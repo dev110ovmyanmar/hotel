@@ -2,8 +2,7 @@ import axios from "axios";
 import Base64 from "crypto-js/enc-base64";
 import Utf8 from "crypto-js/enc-utf8";
 import Logger from "./apiLogger";
-import { getAuthorization, getContentMD5, loadState, getDate } from "../utils";
-import { sessionExpired } from "../services/appSlice";
+import store from "./store";
 import {
   ACCESS_KEY_ID,
   HASH_SIGN_KEY,
@@ -11,13 +10,13 @@ import {
   SECRET_ACCESS_KEY,
   SERVER_ERROR_CODES,
 } from "../variables/constants";
-import store from "./store";
-import Toast from "../component/Toast/Toast";
-import { deviceId, deviceName } from "../utils/deviceInfo";
+import { sessionExpired } from "../services/appSlice";
+import { deviceId, deviceName, getAuthorization, getContentMD5, loadState } from "../utils";
+import { getDate } from "../utils/dateUtils";
 
 // Set up axios response interceptor
-export const setupResponseInterceptor = () => {
-  axios.interceptors.response.use(
+export const setupResponseInterceptor = (client) => {
+  client.interceptors.response.use(
     (response) => {
       Logger.describeSuccessResponse(response);
       return response;
@@ -41,13 +40,14 @@ const handleSessionExpiration = (error) => {
 };
 
 // Set up axios request interceptor
-export const setupRequestInterceptor = () => {
-  axios.interceptors.request.use(
+export const setupRequestInterceptor = (client) => {
+  client.interceptors.request.use(
     (config) => {
       config.params = appendCommonParams(config.method, config.params);
       config.data = appendCommonData(config.method, config.data);
 
       const requestData = config.method === "get" ? config.params : config.data;
+      
       config.headers = generateHeaders(
         config.method,
         requestData,
@@ -85,8 +85,9 @@ const appendCommonData = (method, data = {}) => {
   return data;
 };
 
-const getDeviceId = () => deviceId();
-const getDeviceName = () => deviceName();
+const getDeviceId = () => loadState(LOCAL_STORAGE_KEYS.deviceId) || deviceId();
+const getDeviceName = () =>
+  loadState(LOCAL_STORAGE_KEYS.deviceName) || deviceName();
 
 // Convert parameters to Base64 for GET requests
 const convertParamsToBase64 = (params) => {
@@ -110,12 +111,12 @@ const generateMultipartHeaders = (method) => {
   return {
     "Content-Type": "multipart/form-data",
     "Content-MD5": contentMd5,
-    "platform-origin": "portal",
+    "X-Platform-Origin": "portal",
     content: Base64.stringify(Utf8.parse(JSON.stringify(data))),
     "Auth-Date": rfc2822Date,
-    sessionToken: loadState(LOCAL_STORAGE_KEYS.sessionId) || "",
-    "device-id": getDeviceId,
-    "device-name": getDeviceName,
+    "X-Session-Token": loadState(LOCAL_STORAGE_KEYS.sessionId) || "",
+    "X-Device-Id": getDeviceId(),
+    "X-Device-Name": getDeviceName(),
   };
 };
 
@@ -123,23 +124,24 @@ const generateMultipartHeaders = (method) => {
 const generateJsonHeaders = (method, data) => {
   const { iso8601Date, rfc2822Date } = getDate();
   const contentMd5 = getContentMD5(data);
+
   const sessionId = loadState(LOCAL_STORAGE_KEYS.sessionId) || "";
 
   return {
     "Content-Type": "application/json",
     "Content-MD5": contentMd5,
-    "platform-origin": "portal",
+    "X-Platform-Origin": "portal",
     "Auth-Date": rfc2822Date,
-    Authorization: generateAuthorizationHeader(
+    "PMS-Authorization": generateAuthorizationHeader(
       method.toUpperCase(),
       contentMd5,
       "application/json",
       iso8601Date,
     ),
-    ...(sessionId && { sessionToken: sessionId }),
+    ...(sessionId && { "X-Session-Token": sessionId }),
 
-    "device-id": getDeviceId,
-    "device-name": getDeviceName,
+    "X-Device-Id":deviceId(),
+    "X-Device-Name": getDeviceName(),
   };
 };
 

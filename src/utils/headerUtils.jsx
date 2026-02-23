@@ -48,7 +48,7 @@ export function getAuthorization({
   //Converted the encrypted string into base 64
   const base64String = Base64.stringify(Utf8.parse(hmacSha1String));
 
-  console.log("AUTHORIZATION", accessKeyId + COLON + secretAccesskey + COLON + base64String)
+  // console.log("AUTHORIZATION", accessKeyId + COLON + secretAccesskey + COLON + base64String)
 
   return accessKeyId + COLON + secretAccesskey + COLON + base64String;
 }
