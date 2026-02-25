@@ -6,7 +6,10 @@ import md5 from 'crypto-js/md5';
 /**
  * A utility method to generate MD5 hash of the string
  */
-export function getContentMD5(data = {}) {
+export function getContentMD5(data) {
+  if (!data) {
+    return md5("").toString();
+  }
   return md5(JSON.stringify(data)).toString();
 }
 

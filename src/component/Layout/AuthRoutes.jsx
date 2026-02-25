@@ -13,6 +13,7 @@ import {
   ShopOutlined
 } from "@ant-design/icons";
 import { lazy } from "react";
+import AdminList from "../../pages/Admins/AdminList";
 
 const Dashboard = lazy(() => import("../../pages/Dashboard/Dashboard"));
 const Calendar = lazy(()=> import("../../pages/Calendar/Calendar"));
@@ -47,14 +48,14 @@ export const authRoutes = [
   {
     key: 4,
     label: "Admin",
-    path: "/dashboard/admins",
+    path: "/admins",
     icon: <UserOutlined style={{ fontSize: "20px" }} />,
     isPrivate: true,
-    // component: <AdminList />,
+    component: <AdminList />,
   },
   {
     key: 4.1,
-    path: "/dashboard/admins/:mode/:id",
+    path: "/admins/:mode/:id",
     isPrivate: false,
     // component: <AdminDetails />,
   },
@@ -66,7 +67,7 @@ export const authRoutes = [
     nested: [
       {
         key: 5.1,
-        path: "/dashboard/rooms/",
+        path: "/manage-rooms/rooms/",
         label: "Booking",
         icon: <IdcardOutlined style={{ fontSize: "20px" }} />,
         component: <Booking />
