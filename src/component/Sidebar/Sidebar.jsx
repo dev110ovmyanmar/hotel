@@ -3,13 +3,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Layout, Menu } from 'antd';
 import Scrollbars from "../CustomScrollBar/CustomScrollBar";
 import SidebarMenu from './SidebarMenu';
-import { toggleCollapsed, appSelector } from '../../services/appSlice';
+
 // import logoLg from "../../assets/images/hotel_logo.png";
 import logoLg from "../../assets/images/ovwithtext.png"
 import logoSm from "../../assets/images/ovlogo.png"
 // import logoSm from "../../assets/images/hotel_logo.png";
 
 import "./sidebar.css";
+import { appSelector, toggleCollapsed } from '../../services/appSlice';
 
 const { Sider } = Layout;
 

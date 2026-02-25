@@ -1,43 +1,40 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { persistQueryClient } from "@tanstack/react-query-persist-client";
+import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
+import { createAsyncStoragePersister } from "@tanstack/query-async-storage-persister";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { queryClient } from "./queryClient";
 
-// 1️⃣ Create React Query client
-export const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 24 * 60 * 60 * 1000, // 1 day
-      cacheTime: 24 * 60 * 60 * 1000, // keep cache 1 day
-      refetchOnWindowFocus: false,
-      retry: 1,
-    },
+// Wrap localStorage with async functions
+const asyncLocalStorage = {
+  getItem: async (key) => {
+    return localStorage.getItem(key);
   },
-});
+  setItem: async (key, value) => {
+    localStorage.setItem(key, value);
+  },
+  removeItem: async (key) => {
+    localStorage.removeItem(key);
+  },
+};
 
-// 2️⃣ Setup persistence using localStorage
-persistQueryClient({
-  queryClient,
-  persister: {
-    persistClient: async (client) => {
-      localStorage.setItem("React_Query_Cache", JSON.stringify(client));
-    },
-    restoreClient: async () => {
-      const cache = localStorage.getItem("React_Query_Cache");
-      if (!cache) return undefined;
-      return JSON.parse(cache);
-    },
-    removeClient: async () => {
-      localStorage.removeItem("React_Query_Cache");
-    },
-  },
-  maxAge: 24 * 60 * 60 * 1000, // 1 day
+const persister = createAsyncStoragePersister({
+  storage: asyncLocalStorage,
+  key: "init-data",
 });
 
 export default function QueryProvider({ children }) {
   return (
-    <QueryClientProvider client={queryClient}>
+    <PersistQueryClientProvider
+      client={queryClient}
+      persistOptions={{
+        persister,
+        maxAge: 1000 * 60 * 60 * 24, // 24 hours
+        dehydrateOptions: {
+          shouldDehydrateQuery: (query) => query.meta?.persist === true,
+        },
+      }}
+    >
       {children}
       {import.meta.env.DEV && <ReactQueryDevtools initialIsOpen={false} />}
-    </QueryClientProvider>
+    </PersistQueryClientProvider>
   );
 }

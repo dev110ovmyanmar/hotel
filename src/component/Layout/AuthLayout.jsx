@@ -3,10 +3,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { Layout, Modal } from "antd";
 import Sidebar from "../Sidebar/Sidebar";
 import AuthRoutes from "./AuthRoutes";
-import { appSelector, toggleAll } from "../../services/appSlice";
-import useWindowSize from "../../hooks/useWindowSize";
+
 import { Footer } from "antd/es/layout/layout";
 import Topbar from "../Topbar/Topbar";
+import { appSelector, toggleAll } from "../../services/appSlice";
+import useWindowSize from "../../hooks/useWindowSize";
 
 const { confirm } = Modal;
 

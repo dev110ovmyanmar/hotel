@@ -6,11 +6,11 @@ import {
   Navigate,
   Outlet,
 } from "react-router-dom";
-import Loader from "../component/Loader/Loader";
-import ErrorBoundary from "./ErrorBoundary";
+import Loader from "../component/Loader/Loader.jsx";
+import ErrorBoundary from "./ErrorBoundary.jsx";
 import { ToastContainer } from "react-toastify";
-import { loadState } from "../utils/Utils";
-import { LOCAL_STORAGE_KEYS } from "../variables/constants";
+import { loadState } from "../utils/Utils.js";
+import { LOCAL_STORAGE_KEYS } from "../variables/constants.js";
 
 
 const AuthLayout = lazy(() => import("../component/Layout/AuthLayout.jsx"));

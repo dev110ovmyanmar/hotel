@@ -10,9 +10,10 @@ import {
   SECRET_ACCESS_KEY,
   SERVER_ERROR_CODES,
 } from "../variables/constants";
-import { sessionExpired } from "../services/appSlice";
+
 import { deviceId, deviceName, getAuthorization, getContentMD5, loadState } from "../utils";
 import { getDate } from "../utils/dateUtils";
+import { sessionExpired } from "../services/appSlice";
 
 // Set up axios response interceptor
 export const setupResponseInterceptor = (client) => {

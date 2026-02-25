@@ -1,7 +1,6 @@
 import React, { useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Button, Layout } from "antd";
-import { toggleCollapsed, appSelector } from "../../services/appSlice";
 import withDirection from "../../utils/rtl.jsx";
 import {
   MenuFoldOutlined,
@@ -17,6 +16,7 @@ import {
 } from "../../variables/constants";
 import axios from "axios";
 import Toast from "../Toast/Toast";
+import { appSelector, toggleCollapsed } from "../../services/appSlice.js";
 
 const { Header } = Layout;
 
