@@ -86,7 +86,7 @@ export default class Logger {
       console.groupEnd();
     } else {
       // Something happened in setting up the request that triggered an Error
-      console.log(`UNKNOWN ERROR: ${error.message}`);
+      // console.log(`UNKNOWN ERROR: ${error.message}`);
     }
     console.groupCollapsed('CONFIG');
     console.log(error.config);

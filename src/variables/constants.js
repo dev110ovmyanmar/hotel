@@ -89,7 +89,7 @@ export const LOCAL_STORAGE_KEYS = {
 };
 
 export const LIMITS = {
-  PAGE_SIZE: 25,
+  PAGE_SIZE: 10,
 };
 
 export const SERVER_ERROR_CODES = {

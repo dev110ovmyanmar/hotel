@@ -126,7 +126,8 @@ const generateJsonHeaders = (method, data) => {
   const { iso8601Date, rfc2822Date } = getDate();
   const contentMd5 = getContentMD5(data);
 
-  const sessionId = loadState(LOCAL_STORAGE_KEYS.sessionId) || "";
+  const sessionId = "$2y$10$GgM3eEI9VupwXQm2hPHzf.VY1.MLYwfsmdD6xHgRMiUNylW4IYpIa";
+  // const sessionId = loadState(LOCAL_STORAGE_KEYS.sessionId) || "";
 
   return {
     "Content-Type": "application/json",
