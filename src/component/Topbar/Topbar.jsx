@@ -1,12 +1,15 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Button, Layout } from "antd";
+import { Button, Dropdown, Layout, Menu, Popover } from "antd";
 import withDirection from "../../utils/rtl.jsx";
 import {
+  LockOutlined,
+  LogoutOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   PlusOutlined,
   PrinterOutlined,
+  UserOutlined,
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import {
@@ -21,7 +24,6 @@ import { appSelector, toggleCollapsed } from "../../services/appSlice.js";
 const { Header } = Layout;
 
 const Topbar = withDirection(function (props) {
-
   const { collapsed, openDrawer } = useSelector(appSelector);
 
   const dispatch = useDispatch();
@@ -32,6 +34,42 @@ const Topbar = withDirection(function (props) {
     [dispatch],
   );
 
+  const handleProfilePageViewClick = () => {
+    navigate("/profile");
+  };
+  const changePasswordPage = () => {
+    navigate("/change-password");
+  };
+
+  const content = (
+    <div className="bg-white rounded-md shadow-md min-w-[180px]">
+           <ul>
+        <li
+          className="flex cursor-pointer p-2.5 pl-0 ml-3 mt-4"
+          onClick={handleProfilePageViewClick}
+        >
+          <UserOutlined className="mr-2" />
+          <span>Profile</span>
+        </li>
+
+        <li
+          className="flex cursor-pointer p-2.5 pl-0 ml-3 "
+          onClick={changePasswordPage}
+        >
+          <LogoutOutlined className="text-xl mr-1 " />
+          <span>Change Password</span>
+        </li>
+
+        <li
+          className="cursor-pointer p-2.5 pl-0"
+          // onClick={handleModalOpen}
+        >
+          <LogoutOutlined className="mr-2 ml-3" />
+          Logout
+        </li>
+      </ul>
+    </div>
+  );
   const isCollapsed = collapsed && !openDrawer;
 
   return (
@@ -46,7 +84,6 @@ const Topbar = withDirection(function (props) {
             : "pr-[15px] pl-[260px] md:pr-[31px] md:pl-[265px]!"
       }`}
     >
-
       <div className="flex items-center gap-4">
         <div className="cursor-pointer" onClick={handleToggle}>
           {isCollapsed ? (
@@ -55,7 +92,7 @@ const Topbar = withDirection(function (props) {
             <MenuFoldOutlined className="text-xl" />
           )}
         </div>
-        <div className="text-lg font-bold">Azura Hotel PMS</div>
+        <div className="text-xs md:text-lg font-bold">Azura Hotel PMS</div>
       </div>
 
       {/* Right: Actions */}
@@ -66,6 +103,7 @@ const Topbar = withDirection(function (props) {
           size="middle"
           iconPlacement="end"
           className="bg-purple-600 hover:bg-purple-700 border-none"
+          onClick={() => navigate("/reservation-form")}
         >
           Add Reservation
         </Button>
@@ -98,14 +136,22 @@ const Topbar = withDirection(function (props) {
             />
           </svg>
         </div>
-        <div className="relative group cursor-pointer">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-full bg-gray-300"></div>
-            <span className="hidden md:block text-gray-700 font-medium">
-              Admin
-            </span>
+
+        <Dropdown
+          trigger={["click"]}
+          placement="bottomRight"
+          dropdownRender={() => content}
+          className="bg-white "
+        >
+          <div className="cursor-pointer">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center"></div>
+              <span className="hidden md:block text-gray-700 font-medium">
+                Admin
+              </span>
+            </div>
           </div>
-        </div>
+        </Dropdown>
       </div>
     </Header>
   );
