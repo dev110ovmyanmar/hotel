@@ -11,6 +11,9 @@ import {
   CalendarOutlined,
   ScheduleOutlined,
   ShopOutlined,
+  TeamOutlined,
+  SecurityScanOutlined,
+  UserSwitchOutlined,
 } from "@ant-design/icons";
 import { lazy } from "react";
 import AdminList from "../../pages/Admins/AdminList";
@@ -28,7 +31,8 @@ const Profile = lazy(() => import("../../pages/Profile/ProfilePage"));
 const ReservationForm = lazy(
   () => import("../../pages/Reservation/ReservationForm"),
 );
-
+const PermissionListing = lazy(() => import("../../pages/Permissions/PermissionsListing"))
+const RolesListing = lazy(() => import("../../pages/Roles/RolesListing"))
 export const authRoutes = [
   {
     key: 1,
@@ -87,6 +91,28 @@ export const authRoutes = [
         label: "Floor",
         icon: <IdcardOutlined style={{ fontSize: "20px" }} />,
         component: <Floor />,
+      },
+    ],
+  },
+    {
+    key: 6,
+    label: "Role Management",
+    isPrivate: false,
+    icon: <TeamOutlined style={{ fontSize: "20px" }} />,
+    nested: [
+      {
+        key: 6.1,
+        path: "/permission-management/permissions/",
+        label: "Permissions",
+        icon: <SecurityScanOutlined style={{ fontSize: "20px" }} />,
+        component: <PermissionListing />
+      },
+      {
+        key: 6.2,
+        path: "/role-management/roles/",
+        label: "Roles",
+        icon: <UserSwitchOutlined style={{ fontSize: "20px" }} />,
+        component: <RolesListing />
       },
     ],
   },
