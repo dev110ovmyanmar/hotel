@@ -1,28 +1,22 @@
 
 import React, { useEffect, useState } from "react";
 import { Form, Input, Button, Select, Image, Drawer, AutoComplete } from "antd";
-import { data, useNavigate, useParams } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
 import Toast from "../../../../component/Toast/Toast";
 import { CloseOutlined } from "@ant-design/icons";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
-import { adminDetailsFunApi, createAdminFun, editAdminFun } from "../../../../api/adminFunApi";
 import useApiQuery from "../../../../hooks/useApiQuery";
-import { loadState } from "../../../../utils";
 import { queryClient } from "../../../../app/queryClient";
+import { adminDetailsFunApi, createAdminFun, editAdminFun } from "../../../../api/adminFunctionApi";
 
-
-const AdminForm = ({ mode, selectedData, setSelectedData, drawerOpen, setDrawerOpen }) => {
-  const dispatch = useDispatch();
+const AdminForm = ({ mode, selectedData, setSelectedData, drawerOpen, setDrawerOpen , setPage }) => {
   const [form] = Form.useForm();
-  const navigate = useNavigate();
 
   const isView = mode === "view";
   const isEdit = mode === "edit";
   const isAdd = mode === "add";
 
   const initData = queryClient.getQueryData(["initData", {}]);
-  
+
   const roles = initData?.roles?.map(role => ({
     value: role.uuid,
     label: role.name
@@ -64,7 +58,6 @@ const AdminForm = ({ mode, selectedData, setSelectedData, drawerOpen, setDrawerO
   }, [data])
 
   const onFinish = (values) => {
-    
     if (isAdd) {
       const createValues = {
         ...values,
@@ -76,16 +69,17 @@ const AdminForm = ({ mode, selectedData, setSelectedData, drawerOpen, setDrawerO
         onSuccess: () => {
           form.resetFields();
           setDrawerOpen(false);
+          setPage(1);
           Toast.success("Admin Created Successfully!")
         }
       });
     }
-    if (isEdit ) {
+    if (isEdit) {
       const editValues = {
         ...values,           // merge new form values
         role: { uuid: values.role },
         status: { uuid: values.status },
-        uuid: data?.uuid,     
+        uuid: data?.uuid,
       };
 
       editAdminFunction.mutate(editValues, {
@@ -97,11 +91,12 @@ const AdminForm = ({ mode, selectedData, setSelectedData, drawerOpen, setDrawerO
     }
   };
 
+  
   return (
 
     <div className="flex justify-center" >
       < Drawer
-        size={720}
+        size={500}
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
         closable={false}
@@ -129,8 +124,8 @@ const AdminForm = ({ mode, selectedData, setSelectedData, drawerOpen, setDrawerO
           onFinish={onFinish}
 
         >
-          <Form.Item label="Admin Name" name="name" rules={[{ required: true, message: "Admin Name is Required" }]}>
-            <Input disabled={isView} />
+          <Form.Item label="Admin Name" name="name" rules={[{ required: true, message: "Admin Name is Required" }]} aut>
+            <Input readOnly={isView} />
           </Form.Item>
 
           <Form.Item
@@ -138,31 +133,36 @@ const AdminForm = ({ mode, selectedData, setSelectedData, drawerOpen, setDrawerO
             name="email"
             rules={[{ required: true, message: "Admin Email is Required" }]}
           >
-            <Input disabled={isView} />
+            <Input readOnly={isEdit || isView} />
           </Form.Item>
 
           <Form.Item name="role" label="Role">
             <Select
               showSearch
               options={roles}
+              open={isView? false: undefined}
             />
           </Form.Item>
 
           <Form.Item
             label="Staff"
             name="staff"
+            readOnly={isView}
           >
-            <Input disabled={isView} />
+            <Input />
           </Form.Item>
 
           <Form.Item
             label="Status"
             name="status"
             rules={[{ required: true, message: "Status is Required" }]}
+
           >
             <Select
               showSearch
               options={statuses}
+              open={isView? false: undefined}
+              
             />
           </Form.Item>
 
@@ -171,12 +171,12 @@ const AdminForm = ({ mode, selectedData, setSelectedData, drawerOpen, setDrawerO
               <Button
                 type="default"
                 disabled={isView}
-                onClick={() => navigate(-1)}
+                onClick={()=>setDrawerOpen(false)}
                 className="me-2"
               >
                 Cancel
               </Button>
-              <Button type="primary" htmlType="submit" disabled={isView} loading={isAdd? createAdminFunction.isPending : editAdminFunction.isPending} >
+              <Button type="primary" htmlType="submit" disabled={isView} loading={isAdd ? createAdminFunction.isPending : editAdminFunction.isPending} >
                 {isAdd ? "Create" : "Save"}
               </Button>
             </div>
