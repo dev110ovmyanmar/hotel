@@ -5,7 +5,7 @@ import { LIMITS } from "../../variables/constants";
 import ContentBanner from "../../component/ContentBanner/ContentBanner";
 import FilterBar from "../../component/FilterBar/FilterBar";
 import useApiQuery from "../../hooks/useApiQuery";
-import { adminListFunApi } from "../../api/adminFunApi";
+import { adminFunctionApi, createAdminFun } from "../../api/adminFunctionApi";
 
 const AdminList = () => {
   const [keyword, setKeyword] = useState("");
@@ -18,7 +18,7 @@ const AdminList = () => {
 
   const { data, isLoading, error } = useApiQuery({
     fetchQueryName: "admins",
-    fetchQueryFunction: adminListFunApi,
+    fetchQueryFunction: adminFunctionApi,
     params: {
       pagination: {
         page: page,
@@ -62,9 +62,9 @@ const AdminList = () => {
       <AdminForm
         drawerOpen={drawerOpen}
         setDrawerOpen={setDrawerOpen}
+        setPage={setPage}
         mode="add"
       />
-
     </div>
   )
 };
