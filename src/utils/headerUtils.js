@@ -13,6 +13,12 @@ export function getContentMD5(data) {
   return md5(JSON.stringify(data)).toString();
 }
 
+export function getPasswordMD5(data = "") {
+
+  return md5(data).toString();
+
+}
+
 /**
  * A utility method that genrates the authorization header
  */

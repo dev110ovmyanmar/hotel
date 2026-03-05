@@ -10,15 +10,41 @@ import {
   IdcardOutlined,
   CalendarOutlined,
   ScheduleOutlined,
-  ShopOutlined
+  ShopOutlined,
+  TeamOutlined,
+  SecurityScanOutlined,
+  UserSwitchOutlined,
 } from "@ant-design/icons";
 import { lazy } from "react";
 import AdminList from "../../pages/Admins/AdminList";
 
+import { FiMap } from "react-icons/fi";
+import LocationList from "../../pages/Location/LocationList";
+import AmenitiesList from "../../pages/Amenities/AmenitiesList";
+import PolicyList from "../../pages/Policy/PolicyList";
+
+import { EnvironmentOutlined } from "@ant-design/icons";
+import { MdOutlinePolicy } from 'react-icons/md';
+
 const Dashboard = lazy(() => import("../../pages/Dashboard/Dashboard"));
-const Calendar = lazy(()=> import("../../pages/Calendar/Calendar"));
-const Reservation = lazy(()=> import("../../pages/Reservation/Reservation"));
-const Booking = lazy(()=> import("../../pages/Booking/Booking"))
+const Calendar = lazy(() => import("../../pages/Calendar/Calendar"));
+// const Reservation = lazy(() => import("../../pages/Reservation/Reservation"));
+const Booking = lazy(() => import("../../pages/Booking/Booking"));
+const RoomPlan = lazy(() => import("../../pages/RoomPlan/RoomPlanList"));
+const RoomType = lazy(() => import("../../pages/RoomType/RoomTypeList"));
+const RoomList = lazy(() => import("../../pages/Room/RoomList"));
+const Floor = lazy(() => import("../../pages/Floor/FloorList"));
+const ChangePassword = lazy(
+  () => import("../../pages/Authentication/ChangePassword/ChangePasswordPage"),
+);
+const Profile = lazy(() => import("../../pages/Profile/ProfilePage"));
+const ReservationForm = lazy(
+  () => import("../../pages/Reservation/ReservationForm"),
+);
+const PermissionListing = lazy(() => import("../../pages/Permissions/PermissionsListing"));
+const RolesListing = lazy(() => import("../../pages/Roles/RolesListing"));
+const PropertiesListing = lazy(() => import("../../pages/Properties/PropertiesListing"));
+
 
 export const authRoutes = [
   {
@@ -37,14 +63,14 @@ export const authRoutes = [
     component: <Calendar />,
     isPrivate: false,
   },
-  {
-    key: 3,
-    path: "/reservation/",
-    label: "Reservation",
-    icon: <ScheduleOutlined style={{ fontSize: "20px" }} />,
-    component: <Reservation />,
-    isPrivate: false,
-  },
+  // {
+  //   key: 3,
+  //   path: "/reservation/",
+  //   label: "Reservation",
+  //   icon: <ScheduleOutlined style={{ fontSize: "20px" }} />,
+  //   component: <Reservation />,
+  //   isPrivate: false,
+  // },
   {
     key: 4,
     label: "Admin",
@@ -59,7 +85,7 @@ export const authRoutes = [
     isPrivate: false,
     // component: <AdminDetails />,
   },
-   {
+  {
     key: 5,
     label: "Manage Rooms",
     isPrivate: false,
@@ -67,13 +93,118 @@ export const authRoutes = [
     nested: [
       {
         key: 5.1,
-        path: "/manage-rooms/rooms/",
-        label: "Booking",
+        path: "/manage-rooms/room-plan",
+        label: "Room Plan",
         icon: <IdcardOutlined style={{ fontSize: "20px" }} />,
-        component: <Booking />
+        component: <RoomPlan />,
+      },
+      {
+        key: 5.2,
+        path: "/manage-rooms/room-type",
+        label: "Room Type",
+        icon: <IdcardOutlined style={{ fontSize: "20px" }} />,
+        component: <RoomType />,
+      },
+      {
+        key: 5.3,
+        path: "/manage-rooms/room-list",
+        label: "Room List",
+        icon: <IdcardOutlined style={{ fontSize: "20px" }} />,
+        component: <RoomList />,
+      },
+      {
+        key: 5.2,
+        path: "/manage-rooms/floor",
+        label: "Floor",
+        icon: <IdcardOutlined style={{ fontSize: "20px" }} />,
+        component: <Floor />,
       },
     ],
   },
+  {
+    key: 6,
+    label: "Role Management",
+    isPrivate: false,
+    icon: <TeamOutlined style={{ fontSize: "20px" }} />,
+    nested: [
+      {
+        key: 6.1,
+        path: "/permission-management/permissions/",
+        label: "Permissions",
+        icon: <SecurityScanOutlined style={{ fontSize: "20px" }} />,
+        component: <PermissionListing />
+      },
+      {
+        key: 6.2,
+        path: "/role-management/roles/",
+        label: "Roles",
+        icon: <UserSwitchOutlined style={{ fontSize: "20px" }} />,
+        component: <RolesListing />
+      },
+    ],
+  },
+  {
+    key: 7,
+    path: "/property-management/properties",
+    label: "Properties",
+    icon: <UserSwitchOutlined style={{ fontSize: "20px" }} />,
+    component: <PropertiesListing/>,
+  },
+  {
+    key: 8,
+    path: "/change-password/",
+    component: <ChangePassword />,
+    isPrivate: false,
+  },
+  {
+    key: 9,
+    path: "/profile/",
+    component: <Profile />,
+    isPrivate: false,
+  },
+  {
+    key: 10,
+    path: "/reservation-form/",
+    component: <ReservationForm />,
+    isPrivate: false,
+  },
+  {
+    key: 10,
+    label: "Location",
+    path: "/location",
+    icon: <EnvironmentOutlined style={{ fontSize: "20px" }} />,
+    isPrivate: true,
+    component: <LocationList />,
+  },
+  {
+    key: 11,
+    label: "Amenities",
+    path: "/amenities",
+    icon: <FiMap style={{ fontSize: "20px" }} />,
+    isPrivate: true,
+    component: <AmenitiesList />,
+  },
+  {
+    key: 12,
+    label: "Policy",
+    path: "/policy",
+    icon: <MdOutlinePolicy style={{ fontSize: "20px" }} />,
+    isPrivate: true,
+    component: <PolicyList />
+
+  },
+  // {
+  //   key: 13,
+  //   label: "Meal Plan",
+  //   path: "/meal-plan",
+  //   icon: <MdOutlinePolicy style={{ fontSize: "20px" }} />,
+  //   isPrivate: true,
+  //   component: <MeanPlanList />
+
+  // }
+
+
+
 ];
 
 const AuthRoutes = () => {
@@ -83,11 +214,17 @@ const AuthRoutes = () => {
         return route.nested;
       }
       return route;
-    })
+    }),
   );
 
   return (
-    <Suspense fallback={<div className="w-full h-full flex justify-center items-center text-center" ><Loader /></div>}>
+    <Suspense
+      fallback={
+        <div className="w-full h-full flex justify-center items-center text-center">
+          <Loader />
+        </div>
+      }
+    >
       <Routes>
         {routesOptions.map((option) => (
           <Route
