@@ -1,19 +1,24 @@
 import React, { useEffect, useState } from "react";
-import { Button, Form, Input, Divider, Spin, message } from "antd";
-import Loader from "../../component/Loader/Loader";
+import { Button, Form, Input, Divider, Spin, message, Drawer } from "antd";
+import Loader from "../../../component/Loader/Loader";
 import PermissionAssignDrawer from "./PermissionAssignDrawer";
-import { fetchRoleDetail } from "../../api/roleApi";
-import useApiQuery from "../../hooks/useApiQuery";
+import { fetchRoleDetail } from "../../../api/roleApi";
+import useApiQuery from "../../../hooks/useApiQuery";
+import Toast from "../../../component/Toast/Toast";
 
 const { TextArea } = Input;
 
-const RoleDrawer = ({
+const RoleForm = ({
   mode,
   selectedData,
   setDrawerOpen,
   updateRoleFunction,
   updatePermissionFunction, // ✅ New separate prop for permission update
   createRoleFunction,
+  switchToEdit,
+  DrawerTitle,
+  open,
+  onClose
 }) => {
   const [form] = Form.useForm();
   const [permDrawerOpen, setPermDrawerOpen] = useState(false);
@@ -64,14 +69,14 @@ const RoleDrawer = ({
       createRoleFunction.mutate(createPayload, {
         onSuccess: (res) => {
           if (res?.reasonCode === "200" || res?.status === "success") {
-            message.success("Role created successfully");
+            Toast.success("Role created successfully");
             refetch();
             setDrawerOpen(false);
           } else {
-            message.error(res?.error?.text || "Creation failed");
+            Toast.error(res?.error?.text || "Creation failed");
           }
         },
-        onError: () => message.error("Error occurred while creating role"),
+        onError: () => Toast.error("Error occurred while creating role"),
       });
     } else {
       // ✅ Edit mode: only update role info (no permissions here)
@@ -87,14 +92,14 @@ const RoleDrawer = ({
       updateRoleFunction.mutate(updatePayload, {
         onSuccess: (res) => {
           if (res?.reasonCode === "200") {
-            message.success("Role info updated successfully");
+            Toast.success("Role info updated successfully");
             refetch();
             setDrawerOpen(false);
           } else {
-            message.error(res?.error?.text || "Update failed");
+            Toast.error(res?.error?.text || "Update failed");
           }
         },
-        onError: () => message.error("An error occurred during update"),
+        onError: () => Toast.error("An error occurred during update"),
       });
     }
   };
@@ -118,7 +123,7 @@ const RoleDrawer = ({
     });
 
     if (changedPermissions.length === 0) {
-      message.info("No permission changes detected");
+      Toast.info("No permission changes detected");
       return;
     }
 
@@ -135,14 +140,14 @@ const RoleDrawer = ({
     updatePermissionFunction.mutate(permPayload, {
       onSuccess: (res) => {
         if (res?.reasonCode === "200") {
-          message.success("Permissions updated successfully");
+          Toast.success("Permissions updated successfully");
           refetch();
         } else {
-          message.error(res?.error?.text || "Permission update failed");
+          Toast.error(res?.error?.text || "Permission update failed");
         }
       },
       onError: () =>
-        message.error("An error occurred while updating permissions"),
+        Toast.error("An error occurred while updating permissions"),
     });
   };
 
@@ -153,6 +158,21 @@ const RoleDrawer = ({
           <Loader />
         </div>
       ) : (
+        <Drawer
+        title={
+          <div className="flex items-center justify-between">
+            <span>{DrawerTitle}</span>
+            {isView && (
+              <Button type="primary" onClick={switchToEdit}>
+                Edit
+              </Button>
+            )}
+          </div>
+        }
+        size={500}
+        onClose={onClose}
+        open={open}
+      >
         <Form form={form} layout="vertical" onFinish={onFinish}>
           {/* ── Role Info Fields ── */}
           <Form.Item label="Name" name="name" rules={[{ required: true }]}>
@@ -231,9 +251,11 @@ const RoleDrawer = ({
             onSave={handlePermissionSave} // ✅ triggers its own API call
           />
         </Form>
+      </Drawer>
+
       )}
     </>
   );
 };
 
-export default RoleDrawer;
+export default RoleForm;
