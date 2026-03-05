@@ -9,6 +9,7 @@ import {
   UserOutlined,
   IdcardOutlined,
   CalendarOutlined,
+  ScheduleOutlined,
   ShopOutlined,
   TeamOutlined,
   SecurityScanOutlined,
@@ -32,10 +33,11 @@ const Profile = lazy(() => import("../../pages/Profile/ProfilePage"));
 const ReservationForm = lazy(
   () => import("../../pages/Reservation/ReservationForm"),
 );
-const PermissionListing = lazy(
-  () => import("../../pages/Permissions/PermissionsListing"),
-);
+const PermissionListing = lazy(() => import("../../pages/Permissions/PermissionsListing"));
 const RolesListing = lazy(() => import("../../pages/Roles/RolesListing"));
+const PropertiesListing = lazy(() => import("../../pages/Properties/PropertiesListing"));
+
+
 export const authRoutes = [
   {
     key: 1,
@@ -122,31 +124,38 @@ export const authRoutes = [
         path: "/permission-management/permissions/",
         label: "Permissions",
         icon: <SecurityScanOutlined style={{ fontSize: "20px" }} />,
-        component: <PermissionListing />,
+        component: <PermissionListing />
       },
       {
         key: 6.2,
         path: "/role-management/roles/",
         label: "Roles",
         icon: <UserSwitchOutlined style={{ fontSize: "20px" }} />,
-        component: <RolesListing />,
+        component: <RolesListing />
       },
     ],
   },
   {
-    key: 6,
+    key: 7,
+    path: "/property-management/properties",
+    label: "Properties",
+    icon: <UserSwitchOutlined style={{ fontSize: "20px" }} />,
+    component: <PropertiesListing/>,
+  },
+  {
+    key: 8,
     path: "/change-password/",
     component: <ChangePassword />,
     isPrivate: false,
   },
   {
-    key: 7,
+    key: 9,
     path: "/profile/",
     component: <Profile />,
     isPrivate: false,
   },
   {
-    key: 8,
+    key: 10,
     path: "/reservation-form/",
     component: <ReservationForm />,
     isPrivate: false,

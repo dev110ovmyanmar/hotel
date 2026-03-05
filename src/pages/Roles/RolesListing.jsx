@@ -7,7 +7,7 @@ import {
   createRoleFun,
   updateRoleFun,
   updateRolePermissionFun,
-} from "../../api/roleDataApi.js";
+} from "../../api/roleApi.js";
 import useApiQuery from "../../hooks/useApiQuery";
 import { useApiMutation } from "../../hooks/useApiMutation";
 import Loader from "../../component/Loader/Loader";

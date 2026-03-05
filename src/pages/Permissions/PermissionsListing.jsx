@@ -7,7 +7,7 @@ import {
   fetchPermissionDetail,
   createPermission,
   updatePermission,
-} from "../../api/permissionDataApi";
+} from "../../api/permissionApi";
 import useApiQuery from "../../hooks/useApiQuery";
 import { useApiMutation } from "../../hooks/useApiMutation";
 import Loader from "../../component/Loader/Loader";
