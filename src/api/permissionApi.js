@@ -40,3 +40,5 @@ export const updatePermission = async (uuid, payload) => {
   });
   return data;
 };
+
+

@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from "react";
-import { Table, Drawer, Button, message, Input } from "antd";
+import { Table, Drawer, Button, message } from "antd";
 import { PlusOutlined, SearchOutlined } from "@ant-design/icons";
-import RoleDrawer from "./RoleDrawer";
+import RoleForm from "./Components/RoleForm.jsx";
 import {
   fetchRoleData,
   createRoleFun,
@@ -10,8 +10,7 @@ import {
 } from "../../api/roleApi.js";
 import useApiQuery from "../../hooks/useApiQuery";
 import { useApiMutation } from "../../hooks/useApiMutation";
-import Loader from "../../component/Loader/Loader";
-import useRoleColumns from "./useRoleColumns.jsx";
+import RolesTable from "./Components/RolesTable.jsx";
 import ListHeader from "../../component/ListHeader/ListHeader.jsx";
 
 const RolesListing = () => {
@@ -103,99 +102,42 @@ const RolesListing = () => {
         ? "Role Create"
         : "";
 
-  const columns = useRoleColumns(handleEdit, handleView, handleAdd);
-
   return (
     <>
-      {contextHolder}
-      {isLoading ? (
-        <div className="flex justify-center items-center h-screen">
-          <Loader />
-        </div>
-      ) : (
-        <>
-          {/* <div className="mb-4 flex items-center justify-between gap-4 px-5">
-            <Input
-              placeholder="Search roles by name, code..."
-              prefix={<SearchOutlined />}
-              value={keyword}
-              onChange={(e) => {
-                setKeyword(e.target.value);
-                setCurrentPage(1);
-              }}
-              style={{ width: 300 }}
-              allowClear
-            />
-            <Button
-              type="primary"
-              icon={<PlusOutlined />}
-              onClick={handleAdd}
-            >
-              Add Role
-            </Button>
-          </div> */}
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4 w-full px-6 py-2">
-            <ListHeader
-              title="Role List"
-              searchPlaceholder="Search roles by name, code...."
-              keyword={keyword}
-              setKeyword={setKeyword}
-              addButtonText="Add Role"
-              onAdd={handleAdd}
-            />
-          </div>
-
-          <Table
-            columns={columns}
-            dataSource={filteredRoles}
-            rowKey="id"
-            className="mx-5"
-            loading={isLoading}
-            pagination={{
-              current: currentPage,
-              pageSize: pageSize,
-              // ✅ Use filtered count so pagination reflects search results
-              total: keyword ? filteredRoles.length : total,
-              showSizeChanger: true,
-              pageSizeOptions: ["10", "20", "30", "50"],
-              placement: "bottomRight",
-              showTotal: (total, range) =>
-                `${range[0]}-${range[1]} of ${total} items`,
-              onChange: (page, size) => {
-                setCurrentPage(page);
-                setPageSize(size);
-              },
-            }}
+      <>
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4 w-full px-6 py-2">
+          <ListHeader
+            title="Role List"
+            searchPlaceholder="Search roles by name, code...."
+            keyword={keyword}
+            setKeyword={setKeyword}
+            addButtonText="Add Role"
+            onAdd={handleAdd}
           />
-        </>
-      )}
+        </div>
 
-      <Drawer
-        title={
-          <div className="flex items-center justify-between">
-            <span>{DrawerTitle}</span>
-            {isView && (
-              <Button type="primary" onClick={switchToEdit}>
-                Edit
-              </Button>
-            )}
-          </div>
-        }
-       width={500}
+        <RolesTable
+          dataSource={filteredRoles}
+          loading={isLoading}
+          onAdd={handleAdd}
+          onView={handleView}
+          onEdit={handleEdit}
+        />
+      </>
+      <RoleForm
+        mode={currentMode}
+        selectedData={selectedRow}
+        setDrawerOpen={setOpen}
+        roles={roles}
+        createRoleFunction={createRoleFunction}
+        updateRoleFunction={updateRoleFunction}
+        updatePermissionFunction={updatePermissionFunction}
+        messageApi={messageApi}
+        switchToEdit={switchToEdit}
+        DrawerTitle={DrawerTitle}
         onClose={onClose}
         open={open}
-      >
-        <RoleDrawer
-          mode={currentMode}
-          selectedData={selectedRow}
-          setDrawerOpen={setOpen}
-          roles={roles}
-          createRoleFunction={createRoleFunction}
-          updateRoleFunction={updateRoleFunction}
-          updatePermissionFunction={updatePermissionFunction}
-          messageApi={messageApi}
-        />
-      </Drawer>
+      />
     </>
   );
 };
