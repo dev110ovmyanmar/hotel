@@ -2,11 +2,17 @@ import React, { useState, useMemo, useEffect } from "react"; // Added useMemo
 import { Table, Drawer, Button, message, Input } from "antd";
 import { PlusOutlined, SearchOutlined } from "@ant-design/icons";
 import PermissionDrawer from "./PermissionDrawer";
-import { fetchPermissionData, fetchPermissionDetail, createPermission, updatePermission } from "../../api/permissionDataApi";
+import {
+  fetchPermissionData,
+  fetchPermissionDetail,
+  createPermission,
+  updatePermission,
+} from "../../api/permissionDataApi";
 import useApiQuery from "../../hooks/useApiQuery";
 import { useApiMutation } from "../../hooks/useApiMutation";
 import Loader from "../../component/Loader/Loader";
 import usePermissionColumns from "./usePermissionColumns";
+import ListHeader from "../../component/ListHeader/ListHeader";
 
 const PermissionListing = () => {
   const [open, setOpen] = useState(false);
@@ -25,48 +31,54 @@ const PermissionListing = () => {
     params: {}, // Removed keyword from here
   });
 
-  const permissions = Array.isArray(data?.response?.data) ? data.response.data : [];
+  const permissions = Array.isArray(data?.response?.data)
+    ? data.response.data
+    : [];
 
-// 2. Fetch Permission Details - Only call when drawer is open AND a row is selected
-// const { data: detailRes, isLoading: isLoadingDetail } = useApiQuery({
-//   fetchQueryName: ["permissionDetail", selectedRow?.uuid], 
-//   fetchQueryFunction: () => fetchPermissionDetail(selectedRow?.uuid),
-//   enabled: 
-//     !!open && 
-//     !!selectedRow?.uuid && 
-//     (currentMode === "view" || currentMode === "edit"),
-//   // Add this to prevent stale queries:
-//   staleTime: Infinity, // Prevents automatic refetches
-//   cacheTime: 5 * 60 * 1000, // Cache for 5 minutes
-// });
+  // 2. Fetch Permission Details - Only call when drawer is open AND a row is selected
+  // const { data: detailRes, isLoading: isLoadingDetail } = useApiQuery({
+  //   fetchQueryName: ["permissionDetail", selectedRow?.uuid],
+  //   fetchQueryFunction: () => fetchPermissionDetail(selectedRow?.uuid),
+  //   enabled:
+  //     !!open &&
+  //     !!selectedRow?.uuid &&
+  //     (currentMode === "view" || currentMode === "edit"),
+  //   // Add this to prevent stale queries:
+  //   staleTime: Infinity, // Prevents automatic refetches
+  //   cacheTime: 5 * 60 * 1000, // Cache for 5 minutes
+  // });
 
   // Replace the useApiQuery call with a manual fetch in a useEffect:
-const [detailData, setDetailData] = useState(null);
-const [isLoadingDetail, setIsLoadingDetail] = useState(false);
+  const [detailData, setDetailData] = useState(null);
+  const [isLoadingDetail, setIsLoadingDetail] = useState(false);
 
-useEffect(() => {
-  if (open && selectedRow?.uuid && (currentMode === "view" || currentMode === "edit")) {
-    setIsLoadingDetail(true);
-    fetchPermissionDetail(selectedRow.uuid)
-      .then((res) => {
-        setDetailData(res?.response?.data || null);
-      })
-      .catch((err) => {
-        messageApi.error("Failed to fetch permission details");
-      })
-      .finally(() => {
-        setIsLoadingDetail(false);
-      });
-  } else {
-    setDetailData(null);
-  }
-}, [open, selectedRow?.uuid, currentMode]);
+  useEffect(() => {
+    if (
+      open &&
+      selectedRow?.uuid &&
+      (currentMode === "view" || currentMode === "edit")
+    ) {
+      setIsLoadingDetail(true);
+      fetchPermissionDetail(selectedRow.uuid)
+        .then((res) => {
+          setDetailData(res?.response?.data || null);
+        })
+        .catch((err) => {
+          messageApi.error("Failed to fetch permission details");
+        })
+        .finally(() => {
+          setIsLoadingDetail(false);
+        });
+    } else {
+      setDetailData(null);
+    }
+  }, [open, selectedRow?.uuid, currentMode]);
 
   // 2. Filter the data LOCALLY using useMemo
   // This will re-run instantly when 'keyword' or 'permissions' changes without an API call
   const filteredPermissions = useMemo(() => {
     if (!keyword) return permissions;
-    
+
     const lowerKeyword = keyword.toLowerCase();
     return permissions.filter((item) => {
       return (
@@ -89,7 +101,9 @@ useEffect(() => {
       },
       onError: (err) => {
         const apiError = err?.response?.data?.error?.text;
-        messageApi.error(apiError || err?.message || "Failed to create permission");
+        messageApi.error(
+          apiError || err?.message || "Failed to create permission",
+        );
       },
     },
   });
@@ -105,7 +119,9 @@ useEffect(() => {
       },
       onError: (err) => {
         const apiError = err?.response?.data?.error?.text;
-        messageApi.error(apiError || err?.message || "Failed to update permission");
+        messageApi.error(
+          apiError || err?.message || "Failed to update permission",
+        );
       },
     },
   });
@@ -151,11 +167,21 @@ useEffect(() => {
     setSelectedRow(null);
   };
 
+  const handleAdd = () => {
+    setSelectedRow(null);
+    setCurrentMode("add");
+    setOpen(true);
+  };
+
   const isView = currentMode === "view";
   const isEdit = currentMode === "edit";
   // const isAdd = currentMode === "add";
 
-  const DrawerTitle = isView ? "Permission View" : isEdit ? "Permission Edit" : "Permission Create";
+  const DrawerTitle = isView
+    ? "Permission View"
+    : isEdit
+      ? "Permission Edit"
+      : "Permission Create";
 
   const columns = usePermissionColumns(handleEdit, handleView);
 
@@ -163,12 +189,12 @@ useEffect(() => {
     <>
       {contextHolder}
       {isLoading ? (
-        <div className="flex justify-center items-center h-screen">
+        <div className="flex justify-center items-center h-screen w-full px-6 py-2">
           <Loader />
         </div>
       ) : (
         <>
-          <div className="mb-2 flex items-center justify-between">
+          {/* <div className="mb-2 flex items-center justify-between">
             <div className="ml-5">
               <Input
                 placeholder="Search permissions..."
@@ -192,12 +218,22 @@ useEffect(() => {
                 Add Permission
               </Button>
             </div>
+          </div> */}
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4 w-full px-6 py-2">
+            <ListHeader
+              title="Permission List"
+              searchPlaceholder="Search Permission ..."
+              keyword={keyword}
+              setKeyword={setKeyword}
+              addButtonText=" Add Permission"
+              onAdd={handleAdd}
+            />
           </div>
 
-          <Table 
-            columns={columns} 
+          <Table
+            columns={columns}
             dataSource={filteredPermissions} // Pass the FILTERED array here
-            rowKey="id" 
+            rowKey="id"
             className="mx-5"
             pagination={{
               current: currentPage,
@@ -212,7 +248,7 @@ useEffect(() => {
         </>
       )}
 
-      <Drawer 
+      <Drawer
         title={
           <div className="flex items-center justify-between">
             <span>{DrawerTitle}</span>
@@ -223,18 +259,20 @@ useEffect(() => {
             )}
           </div>
         }
-        size={550} 
-        onClose={onClose} 
+        size={500}
+        onClose={onClose}
         open={open}
       >
-      <PermissionDrawer 
-          initialValues={currentMode === "add" ? null : (detailData || selectedRow)} 
-          mode={currentMode} 
-          onSubmit={handleSubmit} 
+        <PermissionDrawer
+          initialValues={
+            currentMode === "add" ? null : detailData || selectedRow
+          }
+          mode={currentMode}
+          onSubmit={handleSubmit}
           onCancel={onClose}
           permissions={permissions}
-          loading={isLoadingDetail} 
-      />
+          loading={isLoadingDetail}
+        />
       </Drawer>
     </>
   );
