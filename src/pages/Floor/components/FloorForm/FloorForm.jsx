@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { Button, Form, Input } from "antd";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
 import Toast from "../../../../component/Toast/Toast";
-import { createFloor, floorDetail } from "../../../../api/floorApi";
+import { floorDetail, upsertFloor } from "../../../../api/floorApi";
 import useApiQuery from "../../../../hooks/useApiQuery";
 
 const Floorform = ({ initialValues, selectedData, mode, onSuccess }) => {
@@ -12,8 +12,17 @@ const Floorform = ({ initialValues, selectedData, mode, onSuccess }) => {
   const isEdit = mode === "edit";
   const isAdd = mode === "add";
 
+  const { data } = useApiQuery({
+    fetchQueryName: "floorDetails",
+    fetchQueryFunction: floorDetail,
+    params: { uuid: initialValues?.uuid },
+    options: {
+      enabled: (isEdit || isView) && !!initialValues?.uuid,
+    },
+  });
+
   const { mutate, isPending } = useApiMutation({
-    mutationFn: createFloor,
+    mutationFn: upsertFloor,
     options: {
       onSuccess: () => {
         Toast.success(
@@ -23,29 +32,31 @@ const Floorform = ({ initialValues, selectedData, mode, onSuccess }) => {
         form.resetFields();
         onSuccess?.();
       },
-      onError: (err) => Toast.error(err.message || "Failed!"),
+      onError: (error) => {
+        Toast.error("Operation failed!");
+      },
     },
   });
+
+  // const handleSubmit = (values) => {
+  //   const payload = {
+  //     ...values,
+  //   };
+  //   if (isEdit && initialValues?.uuid) {
+  //     payload.uuid = initialValues.uuid;
+  //   }
+  //   mutate(payload);
+  // };
 
   const handleSubmit = (values) => {
-    const payload = {
+    mutate({
       ...values,
-    };
-    if (isEdit && initialValues?.uuid) {
-      payload.uuid = initialValues.uuid;
-    }
-
-    mutate(payload);
+      ...(isEdit &&
+        initialValues?.uuid && {
+          uuid: initialValues?.uuid,
+        }),
+    });
   };
-
-  const { data, isLoading } = useApiQuery({
-    fetchQueryName: "floorDetails",
-    fetchQueryFunction: floorDetail,
-    params: { uuid: initialValues?.uuid },
-    options: {
-      enabled: (isEdit || isView) && !!initialValues?.uuid,
-    },
-  });
 
   useEffect(() => {
     if (data) {
@@ -65,10 +76,10 @@ const Floorform = ({ initialValues, selectedData, mode, onSuccess }) => {
       disabled={isView}
       onFinish={handleSubmit}
     >
-      <Form.Item label="Floor Name" name="name">
+      <Form.Item label="Floor Name" name="name"  rules={[{ required: true, message: "Please enter floor name" }]} >
         <Input />
       </Form.Item>
-      <Form.Item label="Floor No" name="floorNo">
+      <Form.Item label="Floor No" name="floorNo"  rules={[{ required: true, message: "Please enter floor no" }]} >
         <Input />
       </Form.Item>
       <Form.Item label="Descriptiom" name="description">
