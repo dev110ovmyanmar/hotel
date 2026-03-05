@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Button, Form, Input, Divider, Spin, message } from "antd";
 import Loader from "../../component/Loader/Loader";
 import PermissionAssignDrawer from "./PermissionAssignDrawer";
-import { fetchRoleDetail } from "../../api/roleDataApi";
+import { fetchRoleDetail } from "../../api/roleApi";
 import useApiQuery from "../../hooks/useApiQuery";
 
 const { TextArea } = Input;

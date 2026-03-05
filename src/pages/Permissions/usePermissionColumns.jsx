@@ -1,6 +1,6 @@
 import { Button, Tag, Dropdown } from "antd";
 import { Typography } from "antd";
-import { MoreOutlined } from "@ant-design/icons";
+import { EditOutlined, EyeOutlined, MoreOutlined } from "@ant-design/icons";
 // import { ACTION_BG } from "./Permissionconstants";
 import { getAction, getModule } from "./Permissionhelpers";
 
@@ -50,10 +50,10 @@ export default function usePermissionColumns(onEdit, onView) {
               if (key === "1") onView(record);
               if (key === "2") onEdit(record);
             },
-            items: [
-              { key: "1", label: "View" },
-              { key: "2", label: "Edit" },
-            ],
+             items: [
+            { key: "1", label: "View", icon: <EyeOutlined /> },
+            { key: "2", label: "Edit", icon: <EditOutlined /> },
+          ],
           }}
           trigger={["click"]}
         >

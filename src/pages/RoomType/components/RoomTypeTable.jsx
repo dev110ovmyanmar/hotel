@@ -1,17 +1,17 @@
 import React, { useState } from "react";
-import { Space, Table, Drawer, Button, Dropdown, Input } from "antd";
+import { Flex, Space, Table, Tag, Drawer, Button, Dropdown, Input } from "antd";
 import {
   EditOutlined,
   EyeOutlined,
   MoreOutlined,
   SearchOutlined,
 } from "@ant-design/icons";
-import { fetchRoom } from "../../../api/roomApi";
+import RoomTypeForm from "./RoomTypeForm/RoomTypeForm";
+import { fetchRoomType } from "../../../api/roomApi";
 import useApiQuery from "../../../hooks/useApiQuery";
-import RoomForm from "./Room/RoomForm";
 import ListHeader from "../../../component/ListHeader/ListHeader";
 
-const RoomTable = ({ mode }) => {
+const RoomTypeTable = ({ mode }) => {
   const [open, setOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
   const [currentMode, setCurrentMode] = useState(mode);
@@ -20,8 +20,8 @@ const RoomTable = ({ mode }) => {
   const [keyword, setKeyword] = useState("");
 
   const { data, isLoading, refetch } = useApiQuery({
-    fetchQueryName: "roomData",
-    fetchQueryFunction: fetchRoom,
+    fetchQueryName: "roomTypeData",
+    fetchQueryFunction: fetchRoomType,
     params: {
       keyword,
       pagination: {
@@ -45,12 +45,6 @@ const RoomTable = ({ mode }) => {
     setSelectedRow(null);
   };
 
-  const handleAdd = () => {
-    setSelectedRow(null);
-    setCurrentMode("add");
-    setOpen(true);
-  };
-
   const isView = currentMode === "view";
   const isEdit = currentMode === "edit";
   const isAdd = currentMode === "add";
@@ -60,26 +54,62 @@ const RoomTable = ({ mode }) => {
     : isEdit
       ? "Edit Floor"
       : isAdd
-        ? "Add New Room "
+        ? "Add New Room Type"
         : "";
+
+  const handleAdd = () => {
+    setSelectedRow(null);
+    setCurrentMode("add");
+    setOpen(true);
+  };
 
   const columns = [
     {
       title: "No",
       dataIndex: "id",
       key: "id",
-      // width:"20px"
+      // render: (text) => <a>{text}</a>,
     },
     {
-      title: "Room No",
-      dataIndex: "roomNo",
-      key: "roomNo",
+      title: "Name",
+      dataIndex: "name",
+      key: "name",
+    },
+    {
+      title: "Code",
+      // title: "Short Name",
+      dataIndex: "code",
+      key: "code",
+    },
+    {
+      title: "Total Rooms",
+      dataIndex: "totalRooms",
+      key: "totalRooms",
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      render: (status) => {
+        const color = status === "active" ? "green" : "volcano";
+        return <Tag color={color}>{status?.toUpperCase()}</Tag>;
+      },
+    },
+    {
+      title: "Guest",
+      dataIndex: "maxOccupancy",
+      key: "maxOccupancy",
     },
 
     {
-      title: "Price per Night",
-      dataIndex: "pricePerNight",
-      key: "pricePerNight",
+      title: "Extra Bed",
+      dataIndex: "extraBed",
+      key: "extraBed",
+    },
+    {
+      title: "Price",
+      dataIndex: "basePrice",
+      key: "basePrice",
     },
 
     {
@@ -87,6 +117,10 @@ const RoomTable = ({ mode }) => {
       key: "actions",
       render: (_, record) => (
         <Space>
+          {/* <EditOutlined
+            style={{ cursor: "pointer" }}
+            onClick={() => showDrawer(record, "edit")}
+          /> */}
           <Dropdown
             menu={{
               onClick: ({ key }) => {
@@ -115,15 +149,14 @@ const RoomTable = ({ mode }) => {
     <>
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
         <ListHeader
-          title="Room List"
-          searchPlaceholder="Search Room ..."
+          title="Room Type List"
+          searchPlaceholder="Search Room Type ..."
           keyword={keyword}
           setKeyword={setKeyword}
-          addButtonText="Add New Room"
+          addButtonText="Add Room Type"
           onAdd={handleAdd}
         />
       </div>
-
       <Table
         columns={columns}
         dataSource={roomTypeList}
@@ -142,7 +175,7 @@ const RoomTable = ({ mode }) => {
         }}
       />
       <Drawer title={DrawerTitle} onClose={onClose} open={open} width={500}>
-        <RoomForm
+        <RoomTypeForm
           initialValues={selectedRow}
           mode={currentMode}
           onSuccess={() => {
@@ -155,4 +188,4 @@ const RoomTable = ({ mode }) => {
   );
 };
 
-export default RoomTable;
+export default RoomTypeTable;

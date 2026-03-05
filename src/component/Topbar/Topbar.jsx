@@ -42,8 +42,8 @@ const Topbar = withDirection(function (props) {
   };
 
   const content = (
-    <div className="bg-white rounded-md shadow-md min-w-[180px]">
-           <ul>
+    <div className="bg-white rounded-md shadow-md min-w-[180px] z-999">
+      <ul>
         <li
           className="flex cursor-pointer p-2.5 pl-0 ml-3 mt-4"
           onClick={handleProfilePageViewClick}
@@ -74,7 +74,7 @@ const Topbar = withDirection(function (props) {
 
   return (
     <Header
-      className={`bg-white! fixed w-full h-[100px] flex justify-between z-1000 border-b border-gray transition-all ${
+      className={`bg-white! fixed w-full h-[100px] flex justify-between z-1000 border-b border-gray-300 transition-all ${
         isCollapsed
           ? props["data-rtl"] === "rtl"
             ? "px-[15px] md:pl-[31px] md:pr-[109px]!"
@@ -84,15 +84,17 @@ const Topbar = withDirection(function (props) {
             : "pr-[15px] pl-[260px] md:pr-[31px] md:pl-[265px]!"
       }`}
     >
-      <div className="flex items-center gap-4">
-        <div className="cursor-pointer" onClick={handleToggle}>
+      <div className="flex items-center py-2 gap-2 ">
+        <div className="cursor-pointer mt-1" onClick={handleToggle}>
           {isCollapsed ? (
             <MenuUnfoldOutlined className="text-xl" />
           ) : (
             <MenuFoldOutlined className="text-xl" />
           )}
         </div>
-        <div className="text-xs md:text-lg font-bold">Azura Hotel PMS</div>
+        <div className="text-sm sm:text-base md:text-lg lg:text-xl font-bold whitespace-nowrap">
+          Azura Hotel PMS
+        </div>
       </div>
 
       {/* Right: Actions */}
@@ -102,7 +104,7 @@ const Topbar = withDirection(function (props) {
           icon={<PlusOutlined />}
           size="middle"
           iconPlacement="end"
-          className="bg-purple-600 hover:bg-purple-700 border-none"
+          className="bg-purple-600 hover:bg-purple-700 border-none ml-7"
           onClick={() => navigate("/reservation-form")}
         >
           Add Reservation
@@ -139,11 +141,12 @@ const Topbar = withDirection(function (props) {
 
         <Dropdown
           trigger={["click"]}
-          placement="bottomRight"
+          placement="bottomLeft"
           dropdownRender={() => content}
-          className="bg-white "
+          overlayStyle={{ backgroundColor: "#ffffff"}}
+          align={{ offset: [-30, 5] }}
         >
-          <div className="cursor-pointer">
+          <div className="cursor-pointer  z-999">
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center"></div>
               <span className="hidden md:block text-gray-700 font-medium">

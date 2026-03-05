@@ -1,41 +1,38 @@
-
 .scrollarea {
-    height: calc(100vh - 70px);
+  height: calc(100vh - 70px);
 }
 
 .anticon {
-    font-size: 18px;
-    color: inherit;
+  font-size: 18px;
+  color: inherit;
 }
 
 .nav-text {
-    font-size: 14px;
-    color: inherit;
-    font-weight: 400;
+  font-size: 14px;
+  color: inherit;
+  font-weight: 400;
 }
 
 .ant-menu-item-selected,
-.custom-selected-item{
-    background-color: rgba(0, 0, 0, 0.4) !important;
-    /* background-color: rgb(12, 73, 100) !important;
-    color: var(--white) !important; */
-    color: var(--balck) !important;
+.custom-selected-item {
+  background-color: rgba(0, 0, 0, 0.4) !important;
+  /* /* background-color: rgb(12, 73, 100) !important; */
+  color: var(--white) !important;
+  color: var(--balck) !important;
 }
 
 @media only screen and (max-width: 767px) {
-    .ant-layout-sider-collapsed {
-        width: 0;
-        min-width: 0 !important;
-        max-width: 0 !important;
-        flex: 0 0 0 !important;
-    }
-
-    
+  .ant-layout-sider-collapsed {
+    width: 0;
+    min-width: 0 !important;
+    max-width: 0 !important;
+    flex: 0 0 0 !important;
+  }
 }
 
 @media only screen and (max-width: 767px) {
-    .dashboard-menu{
-        width: 240px !important;
-        flex: 0 0 240px !important;
-    }
+  .dashboard-menu {
+    width: 240px !important;
+    flex: 0 0 240px !important;
+  }
 }

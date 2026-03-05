@@ -67,7 +67,7 @@ const AuthLayout = () => {
         <Layout className="flex-row overflow-x-hidden">
           <Sidebar />
           <Layout
-            className="overflow-hidden border-l shrink-0 w-full md:w-[calc(100% - 80px)]"
+          className="overflow-hidden border-l border-gray-300 shrink-0 w-full md:w-[calc(100% - 80px)]"
             style={{
               height: appHeight,
             }}
@@ -80,7 +80,7 @@ const AuthLayout = () => {
               <Breadcrumbs />
               <AuthRoutes />
             </Content>
-            <Footer className="text-center text-md bg-white border-t">
+            <Footer className="text-center text-md bg-white border-t border-gray-300">
               Hotel Management @ 2026 Developed by ORIENTAL VIGOUR
             </Footer>
           </Layout>
