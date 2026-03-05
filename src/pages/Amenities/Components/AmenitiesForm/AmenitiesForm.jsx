@@ -7,8 +7,6 @@ import { useApiMutation } from "../../../../hooks/useApiMutation";
 import useApiQuery from "../../../../hooks/useApiQuery";
 import { FiEdit } from "react-icons/fi";
 import { amenitiesDetailsFun, createAmenitiesFun, editAmenitiesFun } from "../../../../api/amenitiesFunctionApi";
-import { adminListData } from './../../../Admins/AdminListData';
-
 
 const AmenitiesForm = ({
   mode,
@@ -17,10 +15,6 @@ const AmenitiesForm = ({
   drawerOpen,
   setDrawerOpen,
 }) => {
-
-  const adminList = adminListData();
-  const adminData = adminList?.data?.data;
-  console.log(adminList?.data?.data,"adminListForm");
 
   const [form] = Form.useForm();
 
@@ -120,17 +114,6 @@ const AmenitiesForm = ({
         >
           <Form.Item label="Amenity Name" name="name" rules={[{ required: true, message: "Amenity Name is Required" }]}>
             <Input readOnly={isView} />
-          </Form.Item>
-
-          <Form.Item label="Admin Name" name="admin_name" >
-            <Select 
-              options={
-                adminData?.map(admin=>
-                ({label:admin.name, value :admin.uuid})
-                )
-              }
-            >
-            </Select>
           </Form.Item>
 
           <Form.Item label="Amenity Code" name="code" rules={[{ required: true, message: "Amenity Code is Required" }]}>
