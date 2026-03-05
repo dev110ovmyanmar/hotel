@@ -3,6 +3,7 @@ import Base64 from "crypto-js/enc-base64";
 import Utf8 from "crypto-js/enc-utf8";
 import Logger from "./apiLogger";
 import store from "./store";
+import Toast from "../component/Toast/Toast";
 import {
   ACCESS_KEY_ID,
   HASH_SIGN_KEY,
