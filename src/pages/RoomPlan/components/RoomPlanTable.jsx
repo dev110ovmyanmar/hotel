@@ -1,38 +1,21 @@
 import React, { useState } from "react";
-import { Space, Table, Drawer, Button, Dropdown, Input } from "antd";
+import { Flex, Space, Table, Tag, Drawer, Button, Dropdown, Input } from "antd";
 import {
   EditOutlined,
   EyeOutlined,
   MoreOutlined,
   SearchOutlined,
 } from "@ant-design/icons";
-import { fetchRoom } from "../../../api/roomApi";
-import useApiQuery from "../../../hooks/useApiQuery";
-import RoomForm from "./Room/RoomForm";
+import RoomPlanForm from "./RoomPlanForm/RoomPlanForm";
 import ListHeader from "../../../component/ListHeader/ListHeader";
 
-const RoomTable = ({ mode }) => {
+const RoomPlanTable = ({ mode }) => {
   const [open, setOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
   const [currentMode, setCurrentMode] = useState(mode);
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
   const [keyword, setKeyword] = useState("");
-
-  const { data, isLoading, refetch } = useApiQuery({
-    fetchQueryName: "roomData",
-    fetchQueryFunction: fetchRoom,
-    params: {
-      keyword,
-      pagination: {
-        page: page,
-        perPage: perPage,
-      },
-    },
-  });
-
-  const roomTypeList = data?.data || [];
-  const total = data?.total || 0;
 
   const showDrawer = (record, actionMode) => {
     setSelectedRow(record);
@@ -60,33 +43,74 @@ const RoomTable = ({ mode }) => {
     : isEdit
       ? "Edit Floor"
       : isAdd
-        ? "Add New Room "
+        ? "Create Floor"
         : "";
 
   const columns = [
     {
       title: "No",
-      dataIndex: "id",
-      key: "id",
-      // width:"20px"
+      dataIndex: "no",
+      key: "no",
+      render: (text) => <a>{text}</a>,
     },
     {
-      title: "Room No",
-      dataIndex: "roomNo",
-      key: "roomNo",
+      title: "Name",
+      dataIndex: "name",
+      key: "name",
+      render: (text) => <a>{text}</a>,
     },
-
     {
-      title: "Price per Night",
-      dataIndex: "pricePerNight",
-      key: "pricePerNight",
+      title: "Short Name",
+      dataIndex: "short_name",
+      key: "short_name",
+      render: (text) => <a>{text}</a>,
     },
-
+    {
+      title: "Total Room",
+      dataIndex: "total_room",
+      key: "total_room",
+    },
+    {
+      title: "Status",
+      key: "tags",
+      dataIndex: "tags",
+      render: (_, { tags }) => (
+        <Flex gap="small" align="center" wrap>
+          {tags.map((tag) => {
+            let color = tag === "active" ? "green" : "volcano";
+            return (
+              <Tag color={color} key={tag}>
+                {tag.toUpperCase()}
+              </Tag>
+            );
+          })}
+        </Flex>
+      ),
+    },
+    {
+      title: "Guest",
+      dataIndex: "guest",
+      key: "guest",
+    },
+    {
+      title: "Extra Bed",
+      dataIndex: "extra_bed",
+      key: "extra_bed",
+    },
+    {
+      title: "Price",
+      dataIndex: "price",
+      key: "price",
+    },
     {
       title: "Actions",
       key: "actions",
       render: (_, record) => (
         <Space>
+          {/* <EditOutlined
+            style={{ cursor: "pointer" }}
+            onClick={() => showDrawer(record, "edit")}
+          /> */}
           <Dropdown
             menu={{
               onClick: ({ key }) => {
@@ -98,13 +122,13 @@ const RoomTable = ({ mode }) => {
                 }
               },
               items: [
-                { key: "1", label: "View", icon: <EyeOutlined /> },
-                { key: "2", label: "Edit", icon: <EditOutlined /> },
+                { key: "1", label: "View Details", icon: <EyeOutlined /> },
+                { key: "2", label: "Edit Request", icon: <EditOutlined /> },
               ],
             }}
             trigger={["click"]}
           >
-            <Button type="text" icon={<MoreOutlined />} size="small" />
+            <Button icon={<MoreOutlined />} size="small" />
           </Dropdown>
         </Space>
       ),
@@ -115,44 +139,24 @@ const RoomTable = ({ mode }) => {
     <>
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
         <ListHeader
-          title="Room List"
+          title="Room Plan"
           searchPlaceholder="Search Room ..."
           keyword={keyword}
           setKeyword={setKeyword}
-          addButtonText="Add New Room"
+          addButtonText="Add Room Plan"
           onAdd={handleAdd}
         />
       </div>
 
       <Table
         columns={columns}
-        dataSource={roomTypeList}
-        loading={isLoading}
-        rowKey={(record) => record.id || record._id}
-        pagination={{
-          current: page,
-          pageSize: perPage,
-          total: total,
-          showSizeChanger: true,
-          pageSizeOptions: ["5", "10", "20", "50"],
-          onChange: (newPage, newSize) => {
-            setPage(newPage);
-            setPerPage(newSize);
-          },
-        }}
+        //  dataSource={roomList}
       />
-      <Drawer title={DrawerTitle} onClose={onClose} open={open} width={500}>
-        <RoomForm
-          initialValues={selectedRow}
-          mode={currentMode}
-          onSuccess={() => {
-            refetch();
-            onClose();
-          }}
-        />
+      <Drawer title={DrawerTitle} onClose={onClose} open={open}>
+        <RoomPlanForm initialValues={selectedRow} mode={currentMode} />
       </Drawer>
     </>
   );
 };
 
-export default RoomTable;
+export default RoomPlanTable;

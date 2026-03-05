@@ -9,7 +9,6 @@ import {
   UserOutlined,
   IdcardOutlined,
   CalendarOutlined,
-  ScheduleOutlined,
   ShopOutlined,
   TeamOutlined,
   SecurityScanOutlined,
@@ -22,7 +21,9 @@ const Dashboard = lazy(() => import("../../pages/Dashboard/Dashboard"));
 const Calendar = lazy(() => import("../../pages/Calendar/Calendar"));
 // const Reservation = lazy(() => import("../../pages/Reservation/Reservation"));
 const Booking = lazy(() => import("../../pages/Booking/Booking"));
-const Room = lazy(() => import("../../pages/Room/RoomList"));
+const RoomPlan = lazy(() => import("../../pages/RoomPlan/RoomPlanList"));
+const RoomType = lazy(() => import("../../pages/RoomType/RoomTypeList"));
+const RoomList = lazy(() => import("../../pages/Room/RoomList"));
 const Floor = lazy(() => import("../../pages/Floor/FloorList"));
 const ChangePassword = lazy(
   () => import("../../pages/Authentication/ChangePassword/ChangePasswordPage"),
@@ -31,8 +32,10 @@ const Profile = lazy(() => import("../../pages/Profile/ProfilePage"));
 const ReservationForm = lazy(
   () => import("../../pages/Reservation/ReservationForm"),
 );
-const PermissionListing = lazy(() => import("../../pages/Permissions/PermissionsListing"))
-const RolesListing = lazy(() => import("../../pages/Roles/RolesListing"))
+const PermissionListing = lazy(
+  () => import("../../pages/Permissions/PermissionsListing"),
+);
+const RolesListing = lazy(() => import("../../pages/Roles/RolesListing"));
 export const authRoutes = [
   {
     key: 1,
@@ -80,13 +83,27 @@ export const authRoutes = [
     nested: [
       {
         key: 5.1,
-        path: "/manage-rooms/room",
-        label: "Room",
+        path: "/manage-rooms/room-plan",
+        label: "Room Plan",
         icon: <IdcardOutlined style={{ fontSize: "20px" }} />,
-        component: <Room />,
+        component: <RoomPlan />,
       },
       {
-        key: 5.1,
+        key: 5.2,
+        path: "/manage-rooms/room-type",
+        label: "Room Type",
+        icon: <IdcardOutlined style={{ fontSize: "20px" }} />,
+        component: <RoomType />,
+      },
+      {
+        key: 5.3,
+        path: "/manage-rooms/room-list",
+        label: "Room List",
+        icon: <IdcardOutlined style={{ fontSize: "20px" }} />,
+        component: <RoomList />,
+      },
+      {
+        key: 5.2,
         path: "/manage-rooms/floor",
         label: "Floor",
         icon: <IdcardOutlined style={{ fontSize: "20px" }} />,
@@ -94,7 +111,7 @@ export const authRoutes = [
       },
     ],
   },
-    {
+  {
     key: 6,
     label: "Role Management",
     isPrivate: false,
@@ -105,14 +122,14 @@ export const authRoutes = [
         path: "/permission-management/permissions/",
         label: "Permissions",
         icon: <SecurityScanOutlined style={{ fontSize: "20px" }} />,
-        component: <PermissionListing />
+        component: <PermissionListing />,
       },
       {
         key: 6.2,
         path: "/role-management/roles/",
         label: "Roles",
         icon: <UserSwitchOutlined style={{ fontSize: "20px" }} />,
-        component: <RolesListing />
+        component: <RolesListing />,
       },
     ],
   },
