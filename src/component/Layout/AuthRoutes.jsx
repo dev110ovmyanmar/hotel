@@ -14,6 +14,7 @@ import {
   TeamOutlined,
   SecurityScanOutlined,
   UserSwitchOutlined,
+  PropertySafetyOutlined,
 } from "@ant-design/icons";
 import { lazy } from "react";
 import AdminList from "../../pages/Admins/AdminList";
@@ -147,7 +148,7 @@ export const authRoutes = [
     key: 7,
     path: "/property-management/properties",
     label: "Properties",
-    icon: <UserSwitchOutlined style={{ fontSize: "20px" }} />,
+    icon: <PropertySafetyOutlined style={{ fontSize: "20px" }} />,
     component: <PropertiesListing/>,
   },
   {

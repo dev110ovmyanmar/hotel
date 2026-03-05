@@ -57,7 +57,7 @@ export default function usePermissionColumns(onEdit, onView) {
           }}
           trigger={["click"]}
         >
-          <Button icon={<MoreOutlined />} size="small" />
+          <Button icon={<MoreOutlined />} size="small" type="text" />
         </Dropdown>
       ),
     },
