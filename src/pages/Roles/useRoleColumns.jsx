@@ -24,7 +24,9 @@ export default function (onEdit, onView) {
       key: "code",
       width: 150,
       sorter: (a, b) => a.code.localeCompare(b.code),
-      render: (text) => <code className="bg-gray-100 px-2 py-1 rounded text-xs">{text}</code>,
+      render: (text) => (
+        <code className="bg-gray-100 px-2 py-1 rounded text-xs">{text}</code>
+      ),
     },
     {
       title: "Description",
@@ -40,16 +42,16 @@ export default function (onEdit, onView) {
     //   width: 120,
     //   render: (_, record) => (
     //     <Space size="small">
-    //       <Button 
-    //         type="text" 
-    //         size="small" 
+    //       <Button
+    //         type="text"
+    //         size="small"
     //         icon={<EyeOutlined />}
     //         onClick={() => onView(record)}
     //         title="View"
     //       />
-    //       <Button 
-    //         type="text" 
-    //         size="small" 
+    //       <Button
+    //         type="text"
+    //         size="small"
     //         icon={<EditOutlined />}
     //         onClick={() => onEdit(record)}
     //         title="Edit"
@@ -69,13 +71,13 @@ export default function (onEdit, onView) {
               if (key === "2") onEdit(record);
             },
             items: [
-              { key: "1", label: "View" },
-              { key: "2", label: "Edit" },
+              { key: "1", label: "View", icon: <EyeOutlined /> },
+              { key: "2", label: "Edit", icon: <EditOutlined /> },
             ],
           }}
           trigger={["click"]}
         >
-          <Button icon={<MoreOutlined />} size="small" />
+          <Button type="text" icon={<MoreOutlined />} size="small" />
         </Dropdown>
       ),
     },

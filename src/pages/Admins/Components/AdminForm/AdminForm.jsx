@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { Form, Input, Button, Select, Image, Drawer, AutoComplete } from "antd";
 import Toast from "../../../../component/Toast/Toast";
@@ -6,9 +5,20 @@ import { CloseOutlined } from "@ant-design/icons";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
 import useApiQuery from "../../../../hooks/useApiQuery";
 import { queryClient } from "../../../../app/queryClient";
-import { adminDetailsFunApi, createAdminFun, editAdminFun } from "../../../../api/adminFunctionApi";
+import {
+  adminDetailsFunApi,
+  createAdminFun,
+  editAdminFun,
+} from "../../../../api/adminFunctionApi";
 
-const AdminForm = ({ mode, selectedData, setSelectedData, drawerOpen, setDrawerOpen , setPage }) => {
+const AdminForm = ({
+  mode,
+  selectedData,
+  setSelectedData,
+  drawerOpen,
+  setDrawerOpen,
+  setPage,
+}) => {
   const [form] = Form.useForm();
 
   const isView = mode === "view";
@@ -17,14 +27,14 @@ const AdminForm = ({ mode, selectedData, setSelectedData, drawerOpen, setDrawerO
 
   const initData = queryClient.getQueryData(["initData", {}]);
 
-  const roles = initData?.roles?.map(role => ({
+  const roles = initData?.roles?.map((role) => ({
     value: role.uuid,
-    label: role.name
+    label: role.name,
   }));
 
-  const statuses = initData?.statuses?.status?.map(status => ({
+  const statuses = initData?.statuses?.status?.map((status) => ({
     value: status.uuid,
-    label: status.name
+    label: status.name,
   }));
 
   const createAdminFunction = useApiMutation({
@@ -51,11 +61,11 @@ const AdminForm = ({ mode, selectedData, setSelectedData, drawerOpen, setDrawerO
       form.setFieldsValue({
         ...data,
         status: data?.status?.uuid,
-        role: data?.role?.uuid
+        role: data?.role?.uuid,
       });
-      setSelectedData(data)
+      setSelectedData(data);
     }
-  }, [data])
+  }, [data]);
 
   const onFinish = (values) => {
     if (isAdd) {
@@ -70,13 +80,13 @@ const AdminForm = ({ mode, selectedData, setSelectedData, drawerOpen, setDrawerO
           form.resetFields();
           setDrawerOpen(false);
           setPage(1);
-          Toast.success("Admin Created Successfully!")
-        }
+          Toast.success("Admin Created Successfully!");
+        },
       });
     }
     if (isEdit) {
       const editValues = {
-        ...values,           // merge new form values
+        ...values, // merge new form values
         role: { uuid: values.role },
         status: { uuid: values.status },
         uuid: data?.uuid,
@@ -85,27 +95,25 @@ const AdminForm = ({ mode, selectedData, setSelectedData, drawerOpen, setDrawerO
       editAdminFunction.mutate(editValues, {
         onSuccess: () => {
           setDrawerOpen(false);
-          Toast.success("Admin Updated Successfully!")
+          Toast.success("Admin Updated Successfully!");
         },
       });
     }
   };
 
-  
   return (
-
-    <div className="flex justify-center" >
-      < Drawer
-        size={500}
+    <div>
+      <Drawer
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
-        closable={false}
-        extra={
-          < CloseOutlined
-            onClick={() => setDrawerOpen(false)}
-            style={{ fontSize: 18, cursor: "pointer" }}
-          />
-        }
+        width={500}
+        // closable={false}
+        // extra={
+        //   <CloseOutlined
+        //     onClick={() => setDrawerOpen(false)}
+        //     style={{ fontSize: 18, cursor: "pointer" }}
+        //   />
+        // }
         title={
           mode === "view"
             ? "Admin Details"
@@ -116,15 +124,16 @@ const AdminForm = ({ mode, selectedData, setSelectedData, drawerOpen, setDrawerO
       >
         <Form
           form={form}
-          layout="horizontal"
-          labelCol={{ xs: { span: 24 }, sm: { span: 6 } }}
-          wrapperCol={{ xs: { span: 24 }, sm: { span: 18 } }}
-          className="w-full px-4 max-w-lg md:max-w-2xl"
-          validateTrigger="onSubmit"
+          layout="vertical"
+          style={{ width: "100%" }}
           onFinish={onFinish}
-
         >
-          <Form.Item label="Admin Name" name="name" rules={[{ required: true, message: "Admin Name is Required" }]} aut>
+          <Form.Item
+            label="Admin Name"
+            name="name"
+            rules={[{ required: true, message: "Admin Name is Required" }]}
+            aut
+          >
             <Input readOnly={isView} />
           </Form.Item>
 
@@ -140,15 +149,11 @@ const AdminForm = ({ mode, selectedData, setSelectedData, drawerOpen, setDrawerO
             <Select
               showSearch
               options={roles}
-              open={isView? false: undefined}
+              open={isView ? false : undefined}
             />
           </Form.Item>
 
-          <Form.Item
-            label="Staff"
-            name="staff"
-            readOnly={isView}
-          >
+          <Form.Item label="Staff" name="staff" readOnly={isView}>
             <Input />
           </Form.Item>
 
@@ -156,37 +161,43 @@ const AdminForm = ({ mode, selectedData, setSelectedData, drawerOpen, setDrawerO
             label="Status"
             name="status"
             rules={[{ required: true, message: "Status is Required" }]}
-
           >
             <Select
               showSearch
               options={statuses}
-              open={isView? false: undefined}
-              
+              open={isView ? false : undefined}
             />
           </Form.Item>
 
           {!isView && (
-            <div className="flex justify-end sm:mb-2 md:mb-3" >
+            <div className="flex justify-between gap-4">
               <Button
+                className="w-60"
                 type="default"
                 disabled={isView}
-                onClick={()=>setDrawerOpen(false)}
-                className="me-2"
+                onClick={() => setDrawerOpen(false)}
               >
                 Cancel
               </Button>
-              <Button type="primary" htmlType="submit" disabled={isView} loading={isAdd ? createAdminFunction.isPending : editAdminFunction.isPending} >
+              <Button
+                className="w-60"
+                type="primary"
+                htmlType="submit"
+                disabled={isView}
+                loading={
+                  isAdd
+                    ? createAdminFunction.isPending
+                    : editAdminFunction.isPending
+                }
+              >
                 {isAdd ? "Create" : "Save"}
               </Button>
             </div>
           )}
         </Form>
-      </Drawer >
-
-    </div >
-  )
+      </Drawer>
+    </div>
+  );
 };
-
 
 export default AdminForm;
