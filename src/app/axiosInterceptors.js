@@ -3,6 +3,7 @@ import Base64 from "crypto-js/enc-base64";
 import Utf8 from "crypto-js/enc-utf8";
 import Logger from "./apiLogger";
 import store from "./store";
+import Toast from "../component/Toast/Toast";
 import {
   ACCESS_KEY_ID,
   HASH_SIGN_KEY,
@@ -126,8 +127,7 @@ const generateJsonHeaders = (method, data) => {
   const { iso8601Date, rfc2822Date } = getDate();
   const contentMd5 = getContentMD5(data);
 
-  const sessionId = "$2y$10$GgM3eEI9VupwXQm2hPHzf.VY1.MLYwfsmdD6xHgRMiUNylW4IYpIa";
-  // const sessionId = loadState(LOCAL_STORAGE_KEYS.sessionId) || "";
+  const sessionId = loadState(LOCAL_STORAGE_KEYS.sessionId) || "";
 
   return {
     "Content-Type": "application/json",
