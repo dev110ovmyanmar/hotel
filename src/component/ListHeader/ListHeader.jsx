@@ -45,6 +45,8 @@ const ListHeader = ({
           className="xs:w-50 md:w-80"
         />
 
+        {
+        onAdd &&
         <Button
           type="primary"
           // icon={<PlusOutlined />}
@@ -53,6 +55,7 @@ const ListHeader = ({
         >
           {addButtonText}
         </Button>
+        }
       </div>
     </div>
   );
