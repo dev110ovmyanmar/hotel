@@ -48,10 +48,10 @@ export default function usePermissionColumns(onEdit, onView) {
               if (key === "1") onView(record);
               if (key === "2") onEdit(record);
             },
-             items: [
-            { key: "1", label: "View", icon: <EyeOutlined /> },
-            { key: "2", label: "Edit", icon: <EditOutlined /> },
-          ],
+            items: [
+              { key: "1", label: "View", icon: <EyeOutlined /> },
+              { key: "2", label: "Edit", icon: <EditOutlined /> },
+            ],
           }}
           trigger={["click"]}
         >
