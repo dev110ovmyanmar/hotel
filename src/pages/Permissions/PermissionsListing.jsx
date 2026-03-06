@@ -1,7 +1,4 @@
 import React, { useState, useMemo, useEffect } from "react"; // Added useMemo
-import { Table, Drawer, Button, message, Input } from "antd";
-import { PlusOutlined, SearchOutlined } from "@ant-design/icons";
-import PermissionDrawer from "./PermissionDrawer";
 import {
   fetchPermissionData,
   fetchPermissionDetail,
@@ -10,19 +7,17 @@ import {
 } from "../../api/permissionApi";
 import useApiQuery from "../../hooks/useApiQuery";
 import { useApiMutation } from "../../hooks/useApiMutation";
-import Loader from "../../component/Loader/Loader";
-import usePermissionColumns from "./usePermissionColumns";
 import ListHeader from "../../component/ListHeader/ListHeader";
+import PermissionTable from "./Components/PermissionTable";
+import PermissionForm from "./Components/PermissionForm";
+import Toast from "../../component/Toast/Toast";
 
 const PermissionListing = () => {
   const [open, setOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
   const [currentMode, setCurrentMode] = useState("add");
   const [keyword, setKeyword] = useState(""); // This now only controls local UI
-  const [pageSize, setPageSize] = useState(10);
-  const [currentPage, setCurrentPage] = useState(1);
 
-  const [messageApi, contextHolder] = message.useMessage();
 
   // 1. Fetch data WITHOUT keyword so it only calls once on mount
   const { data, refetch, isLoading } = useApiQuery({
@@ -64,7 +59,7 @@ const PermissionListing = () => {
           setDetailData(res?.response?.data || null);
         })
         .catch((err) => {
-          messageApi.error("Failed to fetch permission details");
+          Toast.error("Failed to fetch permission details");
         })
         .finally(() => {
           setIsLoadingDetail(false);
@@ -96,12 +91,12 @@ const PermissionListing = () => {
     options: {
       onSuccess: () => {
         refetch();
-        messageApi.success("Permission created successfully");
+        Toast.success("Permission created successfully");
         setOpen(false);
       },
       onError: (err) => {
         const apiError = err?.response?.data?.error?.text;
-        messageApi.error(
+        Toast.error(
           apiError || err?.message || "Failed to create permission",
         );
       },
@@ -114,12 +109,12 @@ const PermissionListing = () => {
     options: {
       onSuccess: () => {
         refetch();
-        messageApi.success("Permission updated successfully");
+        Toast.success("Permission updated successfully");
         setOpen(false);
       },
       onError: (err) => {
         const apiError = err?.response?.data?.error?.text;
-        messageApi.error(
+        Toast.error(
           apiError || err?.message || "Failed to update permission",
         );
       },
@@ -175,7 +170,6 @@ const PermissionListing = () => {
 
   const isView = currentMode === "view";
   const isEdit = currentMode === "edit";
-  // const isAdd = currentMode === "add";
 
   const DrawerTitle = isView
     ? "Permission View"
@@ -183,97 +177,39 @@ const PermissionListing = () => {
       ? "Permission Edit"
       : "Permission Create";
 
-  const columns = usePermissionColumns(handleEdit, handleView);
-
   return (
     <>
-      {contextHolder}
-      {isLoading ? (
-        <div className="flex justify-center items-center h-screen w-full px-6 py-2">
-          <Loader />
-        </div>
-      ) : (
-        <>
-          {/* <div className="mb-2 flex items-center justify-between">
-            <div className="ml-5">
-              <Input
-                placeholder="Search permissions..."
-                prefix={<SearchOutlined />}
-                value={keyword}
-                onChange={(e) => setKeyword(e.target.value)} // Updates keyword state
-                style={{ width: 300 }}
-                allowClear
-              />
-            </div>
-            <div className="mr-5">
-              <Button
-                type="primary"
-                icon={<PlusOutlined />}
-                onClick={() => {
-                  setSelectedRow(null);
-                  setCurrentMode("add");
-                  setOpen(true);
-                }}
-              >
-                Add Permission
-              </Button>
-            </div>
-          </div> */}
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4 w-full px-6 py-2">
-            <ListHeader
-              title="Permission List"
-              searchPlaceholder="Search Permission ..."
-              keyword={keyword}
-              setKeyword={setKeyword}
-              addButtonText=" Add Permission"
-              onAdd={handleAdd}
-            />
-          </div>
-
-          <Table
-            columns={columns}
-            dataSource={filteredPermissions} // Pass the FILTERED array here
-            rowKey="id"
-            className="mx-5"
-            pagination={{
-              current: currentPage,
-              pageSize: pageSize,
-              showSizeChanger: true,
-              onChange: (page, size) => {
-                setCurrentPage(page);
-                setPageSize(size);
-              },
-            }}
-          />
-        </>
-      )}
-
-      <Drawer
-        title={
-          <div className="flex items-center justify-between">
-            <span>{DrawerTitle}</span>
-            {isView && (
-              <Button type="primary" onClick={switchToEdit}>
-                Edit
-              </Button>
-            )}
-          </div>
-        }
-        size={500}
-        onClose={onClose}
-        open={open}
-      >
-        <PermissionDrawer
-          initialValues={
-            currentMode === "add" ? null : detailData || selectedRow
-          }
-          mode={currentMode}
-          onSubmit={handleSubmit}
-          onCancel={onClose}
-          permissions={permissions}
-          loading={isLoadingDetail}
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4 w-full px-6 py-2">
+        <ListHeader
+          title="Permission List"
+          searchPlaceholder="Search Permission ..."
+          keyword={keyword}
+          setKeyword={setKeyword}
+          addButtonText=" Add Permission"
+          onAdd={handleAdd}
         />
-      </Drawer>
+      </div>
+      <PermissionTable
+        dataSource={filteredPermissions}
+        onView={handleView}
+        onEdit={handleEdit}
+        loading={isLoading}
+      />
+      <PermissionForm
+        initialValues={
+          currentMode === "add" ? null : detailData || selectedRow
+        }
+        mode={currentMode}
+        onSubmit={handleSubmit}
+        open={open}
+        onClose={onClose}
+        onCancel={onClose}
+        permissions={permissions}
+        loading={isLoadingDetail}
+        DrawerTitle={DrawerTitle}
+        switchToEdit={switchToEdit}
+        isView={isView}
+      />
     </>
   );
 };
