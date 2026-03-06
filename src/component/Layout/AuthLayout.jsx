@@ -40,12 +40,6 @@ const AuthLayout = () => {
         logout();
       },
       okText: "Login",
-      okButtonProps: {
-        style: {
-          backgroundColor: "var(--primary)",
-          color: "--white",
-        },
-      },
       cancelButtonProps: {
         style: {
           display: "none",
