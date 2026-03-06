@@ -176,11 +176,10 @@ const PermissionAssignDrawer = ({
                           onChange={() => handleCheck(p.id)}
                         >
                           <span
-                            className={`text-sm ${
-                              isOriginal && isChecked
+                            className={`text-sm ${isOriginal && isChecked
                                 ? "text-green-700 font-semibold"
                                 : ""
-                            }`}
+                              }`}
                           >
                             {p.name}
                           </span>

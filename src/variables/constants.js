@@ -86,6 +86,8 @@ export const LOCAL_STORAGE_KEYS = {
   adminIdentifier: "AdminIdentifier",
   adminRole: "AdminRole",
   superAdmin: "SuperAdmin",
+  deviceId:"DeviceId",
+  deviceName:"DeviceName"
 };
 
 export const LIMITS = {
