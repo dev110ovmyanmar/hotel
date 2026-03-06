@@ -12,19 +12,19 @@ const RolesTable = (
         onEdit
     }
 ) => {
-      const columns = useRoleColumns(onEdit, onView, onAdd);
-  return (
-    <>
-    <Table
-    columns={columns}
-    dataSource={dataSource}
-    rowKey="id"
-    className="mx-5"
-    loading={loading}
-    pagination={{showSizeChanger: true}}
-    />
-    </>  
-  )
+    const columns = useRoleColumns(onEdit, onView, onAdd);
+    return (
+        <>
+            <Table
+                columns={columns}
+                dataSource={dataSource}
+                rowKey="id"
+                className="mx-5"
+                loading={loading}
+                pagination={{ showSizeChanger: true }}
+            />
+        </>
+    )
 }
 
 export default RolesTable
