@@ -13,6 +13,7 @@ import { useApiMutation } from "../../hooks/useApiMutation";
 import RolesTable from "./Components/RolesTable.jsx";
 import ListHeader from "../../component/ListHeader/ListHeader.jsx";
 
+
 const RolesListing = () => {
   const [open, setOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
@@ -20,8 +21,6 @@ const RolesListing = () => {
   const [keyword, setKeyword] = useState("");
   const [pageSize, setPageSize] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
-
-  const [messageApi, contextHolder] = message.useMessage();
 
   // ✅ Fetch role list ONCE — keyword removed from params (we filter client-side)
   const { data, isLoading } = useApiQuery({
@@ -31,7 +30,7 @@ const RolesListing = () => {
   });
 
   const roles = Array.isArray(data?.data) ? data.data : [];
-  const total = data?.total || 0;
+  
 
   // ✅ CREATE mutation
   const createRoleFunction = useApiMutation({
@@ -132,7 +131,6 @@ const RolesListing = () => {
         createRoleFunction={createRoleFunction}
         updateRoleFunction={updateRoleFunction}
         updatePermissionFunction={updatePermissionFunction}
-        messageApi={messageApi}
         switchToEdit={switchToEdit}
         DrawerTitle={DrawerTitle}
         onClose={onClose}
