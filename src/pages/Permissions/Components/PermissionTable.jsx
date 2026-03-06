@@ -2,8 +2,8 @@ import React from "react";
 import { Table } from "antd";
 import usePermissionColumns from "./usePermissionColumns";
 
-const PermissionTable = ({ 
-  dataSource, 
+const PermissionTable = ({
+  dataSource,
   loading,
   onEdit,
   onView

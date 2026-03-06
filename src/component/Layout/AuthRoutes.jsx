@@ -19,6 +19,14 @@ import {
 import { lazy } from "react";
 import AdminList from "../../pages/Admins/AdminList";
 
+import { FiMap } from "react-icons/fi";
+import LocationList from "../../pages/Location/LocationList";
+import AmenitiesList from "../../pages/Amenities/AmenitiesList";
+import PolicyList from "../../pages/Policy/PolicyList";
+
+import { EnvironmentOutlined } from "@ant-design/icons";
+import { MdOutlinePolicy } from 'react-icons/md';
+
 const Dashboard = lazy(() => import("../../pages/Dashboard/Dashboard"));
 const Calendar = lazy(() => import("../../pages/Calendar/Calendar"));
 // const Reservation = lazy(() => import("../../pages/Reservation/Reservation"));
@@ -161,6 +169,43 @@ export const authRoutes = [
     component: <ReservationForm />,
     isPrivate: false,
   },
+  {
+    key: 10,
+    label: "Location",
+    path: "/location",
+    icon: <EnvironmentOutlined style={{ fontSize: "20px" }} />,
+    isPrivate: true,
+    component: <LocationList />,
+  },
+  {
+    key: 11,
+    label: "Amenities",
+    path: "/amenities",
+    icon: <FiMap style={{ fontSize: "20px" }} />,
+    isPrivate: true,
+    component: <AmenitiesList />,
+  },
+  {
+    key: 12,
+    label: "Policy",
+    path: "/policy",
+    icon: <MdOutlinePolicy style={{ fontSize: "20px" }} />,
+    isPrivate: true,
+    component: <PolicyList />
+
+  },
+  // {
+  //   key: 13,
+  //   label: "Meal Plan",
+  //   path: "/meal-plan",
+  //   icon: <MdOutlinePolicy style={{ fontSize: "20px" }} />,
+  //   isPrivate: true,
+  //   component: <MeanPlanList />
+
+  // }
+
+
+
 ];
 
 const AuthRoutes = () => {

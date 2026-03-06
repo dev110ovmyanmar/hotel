@@ -5,14 +5,16 @@ import Loader from "../../../component/Loader/Loader";
 const { TextArea } = Input;
 
 const PermissionForm = ({
-    initialValues, 
-    mode, 
-    onSubmit, 
-    onCancel, 
-    permissions = [], 
-    loading = false ,
-    open, switchToEdit,
-    DrawerTitle, onClose}) => {
+  initialValues,
+  mode,
+  onSubmit,
+  open,
+  onClose,
+  onCancel,
+  permissions = [],
+  loading = false,
+  switchToEdit,
+  DrawerTitle }) => {
   const [form] = Form.useForm();
 
   const isView = mode === "view";
@@ -20,12 +22,12 @@ const PermissionForm = ({
   const isAdd = mode === "add";
 
   useEffect(() => {
-  if (initialValues) {
-    form.setFieldsValue(initialValues);
-  } else {
-    form.resetFields();
-  }
-}, [initialValues, form]);
+    if (initialValues) {
+      form.setFieldsValue(initialValues);
+    } else {
+      form.resetFields();
+    }
+  }, [initialValues, form]);
 
   const handleSubmit = (values) => {
     if (onSubmit) {
@@ -85,72 +87,72 @@ const PermissionForm = ({
         onClose={onClose}
         open={open}
       >
-    {loading ? (
-        <div className="flex justify-center items-center h-64">
-          <Loader />
-        </div>
-      ) : (
-        <>
-          <Form
-            form={form}
-            layout="vertical"
-            style={{ width: "100%" }}
-            onFinish={handleSubmit}
-          >
-        <Form.Item
-          label="Name"
-          name="name"
-          rules={[
-            { required: true, message: "Please input permission name!" },
-            { validator: validateUniqueName }
-          ]}
-        >
-          <Input readOnly={isView} style={{ cursor: isView ? 'default' : 'text' }} placeholder="room view" />
-        </Form.Item>
+        {loading ? (
+          <div className="flex justify-center items-center h-64">
+            <Loader />
+          </div>
+        ) : (
+          <>
+            <Form
+              form={form}
+              layout="vertical"
+              style={{ width: "100%" }}
+              onFinish={handleSubmit}
+            >
+              <Form.Item
+                label="Name"
+                name="name"
+                rules={[
+                  { required: true, message: "Please input permission name!" },
+                  { validator: validateUniqueName }
+                ]}
+              >
+                <Input readOnly={isView} style={{ cursor: isView ? 'default' : 'text' }} placeholder="room view" />
+              </Form.Item>
 
-        <Form.Item
-          label="Code"
-          name="code"
-          rules={[
-            { required: true, message: "Please input permission code!" },
-            { validator: validateUniqueCode }
-          ]}
-        >
-          <Input readOnly={isView} style={{ cursor: isView ? 'default' : 'text' }} placeholder="room.view"/>
-        </Form.Item>
+              <Form.Item
+                label="Code"
+                name="code"
+                rules={[
+                  { required: true, message: "Please input permission code!" },
+                  { validator: validateUniqueCode }
+                ]}
+              >
+                <Input readOnly={isView} style={{ cursor: isView ? 'default' : 'text' }} placeholder="room.view" />
+              </Form.Item>
 
-        {isEdit && (
-          <Form.Item 
-            label="Module" 
-            name="module"
-            rules={[{ required: true, message: "Please input module!" }]}
-          >
-            <AutoComplete
-              options={moduleOptions}
-              placeholder="Enter or select module"
-            />
-          </Form.Item>
+              {isEdit && (
+                <Form.Item
+                  label="Module"
+                  name="module"
+                  rules={[{ required: true, message: "Please input module!" }]}
+                >
+                  <AutoComplete
+                    options={moduleOptions}
+                    placeholder="Enter or select module"
+                  />
+                </Form.Item>
+              )}
+
+              <Form.Item label="Description" name="description">
+                <TextArea rows={4} readOnly={isView} style={{ cursor: isView ? 'default' : 'text' }} placeholder="Enter description for related permission" />
+              </Form.Item>
+            </Form>
+
+            {!isView && (
+              <Row gutter={16}>
+                <Col span={12}>
+                  <Button block onClick={onCancel}>Cancel</Button>
+                </Col>
+                <Col span={12}>
+                  <Button type="primary" htmlType="submit" block onClick={() => form.submit()}>
+                    {isEdit ? "Update" : "Save"}
+                  </Button>
+                </Col>
+              </Row>
+            )}
+          </>
         )}
-
-        <Form.Item label="Description" name="description">
-          <TextArea rows={4} readOnly={isView} style={{ cursor: isView ? 'default' : 'text' }} placeholder="Enter description for related permission"/>
-        </Form.Item>
-          </Form>
-
-          {!isView && (
-            <Row gutter={16}>
-              <Col span={12}>
-                <Button block onClick={onCancel}>Cancel</Button>
-              </Col>
-              <Col span={12}>
-                <Button type="primary" htmlType="submit" block onClick={() => form.submit()}>
-                  {isEdit ? "Update" : "Save"}
-                </Button>
-              </Col>
-            </Row>
-          )}
-        </>
-      )}
       </Drawer>
     </>
   );
