@@ -30,13 +30,13 @@ const AdminTable = ({
       width: 70,
     },
     {
-      title: "Admin Name",
+      title: "Name",
       dataIndex: "name",
       key: "name",
       render: (text) => <div>{text}</div>,
     },
     {
-      title: "Admin Email",
+      title: "Email",
       dataIndex: "email",
       key: "email",
       render: (text) => <div>{text}</div>,
@@ -65,63 +65,6 @@ const AdminTable = ({
       ),
       width: 150,
     },
-    // {
-    //   title: "Action",
-    //   render: (_, record) => {
-    //     const items = [
-    //       {
-    //         key: "1",
-    //         label: (
-    //           <Space
-    //             onClick={() => {
-    //               setDrawerOpen(true);
-    //               setMode("view");
-    //               setSelectedData(record);
-    //             }}
-    //           >
-    //             <EyeOutlined />
-    //             <span>View</span>
-    //           </Space>
-    //         ),
-    //       },
-    //       {
-    //         key: "2",
-    //         label: (
-    //           <Space
-    //             onClick={() => {
-    //               setDrawerOpen(true);
-    //               setMode("edit");
-    //               setSelectedData(record);
-    //             }}
-    //           >
-    //             <EditOutlined />
-    //             <span>Edit</span>
-    //           </Space>
-    //         ),
-    //       },
-    //       {
-    //         key: "3",
-    //         label: (
-    //           <Space
-    //             onClick={() => {
-    //               setConfirmModal(true);
-    //               setSelectedData(record);
-    //             }}
-    //           >
-    //             <KeyOutlined />
-    //             <span>Reset Passoword</span>
-    //           </Space>
-    //         ),
-    //       },
-    //     ];
-
-    //     return (
-    //       <Dropdown menu={{ items }} trigger={["click"]}>
-    //         <MoreOutlined />
-    //       </Dropdown>
-    //     );
-    //   },
-    // },
     {
       title: "Action",
       render: (_, record) => {
@@ -228,6 +171,7 @@ const AdminTable = ({
 
       <AdminForm
         mode={mode}
+        setMode={setMode}
         drawerOpen={drawerOpen}
         setDrawerOpen={setDrawerOpen}
         selectedData={selectedData}

@@ -13,7 +13,6 @@ import { useApiMutation } from "../../hooks/useApiMutation";
 import RolesTable from "./Components/RolesTable.jsx";
 import ListHeader from "../../component/ListHeader/ListHeader.jsx";
 
-
 const RolesListing = () => {
   const [open, setOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
@@ -30,7 +29,6 @@ const RolesListing = () => {
   });
 
   const roles = Array.isArray(data?.data) ? data.data : [];
-  
 
   // ✅ CREATE mutation
   const createRoleFunction = useApiMutation({
@@ -110,7 +108,7 @@ const RolesListing = () => {
             searchPlaceholder="Search roles by name, code...."
             keyword={keyword}
             setKeyword={setKeyword}
-            addButtonText="Add Role"
+            addButtonText="Add New Role"
             onAdd={handleAdd}
           />
         </div>

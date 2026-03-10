@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Form, Input, Select, TimePicker, Drawer, Button, Spin, Divider, Card, Tag, Empty, Space } from "antd";
+import { Form, Input, Select, TimePicker, Drawer, Button, Spin, Divider, Card, Tag, Empty, Space, AutoComplete } from "antd";
 import { PlusOutlined, EditOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import SettingForm from "./SettingForm";
@@ -17,24 +17,24 @@ const PropertyForm = ({
     if (open && initialValues) {
       form.setFieldsValue({
         ...initialValues,
-        checkInTime: initialValues.checkinTime ? dayjs(initialValues.checkinTime, 'HH:mm:ss') : null,
-        checkOutTime: initialValues.checkoutTime ? dayjs(initialValues.checkoutTime, 'HH:mm:ss') : null,
+        checkinTime: initialValues.checkinTime ? dayjs(initialValues.checkinTime, 'HH:mm:ss') : null,
+        checkoutTime: initialValues.checkoutTime ? dayjs(initialValues.checkoutTime, 'HH:mm:ss') : null,
         property_type_uuid: initialValues.type?.uuid,
         country_uuid: initialValues.country?.uuid, 
         city_uuid: initialValues.city?.uuid,
         currency_uuid: initialValues.currency?.uuid,
       });
-    } else if (open) { form.resetFields(); }
+    } else { form.resetFields(); }
   }, [open, initialValues, form]);
 
-  const validateTimes = () => {
-    const checkIn = form.getFieldValue("checkInTime");
-    const checkOut = form.getFieldValue("checkOutTime");
-    if (checkIn && checkOut && !checkOut.isAfter(checkIn)) {
-      return Promise.reject(new Error("Check-out must be after Check-in time"));
-    }
-    return Promise.resolve();
-  };
+  // const validateTimes = () => {
+  //   const checkIn = form.getFieldValue("checkInTime");
+  //   const checkOut = form.getFieldValue("checkOutTime");
+  //   if (checkIn && checkOut && !checkOut.isAfter(checkIn)) {
+  //     return Promise.reject(new Error("Check-out must be after Check-in time"));
+  //   }
+  //   return Promise.resolve();
+  // };
 
   // const openSettingEdit = (setting) => {
   //   setEditingSetting(setting);
@@ -45,6 +45,7 @@ const PropertyForm = ({
     <Drawer
       title={mode === "add" ? "New Property" : isView ? "Property Details" : "Edit Property"}
       width={750} open={open} onClose={onClose}
+      destroyOnClose
       extra={!isView && <Button type="primary" onClick={() => form.submit()} loading={isSaving}>Save All Data</Button>}
     >
       <Spin spinning={loading}>
@@ -52,7 +53,7 @@ const PropertyForm = ({
           <Form.Item name="uuid" hidden><Input /></Form.Item>
           
           <div className="grid grid-cols-2 gap-4">
-            <Form.Item label="Property Name" name="name" rules={[{ required: true }]}><Input readOnly={isView} variant={isView ? "borderless" : "outlined"} /></Form.Item>
+            <Form.Item label="Property Name" name="name" rules={[{ required: true }]}><Input readOnly={isView} variant="outlined" /></Form.Item>
             <Form.Item label="Property Type" name="property_type_uuid" rules={[{ required: true }]}>
               <Select options={propertyTypes} open={isView ? false : undefined} showArrow={!isView} />
             </Form.Item>
@@ -66,15 +67,34 @@ const PropertyForm = ({
           </div>
 
           <Form.Item label="Address" name="address" rules={[{ required: true, message: "Invalid address format" }]}>
-            <Input.TextArea rows={2} readOnly={isView} variant={isView ? "borderless" : "outlined"} />
+            <Input.TextArea rows={2} readOnly={isView} variant="outlined" />
           </Form.Item>
 
           <div className="grid grid-cols-3 gap-4">
             <Form.Item label="Country" name="country_uuid" rules={[{ required: true }]}>
-              <Select options={countryOptions} onChange={onCountryChange} open={isView ? false : undefined} />
+              <Select showSearch 
+              placeholder="Select or type country" 
+              options={countryOptions} 
+              readOnly={isView}
+              // optionFilterProp="label" 
+              onChange={onCountryChange} 
+              open={isView ? false : undefined}
+              filterOption={(input, option) => 
+              (option?.label ?? "").toLocaleLowerCase().includes(input.toLowerCase())
+              } />
             </Form.Item>
             <Form.Item label="City" name="city_uuid" rules={[{ required: true }]}>
-              <Select options={cityOptions} open={isView ? false : undefined} />
+              <Select 
+              showSearch
+              placeholder="Select or type city"
+              options={cityOptions}
+              readOnly={isView}
+              filterOption={
+                (input, option) =>
+                (option?.label ?? "").toLowerCase().includes(input.toLowerCase())
+              }
+              open={isView ? false : undefined} 
+              />
             </Form.Item>
             <Form.Item label="Currency" name="currency_uuid" rules={[{ required: true }]}>
               <Select options={currencyOptions} open={isView ? false : undefined} />
@@ -82,10 +102,10 @@ const PropertyForm = ({
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-            <Form.Item label="Check-In" name="checkInTime" rules={[{ required: true }]}>
+            <Form.Item label="Check-In" name="checkinTime" rules={[{ required: true }]}>
               <TimePicker className="w-full" format="HH:mm:ss" open={isView ? false : undefined} onChange={() => form.validateFields(['checkOutTime'])} />
             </Form.Item>
-            <Form.Item label="Check-Out" name="checkOutTime" rules={[{ required: true }, { validator: validateTimes }]}>
+            <Form.Item label="Check-Out" name="checkoutTime" rules={[{ required: true }]}>
               <TimePicker className="w-full" format="HH:mm:ss" open={isView ? false : undefined} />
             </Form.Item>
           </div>
@@ -120,19 +140,36 @@ const PropertyForm = ({
         width={450} open={settingDrawer} 
         onClose={() => setSettingDrawer(false)}
       >
-        <SettingForm 
-          initialValues={editingSetting}
-          onFinish={(vals) => {
-            let newArray = [...(initialValues?.settingsArray || [])];
-            if (editingSetting) {
-              newArray = newArray.map(item => item.key === editingSetting.key ? vals : item);
-            } else {
-              newArray = [vals, ...newArray];
-            }
-            setInitialValues({ ...initialValues, settingsArray: newArray });
-            setSettingDrawer(false);
-          }} 
-        />
+<SettingForm 
+  initialValues={editingSetting}
+  isSaving={isSaving}
+  onFinish={(settingVals) => {
+    if (initialValues?.uuid) {
+      // 1. Get all current values from the main property form
+      const mainFormValues = form.getFieldsValue();
+
+      // 2. Combine them into the format handlePropertySubmit expects
+      const combinedPayload = {
+        ...mainFormValues,
+        uuid: initialValues.uuid,
+        setting: {
+          key: settingVals.key,
+          value: settingVals.value
+        }
+      };
+
+      // 3. Trigger the API call
+      onFinish(combinedPayload);
+      setSettingDrawer(false);
+    } else {
+      // Logic for new properties (local state update)
+      let newArray = [...(initialValues?.settingsArray || [])];
+      newArray = [settingVals, ...newArray];
+      setInitialValues({ ...initialValues, settingsArray: newArray });
+      setSettingDrawer(false);
+    }
+  }} 
+/>
       </Drawer>
     </Drawer>
   );

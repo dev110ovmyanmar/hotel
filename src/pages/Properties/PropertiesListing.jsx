@@ -7,6 +7,7 @@ import Toast from "../../component/Toast/Toast.jsx";
 import PropertyTable from "./components/PropertyTable.jsx";
 import PropertyForm from "./components/PropertyForm.jsx";
 import ListHeader from "../../component/ListHeader/ListHeader.jsx";
+import dayjs from "dayjs";
 
 const PropertiesListing = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -15,6 +16,11 @@ const PropertiesListing = () => {
   const [keyword, setKeyword] = useState("");
   const [isLoadingDetail, setIsLoadingDetail] = useState(false);
   const [selectedCountryUuid, setSelectedCountryUuid] = useState(null);
+
+  const timezone = dayjs.tz.guess();
+  console.log("Time Zone", timezone);
+
+  const formattedTimezone = timezone === "Asia/Rangoon" ? "Asia/Yangon" : timezone; // Timezone format
 
   const { data, isLoading, refetch } = useApiQuery({
     fetchQueryName: ["propertyData", keyword],
@@ -62,9 +68,35 @@ const PropertiesListing = () => {
   };
 
   const handlePropertySubmit = (values) => {
-    const activeSetting = selectedRow?.settingsArray?.[0]; 
+    // const activeSetting = selectedRow?.settingsArray?.[0];
+    const isSettingUpdate = !!values.setting; 
 
-    const payload = {
+    let payload;
+
+    if(isSettingUpdate){
+      payload = {
+        uuid: values.uuid || "",
+        name: values.name,
+        type: { uuid: values.property_type_uuid },
+        address: values.address,
+        country: { uuid: values.country_uuid },
+        city: { uuid: values.city_uuid },
+        currency: { uuid: values.currency_uuid },
+        email: values.email,
+        phone: values.phone,
+        checkinTime: values.checkinTime?.format("HH:mm:ss"),
+        checkoutTime: values.checkoutTime?.format("HH:mm:ss"),
+        timezone: formattedTimezone,
+        setting: {
+          // uuid: values.setting.uuid,
+          key: values.setting.key,
+          value: values.setting.value
+        }
+      };
+    }else{
+      // Full property payload
+    const activeSetting = selectedRow?.settingsArray?.[0];
+      payload = {
       uuid: values.uuid || "",
       name: values.name,
       type: { uuid: values.property_type_uuid },
@@ -74,24 +106,30 @@ const PropertiesListing = () => {
       currency: { uuid: values.currency_uuid },
       email: values.email,
       phone: values.phone,
-      checkInTime: values.checkInTime?.format("HH:mm:ss"),
-      checkOutTime: values.checkOutTime?.format("HH:mm:ss"),
-      timezone: values.timezone || "Asia/Yangon",
+      checkinTime: values.checkinTime?.format("HH:mm:ss"),
+      checkoutTime: values.checkoutTime?.format("HH:mm:ss"),
+      timezone: formattedTimezone,
       setting: activeSetting ? {
         key: activeSetting.key,
         value: activeSetting.value
       } : undefined
     };
-    upsertMutate(payload);
   };
+    upsertMutate(payload);
+}
+
 
   // Define the add handler separately for cleanliness
   const handleAdd = () => {
     setCurrentMode("add");
-    setSelectedRow({ settingsArray: [] });
+    setSelectedRow(null);
     setSelectedCountryUuid(null);
     setDrawerOpen(true);
   };
+
+  //value for viewing "Add Property" button or not
+  const showButton = properties.length === 0 ? false : true;
+
 
   return (
     <div className="p-6">
@@ -100,10 +138,9 @@ const PropertiesListing = () => {
         keyword={keyword} 
         setKeyword={setKeyword}
         searchPlaceholder="Search Property..."
-        // ONLY give onAdd if there are no properties
-        onAdd={properties.length === 0 ? handleAdd : undefined}
-        // onAdd={handleAdd}
-        addButtonText={properties.length === 0 ? "Add Property" : ""}
+        onAdd={handleAdd}
+        showButton={false}
+        addButtonText={"Add Property"}
     />
 
       <PropertyTable dataSource={properties} loading={isLoading} 

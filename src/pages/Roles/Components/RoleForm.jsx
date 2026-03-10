@@ -111,28 +111,30 @@ const RoleForm = ({
     setPermDrawerOpen(false);
 
     // Compute delta (only changed permissions)
-    const changedPermissions = [];
-    roleDetail?.permissions?.forEach((group) => {
-      group.permissions?.forEach((p) => {
-        const wasSelected = p.selected;
-        const isNowSelected = newIdsAsString.includes(String(p.id));
-        if (wasSelected !== isNowSelected) {
-          changedPermissions.push(p.id);
-        }
-      });
-    });
+    // const changedPermissions = [];
+    // roleDetail?.permissions?.forEach((group) => {
+    //   group.permissions?.forEach((p) => {
+    //     const wasSelected = p.selected;
+    //     const isNowSelected = newIdsAsString.includes(String(p.id));
+    //     if (wasSelected !== isNowSelected) {
+    //       changedPermissions.push(p.id);
+    //     }
+    //   });
+    // });
 
-    if (changedPermissions.length === 0) {
-      Toast.info("No permission changes detected");
-      return;
-    }
+    // if (changedPermissions.length === 0) {
+    //   Toast.info("No permission changes detected");
+    //   return;
+    // }
+
 
     const permPayload = {
       uuid: selectedData?.uuid,
       name: roleDetail.name,
       code: roleDetail.code,
       description: roleDetail.description || "",
-      permissions: changedPermissions,
+      // permissions: changedPermissions,
+      permissions: newIds, //This the array of currently checked IDs
     };
 
     console.log("📤 Sending Permission Delta Update:", permPayload);

@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { Form, Input, Button } from "antd";
-import { NavLink } from "react-router-dom";
+
 import { saveState } from "../../../utils";
 import { LOCAL_STORAGE_KEYS } from "../../../variables/constants";
 import { useApiMutation } from "../../../hooks/useApiMutation";
 import { login } from "../../../api/authApi";
+import signin from "../../../assets/images/signin.png";
+import hotellogotext from "../../../assets/images/hotellogotext.png";
 
 export default function SignIn() {
   const [ipAddress, setIpAddress] = useState("");
@@ -35,21 +37,30 @@ export default function SignIn() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-cover bg-center px-6">
-      <div className="w-full max-w-6xl flex items-center justify-between">
-        <div className="hidden md:block text-white max-w-lg">
-          <h1 className="text-5xl font-light text-white leading-tight">
-            Whatever happens <br />
-            here, <span className="font-bold">stays</span> here
-          </h1>
-          <p className="mt-6 text-lg text-white opacity-80">
-            Please fill the form on the right side.
-          </p>
+    <div className="min-h-screen flex items-center justify-center">
+      <div className="w-full max-w-8xl flex items-center justify-between">
+        <div className="w-full md:w-1/2">
+          <img
+            src={signin}
+            alt="Sign in"
+            className="w-2xl h-full object-cover"
+          />
         </div>
 
-        <div className="w-full md:w-[420px]">
-          <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-10 shadow-2xl">
-            <h2 className="text-2xl font-semibold mb-6 text-white text-center">
+        <div className="flex-1 flex items-start justify-center bg-white mt-[-40px]">
+          <div className="w-full max-w-md px-5">
+            <div className="text-center mb-8">
+              <div className="flex justify-center">
+                <img src={hotellogotext} alt="" />
+              </div>
+
+              <p className="text-gray-500 mt-[-20px] font-bold tracking-wide">
+                Property Management System
+              </p>
+            </div>
+
+            {/* Login Form */}
+            <h2 className="text-center text-lg text-gray-600 font-semibold mb-6  mt-[-20px]">
               Login
             </h2>
 
@@ -70,24 +81,18 @@ export default function SignIn() {
                 <Input.Password size="large" placeholder="Enter password" />
               </Form.Item>
 
-              <div className="text-right mb-4">
-                <NavLink
-                  to="/forgotPassword"
-                  className="text-white/80 hover:text-white text-sm"
-                >
-                  Forgot Password?
-                </NavLink>
-              </div>
-
               <Button
                 type="primary"
                 htmlType="submit"
                 block
                 loading={isPending}
               >
-                Sign In
+                Login
               </Button>
             </Form>
+            <p className="text-center text-gray-400 text-sm mt-10">
+              © Oriental Vigour 2026. All rights reserved.
+            </p>
           </div>
         </div>
       </div>

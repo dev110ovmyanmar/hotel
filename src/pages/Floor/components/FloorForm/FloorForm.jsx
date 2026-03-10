@@ -1,102 +1,147 @@
 import React, { useEffect } from "react";
-import { Button, Form, Input } from "antd";
-import { useApiMutation } from "../../../../hooks/useApiMutation";
+import { Form, Input, Button, Drawer } from "antd";
 import Toast from "../../../../component/Toast/Toast";
-import { floorDetail, upsertFloor } from "../../../../api/floorApi";
+import { useApiMutation } from "../../../../hooks/useApiMutation";
 import useApiQuery from "../../../../hooks/useApiQuery";
+import FormButton from "../../../../component/FormButtons/FormButtons";
+import { createFloor, editFloor, floorDetail } from "../../../../api/floorApi";
+import TextArea from "antd/es/input/TextArea";
 
-const Floorform = ({ initialValues, selectedData, mode, onSuccess }) => {
+const FloorForm = ({
+  mode,
+  setMode,
+  selectedData,
+  setSelectedData,
+  drawerOpen,
+  setDrawerOpen,
+  setPage,
+}) => {
   const [form] = Form.useForm();
 
   const isView = mode === "view";
   const isEdit = mode === "edit";
   const isAdd = mode === "add";
 
-  const { data } = useApiQuery({
-    fetchQueryName: "floorDetails",
+  const createFloors = useApiMutation({
+    mutationFn: createFloor,
+    invalidateKeys: [["floorData"]],
+  });
+
+  const editFloors = useApiMutation({
+    mutationFn: editFloor,
+    invalidateKeys: [["floorData"]],
+  });
+
+  const { data, isLoading, error } = useApiQuery({
+    fetchQueryName: "floorData",
     fetchQueryFunction: floorDetail,
-    params: { uuid: initialValues?.uuid },
+    params: { uuid: selectedData?.uuid },
     options: {
-      enabled: (isEdit || isView) && !!initialValues?.uuid,
+      enabled: !!selectedData?.uuid,
     },
   });
-
-  const { mutate, isPending } = useApiMutation({
-    mutationFn: upsertFloor,
-    options: {
-      onSuccess: () => {
-        Toast.success(
-          isEdit ? "Updated successfully!" : "Created successfully!",
-        );
-
-        form.resetFields();
-        onSuccess?.();
-      },
-      onError: (error) => {
-        Toast.error("Operation failed!");
-      },
-    },
-  });
-
-  // const handleSubmit = (values) => {
-  //   const payload = {
-  //     ...values,
-  //   };
-  //   if (isEdit && initialValues?.uuid) {
-  //     payload.uuid = initialValues.uuid;
-  //   }
-  //   mutate(payload);
-  // };
-
-  const handleSubmit = (values) => {
-    mutate({
-      ...values,
-      ...(isEdit &&
-        initialValues?.uuid && {
-          uuid: initialValues?.uuid,
-        }),
-    });
-  };
 
   useEffect(() => {
-    if (data) {
-      form.setFieldsValue(data);
+    if (!isAdd && data) {
+      form.setFieldsValue({
+        ...data,
+      });
+      setSelectedData(data);
     }
-  }, [data, form]);
+  }, [data]);
 
-  const handleCancel = () => {
-    form.resetFields();
+  const onFinish = (values) => {
+    if (isAdd) {
+      const createValues = {
+        ...values,
+      };
+
+      createFloors.mutate(createValues, {
+        onSuccess: () => {
+          form.resetFields();
+          setDrawerOpen(false);
+          setPage(1);
+          Toast.success("Floor Created Successfully!");
+        },
+      });
+    }
+    if (isEdit) {
+      const editValues = {
+        ...values,
+        uuid: data?.uuid,
+      };
+
+      editFloors.mutate(editValues, {
+        onSuccess: () => {
+          setDrawerOpen(false);
+          Toast.success("Floor Updated Successfully!");
+        },
+      });
+    }
   };
 
   return (
-    <Form
-      form={form}
-      layout="vertical"
-      style={{ width: "100%" }}
-      disabled={isView}
-      onFinish={handleSubmit}
-    >
-      <Form.Item label="Floor Name" name="name"  rules={[{ required: true, message: "Please enter floor name" }]} >
-        <Input />
-      </Form.Item>
-      <Form.Item label="Floor No" name="floorNo"  rules={[{ required: true, message: "Please enter floor no" }]} >
-        <Input />
-      </Form.Item>
-      <Form.Item label="Descriptiom" name="description">
-        <Input />
-      </Form.Item>
-      <Form.Item>
-        <div className="flex justify-between gap-4">
-          <Button type="default" onClick={handleCancel} block>
-            Cancel
-          </Button>
-          <Button type="primary" htmlType="submit" block loading={isPending}>
-            save
-          </Button>
-        </div>
-      </Form.Item>
-    </Form>
+    <div>
+      <Drawer
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        size={500}
+        title={
+          <div className="flex justify-between items-center">
+            <span>
+              {mode === "view"
+                ? "Floor Details"
+                : mode === "edit"
+                  ? "Edit Floor"
+                  : "Create Floor"}
+            </span>
+            {isView ? (
+              <Button
+                type="primary"
+                onClick={() => {
+                  setMode("edit");
+                }}
+              >
+                Edit
+              </Button>
+            ) : (
+              <FormButton
+                onClick={() => form.submit()}
+                isPending={isLoading}
+                mode={mode}
+              />
+            )}
+          </div>
+        }
+      >
+        <Form
+          form={form}
+          layout="vertical"
+          style={{ width: "100%" }}
+          onFinish={onFinish}
+          disabled={isView}
+        >
+          <Form.Item
+            label="Name"
+            name="name"
+            rules={[{ required: true, message: "Please enter floor name" }]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            label="Floor No"
+            name="floorNo"
+            rules={[{ required: true, message: "Please enter floor no" }]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item label="Descriptiom" name="description">
+            <TextArea />
+          </Form.Item>
+        </Form>
+      </Drawer>
+    </div>
   );
 };
 
-export default Floorform;
+export default FloorForm;

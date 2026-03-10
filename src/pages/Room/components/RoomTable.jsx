@@ -1,157 +1,155 @@
-import React, { useState } from "react";
-import { Space, Table, Drawer, Button, Dropdown, Input } from "antd";
+import { Dropdown, Space, Table, Tag } from "antd";
+import { useState } from "react";
 import {
-  EditOutlined,
-  EyeOutlined,
+  KeyOutlined,
   MoreOutlined,
-  SearchOutlined,
+  EyeOutlined,
+  EditOutlined,
 } from "@ant-design/icons";
-import { fetchRoom } from "../../../api/roomApi";
-import useApiQuery from "../../../hooks/useApiQuery";
 import RoomForm from "./Room/RoomForm";
-import ListHeader from "../../../component/ListHeader/ListHeader";
 
-const RoomTable = ({ mode }) => {
-  const [open, setOpen] = useState(false);
-  const [selectedRow, setSelectedRow] = useState(null);
-  const [currentMode, setCurrentMode] = useState(mode);
-  const [page, setPage] = useState(1);
-  const [perPage, setPerPage] = useState(10);
-  const [keyword, setKeyword] = useState("");
-
-  const { data, isLoading, refetch } = useApiQuery({
-    fetchQueryName: "roomData",
-    fetchQueryFunction: fetchRoom,
-    params: {
-      keyword,
-      pagination: {
-        page: page,
-        perPage: perPage,
-      },
-    },
-  });
-
-  const roomTypeList = data?.data || [];
-  const total = data?.total || 0;
-
-  const showDrawer = (record, actionMode) => {
-    setSelectedRow(record);
-    setCurrentMode(actionMode);
-    setOpen(true);
-  };
-
-  const onClose = () => {
-    setOpen(false);
-    setSelectedRow(null);
-  };
-
-  const handleAdd = () => {
-    setSelectedRow(null);
-    setCurrentMode("add");
-    setOpen(true);
-  };
-
-  const isView = currentMode === "view";
-  const isEdit = currentMode === "edit";
-  const isAdd = currentMode === "add";
-
-  const DrawerTitle = isView
-    ? "View Floor"
-    : isEdit
-      ? "Edit Floor"
-      : isAdd
-        ? "Add New Room "
-        : "";
+const RoomTable = ({
+  data,
+  page,
+  perPage,
+  total,
+  changePage,
+  changePerPage,
+}) => {
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [mode, setMode] = useState(null);
+  const [selectedData, setSelectedData] = useState(null);
+  const [confirmModal, setConfirmModal] = useState(false);
 
   const columns = [
     {
-      title: "No",
-      dataIndex: "id",
-      key: "id",
-      // width:"20px"
+      title: "ID",
+      render: (_, record) => <div>{record?.id}</div>,
+      width: 70,
     },
     {
       title: "Room No",
       dataIndex: "roomNo",
       key: "roomNo",
+      render: (text) => <div>{text}</div>,
     },
-
     {
-      title: "Price per Night",
-      dataIndex: "pricePerNight",
-      key: "pricePerNight",
+      title: "Room Type Name",
+      dataIndex: ["roomType", "name"],
+      key: "roomTypeName",
     },
-
     {
-      title: "Actions",
-      key: "actions",
+      title: "Floor Name",
+      dataIndex: ["floor", "name"],
+      key: "floorName",
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
       render: (_, record) => (
-        <Space>
-          <Dropdown
-            menu={{
-              onClick: ({ key }) => {
-                if (key === "1") {
-                  showDrawer(record, "view");
-                }
-                if (key === "2") {
-                  showDrawer(record, "edit");
-                }
-              },
-              items: [
-                { key: "1", label: "View", icon: <EyeOutlined /> },
-                { key: "2", label: "Edit", icon: <EditOutlined /> },
-              ],
-            }}
-            trigger={["click"]}
-          >
-            <Button type="text" icon={<MoreOutlined />} size="small" />
-          </Dropdown>
-        </Space>
+        <Tag color={record?.status?.name === "Active" ? "green" : "red"}>
+          {record?.status?.name.toUpperCase()}
+        </Tag>
       ),
+    },
+    {
+      title: "Action",
+      render: (_, record) => {
+        const smallStyle = { fontSize: "12px" };
+
+        const items = [
+          {
+            key: "1",
+            label: (
+              <Space
+                size={4}
+                style={smallStyle}
+                onClick={() => {
+                  setDrawerOpen(true);
+                  setMode("view");
+                  setSelectedData(record);
+                }}
+              >
+                <EyeOutlined style={{ fontSize: "12px" }} />
+                <span style={{ fontSize: "14px" }}>View</span>
+              </Space>
+            ),
+          },
+          {
+            key: "2",
+            label: (
+              <Space
+                size={4}
+                style={smallStyle}
+                onClick={() => {
+                  setDrawerOpen(true);
+                  setMode("edit");
+                  setSelectedData(record);
+                }}
+              >
+                <EditOutlined style={{ fontSize: "12px" }} />
+                <span style={{ fontSize: "14px" }}>Edit</span>
+              </Space>
+            ),
+          },
+          {
+            key: "3",
+            label: (
+              <Space
+                size={4}
+                style={smallStyle}
+                onClick={() => {
+                  setConfirmModal(true);
+                  setSelectedData(record);
+                }}
+              >
+                <KeyOutlined style={{ fontSize: "12px" }} />
+                <span style={{ fontSize: "14px" }}>Reset Password</span>
+              </Space>
+            ),
+          },
+        ];
+
+        return (
+          <Dropdown menu={{ items }} trigger={["click"]}>
+            <MoreOutlined style={{ fontSize: "16px" }} />
+          </Dropdown>
+        );
+      },
     },
   ];
 
   return (
-    <>
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
-        <ListHeader
-          title="Room List"
-          searchPlaceholder="Search Room ..."
-          keyword={keyword}
-          setKeyword={setKeyword}
-          addButtonText="Add New Room"
-          onAdd={handleAdd}
-        />
-      </div>
-
+    <div id="scrollId">
       <Table
+        tableLayout="fixed"
+        scroll={{ x: 1000 }}
         columns={columns}
-        dataSource={roomTypeList}
-        loading={isLoading}
-        rowKey={(record) => record.id || record._id}
+        dataSource={data}
+        rowKey="uuid"
         pagination={{
           current: page,
           pageSize: perPage,
           total: total,
-          showSizeChanger: true,
-          pageSizeOptions: ["5", "10", "20", "50"],
-          onChange: (newPage, newSize) => {
-            setPage(newPage);
-            setPerPage(newSize);
+          onChange: (page, perPage) => {
+            changePage(page);
+            changePerPage(perPage);
           },
+          showSizeChanger: true,
         }}
       />
-      <Drawer title={DrawerTitle} onClose={onClose} open={open} width={500}>
-        <RoomForm
-          initialValues={selectedRow}
-          mode={currentMode}
-          onSuccess={() => {
-            refetch();
-            onClose();
-          }}
-        />
-      </Drawer>
-    </>
+
+      <RoomForm
+        mode={mode}
+        setMode={setMode}
+        drawerOpen={drawerOpen}
+        setDrawerOpen={setDrawerOpen}
+        selectedData={selectedData}
+        setSelectedData={setSelectedData}
+        width={500}
+      />
+    </div>
   );
 };
 
