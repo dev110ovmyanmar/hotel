@@ -1,37 +1,21 @@
 import { apiClient } from "./apiClient";
 
-// export const fetchFloor = async ({ keyword, page, perPage }) => {
-//   const { data } = await apiClient.get("floors", {
-//     keyword,
-//     pagination: { page, perPage },
-//   });
-//   return data.response;
-// };
-export const fetchFloor = async ({ keyword, page, perPage }) => {
-  const { data } = await apiClient.get("floors", {
-    params: {
-      keyword,
-      page,
-      perPage,
-    },
-  });
-
+export const fetchFloor = async (params) => {
+  const { data } = await apiClient.get("/floors", { params });
   return data.response;
 };
 
-export const upsertFloor  = async ({ uuid, name, floorNo, description }) => {
-  const { data } = await apiClient.post("floor/upsert", {
-    uuid,
-    name,
-    floorNo,
-    description,
-  });
+export const createFloor = async (params) => {
+  const { data } = await apiClient.post("/floor/upsert", params);
   return data.response;
 };
 
-export const floorDetail = async ({ uuid }) => {
-  const { data } = await apiClient.get("floor", {
-     params: { uuid },
-  });
+export const editFloor = async (params) => {
+  const { data } = await apiClient.post("/floor/upsert", params);
+  return data.response;
+};
+
+export const floorDetail = async (params) => {
+  const { data } = await apiClient.get("/floor", { params });
   return data.response;
 };

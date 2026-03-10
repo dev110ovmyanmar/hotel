@@ -1,10 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { Input, Button } from "antd";
-import { PlusOutlined, SearchOutlined } from "@ant-design/icons";
+import { SearchOutlined } from "@ant-design/icons";
 import _ from "lodash";
 
 const ListHeader = ({
-  title,
   keyword,
   setKeyword,
   addButtonText,
@@ -27,12 +26,9 @@ const ListHeader = ({
   }, []);
 
   return (
-    <div className="bg-white rounded-lg space-y-2">
-      <h2 className="text-sm font-semibold text-gray-600 mt-[-20px]">{title}</h2>
-
-      <div className="flex items-center justify-between gap-2">
+    <div className="flex flex-row justify-between items-center w-full gap-2">
+      <div>
         <Input
-          // placeholder="Search..."
           placeholder={searchPlaceholder}
           prefix={<SearchOutlined />}
           allowClear
@@ -42,20 +38,13 @@ const ListHeader = ({
             setInputValue(value);
             debouncedSearchRef.current(value);
           }}
-          className="xs:w-50 md:w-80"
+          className="w-50"
         />
-
-        {
-        onAdd &&
-        <Button
-          type="primary"
-          // icon={<PlusOutlined />}
-          onClick={onAdd}
-          className="bg-blue-600 xs:w-auto w-50 xs:ml-50 md:ml-80 lg:ml-180"
-        >
+      </div>
+      <div className="w-full flex justify-end">
+        <Button type="primary" onClick={onAdd} className="bg-blue-600">
           {addButtonText}
         </Button>
-        }
       </div>
     </div>
   );

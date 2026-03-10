@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { Form, Input, Button, Drawer, Space, Select } from "antd";
 import Toast from "../../../../component/Toast/Toast";
@@ -6,16 +5,21 @@ import { CloseOutlined } from "@ant-design/icons";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
 import useApiQuery from "../../../../hooks/useApiQuery";
 import { FiEdit } from "react-icons/fi";
-import { amenitiesDetailsFun, createAmenitiesFun, editAmenitiesFun } from "../../../../api/amenitiesFunctionApi";
+import {
+  amenitiesDetailsFun,
+  createAmenitiesFun,
+  editAmenitiesFun,
+} from "../../../../api/amenitiesFunctionApi";
+import FormButtons from "../../../../component/FormButtons/FormButtons";
 
 const AmenitiesForm = ({
   mode,
+  setMode,
   selectedData,
   setSelectedData,
   drawerOpen,
   setDrawerOpen,
 }) => {
-
   const [form] = Form.useForm();
 
   const isView = mode === "view";
@@ -24,12 +28,12 @@ const AmenitiesForm = ({
 
   const createAmenitiesFunction = useApiMutation({
     mutationFn: createAmenitiesFun,
-    invalidateKeys: [["amenities"]]
+    invalidateKeys: [["amenities"]],
   });
 
   const editAmenitiesFunction = useApiMutation({
     mutationFn: editAmenitiesFun,
-    invalidateKeys: [["amenities"]]
+    invalidateKeys: [["amenities"]],
   });
 
   const { data, isPending, error } = useApiQuery({
@@ -51,117 +55,131 @@ const AmenitiesForm = ({
 
   useEffect(() => {
     if (isAdd) {
-      form.resetFields()
+      form.resetFields();
     }
-  }, [isAdd])
+  }, [isAdd]);
 
   const onFinish = (values) => {
-    console.log(values,"ValuesInOnCreateFinish");
+    console.log(values, "ValuesInOnCreateFinish");
     if (isAdd) {
       createAmenitiesFunction.mutate(values, {
         onSuccess: () => {
           setDrawerOpen(false);
           Toast.success("Country Created Successfully!");
-          form.resetFields()
-        }
-      })
+          form.resetFields();
+        },
+      });
     }
 
     if (isEdit) {
       const editValues = {
         ...values,
-        uuid: selectedData?.uuid
+        uuid: selectedData?.uuid,
       };
 
       editAmenitiesFunction.mutate(editValues, {
         onSuccess: () => {
           setDrawerOpen(false);
           Toast.success("Country Updated Successfully!");
-        }
-      })
+        },
+      });
     }
   };
 
   return (
-    <div className="flex justify-center" >
+    <div className="flex justify-center">
       <Drawer
-        destroyOnClose
-        size={500}
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
-        closable={false}
-        extra={
-          < CloseOutlined
-            onClick={() => setDrawerOpen(false)}
-            style={{ fontSize: 18, cursor: "pointer" }}
-          />
-        }
+        size={500}
         title={
-          isAdd ? "Create Amenity" :
-            isEdit ? "Edit Amenity" :
-              "Amenity Details"
+          <div className="flex justify-between items-center">
+            <span>
+              {mode === "view"
+                ? "Amenitities Details"
+                : mode === "edit"
+                  ? "Edit Amenitities"
+                  : "Add New Amenitities"}
+            </span>
+            {isView ? (
+              <Button
+                type="primary"
+                onClick={() => {
+                  setMode("edit");
+                }}
+              >
+                Edit
+              </Button>
+            ) : (
+              <FormButtons
+                onClick={() => form.submit()}
+                isPending={
+                  createAmenitiesFunction.isLoading ||
+                  editAmenitiesFunction.isLoading
+                }
+                mode={mode}
+              />
+            )}
+          </div>
         }
       >
         <Form
           form={form}
-          layout="horizontal"
-          labelCol={{ xs: { span: 24 }, sm: { span: 6 } }}
-          wrapperCol={{ xs: { span: 24 }, sm: { span: 18 } }}
-          className="w-full px-4 max-w-lg md:max-w-2xl"
+          layout="vertical"
+          // labelCol={{ xs: { span: 24 }, sm: { span: 6 } }}
+          // wrapperCol={{ xs: { span: 24 }, sm: { span: 18 } }}
+          // className="w-full px-4 max-w-lg md:max-w-2xl"
           validateTrigger="onSubmit"
           onFinish={onFinish}
-
+          disabled={isView}
         >
-          <Form.Item label="Amenity Name" name="name" rules={[{ required: true, message: "Amenity Name is Required" }]}>
+          <Form.Item
+            label="Name"
+            name="name"
+            rules={[{ required: true, message: "Amenity Name is Required" }]}
+          >
             <Input readOnly={isView} />
           </Form.Item>
 
-          <Form.Item label="Amenity Code" name="code" rules={[{ required: true, message: "Amenity Code is Required" }]}>
+          <Form.Item
+            label="Code"
+            name="code"
+            rules={[{ required: true, message: "Amenity Code is Required" }]}
+          >
             <Input readOnly={isView} />
           </Form.Item>
 
-          <Form.Item label="Is Free" name="isFree" rules={[{ required: true, message: "Is Free  is Required" }]}>
+          <Form.Item
+            label="Is Free"
+            name="isFree"
+            rules={[{ required: true, message: "Is Free  is Required" }]}
+          >
             <Select
               options={[
                 { label: "Yes", value: 1 },
                 { label: "No", value: 0 },
               ]}
               open={isView ? false : undefined}
-            >
-            </Select>
+            ></Select>
           </Form.Item>
 
-          <Form.Item label="Visibility" name="visibility" rules={[{ required: true, message: "Visibility  is Required" }]}>
+          <Form.Item
+            label="Visibility"
+            name="visibility"
+            rules={[{ required: true, message: "Visibility  is Required" }]}
+          >
             <Select
               options={[
-
                 { label: "Yes", value: 1 },
                 { label: "No", value: 0 },
               ]}
               open={isView ? false : undefined}
-            >
-            </Select>
+            ></Select>
           </Form.Item>
-
-          {!isView && (
-            <div className="flex justify-end sm:mb-2 md:mb-3" >
-              <Button
-                type="default"
-                onClick={() => setDrawerOpen(false)}
-                className="me-2"
-              >
-                Cancel
-              </Button>
-              <Button type="primary" htmlType="submit" loading={isAdd ? createAmenitiesFunction.isPending : editAmenitiesFunction.isPending}>
-                {isAdd ? "Create" : "Save"}
-              </Button>
-            </div>
-          )}
         </Form>
-      </Drawer >
-    </div >
-  )
+      </Drawer>
+    </div>
+  );
 };
 
-
-export default AmenitiesForm
+export default AmenitiesForm;
