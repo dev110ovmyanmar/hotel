@@ -1,5 +1,10 @@
 import React, { useState, useMemo } from "react";
-import { fetchPropertiesData, createProperty, updateProperty, fetchPropertyDetail } from "../../api/propertyApi.js";
+import {
+  fetchPropertiesData,
+  createProperty,
+  updateProperty,
+  fetchPropertyDetail,
+} from "../../api/propertyApi.js";
 import { queryClient } from "../../app/queryClient.js";
 import useApiQuery from "../../hooks/useApiQuery";
 import { useApiMutation } from "../../hooks/useApiMutation";
@@ -21,28 +26,58 @@ const PropertiesListing = () => {
     fetchQueryFunction: () => fetchPropertiesData({ keyword }),
   });
 
-  const properties = Array.isArray(data?.response?.data) ? data.response.data : [];
+  const properties = Array.isArray(data?.response?.data)
+    ? data.response.data
+    : [];
   const initData = queryClient.getQueryData(["initData", {}]);
 
   // Dynamic Options
-  const propertyTypes = useMemo(() => initData?.statuses?.property_type?.map(item => ({ value: item.uuid, label: item.name })) || [], [initData]);
-  const countryOptions = useMemo(() => initData?.locations?.map(item => ({ value: item.uuid, label: item.name })) || [], [initData]);
-  const currencyOptions = useMemo(() => initData?.currencies?.map(item => ({ value: item.uuid, label: item.code })) || [], [initData]);
-  
+  const propertyTypes = useMemo(
+    () =>
+      initData?.statuses?.property_type?.map((item) => ({
+        value: item.uuid,
+        label: item.name,
+      })) || [],
+    [initData]
+  );
+  const countryOptions = useMemo(
+    () =>
+      initData?.locations?.map((item) => ({
+        value: item.uuid,
+        label: item.name,
+      })) || [],
+    [initData]
+  );
+  const currencyOptions = useMemo(
+    () =>
+      initData?.currencies?.map((item) => ({
+        value: item.uuid,
+        label: item.code,
+      })) || [],
+    [initData]
+  );
   const cityOptions = useMemo(() => {
     if (!selectedCountryUuid || !initData?.locations) return [];
-    return initData.locations.find(loc => loc.uuid === selectedCountryUuid)?.city?.map(c => ({ value: c.uuid, label: c.name })) || [];
+    return (
+      initData.locations
+        .find((loc) => loc.uuid === selectedCountryUuid)
+        ?.city?.map((c) => ({ value: c.uuid, label: c.name })) || []
+    );
   }, [selectedCountryUuid, initData]);
 
   const { mutate: upsertMutate, isPending: isSaving } = useApiMutation({
-    mutationFn: (payload) => payload.uuid ? updateProperty(payload.uuid, payload) : createProperty(payload),
+    mutationFn: (payload) =>
+      payload.uuid
+        ? updateProperty(payload.uuid, payload)
+        : createProperty(payload),
     options: {
       onSuccess: () => {
         Toast.success(`Successfully saved.`);
         setDrawerOpen(false);
         refetch();
       },
-      onError: (err) => Toast.error(err?.response?.data?.error?.text || "Operation failed"),
+      onError: (err) =>
+        Toast.error(err?.response?.data?.error?.text || "Operation failed"),
     },
   });
 
@@ -52,7 +87,12 @@ const PropertiesListing = () => {
       const res = await fetchPropertyDetail(uuid);
       if (res.reasonCode === "200") {
         const rawData = res.response;
-        rawData.settingsArray = rawData.settings?.map(s => ({ uuid: s.uuid, key: s.settingKey, value: s.settingValue })) || [];
+        rawData.settingsArray =
+          rawData.settings?.map((s) => ({
+            uuid: s.uuid,
+            key: s.settingKey,
+            value: s.settingValue,
+          })) || [];
         setSelectedRow(rawData);
         if (rawData.country?.uuid) setSelectedCountryUuid(rawData.country.uuid);
       }
@@ -62,8 +102,7 @@ const PropertiesListing = () => {
   };
 
   const handlePropertySubmit = (values) => {
-    const activeSetting = selectedRow?.settingsArray?.[0]; 
-
+    const activeSetting = selectedRow?.settingsArray?.[0];
     const payload = {
       uuid: values.uuid || "",
       name: values.name,
@@ -77,15 +116,13 @@ const PropertiesListing = () => {
       checkInTime: values.checkInTime?.format("HH:mm:ss"),
       checkOutTime: values.checkOutTime?.format("HH:mm:ss"),
       timezone: values.timezone || "Asia/Yangon",
-      setting: activeSetting ? {
-        key: activeSetting.key,
-        value: activeSetting.value
-      } : undefined
+      setting: activeSetting
+        ? { key: activeSetting.key, value: activeSetting.value }
+        : undefined,
     };
     upsertMutate(payload);
   };
 
-  // Define the add handler separately for cleanliness
   const handleAdd = () => {
     setCurrentMode("add");
     setSelectedRow({ settingsArray: [] });
@@ -94,24 +131,37 @@ const PropertiesListing = () => {
   };
 
   return (
-    <div className="p-6">
-    <ListHeader 
-        title="Properties List" 
-        keyword={keyword} 
-        setKeyword={setKeyword}
-        searchPlaceholder="Search Property..."
-        // ONLY give onAdd if there are no properties
-        onAdd={properties.length === 0 ? handleAdd : undefined}
-        // onAdd={handleAdd}
-        addButtonText={properties.length === 0 ? "Add Property" : ""}
-    />
+    <div className="w-full px-6 py-2">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
+        <ListHeader
+          title="Property List"
+          searchPlaceholder="Search Property ..."
+          keyword={keyword}
+          setKeyword={setKeyword}
+          addButtonText="Add New Property"
+          onAdd={handleAdd}
+        />
+      </div>
 
-      <PropertyTable dataSource={properties} loading={isLoading} 
-        onEdit={(rec) => { setCurrentMode("edit"); setDrawerOpen(true); handleGetDetail(rec.uuid); }}
-        onView={(rec) => { setCurrentMode("view"); setDrawerOpen(true); handleGetDetail(rec.uuid); }}
+      <PropertyTable
+        dataSource={properties}
+        isLoading={isLoading}
+        onEdit={(rec) => {
+          setCurrentMode("edit");
+          setDrawerOpen(true);
+          handleGetDetail(rec.uuid);
+        }}
+        onView={(rec) => {
+          setCurrentMode("view");
+          setDrawerOpen(true);
+          handleGetDetail(rec.uuid);
+        }}
       />
+
       <PropertyForm
         open={drawerOpen}
+        setOpen={setDrawerOpen} 
+        setMode={setCurrentMode}
         onClose={() => setDrawerOpen(false)}
         mode={currentMode}
         initialValues={selectedRow}
