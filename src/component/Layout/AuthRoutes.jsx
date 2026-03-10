@@ -15,6 +15,12 @@ import {
   SecurityScanOutlined,
   UserSwitchOutlined,
   PropertySafetyOutlined,
+  BankOutlined,
+  UnorderedListOutlined,
+  ApartmentOutlined,
+  AppstoreOutlined,
+  BarsOutlined,
+  LayoutOutlined,
 } from "@ant-design/icons";
 import { lazy } from "react";
 import AdminList from "../../pages/Admins/AdminList";
@@ -25,11 +31,15 @@ import AmenitiesList from "../../pages/Amenities/AmenitiesList";
 import PolicyList from "../../pages/Policy/PolicyList";
 
 import { EnvironmentOutlined } from "@ant-design/icons";
-import { MdOutlinePolicy } from 'react-icons/md';
+import { MdOutlinePolicy } from "react-icons/md";
 
 const Dashboard = lazy(() => import("../../pages/Dashboard/Dashboard"));
 const Calendar = lazy(() => import("../../pages/Calendar/Calendar"));
-// const Reservation = lazy(() => import("../../pages/Reservation/Reservation"));
+const Reservation = lazy(
+  () => import("../../pages/Reservation/ReservationList"),
+);
+const ReservationForm =lazy(()=> import("../../pages/ReservationForm/ReservationForm"))
+const Guest = lazy (()=> import("../../pages/Guest/GuestList"))
 const Booking = lazy(() => import("../../pages/Booking/Booking"));
 const RoomPlan = lazy(() => import("../../pages/RoomPlan/RoomPlanList"));
 const RoomType = lazy(() => import("../../pages/RoomType/RoomTypeList"));
@@ -39,13 +49,13 @@ const ChangePassword = lazy(
   () => import("../../pages/Authentication/ChangePassword/ChangePasswordPage"),
 );
 const Profile = lazy(() => import("../../pages/Profile/ProfilePage"));
-const ReservationForm = lazy(
-  () => import("../../pages/Reservation/ReservationForm"),
+const PermissionListing = lazy(
+  () => import("../../pages/Permissions/PermissionsListing"),
 );
-const PermissionListing = lazy(() => import("../../pages/Permissions/PermissionsListing"));
 const RolesListing = lazy(() => import("../../pages/Roles/RolesListing"));
-const PropertiesListing = lazy(() => import("../../pages/Properties/PropertiesListing"));
-
+const PropertiesListing = lazy(
+  () => import("../../pages/Properties/PropertiesListing"),
+);
 
 export const authRoutes = [
   {
@@ -64,14 +74,24 @@ export const authRoutes = [
     component: <Calendar />,
     isPrivate: false,
   },
-  // {
-  //   key: 3,
-  //   path: "/reservation/",
-  //   label: "Reservation",
-  //   icon: <ScheduleOutlined style={{ fontSize: "20px" }} />,
-  //   component: <Reservation />,
-  //   isPrivate: false,
-  // },
+  {
+    key: 3,
+    path: "/reservation/",
+    label: "Reservation",
+    icon: <ScheduleOutlined style={{ fontSize: "20px" }} />,
+    component: <Reservation />,
+    isPrivate: false,
+  },
+   {
+    key: 3.1,
+    path: "/add-reservation/",
+    component: <ReservationForm />,
+  },
+  {
+    key: 3.2,
+    path: "/reservation/guest-details/",
+    component: <Guest />,
+  },
   {
     key: 4,
     label: "Admin",
@@ -88,7 +108,7 @@ export const authRoutes = [
   },
   {
     key: 5,
-    label: "Manage Rooms",
+    label: "Room Management",
     isPrivate: false,
     icon: <ShopOutlined style={{ fontSize: "20px" }} />,
     nested: [
@@ -96,28 +116,28 @@ export const authRoutes = [
         key: 5.1,
         path: "/manage-rooms/room-plan",
         label: "Room Plan",
-        icon: <IdcardOutlined style={{ fontSize: "20px" }} />,
+        icon: <ApartmentOutlined style={{ fontSize: "20px" }} />,
         component: <RoomPlan />,
       },
       {
         key: 5.2,
         path: "/manage-rooms/room-type",
         label: "Room Type",
-        icon: <IdcardOutlined style={{ fontSize: "20px" }} />,
+        icon: <AppstoreOutlined style={{ fontSize: "20px" }} />,
         component: <RoomType />,
       },
       {
         key: 5.3,
         path: "/manage-rooms/room-list",
         label: "Room List",
-        icon: <IdcardOutlined style={{ fontSize: "20px" }} />,
+        icon: <UnorderedListOutlined style={{ fontSize: "20px" }} />,
         component: <RoomList />,
       },
       {
         key: 5.2,
         path: "/manage-rooms/floor",
         label: "Floor",
-        icon: <IdcardOutlined style={{ fontSize: "20px" }} />,
+        icon: <LayoutOutlined style={{ fontSize: "20px" }} />,
         component: <Floor />,
       },
     ],
@@ -133,14 +153,14 @@ export const authRoutes = [
         path: "/permission-management/permissions/",
         label: "Permissions",
         icon: <SecurityScanOutlined style={{ fontSize: "20px" }} />,
-        component: <PermissionListing />
+        component: <PermissionListing />,
       },
       {
         key: 6.2,
         path: "/role-management/roles/",
         label: "Roles",
         icon: <UserSwitchOutlined style={{ fontSize: "20px" }} />,
-        component: <RolesListing />
+        component: <RolesListing />,
       },
     ],
   },
@@ -149,7 +169,7 @@ export const authRoutes = [
     path: "/property-management/properties",
     label: "Properties",
     icon: <PropertySafetyOutlined style={{ fontSize: "20px" }} />,
-    component: <PropertiesListing/>,
+    component: <PropertiesListing />,
   },
   {
     key: 8,
@@ -191,8 +211,7 @@ export const authRoutes = [
     path: "/policy",
     icon: <MdOutlinePolicy style={{ fontSize: "20px" }} />,
     isPrivate: true,
-    component: <PolicyList />
-
+    component: <PolicyList />,
   },
   // {
   //   key: 13,
@@ -203,9 +222,6 @@ export const authRoutes = [
   //   component: <MeanPlanList />
 
   // }
-
-
-
 ];
 
 const AuthRoutes = () => {
