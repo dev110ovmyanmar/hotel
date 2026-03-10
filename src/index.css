@@ -25,7 +25,7 @@
 .breadcrumbs {
   max.width: 1200px;
   margin: 10px 0 20px 0;
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .breadcrumbs .crumb:after {
@@ -85,5 +85,10 @@
 }
 
 .css-var-root {
-    --ant-color-split:  #f5f5f5;
+  --ant-color-split: #f5f5f5;
+  --ant-color-text-disabled: #0d0c0c --ant-color-bg-container-disabled: #ffffff;
 }
+.ant-btn.ant-btn-block {
+  height: 40px;
+}
+
