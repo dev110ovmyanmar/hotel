@@ -1,15 +1,27 @@
-import React, { useEffect, useState } from "react";
-import { Button, Form, Input, Select, Spin } from "antd";
-import { useApiMutation } from "../../../../hooks/useApiMutation";
-import { useApiQuery } from "../../../../hooks/useApiQuery";
+import React, { useEffect } from "react";
+import { Form, Input, Button, Select, Drawer } from "antd";
 import Toast from "../../../../component/Toast/Toast";
-import { upsertRoom, fetchRoomType, roomMeta } from "../../../../api/roomApi";
-import { QueryClient, useQueryClient } from "@tanstack/react-query";
+import { useApiMutation } from "../../../../hooks/useApiMutation";
+import useApiQuery from "../../../../hooks/useApiQuery";
+import { queryClient } from "../../../../app/queryClient";
+import FormButton from "../../../../component/FormButtons/FormButtons";
+import {
+  createRoom,
+  editRoom,
+  roomDetails,
+  roomMeta,
+} from "../../../../api/roomApi";
 
-const RoomForm = ({ initialValues = {}, mode, onSuccess }) => {
+const RoomForm = ({
+  mode,
+  setMode,
+  selectedData,
+  setSelectedData,
+  drawerOpen,
+  setDrawerOpen,
+  setPage,
+}) => {
   const [form] = Form.useForm();
-  const queryClient = useQueryClient();
-  const [isDataReady, setIsDataReady] = useState(false);
 
   const isView = mode === "view";
   const isEdit = mode === "edit";
@@ -22,144 +34,164 @@ const RoomForm = ({ initialValues = {}, mode, onSuccess }) => {
     label: status.name,
   }));
 
-  const { data, isLoading } = useApiQuery({
+  const { data: roomMetaData } = useApiQuery({
     fetchQueryName: "roomMetaData",
     fetchQueryFunction: roomMeta,
   });
 
-  const roomType = data?.room_types?.map((type) => ({
+  const roomType = roomMetaData?.room_types?.map((type) => ({
     value: type.uuid,
     label: type.name,
   }));
 
-  const floors = data?.floors?.map((floor) => ({
+  const floors = roomMetaData?.floors?.map((floor) => ({
     value: floor.uuid,
     label: floor.name,
   }));
 
-  const { mutate, isPending } = useApiMutation({
-    mutationFn: upsertRoom,
+  const createRooms = useApiMutation({
+    mutationFn: createRoom,
+    invalidateKeys: [["roomData"]],
+  });
+
+  const editRooms = useApiMutation({
+    mutationFn: editRoom,
+    invalidateKeys: [["roomData"]],
+  });
+
+  const { data, isLoading, error } = useApiQuery({
+    fetchQueryName: "roomData",
+    fetchQueryFunction: roomDetails,
+    params: { uuid: selectedData?.uuid },
     options: {
-      onSuccess: () => {
-        Toast.success(
-          isEdit ? "Updated successfully!" : "Created successfully!",
-        );
-        form.resetFields();
-        onSuccess?.();
-      },
-      onError: () => {
-        Toast.error("Operation failed!");
-      },
+      enabled: !!selectedData?.uuid,
     },
   });
 
   useEffect(() => {
-    if (
-      initialValues &&
-      (isEdit || isView) &&
-      roomType?.length &&
-      floors?.length
-    ) {
+    if (!isAdd && data) {
       form.setFieldsValue({
-        roomNo: initialValues.roomNo,
-        pricePerNight: initialValues.pricePerNight,
-        statusUuid: initialValues.status?.uuid,
-        roomTypeUuid: initialValues.roomType?.uuid,
-        floorUuid: initialValues.floor?.uuid,
+        roomNo: data?.roomNo,
+        status: data?.status?.uuid,
+        floorUuid: data?.floor?.uuid,
+        roomTypeUuid: data?.roomType?.uuid,
       });
-      setIsDataReady(true);
-    } else if (isAdd && roomType?.length && floors?.length) {
-      setIsDataReady(true);
+
+      setSelectedData(data);
     }
-  }, [initialValues, roomType, floors, form, isEdit, isView, isAdd]);
+  }, [data]);
 
-  const handleSubmit = (values) => {
-    const payload = {
-      uuid: initialValues?.uuid,
-      roomNo: values.roomNo,
-      pricePerNight: values.pricePerNight,
-      status: { uuid: values.statusUuid },
-      roomType: { uuid: values.roomTypeUuid },
-      floor: { uuid: values.floorUuid },
-      propertyUuid: initData?.property?.uuid,
-    };
-    mutate(payload);
-  };
-  const handleCancel = () => {
-    form.resetFields();
-  };
+  const onFinish = (values) => {
+    if (isAdd) {
+      const createValues = {
+        ...values,
+        status: { uuid: values.status },
+        roomType: { uuid: values.roomTypeUuid },
+        floor: { uuid: values.floorUuid },
+      };
 
-  if (isLoading) {
-    return (
-      <div className="text-center py-10">
-        <Spin size="large" />
-      </div>
-    );
-  }
+      createRooms.mutate(createValues, {
+        onSuccess: () => {
+          form.resetFields();
+          setDrawerOpen(false);
+          setPage(1);
+          Toast.success("Room Created Successfully!");
+        },
+      });
+    }
+    if (isEdit) {
+      const editValues = {
+        ...values,
+        status: { uuid: values.status },
+        roomType: { uuid: values.roomTypeUuid },
+        floor: { uuid: values.floorUuid },
+        uuid: data?.uuid,
+      };
+
+      editRooms.mutate(editValues, {
+        onSuccess: () => {
+          setDrawerOpen(false);
+          Toast.success("Room Updated Successfully!");
+        },
+      });
+    }
+  };
 
   return (
-    <Form
-      form={form}
-      layout="vertical"
-      style={{ width: "100%" }}
-      disabled={isView}
-      onFinish={handleSubmit}
-    >
-      <h1 className="form-subtitle">Room</h1>
-
-      <Form.Item
-        label="Room Type"
-        name="roomTypeUuid"
-        rules={[{ required: true, message: "Please select a room type" }]}
+    <div>
+      <Drawer
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        size={500}
+        title={
+          <div className="flex justify-between items-center">
+            <span>
+              {mode === "view"
+                ? "Room Details"
+                : mode === "edit"
+                  ? "Edit Room"
+                  : "Create Room"}
+            </span>
+            {isView ? (
+              <Button
+                type="primary"
+                onClick={() => {
+                  setMode("edit");
+                }}
+              >
+                Edit
+              </Button>
+            ) : (
+              <FormButton
+                onClick={() => form.submit()}
+                isPending={createRoom.isLoading || editRoom.isLoading}
+                mode={mode}
+              />
+            )}
+          </div>
+        }
       >
-        <Select options={roomType} placeholder="Select Room Type" />
-      </Form.Item>
+        <Form
+          form={form}
+          layout="vertical"
+          style={{ width: "100%" }}
+          onFinish={onFinish}
+          disabled={isView}
+        >
+          <Form.Item
+            label="Room No"
+            name="roomNo"
+            rules={[{ required: true, message: "Please enter room number" }]}
+          >
+            <Input placeholder="Enter Room No" />
+          </Form.Item>
 
-      <Form.Item
-        label="Floor"
-        name="floorUuid"
-        rules={[{ required: true, message: "Please select a floor" }]}
-      >
-        <Select options={floors} placeholder="Select Floor" />
-      </Form.Item>
+          <Form.Item
+            label="Floor"
+            name="floorUuid"
+            rules={[{ required: true, message: "Please select a floor" }]}
+          >
+            <Select options={floors} placeholder="Select Floor" />
+          </Form.Item>
 
-      <Form.Item
-        label="Status"
-        name="statusUuid"
-        rules={[{ required: true, message: "Please select a status" }]}
-      >
-        <Select options={statuses} placeholder="Select Status" />
-      </Form.Item>
+          <Form.Item
+            label="Room Type"
+            name="roomTypeUuid"
+            rules={[{ required: true, message: "Please select a room type" }]}
+          >
+            <Select options={roomType} placeholder="Select Room Type" />
+          </Form.Item>
 
-      <Form.Item
-        label="Room No"
-        name="roomNo"
-        rules={[{ required: true, message: "Please enter room number" }]}
-      >
-        <Input placeholder="Enter Room No" />
-      </Form.Item>
-
-      <Form.Item
-        label="Price Per Night"
-        name="pricePerNight"
-        rules={[{ required: true, message: "Please enter price per night" }]}
-      >
-        <Input placeholder="Enter Price" />
-      </Form.Item>
-
-      <Form.Item>
-        <div className="flex justify-between gap-4">
-          <Button type="default" onClick={handleCancel} block>
-            Cancel
-          </Button>
-          {!isView && (
-            <Button type="primary" htmlType="submit" block loading={isPending}>
-              Save
-            </Button>
-          )}
-        </div>
-      </Form.Item>
-    </Form>
+          <Form.Item
+            label="Status"
+            name="status"
+            rules={[{ required: true, message: "Please select a status" }]}
+          >
+            <Select options={statuses} placeholder="Select Status" />
+          </Form.Item>
+        </Form>
+      </Drawer>
+    </div>
   );
 };
 

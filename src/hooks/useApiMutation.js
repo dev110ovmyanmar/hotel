@@ -4,6 +4,7 @@ export const useApiMutation = ({
   mutationFn,
   invalidateKeys = [],
   options = {},
+  page
 }) => {
   const queryClient = useQueryClient();
 
@@ -11,11 +12,14 @@ export const useApiMutation = ({
     mutationFn,
 
     onSuccess: () => {
-      invalidateKeys.forEach((key) =>
-        queryClient.invalidateQueries({ queryKey: key })
-      );
+      if (page === 1) {
+        invalidateKeys.forEach((key) =>
+          queryClient.invalidateQueries({ queryKey: key })
+        );
+      }
     },
 
     ...options,
   });
 };
+

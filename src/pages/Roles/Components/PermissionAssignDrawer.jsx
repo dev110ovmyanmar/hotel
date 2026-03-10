@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo } from "react";
 import { Button, Drawer, Input, Checkbox, Divider, Empty } from "antd";
 // import { SearchOutlined } from "@ant-design/icons";
@@ -176,11 +177,10 @@ const PermissionAssignDrawer = ({
                           onChange={() => handleCheck(p.id)}
                         >
                           <span
-                            className={`text-sm ${
-                              isOriginal && isChecked
+                            className={`text-sm ${isOriginal && isChecked
                                 ? "text-green-700 font-semibold"
                                 : ""
-                            }`}
+                              }`}
                           >
                             {p.name}
                           </span>

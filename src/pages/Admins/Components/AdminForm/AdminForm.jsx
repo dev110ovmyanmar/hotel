@@ -10,9 +10,11 @@ import {
   createAdminFun,
   editAdminFun,
 } from "../../../../api/adminFunctionApi";
+import FormButton from "../../../../component/FormButtons/FormButtons";
 
 const AdminForm = ({
   mode,
+  setMode,
   selectedData,
   setSelectedData,
   drawerOpen,
@@ -106,20 +108,35 @@ const AdminForm = ({
       <Drawer
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
-        width={500}
-        // closable={false}
-        // extra={
-        //   <CloseOutlined
-        //     onClick={() => setDrawerOpen(false)}
-        //     style={{ fontSize: 18, cursor: "pointer" }}
-        //   />
-        // }
+        size={500}
         title={
-          mode === "view"
-            ? "Admin Details"
-            : mode === "edit"
-              ? "Edit Admin"
-              : "Create Admin"
+          <div className="flex justify-between items-center">
+            <span>
+              {mode === "view"
+                ? "Admin Details"
+                : mode === "edit"
+                  ? "Edit Admin"
+                  : "Create Admin"}
+            </span>
+            {isView ? (
+              <Button
+                type="primary"
+                onClick={() => {
+                  setMode("edit");
+                }}
+              >
+                Edit
+              </Button>
+            ) : (
+              <FormButton
+                onClick={() => form.submit()}
+                isPending={
+                  createAdminFunction.isLoading || editAdminFunction.isLoading
+                }
+                mode={mode}
+              />
+            )}
+          </div>
         }
       >
         <Form
@@ -127,22 +144,23 @@ const AdminForm = ({
           layout="vertical"
           style={{ width: "100%" }}
           onFinish={onFinish}
+          disabled={isView}
         >
           <Form.Item
-            label="Admin Name"
+            label="Name"
             name="name"
             rules={[{ required: true, message: "Admin Name is Required" }]}
             aut
           >
-            <Input readOnly={isView} />
+            <Input />
           </Form.Item>
 
           <Form.Item
-            label="Admin Email"
+            label="Email"
             name="email"
             rules={[{ required: true, message: "Admin Email is Required" }]}
           >
-            <Input readOnly={isEdit || isView} />
+            <Input />
           </Form.Item>
 
           <Form.Item name="role" label="Role">
@@ -168,32 +186,6 @@ const AdminForm = ({
               open={isView ? false : undefined}
             />
           </Form.Item>
-
-          {!isView && (
-            <div className="flex justify-between gap-4">
-              <Button
-                className="w-60"
-                type="default"
-                disabled={isView}
-                onClick={() => setDrawerOpen(false)}
-              >
-                Cancel
-              </Button>
-              <Button
-                className="w-60"
-                type="primary"
-                htmlType="submit"
-                disabled={isView}
-                loading={
-                  isAdd
-                    ? createAdminFunction.isPending
-                    : editAdminFunction.isPending
-                }
-              >
-                {isAdd ? "Create" : "Save"}
-              </Button>
-            </div>
-          )}
         </Form>
       </Drawer>
     </div>

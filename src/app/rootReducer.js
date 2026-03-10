@@ -1,8 +1,10 @@
 import { combineReducers } from "redux";
 import appReducer from "../services/appSlice";
+import adminProfileReducer from './../services/profileDetailsSlice';
 
 const reducer = combineReducers({
     app: appReducer,
+    adminProfile: adminProfileReducer
 });
 
 const rootReducer = (state, action) => {

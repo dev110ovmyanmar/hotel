@@ -21,8 +21,6 @@ const RolesListing = () => {
   const [pageSize, setPageSize] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
 
-  const [messageApi, contextHolder] = message.useMessage();
-
   // ✅ Fetch role list ONCE — keyword removed from params (we filter client-side)
   const { data, isLoading } = useApiQuery({
     fetchQueryName: "roles",
@@ -31,7 +29,6 @@ const RolesListing = () => {
   });
 
   const roles = Array.isArray(data?.data) ? data.data : [];
-  const total = data?.total || 0;
 
   // ✅ CREATE mutation
   const createRoleFunction = useApiMutation({
@@ -111,7 +108,7 @@ const RolesListing = () => {
             searchPlaceholder="Search roles by name, code...."
             keyword={keyword}
             setKeyword={setKeyword}
-            addButtonText="Add Role"
+            addButtonText="Add New Role"
             onAdd={handleAdd}
           />
         </div>
@@ -132,7 +129,6 @@ const RolesListing = () => {
         createRoleFunction={createRoleFunction}
         updateRoleFunction={updateRoleFunction}
         updatePermissionFunction={updatePermissionFunction}
-        messageApi={messageApi}
         switchToEdit={switchToEdit}
         DrawerTitle={DrawerTitle}
         onClose={onClose}

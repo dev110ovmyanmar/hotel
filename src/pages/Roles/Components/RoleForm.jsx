@@ -70,7 +70,7 @@ const RoleForm = ({
         onSuccess: (res) => {
           if (res?.reasonCode === "200" || res?.status === "success") {
             Toast.success("Role created successfully");
-            refetch();
+            // refetch();
             setDrawerOpen(false);
           } else {
             Toast.error(res?.error?.text || "Creation failed");
@@ -111,28 +111,30 @@ const RoleForm = ({
     setPermDrawerOpen(false);
 
     // Compute delta (only changed permissions)
-    const changedPermissions = [];
-    roleDetail?.permissions?.forEach((group) => {
-      group.permissions?.forEach((p) => {
-        const wasSelected = p.selected;
-        const isNowSelected = newIdsAsString.includes(String(p.id));
-        if (wasSelected !== isNowSelected) {
-          changedPermissions.push(p.id);
-        }
-      });
-    });
+    // const changedPermissions = [];
+    // roleDetail?.permissions?.forEach((group) => {
+    //   group.permissions?.forEach((p) => {
+    //     const wasSelected = p.selected;
+    //     const isNowSelected = newIdsAsString.includes(String(p.id));
+    //     if (wasSelected !== isNowSelected) {
+    //       changedPermissions.push(p.id);
+    //     }
+    //   });
+    // });
 
-    if (changedPermissions.length === 0) {
-      Toast.info("No permission changes detected");
-      return;
-    }
+    // if (changedPermissions.length === 0) {
+    //   Toast.info("No permission changes detected");
+    //   return;
+    // }
+
 
     const permPayload = {
       uuid: selectedData?.uuid,
       name: roleDetail.name,
       code: roleDetail.code,
       description: roleDetail.description || "",
-      permissions: changedPermissions,
+      // permissions: changedPermissions,
+      permissions: newIds, //This the array of currently checked IDs
     };
 
     console.log("📤 Sending Permission Delta Update:", permPayload);
@@ -159,99 +161,99 @@ const RoleForm = ({
         </div>
       ) : (
         <Drawer
-        title={
-          <div className="flex items-center justify-between">
-            <span>{DrawerTitle}</span>
-            {isView && (
-              <Button type="primary" onClick={switchToEdit}>
-                Edit
-              </Button>
-            )}
-          </div>
-        }
-        size={500}
-        onClose={onClose}
-        open={open}
-      >
-        <Form form={form} layout="vertical" onFinish={onFinish}>
-          {/* ── Role Info Fields ── */}
-          <Form.Item label="Name" name="name" rules={[{ required: true }]}>
-            <Input readOnly={isView} placeholder="IT Support" />
-          </Form.Item>
-          <Form.Item label="Code" name="code" rules={[{ required: true }]}>
-            <Input readOnly={isView} placeholder="it_support"/>
-          </Form.Item>
-          <Form.Item label="Description" name="description">
-            <TextArea rows={3} readOnly={isView} placeholder="Enter the description for related role"/>
-          </Form.Item>
-
-          {/* ── Role Info Action Buttons ── */}
-          {!isView && (
-            <div style={{ display: "flex", gap: "10px", marginBottom: "20px" }}>
-              <Button
-                onClick={() => setDrawerOpen(false)}
-                style={{ flex: 1 }}
-              >
-                Cancel
-              </Button>
-              <Button
-                type="primary"
-                htmlType="submit"
-                style={{ flex: 1 }}
-                loading={
-                  isAdd
-                    ? createRoleFunction.isPending
-                    : updateRoleFunction.isPending
-                }
-              >
-                {isAdd ? "Create Role" : "Update Info"}
-              </Button>
+          title={
+            <div className="flex items-center justify-between">
+              <span>{DrawerTitle}</span>
+              {isView && (
+                <Button type="primary" onClick={switchToEdit}>
+                  Edit
+                </Button>
+              )}
             </div>
-          )}
+          }
+          size={500}
+          onClose={onClose}
+          open={open}
+        >
+          <Form form={form} layout="vertical" onFinish={onFinish}>
+            {/* ── Role Info Fields ── */}
+            <Form.Item label="Name" name="name" rules={[{ required: true }]}>
+              <Input readOnly={isView} placeholder="IT Support" />
+            </Form.Item>
+            <Form.Item label="Code" name="code" rules={[{ required: true }]}>
+              <Input readOnly={isView} placeholder="it_support" />
+            </Form.Item>
+            <Form.Item label="Description" name="description">
+              <TextArea rows={3} readOnly={isView} placeholder="Enter the description for related role" />
+            </Form.Item>
 
-          {/* ── Permissions Section (edit / view only, not add) ── */}
-          {!isAdd && (
-            <>
-              <Divider />
-              <div
-                style={{
-                  background: "#f5f5f5",
-                  padding: "15px",
-                  borderRadius: "8px",
-                  marginBottom: "20px",
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                }}
-              >
-                <span>
-                  Permissions Selected:{" "}
-                  <b>{currentPermissions.length}</b>
-                </span>
-
-                {!isView && (
-                  <Button
-                    type="primary"
-                    loading={updatePermissionFunction?.isPending}
-                    onClick={() => setPermDrawerOpen(true)}
-                  >
-                    Manage Permissions
-                  </Button>
-                )}
+            {/* ── Role Info Action Buttons ── */}
+            {!isView && (
+              <div style={{ display: "flex", gap: "10px", marginBottom: "20px" }}>
+                <Button
+                  onClick={() => setDrawerOpen(false)}
+                  style={{ flex: 1 }}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  style={{ flex: 1 }}
+                  loading={
+                    isAdd
+                      ? createRoleFunction.isPending
+                      : updateRoleFunction.isPending
+                  }
+                >
+                  {isAdd ? "Create Role" : "Update Info"}
+                </Button>
               </div>
-            </>
-          )}
+            )}
 
-          {/* ── Permission Assign Drawer ── */}
-          <PermissionAssignDrawer
-            open={permDrawerOpen}
-            onClose={() => setPermDrawerOpen(false)}
-            rolePermissions={roleDetail?.permissions || []}
-            selectedPermissions={currentPermissions}
-            onSave={handlePermissionSave} // ✅ triggers its own API call
-          />
-        </Form>
-      </Drawer>
+            {/* ── Permissions Section (edit / view only, not add) ── */}
+            {!isAdd && (
+              <>
+                <Divider />
+                <div
+                  style={{
+                    background: "#f5f5f5",
+                    padding: "15px",
+                    borderRadius: "8px",
+                    marginBottom: "20px",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <span>
+                    Permissions Selected:{" "}
+                    <b>{currentPermissions.length}</b>
+                  </span>
+
+                  {!isView && (
+                    <Button
+                      type="primary"
+                      loading={updatePermissionFunction?.isPending}
+                      onClick={() => setPermDrawerOpen(true)}
+                    >
+                      Manage Permissions
+                    </Button>
+                  )}
+                </div>
+              </>
+            )}
+
+            {/* ── Permission Assign Drawer ── */}
+            <PermissionAssignDrawer
+              open={permDrawerOpen}
+              onClose={() => setPermDrawerOpen(false)}
+              rolePermissions={roleDetail?.permissions || []}
+              selectedPermissions={currentPermissions}
+              onSave={handlePermissionSave} // ✅ triggers its own API call
+            />
+          </Form>
+        </Drawer>
 
       )}
     </>
