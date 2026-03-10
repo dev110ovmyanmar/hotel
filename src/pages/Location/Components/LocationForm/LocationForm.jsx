@@ -10,10 +10,13 @@ import { queryClient } from "../../../../app/queryClient";
 import { createLocationFun, editLocationFun, locationDetailsFun } from "../../../../api/locationFunctionApi";
 import { AiTwotoneEye } from "react-icons/ai";
 import { FiEdit } from "react-icons/fi";
-import ContentBanner from "../../../../component/ContentBanner/ContentBanner";
+import ListHeader from './../../../../component/ListHeader/ListHeader';
+import FormButtons from './../../../../component/FormButtons/FormButtons';
 
 
 const LocationForm = ({
+  page,
+  setPage,
   mode,
   selectedData,
   setSelectedData,
@@ -22,6 +25,7 @@ const LocationForm = ({
   modalOpen,
   setModalOpen
 }) => {
+
   const [form] = Form.useForm();
   const [cityForm] = Form.useForm();
 
@@ -38,12 +42,14 @@ const LocationForm = ({
 
   const createLocationFunction = useApiMutation({
     mutationFn: createLocationFun,
-    invalidateKeys: [["locations"]]
+    invalidateKeys: [["locations"]],
+    page: page
   });
 
   const editLocationFunction = useApiMutation({
     mutationFn: editLocationFun,
-    invalidateKeys: [["locations"]]
+    invalidateKeys: [["locations"]],
+    page: page
   });
 
   const { data, isPending, error } = useApiQuery({
@@ -55,9 +61,6 @@ const LocationForm = ({
     },
   });
 
-  if (data) {
-    console.log(data, "DaTATTTTTTTTTTTTTTTTTTTTTTTt")
-  }
 
   useEffect(() => {
     if (isEdit && data) {
@@ -67,19 +70,20 @@ const LocationForm = ({
     }
   }, [data, isEdit]);
 
-  useEffect(()=>{
-    if(isAdd){
+  useEffect(() => {
+    if (isAdd) {
       form.resetFields()
-    } 
-    if(isCityAdd){
+    }
+    if (isCityAdd) {
       cityForm.resetFields()
     }
-  },[isAdd,isCityAdd]);
+  }, [isAdd, isCityAdd]);
 
   const onFinish = (values) => {
     if (isAdd) {
       createLocationFunction.mutate(values, {
         onSuccess: () => {
+          setPage(1);
           setModalOpen(false);
           Toast.success("Country Created Successfully!");
           form.resetFields()
@@ -104,7 +108,7 @@ const LocationForm = ({
 
   const columns = [
     {
-      title: "Id",
+      title: "ID",
       dataIndex: 'id',
       key: 'id',
       render: text => <div>{text}</div>
@@ -121,7 +125,14 @@ const LocationForm = ({
       render: (_, record) => {
         return (
           <Space>
-            <FiEdit className="text-blue-500" onClick={() => { setCreateDrawerOpen(true), setCityMode("cityEdit"), setSelectedCity(record) }} />
+            <FiEdit
+              className="text-blue-500"
+              onClick={() => {
+                setCreateDrawerOpen(true),
+                  setCityMode("cityEdit"),
+                  setSelectedCity(record)
+              }}
+            />
           </Space>
         )
       }
@@ -140,10 +151,11 @@ const LocationForm = ({
         }
       };
       createLocationFunction.mutate(modifiedValues, {
+
         onSuccess: () => {
           setCreateDrawerOpen(false);
           Toast.success("City Create Successfully!");
-          
+
         }
       });
     }
@@ -162,7 +174,7 @@ const LocationForm = ({
         onSuccess: () => {
           setCreateDrawerOpen(false);
           Toast.success("City Updated Successfully!");
-          
+
         }
       });
     }
@@ -170,14 +182,14 @@ const LocationForm = ({
   };
 
   useEffect(() => {
-    if (!isCityAdd && isCityEdit && selectedCity) {
+    if (isCityEdit && selectedCity) {
       cityForm.setFieldsValue({
         city: {
           name: selectedCity.name
         }
       });
     }
-  }, [selectedCity, !isCityAdd]);
+  }, [selectedCity, isCityAdd]);
 
   return (
     <div className="flex justify-center" >
@@ -187,13 +199,6 @@ const LocationForm = ({
           size={500}
           open={drawerOpen}
           onClose={() => setDrawerOpen(false)}
-          closable={false}
-          extra={
-            < CloseOutlined
-              onClick={() => setDrawerOpen(false)}
-              style={{ fontSize: 18, cursor: "pointer" }}
-            />
-          }
           title={
             <>
               <span style={{ fontWeight: "normal" }}>Country: </span>
@@ -201,15 +206,15 @@ const LocationForm = ({
             </>
           }
         >
-          <ContentBanner
-            btntext="Create City"
-            smallbuttonsize="true"
+          <ListHeader
+            addButtonText="Add New City"
+            page={page}
+            setPage={setPage}
             setCreateDrawerOpen={setCreateDrawerOpen}
             setCityMode={setCityMode}
           />
 
           <Table
-            size="small"
             columns={columns}
             dataSource={data?.city}
             rowKey="uuid"
@@ -218,41 +223,37 @@ const LocationForm = ({
           >
           </Table>
 
+          {/* isCityEdit = cityMode === "cityEdit";
+  const isCityAdd = cityMode === "cityAdd"; */}
           <Drawer
             open={createDrawerOpen}
             onClose={() => setCreateDrawerOpen(false)}
-            closable={false}
-            extra={
-              <CloseOutlined
-                onClick={() => setCreateDrawerOpen(false)}
-                style={{ fontSize: 18, cursor: "pointer" }}
-              />
-            }
             title={
-              isCityAdd ? "Create City" : "Edit City"
+              <div className="flex justify-between items-center">
+                <span>
+                  {
+                    isCityEdit ? "Edit City" : "Add New City"
+                  }
+                </span>
+   
+                <div className="flex justify-between gap-4">
+                  <Button type="primary" onClick={()=>cityForm.submit()} loading={isCityAdd? createLocationFunction?.isPending : editLocationFunction?.isPending}>
+                    {isCityAdd ? "Create" : "Update"}
+                  </Button>
+                </div>
+              </div>
             }
-            
+
           >
             <Form
               form={cityForm}
               onFinish={onCityFinish}
+              layout="vertical"
             >
 
               <Form.Item label="City" name={["city", "name"]} rules={[{ required: true, message: "City is required" }]}>
                 <Input />
               </Form.Item>
-
-              <div className="flex justify-end">
-                <Button
-                  onClick={() => setCreateDrawerOpen(false)}
-                  className="me-2"
-                >
-                  Cancel
-                </Button>
-                <Button htmlType="submit" type="primary" loading={isCityAdd ? createLocationFunction.isPending : editLocationFunction.isPending}>
-                  {isCityAdd ? "Create" : "Save"}
-                </Button>
-              </div>
             </Form>
           </Drawer>
         </Drawer >
@@ -264,8 +265,8 @@ const LocationForm = ({
         onCancel={() => setModalOpen(false)}
         title={
           mode === "add" ?
-            "Create Country" :
-            "Edit Country"
+            "Add New Location" :
+            "Edit New Location"
         }
         footer={null}
       >
@@ -293,8 +294,8 @@ const LocationForm = ({
               >
                 Cancel
               </Button>
-              <Button type="primary" htmlType="submit" loading={isAdd? createLocationFunction.isPending : editLocationFunction.isPending}>
-                {isAdd ? "Create" : "Save"}
+              <Button type="primary" htmlType="submit" loading={isAdd ? createLocationFunction.isPending : editLocationFunction.isPending}>
+                Save
               </Button>
             </div>
           )}
