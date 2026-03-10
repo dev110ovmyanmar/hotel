@@ -67,6 +67,7 @@ const AdminList = () => {
         setDrawerOpen={setDrawerOpen}
         setPage={setPage}
         mode={mode}
+        setMode={setMode}
         selectedData={selectedData}
         setSelectedData={setSelectedData}
         width={500}
