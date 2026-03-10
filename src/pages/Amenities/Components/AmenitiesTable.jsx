@@ -19,7 +19,7 @@ const AmenitiesTable = ({
 
   const columns = [
     {
-      title: "Id",
+      title: "ID",
       render: (_, record) => <div>{record?.id}</div>,
       width: 70,
       align: "center",
@@ -102,7 +102,6 @@ const AmenitiesTable = ({
   return (
     <div id="scrollId" className="w-full h-[63vh] ">
       <Table
-        size="small"
         tableLayout="fixed"
         scroll={{ x: 1000 }}
         columns={columns}

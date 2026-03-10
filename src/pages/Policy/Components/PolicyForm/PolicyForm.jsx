@@ -8,33 +8,44 @@ import {
   editPolicyFun,
   policyDetailsFun,
 } from "../../../../api/policyFunctionApi";
-import { queryClient } from "../../../../app/queryClient";
 import FormButtons from "../../../../component/FormButtons/FormButtons";
+import { loadState } from './../../../../utils/Utils';
+import { LOCAL_STORAGE_KEYS } from './../../../../variables/constants';
+
+const { TextArea } = Input;
 
 const PolicyForm = ({
+  page,
+  setPage,
   mode,
   setMode,
   selectedData,
   drawerOpen,
   setDrawerOpen,
 }) => {
+
   const [form] = Form.useForm();
 
   const isView = mode === "view";
   const isEdit = mode === "edit";
   const isAdd = mode === "add";
 
-  const initData = queryClient.getQueryData(["initData", {}]);
-  const policyType = initData?.statuses?.policy_type;
+
+  const initData = loadState(LOCAL_STORAGE_KEYS.initData)?.statuses;
+  const linkTo = initData?.link_to;
+  const policyType = initData?.policy_type;
 
   const createPolicyFunction = useApiMutation({
     mutationFn: createPolicyFun,
     invalidateKeys: [["policies"]],
+    page: page
+
   });
 
   const editPolicyFunction = useApiMutation({
     mutationFn: editPolicyFun,
     invalidateKeys: [["policies"]],
+    page: page
   });
 
   const { data, isPending, error } = useApiQuery({
@@ -47,13 +58,13 @@ const PolicyForm = ({
   });
 
   if (data) {
-    console.log(data, "DataDetailsinPolicyForm");
+    console.log(data?.linkTo?.name, "DataInPolicyFom");
   }
-
   useEffect(() => {
     if (!isAdd && data) {
       form.setFieldsValue({
         ...data,
+        linkTo: data?.linkTo?.uuid
       });
     }
   }, [data, isAdd]);
@@ -66,8 +77,16 @@ const PolicyForm = ({
 
   const onFinish = (values) => {
     if (isAdd) {
-      createPolicyFunction.mutate(values, {
+      const modifiedValue = {
+        ...values,
+        linkTo: {
+          uuid: values?.linkTo
+        }
+      };
+
+      createPolicyFunction.mutate(modifiedValue, {
         onSuccess: () => {
+          setPage(1);
           setDrawerOpen(false);
           Toast.success("Policy Created Successfully!");
           form.resetFields();
@@ -76,10 +95,15 @@ const PolicyForm = ({
     }
 
     if (isEdit) {
+      console.log(values, "ValuesINEdit");
       const editValues = {
         ...values,
+        linkTo: {
+          uuid: values?.linkTo
+        },
         uuid: selectedData?.uuid,
       };
+      console.log(editValues, "editVallues")
 
       editPolicyFunction.mutate(editValues, {
         onSuccess: () => {
@@ -118,7 +142,7 @@ const PolicyForm = ({
               <FormButtons
                 onClick={() => form.submit()}
                 isPending={
-                  createPolicyFunction.isLoading || editPolicyFunction.isLoading
+                  isAdd ? createPolicyFunction.isLoading : editPolicyFunction.isLoading
                 }
                 mode={mode}
               />
@@ -143,21 +167,15 @@ const PolicyForm = ({
             <Input />
           </Form.Item>
 
-          <Form.Item
-            label="Description"
-            name="description"
-            rules={[{ required: true, message: "Description is Required" }]}
-          >
-            <Input />
+          <Form.Item label="Link To" name="linkTo" rules={[{ required: true, message: "Link To is Required" }]}>
+            <Select
+              options={linkTo?.map(item =>
+                ({ label: item?.name, value: item?.uuid })
+              )}
+            >
+            </Select>
           </Form.Item>
 
-          <Form.Item
-            label="Link To"
-            name="linkTo"
-            rules={[{ required: true, message: "Link To is Required" }]}
-          >
-            <Input />
-          </Form.Item>
 
           <Form.Item
             label="Type"
@@ -165,7 +183,7 @@ const PolicyForm = ({
             rules={[{ required: true, message: "Policy Name is Required" }]}
           >
             <Select
-              options={policyType.map((item) => ({
+              options={policyType?.map((item) => ({
                 label: item.name,
                 value: item.uuid,
               }))}
@@ -186,9 +204,16 @@ const PolicyForm = ({
               open={isView ? false : undefined}
             ></Select>
           </Form.Item>
+
+          <Form.Item label="Description" name="description" rules={[{ required: true, message: "Description is Required" }]}>
+            <TextArea
+              readOnly={isView}
+              rows={4}
+            ></TextArea>
+          </Form.Item>
         </Form>
       </Drawer>
-    </div>
+    </div >
   );
 };
 
