@@ -3,12 +3,15 @@ import dayjs from "dayjs";
 // Locales
 import "dayjs/locale/pt";
 
+
+
 // Plugins
 import advancedFormat from "dayjs/plugin/advancedFormat";
 import localizedFormat from "dayjs/plugin/localizedFormat";
 import relativeTime from "dayjs/plugin/relativeTime";
 import utc from 'dayjs/plugin/utc'
 import customParseFormat from 'dayjs/plugin/customParseFormat';
+import timezone from "dayjs/plugin/timezone";
 
 // Load plugins
 dayjs.extend(advancedFormat);
@@ -16,6 +19,7 @@ dayjs.extend(localizedFormat);
 dayjs.extend(relativeTime);
 dayjs.extend(customParseFormat);
 dayjs.extend(utc);
+dayjs.extend(timezone);
 /**
  * @returns object containing ISO 8601 and RFC2822 formatted date
  */

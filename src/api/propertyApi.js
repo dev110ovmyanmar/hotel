@@ -28,4 +28,10 @@ export const updateProperty = async (uuid, payload) => {
   return data;
 };
 
+export const updatePropertySetting = async(uuid, payload) => {
+  const {data} = await apiClient.post("/property/upsert", payload);
+}
+
+
+
 

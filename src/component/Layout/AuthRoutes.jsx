@@ -21,6 +21,7 @@ import {
   AppstoreOutlined,
   BarsOutlined,
   LayoutOutlined,
+  FileProtectOutlined,
 } from "@ant-design/icons";
 import { lazy } from "react";
 import AdminList from "../../pages/Admins/AdminList";
@@ -56,6 +57,7 @@ const RolesListing = lazy(() => import("../../pages/Roles/RolesListing"));
 const PropertiesListing = lazy(
   () => import("../../pages/Properties/PropertiesListing"),
 );
+const PrivacyPolicy = lazy(() => import("../../pages/PrivacyPolicy/PrivacyPolicy"));
 
 export const authRoutes = [
   {
@@ -213,6 +215,14 @@ export const authRoutes = [
     isPrivate: true,
     component: <PolicyList />,
   },
+  {
+    key: 13,
+    label: "Privacy Policy",
+    path: "/privacy-policy",
+    icon: <FileProtectOutlined style={{ fontSize: "20px"}}/>,
+    isPrivate: true,
+    component: <PrivacyPolicy/>
+  }
   // {
   //   key: 13,
   //   label: "Meal Plan",

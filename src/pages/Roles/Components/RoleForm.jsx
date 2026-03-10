@@ -5,7 +5,6 @@ import PermissionAssignDrawer from "./PermissionAssignDrawer";
 import { fetchRoleDetail } from "../../../api/roleApi";
 import useApiQuery from "../../../hooks/useApiQuery";
 import Toast from "../../../component/Toast/Toast";
-import FormButtons from "../../../component/FormButtons/FormButtons";
 
 const { TextArea } = Input;
 
@@ -19,7 +18,7 @@ const RoleForm = ({
   switchToEdit,
   DrawerTitle,
   open,
-  onClose,
+  onClose
 }) => {
   const [form] = Form.useForm();
   const [permDrawerOpen, setPermDrawerOpen] = useState(false);
@@ -28,11 +27,7 @@ const RoleForm = ({
   const isView = mode === "view";
   const isAdd = mode === "add";
 
-  const {
-    data: roleDetail,
-    refetch,
-    isLoading,
-  } = useApiQuery({
+  const { data: roleDetail, refetch, isLoading } = useApiQuery({
     fetchQueryName: "roleDetail",
     fetchQueryFunction: fetchRoleDetail,
     params: { uuid: selectedData?.uuid },
@@ -116,28 +111,30 @@ const RoleForm = ({
     setPermDrawerOpen(false);
 
     // Compute delta (only changed permissions)
-    const changedPermissions = [];
-    roleDetail?.permissions?.forEach((group) => {
-      group.permissions?.forEach((p) => {
-        const wasSelected = p.selected;
-        const isNowSelected = newIdsAsString.includes(String(p.id));
-        if (wasSelected !== isNowSelected) {
-          changedPermissions.push(p.id);
-        }
-      });
-    });
+    // const changedPermissions = [];
+    // roleDetail?.permissions?.forEach((group) => {
+    //   group.permissions?.forEach((p) => {
+    //     const wasSelected = p.selected;
+    //     const isNowSelected = newIdsAsString.includes(String(p.id));
+    //     if (wasSelected !== isNowSelected) {
+    //       changedPermissions.push(p.id);
+    //     }
+    //   });
+    // });
 
-    if (changedPermissions.length === 0) {
-      Toast.info("No permission changes detected");
-      return;
-    }
+    // if (changedPermissions.length === 0) {
+    //   Toast.info("No permission changes detected");
+    //   return;
+    // }
+
 
     const permPayload = {
       uuid: selectedData?.uuid,
       name: roleDetail.name,
       code: roleDetail.code,
       description: roleDetail.description || "",
-      permissions: changedPermissions,
+      // permissions: changedPermissions,
+      permissions: newIds, //This the array of currently checked IDs
     };
 
     console.log("📤 Sending Permission Delta Update:", permPayload);
@@ -167,12 +164,10 @@ const RoleForm = ({
           title={
             <div className="flex items-center justify-between">
               <span>{DrawerTitle}</span>
-              {isView ? (
+              {isView && (
                 <Button type="primary" onClick={switchToEdit}>
                   Edit
                 </Button>
-              ) : (
-                <FormButtons onClick={() => form.submit()} mode={mode} />
               )}
             </div>
           }
@@ -189,15 +184,32 @@ const RoleForm = ({
               <Input readOnly={isView} placeholder="it_support" />
             </Form.Item>
             <Form.Item label="Description" name="description">
-              <TextArea
-                rows={3}
-                readOnly={isView}
-                placeholder="Enter the description for related role"
-              />
+              <TextArea rows={3} readOnly={isView} placeholder="Enter the description for related role" />
             </Form.Item>
 
             {/* ── Role Info Action Buttons ── */}
-          
+            {!isView && (
+              <div style={{ display: "flex", gap: "10px", marginBottom: "20px" }}>
+                <Button
+                  onClick={() => setDrawerOpen(false)}
+                  style={{ flex: 1 }}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  style={{ flex: 1 }}
+                  loading={
+                    isAdd
+                      ? createRoleFunction.isPending
+                      : updateRoleFunction.isPending
+                  }
+                >
+                  {isAdd ? "Create Role" : "Update Info"}
+                </Button>
+              </div>
+            )}
 
             {/* ── Permissions Section (edit / view only, not add) ── */}
             {!isAdd && (
@@ -215,7 +227,8 @@ const RoleForm = ({
                   }}
                 >
                   <span>
-                    Permissions Selected: <b>{currentPermissions.length}</b>
+                    Permissions Selected:{" "}
+                    <b>{currentPermissions.length}</b>
                   </span>
 
                   {!isView && (
@@ -241,6 +254,7 @@ const RoleForm = ({
             />
           </Form>
         </Drawer>
+
       )}
     </>
   );
