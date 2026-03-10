@@ -18,7 +18,6 @@ const PermissionListing = () => {
   const [currentMode, setCurrentMode] = useState("add");
   const [keyword, setKeyword] = useState(""); // This now only controls local UI
 
-
   // 1. Fetch data WITHOUT keyword so it only calls once on mount
   const { data, refetch, isLoading } = useApiQuery({
     fetchQueryName: "permissionData",
@@ -96,9 +95,7 @@ const PermissionListing = () => {
       },
       onError: (err) => {
         const apiError = err?.response?.data?.error?.text;
-        Toast.error(
-          apiError || err?.message || "Failed to create permission",
-        );
+        Toast.error(apiError || err?.message || "Failed to create permission");
       },
     },
   });
@@ -114,9 +111,7 @@ const PermissionListing = () => {
       },
       onError: (err) => {
         const apiError = err?.response?.data?.error?.text;
-        Toast.error(
-          apiError || err?.message || "Failed to update permission",
-        );
+        Toast.error(apiError || err?.message || "Failed to update permission");
       },
     },
   });
@@ -185,7 +180,7 @@ const PermissionListing = () => {
           searchPlaceholder="Search Permission ..."
           keyword={keyword}
           setKeyword={setKeyword}
-          addButtonText=" Add Permission"
+          addButtonText=" Add New Permission"
           onAdd={handleAdd}
         />
       </div>
@@ -196,9 +191,7 @@ const PermissionListing = () => {
         loading={isLoading}
       />
       <PermissionForm
-        initialValues={
-          currentMode === "add" ? null : detailData || selectedRow
-        }
+        initialValues={currentMode === "add" ? null : detailData || selectedRow}
         mode={currentMode}
         onSubmit={handleSubmit}
         open={open}
