@@ -26,7 +26,6 @@ import { adminLogout } from "../../api/logoutApi.js";
 import { useApiMutation } from "../../hooks/useApiMutation.js";
 import { ReloadOutlined } from "@ant-design/icons";
 import { queryClient } from "../../app/queryClient.js";
-import { fetchInitData } from "../../api/initDataApi.js";
 
 const { Header } = Layout;
 
@@ -41,22 +40,21 @@ const Topbar = withDirection(function (props) {
   const [popoverOpen, setPopoverOpen] = useState(false);
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   const handleRefetchInitData = async () => {
-    try {
-      await queryClient.fetchQuery({
-        queryKey: ["initData"],
-        queryFn: fetchInitData,
-        staleTime: 24 * 60 * 60 * 1000,
-        gcTime: 24 * 60 * 60 * 1000,
-        meta: { persist: true },
-      });
-      queryClient.setQueryData(["initData"], data);
-      console.log("Init data refreshed");
-    } catch (error) {
-      console.error("Refetch failed", error);
-    }
-  };
+  try {
+    setRefreshing(true);
+
+    await queryClient.invalidateQueries({
+      queryKey: ["initData"],
+    });
+  } catch (error) {
+    console.error("Refetch failed", error);
+  } finally {
+    setRefreshing(false);
+  }
+};
 
   const logout = useApiMutation({
     mutationFn: adminLogout,
@@ -198,8 +196,8 @@ const Topbar = withDirection(function (props) {
 
           <Button
             type="text"
+            loading={refreshing}
             icon={<ReloadOutlined style={{ fontSize: 20 }}/>}
-            size="middle"
             className="bg-gray-200 hover:bg-gray-300 text-gray-700"
             onClick={handleRefetchInitData}
           />
