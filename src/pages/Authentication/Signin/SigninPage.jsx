@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Form, Input, Button } from "antd";
-
+import { NavLink, useNavigate } from "react-router-dom";
 import { saveState } from "../../../utils";
 import { LOCAL_STORAGE_KEYS } from "../../../variables/constants";
 import { useApiMutation } from "../../../hooks/useApiMutation";
@@ -8,23 +8,46 @@ import { login } from "../../../api/authApi";
 import signin from "../../../assets/images/signin.png";
 import hotellogotext from "../../../assets/images/hotellogotext.png";
 
+import { queryClient } from "../../../app/queryClient";
+import { fetchInitData } from "../../../api/initDataApi";
+import { setUserData } from "../../../services/authSlice";
+import { useDispatch } from "react-redux";
+
 export default function SignIn() {
   const [ipAddress, setIpAddress] = useState("");
+
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const { mutate, isPending } = useApiMutation({
     mutationFn: login,
     options: {
-      onSuccess: (data) => {
-        console.log(data, "data");
-        if (data) saveState(LOCAL_STORAGE_KEYS.sessionId, data.XSessionToken);
-        saveState(LOCAL_STORAGE_KEYS.adminRole, data.role.name);
-        window.location.href = "/dashboard";
-      },
-      onError: (error) => {
-        const message =
-          error.response?.data?.message ||
-          "Login failed. Please check your credentials.";
-        alert(message);
+      onSuccess: async (data) => {
+        try {
+          saveState(LOCAL_STORAGE_KEYS.sessionId, data.XSessionToken);
+
+          // Prefetch initData (now header will include token)
+          //prefetchQuery => only cache
+          //fetchQuery => cache + return data
+          const initData = await queryClient.fetchQuery({
+            queryKey: ["initData"],
+            queryFn: fetchInitData,
+            staleTime: 24 * 60 * 60 * 1000,
+            gcTime: 24 * 60 * 60 * 1000,
+            meta: { persist: true },
+          });
+
+          const permissions = saveState(LOCAL_STORAGE_KEYS.initPermissions,initData.permissions);
+          saveState(LOCAL_STORAGE_KEYS.adminRole, data.role.name);
+
+          // Store in Redux
+          dispatch(setUserData({ permissions }));
+
+          // Navigate without reload
+          navigate("/dashboard", { replace: true });
+        } catch (error) {
+          console.error("InitData failed:", error);
+        }
       },
     },
   });

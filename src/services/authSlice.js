@@ -1,27 +1,34 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { loadState } from "../utils";
+
+
+const localPermissions = loadState("InitPermissions");
 
 const initialState = {
-  sessionId: null,
   user: null,
-  role: null,
+  permissions: localPermissions || [],
 };
 
-const authSlice = createSlice({
+export const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    setAuthData: (state, action) => {
-      state.sessionId = action.payload.sessionId;
-      state.user = action.payload.user;
-      state.role = action.payload.role;
+    setUserData: (state, action) => {
+      state.permissions = action.payload.permissions;
     },
-    clearAuthData: (state) => {
-      state.sessionId = null;
-      state.user = null;
-      state.role = null;
+
+    logout: () => {
+      return {
+        ...initialState,
+      };
     },
   },
 });
 
-export const { setAuthData, clearAuthData } = authSlice.actions;
-export default authSlice.reducer;
+const authReducer = authSlice.reducer;
+
+export const { setUserData, logout } = authSlice.actions;
+
+export const authSelector = (state) => state?.auth;
+
+export default authReducer;

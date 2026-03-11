@@ -90,6 +90,8 @@ export const LOCAL_STORAGE_KEYS = {
   deviceName:"DeviceName",
   initData: "Init_Data",
   loginAdminDetails: "Admin_Details",
+  initPermissions: "InitPermissions",
+
 };
 
 export const LIMITS = {
