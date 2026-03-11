@@ -68,7 +68,13 @@ const PolicyList = () => {
         drawerOpen={drawerOpen}
         setMode={setMode}
         setDrawerOpen={setDrawerOpen}
-        mode="add"
+        page={page}
+        setPage={setPage}
+        mode={mode}
+        selectedData={selectedData}
+        setSelectedData={setSelectedData}
+        width={500}
+
       />
     </div>
   );
