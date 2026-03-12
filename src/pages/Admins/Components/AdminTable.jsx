@@ -9,6 +9,8 @@ import {
 } from "@ant-design/icons";
 import { useApiMutation } from "../../../hooks/useApiMutation";
 import { resetFunction } from "../../../api/resetFunctionApi";
+import { loadState } from './../../../utils/Utils';
+import { LOCAL_STORAGE_KEYS } from './../../../variables/constants';
 
 const AdminTable = ({
   data,
@@ -22,6 +24,8 @@ const AdminTable = ({
   const [mode, setMode] = useState(null);
   const [selectedData, setSelectedData] = useState(null);
   const [confirmModal, setConfirmModal] = useState(false);
+
+  const localAdminDetails = loadState(LOCAL_STORAGE_KEYS.loginAdminDetails)?.uuid;
 
   const columns = [
     {
@@ -105,6 +109,7 @@ const AdminTable = ({
               </Space>
             ),
           },
+          localAdminDetails !== record?.uuid &&
           {
             key: "3",
             label: (
@@ -170,6 +175,7 @@ const AdminTable = ({
       />
 
       <AdminForm
+        page={page}
         mode={mode}
         setMode={setMode}
         drawerOpen={drawerOpen}

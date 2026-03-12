@@ -5,7 +5,7 @@ import _ from "lodash";
 import { Drawer } from "antd";
 
 const ListHeader = ({
-  title,
+  // title,
   keyword,
   setKeyword,
   addButtonText,
@@ -17,7 +17,6 @@ const ListHeader = ({
   setPage
 
 }) => {
-  console.log(page,"page")
   const [inputValue, setInputValue] = useState(keyword || "");
   const debouncedSearchRef = useRef(null);
 
@@ -40,7 +39,7 @@ const ListHeader = ({
 
   return (
     <div className="bg-white rounded-lg space-y-2">
-      <h2 className="text-sm font-semibold text-gray-600 mt-[-20px]">{title}</h2>
+      {/* <h2 className="text-sm font-semibold text-gray-600 mt-[-20px]">{title}</h2> */}
 
       <div className={(!setCreateDrawerOpen && !setCityMode) ? "flex items-center justify-between gap-2" :"flex" }>
         {!setCreateDrawerOpen && !setCityMode && (
