@@ -25,10 +25,14 @@ import {
   BarsOutlined,
   LayoutOutlined,
   FileProtectOutlined,
+  DeploymentUnitOutlined,
+  TagsOutlined,
+  DatabaseOutlined,
 } from "@ant-design/icons";
 import { lazy } from "react";
 import { FiMap } from "react-icons/fi";
 import { MdOutlinePolicy } from "react-icons/md";
+
 
 const Dashboard = lazy(() => import("../../pages/Dashboard/Dashboard"));
 const Calendar = lazy(() => import("../../pages/Calendar/Calendar"));
@@ -59,12 +63,15 @@ const RolesListing = lazy(() => import("../../pages/Roles/RolesListing"));
 const PropertiesListing = lazy(
   () => import("../../pages/Properties/PropertiesListing"),
 );
-const ServiceList = lazy(() => import("../../pages/Services/ServiceList"));
+// const ServiceList = lazy(() => import("../../pages/Services/ServiceList"));
 
 const PrivacyPolicy = lazy(
   () => import("../../pages/PrivacyPolicy/PrivacyPolicy"),
 );
 
+const CategoryListing = lazy(() => import("../../pages/Categories/CategoryListing"));
+const UnitListing = lazy(() => import("../../pages/Units/UnitListing"));
+const InventoryListing = lazy(() => import("../../pages/Inventories/InventoryListing"))
 export const authRoutes = [
   {
     key: 1,
@@ -167,7 +174,7 @@ export const authRoutes = [
         label: "Permissions",
         icon: <SecurityScanOutlined style={{ fontSize: "20px" }} />,
         component: <PermissionListing />,
-        permission: "permission.list",
+        // permission: "permission.list",
       },
       {
         key: 6.2,
@@ -175,7 +182,7 @@ export const authRoutes = [
         label: "Roles",
         icon: <UserSwitchOutlined style={{ fontSize: "20px" }} />,
         component: <RolesListing />,
-        permission: "role.list",
+        // permission: "role.list",
       },
     ],
   },
@@ -239,8 +246,35 @@ export const authRoutes = [
     icon: <FileProtectOutlined style={{ fontSize: "20px" }} />,
     isPrivate: true,
     component: <PrivacyPolicy />,
-    permission: "privacy-policy.list",
+    // permission: "privacy-policy.list",
   },
+  {
+    key: 13,
+    label: "Category",
+    path: "/category",
+    icon: <TagsOutlined style={{ fontSize: "20px" }} />,
+    isPrivate: true,
+    component: <CategoryListing />,
+    // permission: "category.list",
+  },
+  {
+    key: 14,
+    label: "Units",
+    path:"/unit",
+    icon: <DeploymentUnitOutlined style={{ fontSize: "20px" }} />,
+    isPrivate: true,
+    component: <UnitListing />,
+    // permission: "unit.list",
+  },
+  {
+    key: 15,
+    label: "Inventories",
+    path:"/inventory",
+    icon: <DatabaseOutlined style={{ fontSize: "20px" }} />,
+    isPrivate: true,
+    component: <InventoryListing />,
+    // permission: "inventory.list",
+  }
   // {
   //   key: 13,
   //   label: "Meal Plan",
@@ -248,17 +282,16 @@ export const authRoutes = [
   //   icon: <MdOutlinePolicy style={{ fontSize: "20px" }} />,
   //   isPrivate: true,
   //   component: <MeanPlanList />
-
   // },
 
-  {
-    key: 14,
-    label: "Services",
-    path: "/services",
-    icon: <CustomerServiceOutlined style={{ fontSize: "20px" }} />,
-    component: <ServiceList />,
-    permission: "service.list",
-  },
+  // {
+  //   key: 14,
+  //   label: "Services",
+  //   path: "/services",
+  //   icon: <CustomerServiceOutlined style={{ fontSize: "20px" }} />,
+  //   component: <ServiceList />,
+  //   permission: "service.list",
+  // },
 ];
 
 const AuthRoutes = () => {

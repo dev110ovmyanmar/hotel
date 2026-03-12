@@ -15,7 +15,7 @@ export default function usePropertiesColumns(onEdit, onView) {
       title: "Hotel Name",
       dataIndex: "name",
       key: "name",
-      render: (text) => <strong>{text}</strong>
+      render: (text) => <p>{text}</p>
     },
     {
       title: "Address",

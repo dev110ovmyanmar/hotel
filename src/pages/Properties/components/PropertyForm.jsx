@@ -3,15 +3,20 @@ import { Form, Input, Select, TimePicker, Drawer, Button, Spin, Divider, Card, T
 import { PlusOutlined, EditOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import SettingForm from "./SettingForm";
+import FormButtons from "../../../component/FormButtons/FormButtons";
 
 const PropertyForm = ({ 
   open, onClose, initialValues, setInitialValues, onFinish, mode, loading, isSaving,
-  propertyTypes, countryOptions, cityOptions, currencyOptions, onCountryChange 
+  propertyTypes, countryOptions, cityOptions, currencyOptions, onCountryChange,
+  DrawerTitle,
+  switchToEdit,
+
 }) => {
   const [form] = Form.useForm();
   const [settingDrawer, setSettingDrawer] = useState(false);
   const [editingSetting, setEditingSetting] = useState(null);
   const isView = mode === "view";
+  const isAdd = mode === "add";
 
   useEffect(() => {
     if (open && initialValues) {
@@ -42,12 +47,27 @@ const PropertyForm = ({
   // };
 
   return (
-    <Drawer
-      title={mode === "add" ? "New Property" : isView ? "Property Details" : "Edit Property"}
-      width={750} open={open} onClose={onClose}
-      destroyOnClose
-      extra={!isView && <Button type="primary" onClick={() => form.submit()} loading={isSaving}>Save All Data</Button>}
-    >
+      <Drawer
+          title={
+            <div className="flex items-center justify-between">
+              <span>{DrawerTitle}</span>
+          {isView ? (
+           <Button type="primary" onClick={switchToEdit}>
+            Edit
+          </Button>
+          ) : (
+          <FormButtons 
+          onClick={() => form.submit()} 
+          mode={mode} 
+          loading={isSaving}/>
+          )}
+            </div>
+          }
+          size={500}
+          onClose={onClose}
+          open={open}
+        >
+
       <Spin spinning={loading}>
         <Form form={form} layout="vertical" onFinish={onFinish}>
           <Form.Item name="uuid" hidden><Input /></Form.Item>
@@ -55,7 +75,7 @@ const PropertyForm = ({
           <div className="grid grid-cols-2 gap-4">
             <Form.Item label="Property Name" name="name" rules={[{ required: true }]}><Input readOnly={isView} variant="outlined" /></Form.Item>
             <Form.Item label="Property Type" name="property_type_uuid" rules={[{ required: true }]}>
-              <Select options={propertyTypes} open={isView ? false : undefined} showArrow={!isView} />
+              <Select options={propertyTypes} open={isView ? false : undefined} />
             </Form.Item>
           </div>
 
@@ -81,7 +101,8 @@ const PropertyForm = ({
               open={isView ? false : undefined}
               filterOption={(input, option) => 
               (option?.label ?? "").toLocaleLowerCase().includes(input.toLowerCase())
-              } />
+              }
+               disabled={isView} />
             </Form.Item>
             <Form.Item label="City" name="city_uuid" rules={[{ required: true }]}>
               <Select 
@@ -93,26 +114,27 @@ const PropertyForm = ({
                 (input, option) =>
                 (option?.label ?? "").toLowerCase().includes(input.toLowerCase())
               }
-              open={isView ? false : undefined} 
+              open={isView ? false : undefined}
+              disabled={isView} 
               />
             </Form.Item>
             <Form.Item label="Currency" name="currency_uuid" rules={[{ required: true }]}>
-              <Select options={currencyOptions} open={isView ? false : undefined} />
+              <Select options={currencyOptions} open={isView ? false : undefined} disabled={isView} />
             </Form.Item>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-            <Form.Item label="Check-In" name="checkinTime" rules={[{ required: true }]}>
-              <TimePicker className="w-full" format="HH:mm:ss" open={isView ? false : undefined} onChange={() => form.validateFields(['checkOutTime'])} />
+            <Form.Item label="Check-In Time" name="checkinTime" rules={[{ required: true }]}>
+              <TimePicker className="w-full" format="HH:mm:ss" open={isView ? false : undefined} onChange={() => form.validateFields(['checkOutTime'])} disabled={isView}/>
             </Form.Item>
-            <Form.Item label="Check-Out" name="checkoutTime" rules={[{ required: true }]}>
-              <TimePicker className="w-full" format="HH:mm:ss" open={isView ? false : undefined} />
+            <Form.Item label="Check-Out Time" name="checkoutTime" rules={[{ required: true }]}>
+              <TimePicker className="w-full" format="HH:mm:ss" open={isView ? false : undefined} disabled={isView}/>
             </Form.Item>
           </div>
         </Form>
 
         <Divider />
-        <div className="flex justify-between items-center mb-4">
+       {!isAdd &&  <div className="flex justify-between items-center mb-4">
           <h3 className="text-lg font-bold">Settings</h3>
           {!isView && (
             <Button type="dashed" icon={<PlusOutlined />} onClick={() => { setEditingSetting(null); setSettingDrawer(true); }}>
@@ -120,8 +142,10 @@ const PropertyForm = ({
             </Button>
           )}
         </div>
-
-        <div className="space-y-4">
+        }
+        
+        {
+        !isAdd && <div className="space-y-4">
           {initialValues?.settingsArray?.map((s, idx) => (
             <Card 
               key={idx} size="small" 
@@ -133,6 +157,8 @@ const PropertyForm = ({
           ))}
           {(!initialValues?.settingsArray || initialValues.settingsArray.length === 0) && <Empty description="No settings added" />}
         </div>
+         
+        } 
       </Spin>
 
       <Drawer 
@@ -140,11 +166,11 @@ const PropertyForm = ({
         width={450} open={settingDrawer} 
         onClose={() => setSettingDrawer(false)}
       >
-<SettingForm 
-  initialValues={editingSetting}
-  isSaving={isSaving}
-  onFinish={(settingVals) => {
-    if (initialValues?.uuid) {
+      <SettingForm 
+        initialValues={editingSetting}
+        isSaving={isSaving}
+        onFinish={(settingVals) => {
+       if (initialValues?.uuid) {
       // 1. Get all current values from the main property form
       const mainFormValues = form.getFieldsValue();
 
