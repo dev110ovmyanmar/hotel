@@ -28,12 +28,13 @@ import {
   DeploymentUnitOutlined,
   TagsOutlined,
   DatabaseOutlined,
+  DollarOutlined,
+  WalletOutlined,
 } from "@ant-design/icons";
 import { lazy } from "react";
 import { FiMap } from "react-icons/fi";
 import { MdOutlinePolicy } from "react-icons/md";
 import { MdPayments } from "react-icons/md";
-
 
 const Dashboard = lazy(() => import("../../pages/Dashboard/Dashboard"));
 const Calendar = lazy(() => import("../../pages/Calendar/Calendar"));
@@ -70,20 +71,20 @@ const PrivacyPolicy = lazy(
   () => import("../../pages/PrivacyPolicy/PrivacyPolicy"),
 );
 
-const CategoryListing = lazy(() => import("../../pages/Categories/CategoryListing"));
+const CategoryListing = lazy(
+  () => import("../../pages/Categories/CategoryListing"),
+);
 const UnitListing = lazy(() => import("../../pages/Units/UnitListing"));
-const InventoryListing = lazy(() => import("../../pages/Inventories/InventoryListing"))
-
-const MeanPlanList = lazy(
-  () => import("../../pages/MealPlan/MealPlanList")
+const InventoryListing = lazy(
+  () => import("../../pages/Inventories/InventoryListing"),
 );
 
-const PaymentList = lazy(
-  () => import("../../pages/Payment/PaymentList")
-);
+// const MeanPlanList = lazy(() => import("../../pages/MealPlan/MealPlanList"));
+
+// const PaymentList = lazy(() => import("../../pages/Payment/PaymentList"));
 
 
-
+const Taxs = lazy(() => import("../../pages/Tax/TaxList"));
 
 export const authRoutes = [
   {
@@ -296,24 +297,42 @@ export const authRoutes = [
     component: <ServiceList />,
     // permission: "service.list",
   },
+  // {
+  //   key: 16,
+  //   label: "Meal Plan",
+  //   path: "/meal-plan",
+  //   icon: <MdOutlinePolicy style={{ fontSize: "20px" }} />,
+  //   isPrivate: true,
+  //   component: <MeanPlanList />,
+  //   permission: "meal-plan.list",
+  // },
+
+  // {
+  //   key: 17,
+  //   label: "Payment",
+  //   path: "/payment",
+  //   icon: <MdPayments style={{ fontSize: "20px" }} />,
+  //   isPrivate: true,
+  //   component: <PaymentList />,
+  //   // permission:"meal-plan.list",
+  // },
   {
     key: 16,
-    label: "Meal Plan",
-    path: "/meal-plan",
-    icon: <MdOutlinePolicy style={{ fontSize: "20px" }} />,
-    isPrivate: true,
-    component: <MeanPlanList />,
-    permission: "meal-plan.list",
-  },
-
-  {
-    key: 17,
-    label: "Payment",
-    path: "/payment",
-    icon: <MdPayments style={{ fontSize: "20px" }} />,
-    isPrivate: true,
-    component: <PaymentList />,
-    // permission:"meal-plan.list",
+    label: "Billing & Finance",
+    path: "/billing-finance",
+    icon: <WalletOutlined style={{ fontSize: "20px" }} />,
+    // component: <ServiceList />,
+    // permission: "service.list",
+    nested: [
+      {
+        key: 16.1,
+        path: "/billing-finance/taxes",
+        label: "Taxes",
+        icon: <DollarOutlined style={{ fontSize: "20px" }} />,
+        component: <Taxs />,
+        // permission: "guests.list",
+      },
+    ],
   },
 ];
 

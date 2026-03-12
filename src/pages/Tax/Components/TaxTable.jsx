@@ -1,10 +1,9 @@
 import { Dropdown, Space, Table } from "antd";
 import { useState } from "react";
 import { MoreOutlined, EyeOutlined, EditOutlined } from "@ant-design/icons";
+import TaxForm from "./TaxForms/TaxForm";
 
-import RoomTypeForm from "./RoomTypeForm/RoomTypeForm";
-
-const RoomTypeTable = ({
+const TaxTable = ({
   data,
   page,
   perPage,
@@ -19,49 +18,38 @@ const RoomTypeTable = ({
   const columns = [
     {
       title: "ID",
-      dataIndex: "id",
-      key: "id",
+      render: (_, record) => <div>{record?.id}</div>,
       width: 70,
     },
     {
       title: "Name",
       dataIndex: "name",
       key: "name",
-           },
-    {
-      title: "Code",
-      dataIndex: "code",
-      key: "code",
-      width: 70,
     },
     {
-      title: "Total Rooms",
-      dataIndex: "totalRooms",
-      key: "totalRooms",
-        width: 120,
-      align: "center",
+      title: "Per Unit",
+      dataIndex: "perUnit",
+      key: "perUnit",
+      width: 160,
+    },
+    {
+      title: "Inclusive",
+      dataIndex: "isInclusive",
+      key: "isInclusive",
+      render: (text) => <div>{text ? "True" : "False"}</div>,
+    },
+    {
+      title: "Remark ",
+      dataIndex: "remark",
+      key: "remark",
+      width: 160,
+    },
+    {
+      title: "Charge Value ",
+      dataIndex: "chargeValue",
+      key: "chargeValue",
     },
 
-    {
-      title: "Guest",
-      dataIndex: "maxOccupancy",
-      key: "maxOccupancy",
-      width: 80,
-      align: "center",
-    },
-    {
-      title: "Extra Bed",
-      dataIndex: "extraBeds",
-      key: "extraBeds",
-        width: 110,
-      align: "center",
-    },
-    {
-      title: "Price (MMK)",
-      dataIndex: "basePrice",
-      key: "basePrice",
-      render: (price) => price?.toLocaleString(),
-    },
     {
       title: "Action",
       render: (_, record) => {
@@ -133,7 +121,7 @@ const RoomTypeTable = ({
         }}
       />
 
-      <RoomTypeForm
+      <TaxForm
         mode={mode}
         setMode={setMode}
         drawerOpen={drawerOpen}
@@ -141,10 +129,9 @@ const RoomTypeTable = ({
         selectedData={selectedData}
         setSelectedData={setSelectedData}
         width={500}
-        setPage={changePage}
       />
     </div>
   );
 };
 
-export default RoomTypeTable;
+export default TaxTable;

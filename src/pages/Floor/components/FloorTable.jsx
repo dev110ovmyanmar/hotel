@@ -35,6 +35,7 @@ const FloorTable = ({
       title: "Description",
       dataIndex: "description",
       key: "description",
+      render: (text) => (text ? text : "-"),
     },
     {
       title: "Action",
