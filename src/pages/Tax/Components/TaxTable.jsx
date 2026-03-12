@@ -1,9 +1,9 @@
 import { Dropdown, Space, Table } from "antd";
 import { useState } from "react";
 import { MoreOutlined, EyeOutlined, EditOutlined } from "@ant-design/icons";
-import FloorForm from "./FloorForm/FloorForm";
+import TaxForm from "./TaxForms/TaxForm";
 
-const FloorTable = ({
+const TaxTable = ({
   data,
   page,
   perPage,
@@ -18,8 +18,8 @@ const FloorTable = ({
   const columns = [
     {
       title: "ID",
-      dataIndex: "id",
-      key: "id",
+      render: (_, record) => <div>{record?.id}</div>,
+      width: 70,
     },
     {
       title: "Name",
@@ -27,16 +27,29 @@ const FloorTable = ({
       key: "name",
     },
     {
-      title: "Floor No",
-      dataIndex: "floorNo",
-      key: "floorNo",
+      title: "Per Unit",
+      dataIndex: "perUnit",
+      key: "perUnit",
+      width: 160,
     },
     {
-      title: "Description",
-      dataIndex: "description",
-      key: "description",
-      render: (text) => (text ? text : "-"),
+      title: "Inclusive",
+      dataIndex: "isInclusive",
+      key: "isInclusive",
+      render: (text) => <div>{text ? "True" : "False"}</div>,
     },
+    {
+      title: "Remark ",
+      dataIndex: "remark",
+      key: "remark",
+      width: 160,
+    },
+    {
+      title: "Charge Value ",
+      dataIndex: "chargeValue",
+      key: "chargeValue",
+    },
+
     {
       title: "Action",
       render: (_, record) => {
@@ -108,7 +121,7 @@ const FloorTable = ({
         }}
       />
 
-      <FloorForm
+      <TaxForm
         mode={mode}
         setMode={setMode}
         drawerOpen={drawerOpen}
@@ -121,4 +134,4 @@ const FloorTable = ({
   );
 };
 
-export default FloorTable;
+export default TaxTable;

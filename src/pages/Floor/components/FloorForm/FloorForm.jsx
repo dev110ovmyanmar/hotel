@@ -107,7 +107,7 @@ const FloorForm = ({
             ) : (
               <FormButton
                 onClick={() => form.submit()}
-                isPending={isLoading}
+                isPending={createFloors.isPending || editFloors.isPending}
                 mode={mode}
               />
             )}
