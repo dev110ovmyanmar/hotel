@@ -64,9 +64,6 @@ const PolicyForm = ({
     },
   });
 
-  if (data) {
-    console.log(data?.linkTo?.name, "DataInPolicyFom");
-  }
   useEffect(() => {
     if (!isAdd && data) {
       form.setFieldsValue({
@@ -102,7 +99,6 @@ const PolicyForm = ({
     }
 
     if (isEdit) {
-      console.log(values, "ValuesINEdit");
       const editValues = {
         ...values,
         linkTo: {
@@ -110,7 +106,6 @@ const PolicyForm = ({
         },
         uuid: selectedData?.uuid,
       };
-      console.log(editValues, "editVallues")
 
       editPolicyFunction.mutate(editValues, {
         onSuccess: () => {
@@ -149,7 +144,7 @@ const PolicyForm = ({
               <FormButtons
                 onClick={() => form.submit()}
                 isPending={
-                  isAdd ? createPolicyFunction.isLoading : editPolicyFunction.isLoading
+                  isAdd ? createPolicyFunction.isPending : editPolicyFunction.isPending
                 }
                 mode={mode}
               />
