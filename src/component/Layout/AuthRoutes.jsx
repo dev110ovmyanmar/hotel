@@ -79,7 +79,7 @@ const InventoryListing = lazy(
   () => import("../../pages/Inventories/InventoryListing"),
 );
 
-// const MeanPlanList = lazy(() => import("../../pages/MealPlan/MealPlanList"));
+const MeanPlanList = lazy(() => import("../../pages/MealPlan/MealPlanList"));
 
 // const PaymentList = lazy(() => import("../../pages/Payment/PaymentList"));
 
@@ -297,15 +297,15 @@ export const authRoutes = [
     component: <ServiceList />,
     // permission: "service.list",
   },
-  // {
-  //   key: 16,
-  //   label: "Meal Plan",
-  //   path: "/meal-plan",
-  //   icon: <MdOutlinePolicy style={{ fontSize: "20px" }} />,
-  //   isPrivate: true,
-  //   component: <MeanPlanList />,
-  //   permission: "meal-plan.list",
-  // },
+  {
+    key: 16,
+    label: "Meal Plan",
+    path: "/meal-plan",
+    icon: <MdOutlinePolicy style={{ fontSize: "20px" }} />,
+    isPrivate: true,
+    component: <MeanPlanList />,
+    // permission: "meal-plan.list",
+  },
 
   // {
   //   key: 17,
