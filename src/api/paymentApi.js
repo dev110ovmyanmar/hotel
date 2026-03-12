@@ -1,6 +1,7 @@
 
 import { apiClient } from './apiClient';
 
+// Payment
 export const fetchPayment = async (params) => {
     const {data} = await apiClient.get(
         "/payments",
