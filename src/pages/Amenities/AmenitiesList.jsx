@@ -64,10 +64,14 @@ const AmenitiesList = () => {
       />
 
       <AmenitiesForm
-        drawerOpen={drawerOpen}
+        mode={mode}
         setMode={setMode}
+        selectedData={selectedData}
+        setSelectedData={setSelectedData}
+        drawerOpen={drawerOpen}
         setDrawerOpen={setDrawerOpen}
-        mode="add"
+        page={page}
+        setPage={setPage}
       />
     </div>
   );
