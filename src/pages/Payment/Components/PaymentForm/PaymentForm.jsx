@@ -10,7 +10,7 @@ import FormButtons from './../../../../component/FormButtons/FormButtons';
 import {createPayment , editPayment , paymentDetails} from "../../../../api/paymentApi";
 import { queryClient } from './../../../../app/queryClient';
 
-
+// Add PaymentForm
 const PaymentForm = ({
   mode,
   setMode,
@@ -28,7 +28,6 @@ const PaymentForm = ({
   const isEdit = mode === "edit";
   const isAdd = mode === "add";
 
-  // const initData = loadState(LOCAL_STORAGE_KEYS.initData)?.statuses;
   const initData = queryClient.getQueryData(["initData"]);
   const status = initData?.statuses.status;
   const provider = initData?.statuses.provider;

@@ -34,13 +34,13 @@ const AmenitiesTable = ({
       title: "Is Free",
       dataIndex: "isFree",
       key: "isFree",
-      render: (text) => <div>{text === 1 ? "True" : "False"}</div>,
+      render: (text) => <div>{text === true ? "True" : "False"}</div>,
     },
     {
       title: "Visibility",
       dataIndex: "visibility",
       key: "visibility",
-      render: (text) => <div>{text === 1 ? "True" : "False"}</div>,
+      render: (text) => <div>{text === true ? "True" : "False"}</div>,
     },
     {
       title: "Default Quantity",
@@ -126,6 +126,7 @@ const AmenitiesTable = ({
         setDrawerOpen={setDrawerOpen}
         selectedData={selectedData}
         setSelectedData={setSelectedData}
+        page={page}
       />
     </div>
   );
