@@ -64,6 +64,7 @@ const Topbar = withDirection(function (props) {
     try {
       setLoading(true);
       await logout.mutateAsync();
+      queryClient.clear();
       localStorage.clear();
       navigate("/signin");
     } catch (error) {

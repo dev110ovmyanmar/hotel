@@ -43,7 +43,7 @@ const SettingForm = ({ onFinish, initialValues, isSaving }) => {
         <Input.TextArea rows={18} className="font-mono text-xs p-4 bg-black text-green-400" />
       </Form.Item>
       <Button type="primary" htmlType="submit" block size="large">
-        Save Setting
+        Save
       </Button>
     </Form>
   );

@@ -176,7 +176,7 @@ const PermissionListing = () => {
     <>
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4 w-full px-6 py-2">
         <ListHeader
-          title="Permission List"
+          // title="Permission List"
           searchPlaceholder="Search Permission ..."
           keyword={keyword}
           setKeyword={setKeyword}
