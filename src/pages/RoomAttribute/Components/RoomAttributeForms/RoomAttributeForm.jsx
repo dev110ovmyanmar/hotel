@@ -1,13 +1,16 @@
 import React, { useEffect } from "react";
-import { Form, Input, Button, Drawer } from "antd";
+import { Form, Input, Button, Drawer, Row, Col } from "antd";
 import Toast from "../../../../component/Toast/Toast";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
 import useApiQuery from "../../../../hooks/useApiQuery";
 import FormButton from "../../../../component/FormButtons/FormButtons";
-import { createFloor, editFloor, floorDetail } from "../../../../api/floorApi";
-import TextArea from "antd/es/input/TextArea";
+import {
+  createRoomAttribute,
+  editRoomAttribute,
+  roomAttributeDetails,
+} from "../../../../api/roomApi";
 
-const FloorForm = ({
+const RoomAttributeForm = ({
   mode,
   setMode,
   selectedData,
@@ -22,19 +25,19 @@ const FloorForm = ({
   const isEdit = mode === "edit";
   const isAdd = mode === "add";
 
-  const createFloors = useApiMutation({
-    mutationFn: createFloor,
-    invalidateKeys: [["floorData"]],
+  const createRoomAttributes = useApiMutation({
+    mutationFn: createRoomAttribute,
+    invalidateKeys: [["roomAttributeData"]],
   });
 
-  const editFloors = useApiMutation({
-    mutationFn: editFloor,
-    invalidateKeys: [["floorData"]],
+  const editRoomAttributes = useApiMutation({
+    mutationFn: editRoomAttribute,
+    invalidateKeys: [["roomAttributeData"]],
   });
 
-  const { data, isLoading, error } = useApiQuery({
-    fetchQueryName: "floorData",
-    fetchQueryFunction: floorDetail,
+  const { data } = useApiQuery({
+    fetchQueryName: "roomAttributeData",
+    fetchQueryFunction: roomAttributeDetails,
     params: { uuid: selectedData?.uuid },
     options: {
       enabled: !!selectedData?.uuid,
@@ -56,25 +59,26 @@ const FloorForm = ({
         ...values,
       };
 
-      createFloors.mutate(createValues, {
+      createRoomAttributes.mutate(createValues, {
         onSuccess: () => {
           form.resetFields();
           setDrawerOpen(false);
           setPage(1);
-          Toast.success("Floor Created Successfully!");
+          Toast.success("Room Attribute Created Successfully!");
         },
       });
     }
     if (isEdit) {
       const editValues = {
         ...values,
+
         uuid: data?.uuid,
       };
 
-      editFloors.mutate(editValues, {
+      editRoomAttributes.mutate(editValues, {
         onSuccess: () => {
           setDrawerOpen(false);
-          Toast.success("Floor Updated Successfully!");
+          Toast.success("Room Attribute Updated Successfully!");
         },
       });
     }
@@ -90,10 +94,10 @@ const FloorForm = ({
           <div className="flex justify-between items-center">
             <span>
               {mode === "view"
-                ? "Floor Details"
+                ? "Room Attribute Details"
                 : mode === "edit"
-                  ? "Edit Floor"
-                  : "Create Floor"}
+                  ? "Edit Room Attribute"
+                  : "Create Room Attribute"}
             </span>
             {isView ? (
               <Button
@@ -107,7 +111,9 @@ const FloorForm = ({
             ) : (
               <FormButton
                 onClick={() => form.submit()}
-                isPending={createFloors.isPending || editFloors.isPending}
+                isPending={
+                  createRoomAttributes.isPending || editRoomAttributes.isPending
+                }
                 mode={mode}
               />
             )}
@@ -124,19 +130,9 @@ const FloorForm = ({
           <Form.Item
             label="Name"
             name="name"
-            rules={[{ required: true, message: "Please enter floor name" }]}
+            rules={[{ required: true, message: "Please enter room type name" }]}
           >
             <Input />
-          </Form.Item>
-          <Form.Item
-            label="Floor No"
-            name="floorNo"
-            rules={[{ required: true, message: "Please enter floor no" }]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item label="Descriptiom" name="description">
-            <TextArea />
           </Form.Item>
         </Form>
       </Drawer>
@@ -144,4 +140,4 @@ const FloorForm = ({
   );
 };
 
-export default FloorForm;
+export default RoomAttributeForm;

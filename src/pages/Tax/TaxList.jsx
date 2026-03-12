@@ -1,15 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { LIMITS } from "../../variables/constants";
-import ContentBanner from "../../component/ContentBanner/ContentBanner";
-import FilterBar from "../../component/FilterBar/FilterBar";
 import useApiQuery from "../../hooks/useApiQuery";
-import PolicyTable from "./Components/PolicyTable";
-import PolicyForm from "./Components/PolicyForm/PolicyForm";
-import { policyListFun } from "../../api/policyFunctionApi";
 import ListHeader from "../../component/ListHeader/ListHeader";
+import TaxTable from "./Components/TaxTable";
+import TaxForm from "./Components/TaxForms/TaxForm";
+import { fetchTax } from "../../api/TaxApi";
 
-// PolicyList
-const PolicyList = () => {
+
+const TaxList = () => {
   const [keyword, setKeyword] = useState("");
   const [status, setStatus] = useState("all");
   const [page, setPage] = useState(1);
@@ -20,9 +18,9 @@ const PolicyList = () => {
 
   const normalStatus = status === "all" ? null : status;
 
-  const { data, isLoading, error } = useApiQuery({
-    fetchQueryName: "policies",
-    fetchQueryFunction: policyListFun,
+  const { data } = useApiQuery({
+    fetchQueryName: "taxData",
+    fetchQueryFunction: fetchTax,
     params: {
       pagination: {
         page: page,
@@ -47,16 +45,16 @@ const PolicyList = () => {
     <div className="w-full px-6 py-2">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
         <ListHeader
-          title="Policy List"
-          searchPlaceholder="Search Policy ..."
+          title="Tax List"
+          searchPlaceholder="Search Tax ..."
           keyword={keyword}
           setKeyword={setKeyword}
-          addButtonText="Add New Policy"
+          addButtonText="Add New Tax"
           onAdd={handleAdd}
         />
       </div>
 
-      <PolicyTable
+      <TaxTable
         data={data?.data || []}
         page={data?.pagination.currentPage}
         perPage={data?.pagination.perPage}
@@ -65,20 +63,18 @@ const PolicyList = () => {
         changePerPage={(perPage) => setPerPage(perPage)}
       />
 
-      <PolicyForm
+      <TaxForm
         drawerOpen={drawerOpen}
-        setMode={setMode}
         setDrawerOpen={setDrawerOpen}
-        page={page}
         setPage={setPage}
         mode={mode}
+        setMode={setMode}
         selectedData={selectedData}
         setSelectedData={setSelectedData}
         width={500}
-
       />
     </div>
   );
 };
 
-export default PolicyList;
+export default TaxList;
