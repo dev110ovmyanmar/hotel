@@ -32,6 +32,7 @@ import {
 import { lazy } from "react";
 import { FiMap } from "react-icons/fi";
 import { MdOutlinePolicy } from "react-icons/md";
+import { MdPayments } from "react-icons/md";
 
 
 const Dashboard = lazy(() => import("../../pages/Dashboard/Dashboard"));
@@ -63,7 +64,7 @@ const RolesListing = lazy(() => import("../../pages/Roles/RolesListing"));
 const PropertiesListing = lazy(
   () => import("../../pages/Properties/PropertiesListing"),
 );
-// const ServiceList = lazy(() => import("../../pages/Services/ServiceList"));
+const ServiceList = lazy(() => import("../../pages/Services/ServiceList"));
 
 const PrivacyPolicy = lazy(
   () => import("../../pages/PrivacyPolicy/PrivacyPolicy"),
@@ -72,6 +73,18 @@ const PrivacyPolicy = lazy(
 const CategoryListing = lazy(() => import("../../pages/Categories/CategoryListing"));
 const UnitListing = lazy(() => import("../../pages/Units/UnitListing"));
 const InventoryListing = lazy(() => import("../../pages/Inventories/InventoryListing"))
+
+const MeanPlanList = lazy(
+  () => import("../../pages/MealPlan/MealPlanList")
+);
+
+const PaymentList = lazy(
+  () => import("../../pages/Payment/PaymentList")
+);
+
+
+
+
 export const authRoutes = [
   {
     key: 1,
@@ -260,7 +273,7 @@ export const authRoutes = [
   {
     key: 14,
     label: "Units",
-    path:"/unit",
+    path: "/unit",
     icon: <DeploymentUnitOutlined style={{ fontSize: "20px" }} />,
     isPrivate: true,
     component: <UnitListing />,
@@ -269,29 +282,39 @@ export const authRoutes = [
   {
     key: 15,
     label: "Inventories",
-    path:"/inventory",
+    path: "/inventory",
     icon: <DatabaseOutlined style={{ fontSize: "20px" }} />,
     isPrivate: true,
     component: <InventoryListing />,
     // permission: "inventory.list",
-  }
-  // {
-  //   key: 13,
-  //   label: "Meal Plan",
-  //   path: "/meal-plan",
-  //   icon: <MdOutlinePolicy style={{ fontSize: "20px" }} />,
-  //   isPrivate: true,
-  //   component: <MeanPlanList />
-  // },
+  },
+  {
+    key: 14,
+    label: "Services",
+    path: "/services",
+    icon: <CustomerServiceOutlined style={{ fontSize: "20px" }} />,
+    component: <ServiceList />,
+    // permission: "service.list",
+  },
+  {
+    key: 16,
+    label: "Meal Plan",
+    path: "/meal-plan",
+    icon: <MdOutlinePolicy style={{ fontSize: "20px" }} />,
+    isPrivate: true,
+    component: <MeanPlanList />,
+    permission: "meal-plan.list",
+  },
 
-  // {
-  //   key: 14,
-  //   label: "Services",
-  //   path: "/services",
-  //   icon: <CustomerServiceOutlined style={{ fontSize: "20px" }} />,
-  //   component: <ServiceList />,
-  //   permission: "service.list",
-  // },
+  {
+    key: 17,
+    label: "Payment",
+    path: "/payment",
+    icon: <MdPayments style={{ fontSize: "20px" }} />,
+    isPrivate: true,
+    component: <PaymentList />,
+    // permission:"meal-plan.list",
+  },
 ];
 
 const AuthRoutes = () => {
