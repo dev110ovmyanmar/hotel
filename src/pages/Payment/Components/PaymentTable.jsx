@@ -1,52 +1,56 @@
-import { Dropdown, Space, Table, Tag, Button } from "antd";
+import { Dropdown, Space, Table, Tag, Button } from 'antd';
 import { useState } from "react";
-import { AiTwotoneEye } from "react-icons/ai";
-import { FiEdit } from "react-icons/fi";
-import { EditOutlined, EyeOutlined, MoreOutlined } from "@ant-design/icons";
-import AmenitiesForm from "./AmenitiesForm/AmenitiesForm";
+import { MoreOutlined } from '@ant-design/icons';
+import { EditOutlined } from '@ant-design/icons';
+import { EyeOutlined } from '@ant-design/icons';
+import PaymentForm from './PaymentForm/PaymentForm';
 
-const AmenitiesTable = ({
-  data,
-  page,
-  perPage,
-  total,
-  changePage,
-  changePerPage,
-}) => {
+const PaymentTable = ({ data, page, perPage, total, changePage, changePerPage }) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [mode, setMode] = useState(null);
+  const [mode, setMode] = useState("");
   const [selectedData, setSelectedData] = useState({});
 
   const columns = [
     {
-      title: "ID",
+      title: 'ID',
       render: (_, record) => <div>{record?.id}</div>,
       width: 70,
-      align: "center",
     },
     {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
-      render: (text) => <div>{text}</div>,
+      title: 'Name',
+      dataIndex: 'name',
+      key: 'name',
+      render: text => <div>{text}</div>,
     },
     {
-      title: "Is Free",
-      dataIndex: "isFree",
-      key: "isFree",
-      render: (text) => <div>{text === true ? "True" : "False"}</div>,
+      title: 'Provider Type',
+      dataIndex: 'type',
+      key: 'type',
+      render: type => <div>{type?.name}</div>,
     },
     {
-      title: "Visibility",
-      dataIndex: "visibility",
-      key: "visibility",
-      render: (text) => <div>{text === true ? "True" : "False"}</div>,
+      title: 'Provider',
+      dataIndex: 'provider',
+      key: 'provider',
+      render: provider => <div>{provider?.name}</div>,
     },
     {
-      title: "Default Quantity",
-      dataIndex: "defaultQuantity",
-      key: "defaultQuantity",
-      render: (text) => <div>{text}</div>,
+      title: 'isOnline',
+      dataIndex: 'isOnline',
+      key: 'isOnline',
+      render: isOnline => <div>{isOnline === true ? "Yes" : "No"}</div>,
+    },
+    {
+      title: 'Status',
+      dataIndex: 'status',
+      key: 'status',
+      render: status => 
+      <Tag 
+        className = {status?.name == "Active" ? 
+              "!text-green-400" : 
+              "!text-red-400"}>
+        {status?.name?.toUpperCase()}
+      </Tag>
     },
     {
       title: "Action",
@@ -100,7 +104,7 @@ const AmenitiesTable = ({
   ];
 
   return (
-    <div id="scrollId" className="w-full h-[63vh] ">
+    <div id="scrollId" className="w-full h-[63vh] " >
       <Table
         tableLayout="fixed"
         scroll={{ x: 1000 }}
@@ -113,23 +117,25 @@ const AmenitiesTable = ({
           total: total,
           onChange: (page, perPage) => {
             changePage(page);
-            changePerPage(perPage);
+            changePerPage(perPage)
           },
-          showSizeChanger: true,
+          showSizeChanger: true
         }}
       />
 
-      <AmenitiesForm
+      <PaymentForm
         mode={mode}
         setMode={setMode}
         drawerOpen={drawerOpen}
         setDrawerOpen={setDrawerOpen}
         selectedData={selectedData}
         setSelectedData={setSelectedData}
+        width={500}
         page={page}
       />
     </div>
-  );
+  )
 };
 
-export default AmenitiesTable;
+
+export default PaymentTable;

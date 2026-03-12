@@ -1,27 +1,25 @@
 import React, { useEffect, useState } from "react";
 import { LIMITS } from "../../variables/constants";
-import ContentBanner from "../../component/ContentBanner/ContentBanner";
-import FilterBar from "../../component/FilterBar/FilterBar";
 import useApiQuery from "../../hooks/useApiQuery";
-import { amenitiesListFun } from "../../api/amenitiesFunctionApi";
-import AmenitiesTable from "./Components/AmenitiesTable";
-import AmenitiesForm from "./Components/AmenitiesForm/AmenitiesForm";
-import ListHeader from "../../component/ListHeader/ListHeader";
+import ListHeader from './../../component/ListHeader/ListHeader';
+import { fetchPayment } from './../../api/paymentApi';
+import PaymentTable from './Components/PaymentTable';
+import PaymentForm from './Components/PaymentForm/PaymentForm';
 
-const AmenitiesList = () => {
+const PaymentList = () => {
   const [keyword, setKeyword] = useState("");
   const [status, setStatus] = useState("all");
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(LIMITS.PAGE_SIZE);
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [mode, setMode] = useState("add");
+  const [mode, setMode] = useState("");
   const [selectedData, setSelectedData] = useState(null);
 
   const normalStatus = status === "all" ? null : status;
 
   const { data, isLoading, error } = useApiQuery({
-    fetchQueryName: "amenities",
-    fetchQueryFunction: amenitiesListFun,
+    fetchQueryName: "payments",
+    fetchQueryFunction: fetchPayment,
     params: {
       pagination: {
         page: page,
@@ -33,28 +31,30 @@ const AmenitiesList = () => {
   });
 
   useEffect(() => {
-    setPage(1);
+    setPage(1)
   }, [keyword, status, perPage]);
 
   const handleAdd = () => {
-    setSelectedData(null);
-    setMode("add");
     setDrawerOpen(true);
-  };
+    setSelectedData({});
+    setMode("add");
+  }
+
   return (
     <div className="w-full px-6 py-2">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
         <ListHeader
-          title="Amenitities List"
-          searchPlaceholder="Search Amenitities ..."
+          title="Payment List"
+          searchPlaceholder="Search Payment ..."
           keyword={keyword}
           setKeyword={setKeyword}
-          addButtonText="Add New Amenitities"
+          addButtonText="Add New Payment"
           onAdd={handleAdd}
         />
       </div>
 
-      <AmenitiesTable
+
+      <PaymentTable
         data={data?.data || []}
         page={data?.pagination.currentPage}
         perPage={data?.pagination.perPage}
@@ -63,18 +63,20 @@ const AmenitiesList = () => {
         changePerPage={(perPage) => setPerPage(perPage)}
       />
 
-      <AmenitiesForm
-        mode={mode}
-        setMode={setMode}
-        selectedData={selectedData}
-        setSelectedData={setSelectedData}
+      <PaymentForm
         drawerOpen={drawerOpen}
         setDrawerOpen={setDrawerOpen}
         page={page}
         setPage={setPage}
+        mode={mode}
+        setMode={setMode}
+        selectedData={selectedData}
+        setSelectedData={setSelectedData}
+        width={500}
       />
     </div>
-  );
+  )
 };
 
-export default AmenitiesList;
+
+export default PaymentList;
