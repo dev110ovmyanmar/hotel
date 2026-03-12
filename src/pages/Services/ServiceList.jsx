@@ -1,15 +1,12 @@
-import React, { useEffect, useState } from "react";
+ import React, { useEffect, useState } from "react";
 import { LIMITS } from "../../variables/constants";
-import ContentBanner from "../../component/ContentBanner/ContentBanner";
-import FilterBar from "../../component/FilterBar/FilterBar";
 import useApiQuery from "../../hooks/useApiQuery";
-import PolicyTable from "./Components/PolicyTable";
-import PolicyForm from "./Components/PolicyForm/PolicyForm";
-import { policyListFun } from "../../api/policyFunctionApi";
 import ListHeader from "../../component/ListHeader/ListHeader";
+import ServiceTable from "./Components/ServiceTable";
+import ServiceForm from "./Components/ServiceForm/ServiceForm";
+import { getServices } from "../../api/serviceApi";
 
-
-const PolicyList = () => {
+const ServiceList = () => {
   const [keyword, setKeyword] = useState("");
   const [status, setStatus] = useState("all");
   const [page, setPage] = useState(1);
@@ -18,24 +15,21 @@ const PolicyList = () => {
   const [mode, setMode] = useState("add");
   const [selectedData, setSelectedData] = useState(null);
 
-  const normalStatus = status === "all" ? null : status;
-
   const { data, isLoading, error } = useApiQuery({
-    fetchQueryName: "policies",
-    fetchQueryFunction: policyListFun,
+    fetchQueryName: "services",
+    fetchQueryFunction: getServices,
     params: {
       pagination: {
         page: page,
         perPage: perPage,
       },
       keyword,
-      status: normalStatus,
     },
   });
 
   useEffect(() => {
     setPage(1);
-  }, [keyword, status, perPage]);
+  }, [keyword, perPage]);
 
   const handleAdd = () => {
     setSelectedData(null);
@@ -47,16 +41,16 @@ const PolicyList = () => {
     <div className="w-full px-6 py-2">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
         <ListHeader
-          title="Policy List"
-          searchPlaceholder="Search Policy ..."
+          // title="Service List"
+          searchPlaceholder="Search Service ..."
           keyword={keyword}
           setKeyword={setKeyword}
-          addButtonText="Add New Policy"
+          addButtonText="Add New Service"
           onAdd={handleAdd}
         />
       </div>
 
-      <PolicyTable
+      <ServiceTable
         data={data?.data || []}
         page={data?.pagination.currentPage}
         perPage={data?.pagination.perPage}
@@ -65,9 +59,8 @@ const PolicyList = () => {
         changePerPage={(perPage) => setPerPage(perPage)}
       />
 
-      <PolicyForm
+      <ServiceForm
         drawerOpen={drawerOpen}
-        setMode={setMode}
         setDrawerOpen={setDrawerOpen}
         page={page}
         setPage={setPage}
@@ -75,10 +68,9 @@ const PolicyList = () => {
         selectedData={selectedData}
         setSelectedData={setSelectedData}
         width={500}
-
       />
     </div>
   );
 };
 
-export default PolicyList;
+export default ServiceList;
