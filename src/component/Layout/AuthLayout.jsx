@@ -8,6 +8,7 @@ import Topbar from "../Topbar/Topbar";
 import { appSelector, toggleAll } from "../../services/appSlice";
 import useWindowSize from "../../hooks/useWindowSize";
 import Breadcrumbs from "../Breadcrumbs/Breadcrumbs";
+import { queryClient } from './../../app/queryClient';
 
 const { confirm } = Modal;
 
@@ -46,10 +47,11 @@ const AuthLayout = () => {
         },
       },
     });
-  };
+  };  
 
   const logout = () => {
     localStorage.clear();
+    queryClient.clear();
     // window.location.href = '/dashboard/login';
     window.location.href = "/";
   };

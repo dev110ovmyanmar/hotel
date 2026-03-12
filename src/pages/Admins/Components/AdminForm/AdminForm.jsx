@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { Form, Input, Button, Select, Image, Drawer, AutoComplete } from "antd";
-import Toast from "../../../../component/Toast/Toast";
 import { CloseOutlined } from "@ant-design/icons";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
 import useApiQuery from "../../../../hooks/useApiQuery";
@@ -12,6 +11,18 @@ import {
 } from "../../../../api/adminFunctionApi";
 import FormButton from "../../../../component/FormButtons/FormButtons";
 
+import { loadState } from './../../../../utils/Utils';
+import { LOCAL_STORAGE_KEYS } from './../../../../variables/constants';
+import { Divider } from 'antd';
+import { Space } from 'antd';
+import CheckBoxs from './CheckBoxs';
+import { Checkbox } from "antd";
+import PermissionAssignDrawer from './../../../Roles/Components/PermissionAssignDrawer';
+import AddOnDrawer from './AddOnDrawer';
+import { adminPermission } from './../../../../api/adminFunctionApi';
+import Toast from './../../../../component/Toast/Toast';
+
+
 const AdminForm = ({
   mode,
   setMode,
@@ -19,6 +30,7 @@ const AdminForm = ({
   setSelectedData,
   drawerOpen,
   setDrawerOpen,
+  page,
   setPage,
 }) => {
   const [form] = Form.useForm();
@@ -27,7 +39,9 @@ const AdminForm = ({
   const isEdit = mode === "edit";
   const isAdd = mode === "add";
 
-  const initData = queryClient.getQueryData(["initData", {}]);
+  const initData = queryClient.getQueryData(["initData"]);
+  const [adminDrawerOpen, setAdminDrawerOpen] = useState(false);
+  const [selectedPermissions, setSelectedPermissions] = useState([]);
 
   const roles = initData?.roles?.map((role) => ({
     value: role.uuid,
@@ -42,11 +56,13 @@ const AdminForm = ({
   const createAdminFunction = useApiMutation({
     mutationFn: createAdminFun,
     invalidateKeys: [["admins"]],
+    page: page
   });
 
   const editAdminFunction = useApiMutation({
     mutationFn: editAdminFun,
     invalidateKeys: [["admins"]],
+    page: page
   });
 
   const { data, isLoading, error } = useApiQuery({
@@ -57,6 +73,52 @@ const AdminForm = ({
       enabled: !!selectedData?.uuid,
     },
   });
+
+  const [allowMode, setAllowMode] = useState(""); // "allow" or "notAllow"
+
+
+  const changesNotAllowList = data?.permissions?.changesNotAllowList;
+  const changesAllowList = data?.permissions?.changesAllowList;
+  const allowPermissionIds =
+    changesAllowList?.flatMap(module =>
+      module.permissions
+        .filter(p => p.selected === true)
+        .map(p => p.id)
+    ) || [];
+
+  const notAllowPermissionIds =
+    changesNotAllowList?.flatMap(module =>
+      module.permissions
+        .filter(p => p.selected === true)
+        .map(p => p.id)
+    ) || [];
+
+
+  const addOnAdminPermission = useApiMutation({
+    mutationFn: adminPermission,
+    invalidateKeys: [["admins"]],
+    page: page
+  });
+
+
+  const onSave = (values) => {
+    const modifiedValues = {
+      uuid: data?.uuid,
+      permission: {
+        ids: values
+      }
+
+    };
+    addOnAdminPermission.mutate(modifiedValues,
+      {
+        onSuccess: () => {
+          setAdminDrawerOpen(false);
+          Toast.success("Added Permission Successfully");
+          setSelectedPermissions(values);
+        }
+      }
+    )
+  }
 
   useEffect(() => {
     if (!isAdd && data) {
@@ -103,6 +165,17 @@ const AdminForm = ({
     }
   };
 
+  const adminDrawerFunction = (mode) => {
+    setAllowMode(mode);
+    setAdminDrawerOpen(true);
+  };
+
+  useEffect(() => {
+    if (data && allowMode === "allow") {
+      setSelectedPermissions(allowPermissionIds);
+    }
+  }, [data]);
+
   return (
     <div>
       <Drawer
@@ -131,7 +204,7 @@ const AdminForm = ({
               <FormButton
                 onClick={() => form.submit()}
                 isPending={
-                  createAdminFunction.isLoading || editAdminFunction.isLoading
+                  mode === "add" ? createAdminFunction.isPending : editAdminFunction.isPending
                 }
                 mode={mode}
               />
@@ -145,6 +218,7 @@ const AdminForm = ({
           style={{ width: "100%" }}
           onFinish={onFinish}
           disabled={isView}
+
         >
           <Form.Item
             label="Name"
@@ -186,6 +260,81 @@ const AdminForm = ({
               open={isView ? false : undefined}
             />
           </Form.Item>
+
+          {
+            isEdit && (
+              <div className="mt-6">
+                <Divider />
+
+                <div
+                  style={{
+                    background: "#f5f5f5",
+                    padding: "15px",
+                    borderRadius: "8px",
+                    marginBottom: "20px",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <span>
+                    Original :{" "}
+                    <b>{changesNotAllowList?.length}</b>
+                  </span>
+
+                  {changesNotAllowList?.length <= 0 ? null : (
+                    <Button
+                      type="primary"
+                      onClick={() => adminDrawerFunction("notAllow")}
+                    >
+                      View Permissions
+                    </Button>
+                  )}
+
+                </div>
+
+                <div
+                  style={{
+                    background: "#f5f5f5",
+                    padding: "15px",
+                    borderRadius: "8px",
+                    marginBottom: "20px",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <span>
+                    Add On :{" "}
+                    <b>{changesAllowList?.length}</b>
+                  </span>
+
+                  {changesAllowList?.length <= 0 ? null : (
+                    <Button
+                      type="primary"
+                      onClick={() => adminDrawerFunction("allow")}
+                    >
+                      Add On Permissions
+                    </Button>
+                  )}
+
+                </div>
+
+                <AddOnDrawer
+                  mode={allowMode}
+                  open={adminDrawerOpen}
+                  onClose={() => setAdminDrawerOpen(false)}
+                  loading={addOnAdminPermission.isPending}
+                  rolePermissions={allowMode === "notAllow" ? changesNotAllowList : changesAllowList}
+                  selectedPermissions={allowMode === "notAllow" ? notAllowPermissionIds : selectedPermissions}
+                  onSave={onSave}
+                />
+
+              </div>
+
+            )
+          }
+
         </Form>
       </Drawer>
     </div>
