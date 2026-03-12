@@ -11,6 +11,8 @@ import {
 import FormButtons from "../../../../component/FormButtons/FormButtons";
 import { loadState } from './../../../../utils/Utils';
 import { LOCAL_STORAGE_KEYS } from './../../../../variables/constants';
+import { queryClient } from "../../../../app/queryClient";
+
 
 const { TextArea } = Input;
 
@@ -31,9 +33,14 @@ const PolicyForm = ({
   const isAdd = mode === "add";
 
 
-  const initData = loadState(LOCAL_STORAGE_KEYS.initData)?.statuses;
-  const linkTo = initData?.link_to;
-  const policyType = initData?.policy_type;
+  // const initData = loadState(LOCAL_STORAGE_KEYS.initData)?.statuses;
+  // const linkTo = initData?.link_to;
+  // const policyType = initData?.policy_type;
+
+  const initData = queryClient.getQueryData(["initData"]);
+  const policyType = initData?.statuses?.policy_type;
+  const linkTo = initData?.statuses?.link_to;
+
 
   const createPolicyFunction = useApiMutation({
     mutationFn: createPolicyFun,

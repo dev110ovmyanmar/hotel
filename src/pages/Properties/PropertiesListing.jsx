@@ -28,7 +28,7 @@ const PropertiesListing = () => {
   });
 
   const properties = Array.isArray(data?.response?.data) ? data.response.data : [];
-  const initData = queryClient.getQueryData(["initData", {}]);
+  const initData = queryClient.getQueryData(["initData"]);
 
   // Dynamic Options
   const propertyTypes = useMemo(() => initData?.statuses?.property_type?.map(item => ({ value: item.uuid, label: item.name })) || [], [initData]);
@@ -131,24 +131,41 @@ const PropertiesListing = () => {
   const showButton = properties.length === 0 ? false : true;
 
 
+  const isView = currentMode === "view";
+  const isEdit = currentMode === "edit";
+  const isAdd = currentMode === "add";
+
+  const DrawerTitle = isView ? "Role View" : 
+                      isEdit ? "Role Edit" : 
+                      isAdd  ? "Role Create" : "";
+
+  const switchToEdit = () => {
+    setCurrentMode("edit");
+  };
+  
+
   return (
     <div className="p-6">
-    <ListHeader 
-        title="Properties List" 
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4 w-full px-6 py-2">
+      <ListHeader 
+        // title="Properties List" 
         keyword={keyword} 
         setKeyword={setKeyword}
         searchPlaceholder="Search Property..."
         onAdd={handleAdd}
         showButton={false}
         addButtonText={"Add Property"}
-    />
+         />
+      </div>
 
       <PropertyTable dataSource={properties} loading={isLoading} 
         onEdit={(rec) => { setCurrentMode("edit"); setDrawerOpen(true); handleGetDetail(rec.uuid); }}
         onView={(rec) => { setCurrentMode("view"); setDrawerOpen(true); handleGetDetail(rec.uuid); }}
       />
+
       <PropertyForm
         open={drawerOpen}
+        DrawerTitle={DrawerTitle}
         onClose={() => setDrawerOpen(false)}
         mode={currentMode}
         initialValues={selectedRow}
@@ -161,6 +178,7 @@ const PropertiesListing = () => {
         currencyOptions={currencyOptions}
         onCountryChange={setSelectedCountryUuid}
         onFinish={handlePropertySubmit}
+        switchToEdit={switchToEdit}
       />
     </div>
   );

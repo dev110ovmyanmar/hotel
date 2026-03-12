@@ -7,22 +7,31 @@ import {
   LogoutOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
+  MoonOutlined,
   PlusOutlined,
   PrinterOutlined,
+  SunOutlined,
   UserOutlined,
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
-import { appSelector, toggleCollapsed } from "../../services/appSlice.js";
+import {
+  appSelector,
+  toggleCollapsed,
+  toggleTheme,
+} from "../../services/appSlice.js";
 import ChangePasswordPage from "../../pages/Authentication/ChangePassword/ChangePasswordPage.jsx";
 import ProfilePage from "../../pages/Profile/ProfilePage.jsx";
 import { useCallback, useState } from "react";
 import { adminLogout } from "../../api/logoutApi.js";
 import { useApiMutation } from "../../hooks/useApiMutation.js";
+import { ReloadOutlined } from "@ant-design/icons";
+import { queryClient } from "../../app/queryClient.js";
 
 const { Header } = Layout;
 
 const Topbar = withDirection(function (props) {
-  const { collapsed, openDrawer } = useSelector(appSelector);
+  const { collapsed, openDrawer, theme } = useSelector(appSelector);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -31,6 +40,21 @@ const Topbar = withDirection(function (props) {
   const [popoverOpen, setPopoverOpen] = useState(false);
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const handleRefetchInitData = async () => {
+  try {
+    setRefreshing(true);
+
+    await queryClient.invalidateQueries({
+      queryKey: ["initData"],
+    });
+  } catch (error) {
+    console.error("Refetch failed", error);
+  } finally {
+    setRefreshing(false);
+  }
+};
 
   const logout = useApiMutation({
     mutationFn: adminLogout,
@@ -40,6 +64,7 @@ const Topbar = withDirection(function (props) {
     try {
       setLoading(true);
       await logout.mutateAsync();
+      queryClient.clear();
       localStorage.clear();
       navigate("/signin");
     } catch (error) {
@@ -157,7 +182,28 @@ const Topbar = withDirection(function (props) {
             Print Reservation
           </Button>
 
-          <div className="relative cursor-pointer">
+          <Button
+            type="text"
+            icon={
+              theme === "light" ? (
+                <MoonOutlined style={{ fontSize: 20 }} />
+              ) : (
+                <SunOutlined style={{ fontSize: 20 }} />
+              )
+            }
+            onClick={() => dispatch(toggleTheme())}
+            className="text-black dark:text-white transition-all duration-300 rotate-0 dark:rotate-180"
+          />
+
+          <Button
+            type="text"
+            loading={refreshing}
+            icon={<ReloadOutlined style={{ fontSize: 20 }}/>}
+            className="bg-gray-200 hover:bg-gray-300 text-gray-700"
+            onClick={handleRefetchInitData}
+          />
+
+          {/* <div className="relative cursor-pointer">
             <span className="w-2.5 h-2.5 bg-red-500 rounded-full absolute -top-1 -right-1 animate-pulse"></span>
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -173,7 +219,7 @@ const Topbar = withDirection(function (props) {
                 d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 00-5-5.917V5a1 1 0 10-2 0v.083A6 6 0 006 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
               />
             </svg>
-          </div>
+          </div> */}
 
           <Popover
             content={dropdownContent}

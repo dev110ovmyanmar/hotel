@@ -15,15 +15,38 @@
 
 :root {
   --site-font: "Poppins", sans-serif;
+  --background: #ffffff;
+  --foreground: #000000;
 }
+
+.dark {
+  --background: #0f172a;
+  --foreground: #ffffff;
+}
+
+@custom-variant dark (&:where(.dark, .dark *));
 
 * {
   font-family: sans-serif;
+  transition:
+    background-color 0.35s ease,
+    color 0.35s ease,
+    border-color 0.35s ease,
+    fill 0.35s ease,
+    stroke 0.35s ease;
+}
+
+.bg-background {
+  background-color: var(--background);
+}
+
+.text-foreground {
+  color: var(--foreground);
 }
 
 /* Breadcrumb */
 .breadcrumbs {
-  max.width: 1200px;
+  max-width: 1200px;
   margin: 10px 0 20px 0;
   font-size: 14px;
 }
@@ -51,8 +74,8 @@
   --ant-form-label-color: #474141;
 }
 
-//radio button font size
-..ant-radio-wrapper {
+/* radio button font size */
+.ant-radio-wrapper {
   --ant-font-size: 12px !important;
 }
 
@@ -85,10 +108,23 @@
 }
 
 .css-var-root {
+  --ant-color-split:  #f5f5f5;
   --ant-color-split: #f5f5f5;
   --ant-color-text-disabled: #0d0c0c --ant-color-bg-container-disabled: #ffffff;
 }
+
 .ant-btn.ant-btn-block {
   height: 40px;
 }
 
+.ant-layout,
+.ant-layout-header,
+.ant-layout-sider,
+.ant-card,
+.ant-modal,
+.ant-btn,
+.ant-input,
+.ant-select,
+.ant-picker {
+  transition: background-color 0.35s ease, color 0.35s ease, border-color 0.35s ease;
+}
