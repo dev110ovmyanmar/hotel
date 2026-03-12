@@ -52,3 +52,46 @@ export const roomTypeDetails = async (params) => {
   const { data } = await apiClient.get("/room-type", { params });
   return data.response;
 };
+
+// Room-attribute
+export const fetchRoomAttribute = async (params) => {
+  const { data } = await apiClient.get("/room-attributes", { params });
+  return data.response;
+};
+
+export const createRoomAttribute = async (params) => {
+  const { data } = await apiClient.post("/room-attribute/upsert", params);
+  return data.response;
+};
+
+export const editRoomAttribute = async (params) => {
+  const { data } = await apiClient.post("/room-attribute/upsert", params);
+  return data.response;
+};
+
+export const roomAttributeDetails = async (params) => {
+  const { data } = await apiClient.get("/room-attribute", { params });
+  return data.response;
+};
+
+//Room-attribute-value api
+export const createRoomAttributeValue = async (params) => {
+  const { data } = await apiClient.post("/room-attribute-value/upsert", params);
+  return data.response;
+};
+
+export const editRoomAttributeValue = async (params) => {
+  const { data } = await apiClient.post("/room-attribute-value/upsert", params);
+  return data.response;
+};
+
+// Room-Type-amenity
+export const createRoomTypeAmenity = async (params) => {
+  const { data } = await apiClient.post("/room-type-amenity/upsert", params);
+  return data.response;
+};
+
+export const editRoomTypeAmenity = async (params) => {
+  const { data } = await apiClient.post("/room-type-amenity/upsert", params);
+  return data.response;
+};
