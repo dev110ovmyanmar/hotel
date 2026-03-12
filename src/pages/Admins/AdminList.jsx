@@ -65,6 +65,7 @@ const AdminList = () => {
       <AdminForm
         drawerOpen={drawerOpen}
         setDrawerOpen={setDrawerOpen}
+        page={page}
         setPage={setPage}
         mode={mode}
         setMode={setMode}
