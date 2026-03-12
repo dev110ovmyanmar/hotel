@@ -5,6 +5,7 @@ import { EditOutlined } from '@ant-design/icons';
 import { EyeOutlined } from '@ant-design/icons';
 import PaymentForm from './PaymentForm/PaymentForm';
 
+// PaymentTable
 const PaymentTable = ({ data, page, perPage, total, changePage, changePerPage }) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mode, setMode] = useState("");
