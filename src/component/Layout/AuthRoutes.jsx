@@ -64,7 +64,7 @@ const RolesListing = lazy(() => import("../../pages/Roles/RolesListing"));
 const PropertiesListing = lazy(
   () => import("../../pages/Properties/PropertiesListing"),
 );
-// const ServiceList = lazy(() => import("../../pages/Services/ServiceList"));
+const ServiceList = lazy(() => import("../../pages/Services/ServiceList"));
 
 const PrivacyPolicy = lazy(
   () => import("../../pages/PrivacyPolicy/PrivacyPolicy"),
@@ -288,14 +288,14 @@ export const authRoutes = [
     component: <InventoryListing />,
     // permission: "inventory.list",
   },
-  // {
-  //   key: 14,
-  //   label: "Services",
-  //   path: "/services",
-  //   icon: <CustomerServiceOutlined style={{ fontSize: "20px" }} />,
-  //   component: <ServiceList />,
-  //   permission: "service.list",
-  // },
+  {
+    key: 14,
+    label: "Services",
+    path: "/services",
+    icon: <CustomerServiceOutlined style={{ fontSize: "20px" }} />,
+    component: <ServiceList />,
+    // permission: "service.list",
+  },
   {
     key: 16,
     label: "Meal Plan",
