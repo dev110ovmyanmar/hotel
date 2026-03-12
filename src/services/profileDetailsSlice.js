@@ -10,7 +10,7 @@ const adminProfileSlice = createSlice({
   initialState,
   reducers: {
     saveProfileDetails: (state, action) => {
-        console.log(action.payload,"ActionPayload");
+      console.log(action.payload,"ActionPayload");
       state.adminProfileDetails = action.payload;
     },
   },

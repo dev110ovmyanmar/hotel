@@ -5,8 +5,7 @@ import { FiEdit } from "react-icons/fi";
 import LocationForm from './LocationForm/LocationForm';
 import { EditOutlined, EyeOutlined, MoreOutlined } from '@ant-design/icons';
 
-const LocationTable = ({data , page, perPage, total, changePage , changePerPage}) => {
-  console.log(data,"DataInLocationTable");
+const LocationTable = ({data , page,setPage, perPage, total, changePage , changePerPage}) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [modalOpen,setModalOpen] = useState(false);
   const [mode,setMode] = useState(null);
@@ -14,7 +13,7 @@ const LocationTable = ({data , page, perPage, total, changePage , changePerPage}
   
   const columns = [
     {
-      title: 'Id',
+      title: 'ID',
       render:(_,record) => <div>{record?.id}</div>,
       width:70,
       align:'center'
@@ -41,6 +40,7 @@ const LocationTable = ({data , page, perPage, total, changePage , changePerPage}
                   setDrawerOpen(true);
                   setMode("view");
                   setSelectedData(record);
+                  // setPage(1);
                 }}
               >
                 <EyeOutlined style={{ fontSize: "12px" }} />
@@ -55,7 +55,7 @@ const LocationTable = ({data , page, perPage, total, changePage , changePerPage}
                 size={4}
                 style={smallStyle}
                 onClick={() => {
-                  setDrawerOpen(true);
+                  setModalOpen(true);
                   setMode("edit");
                   setSelectedData(record);
                 }}
@@ -79,7 +79,6 @@ const LocationTable = ({data , page, perPage, total, changePage , changePerPage}
   return (
     <div id="scrollId" className="w-full h-[63vh] " >
         <Table
-          size='small'
           tableLayout="fixed"
           scroll={{ x: 1000 }}
           columns={columns}
@@ -99,6 +98,8 @@ const LocationTable = ({data , page, perPage, total, changePage , changePerPage}
 
         <LocationForm 
           mode={mode}
+          page={page}
+          setPage={setPage}
           setMode={setMode}
           drawerOpen={ mode === "view" && drawerOpen}
           setDrawerOpen={mode === "view" && setDrawerOpen}

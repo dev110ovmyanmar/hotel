@@ -1,8 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { Suspense } from "react";
+import React, { Suspense, useMemo } from "react";
 import { Route, Routes } from "react-router-dom";
 import Loader from "../../component/Loader/Loader";
 import NotFound from "../../pages/404/NotFound";
+import PermissionRoute from "../../app/permissionRoute";
 import _ from "lodash";
 import {
   DashboardOutlined,
@@ -15,6 +16,8 @@ import {
   SecurityScanOutlined,
   UserSwitchOutlined,
   PropertySafetyOutlined,
+  EnvironmentOutlined,
+  CustomerServiceOutlined,
   BankOutlined,
   UnorderedListOutlined,
   ApartmentOutlined,
@@ -22,30 +25,33 @@ import {
   BarsOutlined,
   LayoutOutlined,
   FileProtectOutlined,
+  DeploymentUnitOutlined,
+  TagsOutlined,
+  DatabaseOutlined,
 } from "@ant-design/icons";
 import { lazy } from "react";
-import AdminList from "../../pages/Admins/AdminList";
-
 import { FiMap } from "react-icons/fi";
-import LocationList from "../../pages/Location/LocationList";
-import AmenitiesList from "../../pages/Amenities/AmenitiesList";
-import PolicyList from "../../pages/Policy/PolicyList";
-
-import { EnvironmentOutlined } from "@ant-design/icons";
 import { MdOutlinePolicy } from "react-icons/md";
+
 
 const Dashboard = lazy(() => import("../../pages/Dashboard/Dashboard"));
 const Calendar = lazy(() => import("../../pages/Calendar/Calendar"));
 const Reservation = lazy(
   () => import("../../pages/Reservation/ReservationList"),
 );
-const ReservationForm =lazy(()=> import("../../pages/ReservationForm/ReservationForm"))
-const Guest = lazy (()=> import("../../pages/Guest/GuestList"))
+const ReservationForm = lazy(
+  () => import("../../pages/ReservationForm/ReservationForm"),
+);
+const Guest = lazy(() => import("../../pages/Guest/GuestList"));
 const Booking = lazy(() => import("../../pages/Booking/Booking"));
 const RoomPlan = lazy(() => import("../../pages/RoomPlan/RoomPlanList"));
 const RoomType = lazy(() => import("../../pages/RoomType/RoomTypeList"));
 const RoomList = lazy(() => import("../../pages/Room/RoomList"));
 const Floor = lazy(() => import("../../pages/Floor/FloorList"));
+const AdminList = lazy(() => import("../../pages/Admins/AdminList"));
+const LocationList = lazy(() => import("../../pages/Location/LocationList"));
+const AmenitiesList = lazy(() => import("../../pages/Amenities/AmenitiesList"));
+const PolicyList = lazy(() => import("../../pages/Policy/PolicyList"));
 const ChangePassword = lazy(
   () => import("../../pages/Authentication/ChangePassword/ChangePasswordPage"),
 );
@@ -57,8 +63,15 @@ const RolesListing = lazy(() => import("../../pages/Roles/RolesListing"));
 const PropertiesListing = lazy(
   () => import("../../pages/Properties/PropertiesListing"),
 );
-const PrivacyPolicy = lazy(() => import("../../pages/PrivacyPolicy/PrivacyPolicy"));
+// const ServiceList = lazy(() => import("../../pages/Services/ServiceList"));
 
+const PrivacyPolicy = lazy(
+  () => import("../../pages/PrivacyPolicy/PrivacyPolicy"),
+);
+
+const CategoryListing = lazy(() => import("../../pages/Categories/CategoryListing"));
+const UnitListing = lazy(() => import("../../pages/Units/UnitListing"));
+const InventoryListing = lazy(() => import("../../pages/Inventories/InventoryListing"))
 export const authRoutes = [
   {
     key: 1,
@@ -84,7 +97,7 @@ export const authRoutes = [
     component: <Reservation />,
     isPrivate: false,
   },
-   {
+  {
     key: 3.1,
     path: "/add-reservation/",
     component: <ReservationForm />,
@@ -101,6 +114,7 @@ export const authRoutes = [
     icon: <UserOutlined style={{ fontSize: "20px" }} />,
     isPrivate: true,
     component: <AdminList />,
+    permission: "admin.list",
   },
   {
     key: 4.1,
@@ -120,6 +134,7 @@ export const authRoutes = [
         label: "Room Plan",
         icon: <ApartmentOutlined style={{ fontSize: "20px" }} />,
         component: <RoomPlan />,
+        permission: "room-plan.list",
       },
       {
         key: 5.2,
@@ -127,6 +142,7 @@ export const authRoutes = [
         label: "Room Type",
         icon: <AppstoreOutlined style={{ fontSize: "20px" }} />,
         component: <RoomType />,
+        permission: "room-type.list",
       },
       {
         key: 5.3,
@@ -134,6 +150,7 @@ export const authRoutes = [
         label: "Room List",
         icon: <UnorderedListOutlined style={{ fontSize: "20px" }} />,
         component: <RoomList />,
+        permission: "room.list",
       },
       {
         key: 5.2,
@@ -141,6 +158,7 @@ export const authRoutes = [
         label: "Floor",
         icon: <LayoutOutlined style={{ fontSize: "20px" }} />,
         component: <Floor />,
+        permission: "floor.list",
       },
     ],
   },
@@ -156,6 +174,7 @@ export const authRoutes = [
         label: "Permissions",
         icon: <SecurityScanOutlined style={{ fontSize: "20px" }} />,
         component: <PermissionListing />,
+        // permission: "permission.list",
       },
       {
         key: 6.2,
@@ -163,6 +182,7 @@ export const authRoutes = [
         label: "Roles",
         icon: <UserSwitchOutlined style={{ fontSize: "20px" }} />,
         component: <RolesListing />,
+        // permission: "role.list",
       },
     ],
   },
@@ -172,6 +192,7 @@ export const authRoutes = [
     label: "Properties",
     icon: <PropertySafetyOutlined style={{ fontSize: "20px" }} />,
     component: <PropertiesListing />,
+    permission: "property.list",
   },
   {
     key: 8,
@@ -198,6 +219,7 @@ export const authRoutes = [
     icon: <EnvironmentOutlined style={{ fontSize: "20px" }} />,
     isPrivate: true,
     component: <LocationList />,
+    permission: "location.list",
   },
   {
     key: 11,
@@ -206,6 +228,7 @@ export const authRoutes = [
     icon: <FiMap style={{ fontSize: "20px" }} />,
     isPrivate: true,
     component: <AmenitiesList />,
+    permission: "amenity.list",
   },
   {
     key: 12,
@@ -214,14 +237,43 @@ export const authRoutes = [
     icon: <MdOutlinePolicy style={{ fontSize: "20px" }} />,
     isPrivate: true,
     component: <PolicyList />,
+    permission: "policy.list",
   },
   {
     key: 13,
     label: "Privacy Policy",
     path: "/privacy-policy",
-    icon: <FileProtectOutlined style={{ fontSize: "20px"}}/>,
+    icon: <FileProtectOutlined style={{ fontSize: "20px" }} />,
     isPrivate: true,
-    component: <PrivacyPolicy/>
+    component: <PrivacyPolicy />,
+    // permission: "privacy-policy.list",
+  },
+  {
+    key: 13,
+    label: "Category",
+    path: "/category",
+    icon: <TagsOutlined style={{ fontSize: "20px" }} />,
+    isPrivate: true,
+    component: <CategoryListing />,
+    // permission: "category.list",
+  },
+  {
+    key: 14,
+    label: "Units",
+    path:"/unit",
+    icon: <DeploymentUnitOutlined style={{ fontSize: "20px" }} />,
+    isPrivate: true,
+    component: <UnitListing />,
+    // permission: "unit.list",
+  },
+  {
+    key: 15,
+    label: "Inventories",
+    path:"/inventory",
+    icon: <DatabaseOutlined style={{ fontSize: "20px" }} />,
+    isPrivate: true,
+    component: <InventoryListing />,
+    // permission: "inventory.list",
   }
   // {
   //   key: 13,
@@ -230,19 +282,35 @@ export const authRoutes = [
   //   icon: <MdOutlinePolicy style={{ fontSize: "20px" }} />,
   //   isPrivate: true,
   //   component: <MeanPlanList />
+  // },
 
-  // }
+  // {
+  //   key: 14,
+  //   label: "Services",
+  //   path: "/services",
+  //   icon: <CustomerServiceOutlined style={{ fontSize: "20px" }} />,
+  //   component: <ServiceList />,
+  //   permission: "service.list",
+  // },
 ];
 
 const AuthRoutes = () => {
-  const routesOptions = _.flatten(
-    _.map(authRoutes, (route) => {
-      if (route.nested) {
-        return route.nested;
-      }
-      return route;
-    }),
-  );
+  // const routesOptions = _.flatten(
+  //   _.map(authRoutes, (route) => {
+  //     if (route.nested) {
+  //       return route.nested;
+  //     }
+  //     return route;
+  //   }),
+  // );
+
+  // Flatten routes including nested ones
+
+  const routesOptions = useMemo(() => {
+    return _.flatten(
+      _.map(authRoutes, (route) => (route.nested ? route.nested : route)),
+    );
+  }, []);
 
   return (
     <Suspense
@@ -255,9 +323,17 @@ const AuthRoutes = () => {
       <Routes>
         {routesOptions.map((option) => (
           <Route
+            // key={option.key}
+            // path={`/${option?.path}`}
+            // element={option.component}
+
             key={option.key}
-            path={`/${option?.path}`}
-            element={option.component}
+            path={option.path}
+            element={
+              <PermissionRoute permission={option.permission}>
+                {option.component}
+              </PermissionRoute>
+            }
           />
         ))}
         <Route path="*" element={<NotFound />} />

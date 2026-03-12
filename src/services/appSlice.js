@@ -16,7 +16,8 @@ const initialState = {
   view: !isServer && getView(window.innerWidth),
   height: !isServer && window.innerHeight,
   openDrawer: false,
-  sessionExpired: false
+  sessionExpired: false,
+  theme: (!isServer && localStorage.getItem('theme')) || 'light'
 };
 
 const appSlice = createSlice({
@@ -51,7 +52,28 @@ const appSlice = createSlice({
     },
     sessionExpired: (state, action) => {
       state.sessionExpired = action.payload;
-    }
+    },
+    // Added Theme Toggle Reducer
+    toggleTheme: (state) => {
+      const newTheme = state.theme === 'light' ? 'dark' : 'light';
+      state.theme = newTheme;
+      
+      if (!isServer) {
+        localStorage.setItem('theme', newTheme);
+        // Sync Tailwind v4 class
+        if (newTheme === 'dark') {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+      }
+    },
+    // Added to initialize theme on app load
+    initTheme: (state) => {
+      if (!isServer && state.theme === 'dark') {
+        document.documentElement.classList.add('dark');
+      }
+    },
   },
 });
 
@@ -64,6 +86,8 @@ export const {
   changeOpenKeys,
   changeCurrent,
   clearMenu,
+  toggleTheme,
+  initTheme,
 } = appSlice.actions;
 
 

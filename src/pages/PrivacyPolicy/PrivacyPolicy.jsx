@@ -25,7 +25,7 @@ const PrivacyPolicy = () => {
     params: {},
   });
 
-  const initData = queryClient.getQueryData(["initData", {}]);
+  const initData = queryClient.getQueryData(["initData"]);
 
   const statusOptions =
     initData?.statuses?.status?.map((item) => ({
@@ -143,38 +143,37 @@ const PrivacyPolicy = () => {
             wrapperCol={{ span: 16 }}
             onFinish={onFinish}
           >
-            {/* Privacy Policy */}
+            
             <Form.Item
               name="privacyPolicy"
               label={<span className="font-bold text-gray-700 text-sm">Privacy Policy</span>}
-              rules={[{ required: true, message: "Required" }]}
+              /* Only validate when not in view mode */
+              rules={[{ required: isEdit , message: "Required" }]}
               className="mb-10"
             >
-              {isEdit ? (
-                <Editor placeholder="Content..." />
-              ) : (
-                <div
-                  className="border border-gray-200 rounded-lg p-4 bg-gray-50 min-h-[150px]"
-                  dangerouslySetInnerHTML={{ __html: savedPolicies.privacyPolicy || "-" }}
-                />
-              )}
+              <Editor 
+              placeholder="Content..." 
+              readOnly={!isEdit} // Most editors use this prop
+              disabled={!isEdit} // Some editors (like AntD variants) use this
+              // If your editor needs a specific "view" theme:
+              theme={!isEdit ? "bubble" : "snow"} 
+              />
             </Form.Item>
 
-            {/* Terms & Conditions */}
             <Form.Item
               name="termsAndConditions"
               label={<span className="font-bold text-gray-700 text-sm">Terms & Conditions</span>}
-              rules={[{ required: true, message: "Required" }]}
+              /* Only validate when not in view mode */
+              rules={[{ required: isEdit , message: "Required" }]}
               className="mb-10"
             >
-              {isEdit ? (
-                <Editor placeholder="Content..." />
-              ) : (
-                <div
-                  className="border border-gray-200 rounded-lg p-4 bg-gray-50 min-h-[150px]"
-                  dangerouslySetInnerHTML={{ __html: savedPolicies.termsAndConditions || "-" }}
-                />
-              )}
+              <Editor 
+              placeholder="Content..." 
+              readOnly={!isEdit} // Most editors use this prop
+              disabled={!isEdit} // Some editors (like AntD variants) use this
+              // If your editor needs a specific "view" theme:
+              theme={!isEdit ? "bubble" : "snow"} 
+              />
             </Form.Item>
 
             {/* Status */}
@@ -183,17 +182,12 @@ const PrivacyPolicy = () => {
               label={<span className="font-bold text-gray-700 text-sm">Status</span>}
               rules={[{ required: true, message: "Required" }]}
             >
-              {isEdit ? (
                 <Select
                   options={statusOptions}
                   className="h-11 w-40"
                   placeholder="Select Status"
+                  disabled={!isEdit}
                 />
-              ) : (
-                <div className="border border-gray-200 rounded-lg px-4 h-11 flex items-center bg-gray-50 w-40">
-                  {getStatusLabel(savedPolicies.statusUuid)}
-                </div>
-              )}
             </Form.Item>
 
             {/* Buttons */}
