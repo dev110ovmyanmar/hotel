@@ -96,7 +96,7 @@ const RoomForm = ({
 
       createRooms.mutate(payload, {
         onSuccess: () => {
-          queryClient.invalidateQueries(["taxList"]);
+          queryClient.invalidateQueries(["roomData"]);
           form.resetFields();
           setDrawerOpen(false);
           setPage(1);
@@ -116,7 +116,7 @@ const RoomForm = ({
 
       editRooms.mutate(payload, {
         onSuccess: () => {
-          queryClient.invalidateQueries(["taxList"]);
+          queryClient.invalidateQueries(["roomData"]);
           setDrawerOpen(false);
           Toast.success("Room Updated Successfully!");
         },

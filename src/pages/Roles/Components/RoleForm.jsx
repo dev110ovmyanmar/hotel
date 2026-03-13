@@ -129,7 +129,6 @@
 //     //   return;
 //     // }
 
-
 //     const permPayload = {
 //       uuid: selectedData?.uuid,
 //       name: roleDetail.name,
@@ -285,7 +284,7 @@ const RoleForm = ({
   switchToEdit,
   DrawerTitle,
   open,
-  onClose
+  onClose,
 }) => {
   const [form] = Form.useForm();
   const [permDrawerOpen, setPermDrawerOpen] = useState(false);
@@ -294,7 +293,11 @@ const RoleForm = ({
   const isView = mode === "view";
   const isAdd = mode === "add";
 
-  const { data: roleDetail, refetch, isLoading } = useApiQuery({
+  const {
+    data: roleDetail,
+    refetch,
+    isLoading,
+  } = useApiQuery({
     fetchQueryName: "roleDetail",
     fetchQueryFunction: fetchRoleDetail,
     params: { uuid: selectedData?.uuid },
@@ -396,7 +399,6 @@ const RoleForm = ({
     //   return;
     // }
 
-
     const permPayload = {
       uuid: selectedData?.uuid,
       name: roleDetail.name,
@@ -433,17 +435,21 @@ const RoleForm = ({
           title={
             <div className="flex items-center justify-between">
               <span>{DrawerTitle}</span>
-          {isView ? (
-           <Button type="primary" onClick={switchToEdit}>
-            Edit
-          </Button>
-          ) : (
-          <FormButtons 
-          onClick={() => form.submit()} 
-          mode={mode} 
-          loading={isAdd ? createRoleFunction.isPending : updateRoleFunction.isPending}/>
-
-          )}
+              {isView ? (
+                <Button type="primary" onClick={switchToEdit}>
+                  Edit
+                </Button>
+              ) : (
+                <FormButtons
+                  onClick={() => form.submit()}
+                  mode={mode}
+                  loading={
+                    isAdd
+                      ? createRoleFunction.isPending
+                      : updateRoleFunction.isPending
+                  }
+                />
+              )}
             </div>
           }
           size={500}
@@ -459,7 +465,10 @@ const RoleForm = ({
               <Input readOnly={isView} placeholder="it_support" />
             </Form.Item>
             <Form.Item label="Description" name="description">
-              <TextArea rows={3} readOnly={isView} placeholder="Enter the description for related role" />
+              <TextArea
+                readOnly={isView}
+                // placeholder="Enter the description for related role"
+              />
             </Form.Item>
 
             {/* ── Permissions Section (edit / view only, not add) ── */}
@@ -478,8 +487,7 @@ const RoleForm = ({
                   }}
                 >
                   <span>
-                    Permissions Selected:{" "}
-                    <b>{currentPermissions.length}</b>
+                    Permissions Selected: <b>{currentPermissions.length}</b>
                   </span>
 
                   {!isView && (
@@ -505,7 +513,6 @@ const RoleForm = ({
             />
           </Form>
         </Drawer>
-
       )}
     </>
   );

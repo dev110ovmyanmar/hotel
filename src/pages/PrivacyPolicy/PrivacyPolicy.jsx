@@ -202,7 +202,7 @@ const PrivacyPolicy = () => {
                   className="bg-blue-600 hover:bg-blue-700 px-12 h-11 font-bold text-white"
                   htmlType="submit"
                 >
-                  Save
+                  Create
                 </Button>
               </div>
             )}

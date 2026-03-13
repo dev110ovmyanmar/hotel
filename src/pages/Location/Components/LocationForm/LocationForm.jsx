@@ -1,18 +1,31 @@
-
 import React, { useEffect, useState } from "react";
-import { Form, Input, Button, Select, Image, Drawer, AutoComplete, Modal, Table, Space } from "antd";
+import {
+  Form,
+  Input,
+  Button,
+  Select,
+  Image,
+  Drawer,
+  AutoComplete,
+  Modal,
+  Table,
+  Space,
+} from "antd";
 import Toast from "../../../../component/Toast/Toast";
 import { CloseOutlined } from "@ant-design/icons";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
 import useApiQuery from "../../../../hooks/useApiQuery";
 import { loadState } from "../../../../utils";
 import { queryClient } from "../../../../app/queryClient";
-import { createLocationFun, editLocationFun, locationDetailsFun } from "../../../../api/locationFunctionApi";
+import {
+  createLocationFun,
+  editLocationFun,
+  locationDetailsFun,
+} from "../../../../api/locationFunctionApi";
 import { AiTwotoneEye } from "react-icons/ai";
 import { FiEdit } from "react-icons/fi";
-import ListHeader from './../../../../component/ListHeader/ListHeader';
-import FormButtons from './../../../../component/FormButtons/FormButtons';
-
+import ListHeader from "./../../../../component/ListHeader/ListHeader";
+import FormButtons from "./../../../../component/FormButtons/FormButtons";
 
 const LocationForm = ({
   page,
@@ -23,9 +36,8 @@ const LocationForm = ({
   drawerOpen,
   setDrawerOpen,
   modalOpen,
-  setModalOpen
+  setModalOpen,
 }) => {
-
   const [form] = Form.useForm();
   const [cityForm] = Form.useForm();
 
@@ -43,13 +55,13 @@ const LocationForm = ({
   const createLocationFunction = useApiMutation({
     mutationFn: createLocationFun,
     invalidateKeys: [["locations"]],
-    page: page
+    page: page,
   });
 
   const editLocationFunction = useApiMutation({
     mutationFn: editLocationFun,
     invalidateKeys: [["locations"]],
-    page: page
+    page: page,
   });
 
   const { data, isPending, error } = useApiQuery({
@@ -61,7 +73,6 @@ const LocationForm = ({
     },
   });
 
-
   useEffect(() => {
     if (isEdit && data) {
       form.setFieldsValue({
@@ -72,10 +83,10 @@ const LocationForm = ({
 
   useEffect(() => {
     if (isAdd) {
-      form.resetFields()
+      form.resetFields();
     }
     if (isCityAdd) {
-      cityForm.resetFields()
+      cityForm.resetFields();
     }
   }, [isAdd, isCityAdd]);
 
@@ -86,39 +97,38 @@ const LocationForm = ({
           setPage(1);
           setModalOpen(false);
           Toast.success("Country Created Successfully!");
-          form.resetFields()
-        }
-      })
+          form.resetFields();
+        },
+      });
     }
 
     if (isEdit) {
       const editValues = {
         ...values,
-        uuid: selectedData?.uuid
+        uuid: selectedData?.uuid,
       };
 
       editLocationFunction.mutate(editValues, {
         onSuccess: () => {
           setModalOpen(false);
           Toast.success("Country Updated Successfully!");
-        }
-      })
+        },
+      });
     }
   };
 
   const columns = [
     {
       title: "ID",
-      dataIndex: 'id',
-      key: 'id',
-      render: text => <div>{text}</div>
-
+      dataIndex: "id",
+      key: "id",
+      render: (text) => <div>{text}</div>,
     },
     {
       title: "City",
-      dataIndex: 'name',
+      dataIndex: "name",
       key: "name",
-      render: text => <div>{text}</div>
+      render: (text) => <div>{text}</div>,
     },
     {
       title: "Action",
@@ -128,35 +138,32 @@ const LocationForm = ({
             <FiEdit
               className="text-blue-500"
               onClick={() => {
-                setCreateDrawerOpen(true),
+                (setCreateDrawerOpen(true),
                   setCityMode("cityEdit"),
-                  setSelectedCity(record)
+                  setSelectedCity(record));
               }}
             />
           </Space>
-        )
-      }
-    }
+        );
+      },
+    },
   ];
 
   const onCityFinish = (values) => {
-
     if (isCityAdd) {
       setSelectedCity(null);
       const modifiedValues = {
         name: data?.name,
         uuid: data?.uuid,
         city: {
-          name: values?.city.name
-        }
+          name: values?.city.name,
+        },
       };
       createLocationFunction.mutate(modifiedValues, {
-
         onSuccess: () => {
           setCreateDrawerOpen(false);
           Toast.success("City Create Successfully!");
-
-        }
+        },
       });
     }
 
@@ -167,32 +174,30 @@ const LocationForm = ({
         uuid: data?.uuid,
         city: {
           name: values?.city.name,
-          uuid: selectedCity.uuid
-        }
-      }
+          uuid: selectedCity.uuid,
+        },
+      };
       editLocationFunction.mutate(editValues, {
         onSuccess: () => {
           setCreateDrawerOpen(false);
           Toast.success("City Updated Successfully!");
-
-        }
+        },
       });
     }
-
   };
 
   useEffect(() => {
     if (isCityEdit && selectedCity) {
       cityForm.setFieldsValue({
         city: {
-          name: selectedCity.name
-        }
+          name: selectedCity.name,
+        },
       });
     }
   }, [selectedCity, isCityAdd]);
 
   return (
-    <div className="flex justify-center" >
+    <div className="flex justify-center">
       {isView && (
         <Drawer
           destroyOnClose
@@ -202,7 +207,7 @@ const LocationForm = ({
           title={
             <>
               <span style={{ fontWeight: "normal" }}>Country: </span>
-              <span >{data?.name}</span>
+              <span>{data?.name}</span>
             </>
           }
         >
@@ -220,8 +225,7 @@ const LocationForm = ({
             rowKey="uuid"
             className="my-3"
             pagination={false}
-          >
-          </Table>
+          ></Table>
 
           {/* isCityEdit = cityMode === "cityEdit";
   const isCityAdd = cityMode === "cityAdd"; */}
@@ -230,44 +234,42 @@ const LocationForm = ({
             onClose={() => setCreateDrawerOpen(false)}
             title={
               <div className="flex justify-between items-center">
-                <span>
-                  {
-                    isCityEdit ? "Edit City" : "Add New City"
-                  }
-                </span>
-   
+                <span>{isCityEdit ? "Edit City" : "Add New City"}</span>
+
                 <div className="flex justify-between gap-4">
-                  <Button type="primary" onClick={()=>cityForm.submit()} loading={isCityAdd? createLocationFunction?.isPending : editLocationFunction?.isPending}>
+                  <Button
+                    type="primary"
+                    onClick={() => cityForm.submit()}
+                    loading={
+                      isCityAdd
+                        ? createLocationFunction?.isPending
+                        : editLocationFunction?.isPending
+                    }
+                  >
                     {isCityAdd ? "Create" : "Update"}
                   </Button>
                 </div>
               </div>
             }
-
           >
-            <Form
-              form={cityForm}
-              onFinish={onCityFinish}
-              layout="vertical"
-            >
-
-              <Form.Item label="City" name={["city", "name"]} rules={[{ required: true, message: "City is required" }]}>
+            <Form form={cityForm} onFinish={onCityFinish} layout="vertical">
+              <Form.Item
+                label="City"
+                name={["city", "name"]}
+                rules={[{ required: true, message: "City is required" }]}
+              >
                 <Input />
               </Form.Item>
             </Form>
           </Drawer>
-        </Drawer >
+        </Drawer>
       )}
 
       <Modal
         width={400}
         open={modalOpen}
         onCancel={() => setModalOpen(false)}
-        title={
-          mode === "add" ?
-            "Add New Location" :
-            "Edit New Location"
-        }
+        title={mode === "add" ? "Add New Location" : "Edit Location"}
         footer={null}
       >
         <Form
@@ -278,33 +280,45 @@ const LocationForm = ({
           className="w-full px-4 max-w-lg md:max-w-2xl"
           validateTrigger="onSubmit"
           onFinish={onFinish}
-
         >
-          <Form.Item label="Country" name="name" rules={[{ required: true, message: "Country is Required" }]}>
+          <Form.Item
+            label="Country"
+            name="name"
+            rules={[{ required: true, message: "Country is Required" }]}
+          >
             <Input />
           </Form.Item>
 
-
           {!isView && (
-            <div className="flex justify-end sm:mb-2 md:mb-3" >
-              <Button
-                type="default"
-                onClick={() => setModalOpen(false)}
-                className="me-2"
-              >
+            <div className="flex justify-end sm:mb-2 md:mb-3 gap-2">
+              <Button type="default" onClick={() => setModalOpen(false)}>
                 Cancel
               </Button>
-              <Button type="primary" htmlType="submit" loading={isAdd ? createLocationFunction.isPending : editLocationFunction.isPending}>
-                Save
-              </Button>
+              {/* <Button
+                type="primary"
+                htmlType="submit"
+                loading={
+                  isAdd
+                    ? createLocationFunction.isPending
+                    : editLocationFunction.isPending
+                }
+              >
+                Create
+              </Button> */}
+              <FormButtons
+                onClick={() => form.submit()}
+                isPending={
+                  createLocationFunction.isPending ||
+                  editLocationFunction.isPending
+                }
+                mode={mode}
+              />
             </div>
           )}
         </Form>
       </Modal>
-
-    </div >
-  )
+    </div>
+  );
 };
 
-
-export default LocationForm
+export default LocationForm;

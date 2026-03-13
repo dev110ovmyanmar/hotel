@@ -3,7 +3,16 @@ import { Button, Form, Input, Drawer, Select } from "antd";
 import Loader from "../../../component/Loader/Loader";
 import FormButtons from "../../../component/FormButtons/FormButtons";
 
-const UnitForm = ({ initialValues, mode, onSubmit, open, onClose, loading, switchToEdit, statusOptions }) => {
+const UnitForm = ({
+  initialValues,
+  mode,
+  onSubmit,
+  open,
+  onClose,
+  loading,
+  switchToEdit,
+  statusOptions,
+}) => {
   const [form] = Form.useForm();
   const isView = mode === "view";
 
@@ -24,15 +33,24 @@ const UnitForm = ({ initialValues, mode, onSubmit, open, onClose, loading, switc
 
   // Use watch to get the value in real-time for the read-only display
   const currentStatusUuid = Form.useWatch("statusUuid", form);
-  const getStatusLabel = (val) => statusOptions?.find((s) => s.value === val)?.label || "-";
+  const getStatusLabel = (val) =>
+    statusOptions?.find((s) => s.value === val)?.label || "-";
 
   return (
     <Drawer
       title={
-        <div className="flex items-center justify-between w-full pr-8">
-          <span>{mode === "view" ? "View Category" : mode === "edit" ? "Edit Unit" : "Add Unit"}</span>
+        <div className="flex items-center justify-between w-full">
+          <span>
+            {mode === "view"
+              ? "View Category"
+              : mode === "edit"
+                ? "Edit Unit"
+                : "Add Unit"}
+          </span>
           {isView ? (
-            <Button type="primary" onClick={switchToEdit}>Edit</Button>
+            <Button type="primary" onClick={switchToEdit}>
+              Edit
+            </Button>
           ) : (
             <FormButtons onClick={() => form.submit()} mode={mode} />
           )}
@@ -43,7 +61,9 @@ const UnitForm = ({ initialValues, mode, onSubmit, open, onClose, loading, switc
       open={open}
       destroyOnClose
     >
-      {loading ? <Loader /> : (
+      {loading ? (
+        <Loader />
+      ) : (
         <Form form={form} layout="vertical" onFinish={onSubmit}>
           <Form.Item
             label="Unit Name"
@@ -53,10 +73,12 @@ const UnitForm = ({ initialValues, mode, onSubmit, open, onClose, loading, switc
             <Input placeholder="e.g. Guest Amenities" readOnly={isView} />
           </Form.Item>
 
-        <Form.Item
+          <Form.Item
             label="Short Name"
             name="shortName"
-            rules={[{ required: true, message: "Please input unit short name!" }]}
+            rules={[
+              { required: true, message: "Please input unit short name!" },
+            ]}
           >
             <Input placeholder="e.g. Guest Amenities" readOnly={isView} />
           </Form.Item>
@@ -71,10 +93,9 @@ const UnitForm = ({ initialValues, mode, onSubmit, open, onClose, loading, switc
                 {getStatusLabel(currentStatusUuid)}
               </div>
             ) : (
-              <Select 
-                options={statusOptions || []} 
-                className="h-11" 
-                placeholder="Select Status" 
+              <Select
+                options={statusOptions || []}
+                placeholder="Select Status"
               />
             )}
           </Form.Item>
