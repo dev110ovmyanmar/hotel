@@ -1,14 +1,5 @@
 import React, { useEffect, useMemo } from "react";
-import {
-  Button,
-  Form,
-  Input,
-  Row,
-  Col,
-  Spin,
-  AutoComplete,
-  Drawer,
-} from "antd";
+import { Button, Form, Input, AutoComplete, Drawer } from "antd";
 import Loader from "../../../component/Loader/Loader";
 import FormButtons from "../../../component/FormButtons/FormButtons";
 
@@ -161,10 +152,9 @@ const PermissionForm = ({
 
               <Form.Item label="Description" name="description">
                 <TextArea
-                  rows={4}
                   readOnly={isView}
                   style={{ cursor: isView ? "default" : "text" }}
-                  placeholder="Enter description for related permission"
+                  // placeholder="Enter description for related permission"
                 />
               </Form.Item>
             </Form>

@@ -43,18 +43,18 @@ const Topbar = withDirection(function (props) {
   const [refreshing, setRefreshing] = useState(false);
 
   const handleRefetchInitData = async () => {
-  try {
-    setRefreshing(true);
+    try {
+      setRefreshing(true);
 
-    await queryClient.invalidateQueries({
-      queryKey: ["initData"],
-    });
-  } catch (error) {
-    console.error("Refetch failed", error);
-  } finally {
-    setRefreshing(false);
-  }
-};
+      await queryClient.refetchQueries({
+        queryKey: ["initData"],
+      });
+    } catch (error) {
+      console.error("Refetch failed", error);
+    } finally {
+      setRefreshing(false);
+    }
+  };
 
   const logout = useApiMutation({
     mutationFn: adminLogout,
@@ -162,7 +162,7 @@ const Topbar = withDirection(function (props) {
         </div>
 
         {/* Right Section */}
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-3">
           <Button
             type="primary"
             icon={<PlusOutlined />}
@@ -186,7 +186,7 @@ const Topbar = withDirection(function (props) {
             type="text"
             icon={
               theme === "light" ? (
-                <MoonOutlined style={{ fontSize: 20 }} />
+                <MoonOutlined style={{ fontSize: 20, marginTop: 30  }} />
               ) : (
                 <SunOutlined style={{ fontSize: 20 }} />
               )
@@ -198,7 +198,7 @@ const Topbar = withDirection(function (props) {
           <Button
             type="text"
             loading={refreshing}
-            icon={<ReloadOutlined style={{ fontSize: 20 }}/>}
+            icon={<ReloadOutlined style={{ fontSize: 18, marginTop: 30  }} />}
             className="bg-gray-200 hover:bg-gray-300 text-gray-700"
             onClick={handleRefetchInitData}
           />

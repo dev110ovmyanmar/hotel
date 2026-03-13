@@ -71,7 +71,6 @@ const RoomAttributeForm = ({
     if (isEdit) {
       const editValues = {
         ...values,
-
         uuid: data?.uuid,
       };
 

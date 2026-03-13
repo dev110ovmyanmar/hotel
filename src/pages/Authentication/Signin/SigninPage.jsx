@@ -37,7 +37,10 @@ export default function SignIn() {
             meta: { persist: true },
           });
 
-          const permissions = saveState(LOCAL_STORAGE_KEYS.initPermissions,initData.permissions);
+          const permissions = saveState(
+            LOCAL_STORAGE_KEYS.initPermissions,
+            initData.permissions,
+          );
           saveState(LOCAL_STORAGE_KEYS.adminRole, data.role.name);
 
           // Store in Redux
@@ -60,36 +63,100 @@ export default function SignIn() {
   };
 
   return (
+    // <div className="min-h-screen flex items-center justify-center">
+    //   <div className="w-full max-w-8xl flex items-center justify-between">
+    //     <div className="w-full md:w-1/2">
+    //       <img
+    //         src={signin}
+    //         alt="Sign in"
+    //         className="w-2xl h-151 object-cover"
+    //       />
+    //     </div>
+
+    //     <div className="flex-1 flex items-start justify-center bg-white mt-[-40px]">
+    //       <div className="w-full max-w-md px-5">
+    //         <div className="text-center mb-8">
+    //           <div className="flex justify-center">
+    //             <img src={hotellogotext} alt="" />
+    //           </div>
+
+    //           <p className="text-gray-500 mt-[-20px] font-bold tracking-wide">
+    //             Property Management System
+    //           </p>
+    //         </div>
+
+    //         {/* Login Form */}
+    //         <h2 className="text-center text-lg text-gray-600 font-semibold mb-6  mt-[-20px]">
+    //           Login
+    //         </h2>
+
+    //         <Form layout="vertical" onFinish={handleLogin}>
+    //           <Form.Item
+    //             label={<span className="text-white">Email</span>}
+    //             name="email"
+    //             rules={[{ required: true, message: "Email is required" }]}
+    //           >
+    //             <Input size="large" placeholder="Enter your email" />
+    //           </Form.Item>
+
+    //           <Form.Item
+    //             label={<span className="text-white">Password</span>}
+    //             name="password"
+    //             rules={[{ required: true, message: "Password is required" }]}
+    //           >
+    //             <Input.Password size="large" placeholder="Enter password" />
+    //           </Form.Item>
+
+    //           <Button
+    //             type="primary"
+    //             htmlType="submit"
+    //             block
+    //             loading={isPending}
+    //           >
+    //             Login
+    //           </Button>
+    //         </Form>
+    //         <p className="text-center text-gray-400 text-sm mt-10">
+    //           © Oriental Vigour 2026. All rights reserved.
+    //         </p>
+    //       </div>
+    //     </div>
+    //   </div>
+    // </div>
     <div className="min-h-screen flex items-center justify-center">
-      <div className="w-full max-w-8xl flex items-center justify-between">
-        <div className="w-full md:w-1/2">
+      <div className="w-full max-w-7xl flex flex-col md:flex-row items-center justify-between">
+        {/* Image Section */}
+        <div className="w-full md:w-1/2 flex justify-center mb-10 md:mb-0">
           <img
             src={signin}
             alt="Sign in"
-            className="w-2xl h-full object-cover"
+            className="w-full max-w-md md:max-w-2xl lg:max-w-4xl h-160 object-cover"
           />
         </div>
 
-        <div className="flex-1 flex items-start justify-center bg-white mt-[-40px]">
-          <div className="w-full max-w-md px-5">
-            <div className="text-center mb-8">
+        {/* Login Section */}
+        <div className="w-full md:w-1/2 flex justify-center bg-white">
+          <div className="w-full max-w-md px-6 py-6">
+            {/* Logo */}
+            <div className="text-center mb-6">
               <div className="flex justify-center">
-                <img src={hotellogotext} alt="" />
+                <img src={hotellogotext} alt="logo" className="max-w-[200px]" />
               </div>
 
-              <p className="text-gray-500 mt-[-20px] font-bold tracking-wide">
+              <p className="text-gray-500 font-bold tracking-wide text-sm mt-2">
                 Property Management System
               </p>
             </div>
 
-            {/* Login Form */}
-            <h2 className="text-center text-lg text-gray-600 font-semibold mb-6  mt-[-20px]">
+            {/* Login Title */}
+            <h2 className="text-center text-lg text-gray-600 font-semibold mb-6">
               Login
             </h2>
 
+            {/* Form */}
             <Form layout="vertical" onFinish={handleLogin}>
               <Form.Item
-                label={<span className="text-white">Email</span>}
+                label="Email"
                 name="email"
                 rules={[{ required: true, message: "Email is required" }]}
               >
@@ -97,7 +164,7 @@ export default function SignIn() {
               </Form.Item>
 
               <Form.Item
-                label={<span className="text-white">Password</span>}
+                label="Password"
                 name="password"
                 rules={[{ required: true, message: "Password is required" }]}
               >
@@ -109,11 +176,13 @@ export default function SignIn() {
                 htmlType="submit"
                 block
                 loading={isPending}
+                size="large"
               >
                 Login
               </Button>
             </Form>
-            <p className="text-center text-gray-400 text-sm mt-10">
+
+            <p className="text-center text-gray-400 text-sm mt-8">
               © Oriental Vigour 2026. All rights reserved.
             </p>
           </div>

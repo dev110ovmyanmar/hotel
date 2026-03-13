@@ -1,5 +1,10 @@
 import React, { useState, useMemo } from "react";
-import { fetchPropertiesData, createProperty, updateProperty, fetchPropertyDetail } from "../../api/propertyApi.js";
+import {
+  fetchPropertiesData,
+  createProperty,
+  updateProperty,
+  fetchPropertyDetail,
+} from "../../api/propertyApi.js";
 import { queryClient } from "../../app/queryClient.js";
 import useApiQuery from "../../hooks/useApiQuery";
 import { useApiMutation } from "../../hooks/useApiMutation";
@@ -20,35 +25,67 @@ const PropertiesListing = () => {
   const timezone = dayjs.tz.guess();
   console.log("Time Zone", timezone);
 
-  const formattedTimezone = timezone === "Asia/Rangoon" ? "Asia/Yangon" : timezone; // Timezone format
+  const formattedTimezone =
+    timezone === "Asia/Rangoon" ? "Asia/Yangon" : timezone; // Timezone format
 
   const { data, isLoading, refetch } = useApiQuery({
     fetchQueryName: ["propertyData", keyword],
     fetchQueryFunction: () => fetchPropertiesData({ keyword }),
   });
 
-  const properties = Array.isArray(data?.response?.data) ? data.response.data : [];
+  const properties = Array.isArray(data?.response?.data)
+    ? data.response.data
+    : [];
   const initData = queryClient.getQueryData(["initData"]);
 
   // Dynamic Options
-  const propertyTypes = useMemo(() => initData?.statuses?.property_type?.map(item => ({ value: item.uuid, label: item.name })) || [], [initData]);
-  const countryOptions = useMemo(() => initData?.locations?.map(item => ({ value: item.uuid, label: item.name })) || [], [initData]);
-  const currencyOptions = useMemo(() => initData?.currencies?.map(item => ({ value: item.uuid, label: item.code })) || [], [initData]);
-  
+  const propertyTypes = useMemo(
+    () =>
+      initData?.statuses?.property_type?.map((item) => ({
+        value: item.uuid,
+        label: item.name,
+      })) || [],
+    [initData],
+  );
+  const countryOptions = useMemo(
+    () =>
+      initData?.locations?.map((item) => ({
+        value: item.uuid,
+        label: item.name,
+      })) || [],
+    [initData],
+  );
+  const currencyOptions = useMemo(
+    () =>
+      initData?.currencies?.map((item) => ({
+        value: item.uuid,
+        label: item.code,
+      })) || [],
+    [initData],
+  );
+
   const cityOptions = useMemo(() => {
     if (!selectedCountryUuid || !initData?.locations) return [];
-    return initData.locations.find(loc => loc.uuid === selectedCountryUuid)?.city?.map(c => ({ value: c.uuid, label: c.name })) || [];
+    return (
+      initData.locations
+        .find((loc) => loc.uuid === selectedCountryUuid)
+        ?.city?.map((c) => ({ value: c.uuid, label: c.name })) || []
+    );
   }, [selectedCountryUuid, initData]);
 
   const { mutate: upsertMutate, isPending: isSaving } = useApiMutation({
-    mutationFn: (payload) => payload.uuid ? updateProperty(payload.uuid, payload) : createProperty(payload),
+    mutationFn: (payload) =>
+      payload.uuid
+        ? updateProperty(payload.uuid, payload)
+        : createProperty(payload),
     options: {
       onSuccess: () => {
         Toast.success(`Successfully saved.`);
         setDrawerOpen(false);
         refetch();
       },
-      onError: (err) => Toast.error(err?.response?.data?.error?.text || "Operation failed"),
+      onError: (err) =>
+        Toast.error(err?.response?.data?.error?.text || "Operation failed"),
     },
   });
 
@@ -58,7 +95,12 @@ const PropertiesListing = () => {
       const res = await fetchPropertyDetail(uuid);
       if (res.reasonCode === "200") {
         const rawData = res.response;
-        rawData.settingsArray = rawData.settings?.map(s => ({ uuid: s.uuid, key: s.settingKey, value: s.settingValue })) || [];
+        rawData.settingsArray =
+          rawData.settings?.map((s) => ({
+            uuid: s.uuid,
+            key: s.settingKey,
+            value: s.settingValue,
+          })) || [];
         setSelectedRow(rawData);
         if (rawData.country?.uuid) setSelectedCountryUuid(rawData.country.uuid);
       }
@@ -69,11 +111,11 @@ const PropertiesListing = () => {
 
   const handlePropertySubmit = (values) => {
     // const activeSetting = selectedRow?.settingsArray?.[0];
-    const isSettingUpdate = !!values.setting; 
+    const isSettingUpdate = !!values.setting;
 
     let payload;
 
-    if(isSettingUpdate){
+    if (isSettingUpdate) {
       payload = {
         uuid: values.uuid || "",
         name: values.name,
@@ -90,34 +132,35 @@ const PropertiesListing = () => {
         setting: {
           // uuid: values.setting.uuid,
           key: values.setting.key,
-          value: values.setting.value
-        }
+          value: values.setting.value,
+        },
       };
-    }else{
+    } else {
       // Full property payload
-    const activeSetting = selectedRow?.settingsArray?.[0];
+      const activeSetting = selectedRow?.settingsArray?.[0];
       payload = {
-      uuid: values.uuid || "",
-      name: values.name,
-      type: { uuid: values.property_type_uuid },
-      address: values.address,
-      country: { uuid: values.country_uuid },
-      city: { uuid: values.city_uuid },
-      currency: { uuid: values.currency_uuid },
-      email: values.email,
-      phone: values.phone,
-      checkinTime: values.checkinTime?.format("HH:mm:ss"),
-      checkoutTime: values.checkoutTime?.format("HH:mm:ss"),
-      timezone: formattedTimezone,
-      setting: activeSetting ? {
-        key: activeSetting.key,
-        value: activeSetting.value
-      } : undefined
-    };
-  };
+        uuid: values.uuid || "",
+        name: values.name,
+        type: { uuid: values.property_type_uuid },
+        address: values.address,
+        country: { uuid: values.country_uuid },
+        city: { uuid: values.city_uuid },
+        currency: { uuid: values.currency_uuid },
+        email: values.email,
+        phone: values.phone,
+        checkinTime: values.checkinTime?.format("HH:mm:ss"),
+        checkoutTime: values.checkoutTime?.format("HH:mm:ss"),
+        timezone: formattedTimezone,
+        setting: activeSetting
+          ? {
+              key: activeSetting.key,
+              value: activeSetting.value,
+            }
+          : undefined,
+      };
+    }
     upsertMutate(payload);
-}
-
+  };
 
   // Define the add handler separately for cleanliness
   const handleAdd = () => {
@@ -130,37 +173,49 @@ const PropertiesListing = () => {
   //value for viewing "Add Property" button or not
   const showButton = properties.length === 0 ? false : true;
 
-
   const isView = currentMode === "view";
   const isEdit = currentMode === "edit";
   const isAdd = currentMode === "add";
 
-  const DrawerTitle = isView ? "Role View" : 
-                      isEdit ? "Role Edit" : 
-                      isAdd  ? "Role Create" : "";
+  const DrawerTitle = isView
+    ? "Property View"
+    : isEdit
+      ? "Property Edit"
+      : isAdd
+        ? "Add Property"
+        : "";
 
   const switchToEdit = () => {
     setCurrentMode("edit");
   };
-  
 
   return (
-    <div className="p-6">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4 w-full px-6 py-2">
-      <ListHeader 
-        // title="Properties List" 
-        keyword={keyword} 
-        setKeyword={setKeyword}
-        searchPlaceholder="Search Property..."
-        onAdd={handleAdd}
-        showButton={false}
-        addButtonText={"Add Property"}
-         />
+    <div className="w-full px-6 py-2">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
+        <ListHeader
+          // title="Properties List"
+          keyword={keyword}
+          setKeyword={setKeyword}
+          searchPlaceholder="Search Property..."
+          onAdd={handleAdd}
+          showButton={false}
+          addButtonText={"Add Property"}
+        />
       </div>
 
-      <PropertyTable dataSource={properties} loading={isLoading} 
-        onEdit={(rec) => { setCurrentMode("edit"); setDrawerOpen(true); handleGetDetail(rec.uuid); }}
-        onView={(rec) => { setCurrentMode("view"); setDrawerOpen(true); handleGetDetail(rec.uuid); }}
+      <PropertyTable
+        dataSource={properties}
+        loading={isLoading}
+        onEdit={(rec) => {
+          setCurrentMode("edit");
+          setDrawerOpen(true);
+          handleGetDetail(rec.uuid);
+        }}
+        onView={(rec) => {
+          setCurrentMode("view");
+          setDrawerOpen(true);
+          handleGetDetail(rec.uuid);
+        }}
       />
 
       <PropertyForm
