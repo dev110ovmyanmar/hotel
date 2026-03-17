@@ -3,27 +3,22 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 export const useApiMutation = ({
   mutationFn,
   invalidateKeys = [],
+  shouldInvalidate = true, 
   options = {},
-  page
 }) => {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn,
-
-    onSuccess: () => {
-      if (page === 1) {
-        invalidateKeys.forEach((key) =>
-          queryClient.invalidateQueries({ queryKey: key })
-        );
-      }else{
-        invalidateKeys.forEach((key) =>
-          queryClient.invalidateQueries({ queryKey: key })
-        );
-      }
-    },
-
     ...options,
+    onSuccess: (data, variables, context) => {
+      if (shouldInvalidate) {
+        invalidateKeys.forEach((key) => {
+          queryClient.invalidateQueries({ queryKey: key });
+        });
+      }
+
+      options?.onSuccess?.(data, variables, context);
+    },
   });
 };
-
