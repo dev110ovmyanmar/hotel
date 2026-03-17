@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Table, Form, Input, Button, Drawer, Select, Divider, Space, InputNumber } from "antd";
+import React, { useEffect } from "react";
+import { Form, Input, Button, Drawer, Select , Switch } from "antd";
 import Toast from "../../../../component/Toast/Toast";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
 import useApiQuery from "../../../../hooks/useApiQuery";
@@ -30,15 +30,7 @@ const PolicyForm = ({
   const isEdit = mode === "edit";
   const isAdd = mode === "add";
 
-  const [addPolicyRuleDrawer, setAddPolicyRuleDrawer] = useState(false);
-
-  const [selectedPolicyRule, setSelectedPolicyRule] = useState({});
-
-  const [policyRuleMode, setPolicyRuleMode] = useState("");
-  const addPolicyRule = policyRuleMode === "addRule";
-  const editPolicyRule = policyRuleMode === "editRule";
-
-  const initData = queryClient.getQueryData(["initData", "authenticated"]);
+  const initData = queryClient.getQueryData(["initData"]);
   const policyType = initData?.statuses?.policy_type;
   const linkTo = initData?.statuses?.link_to;
   const chargeBaseType = initData?.statuses?.charge_base_type;
@@ -301,7 +293,10 @@ const PolicyForm = ({
           layout="vertical"
           validateTrigger="onSubmit"
           onFinish={onFinish}
-          readOnly={isView}
+          disabled={isView}
+          initialValues = {{
+            isActive: false
+          }}
         >
           <Form.Item
             label="Name"
@@ -341,15 +336,16 @@ const PolicyForm = ({
           <Form.Item
             label="Is Active"
             name="isActive"
-            rules={[{ required: true, message: "Is Active  is Required" }]}
+            valuePropName = "checked"
           >
-            <Select
+            {/* <Select
               options={[
                 { label: "Yes", value: true },
                 { label: "No", value: false },
               ]}
               open={isView ? false : undefined}
-            ></Select>
+            ></Select> */}
+            <Switch disabled={isView}/>
           </Form.Item>
 
           <Form.Item
