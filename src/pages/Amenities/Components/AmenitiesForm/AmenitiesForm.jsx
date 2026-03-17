@@ -42,13 +42,14 @@ const AmenitiesForm = ({
   const createAmenitiesFunction = useApiMutation({
     mutationFn: createAmenitiesFun,
     invalidateKeys: [["amenities"]],
-    page: page,
+    shouldInvalidate: page === 1
+
   });
 
   const editAmenitiesFunction = useApiMutation({
     mutationFn: editAmenitiesFun,
     invalidateKeys: [["amenities"]],
-    page: page,
+    
   });
 
   const { data, isPending, error } = useApiQuery({
@@ -162,15 +163,6 @@ const AmenitiesForm = ({
             rules={[{ required: true, message: "Amenity Code is Required" }]}
           >
             <Input readOnly={isView} />
-          </Form.Item>
-          <Form.Item
-            label="Default Quantity"
-            name="defaultQuantity"
-            rules={[
-              { required: true, message: "Default Quantity is Required" },
-            ]}
-          >
-            <InputNumber readOnly={isView} style={{ width: "100%" }} />
           </Form.Item>
 
           <Row gutter={16}>

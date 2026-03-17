@@ -43,12 +43,6 @@ const AmenitiesTable = ({
       render: (text) => <div>{text === true ? "True" : "False"}</div>,
     },
     {
-      title: "Default Quantity",
-      dataIndex: "defaultQuantity",
-      key: "defaultQuantity",
-      render: (text) => <div>{text}</div>,
-    },
-    {
       title: "Action",
       render: (_, record) => {
         const smallStyle = { fontSize: "12px" };

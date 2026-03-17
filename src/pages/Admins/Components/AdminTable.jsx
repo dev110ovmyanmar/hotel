@@ -225,7 +225,7 @@ const AdminTable = ({
 }) => {
   const { hasPermission } = usePermission();
 
-  const localAdminDetails = loadState(LOCAL_STORAGE_KEYS.loginAdminDetails,)?.uuid;
+  const localAdminDetails = loadState(LOCAL_STORAGE_KEYS.loginAdminDetails)?.uuid;
 
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mode, setMode] = useState(null);
@@ -307,6 +307,7 @@ const AdminTable = ({
             key: "reset",
             label: "Reset Password",
             icon: <KeyOutlined style={{ fontSize: "12px" }} />,
+
             hidden: localAdminDetails === record?.uuid,
             onClick: () => {
               setConfirmModal(true);
