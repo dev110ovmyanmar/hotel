@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { Form, Input, Button, Drawer, Select , Switch } from "antd";
+import React, { useEffect, useState } from "react";
+import { Table, Form, Input, Button, Drawer, Select, Divider, Space, InputNumber } from "antd";
 import Toast from "../../../../component/Toast/Toast";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
 import useApiQuery from "../../../../hooks/useApiQuery";
@@ -9,6 +9,8 @@ import {
   policyDetailsFun,
 } from "../../../../api/policyFunctionApi";
 import FormButtons from "../../../../component/FormButtons/FormButtons";
+import { loadState } from "./../../../../utils/Utils";
+import { LOCAL_STORAGE_KEYS } from "./../../../../variables/constants";
 import { queryClient } from "../../../../app/queryClient";
 import { EditOutlined } from '@ant-design/icons';
 
@@ -30,7 +32,15 @@ const PolicyForm = ({
   const isEdit = mode === "edit";
   const isAdd = mode === "add";
 
-  const initData = queryClient.getQueryData(["initData"]);
+  const [addPolicyRuleDrawer, setAddPolicyRuleDrawer] = useState(false);
+
+  const [selectedPolicyRule, setSelectedPolicyRule] = useState({});
+
+  const [policyRuleMode, setPolicyRuleMode] = useState("");
+  const addPolicyRule = policyRuleMode === "addRule";
+  const editPolicyRule = policyRuleMode === "editRule";
+
+  const initData = queryClient.getQueryData(["initData", "authenticated"]);
   const policyType = initData?.statuses?.policy_type;
   const linkTo = initData?.statuses?.link_to;
   const chargeBaseType = initData?.statuses?.charge_base_type;
@@ -49,7 +59,6 @@ const PolicyForm = ({
   const editPolicyFunction = useApiMutation({
     mutationFn: editPolicyFun,
     invalidateKeys: [["policies"]],
-
   });
 
   const { data, isPending, error } = useApiQuery({
@@ -160,7 +169,6 @@ const PolicyForm = ({
     {
       title: "Action",
       render: (_, record) => {
-
         return (
           <EditOutlined
             style={{ fontSize: "12px" }}
@@ -182,6 +190,7 @@ const PolicyForm = ({
       policyForm.resetFields()
     }
   }, [addPolicyRule]);
+
 
   useEffect(() => {
     if (editPolicyRule) {
@@ -220,15 +229,10 @@ const PolicyForm = ({
       }
     };
 
-
     if (addPolicyRule) {
       createPolicyFunction.mutate(modifiedPolicyRule, {
         onSuccess: () => {
-
-          if(addPolicyRule){
-            queryClient.invalidateQueries({ queryKey: ["policy-detail", { uuid: selectedData?.uuid }] });
-          }
-
+          queryClient.invalidateQueries({ queryKey: ["policy-detail", { uuid: selectedData?.uuid }] });
           Toast.success("Policy Rule Created Successfully");
           setAddPolicyRuleDrawer(false);
         }
@@ -238,10 +242,7 @@ const PolicyForm = ({
     if (editPolicyRule) {
       editPolicyFunction.mutate(modifiedPolicyRule, {
         onSuccess: () => {
-
-          if(editPolicyRule){
-            queryClient.invalidateQueries({ queryKey: ["policy-detail", { uuid: selectedData?.uuid }] });
-          }
+          queryClient.invalidateQueries({ queryKey: ["policy-detail", { uuid: selectedData?.uuid }] });
           Toast.success("Policy Rule Updated Successfully");
           setAddPolicyRuleDrawer(false);
         }
@@ -293,10 +294,7 @@ const PolicyForm = ({
           layout="vertical"
           validateTrigger="onSubmit"
           onFinish={onFinish}
-          disabled={isView}
-          initialValues = {{
-            isActive: false
-          }}
+          readOnly={isView}
         >
           <Form.Item
             label="Name"
@@ -336,16 +334,15 @@ const PolicyForm = ({
           <Form.Item
             label="Is Active"
             name="isActive"
-            valuePropName = "checked"
+            rules={[{ required: true, message: "Is Active  is Required" }]}
           >
-            {/* <Select
+            <Select
               options={[
                 { label: "Yes", value: true },
                 { label: "No", value: false },
               ]}
               open={isView ? false : undefined}
-            ></Select> */}
-            <Switch disabled={isView}/>
+            ></Select>
           </Form.Item>
 
           <Form.Item
@@ -380,6 +377,8 @@ const PolicyForm = ({
                 <Table
                   rowKey="id"
                   dataSource={data?.policyRules}
+                  // dataSource={selectedData?.policyRules }
+                  // dataSource={policyRuleData}
                   columns={columns}
                   pagination={false}
                   className="my-3"
