@@ -26,6 +26,7 @@ import { adminLogout } from "../../api/logoutApi.js";
 import { useApiMutation } from "../../hooks/useApiMutation.js";
 import { ReloadOutlined } from "@ant-design/icons";
 import { queryClient } from "../../app/queryClient.js";
+import { setUserData } from "../../services/authSlice.js";
 
 const { Header } = Layout;
 
@@ -43,18 +44,26 @@ const Topbar = withDirection(function (props) {
   const [refreshing, setRefreshing] = useState(false);
 
   const handleRefetchInitData = async () => {
-  try {
-    setRefreshing(true);
+    try {
+      setRefreshing(true);
 
-    await queryClient.invalidateQueries({
-      queryKey: ["initData"],
-    });
-  } catch (error) {
-    console.error("Refetch failed", error);
-  } finally {
-    setRefreshing(false);
-  }
-};
+      await queryClient.refetchQueries({
+        queryKey: ["initData", "authenticated"],
+        exact: true, // Only refresh the logged-in data
+      });
+
+      const freshData = queryClient.getQueryData(["initData", "authenticated"]);
+
+      if (freshData?.permissions) {
+        dispatch(setUserData({ permissions: freshData.permissions }));
+      }
+
+    } catch (error) {
+      console.error("Refetch failed", error);
+    } finally {
+      setRefreshing(false);
+    }
+  };
 
   const logout = useApiMutation({
     mutationFn: adminLogout,
@@ -105,7 +114,7 @@ const Topbar = withDirection(function (props) {
   const isCollapsed = collapsed && !openDrawer;
 
   const dropdownContent = (
-    <div className="bg-white rounded-md shadow-md min-w-[180px] z-999">
+    <div className="bg-white rounded-md shadow-md min-w-45 z-999">
       <ul>
         <li
           className="flex cursor-pointer p-2.5 pl-0 ml-3 mt-4"
@@ -137,7 +146,7 @@ const Topbar = withDirection(function (props) {
   return (
     <>
       <Header
-        className={`bg-white! fixed w-full h-[100px] flex justify-between z-1000 border-b border-gray-300 transition-all ${
+        className={`bg-white! fixed w-full h-25 flex justify-between z-1000 border-b border-gray-300 transition-all ${
           isCollapsed
             ? props["data-rtl"] === "rtl"
               ? "px-[15px] md:pl-[31px] md:pr-[109px]!"
@@ -162,7 +171,7 @@ const Topbar = withDirection(function (props) {
         </div>
 
         {/* Right Section */}
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-3">
           <Button
             type="primary"
             icon={<PlusOutlined />}
@@ -186,7 +195,7 @@ const Topbar = withDirection(function (props) {
             type="text"
             icon={
               theme === "light" ? (
-                <MoonOutlined style={{ fontSize: 20 }} />
+                <MoonOutlined style={{ fontSize: 20, marginTop: 30  }} />
               ) : (
                 <SunOutlined style={{ fontSize: 20 }} />
               )
@@ -198,7 +207,7 @@ const Topbar = withDirection(function (props) {
           <Button
             type="text"
             loading={refreshing}
-            icon={<ReloadOutlined style={{ fontSize: 20 }}/>}
+            icon={<ReloadOutlined style={{ fontSize: 18, marginTop: 30  }} />}
             className="bg-gray-200 hover:bg-gray-300 text-gray-700"
             onClick={handleRefetchInitData}
           />

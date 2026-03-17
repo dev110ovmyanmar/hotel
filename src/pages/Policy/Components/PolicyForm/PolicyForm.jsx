@@ -9,10 +9,9 @@ import {
   policyDetailsFun,
 } from "../../../../api/policyFunctionApi";
 import FormButtons from "../../../../component/FormButtons/FormButtons";
-import { loadState } from './../../../../utils/Utils';
-import { LOCAL_STORAGE_KEYS } from './../../../../variables/constants';
+import { loadState } from "./../../../../utils/Utils";
+import { LOCAL_STORAGE_KEYS } from "./../../../../variables/constants";
 import { queryClient } from "../../../../app/queryClient";
-
 
 const { TextArea } = Input;
 
@@ -25,13 +24,11 @@ const PolicyForm = ({
   drawerOpen,
   setDrawerOpen,
 }) => {
-
   const [form] = Form.useForm();
 
   const isView = mode === "view";
   const isEdit = mode === "edit";
   const isAdd = mode === "add";
-
 
   // const initData = loadState(LOCAL_STORAGE_KEYS.initData)?.statuses;
   // const linkTo = initData?.link_to;
@@ -41,18 +38,16 @@ const PolicyForm = ({
   const policyType = initData?.statuses?.policy_type;
   const linkTo = initData?.statuses?.link_to;
 
-
   const createPolicyFunction = useApiMutation({
     mutationFn: createPolicyFun,
     invalidateKeys: [["policies"]],
-    page: page
-
+    page: page,
   });
 
   const editPolicyFunction = useApiMutation({
     mutationFn: editPolicyFun,
     invalidateKeys: [["policies"]],
-    page: page
+    page: page,
   });
 
   const { data, isPending, error } = useApiQuery({
@@ -64,14 +59,11 @@ const PolicyForm = ({
     },
   });
 
-  if (data) {
-    console.log(data?.linkTo?.name, "DataInPolicyFom");
-  }
   useEffect(() => {
     if (!isAdd && data) {
       form.setFieldsValue({
         ...data,
-        linkTo: data?.linkTo?.uuid
+        linkTo: data?.linkTo?.uuid,
       });
     }
   }, [data, isAdd]);
@@ -87,8 +79,8 @@ const PolicyForm = ({
       const modifiedValue = {
         ...values,
         linkTo: {
-          uuid: values?.linkTo
-        }
+          uuid: values?.linkTo,
+        },
       };
 
       createPolicyFunction.mutate(modifiedValue, {
@@ -102,15 +94,13 @@ const PolicyForm = ({
     }
 
     if (isEdit) {
-      console.log(values, "ValuesINEdit");
       const editValues = {
         ...values,
         linkTo: {
-          uuid: values?.linkTo
+          uuid: values?.linkTo,
         },
         uuid: selectedData?.uuid,
       };
-      console.log(editValues, "editVallues")
 
       editPolicyFunction.mutate(editValues, {
         onSuccess: () => {
@@ -149,7 +139,9 @@ const PolicyForm = ({
               <FormButtons
                 onClick={() => form.submit()}
                 isPending={
-                  isAdd ? createPolicyFunction.isLoading : editPolicyFunction.isLoading
+                  isAdd
+                    ? createPolicyFunction.isPending
+                    : editPolicyFunction.isPending
                 }
                 mode={mode}
               />
@@ -174,15 +166,18 @@ const PolicyForm = ({
             <Input />
           </Form.Item>
 
-          <Form.Item label="Link To" name="linkTo" rules={[{ required: true, message: "Link To is Required" }]}>
+          <Form.Item
+            label="Link To"
+            name="linkTo"
+            rules={[{ required: true, message: "Link To is Required" }]}
+          >
             <Select
-              options={linkTo?.map(item =>
-                ({ label: item?.name, value: item?.uuid })
-              )}
-            >
-            </Select>
+              options={linkTo?.map((item) => ({
+                label: item?.name,
+                value: item?.uuid,
+              }))}
+            ></Select>
           </Form.Item>
-
 
           <Form.Item
             label="Type"
@@ -212,15 +207,16 @@ const PolicyForm = ({
             ></Select>
           </Form.Item>
 
-          <Form.Item label="Description" name="description" rules={[{ required: true, message: "Description is Required" }]}>
-            <TextArea
-              readOnly={isView}
-              rows={4}
-            ></TextArea>
+          <Form.Item
+            label="Description"
+            name="description"
+            rules={[{ required: true, message: "Description is Required" }]}
+          >
+            <TextArea readOnly={isView}></TextArea>
           </Form.Item>
         </Form>
       </Drawer>
-    </div >
+    </div>
   );
 };
 

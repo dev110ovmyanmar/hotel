@@ -1,11 +1,6 @@
 import { Dropdown, Space, Table, Tag } from "antd";
 import { useState } from "react";
-import {
-  KeyOutlined,
-  MoreOutlined,
-  EyeOutlined,
-  EditOutlined,
-} from "@ant-design/icons";
+import { MoreOutlined, EyeOutlined, EditOutlined } from "@ant-design/icons";
 import RoomForm from "./Room/RoomForm";
 
 const RoomTable = ({
@@ -19,7 +14,6 @@ const RoomTable = ({
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mode, setMode] = useState(null);
   const [selectedData, setSelectedData] = useState(null);
-  const [confirmModal, setConfirmModal] = useState(false);
 
   const columns = [
     {
@@ -32,6 +26,7 @@ const RoomTable = ({
       dataIndex: "roomNo",
       key: "roomNo",
       render: (text) => <div>{text}</div>,
+      width: 100,
     },
     {
       title: "Room Type Name",
@@ -42,16 +37,28 @@ const RoomTable = ({
       title: "Floor Name",
       dataIndex: ["floor", "name"],
       key: "floorName",
+      width: 160,
     },
+
     {
       title: "Status",
-      dataIndex: "status",
+      dataIndex: "room_status",
       key: "status",
-      render: (_, record) => (
-        <Tag color={record?.status?.name === "Active" ? "green" : "red"}>
-          {record?.status?.name.toUpperCase()}
-        </Tag>
-      ),
+      render: (_, record) => {
+        const statusColorMap = {
+          Available: "green",
+          Dirty: "yellow",
+          Maintenance: "red",
+          Occupied: "blue",
+          Cleaning: "orange",
+          CheckedOut:"brown"
+        };
+
+        const statusName = record?.status?.name;
+        const color = statusColorMap[statusName] || "gray";
+
+        return <Tag color={color}>{statusName?.toUpperCase()}</Tag>;
+      },
     },
     {
       title: "Action",
@@ -90,22 +97,6 @@ const RoomTable = ({
               >
                 <EditOutlined style={{ fontSize: "12px" }} />
                 <span style={{ fontSize: "14px" }}>Edit</span>
-              </Space>
-            ),
-          },
-          {
-            key: "3",
-            label: (
-              <Space
-                size={4}
-                style={smallStyle}
-                onClick={() => {
-                  setConfirmModal(true);
-                  setSelectedData(record);
-                }}
-              >
-                <KeyOutlined style={{ fontSize: "12px" }} />
-                <span style={{ fontSize: "14px" }}>Reset Password</span>
               </Space>
             ),
           },

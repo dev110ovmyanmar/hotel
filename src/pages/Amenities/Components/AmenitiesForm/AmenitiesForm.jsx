@@ -1,5 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { Form, Input, Button, Drawer, Space, Select } from "antd";
+import {
+  Form,
+  Input,
+  Button,
+  Drawer,
+  Space,
+  Select,
+  Switch,
+  InputNumber,
+  Row,
+  Col,
+} from "antd";
 import Toast from "../../../../component/Toast/Toast";
 import { CloseOutlined } from "@ant-design/icons";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
@@ -19,6 +30,8 @@ const AmenitiesForm = ({
   setSelectedData,
   drawerOpen,
   setDrawerOpen,
+  page,
+  setPage,
 }) => {
   const [form] = Form.useForm();
 
@@ -29,11 +42,13 @@ const AmenitiesForm = ({
   const createAmenitiesFunction = useApiMutation({
     mutationFn: createAmenitiesFun,
     invalidateKeys: [["amenities"]],
+    page: page,
   });
 
   const editAmenitiesFunction = useApiMutation({
     mutationFn: editAmenitiesFun,
     invalidateKeys: [["amenities"]],
+    page: page,
   });
 
   const { data, isPending, error } = useApiQuery({
@@ -60,10 +75,10 @@ const AmenitiesForm = ({
   }, [isAdd]);
 
   const onFinish = (values) => {
-    console.log(values, "ValuesInOnCreateFinish");
     if (isAdd) {
       createAmenitiesFunction.mutate(values, {
         onSuccess: () => {
+          setPage(1);
           setDrawerOpen(false);
           Toast.success("Country Created Successfully!");
           form.resetFields();
@@ -114,8 +129,9 @@ const AmenitiesForm = ({
               <FormButtons
                 onClick={() => form.submit()}
                 isPending={
-                  createAmenitiesFunction.isLoading ||
-                  editAmenitiesFunction.isLoading
+                  isAdd
+                    ? createAmenitiesFunction.isPending
+                    : editAmenitiesFunction.isPending
                 }
                 mode={mode}
               />
@@ -126,12 +142,12 @@ const AmenitiesForm = ({
         <Form
           form={form}
           layout="vertical"
-          // labelCol={{ xs: { span: 24 }, sm: { span: 6 } }}
-          // wrapperCol={{ xs: { span: 24 }, sm: { span: 18 } }}
-          // className="w-full px-4 max-w-lg md:max-w-2xl"
           validateTrigger="onSubmit"
           onFinish={onFinish}
-          disabled={isView}
+          initialValues={{
+            isFree: false,
+            visibility: false,
+          }}
         >
           <Form.Item
             label="Name"
@@ -140,7 +156,6 @@ const AmenitiesForm = ({
           >
             <Input readOnly={isView} />
           </Form.Item>
-
           <Form.Item
             label="Code"
             name="code"
@@ -148,34 +163,32 @@ const AmenitiesForm = ({
           >
             <Input readOnly={isView} />
           </Form.Item>
-
           <Form.Item
-            label="Is Free"
-            name="isFree"
-            rules={[{ required: true, message: "Is Free  is Required" }]}
+            label="Default Quantity"
+            name="defaultQuantity"
+            rules={[
+              { required: true, message: "Default Quantity is Required" },
+            ]}
           >
-            <Select
-              options={[
-                { label: "Yes", value: 1 },
-                { label: "No", value: 0 },
-              ]}
-              open={isView ? false : undefined}
-            ></Select>
+            <InputNumber readOnly={isView} style={{ width: "100%" }} />
           </Form.Item>
 
-          <Form.Item
-            label="Visibility"
-            name="visibility"
-            rules={[{ required: true, message: "Visibility  is Required" }]}
-          >
-            <Select
-              options={[
-                { label: "Yes", value: 1 },
-                { label: "No", value: 0 },
-              ]}
-              open={isView ? false : undefined}
-            ></Select>
-          </Form.Item>
+          <Row gutter={16}>
+            <Col span={6}>
+              <Form.Item label="Is Free" name="isFree" valuePropName="checked">
+                <Switch disabled={isView} />
+              </Form.Item>
+            </Col>
+            <Col span={6}>
+              <Form.Item
+                label="Visibility"
+                name="visibility"
+                valuePropName="checked"
+              >
+                <Switch disabled={isView} />
+              </Form.Item>
+            </Col>
+          </Row>
         </Form>
       </Drawer>
     </div>

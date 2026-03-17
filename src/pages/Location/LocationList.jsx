@@ -7,8 +7,7 @@ import { locationListFunctionApi } from "../../api/locationFunctionApi";
 import LocationTable from "./Components/LocationTable";
 import LocationForm from "./Components/LocationForm/LocationForm";
 import ListHeader from "../../component/ListHeader/ListHeader";
-
-
+import { PERMISSIONS } from "../../variables/permission";
 
 const LocationList = () => {
   const [keyword, setKeyword] = useState("");
@@ -59,6 +58,7 @@ const LocationList = () => {
           setKeyword={setKeyword}
           addButtonText="Add New Location"
           onAdd={handleAdd}
+          permission={PERMISSIONS.LOCATION_CREATE}
         />
       </div>
 

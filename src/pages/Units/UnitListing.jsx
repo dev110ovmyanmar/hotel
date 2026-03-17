@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect } from "react";
 import {
   fetchUnitData, //Api function name
   fetchUnitDetail,
-  upsertUnit
+  upsertUnit,
 } from "../../api/unitApi";
 import useApiQuery from "../../hooks/useApiQuery";
 import { queryClient } from "../../app/queryClient";
@@ -19,12 +19,13 @@ const UnitListing = () => {
   const [keyword, setKeyword] = useState("");
 
   const initData = queryClient.getQueryData(["initData"]);
-    const statusOptions = initData?.statuses?.status?.
-    filter((item) => item.name.toLowerCase() !== "blocked")
-    ?.map((item) => ({
-    value: item.uuid,
-    label: item.name,
-    })) || [];
+  const statusOptions =
+    initData?.statuses?.status
+      ?.filter((item) => item.name.toLowerCase() !== "blocked")
+      ?.map((item) => ({
+        value: item.uuid,
+        label: item.name,
+      })) || [];
 
   const { data, refetch, isLoading } = useApiQuery({
     fetchQueryName: "unitData",
@@ -39,7 +40,10 @@ const UnitListing = () => {
     fetchQueryFunction: fetchUnitDetail,
     params: { uuid: selectedRow?.uuid },
     options: {
-      enabled: !!open && !!selectedRow?.uuid && (currentMode === "view" || currentMode === "edit"),
+      enabled:
+        !!open &&
+        !!selectedRow?.uuid &&
+        (currentMode === "view" || currentMode === "edit"),
       staleTime: 0,
     },
   });
@@ -53,7 +57,9 @@ const UnitListing = () => {
     options: {
       onSuccess: () => {
         refetch();
-        Toast.success(`Unit ${currentMode === "add" ? "created" : "updated"} successfully`);
+        Toast.success(
+          `Unit ${currentMode === "add" ? "created" : "updated"} successfully`,
+        );
         handleClose();
       },
     },
@@ -64,15 +70,15 @@ const UnitListing = () => {
       name: values.name,
       shortName: values.shortName,
       status: {
-        uuid: values.statusUuid
-      }
+        uuid: values.statusUuid,
+      },
     };
 
-    if(currentMode !== "add"){
+    if (currentMode !== "add") {
       payload.uuid = selectedRow?.uuid;
     }
     upsertMutate(payload);
-  }
+  };
 
   const handleClose = () => {
     setOpen(false);
@@ -80,32 +86,32 @@ const UnitListing = () => {
   };
 
   const handleAdd = () => {
-    setCurrentMode("add"); setOpen(true); 
-  }
+    setCurrentMode("add");
+    setOpen(true);
+  };
 
   const handleView = (record) => {
-    setSelectedRow(record); 
-    setCurrentMode("view"); 
+    setSelectedRow(record);
+    setCurrentMode("view");
     setOpen(true);
-  }
+  };
 
   const handleEdit = (record) => {
-    setSelectedRow(record); 
+    setSelectedRow(record);
     setCurrentMode("edit");
-    setOpen(true); 
-  }
+    setOpen(true);
+  };
 
   return (
-    <>
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4 w-full px-6 py-2">
-      <ListHeader
-        // title="Unit List"
-        keyword={keyword}
-        searchPlaceholder="Search Unit ..."
-        setKeyword={setKeyword}
-        addButtonText="Add New Unit"
-        onAdd={handleAdd}
-      />
+    <div className="w-full px-6 py-2">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
+        <ListHeader
+          keyword={keyword}
+          searchPlaceholder="Search Unit ..."
+          setKeyword={setKeyword}
+          addButtonText="Add New Unit"
+          onAdd={handleAdd}
+        />
       </div>
 
       <UnitTable
@@ -124,9 +130,8 @@ const UnitListing = () => {
         switchToEdit={() => setCurrentMode("edit")}
         statusOptions={statusOptions}
       />
-    </>
+    </div>
   );
 };
-
 
 export default UnitListing;
