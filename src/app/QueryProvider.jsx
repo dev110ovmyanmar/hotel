@@ -16,7 +16,7 @@ const asyncLocalStorage = {
   },
 };
 
-const persister = createAsyncStoragePersister({
+export const persister = createAsyncStoragePersister({
   storage: asyncLocalStorage,
   key: "init-data",
 });

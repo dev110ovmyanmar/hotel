@@ -26,6 +26,7 @@ import { adminLogout } from "../../api/logoutApi.js";
 import { useApiMutation } from "../../hooks/useApiMutation.js";
 import { ReloadOutlined } from "@ant-design/icons";
 import { queryClient } from "../../app/queryClient.js";
+import { setUserData } from "../../services/authSlice.js";
 
 const { Header } = Layout;
 
@@ -47,8 +48,16 @@ const Topbar = withDirection(function (props) {
       setRefreshing(true);
 
       await queryClient.refetchQueries({
-        queryKey: ["initData"],
+        queryKey: ["initData", "authenticated"],
+        exact: true, // Only refresh the logged-in data
       });
+
+      const freshData = queryClient.getQueryData(["initData", "authenticated"]);
+
+      if (freshData?.permissions) {
+        dispatch(setUserData({ permissions: freshData.permissions }));
+      }
+
     } catch (error) {
       console.error("Refetch failed", error);
     } finally {
@@ -105,7 +114,7 @@ const Topbar = withDirection(function (props) {
   const isCollapsed = collapsed && !openDrawer;
 
   const dropdownContent = (
-    <div className="bg-white rounded-md shadow-md min-w-[180px] z-999">
+    <div className="bg-white rounded-md shadow-md min-w-45 z-999">
       <ul>
         <li
           className="flex cursor-pointer p-2.5 pl-0 ml-3 mt-4"
@@ -137,7 +146,7 @@ const Topbar = withDirection(function (props) {
   return (
     <>
       <Header
-        className={`bg-white! fixed w-full h-[100px] flex justify-between z-1000 border-b border-gray-300 transition-all ${
+        className={`bg-white! fixed w-full h-25 flex justify-between z-1000 border-b border-gray-300 transition-all ${
           isCollapsed
             ? props["data-rtl"] === "rtl"
               ? "px-[15px] md:pl-[31px] md:pr-[109px]!"

@@ -5,6 +5,7 @@ import { LIMITS } from "../../variables/constants";
 import useApiQuery from "../../hooks/useApiQuery";
 import { adminFunctionApi } from "../../api/adminFunctionApi";
 import ListHeader from "../../component/ListHeader/ListHeader";
+import { PERMISSIONS } from "../../variables/permission";
 
 const AdminList = () => {
   const [keyword, setKeyword] = useState("");
@@ -50,6 +51,7 @@ const AdminList = () => {
           setKeyword={setKeyword}
           addButtonText="Add New Admin"
           onAdd={handleAdd}
+          permission={PERMISSIONS.ADMIN_CREATE}
         />
       </div>
 
