@@ -34,10 +34,6 @@ const LocationList = () => {
     },
   });
 
-  if (data) {
-    console.log(data?.data, "DataInLocationListPagination");
-  }
-
   useEffect(() => {
     setPage(1);
   }, [keyword, status, perPage]);
