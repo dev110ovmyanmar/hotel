@@ -142,3 +142,7 @@
 .dark .css-var-_r_0_.ant-menu-css-var {
   --ant-menu-item-bg: #000000;
 }
+
+.css-var-_r_0_.ant-menu-css-var {
+  --ant-menu-active-bar-border-width: 0px;
+}

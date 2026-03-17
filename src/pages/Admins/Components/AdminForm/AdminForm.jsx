@@ -10,18 +10,10 @@ import {
   editAdminFun,
 } from "../../../../api/adminFunctionApi";
 import FormButton from "../../../../component/FormButtons/FormButtons";
-
-// import { loadState } from './../../../../utils/Utils';
-// import { LOCAL_STORAGE_KEYS } from './../../../../variables/constants';
 import { Divider } from 'antd';
-// import { Space } from 'antd';
-// import CheckBoxs from './CheckBoxs';
-// import { Checkbox } from "antd";
-// import PermissionAssignDrawer from './../../../Roles/Components/PermissionAssignDrawer';
 import AddOnDrawer from './AddOnDrawer';
 import { adminPermission } from './../../../../api/adminFunctionApi';
 import Toast from './../../../../component/Toast/Toast';
-
 
 const AdminForm = ({
   mode,
@@ -62,11 +54,10 @@ const AdminForm = ({
   const editAdminFunction = useApiMutation({
     mutationFn: editAdminFun,
     invalidateKeys: [["admins"]],
-    page: page
   });
 
   const { data, isLoading, error } = useApiQuery({
-    fetchQueryName: "admins",
+    fetchQueryName: "admin-details",
     fetchQueryFunction: adminDetailsFunApi,
     params: { uuid: selectedData?.uuid },
     options: {

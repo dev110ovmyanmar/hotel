@@ -16,6 +16,10 @@ export const useApiMutation = ({
         invalidateKeys.forEach((key) =>
           queryClient.invalidateQueries({ queryKey: key })
         );
+      }else{
+        invalidateKeys.forEach((key) =>
+          queryClient.invalidateQueries({ queryKey: key })
+        );
       }
     },
 

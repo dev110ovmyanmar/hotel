@@ -41,6 +41,7 @@ import { lazy } from "react";
 import { FiMap } from "react-icons/fi";
 import { MdOutlinePolicy } from "react-icons/md";
 import { MdPayments } from "react-icons/md";
+import { PERMISSIONS } from "../../variables/permission";
 
 const Dashboard = lazy(() => import("../../pages/Dashboard/Dashboard"));
 const Calendar = lazy(() => import("../../pages/Calendar/Calendar"));
@@ -108,6 +109,7 @@ export const authRoutes = [
     label: "Reservation Calendar",
     icon: <CalendarOutlined style={{ fontSize: "20px" }} />,
     component: <Calendar />,
+    permission: PERMISSIONS.AVAILABILITY_CALENDAR_LIST,
     isPrivate: false,
   },
   {
@@ -140,7 +142,7 @@ export const authRoutes = [
         icon: <DatabaseOutlined style={{ fontSize: "20px" }} />,
         isPrivate: true,
         component: <InventoryListing />,
-        // permission: ".list",
+        permission: PERMISSIONS.INVENTORY_LIST,
       },
       // {
       //   key: 4.3,
@@ -164,7 +166,7 @@ export const authRoutes = [
         label: "Rooms",
         icon: <ApartmentOutlined style={{ fontSize: "20px" }} />,
         component: <Room />,
-        permission: "room.list",
+        permission: PERMISSIONS.ROOM_LIST
       },
       {
         key: 5.2,
@@ -172,7 +174,7 @@ export const authRoutes = [
         label: "Room Types",
         icon: <AppstoreOutlined style={{ fontSize: "20px" }} />,
         component: <RoomType />,
-        permission: "room-type.list",
+        permission: PERMISSIONS.ROOM_TYPE_LIST
       },
       {
         key: 5.3,
@@ -180,6 +182,7 @@ export const authRoutes = [
         label: "Room Attributes",
         icon: <DiffOutlined style={{ fontSize: "20px" }} />,
         component: <RoomAttribute />,
+        permission: PERMISSIONS.ROOM_ATTRIBUTE_LIST,
       },
       {
         key: 5.4,
@@ -187,7 +190,7 @@ export const authRoutes = [
         label: "Floors",
         icon: <LayoutOutlined style={{ fontSize: "20px" }} />,
         component: <Floor />,
-        permission: "floor.list",
+        permission: PERMISSIONS.FLOOR_LIST
       },
       {
         key: 5.5,
@@ -196,7 +199,7 @@ export const authRoutes = [
         icon: <FiMap style={{ fontSize: "20px" }} />,
         isPrivate: true,
         component: <AmenitiesList />,
-        permission: "amenity.list",
+        permission: PERMISSIONS.AMENITY_LIST
       },
     ],
   },
@@ -313,6 +316,7 @@ export const authRoutes = [
         icon: <TagsOutlined style={{ fontSize: "20px" }} />,
         isPrivate: true,
         component: <CategoryListing />,
+        permission: PERMISSIONS.CATEGORY_LIST
       },
       {
         key: 9.3,
@@ -321,7 +325,7 @@ export const authRoutes = [
         icon: <DeploymentUnitOutlined style={{ fontSize: "20px" }} />,
         isPrivate: true,
         component: <UnitListing />,
-        // permission: "unit.list",
+        permission: PERMISSIONS.UNIT_LIST
       },
     ],
   },
@@ -338,7 +342,7 @@ export const authRoutes = [
         icon: <UserOutlined style={{ fontSize: "20px" }} />,
         isPrivate: true,
         component: <AdminList />,
-        permission: "admin.list",
+        permission: PERMISSIONS.ADMIN_LIST,
       },
       {
         key: 10.2,
@@ -346,7 +350,7 @@ export const authRoutes = [
         path: "/access-control/roles/",
         icon: <UserSwitchOutlined style={{ fontSize: "20px" }} />,
         component: <RolesListing />,
-        // permission: "role.list",
+        permission: PERMISSIONS.ROLE_LIST,
       },
       {
         key: 10.3,
@@ -354,7 +358,7 @@ export const authRoutes = [
         path: "/access-control/permissions/",
         icon: <SecurityScanOutlined style={{ fontSize: "20px" }} />,
         component: <PermissionListing />,
-        // permission: "permission.list",
+        permission: PERMISSIONS.PERMISSION_LIST,
       },
     ],
   },
@@ -420,7 +424,8 @@ export const authRoutes = [
       //   path: "/facility-management/bookings",
       //   icon: <DiffOutlined style={{ fontSize: "20px" }} />,
       //   // component: </>,
-      //   // permission: ".list",
+        //  permission: PERMISSIONS.BOOKING_LIST,
+      //
       // },
     ],
   },
@@ -436,7 +441,7 @@ export const authRoutes = [
         path: "/services-management/services",
         icon: <SecurityScanOutlined style={{ fontSize: "20px" }} />,
         component: <ServiceList />,
-        // permission: ".list",
+        permission: PERMISSIONS.SERVICE_LIST,
       },
       // {
       //   key: 13.2,
@@ -583,7 +588,7 @@ export const authRoutes = [
         label: "Country & City",
         path: "/settings/country-city",
         icon: <DiffOutlined style={{ fontSize: "20px" }} />,
-        component: <ServiceList />,
+        // component: <ServiceList />,
         // permission: ".list",
       },
       {
@@ -593,7 +598,7 @@ export const authRoutes = [
         icon: <FileProtectOutlined style={{ fontSize: "20px" }} />,
         isPrivate: true,
         component: <PrivacyPolicy />,
-        // permission: ".list",
+        permission: PERMISSIONS.PRIVACY_POLICY_LIST,
       },
     ],
   },
@@ -609,7 +614,7 @@ export const authRoutes = [
         path: "/billing-finance/taxes",
         icon: <DollarOutlined style={{ fontSize: "20px" }} />,
         component: <Taxs />,
-        // permission: "Taxs.list",
+        permission: PERMISSIONS.TAX_LIST,
       },
       {
         key: 16.2,
@@ -618,7 +623,7 @@ export const authRoutes = [
         icon: <MdPayments style={{ fontSize: "20px" }} />,
         isPrivate: true,
         component: <PaymentList />,
-        // permission:"meal-plan.list",
+        permission:PERMISSIONS.PAYMENT_LIST,
       },
     ],
   },
@@ -629,9 +634,8 @@ export const authRoutes = [
     icon: <EnvironmentOutlined style={{ fontSize: "20px" }} />,
     isPrivate: true,
     component: <LocationList />,
-    permission: "location.list",
+    permission: PERMISSIONS.LOCATION_LIST,
   },
-
   {
     key: 19,
     label: "Meal Plan",
@@ -639,7 +643,7 @@ export const authRoutes = [
     icon: <JavaOutlined style={{ fontSize: "20px" }} />,
     isPrivate: true,
     component: <MeanPlanList />,
-    // permission: "meal-plan.list",
+    permission: PERMISSIONS.MEAL_PLAN_LIST,
   },
   {
     key: 20,
