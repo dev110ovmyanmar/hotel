@@ -28,7 +28,7 @@ const CategoryForm = ({ initialValues, mode, onSubmit, open, onClose, loading, s
   return (
     <Drawer
       title={
-        <div className="flex items-center justify-between w-full pr-8">
+        <div className="flex items-center justify-between w-full">
           <span>{mode === "view" ? "View Category" : mode === "edit" ? "Edit Category" : "Add Category"}</span>
           {isView ? (
             <Button type="primary" onClick={switchToEdit}>Edit</Button>
@@ -37,7 +37,7 @@ const CategoryForm = ({ initialValues, mode, onSubmit, open, onClose, loading, s
           )}
         </div>
       }
-      width={500} // size={500} is not a valid AntD prop, use width
+      size={500} // size={500} is not a valid AntD prop, use width
       onClose={onClose}
       open={open}
       destroyOnClose
@@ -70,7 +70,7 @@ const CategoryForm = ({ initialValues, mode, onSubmit, open, onClose, loading, s
             )} */}
               <Select 
                 options={statusOptions} 
-                className="h-11" 
+                // className="h-11" 
                 placeholder="Select Status" 
                 disabled={isView}
               />

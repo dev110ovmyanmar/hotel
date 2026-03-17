@@ -5,6 +5,7 @@ import ListHeader from "../../component/ListHeader/ListHeader";
 import FloorForm from "./components/FloorForm/FloorForm";
 import FloorTable from "./components/FloorTable";
 import { fetchFloor } from "../../api/floorApi";
+import { PERMISSIONS } from "../../variables/permission";
 
 const FloorList = () => {
   const [keyword, setKeyword] = useState("");
@@ -50,6 +51,7 @@ const FloorList = () => {
           setKeyword={setKeyword}
           addButtonText="Add New Floor"
           onAdd={handleAdd}
+          permission={PERMISSIONS.FLOOR_CREATE}
         />
       </div>
 

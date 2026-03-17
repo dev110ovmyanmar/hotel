@@ -1,5 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { Form, Input, Button, Drawer, Space, Select , Switch, InputNumber} from "antd";
+import {
+  Form,
+  Input,
+  Button,
+  Drawer,
+  Space,
+  Select,
+  Switch,
+  InputNumber,
+  Row,
+  Col,
+} from "antd";
 import Toast from "../../../../component/Toast/Toast";
 import { CloseOutlined } from "@ant-design/icons";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
@@ -20,7 +31,7 @@ const AmenitiesForm = ({
   drawerOpen,
   setDrawerOpen,
   page,
-  setPage
+  setPage,
 }) => {
   const [form] = Form.useForm();
 
@@ -31,13 +42,13 @@ const AmenitiesForm = ({
   const createAmenitiesFunction = useApiMutation({
     mutationFn: createAmenitiesFun,
     invalidateKeys: [["amenities"]],
-    page:page
+    page: page,
   });
 
   const editAmenitiesFunction = useApiMutation({
     mutationFn: editAmenitiesFun,
     invalidateKeys: [["amenities"]],
-    page:page
+    page: page,
   });
 
   const { data, isPending, error } = useApiQuery({
@@ -118,8 +129,9 @@ const AmenitiesForm = ({
               <FormButtons
                 onClick={() => form.submit()}
                 isPending={
-                  isAdd ?createAmenitiesFunction.isPending :
-                  editAmenitiesFunction.isPending
+                  isAdd
+                    ? createAmenitiesFunction.isPending
+                    : editAmenitiesFunction.isPending
                 }
                 mode={mode}
               />
@@ -133,8 +145,8 @@ const AmenitiesForm = ({
           validateTrigger="onSubmit"
           onFinish={onFinish}
           initialValues={{
-            isFree:false,
-            visibility:false
+            isFree: false,
+            visibility: false,
           }}
         >
           <Form.Item
@@ -144,7 +156,6 @@ const AmenitiesForm = ({
           >
             <Input readOnly={isView} />
           </Form.Item>
-
           <Form.Item
             label="Code"
             name="code"
@@ -152,33 +163,32 @@ const AmenitiesForm = ({
           >
             <Input readOnly={isView} />
           </Form.Item>
-
-          <Form.Item
-            label="Is Free"
-            name="isFree"
-            valuePropName = "checked"
-          >
-            <Switch disabled={isView}/>
-          </Form.Item>
-
-          <Form.Item
-            label="Visibility"
-            name="visibility"
-            valuePropName = "checked"
-          >
-           <Switch disabled={isView}/>
-          </Form.Item>
-
           <Form.Item
             label="Default Quantity"
             name="defaultQuantity"
-            rules={[{ required: true, message: "Default Quantity is Required" }]}
+            rules={[
+              { required: true, message: "Default Quantity is Required" },
+            ]}
           >
-            <InputNumber 
-              readOnly={isView}
-              style ={{width:"100%"}}
-            />
+            <InputNumber readOnly={isView} style={{ width: "100%" }} />
           </Form.Item>
+
+          <Row gutter={16}>
+            <Col span={6}>
+              <Form.Item label="Is Free" name="isFree" valuePropName="checked">
+                <Switch disabled={isView} />
+              </Form.Item>
+            </Col>
+            <Col span={6}>
+              <Form.Item
+                label="Visibility"
+                name="visibility"
+                valuePropName="checked"
+              >
+                <Switch disabled={isView} />
+              </Form.Item>
+            </Col>
+          </Row>
         </Form>
       </Drawer>
     </div>

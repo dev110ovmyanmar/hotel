@@ -12,7 +12,7 @@ const UnitTable = ({
   const columns = useUnitColumns(onEdit, onView);
 
   return (
-    <div className="mx-5">
+    <div>
       <Table
         loading={loading}
         columns={columns}
@@ -23,7 +23,7 @@ const UnitTable = ({
           defaultPageSize: 10,
           pageSizeOptions: ['10', '20', '50']
         }}
-        size="middle"
+        // size="middle"
       />
     </div>
   );

@@ -22,7 +22,7 @@ const CategoryTable = ({
           defaultPageSize: 10,
           pageSizeOptions: ['10', '20', '50']
         }}
-        size="middle"
+        // size="middle"
       />
     </div>
   );

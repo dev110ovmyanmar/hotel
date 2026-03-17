@@ -11,7 +11,7 @@ const InventoryTable = ({
   const columns = useInventoryColumns(onEdit, onView);
 
   return (
-    <div className="mx-5">
+    <div >
       <Table
         loading={loading}
         columns={columns}
@@ -22,7 +22,7 @@ const InventoryTable = ({
           defaultPageSize: 10,
           pageSizeOptions: ['10', '20', '50']
         }}
-        size="middle"
+        // size="middle"
       />
     </div>
   );
