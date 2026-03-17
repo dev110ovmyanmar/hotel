@@ -65,7 +65,7 @@ const ListHeader = ({
         {canCreate && (
           <Button
             type="primary"
-            onClick={onAdd}
+            onClick={!setCreateDrawerOpen && !setCityMode ? onAdd : cityFunction}
             className={
               !setCreateDrawerOpen && !setCityMode
                 ? "bg-blue-600 xs:w-auto w-50 xs:ml-50 md:ml-80 lg:ml-180"
