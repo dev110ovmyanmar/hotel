@@ -1,10 +1,12 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
+
+// Update
 export const useApiMutation = ({
   mutationFn,
   invalidateKeys = [],
   options = {},
-  page
+  shouldInvalidate = true
 }) => {
   const queryClient = useQueryClient();
 
@@ -12,11 +14,7 @@ export const useApiMutation = ({
     mutationFn,
 
     onSuccess: () => {
-      if (page === 1) {
-        invalidateKeys.forEach((key) =>
-          queryClient.invalidateQueries({ queryKey: key })
-        );
-      }else{
+      if (shouldInvalidate) {
         invalidateKeys.forEach((key) =>
           queryClient.invalidateQueries({ queryKey: key })
         );
