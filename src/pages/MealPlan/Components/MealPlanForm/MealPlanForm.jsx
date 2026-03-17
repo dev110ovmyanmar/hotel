@@ -31,18 +31,18 @@ const MeanPlanForm = ({
   const isEdit = mode === "edit";
   const isAdd = mode === "add";
 
-  const initData = queryClient.getQueryData(["initData"])?.statuses?.status;
+  const initData = queryClient.getQueryData(["initData", "authenticated"])?.statuses?.status;
 
   const createMealPlanFunction = useApiMutation({
     mutationFn: createMealPlan,
     invalidateKeys: [["mealPlans"]],
-    page: page,
+    shouldInvalidate : page === 1
   });
 
   const editMealPlanFunction = useApiMutation({
     mutationFn: editMealPlan,
     invalidateKeys: [["mealPlans"]],
-    page: page,
+    
   });
 
   const { data, isPending, error } = useApiQuery({

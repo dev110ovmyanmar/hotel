@@ -31,7 +31,8 @@ const AdminForm = ({
   const isEdit = mode === "edit";
   const isAdd = mode === "add";
 
-  const initData = queryClient.getQueryData(["initData"]);
+  const initData = queryClient.getQueryData(["initData", "authenticated"]);
+  console.log(initData,"initDataInAdminForm");
   const [adminDrawerOpen, setAdminDrawerOpen] = useState(false);
   const [selectedPermissions, setSelectedPermissions] = useState([]);
 
@@ -48,7 +49,7 @@ const AdminForm = ({
   const createAdminFunction = useApiMutation({
     mutationFn: createAdminFun,
     invalidateKeys: [["admins"]],
-    page: page
+    shouldInvalidate: page === 1
   });
 
   const editAdminFunction = useApiMutation({
@@ -228,7 +229,10 @@ const AdminForm = ({
             <Input />
           </Form.Item>
 
-          <Form.Item name="role" label="Role">
+          <Form.Item
+            name="role"
+            label="Role"
+            rules={[{ required: true, message: "Role is Required" }]}>
             <Select
               showSearch
               options={roles}
@@ -268,9 +272,8 @@ const AdminForm = ({
                     alignItems: "center",
                   }}
                 >
-                  <span>
-                    Original :{" "}
-                    <b>{changesNotAllowList?.length}</b>
+                  <span className="font-bold">
+                    Current Permissions
                   </span>
 
                   {changesNotAllowList?.length <= 0 ? null : (
@@ -278,7 +281,7 @@ const AdminForm = ({
                       type="primary"
                       onClick={() => adminDrawerFunction("notAllow")}
                     >
-                      View Permissions
+                      View
                     </Button>
                   )}
 
@@ -295,9 +298,8 @@ const AdminForm = ({
                     alignItems: "center",
                   }}
                 >
-                  <span>
-                    Add On :{" "}
-                    <b>{changesAllowList?.length}</b>
+                  <span className="font-bold">
+                    Additional Permissions
                   </span>
 
                   {changesAllowList?.length <= 0 ? null : (
@@ -305,7 +307,7 @@ const AdminForm = ({
                       type="primary"
                       onClick={() => adminDrawerFunction("allow")}
                     >
-                      Add On Permissions
+                      Add On 
                     </Button>
                   )}
 

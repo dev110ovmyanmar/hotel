@@ -16,7 +16,6 @@ import { CloseOutlined } from "@ant-design/icons";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
 import useApiQuery from "../../../../hooks/useApiQuery";
 import { loadState } from "../../../../utils";
-import { queryClient } from "../../../../app/queryClient";
 import {
   createLocationFun,
   editLocationFun,
@@ -26,6 +25,7 @@ import { AiTwotoneEye } from "react-icons/ai";
 import { FiEdit } from "react-icons/fi";
 import ListHeader from "./../../../../component/ListHeader/ListHeader";
 import FormButtons from "./../../../../component/FormButtons/FormButtons";
+import { queryClient } from './../../../../app/queryClient';
 
 const LocationForm = ({
   page,
@@ -55,17 +55,18 @@ const LocationForm = ({
   const createLocationFunction = useApiMutation({
     mutationFn: createLocationFun,
     invalidateKeys: [["locations"]],
-    page: page,
+    shouldInvalidate : page === 1
+    
   });
 
   const editLocationFunction = useApiMutation({
     mutationFn: editLocationFun,
     invalidateKeys: [["locations"]],
-    page: page,
+    
   });
 
   const { data, isPending, error } = useApiQuery({
-    fetchQueryName: "locations",
+    fetchQueryName: "location-detail",
     fetchQueryFunction: locationDetailsFun,
     params: { uuid: selectedData?.uuid },
     options: {
@@ -151,7 +152,7 @@ const LocationForm = ({
 
   const onCityFinish = (values) => {
     if (isCityAdd) {
-      setSelectedCity(null);
+      setSelectedCity({});
       const modifiedValues = {
         name: data?.name,
         uuid: data?.uuid,
@@ -161,8 +162,10 @@ const LocationForm = ({
       };
       createLocationFunction.mutate(modifiedValues, {
         onSuccess: () => {
+          queryClient.invalidateQueries(["locations"]);
           setCreateDrawerOpen(false);
           Toast.success("City Create Successfully!");
+          
         },
       });
     }
@@ -179,6 +182,7 @@ const LocationForm = ({
       };
       editLocationFunction.mutate(editValues, {
         onSuccess: () => {
+          queryClient.invalidateQueries(["locations"]);
           setCreateDrawerOpen(false);
           Toast.success("City Updated Successfully!");
         },
