@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Form, Input, Button, Drawer, Select } from "antd";
+import { Form, Input, Button, Drawer, Select , Switch } from "antd";
 import Toast from "../../../../component/Toast/Toast";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
 import useApiQuery from "../../../../hooks/useApiQuery";
@@ -29,10 +29,6 @@ const PolicyForm = ({
   const isView = mode === "view";
   const isEdit = mode === "edit";
   const isAdd = mode === "add";
-
-  // const initData = loadState(LOCAL_STORAGE_KEYS.initData)?.statuses;
-  // const linkTo = initData?.link_to;
-  // const policyType = initData?.policy_type;
 
   const initData = queryClient.getQueryData(["initData"]);
   const policyType = initData?.statuses?.policy_type;
@@ -152,11 +148,12 @@ const PolicyForm = ({
         <Form
           form={form}
           layout="vertical"
-          // labelCol={{ xs: { span: 24 }, sm: { span: 6 } }}
-          // wrapperCol={{ xs: { span: 24 }, sm: { span: 18 } }}
           validateTrigger="onSubmit"
           onFinish={onFinish}
           disabled={isView}
+          initialValues = {{
+            isActive: false
+          }}
         >
           <Form.Item
             label="Name"
@@ -196,15 +193,16 @@ const PolicyForm = ({
           <Form.Item
             label="Is Active"
             name="isActive"
-            rules={[{ required: true, message: "Is Active  is Required" }]}
+            valuePropName = "checked"
           >
-            <Select
+            {/* <Select
               options={[
                 { label: "Yes", value: true },
                 { label: "No", value: false },
               ]}
               open={isView ? false : undefined}
-            ></Select>
+            ></Select> */}
+            <Switch disabled={isView}/>
           </Form.Item>
 
           <Form.Item
