@@ -52,6 +52,8 @@ const ReservationForm = lazy(
 );
 const Guest = lazy(() => import("../../pages/Guest/GuestList"));
 const Booking = lazy(() => import("../../pages/Booking/Booking"));
+const Staff =lazy(()=>import ("../../pages/Staffs/StaffsList"))
+const Department =lazy(()=> import("../../pages/Departments/DepartmentsList"))
 const RoomType = lazy(() => import("../../pages/RoomType/RoomTypeList"));
 const Room = lazy(() => import("../../pages/Room/RoomList"));
 const RoomAttribute = lazy(
@@ -92,6 +94,7 @@ const MeanPlanList = lazy(() => import("../../pages/MealPlan/MealPlanList"));
 const PaymentList = lazy(() => import("../../pages/Payment/PaymentList"));
 
 const Taxs = lazy(() => import("../../pages/Tax/TaxList"));
+const RatePlan =lazy(()=> import("../../pages/RatePlan/RatePlanList"))
 
 export const authRoutes = [
   {
@@ -125,14 +128,14 @@ export const authRoutes = [
     isPrivate: false,
     icon: <RiseOutlined style={{ fontSize: "20px" }} />,
     nested: [
-      // {
-      //   key: 4.1,
-      //   path: "/rates-availability/rate-plans",
-      //   label: "Rate Plans",
-      //   icon: <ApartmentOutlined style={{ fontSize: "20px" }} />,
-      //   // component: < />,
-      //   // permission: ".list",
-      // },
+      {
+        key: 4.1,
+        path: "/rates-availability/rate-plans",
+        label: "Rate Plans",
+        icon: <ApartmentOutlined style={{ fontSize: "20px" }} />,
+        component: <RatePlan />,
+        // permission: ".list",
+      },
       {
         key: 4.2,
         label: "Inventories",
@@ -273,23 +276,23 @@ export const authRoutes = [
     isPrivate: false,
     icon: <ShopOutlined style={{ fontSize: "20px" }} />,
     nested: [
-      // {
-      //   key: 8.1,
-      //   label: "Staffs",
-      //   path: "/staff-management/staffs",
-      //   icon: <ApartmentOutlined style={{ fontSize: "20px" }} />,
-      //   // component: < />,
-      //   // permission: ".list",
-      // },
-      // {
-      //   key: 8.2,
-      //   label: "Departments",
-      //   path: "/staff-management/departments",
-      //   icon: <DatabaseOutlined style={{ fontSize: "20px" }} />,
-      //   isPrivate: true,
-      //   // component: < />,
-      //   // permission: ".list",
-      // },
+      {
+        key: 8.1,
+        label: "Staffs",
+        path: "/staff-management/staffs",
+        icon: <ApartmentOutlined style={{ fontSize: "20px" }} />,
+        component: <Staff />,
+        // permission: ".list",
+      },
+      {
+        key: 8.2,
+        label: "Departments",
+        path: "/staff-management/departments",
+        icon: <DatabaseOutlined style={{ fontSize: "20px" }} />,
+        isPrivate: true,
+        component: <Department />,
+        // permission: ".list",
+      },
     ],
   },
   {
