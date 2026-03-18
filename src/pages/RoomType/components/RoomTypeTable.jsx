@@ -1,7 +1,8 @@
 import { Dropdown, Space, Table } from "antd";
 import { useState } from "react";
 import { MoreOutlined, EyeOutlined, EditOutlined } from "@ant-design/icons";
-
+import usePermission from "../../../hooks/usePermission";
+import { PERMISSIONS } from "../../../variables/permission";
 import RoomTypeForm from "./RoomTypeForm/RoomTypeForm";
 
 const RoomTypeTable = ({
@@ -12,6 +13,7 @@ const RoomTypeTable = ({
   changePage,
   changePerPage,
 }) => {
+  const { hasPermission } = usePermission();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mode, setMode] = useState(null);
   const [selectedData, setSelectedData] = useState(null);
@@ -27,18 +29,18 @@ const RoomTypeTable = ({
       title: "Name",
       dataIndex: "name",
       key: "name",
-           },
+    },
     {
       title: "Code",
       dataIndex: "code",
       key: "code",
-      width: 70,
+      width: 80,
     },
     {
       title: "Total Rooms",
       dataIndex: "totalRooms",
       key: "totalRooms",
-        width: 120,
+      width: 120,
       align: "center",
     },
 
@@ -53,7 +55,7 @@ const RoomTypeTable = ({
       title: "Extra Bed",
       dataIndex: "extraBeds",
       key: "extraBeds",
-        width: 110,
+      width: 110,
       align: "center",
     },
     {
@@ -67,42 +69,44 @@ const RoomTypeTable = ({
       render: (_, record) => {
         const smallStyle = { fontSize: "12px" };
 
-        const items = [
+        const actions = [
           {
-            key: "1",
-            label: (
-              <Space
-                size={4}
-                style={smallStyle}
-                onClick={() => {
-                  setDrawerOpen(true);
-                  setMode("view");
-                  setSelectedData(record);
-                }}
-              >
-                <EyeOutlined style={{ fontSize: "12px" }} />
-                <span style={{ fontSize: "14px" }}>View</span>
-              </Space>
-            ),
+            key: "view",
+            label: "View",
+            icon: <EyeOutlined style={{ fontSize: "12px" }} />,
+            permission: PERMISSIONS.ROOM_TYPE_VIEW,
+            onClick: () => {
+              setDrawerOpen(true);
+              setMode("view");
+              setSelectedData(record);
+            },
           },
           {
-            key: "2",
-            label: (
-              <Space
-                size={4}
-                style={smallStyle}
-                onClick={() => {
-                  setDrawerOpen(true);
-                  setMode("edit");
-                  setSelectedData(record);
-                }}
-              >
-                <EditOutlined style={{ fontSize: "12px" }} />
-                <span style={{ fontSize: "14px" }}>Edit</span>
-              </Space>
-            ),
+            key: "edit",
+            label: "Edit",
+            icon: <EditOutlined style={{ fontSize: "12px" }} />,
+            permission: PERMISSIONS.ROOM_TYPE_EDIT,
+            onClick: () => {
+              setDrawerOpen(true);
+              setMode("edit");
+              setSelectedData(record);
+            },
           },
         ];
+
+        const items = actions
+          .filter(
+            (action) => !action.permission || hasPermission(action.permission),
+          )
+          .map((action) => ({
+            key: action.key,
+            label: (
+              <Space size={4} style={smallStyle} onClick={action.onClick}>
+                {action.icon}
+                <span style={{ fontSize: "14px" }}>{action.label}</span>
+              </Space>
+            ),
+          }));
 
         return (
           <Dropdown menu={{ items }} trigger={["click"]}>
@@ -134,14 +138,13 @@ const RoomTypeTable = ({
       />
 
       <RoomTypeForm
+        page={page}
         mode={mode}
         setMode={setMode}
         drawerOpen={drawerOpen}
         setDrawerOpen={setDrawerOpen}
         selectedData={selectedData}
         setSelectedData={setSelectedData}
-        width={500}
-        setPage={changePage}
       />
     </div>
   );

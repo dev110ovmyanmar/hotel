@@ -93,7 +93,7 @@ const RoomAttributesForm = ({
     <Drawer
       title={
         <div className="flex justify-between items-center">
-          <span>{mode === "edit" ? "Edit Attribute" : "Add Attribute"}</span>
+          <span>{mode === "edit" ? "Edit Room Attribute" : "Add Room Attribute"}</span>
           <FormButtons
             onClick={() => form.submit()}
             isPending={createAttribute.isPending || editAttribute.isPending}
