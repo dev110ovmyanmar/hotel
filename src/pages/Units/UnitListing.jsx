@@ -1,24 +1,25 @@
 import React, { useState, useMemo, useEffect } from "react";
 import {
-  fetchUnitData, //Api function name
-  fetchUnitDetail,
-  upsertUnit,
+  getUnits, //Api function name
 } from "../../api/unitApi";
 import useApiQuery from "../../hooks/useApiQuery";
 import { queryClient } from "../../app/queryClient";
-import { useApiMutation } from "../../hooks/useApiMutation";
 import ListHeader from "../../component/ListHeader/ListHeader";
 import UnitTable from "./components/UnitTable";
 import UnitForm from "./components/UnitForm";
-import Toast from "../../component/Toast/Toast";
+import { LIMITS } from "../../variables/constants";
 
 const UnitListing = () => {
-  const [open, setOpen] = useState(false);
-  const [selectedRow, setSelectedRow] = useState(null);
-  const [currentMode, setCurrentMode] = useState("add");
-  const [keyword, setKeyword] = useState("");
 
-  const initData = queryClient.getQueryData(["initData"]);
+    const [selectedRow, setSelectedRow] = useState(null);
+    const [currentMode, setCurrentMode] = useState("add");
+    const [keyword, setKeyword] = useState("");
+    const [page, setPage] = useState(1);
+    const [perPage, setPerPage] = useState(LIMITS.PAGE_SIZE);
+    const [drawerOpen, setDrawerOpen] = useState(false);
+
+  const initData = queryClient.getQueryData(["initData", "authenticated"]);
+
   const statusOptions =
     initData?.statuses?.status
       ?.filter((item) => item.name.toLowerCase() !== "blocked")
@@ -27,79 +28,49 @@ const UnitListing = () => {
         label: item.name,
       })) || [];
 
-  const { data, refetch, isLoading } = useApiQuery({
-    fetchQueryName: "unitData",
-    fetchQueryFunction: fetchUnitData,
-    params: { keyword }, // Pass keyword to API if supported
-  });
-
-  const units = data?.response?.data || [];
-
-  const { data: detailRes, isLoading: isLoadingDetail } = useApiQuery({
-    fetchQueryName: ["unitDetail", selectedRow?.uuid],
-    fetchQueryFunction: fetchUnitDetail,
-    params: { uuid: selectedRow?.uuid },
-    options: {
-      enabled:
-        !!open &&
-        !!selectedRow?.uuid &&
-        (currentMode === "view" || currentMode === "edit"),
-      staleTime: 0,
+  const { data, isLoading, error } = useApiQuery({
+    fetchQueryName: "units",
+    fetchQueryFunction: getUnits,
+    params: {
+      pagination: 
+      { page: page, 
+        perPage: perPage
+      },
+      keyword,
     },
   });
 
-  const detailData = detailRes?.response || null;
+  console.log('Units API Response:', data);
+  const units = data?.data || [];
 
-  // Mutations
-  const { mutate: upsertMutate } = useApiMutation({
-    mutationFn: upsertUnit,
-    invalidateKeys: ["unitData"],
-    options: {
-      onSuccess: () => {
-        refetch();
-        Toast.success(
-          `Unit ${currentMode === "add" ? "created" : "updated"} successfully`,
-        );
-        handleClose();
-      },
-    },
-  });
-
-  const handleSubmit = (values) => {
-    const payload = {
-      name: values.name,
-      shortName: values.shortName,
-      status: {
-        uuid: values.statusUuid,
-      },
-    };
-
-    if (currentMode !== "add") {
-      payload.uuid = selectedRow?.uuid;
-    }
-    upsertMutate(payload);
-  };
+  useEffect(() => {
+        setPage(1);
+  }, [keyword, perPage]);
 
   const handleClose = () => {
-    setOpen(false);
+    setDrawerOpen(false);
     setSelectedRow(null);
   };
 
   const handleAdd = () => {
     setCurrentMode("add");
-    setOpen(true);
+    setDrawerOpen(true);
   };
 
   const handleView = (record) => {
     setSelectedRow(record);
     setCurrentMode("view");
-    setOpen(true);
+    setDrawerOpen(true);
   };
 
   const handleEdit = (record) => {
     setSelectedRow(record);
     setCurrentMode("edit");
-    setOpen(true);
+    setDrawerOpen(true);
+  };
+
+  const switchToEdit = () => {
+    setCurrentMode("edit");
   };
 
   return (
@@ -119,15 +90,23 @@ const UnitListing = () => {
         onView={handleView}
         onEdit={handleEdit}
         loading={isLoading}
+        page={data?.pagination?.currentPage || page}
+        perPage={data?.pagination?.perPage || perPage}
+        total={data?.pagination?.total}
+        changePage={(page) => setPage(page)}
+        changePerPage={(perPage) => setPerPage(perPage)}
       />
+
       <UnitForm
-        initialValues={currentMode === "add" ? null : detailData}
         mode={currentMode}
-        onSubmit={handleSubmit}
-        open={open}
-        onClose={handleClose}
-        loading={isLoadingDetail && currentMode !== "add"}
-        switchToEdit={() => setCurrentMode("edit")}
+        page={data?.pagination?.currentPage || page}
+        setPage={setPage}
+        drawerOpen={drawerOpen}
+        setDrawerOpen={setDrawerOpen}
+        switchToEdit={switchToEdit}
+        loading={isLoading}
+        selectedRow={selectedRow}
+        setSelectedRow={setSelectedRow}
         statusOptions={statusOptions}
       />
     </div>
@@ -135,3 +114,4 @@ const UnitListing = () => {
 };
 
 export default UnitListing;
+

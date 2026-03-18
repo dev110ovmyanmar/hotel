@@ -1,110 +1,72 @@
-import React, { useState, useMemo } from "react";
-import { Table, Drawer, Button, message } from "antd";
-import { PlusOutlined, SearchOutlined } from "@ant-design/icons";
+import React, { useState, useMemo, useEffect } from "react";
 import RoleForm from "./Components/RoleForm.jsx";
 import {
-  fetchRoleData,
-  createRoleFun,
-  updateRoleFun,
-  updateRolePermissionFun,
+    getRoles
 } from "../../api/roleApi.js";
 import useApiQuery from "../../hooks/useApiQuery";
-import { useApiMutation } from "../../hooks/useApiMutation";
 import RolesTable from "./Components/RolesTable.jsx";
 import ListHeader from "../../component/ListHeader/ListHeader.jsx";
+import { LIMITS } from "../../variables/constants.js";
 
 const RolesListing = () => {
-  const [open, setOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
   const [currentMode, setCurrentMode] = useState("add");
   const [keyword, setKeyword] = useState("");
-  const [pageSize, setPageSize] = useState(10);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [page, setPage] = useState(1);
+  const [perPage, setPerPage] = useState(LIMITS.PAGE_SIZE);
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
-  // ✅ Fetch role list ONCE — keyword removed from params (we filter client-side)
-  const { data, isLoading } = useApiQuery({
+
+  const { data, isLoading, error } = useApiQuery({
     fetchQueryName: "roles",
-    fetchQueryFunction: fetchRoleData,
-    params: { page: currentPage, perPage: pageSize }, // ❌ removed keyword
+    fetchQueryFunction: getRoles,
+    params: {
+      pagination: {
+        page: page,
+        perPage: perPage
+      },
+      keyword,
+    },
   });
 
-  const roles = Array.isArray(data?.data) ? data.data : [];
+  const roles = data?.data || [];
 
-  // ✅ CREATE mutation
-  const createRoleFunction = useApiMutation({
-    mutationFn: createRoleFun,
-    invalidateKeys: [["roles"]],
-  });
+  useEffect(() => {
+    setPage(1);
+  }, [keyword, perPage]);
 
-  // ✅ UPDATE mutation
-  const updateRoleFunction = useApiMutation({
-    mutationFn: updateRoleFun,
-    invalidateKeys: [["roles", "roleDetail"]],
-  });
-
-  // ✅ UPDATE PERMISSION mutation
-  const updatePermissionFunction = useApiMutation({
-    mutationFn: updateRolePermissionFun,
-    invalidateKeys: [["roles", "roleDetail"]],
-  });
-
-  // ✅ Client-side filter only — no API call triggered
-  const filteredRoles = useMemo(() => {
-    if (!keyword.trim()) return roles;
-
-    const lowerKeyword = keyword.toLowerCase();
-    return roles.filter(
-      (item) =>
-        item.name?.toLowerCase().includes(lowerKeyword) ||
-        item.code?.toLowerCase().includes(lowerKeyword) ||
-        item.description?.toLowerCase().includes(lowerKeyword),
-    );
-  }, [keyword, roles]);
-
-  const handleEdit = (record) => {
-    setSelectedRow(record);
-    setCurrentMode("edit");
-    setOpen(true);
+  const handleAdd = () => {
+    setSelectedRow(null);
+    setCurrentMode("add");
+    setDrawerOpen(true);
   };
 
   const handleView = (record) => {
     setSelectedRow(record);
     setCurrentMode("view");
-    setOpen(true);
+    setDrawerOpen(true);
+  };
+
+  const handleEdit = (record) => {
+    setSelectedRow(record);
+    setCurrentMode("edit");
+    setDrawerOpen(true);
+  };
+
+  const onClose = () => {
+    setDrawerOpen(false);
+    setSelectedRow(null);
   };
 
   const switchToEdit = () => {
     setCurrentMode("edit");
   };
 
-  const onClose = () => {
-    setOpen(false);
-    setSelectedRow(null);
-  };
-  const handleAdd = () => {
-    setSelectedRow(null);
-    setCurrentMode("add");
-    setOpen(true);
-  };
-
-  const isView = currentMode === "view";
-  const isEdit = currentMode === "edit";
-  const isAdd = currentMode === "add";
-
-  const DrawerTitle = isView
-    ? "Role View"
-    : isEdit
-      ? "Role Edit"
-      : isAdd
-        ? "Role Create"
-        : "";
-
   return (
     <>
       <>
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4 w-full px-6 py-2">
           <ListHeader
-            // title="Role List"
             searchPlaceholder="Search roles by name, code...."
             keyword={keyword}
             setKeyword={setKeyword}
@@ -114,28 +76,33 @@ const RolesListing = () => {
         </div>
 
         <RolesTable
-          dataSource={filteredRoles}
-          loading={isLoading}
-          onAdd={handleAdd}
+          dataSource={roles}
           onView={handleView}
           onEdit={handleEdit}
+          loading={isLoading}
+          page={data?.pagination?.currentPage || page}
+          perPage={data?.pagination?.perPage || perPage}
+          total={data?.pagination?.total}
+          changePage={(page) => setPage(page)}
+          changePerPage={(perPage) => setPerPage(perPage)}
         />
       </>
+      
       <RoleForm
         mode={currentMode}
-        selectedData={selectedRow}
-        setDrawerOpen={setOpen}
+        drawerOpen={drawerOpen}
+        setDrawerOpen={setDrawerOpen}
         roles={roles}
-        createRoleFunction={createRoleFunction}
-        updateRoleFunction={updateRoleFunction}
-        updatePermissionFunction={updatePermissionFunction}
+        loading={isLoading}
         switchToEdit={switchToEdit}
-        DrawerTitle={DrawerTitle}
-        onClose={onClose}
-        open={open}
+        selectedRow={selectedRow}
+        setSelectedRow={setSelectedRow}
+        page={page}
+        setPage={setPage}
       />
     </>
   );
 };
 
 export default RolesListing;
+
