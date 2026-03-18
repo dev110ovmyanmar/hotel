@@ -1,15 +1,32 @@
+import { AiOutlineCopy } from "react-icons/ai";
 import { Dropdown, Space, Table, Tag, Button } from 'antd';
 import { useState } from "react";
 import { MoreOutlined } from '@ant-design/icons';
 import PolicyForm from './PolicyForm/PolicyForm';
 import { EyeOutlined } from '@ant-design/icons';
 import { EditOutlined } from '@ant-design/icons';
+import { useApiMutation } from './../../../hooks/useApiMutation';
+import { createPolicyDuplicate } from './../../../api/policyFunctionApi';
+import Toast from './../../../component/Toast/Toast';
 
-const PolicyTable = ({ data, page , setPage, perPage, total, changePage, changePerPage }) => {
-  console.log(data, "DataInPolicyTable");
+const PolicyTable = ({ data, page, setPage, perPage, total, changePage, changePerPage }) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mode, setMode] = useState(null);
   const [selectedData, setSelectedData] = useState({});
+
+  const duplicatePolicy = useApiMutation({
+    mutationFn : createPolicyDuplicate,
+    invalidateKeys : [["policies"]],
+    page: page
+  });
+
+  const duplicateClick = (uuid) =>{
+    duplicatePolicy.mutate(uuid,{
+      onSuccess : () =>{
+        Toast.success("Duplicated Successfully")
+      }
+    })
+  }
 
   const columns = [
     {
@@ -24,10 +41,34 @@ const PolicyTable = ({ data, page , setPage, perPage, total, changePage, changeP
       render: text => <div>{text}</div>,
     },
     {
+      title: 'Version',
+      dataIndex: 'version',
+      key: 'version',
+      render: text => <div>{text}</div>,
+    },
+    {
       title: 'Is Active',
       dataIndex: 'isActive',
       key: 'isActive',
       render: text => <div>{text === true ? "True" : "False"}</div>,
+    },
+    {
+      title: 'Policy Type',
+      dataIndex: ["policyType", "name"],
+      key: 'policyType',
+      render: text => <div>{text}</div>,
+    },
+    {
+      title: 'Link To',
+      dataIndex: ["linkTo", "name"],
+      key: 'linkTo',
+      render: text => <div>{text}</div>,
+    },
+    {
+      title: 'Description',
+      dataIndex: 'description',
+      key: 'description',
+      render: text => <div>{text}</div>,
     },
     {
       title: "Action",
@@ -66,6 +107,22 @@ const PolicyTable = ({ data, page , setPage, perPage, total, changePage, changeP
               >
                 <EditOutlined style={{ fontSize: "12px" }} />
                 <span style={{ fontSize: "14px" }}>Edit</span>
+              </Space>
+            ),
+          },
+          record?.isDuplicate &&
+          {
+            key: "3",
+            label: (
+              <Space
+                size={4}
+                style={smallStyle}
+                onClick={() => {
+                  duplicateClick(record?.uuid)
+                }}
+              >
+                <AiOutlineCopy style={{ fontSize: "12px" }} />
+                <span style={{ fontSize: "14px" }}>Duplicate</span>
               </Space>
             ),
           },

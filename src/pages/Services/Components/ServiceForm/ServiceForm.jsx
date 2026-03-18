@@ -121,7 +121,7 @@ const ServiceForm = ({
       <Drawer
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
-        width={500}
+        size={500}
         // closable={false}
         // extra={
         //   <CloseOutlined
@@ -157,7 +157,7 @@ const ServiceForm = ({
             ) : (
               <FormButtons
                 onClick={() => form.submit()}
-                isPending={isLoading}
+                isPending={createService.isPending || editService.isPending}
                 mode={mode}
               />
             )}
@@ -219,7 +219,7 @@ const ServiceForm = ({
           </Form.Item>
 
           <Form.Item label="Description" name="description">
-            <Input.TextArea rows={3} />
+            <Input.TextArea />
           </Form.Item>
         </Form>
       </Drawer>

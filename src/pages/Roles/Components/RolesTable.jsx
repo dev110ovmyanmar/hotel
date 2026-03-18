@@ -1,30 +1,44 @@
-import React from "react";
+import React, { useState } from "react";
 import { Table } from "antd";
 import useRoleColumns from "./useRoleColumns";
 import { filter } from "lodash";
+import RoleForm from "./RoleForm";
 
-const RolesTable = (
-    {
+const RolesTable = ({
         dataSource,
         loading,
-        onAdd,
+        onEdit,
         onView,
-        onEdit
-    }
-) => {
-    const columns = useRoleColumns(onEdit, onView, onAdd);
+        page,
+        perPage,
+        changePage,
+        changePerPage,
+        total,
+}) => {
+
+    const columns = useRoleColumns(onEdit, onView);
     return (
-        <>
-            <Table
+            <div id="scrollId" className="w-full h-[63vh]">
+             <Table
+                scroll={{ x: 1000 }}
+                loading={loading}
                 columns={columns}
                 dataSource={dataSource}
-                rowKey="id"
+                rowKey="uuid"
                 className="mx-5"
-                loading={loading}
-                pagination={{ showSizeChanger: true }}
+                pagination={{ 
+                    current: page,
+                    pageSize: perPage,
+                    total : total,
+                    onChange: (page, perPage) => {
+                        changePage(page);
+                        changePerPage(perPage);
+                    },
+                    showSizeChanger: true,
+                 }}
             />
-        </>
-    )
+            </div>
+            )
 }
 
 export default RolesTable

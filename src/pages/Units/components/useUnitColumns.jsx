@@ -5,7 +5,7 @@ export default function useUnitColumns(onEdit, onView) {
   return [
     { title: "ID", dataIndex: "id", key: "id", width: 80 },
     { title: "Name", dataIndex: "name", key: "name" },
-    {title: "Short Name", dataIndex: "shortName", key: "shortName", width: 120,},
+    {title: "Short Name", dataIndex: "shortName", key: "shortName"},
     {
       title: "Status",
       dataIndex: "status",

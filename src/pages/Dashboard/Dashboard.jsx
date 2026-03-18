@@ -3,7 +3,7 @@ import { queryClient } from '../../app/queryClient';
 
 const Dashboard = () => {
 
-  const initData = queryClient.getQueryData(["initData", {}]);
+  const  initData = queryClient.getQueryData(["initData", "authenticated"]);
 
   return (
     <div>Dashboard</div>

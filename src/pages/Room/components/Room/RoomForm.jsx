@@ -1,5 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Form, Input, Button, Select, Drawer, Divider } from "antd";
+import {
+  Form,
+  Input,
+  Button,
+  Select,
+  Drawer,
+  Divider,
+  Table,
+  Card,
+} from "antd";
 import Toast from "../../../../component/Toast/Toast";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
 import useApiQuery from "../../../../hooks/useApiQuery";
@@ -13,6 +22,8 @@ import {
 } from "../../../../api/roomApi";
 import RoomAttributesForm from "./RoomAttributesForm";
 import { EditOutlined } from "@ant-design/icons";
+import { PERMISSIONS } from "../../../../variables/permission";
+import usePermission from "../../../../hooks/usePermission";
 
 const RoomForm = ({
   mode,
@@ -22,25 +33,26 @@ const RoomForm = ({
   drawerOpen,
   setDrawerOpen,
   setPage,
+  page,
 }) => {
   const [form] = Form.useForm();
+  const { hasPermission } = usePermission();
   const [attributeOpen, setAttributeOpen] = useState(false);
   const [attributeMode, setAttributeMode] = useState("add");
   const [selectedAttribute, setSelectedAttribute] = useState(null);
-  const [loading, setLoading] = useState(false);
 
   const isView = mode === "view";
   const isEdit = mode === "edit";
   const isAdd = mode === "add";
 
-  const initData = queryClient.getQueryData(["initData"]);
+  const initData = queryClient.getQueryData(["initData", "authenticated"]);
 
   const statuses = initData?.statuses?.room_status?.map((status) => ({
     value: status.uuid,
     label: status.name,
   }));
 
-  const { data: roomMetaData, isPending } = useApiQuery({
+  const { data: roomMetaData } = useApiQuery({
     fetchQueryName: "roomMetaData",
     fetchQueryFunction: roomMeta,
   });
@@ -58,6 +70,7 @@ const RoomForm = ({
   const createRooms = useApiMutation({
     mutationFn: createRoom,
     invalidateKeys: [["roomData"]],
+    shouldInvalidate: page === 1,
   });
 
   const editRooms = useApiMutation({
@@ -75,6 +88,7 @@ const RoomForm = ({
   useEffect(() => {
     if (!isAdd && data) {
       form.setFieldsValue({
+        ...data,
         roomNo: data?.roomNo,
         status: data?.status?.uuid,
         floorUuid: data?.floor?.uuid,
@@ -87,16 +101,15 @@ const RoomForm = ({
 
   const onFinish = (values) => {
     if (isAdd) {
-      const payload = {
+      const createValues = {
         ...values,
         status: { uuid: values.status },
         roomType: { uuid: values.roomTypeUuid },
         floor: { uuid: values.floorUuid },
       };
 
-      createRooms.mutate(payload, {
+      createRooms.mutate(createValues, {
         onSuccess: () => {
-          queryClient.invalidateQueries(["taxList"]);
           form.resetFields();
           setDrawerOpen(false);
           setPage(1);
@@ -106,7 +119,7 @@ const RoomForm = ({
     }
 
     if (isEdit) {
-      const payload = {
+      const editValues = {
         ...values,
         status: { uuid: values.status },
         roomType: { uuid: values.roomTypeUuid },
@@ -114,9 +127,8 @@ const RoomForm = ({
         uuid: data?.uuid,
       };
 
-      editRooms.mutate(payload, {
+      editRooms.mutate(editValues, {
         onSuccess: () => {
-          queryClient.invalidateQueries(["taxList"]);
           setDrawerOpen(false);
           Toast.success("Room Updated Successfully!");
         },
@@ -124,12 +136,42 @@ const RoomForm = ({
     }
   };
 
+  const attributeColumns = [
+    {
+      title: "Name",
+      dataIndex: ["roomAttribute", "name"],
+      key: "name",
+    },
+    {
+      title: "Value",
+      dataIndex: "value",
+      key: "value",
+    },
+    {
+      title: "Action",
+      key: "action",
+      width: 80,
+      render: (_, record) =>
+        hasPermission(PERMISSIONS.ROOM_VIEW) && (
+          <Button
+            type="text"
+            icon={<EditOutlined />}
+            onClick={() => {
+              setAttributeMode("edit");
+              setSelectedAttribute(record);
+              setAttributeOpen(true);
+            }}
+          />
+        ),
+    },
+  ];
+
   return (
     <>
       <Drawer
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
-        size={500}
+        size={600}
         title={
           <div className="flex justify-between items-center">
             <span>
@@ -147,7 +189,7 @@ const RoomForm = ({
             ) : (
               <FormButton
                 onClick={() => form.submit()}
-                loading={loading}
+                isPending={createRooms.isPending || editRooms.isPending}
                 mode={mode}
               />
             )}
@@ -192,12 +234,10 @@ const RoomForm = ({
             <Select options={statuses} placeholder="Select Status" />
           </Form.Item>
 
-          <Divider />
-
           {!isAdd && (
-            <div className="mt-4">
-              <div className="flex justify-between items-center text-lg font-semibold mb-2">
-                <span>Attribute Value</span>
+            <Card className="mt-5 shadow-sm  border border-gray-100 bg-gray-100!">
+              <div className="flex justify-between text-base items-center font-semibold mb-2">
+                <span>Room Attribute Value</span>
 
                 {!isView && (
                   <Button
@@ -207,13 +247,14 @@ const RoomForm = ({
                       setSelectedAttribute(null);
                       setAttributeOpen(true);
                     }}
+                    permission={PERMISSIONS.ROOM_ATTRIBUTE_VALUE_CREATE}
                   >
-                    Add Attribute
+                    Add Room Attribute
                   </Button>
                 )}
               </div>
 
-              {data?.roomAttributeValues?.length > 0 ? (
+              {/* {data?.roomAttributeValues?.length > 0 ? (
                 data.roomAttributeValues.map((attr) => (
                   <div
                     key={attr.uuid}
@@ -236,8 +277,20 @@ const RoomForm = ({
                 ))
               ) : (
                 <span className="text-gray-400">No attributes added</span>
+              )} */}
+              {data?.roomAttributeValues?.length > 0 ? (
+                <Table
+                  columns={attributeColumns}
+                  dataSource={data.roomAttributeValues}
+                  rowKey="uuid"
+                  pagination={false}
+                  size="small"
+                  className="mt-5"
+                />
+              ) : (
+                <span className="text-gray-400">No attributes added</span>
               )}
-            </div>
+            </Card>
           )}
         </Form>
       </Drawer>
