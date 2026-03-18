@@ -53,7 +53,8 @@ const PolicyForm = ({
   const createPolicyFunction = useApiMutation({
     mutationFn: createPolicyFun,
     invalidateKeys: [["policies"]],
-    shouldInvalidate: addPolicyRule ? !addPolicyRule : page === 1
+                                      // false             false
+    shouldInvalidate: addPolicyRule ? !addPolicyRule : page === 1,
   });
 
   const editPolicyFunction = useApiMutation({

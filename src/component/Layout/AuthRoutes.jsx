@@ -93,6 +93,12 @@ const PaymentList = lazy(() => import("../../pages/Payment/PaymentList"));
 
 const Taxs = lazy(() => import("../../pages/Tax/TaxList"));
 
+const Agencies = lazy(()=> import("../../pages/Agencies/AgencyList"));
+
+const Company = lazy(()=> import("../../pages/Company/CompanyList"));
+
+const ReferralAgent = lazy(()=>import("../../pages/ReferralAgent/ReferralList"));
+
 export const authRoutes = [
   {
     key: 1,
@@ -234,39 +240,6 @@ export const authRoutes = [
   //   component: <PropertiesListing />,
   //   permission: "property.list",
   // },
-  {
-    key: 7,
-    label: "Partners",
-    isPrivate: false,
-    icon: <ShopOutlined style={{ fontSize: "20px" }} />,
-    nested: [
-      // {
-      //   key: 7.1,
-      //   label: "Agencies",
-      //   path: "/partners/agencies",
-      //   icon: <ApartmentOutlined style={{ fontSize: "20px" }} />,
-      //   // component: < />,
-      //   // permission: ".list",
-      // },
-      // {
-      //   key: 7.2,
-      //   label: "Companies",
-      //   path: "/partners/companies",
-      //   icon: <DatabaseOutlined style={{ fontSize: "20px" }} />,
-      //   isPrivate: true,
-      //   // component: < />,
-      //   // permission: ".list",
-      // },
-      // {
-      //   key: 7.3,
-      //   label: "Referral Agents",
-      //   path: "/partners/referral-agents",
-      //   icon: <DiffOutlined style={{ fontSize: "20px" }} />,
-      //   // component: </>,
-      //   // permission: ".list",
-      // },
-    ],
-  },
   {
     key: 8,
     label: "Staff Management",
@@ -624,6 +597,37 @@ export const authRoutes = [
   },
   {
     key: 17,
+    label: "Partners",
+    icon: <WalletOutlined style={{ fontSize: "20px" }} />,
+    nested: [
+      {
+        key: 17.1,
+        label: "Agencies",
+        path: "/partners/agencies",
+        icon: <DollarOutlined style={{ fontSize: "20px" }} />,
+        component: <Agencies />,
+        
+      },
+      {
+        key: 17.2,
+        label: "Companies",
+        path: "/partners/company",
+        icon: <MdPayments style={{ fontSize: "20px" }} />,
+        isPrivate: true,
+        component: <Company />,
+      },
+      {
+        key: 17.3,
+        label: "Referral Agents",
+        path: "/partners/referral-agent",
+        icon: <MdPayments style={{ fontSize: "20px" }} />,
+        isPrivate: true,
+        component: <ReferralAgent />,
+      },
+    ],
+  },
+  {
+    key: 18,
     label: "Location",
     path: "/location",
     icon: <EnvironmentOutlined style={{ fontSize: "20px" }} />,
