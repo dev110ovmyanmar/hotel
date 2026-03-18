@@ -2,50 +2,134 @@ import React, { useEffect } from "react";
 import { Button, Form, Input, Drawer, Select } from "antd";
 import Loader from "../../../component/Loader/Loader";
 import FormButtons from "../../../component/FormButtons/FormButtons";
+import Toast from "../../../component/Toast/Toast";
+import { useApiMutation } from "../../../hooks/useApiMutation";
+import useApiQuery from "../../../hooks/useApiQuery";
+import { upsertUnit, getUnitDetail } from "../../../api/unitApi";
 
 const UnitForm = ({
-  initialValues,
   mode,
-  onSubmit,
-  open,
-  onClose,
-  loading,
+  units = [],
+  loading = false,
   switchToEdit,
-  statusOptions,
+  page,
+  setPage,
+  selectedRow,
+  setSelectedRow,
+  drawerOpen, 
+  setDrawerOpen,
+  statusOptions 
 }) => {
   const [form] = Form.useForm();
+
   const isView = mode === "view";
+  const isEdit = mode === "edit";
+  const isAdd = mode === "add";
+
+  const { data, isLoading, error } = useApiQuery({
+      fetchQueryName: "unit_detail",
+      fetchQueryFunction: getUnitDetail,
+      params: { uuid: selectedRow?.uuid },
+      options: {
+        enabled: !!selectedRow?.uuid && (isEdit || isView) && drawerOpen,
+      }
+    });
 
   useEffect(() => {
-    if (open) {
-      if (initialValues) {
-        form.setFieldsValue({
-          name: initialValues.name,
-          shortName: initialValues.shortName,
-          // Handle both flat and nested responses from API
-          statusUuid: initialValues.status?.uuid || initialValues.statusUuid,
-        });
-      } else {
-        form.resetFields();
-      }
+    if (isAdd) {
+      form.resetFields();
+    } else if (data) {
+      form.setFieldsValue({
+        ...data,
+        statusUuid: data.status?.uuid
+      });
     }
-  }, [initialValues, open, form]);
+  }, [data, mode]);
+
+    const createUnit = useApiMutation({
+      mutationFn: upsertUnit,
+      invalidateKeys: [["units"]],
+      shouldInvalidate: page === 1
+    });
+
+    const editUnit = useApiMutation({
+        mutationFn: upsertUnit,
+        invalidateKeys: [["units"]],
+      });
+
+
+  const onFinish = (values) => {
+    console.log('Form values:', values);
+    
+    // Validate required fields
+    if (!values.statusUuid) {
+      Toast.error('Please select a status');
+      return;
+    }
+
+    const basePayload = {
+      name: values.name,
+      shortName: values.shortName,
+      status: { uuid: values.statusUuid }
+    };
+
+    console.log('Final payload:', basePayload);
+
+    if(isAdd){
+      createUnit.mutate(basePayload, {
+        onSuccess: () => {
+          form.resetFields();
+          setDrawerOpen(false);
+          Toast.success("Unit Created Successfully!");
+        },
+        onError: (error) => {
+          console.error('Create error:', error);
+          Toast.error(error?.response?.data?.error?.text || 'Failed to create unit');
+        }
+      });
+    }
+    if(isEdit){
+      const editValues = {
+        ...basePayload,
+        uuid: data?.uuid,
+      };
+     editUnit.mutate(editValues, {
+      onSuccess: () => {
+        setDrawerOpen(false);
+        Toast.success("Unit Updated Successfully!");
+      },
+      onError: (error) => {
+        console.error('Update error:', error);
+        Toast.error(error?.response?.data?.error?.text || 'Failed to update unit');
+      }
+     });
+    }
+  }
+
 
   // Use watch to get the value in real-time for the read-only display
   const currentStatusUuid = Form.useWatch("statusUuid", form);
   const getStatusLabel = (val) =>
     statusOptions?.find((s) => s.value === val)?.label || "-";
 
+    const onClose = () => {
+    form.resetFields();
+    setDrawerOpen(false);
+    setSelectedRow(null);
+  };
+
+  const DrawerTitle = isView
+    ? "Unit View"
+    : isEdit
+    ? "Unit Edit"
+    : "Unit Create";
+
   return (
     <Drawer
       title={
         <div className="flex items-center justify-between w-full">
           <span>
-            {mode === "view"
-              ? "View Category"
-              : mode === "edit"
-                ? "Edit Unit"
-                : "Add Unit"}
+            {DrawerTitle}
           </span>
           {isView ? (
             <Button type="primary" onClick={switchToEdit}>
@@ -58,13 +142,13 @@ const UnitForm = ({
       }
       width={500} // size={500} is not a valid AntD prop, use width
       onClose={onClose}
-      open={open}
+      open={drawerOpen}
       destroyOnClose
     >
       {loading ? (
         <Loader />
       ) : (
-        <Form form={form} layout="vertical" onFinish={onSubmit}>
+        <Form form={form} layout="vertical" onFinish={onFinish}>
           <Form.Item
             label="Unit Name"
             name="name"
