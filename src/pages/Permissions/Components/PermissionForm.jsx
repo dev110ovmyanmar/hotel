@@ -1,21 +1,34 @@
 import React, { useEffect, useMemo } from "react";
-import { Button, Form, Input, AutoComplete, Drawer } from "antd";
+import {
+  Button,
+  Form,
+  Input,
+  Row,
+  Col,
+  Spin,
+  AutoComplete,
+  Drawer,
+} from "antd";
 import Loader from "../../../component/Loader/Loader";
 import FormButtons from "../../../component/FormButtons/FormButtons";
+import Toast from "../../../component/Toast/Toast";
+import useApiQuery from "../../../hooks/useApiQuery";
+import { useApiMutation } from "../../../hooks/useApiMutation";
+import { upsertPermission, getPermissionDetail } from "../../../api/permissionApi";
 
 const { TextArea } = Input;
 
 const PermissionForm = ({
-  initialValues,
   mode,
-  onSubmit,
-  open,
-  onClose,
-  onCancel,
   permissions = [],
   loading = false,
   switchToEdit,
-  DrawerTitle,
+  page,
+  setPage,
+  selectedRow,
+  setSelectedRow,
+  drawerOpen, 
+  setDrawerOpen,
 }) => {
   const [form] = Form.useForm();
 
@@ -23,27 +36,80 @@ const PermissionForm = ({
   const isEdit = mode === "edit";
   const isAdd = mode === "add";
 
-  useEffect(() => {
-    if (initialValues) {
-      form.setFieldsValue(initialValues);
-    } else {
-      form.resetFields();
+    const { data, isLoading, refetch } = useApiQuery({
+    fetchQueryName: "permission-detail",
+    fetchQueryFunction: getPermissionDetail,
+    params: { uuid: selectedRow?.uuid },
+    options: {
+      enabled: !!selectedRow?.uuid,
     }
-  }, [initialValues, form]);
+  });
 
-  const handleSubmit = (values) => {
-    if (onSubmit) {
-      if (isAdd) {
-        const code = values.code || "";
-        const extractedModule = code.includes(".")
-          ? code.split(".")[0]
-          : values.module || "privacy policy";
-        onSubmit({ ...values, module: extractedModule });
-      } else {
-        onSubmit(values);
-      }
+  const selectedPermission = selectedRow || data;
+
+  useEffect(() => {
+    if (!isAdd && data) {
+      form.setFieldsValue({...data});
+      setSelectedRow(data);
+    } 
+  }, [data]);
+
+  const createPermission = useApiMutation({
+    mutationFn: upsertPermission,
+    invalidateKeys: [["permissions"]],
+    shouldInvalidate: page === 1
+  });
+
+  const editPermission = useApiMutation({
+    mutationFn: upsertPermission,
+    invalidateKeys: [["permissions"]],
+  });
+
+    const onFinish = (values) => {
+    if(isAdd){
+      const code = values.code || "";
+      const extractedModule = code.includes(".")
+      ? code.split(".")[0] : values.module || "general";
+      const createValues = {
+        ...values, module: extractedModule
+      };
+
+      createPermission.mutate(createValues, {
+        onSuccess: () => {
+          form.resetFields();
+          setDrawerOpen(false);
+          setPage(1);
+          Toast.success("Permission Created Successfully!");
+        },
+      });
     }
+    if(isEdit){
+      const editValues = {
+        ...values,
+        uuid: data?.uuid,
+      };
+     editPermission.mutate(editValues, {
+      onSuccess: () => {
+        setDrawerOpen(false);
+        refetch();
+        Toast.success("Permission Updated Successfully!");
+      },
+     });
+    }
+  }
+
+  const onClose = () => {
+    form.resetFields();
+    setDrawerOpen(false);
+    setSelectedRow(null);
   };
+
+    const DrawerTitle = isView
+    ? "Permission View"
+    : isEdit
+      ? "Permission Edit"
+      : "Permission Create";
+
 
   const moduleOptions = useMemo(() => {
     const modules = [
@@ -57,7 +123,7 @@ const PermissionForm = ({
     const duplicate = permissions.find(
       (p) =>
         p.name.toLowerCase() === value.trim().toLowerCase() &&
-        (!isEdit || p.id !== initialValues?.id),
+        (!isEdit || p.id !== selectedPermission?.id),
     );
     return duplicate
       ? Promise.reject(new Error("Permission name already exists"))
@@ -69,7 +135,7 @@ const PermissionForm = ({
     const duplicate = permissions.find(
       (p) =>
         p.code.toLowerCase() === value.trim().toLowerCase() &&
-        (!isEdit || p.id !== initialValues?.id),
+        (!isEdit || p.id !== selectedPermission?.id),
     );
     return duplicate
       ? Promise.reject(new Error("Permission code already exists"))
@@ -93,7 +159,7 @@ const PermissionForm = ({
         }
         size={500}
         onClose={onClose}
-        open={open}
+        open={drawerOpen}
       >
         {loading ? (
           <div className="flex justify-center items-center h-64">
@@ -105,7 +171,7 @@ const PermissionForm = ({
               form={form}
               layout="vertical"
               style={{ width: "100%" }}
-              onFinish={handleSubmit}
+              onFinish={onFinish}
             >
               <Form.Item
                 label="Name"
@@ -137,24 +203,31 @@ const PermissionForm = ({
                 />
               </Form.Item>
 
-              {isEdit && (
+              {!isView && !isAdd && (
                 <Form.Item
                   label="Module"
                   name="module"
-                  rules={[{ required: true, message: "Please input module!" }]}
+                  rules={[{ required: false, message: "Please input module!" }]}
                 >
                   <AutoComplete
                     options={moduleOptions}
-                    placeholder="Enter or select module"
+                    placeholder={isAdd ? "Enter module (auto-extracted from code if contains dot)" : "Select or enter module"}
                   />
+                </Form.Item>
+              )}
+
+              {isView && data?.module && (
+                <Form.Item label="Module" name="module" >
+                  <Input readOnly value={data.module} />
                 </Form.Item>
               )}
 
               <Form.Item label="Description" name="description">
                 <TextArea
+                  rows={4}
                   readOnly={isView}
                   style={{ cursor: isView ? "default" : "text" }}
-                  // placeholder="Enter description for related permission"
+                  placeholder="Enter description for related permission"
                 />
               </Form.Item>
             </Form>

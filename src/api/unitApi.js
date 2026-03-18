@@ -1,18 +1,18 @@
 import { apiClient } from "./apiClient";
 
-export const fetchUnitData = async (params = {}) => {
+export const getUnits = async (params) => {
   const { data } = await apiClient.get("/units", { params });
-  return data;
+  return data.response;
 };
 
-export const fetchUnitDetail = async ({ uuid }) => {
-  if (!uuid) return null;
-  const { data } = await apiClient.get("/unit", { params: { uuid } });
-  return data;
+export const getUnitDetail = async (params) => {
+  const { data } = await apiClient.get("/unit", 
+  {params});
+  return data.response;
 };
 
 // Simplified: Using one upsert function since the logic is identical
-export const upsertUnit = async (payload) => {
-  const { data } = await apiClient.post("unit/upsert", null, {params: payload});
-  return data;
+export const upsertUnit = async (params) => {
+  const { data } = await apiClient.post("unit/upsert", params);
+  return data.response;
 };

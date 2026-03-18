@@ -17,7 +17,6 @@ const PermissionAssignDrawer = ({
   React.useEffect(() => {
     if (open) {
       const ids = (selectedPermissions || []).map((id) => String(id));
-      console.log("🟡 Drawer Sync: Setting checkedIds to", ids);
       setCheckedIds(ids);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -93,7 +92,6 @@ const PermissionAssignDrawer = ({
   //  Save: pass integer IDs back to RoleDrawer.handlePermissionSave
   const handleSave = () => {
     const finalIds = checkedIds.map((id) => parseInt(id, 10));
-    console.log("🟡 Final IDs to save:", finalIds);
     onSave(finalIds); // RoleDrawer will call API and update state
   };
 
