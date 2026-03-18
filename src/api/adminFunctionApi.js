@@ -19,3 +19,8 @@ export const adminDetailsFunApi = async (params) => {
   const { data } = await apiClient.get("/admin", { params });
   return data.response;
 };
+
+export const adminPermission = async (params) =>{
+  const {data} = await apiClient.post("/admin-permission",params);
+  return data.response;
+}

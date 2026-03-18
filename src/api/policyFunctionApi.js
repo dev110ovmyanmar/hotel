@@ -24,3 +24,10 @@ export const policyDetailsFun = async (params) => {
   });
 return data.response;
 }
+
+export const createPolicyDuplicate = async (uuid) => {
+  const {data} = await apiClient.post("/policy/duplicate", {
+    uuid,
+  });
+return data.response;
+}

@@ -23,8 +23,18 @@ export default function useCategoryColumns(onEdit, onView) {
         <Dropdown
           menu={{
             items: [
-              { key: "1", label: "View", icon: <EyeOutlined />, onClick: () => onView(record) },
-              { key: "2", label: "Edit", icon: <EditOutlined />, onClick: () => onEdit(record) },
+              {
+                key: "1",
+                label: "View",
+                icon: <EyeOutlined />,
+                onClick: () => onView(record),
+              },
+              {
+                key: "2",
+                label: "Edit",
+                icon: <EditOutlined />,
+                onClick: () => onEdit(record),
+              },
             ],
           }}
           trigger={["click"]}

@@ -6,7 +6,12 @@ const UnitTable = ({
   dataSource,
   loading,
   onEdit,
-  onView
+  onView,
+  page,
+  perPage,
+  changePage,
+  changePerPage,
+  total,
 }) => {
 
   const columns = useUnitColumns(onEdit, onView);
@@ -19,11 +24,16 @@ const UnitTable = ({
         dataSource={dataSource}
         rowKey="id"
         pagination={{ 
+          current: page,
+          pageSize: perPage,
+          total: total,
+          onChange: (page, perPage) => {
+            changePage(page);
+            changePerPage(perPage);
+          },
           showSizeChanger: true,
-          defaultPageSize: 10,
-          pageSizeOptions: ['10', '20', '50']
-        }}
-        size="middle"
+       }}
+        // size="middle"
       />
     </div>
   );

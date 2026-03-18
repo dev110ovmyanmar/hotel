@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { Form, Input, Button, Drawer, Row, Col } from "antd";
+import React, { useEffect, useState } from "react";
+import { Form, Input, Button, Drawer, Row, Col, Divider } from "antd";
 import Toast from "../../../../component/Toast/Toast";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
 import useApiQuery from "../../../../hooks/useApiQuery";
@@ -10,6 +10,8 @@ import {
   roomTypeDetails,
 } from "../../../../api/roomApi";
 import TextArea from "antd/es/input/TextArea";
+import RoomTypeAmenityForm from "./RoomTypeAmenityForm";
+import { EditOutlined } from "@ant-design/icons";
 
 const RoomTypeForm = ({
   mode,
@@ -21,6 +23,9 @@ const RoomTypeForm = ({
   setPage,
 }) => {
   const [form] = Form.useForm();
+  const [roomTypeAmenityOpen, setRoomTypeAmenityOpen] = useState(false);
+  const [amenityMode, setAmenityMode] = useState("add");
+  const [selectedAmenity, setSelectedAmenity] = useState(null);
 
   const isView = mode === "view";
   const isEdit = mode === "edit";
@@ -36,7 +41,7 @@ const RoomTypeForm = ({
     invalidateKeys: [["roomTypeData"]],
   });
 
-  const { data, isLoading, error } = useApiQuery({
+  const { data } = useApiQuery({
     fetchQueryName: "roomTypeData",
     fetchQueryFunction: roomTypeDetails,
     params: { uuid: selectedData?.uuid },
@@ -79,7 +84,6 @@ const RoomTypeForm = ({
       editRoomTypes.mutate(editValues, {
         onSuccess: () => {
           setDrawerOpen(false);
-          setPage(1);
           Toast.success("Room Type Updated Successfully!");
         },
       });
@@ -113,7 +117,7 @@ const RoomTypeForm = ({
             ) : (
               <FormButton
                 onClick={() => form.submit()}
-                isPending={createRoomTypes.isLoading || editRoomTypes.isLoading}
+                isPending={createRoomTypes.isPending || editRoomTypes.isPending}
                 mode={mode}
               />
             )}
@@ -204,7 +208,7 @@ const RoomTypeForm = ({
                 name="basePrice"
                 rules={[{ required: true, message: "Please enter base price" }]}
               >
-                <Input />
+                <Input addonAfter="MMK"/>
               </Form.Item>
             </Col>
           </Row>
@@ -220,8 +224,64 @@ const RoomTypeForm = ({
           >
             <TextArea />
           </Form.Item>
+
+          <Divider />
+
+          {!isAdd && (
+            <div className="mt-4">
+              <div className="flex justify-between items-center text-base font-semibold mb-2">
+                <span>Room Type Amenity Data</span>
+
+                {!isView && (
+                  <Button
+                    type="primary"
+                    onClick={() => {
+                      setAmenityMode("add");
+                      setSelectedAmenity(null);
+                      setRoomTypeAmenityOpen(true);
+                    }}
+                  >
+                    Add Amenity
+                  </Button>
+                )}
+              </div>
+
+              {data?.roomTypeAmenities?.length > 0 ? (
+                data.roomTypeAmenities.map((amenity) => (
+                  <div
+                    key={amenity.uuid}
+                    className="flex items-center justify-between mb-2 pb-1"
+                  >
+                    <span>
+                      {amenity.amenity?.name} : {amenity?.extraPrice?.toLocaleString()} MMK
+                    </span>
+                    <Button
+                      type="text"
+                      icon={<EditOutlined />}
+                      onClick={() => {
+                        setAmenityMode("edit");
+                        setSelectedAmenity(amenity);
+                        setRoomTypeAmenityOpen(true);
+                      }}
+                    />
+                  </div>
+                ))
+              ) : (
+                <span className="text-gray-400">
+                  No room type amenity added
+                </span>
+              )}
+            </div>
+          )}
         </Form>
       </Drawer>
+      <RoomTypeAmenityForm
+        mode={amenityMode}
+        open={roomTypeAmenityOpen}
+        setDrawerOpen={setRoomTypeAmenityOpen}
+        roomTypeUuid={selectedData?.uuid}
+        selectedAmenity={selectedAmenity}
+      />
     </div>
   );
 };
