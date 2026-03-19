@@ -2,12 +2,12 @@ import React, { useEffect, useState } from "react";
 import { LIMITS } from "../../variables/constants";
 import useApiQuery from "../../hooks/useApiQuery";
 import ListHeader from "../../component/ListHeader/ListHeader";
-import { fetchRoomAttribute } from "../../api/roomApi";
-import RoomAttributeTable from "./Components/RoomAttributeTable";
-import RoomAttributeForm from "./Components/RoomAttributeForms/RoomAttributeform";
 import { PERMISSIONS } from "../../variables/permission";
+import StaffsForm from "./Components/StaffsForms/StaffsForm";
+import StaffsTable from "./Components/StaffsTable";
+import { fetchStaff } from "../../api/staffApi";
 
-const RoomAttributeList = () => {
+const StaffsList = () => {
   const [keyword, setKeyword] = useState("");
   const [status, setStatus] = useState("all");
   const [page, setPage] = useState(1);
@@ -19,8 +19,8 @@ const RoomAttributeList = () => {
   const normalStatus = status === "all" ? null : status;
 
   const { data } = useApiQuery({
-    fetchQueryName: "roomAttributeData",
-    fetchQueryFunction: fetchRoomAttribute,
+    fetchQueryName: "staffData",
+    fetchQueryFunction: fetchStaff,
     params: {
       pagination: {
         page: page,
@@ -45,17 +45,17 @@ const RoomAttributeList = () => {
     <div className="w-full px-6 py-2">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
         <ListHeader
-          title="Room Attribute List"
-          searchPlaceholder="Search Room Attribute ..."
+          title="Staff List"
+          searchPlaceholder="Search Staff ..."
           keyword={keyword}
           setKeyword={setKeyword}
-          addButtonText="Add New Room Attribute"
+          addButtonText="Add New Staff"
           onAdd={handleAdd}
-          permission={PERMISSIONS.ROOM_ATTRIBUTE_CREATE}
+          permission={PERMISSIONS.STAFF_CREATE}
         />
       </div>
 
-      <RoomAttributeTable
+      <StaffsTable
         data={data?.data || []}
         page={data?.pagination.currentPage}
         perPage={data?.pagination.perPage}
@@ -64,7 +64,7 @@ const RoomAttributeList = () => {
         changePerPage={(perPage) => setPerPage(perPage)}
       />
 
-      <RoomAttributeForm
+      <StaffsForm
         page={page}
         setPage={setPage}
         mode={mode}
@@ -78,4 +78,4 @@ const RoomAttributeList = () => {
   );
 };
 
-export default RoomAttributeList;
+export default StaffsList;

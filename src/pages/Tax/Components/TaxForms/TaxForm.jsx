@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Form, Input, Button, Select, Drawer, Switch, Row, Col } from "antd";
 import Toast from "../../../../component/Toast/Toast";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
@@ -15,6 +15,7 @@ const TaxForm = ({
   drawerOpen,
   setDrawerOpen,
   setPage,
+  page,
 }) => {
   const [form] = Form.useForm();
 
@@ -22,7 +23,8 @@ const TaxForm = ({
   const isEdit = mode === "edit";
   const isAdd = mode === "add";
 
-  const initData = queryClient.getQueryData(["initData"]);
+  const initData = queryClient.getQueryData(["initData", "authenticated"]);
+  const chargeTypeValue = Form.useWatch("charge_type", form);
 
   const chargeCategory = initData?.statuses?.charge_category?.map(
     (category) => ({
@@ -43,6 +45,11 @@ const TaxForm = ({
     }),
   );
 
+  const perUnit = initData?.statuses?.per_unit?.map((unit) => ({
+    value: unit.uuid,
+    label: unit.name,
+  }));
+
   const statuses = initData?.statuses?.status?.map((status) => ({
     value: status.uuid,
     label: status.name,
@@ -51,11 +58,13 @@ const TaxForm = ({
   const createTaxs = useApiMutation({
     mutationFn: createTax,
     invalidateKeys: [["taxData"]],
+    page: page,
   });
 
   const editTaxs = useApiMutation({
     mutationFn: editTax,
     invalidateKeys: [["taxData"]],
+    page: page,
   });
 
   const { data } = useApiQuery({
@@ -74,6 +83,7 @@ const TaxForm = ({
         charge_category: data?.chargeCategory?.uuid,
         charge_type: data?.chargeType?.uuid,
         charge_apply_type: data?.chargeApplyType?.uuid,
+        per_unit: data?.perUnit?.uuid,
         status: data?.status?.uuid,
       });
       setSelectedData(data);
@@ -87,12 +97,12 @@ const TaxForm = ({
         chargeCategory: { uuid: values.charge_category },
         chargeType: { uuid: values.charge_type },
         chargeApplyType: { uuid: values.charge_apply_type },
+        perUnit: { uuid: values.per_unit },
         status: { uuid: values.status },
       };
 
       createTaxs.mutate(createValues, {
         onSuccess: () => {
-          queryClient.invalidateQueries(["taxList"]);
           form.resetFields();
           setDrawerOpen(false);
           setPage(1);
@@ -106,12 +116,12 @@ const TaxForm = ({
         chargeCategory: { uuid: values.charge_category },
         chargeType: { uuid: values.charge_type },
         chargeApplyType: { uuid: values.charge_apply_type },
+        perUnit: { uuid: values.per_unit },
         status: { uuid: values.status },
         uuid: data?.uuid,
       };
       editTaxs.mutate(editValues, {
         onSuccess: () => {
-          queryClient.invalidateQueries(["taxList"]);
           setDrawerOpen(false);
           Toast.success("Tax Updated Successfully!");
         },
@@ -169,27 +179,19 @@ const TaxForm = ({
           </Form.Item>
 
           <Form.Item
-            label="Per Unit"
-            name="perUnit"
-            rules={[{ required: true, message: "Tax perUnit  is Required" }]}
+            label="Charge Category"
+            name="charge_category"
+            rules={[{ required: true, message: "Please select status" }]}
           >
-            <Input />
+            <Select
+              showSearch
+              options={chargeCategory}
+              placeholder="Select Status"
+            />
           </Form.Item>
 
-          <Form.Item
-            label="Remark"
-            name="remark"
-            rules={[{ required: true, message: "Tax remark   is Required" }]}
-          >
-            <Input />
-          </Form.Item>
-
-          <Form.Item
-            label="Charge Value "
-            name="chargeValue"
-            rules={[{ required: true, message: "Tax remark   is Required" }]}
-          >
-            <Input />
+          <Form.Item label="Per Unit" name="per_unit">
+            <Select showSearch options={perUnit} placeholder="Select perUnit" />
           </Form.Item>
 
           <Form.Item
@@ -204,27 +206,79 @@ const TaxForm = ({
           <Row gutter={16}>
             <Col span={12}>
               <Form.Item
-                label="Charge Category"
-                name="charge_category"
-                rules={[{ required: true, message: "Please select status" }]}
+                label="Charge Type"
+                name="charge_type"
+                rules={[
+                  { required: true, message: "Please select charge type" },
+                ]}
               >
                 <Select
                   showSearch
-                  options={chargeCategory}
-                  placeholder="Select Status"
+                  placeholder="Select charge type"
+                  options={chargeType}
+                  // Add this onChange handler:
+                  onChange={() => {
+                    form.setFieldValue("chargeValue", undefined);
+                    // Use undefined or "" depending on your preference
+                  }}
                 />
               </Form.Item>
             </Col>
+
+            {/* <Col span={12}>
+              <Form.Item
+                label="Charge Value"
+                name="chargeValue"
+                rules={[
+                  { required: true, message: "Charge value is required" },
+                ]}
+              >
+                <Input
+                  addonAfter={(() => {
+                    const selected = initData?.statuses?.charge_type?.find(
+                      (ct) => ct.uuid === chargeTypeValue,
+                    );
+                    return selected?.code === "percentage" ? "%" : "MMK";
+                  })()}
+                />
+              </Form.Item>
+            </Col> */}
             <Col span={12}>
               <Form.Item
-                label="Charge Type"
-                name="charge_type"
-                rules={[{ required: true, message: "Please select status" }]}
+                label="Charge Value"
+                name="chargeValue"
+                rules={[
+                  { required: true, message: "Charge value is required" },
+                  {
+                    validator: (_, value) => {
+                      const selectedType =
+                        initData?.statuses?.charge_type?.find(
+                          (ct) => ct.uuid === chargeTypeValue,
+                        );
+
+                      if (selectedType?.code === "percentage") {
+                        const numValue = Number(value);
+                        if (isNaN(numValue) || numValue < 1 || numValue > 100) {
+                          return Promise.reject(
+                            new Error("Percentage must be between 1 and 100"),
+                          );
+                        }
+                      }
+                      return Promise.resolve();
+                    },
+                  },
+                ]}
               >
-                <Select
-                  showSearch
-                  options={chargeType}
-                  placeholder="Select Status"
+                <Input
+                  type="number"
+                  min={1}
+                  // max={chargeTypeValue === "percentage" ? 100 : undefined}
+                  addonAfter={(() => {
+                    const selected = initData?.statuses?.charge_type?.find(
+                      (ct) => ct.uuid === chargeTypeValue,
+                    );
+                    return selected?.code === "percentage" ? "%" : "MMK";
+                  })()}
                 />
               </Form.Item>
             </Col>
@@ -259,6 +313,10 @@ const TaxForm = ({
               </Form.Item>
             </Col>
           </Row>
+
+          <Form.Item label="Remark" name="remark">
+            <Input />
+          </Form.Item>
         </Form>
       </Drawer>
     </div>

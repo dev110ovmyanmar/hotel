@@ -1,11 +1,11 @@
-import { Dropdown, Space, Table } from "antd";
+import { Dropdown, Space, Table, Tag } from "antd";
 import { useState } from "react";
 import { MoreOutlined, EyeOutlined, EditOutlined } from "@ant-design/icons";
 import usePermission from "../../../hooks/usePermission";
 import { PERMISSIONS } from "../../../variables/permission";
-import RoomTypeForm from "./RoomTypeForm/RoomTypeForm";
+import DepartmentsForm from "./DepartmentsForms/DepartmentsForm";
 
-const RoomTypeTable = ({
+const DepartmentsTable = ({
   data,
   page,
   perPage,
@@ -14,55 +14,31 @@ const RoomTypeTable = ({
   changePerPage,
 }) => {
   const { hasPermission } = usePermission();
+
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mode, setMode] = useState(null);
   const [selectedData, setSelectedData] = useState(null);
 
   const columns = [
+    { title: "ID", dataIndex: "id", key: "id", width: 70 },
+    { title: "Name", dataIndex: "name", key: "name" },
+    { title: "Code", dataIndex: "code", key: "code" },
     {
-      title: "ID",
-      dataIndex: "id",
-      key: "id",
-      width: 70,
+      title: "Description",
+      dataIndex: "description",
+      key: "description",
+      render: (text) => text || "-",
     },
     {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
-    },
-    {
-      title: "Code",
-      dataIndex: "code",
-      key: "code",
-      width: 80,
-    },
-    {
-      title: "Total Rooms",
-      dataIndex: "totalRooms",
-      key: "totalRooms",
-      width: 120,
-      align: "center",
-    },
-
-    {
-      title: "Guest",
-      dataIndex: "maxOccupancy",
-      key: "maxOccupancy",
-      width: 80,
-      align: "center",
-    },
-    {
-      title: "Extra Bed",
-      dataIndex: "extraBeds",
-      key: "extraBeds",
-      width: 110,
-      align: "center",
-    },
-    {
-      title: "Price (MMK)",
-      dataIndex: "basePrice",
-      key: "basePrice",
-      render: (price) => price?.toLocaleString(),
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      render: (_, record) => (
+        <Tag color={record?.status?.name === "Active" ? "green" : "red"}>
+          {record?.status?.name.toUpperCase()}
+        </Tag>
+      ),
+      width: 150,
     },
     {
       title: "Action",
@@ -74,7 +50,7 @@ const RoomTypeTable = ({
             key: "view",
             label: "View",
             icon: <EyeOutlined style={{ fontSize: "12px" }} />,
-            permission: PERMISSIONS.ROOM_TYPE_VIEW,
+            permission: PERMISSIONS.DEPARTMENT_VIEW,
             onClick: () => {
               setDrawerOpen(true);
               setMode("view");
@@ -85,7 +61,7 @@ const RoomTypeTable = ({
             key: "edit",
             label: "Edit",
             icon: <EditOutlined style={{ fontSize: "12px" }} />,
-            permission: PERMISSIONS.ROOM_TYPE_EDIT,
+            permission: PERMISSIONS.DEPARTMENT_EDIT,
             onClick: () => {
               setDrawerOpen(true);
               setMode("edit");
@@ -93,7 +69,6 @@ const RoomTypeTable = ({
             },
           },
         ];
-
         const items = actions
           .filter(
             (action) => !action.permission || hasPermission(action.permission),
@@ -137,7 +112,7 @@ const RoomTypeTable = ({
         }}
       />
 
-      <RoomTypeForm
+      <DepartmentsForm
         page={page}
         mode={mode}
         setMode={setMode}
@@ -150,4 +125,4 @@ const RoomTypeTable = ({
   );
 };
 
-export default RoomTypeTable;
+export default DepartmentsTable;

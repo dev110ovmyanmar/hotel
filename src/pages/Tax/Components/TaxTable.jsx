@@ -1,4 +1,4 @@
-import { Dropdown, Space, Table } from "antd";
+import { Dropdown, Space, Table, Tag } from "antd";
 import { useState } from "react";
 import { MoreOutlined, EyeOutlined, EditOutlined } from "@ant-design/icons";
 import TaxForm from "./TaxForms/TaxForm";
@@ -27,29 +27,64 @@ const TaxTable = ({
       key: "name",
     },
     {
-      title: "Per Unit",
-      dataIndex: "perUnit",
-      key: "perUnit",
+      title: "Charge Apply Type",
+      dataIndex: ["chargeApplyType", "name"],
+      key: "chargeApplyType",
       width: 160,
     },
     {
       title: "Inclusive",
       dataIndex: "isInclusive",
       key: "isInclusive",
-      render: (text) => <div>{text ? "True" : "False"}</div>,
+      render: (_, record) => (
+        <Tag color={record.isInclusive ? "green" : "red"}>
+          {record.isInclusive ? "TRUE" : "FALSE"}
+        </Tag>
+      ),
     },
-    {
-      title: "Remark ",
-      dataIndex: "remark",
-      key: "remark",
-      width: 160,
-    },
-    {
-      title: "Charge Value ",
-      dataIndex: "chargeValue",
-      key: "chargeValue",
-    },
+    // {
+    //   title: "Charge Value ",
+    //   dataIndex: "chargeValue",
+    //   key: "chargeValue",
+    // },
+    // {
+    //   title: "Charge Type ",
+    //   dataIndex: ["chargeType", "name"],
+    //   key: "chargeType",
+    //   width: 160,
+    // },
+    // {
+    //   title: "Charge Value",
+    //   key: "chargeValue",
+    //   render: (_, record) => {
+    //     const value = record?.chargeValue;
+    //     const type = record?.chargeType?.name;
 
+    //     return (
+    //       <span>
+    //         {value} {type}
+    //       </span>
+    //     );
+    //   },
+    // },
+    {
+      title: "Charge Value",
+      key: "chargeValue",
+      render: (_, record) => {
+        const value = record?.chargeValue;
+        const type = record?.chargeType?.name;
+
+        if (type === "Percentage") {
+          return <span>{value}%</span>;
+        }
+
+        if (type === "Flat") {
+          return <span>{value} MMK</span>;
+        }
+
+        return value;
+      },
+    },
     {
       title: "Action",
       render: (_, record) => {
@@ -122,13 +157,13 @@ const TaxTable = ({
       />
 
       <TaxForm
+        page={page}
         mode={mode}
         setMode={setMode}
         drawerOpen={drawerOpen}
         setDrawerOpen={setDrawerOpen}
         selectedData={selectedData}
         setSelectedData={setSelectedData}
-        width={500}
       />
     </div>
   );

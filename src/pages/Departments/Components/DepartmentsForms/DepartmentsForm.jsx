@@ -1,16 +1,18 @@
 import React, { useEffect } from "react";
-import { Form, Input, Button, Drawer, Row, Col } from "antd";
+import { Form, Input, Button, Drawer, Select } from "antd";
 import Toast from "../../../../component/Toast/Toast";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
 import useApiQuery from "../../../../hooks/useApiQuery";
+import { queryClient } from "../../../../app/queryClient";
 import FormButton from "../../../../component/FormButtons/FormButtons";
+import TextArea from "antd/es/input/TextArea";
 import {
-  createRoomAttribute,
-  editRoomAttribute,
-  roomAttributeDetails,
-} from "../../../../api/roomApi";
+  createDepartment,
+  departmentDetails,
+  editDepartment,
+} from "../../../../api/departmentApi";
 
-const RoomAttributeForm = ({
+const DepartmentsForm = ({
   mode,
   setMode,
   selectedData,
@@ -18,7 +20,7 @@ const RoomAttributeForm = ({
   drawerOpen,
   setDrawerOpen,
   setPage,
-  page
+  page,
 }) => {
   const [form] = Form.useForm();
 
@@ -26,20 +28,27 @@ const RoomAttributeForm = ({
   const isEdit = mode === "edit";
   const isAdd = mode === "add";
 
-  const createRoomAttributes = useApiMutation({
-    mutationFn: createRoomAttribute,
-    invalidateKeys: [["roomAttributeData"]],
+  const initData = queryClient.getQueryData(["initData", "authenticated"]);
+
+  const statuses = initData?.statuses?.status?.map((status) => ({
+    value: status.uuid,
+    label: status.name,
+  }));
+
+  const createDepartments = useApiMutation({
+    mutationFn: createDepartment,
+    invalidateKeys: [["departmentsdata"]],
     shouldInvalidate: page === 1,
   });
 
-  const editRoomAttributes = useApiMutation({
-    mutationFn: editRoomAttribute,
-    invalidateKeys: [["roomAttributeData"]],
+  const editDepartments = useApiMutation({
+    mutationFn: editDepartment,
+    invalidateKeys: [["departmentsdata"]],
   });
 
   const { data } = useApiQuery({
-    fetchQueryName: "roomAttributeData",
-    fetchQueryFunction: roomAttributeDetails,
+    fetchQueryName: "departmentsdata",
+    fetchQueryFunction: departmentDetails,
     params: { uuid: selectedData?.uuid },
     options: {
       enabled: !!selectedData?.uuid,
@@ -50,6 +59,7 @@ const RoomAttributeForm = ({
     if (!isAdd && data) {
       form.setFieldsValue({
         ...data,
+        status: data?.status?.uuid,
       });
       setSelectedData(data);
     }
@@ -59,27 +69,29 @@ const RoomAttributeForm = ({
     if (isAdd) {
       const createValues = {
         ...values,
+        status: { uuid: values.status },
       };
 
-      createRoomAttributes.mutate(createValues, {
+      createDepartments.mutate(createValues, {
         onSuccess: () => {
-          form.resetFields();
-          setDrawerOpen(false);
           setPage(1);
-          Toast.success("Room Attribute Created Successfully!");
+          setDrawerOpen(false);
+          Toast.success("Department Created Successfully!");
+          form.resetFields();
         },
       });
     }
     if (isEdit) {
       const editValues = {
         ...values,
-        uuid: data?.uuid,
+        status: { uuid: values.status },
+        uuid: selectedData?.uuid,
       };
 
-      editRoomAttributes.mutate(editValues, {
+      editDepartments.mutate(editValues, {
         onSuccess: () => {
           setDrawerOpen(false);
-          Toast.success("Room Attribute Updated Successfully!");
+          Toast.success("Department Updated Successfully!");
         },
       });
     }
@@ -95,10 +107,10 @@ const RoomAttributeForm = ({
           <div className="flex justify-between items-center">
             <span>
               {mode === "view"
-                ? "Room Attribute Details"
+                ? "Department Details"
                 : mode === "edit"
-                  ? "Edit Room Attribute"
-                  : "Create Room Attribute"}
+                  ? "Edit Department"
+                  : "Create Department"}
             </span>
             {isView ? (
               <Button
@@ -113,7 +125,7 @@ const RoomAttributeForm = ({
               <FormButton
                 onClick={() => form.submit()}
                 isPending={
-                  createRoomAttributes.isPending || editRoomAttributes.isPending
+                  createDepartments.isPending || editDepartments.isPending
                 }
                 mode={mode}
               />
@@ -131,9 +143,33 @@ const RoomAttributeForm = ({
           <Form.Item
             label="Name"
             name="name"
-            rules={[{ required: true, message: "Please enter room type name" }]}
+            rules={[{ required: true, message: "Name is Required" }]}
           >
             <Input />
+          </Form.Item>
+
+          <Form.Item
+            label="Code"
+            name="code"
+            rules={[{ required: true, message: "Code is Required" }]}
+          >
+            <Input />
+          </Form.Item>
+
+          <Form.Item label="Description" name="description">
+            <TextArea />
+          </Form.Item>
+
+          <Form.Item
+            label="Status"
+            name="status"
+            rules={[{ required: true, message: "Status is Required" }]}
+          >
+            <Select
+              showSearch
+              options={statuses}
+              open={isView ? false : undefined}
+            />
           </Form.Item>
         </Form>
       </Drawer>
@@ -141,4 +177,4 @@ const RoomAttributeForm = ({
   );
 };
 
-export default RoomAttributeForm;
+export default DepartmentsForm;

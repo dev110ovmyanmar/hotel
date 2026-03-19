@@ -3,9 +3,9 @@ import { useState } from "react";
 import { MoreOutlined, EyeOutlined, EditOutlined } from "@ant-design/icons";
 import usePermission from "../../../hooks/usePermission";
 import { PERMISSIONS } from "../../../variables/permission";
-import RoomTypeForm from "./RoomTypeForm/RoomTypeForm";
+import RatePlanForm from "./RatePlanForms/RatePlanForm";
 
-const RoomTypeTable = ({
+const RatePlanTable = ({
   data,
   page,
   perPage,
@@ -23,7 +23,6 @@ const RoomTypeTable = ({
       title: "ID",
       dataIndex: "id",
       key: "id",
-      width: 70,
     },
     {
       title: "Name",
@@ -34,35 +33,6 @@ const RoomTypeTable = ({
       title: "Code",
       dataIndex: "code",
       key: "code",
-      width: 80,
-    },
-    {
-      title: "Total Rooms",
-      dataIndex: "totalRooms",
-      key: "totalRooms",
-      width: 120,
-      align: "center",
-    },
-
-    {
-      title: "Guest",
-      dataIndex: "maxOccupancy",
-      key: "maxOccupancy",
-      width: 80,
-      align: "center",
-    },
-    {
-      title: "Extra Bed",
-      dataIndex: "extraBeds",
-      key: "extraBeds",
-      width: 110,
-      align: "center",
-    },
-    {
-      title: "Price (MMK)",
-      dataIndex: "basePrice",
-      key: "basePrice",
-      render: (price) => price?.toLocaleString(),
     },
     {
       title: "Action",
@@ -74,7 +44,7 @@ const RoomTypeTable = ({
             key: "view",
             label: "View",
             icon: <EyeOutlined style={{ fontSize: "12px" }} />,
-            permission: PERMISSIONS.ROOM_TYPE_VIEW,
+            // permission: PERMISSIONS.ROOM_TYPE_VIEW,
             onClick: () => {
               setDrawerOpen(true);
               setMode("view");
@@ -85,7 +55,7 @@ const RoomTypeTable = ({
             key: "edit",
             label: "Edit",
             icon: <EditOutlined style={{ fontSize: "12px" }} />,
-            permission: PERMISSIONS.ROOM_TYPE_EDIT,
+            // permission: PERMISSIONS.ROOM_TYPE_EDIT,
             onClick: () => {
               setDrawerOpen(true);
               setMode("edit");
@@ -137,7 +107,7 @@ const RoomTypeTable = ({
         }}
       />
 
-      <RoomTypeForm
+      <RatePlanForm
         page={page}
         mode={mode}
         setMode={setMode}
@@ -150,4 +120,4 @@ const RoomTypeTable = ({
   );
 };
 
-export default RoomTypeTable;
+export default RatePlanTable;
