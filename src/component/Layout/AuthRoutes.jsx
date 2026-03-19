@@ -56,6 +56,8 @@ const ReservationForm = lazy(
 );
 const Guest = lazy(() => import("../../pages/Guest/GuestList"));
 const Booking = lazy(() => import("../../pages/Booking/Booking"));
+const Staff =lazy(()=>import ("../../pages/Staffs/StaffsList"))
+const Department =lazy(()=> import("../../pages/Departments/DepartmentsList"))
 const RoomType = lazy(() => import("../../pages/RoomType/RoomTypeList"));
 const Room = lazy(() => import("../../pages/Room/RoomList"));
 const RoomAttribute = lazy(
@@ -96,6 +98,7 @@ const MeanPlanList = lazy(() => import("../../pages/MealPlan/MealPlanList"));
 const PaymentList = lazy(() => import("../../pages/Payment/PaymentList"));
 
 const Taxs = lazy(() => import("../../pages/Tax/TaxList"));
+const RatePlan =lazy(()=> import("../../pages/RatePlan/RatePlanList"))
 
 const Agencies = lazy(() => import("../../pages/Agencies/AgencyList"));
 

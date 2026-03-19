@@ -18,6 +18,7 @@ const RoomAttributeForm = ({
   drawerOpen,
   setDrawerOpen,
   setPage,
+  page
 }) => {
   const [form] = Form.useForm();
 
@@ -28,6 +29,7 @@ const RoomAttributeForm = ({
   const createRoomAttributes = useApiMutation({
     mutationFn: createRoomAttribute,
     invalidateKeys: [["roomAttributeData"]],
+    shouldInvalidate: page === 1,
   });
 
   const editRoomAttributes = useApiMutation({
