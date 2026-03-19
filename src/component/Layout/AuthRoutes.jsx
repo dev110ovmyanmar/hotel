@@ -110,6 +110,9 @@ const FacilityList = lazy(() => import("../../pages/Facility/FacilityList"));
 const FacilityPackageList = lazy(
   () => import("../../pages/FacilityPackage/FacilityPackageList"),
 );
+const Staff = lazy(() => import("../../pages/Staffs/StaffsList"));
+const RatePlan = lazy(() => import("../../pages/RatePlan/RatePlanList"));
+
 
 export const authRoutes = [
   {
@@ -136,6 +139,13 @@ export const authRoutes = [
     icon: <ScheduleOutlined style={{ fontSize: "20px" }} />,
     component: <Reservation />,
     isPrivate: false,
+     nested: [
+      {
+        key: 2.1,
+        path: "/reservation/guest-details/",
+        component: <Guest />,
+      },
+    ],
   },
 
   {
@@ -144,14 +154,14 @@ export const authRoutes = [
     isPrivate: false,
     icon: <RiseOutlined style={{ fontSize: "20px" }} />,
     nested: [
-      // {
-      //   key: 4.1,
-      //   path: "/rates-availability/rate-plans",
-      //   label: "Rate Plans",
-      //   icon: <ApartmentOutlined style={{ fontSize: "20px" }} />,
-      //   // component: < />,
-      //   // permission: ".list",
-      // },
+      {
+        key: 4.1,
+        path: "/rates-availability/rate-plans",
+        label: "Rate Plans",
+        icon: <ApartmentOutlined style={{ fontSize: "20px" }} />,
+        component: < RatePlan />,
+        // permission: ".list",
+      },
       {
         key: 4.2,
         label: "Inventories",
@@ -304,14 +314,14 @@ export const authRoutes = [
     isPrivate: false,
     icon: <ShopOutlined style={{ fontSize: "20px" }} />,
     nested: [
-      // {
-      //   key: 8.1,
-      //   label: "Staffs",
-      //   path: "/staff-management/staffs",
-      //   icon: <ApartmentOutlined style={{ fontSize: "20px" }} />,
-      //   // component: < />,
-      //   // permission: ".list",
-      // },
+      {
+        key: 8.1,
+        label: "Staffs",
+        path: "/staff-management/staffs",
+        icon: <ApartmentOutlined style={{ fontSize: "20px" }} />,
+        component: < Staff />,
+        // permission: ".list",
+      },
       // {
       //   key: 8.2,
       //   label: "Departments",
