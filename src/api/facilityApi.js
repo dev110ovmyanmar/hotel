@@ -1,24 +1,24 @@
 import { apiClient } from "./apiClient";
 
-export const getServices = async (params) => {
+export const getFacilitList = async (params) => {
     const  {data}  = await apiClient.get(
-        "/services",
+        "/facilities",
         {params}
     );
     return data.response;
 };
 
-export const upsertService = async (params) => {
+export const upsertFacility = async (params) => {
     const { data } = await apiClient.post(
-        "/service/upsert",
+        "/facility/upsert",
         params
     );
     return data.response;
 };
 
-export const getServiceDetails = async (params) => {
+export const getFacilityDetails = async (params) => {
     const { data } = await apiClient.get(
-        "/service",
+        "/facility",
         {params}
     );
     return data.response;
