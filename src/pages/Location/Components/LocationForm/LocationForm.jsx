@@ -3,25 +3,18 @@ import {
   Form,
   Input,
   Button,
-  Select,
-  Image,
   Drawer,
-  AutoComplete,
   Modal,
   Table,
   Space,
 } from "antd";
 import Toast from "../../../../component/Toast/Toast";
-import { CloseOutlined } from "@ant-design/icons";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
 import useApiQuery from "../../../../hooks/useApiQuery";
-import { loadState } from "../../../../utils";
 import {
-  createLocationFun,
-  editLocationFun,
-  locationDetailsFun,
-} from "../../../../api/locationFunctionApi";
-import { AiTwotoneEye } from "react-icons/ai";
+  upsertLocation,
+  locationDetails,
+} from "../../../../api/locationApi";
 import { FiEdit } from "react-icons/fi";
 import ListHeader from "./../../../../component/ListHeader/ListHeader";
 import FormButtons from "./../../../../component/FormButtons/FormButtons";
@@ -52,22 +45,16 @@ const LocationForm = ({
   const [createDrawerOpen, setCreateDrawerOpen] = useState(false);
   const [selectedCity, setSelectedCity] = useState({});
 
-  const createLocationFunction = useApiMutation({
-    mutationFn: createLocationFun,
+  const upsertLocations = useApiMutation({
+    mutationFn: upsertLocation,
     invalidateKeys: [["locations"]],
-    shouldInvalidate : page === 1
-    
-  });
-
-  const editLocationFunction = useApiMutation({
-    mutationFn: editLocationFun,
-    invalidateKeys: [["locations"]],
+    shouldInvalidate : isEdit? true : page === 1
     
   });
 
   const { data, isPending, error } = useApiQuery({
     fetchQueryName: "location-detail",
-    fetchQueryFunction: locationDetailsFun,
+    fetchQueryFunction: locationDetails,
     params: { uuid: selectedData?.uuid },
     options: {
       enabled: !!selectedData?.uuid,
@@ -93,7 +80,7 @@ const LocationForm = ({
 
   const onFinish = (values) => {
     if (isAdd) {
-      createLocationFunction.mutate(values, {
+      upsertLocations.mutate(values, {
         onSuccess: () => {
           setPage(1);
           setModalOpen(false);
@@ -109,7 +96,7 @@ const LocationForm = ({
         uuid: selectedData?.uuid,
       };
 
-      editLocationFunction.mutate(editValues, {
+      upsertLocations.mutate(editValues, {
         onSuccess: () => {
           setModalOpen(false);
           Toast.success("Country Updated Successfully!");
@@ -160,7 +147,7 @@ const LocationForm = ({
           name: values?.city.name,
         },
       };
-      createLocationFunction.mutate(modifiedValues, {
+      upsertLocations.mutate(modifiedValues, {
         onSuccess: () => {
           queryClient.invalidateQueries(["locations"]);
           setCreateDrawerOpen(false);
@@ -180,7 +167,7 @@ const LocationForm = ({
           uuid: selectedCity.uuid,
         },
       };
-      editLocationFunction.mutate(editValues, {
+      upsertLocations.mutate(editValues, {
         onSuccess: () => {
           queryClient.invalidateQueries(["locations"]);
           setCreateDrawerOpen(false);
@@ -231,8 +218,6 @@ const LocationForm = ({
             pagination={false}
           ></Table>
 
-          {/* isCityEdit = cityMode === "cityEdit";
-  const isCityAdd = cityMode === "cityAdd"; */}
           <Drawer
             open={createDrawerOpen}
             onClose={() => setCreateDrawerOpen(false)}
@@ -244,11 +229,7 @@ const LocationForm = ({
                   <Button
                     type="primary"
                     onClick={() => cityForm.submit()}
-                    loading={
-                      isCityAdd
-                        ? createLocationFunction?.isPending
-                        : editLocationFunction?.isPending
-                    }
+                    loading={upsertLocations?.isPending}
                   >
                     {isCityAdd ? "Create" : "Update"}
                   </Button>
@@ -298,23 +279,10 @@ const LocationForm = ({
               <Button type="default" onClick={() => setModalOpen(false)}>
                 Cancel
               </Button>
-              {/* <Button
-                type="primary"
-                htmlType="submit"
-                loading={
-                  isAdd
-                    ? createLocationFunction.isPending
-                    : editLocationFunction.isPending
-                }
-              >
-                Create
-              </Button> */}
+
               <FormButtons
                 onClick={() => form.submit()}
-                isPending={
-                  createLocationFunction.isPending ||
-                  editLocationFunction.isPending
-                }
+                isPending={upsertLocations?.isPending}
                 mode={mode}
               />
             </div>

@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { LIMITS } from "../../variables/constants";
-import ContentBanner from "../../component/ContentBanner/ContentBanner";
-import FilterBar from "../../component/FilterBar/FilterBar";
 import useApiQuery from "../../hooks/useApiQuery";
-import { locationListFunctionApi } from "../../api/locationFunctionApi";
+import { fetchLocation } from "../../api/locationApi";
 import LocationTable from "./Components/LocationTable";
 import LocationForm from "./Components/LocationForm/LocationForm";
 import ListHeader from "../../component/ListHeader/ListHeader";
@@ -23,7 +21,7 @@ const LocationList = () => {
 
   const { data, isLoading, error } = useApiQuery({
     fetchQueryName: "locations",
-    fetchQueryFunction: locationListFunctionApi,
+    fetchQueryFunction: fetchLocation,
     params: {
       pagination: {
         page: page,
@@ -78,8 +76,6 @@ const LocationList = () => {
         mode={mode}
         selectedData={selectedData}
         setSelectedData={setSelectedData}
-        width={500}
-
       />
     </div>
   );
