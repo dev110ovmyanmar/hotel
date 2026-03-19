@@ -177,7 +177,7 @@ const Topbar = withDirection(function (props) {
             icon={<PlusOutlined />}
             size="middle"
             className="bg-purple-600 hover:bg-purple-700 border-none ml-7"
-            onClick={() => navigate("/add-reservation")}
+            onClick={() => navigate("/reservation-form")}
           >
             Add Reservation
           </Button>
