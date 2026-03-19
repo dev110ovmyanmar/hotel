@@ -27,6 +27,7 @@ import { useApiMutation } from "../../hooks/useApiMutation.js";
 import { ReloadOutlined } from "@ant-design/icons";
 import { queryClient } from "../../app/queryClient.js";
 import { setUserData } from "../../services/authSlice.js";
+import { persister } from './../../app/QueryProvider';
 
 const { Header } = Layout;
 
@@ -73,6 +74,7 @@ const Topbar = withDirection(function (props) {
     try {
       setLoading(true);
       await logout.mutateAsync();
+      await persister.removeClient();
       queryClient.clear();
       localStorage.clear();
       navigate("/signin");
