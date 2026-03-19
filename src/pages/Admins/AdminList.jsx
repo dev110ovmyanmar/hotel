@@ -3,9 +3,9 @@ import AdminTable from "./Components/AdminTable";
 import AdminForm from "./Components/AdminForm/AdminForm";
 import { LIMITS } from "../../variables/constants";
 import useApiQuery from "../../hooks/useApiQuery";
-import { adminFunctionApi } from "../../api/adminFunctionApi";
 import ListHeader from "../../component/ListHeader/ListHeader";
 import { PERMISSIONS } from "../../variables/permission";
+import { fetchAdmin } from './../../api/adminApi';
 
 const AdminList = () => {
   const [keyword, setKeyword] = useState("");
@@ -20,7 +20,7 @@ const AdminList = () => {
 
   const { data, isLoading, error } = useApiQuery({
     fetchQueryName: "admins",
-    fetchQueryFunction: adminFunctionApi,
+    fetchQueryFunction: fetchAdmin,
     params: {
       pagination: {
         page: page,
@@ -73,7 +73,7 @@ const AdminList = () => {
         setMode={setMode}
         selectedData={selectedData}
         setSelectedData={setSelectedData}
-        width={500}
+        
       />
     </div>
   );
