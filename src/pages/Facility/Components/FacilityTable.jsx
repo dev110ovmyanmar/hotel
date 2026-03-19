@@ -1,11 +1,14 @@
 import { Dropdown, Space, Table, Tag } from "antd";
 import { useState } from "react";
-import { MoreOutlined, EyeOutlined, EditOutlined } from "@ant-design/icons";
-import TaxForm from "./TaxForms/TaxForm";
+import { MoreOutlined } from "@ant-design/icons";
+import { EyeOutlined } from "@ant-design/icons";
+import { EditOutlined } from "@ant-design/icons";
+import FacilityForm from "./FacilityForm/FacilityForm";
 
-const TaxTable = ({
+const FacilityTable = ({
   data,
   page,
+  setPage,
   perPage,
   total,
   changePage,
@@ -13,7 +16,7 @@ const TaxTable = ({
 }) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mode, setMode] = useState(null);
-  const [selectedData, setSelectedData] = useState(null);
+  const [selectedData, setSelectedData] = useState({});
 
   const columns = [
     {
@@ -27,63 +30,29 @@ const TaxTable = ({
       key: "name",
     },
     {
-      title: "Charge Apply Type",
-      dataIndex: ["chargeApplyType", "name"],
-      key: "chargeApplyType",
-      width: 160,
+      title: "Property",
+      dataIndex: ["property", "name"],
+      key: "property",
     },
     {
-      title: "Inclusive",
-      dataIndex: "isInclusive",
-      key: "isInclusive",
+      title: "Facility Type",
+      dataIndex: ["facilityType", "name"],
+      key: "facilityType",
+    },
+    {
+      title: "Capacity",
+      dataIndex: "capacity",
+      key: "capacity",
+    },
+    {
+      title: "Status",
+      dataIndex: ["status", "name"],
+      key: "status",
       render: (_, record) => (
-        <Tag color={record.isInclusive ? "green" : "red"}>
-          {record.isInclusive ? "TRUE" : "FALSE"}
+        <Tag color={record?.status?.name === "Active" ? "green" : "red"}>
+          {record?.status?.name.toUpperCase()}
         </Tag>
       ),
-    },
-    // {
-    //   title: "Charge Value ",
-    //   dataIndex: "chargeValue",
-    //   key: "chargeValue",
-    // },
-    // {
-    //   title: "Charge Type ",
-    //   dataIndex: ["chargeType", "name"],
-    //   key: "chargeType",
-    //   width: 160,
-    // },
-    // {
-    //   title: "Charge Value",
-    //   key: "chargeValue",
-    //   render: (_, record) => {
-    //     const value = record?.chargeValue;
-    //     const type = record?.chargeType?.name;
-
-    //     return (
-    //       <span>
-    //         {value} {type}
-    //       </span>
-    //     );
-    //   },
-    // },
-    {
-      title: "Charge Value",
-      key: "chargeValue",
-      render: (_, record) => {
-        const value = record?.chargeValue;
-        const type = record?.chargeType?.name;
-
-        if (type === "Percentage") {
-          return <span>{value}%</span>;
-        }
-
-        if (type === "Flat") {
-          return <span>{value} MMK</span>;
-        }
-
-        return value;
-      },
     },
     {
       title: "Action",
@@ -137,7 +106,7 @@ const TaxTable = ({
   ];
 
   return (
-    <div id="scrollId">
+    <div id="scrollId" className="w-full h-[63vh] ">
       <Table
         tableLayout="fixed"
         scroll={{ x: 1000 }}
@@ -156,17 +125,19 @@ const TaxTable = ({
         }}
       />
 
-      <TaxForm
+      <FacilityForm
         page={page}
+        setPage={setPage}
         mode={mode}
         setMode={setMode}
         drawerOpen={drawerOpen}
         setDrawerOpen={setDrawerOpen}
         selectedData={selectedData}
         setSelectedData={setSelectedData}
+        width={500}
       />
     </div>
   );
 };
 
-export default TaxTable;
+export default FacilityTable;

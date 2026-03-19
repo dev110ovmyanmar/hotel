@@ -1,9 +1,10 @@
-import { Dropdown, Space, Table, Tag } from "antd";
+import { Dropdown, Space, Table, Tag, Button } from "antd";
 import { useState } from "react";
-import { MoreOutlined, EyeOutlined, EditOutlined } from "@ant-design/icons";
-import TaxForm from "./TaxForms/TaxForm";
+import { EditOutlined, EyeOutlined, MoreOutlined } from "@ant-design/icons";
+import ReferralForm from './ReferralForm/ReferralForm';
 
-const TaxTable = ({
+
+const ReferralTable = ({
   data,
   page,
   perPage,
@@ -13,77 +14,68 @@ const TaxTable = ({
 }) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mode, setMode] = useState(null);
-  const [selectedData, setSelectedData] = useState(null);
+  const [selectedData, setSelectedData] = useState({});
 
   const columns = [
     {
       title: "ID",
       render: (_, record) => <div>{record?.id}</div>,
       width: 70,
+      align: "center",
     },
     {
       title: "Name",
       dataIndex: "name",
       key: "name",
+      render: (text) => <div>{text}</div>,
     },
     {
-      title: "Charge Apply Type",
-      dataIndex: ["chargeApplyType", "name"],
-      key: "chargeApplyType",
-      width: 160,
+      title: "Contact Person",
+      dataIndex: "contactPerson",
+      key: "contactPerson",
+      render: (text) => <div>{text}</div>,
     },
     {
-      title: "Inclusive",
-      dataIndex: "isInclusive",
-      key: "isInclusive",
-      render: (_, record) => (
-        <Tag color={record.isInclusive ? "green" : "red"}>
-          {record.isInclusive ? "TRUE" : "FALSE"}
-        </Tag>
-      ),
+      title: "Email",
+      dataIndex: "email",
+      key: "email",
+      render: (text) => <div>{text? text : "-"}</div>,
     },
-    // {
-    //   title: "Charge Value ",
-    //   dataIndex: "chargeValue",
-    //   key: "chargeValue",
-    // },
-    // {
-    //   title: "Charge Type ",
-    //   dataIndex: ["chargeType", "name"],
-    //   key: "chargeType",
-    //   width: 160,
-    // },
-    // {
-    //   title: "Charge Value",
-    //   key: "chargeValue",
-    //   render: (_, record) => {
-    //     const value = record?.chargeValue;
-    //     const type = record?.chargeType?.name;
-
-    //     return (
-    //       <span>
-    //         {value} {type}
-    //       </span>
-    //     );
-    //   },
-    // },
+    {
+      title: "Phone",
+      dataIndex: "phone",
+      key: "phone",
+      render: (text) => <div>{text? text : "-"}</div>,
+    },
+    {
+      title: "Address",
+      dataIndex: "address",
+      key: "address",
+      render: (text) => <div>{text}</div>,
+    },
+    {
+      title: "Charge Type",
+      dataIndex: ["chargeType","name"],
+      key: "chargeType",
+      render: (text) => <div>{text}</div>,
+    },
     {
       title: "Charge Value",
+      dataIndex: "chargeValue",
       key: "chargeValue",
-      render: (_, record) => {
-        const value = record?.chargeValue;
-        const type = record?.chargeType?.name;
-
-        if (type === "Percentage") {
-          return <span>{value}%</span>;
-        }
-
-        if (type === "Flat") {
-          return <span>{value} MMK</span>;
-        }
-
-        return value;
-      },
+      render: (text) => <div>{text}</div>,
+    },
+    {
+      title: "Remark",
+      dataIndex: "remark",
+      key: "remark",
+      render: (text) => <div>{text? text : "-"}</div>,
+    },
+    {
+      title: "Status",
+      dataIndex: ["status","name"],
+      key: "status",
+      render: (text) => <Tag className={text === "Active" ? "!text-green-500 " : "!text-red-500"}>{text === "Active" ? "Active" : "Inactive"}</Tag>,
     },
     {
       title: "Action",
@@ -137,7 +129,7 @@ const TaxTable = ({
   ];
 
   return (
-    <div id="scrollId">
+    <div id="scrollId" className="w-full h-[63vh] ">
       <Table
         tableLayout="fixed"
         scroll={{ x: 1000 }}
@@ -156,17 +148,17 @@ const TaxTable = ({
         }}
       />
 
-      <TaxForm
-        page={page}
+      <ReferralForm
         mode={mode}
         setMode={setMode}
         drawerOpen={drawerOpen}
         setDrawerOpen={setDrawerOpen}
         selectedData={selectedData}
         setSelectedData={setSelectedData}
+        page={page}
       />
     </div>
   );
 };
 
-export default TaxTable;
+export default ReferralTable;

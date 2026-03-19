@@ -2,11 +2,12 @@ import React, { useEffect, useState } from "react";
 import { LIMITS } from "../../variables/constants";
 import useApiQuery from "../../hooks/useApiQuery";
 import ListHeader from "../../component/ListHeader/ListHeader";
-import TaxTable from "./Components/TaxTable";
-import TaxForm from "./Components/TaxForms/TaxForm";
-import { fetchTax } from "../../api/TaxApi";
+import { PERMISSIONS } from "../../variables/permission";
+import { fetchDepartment } from "../../api/departmentApi";
+import DepartmentsForm from "./Components/DepartmentsForms/DepartmentsForm";
+import DepartmentsTable from "./Components/DepartmentsTable";
 
-const TaxList = () => {
+const DepartmentsList = () => {
   const [keyword, setKeyword] = useState("");
   const [status, setStatus] = useState("all");
   const [page, setPage] = useState(1);
@@ -18,8 +19,8 @@ const TaxList = () => {
   const normalStatus = status === "all" ? null : status;
 
   const { data } = useApiQuery({
-    fetchQueryName: "taxData",
-    fetchQueryFunction: fetchTax,
+    fetchQueryName: "departmentsdata",
+    fetchQueryFunction: fetchDepartment,
     params: {
       pagination: {
         page: page,
@@ -44,17 +45,18 @@ const TaxList = () => {
     <div className="w-full px-6 py-2">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
         <ListHeader
-          title="Tax List"
-          searchPlaceholder="Search Tax ..."
+          title="Department List"
+          searchPlaceholder="Search Department ..."
           keyword={keyword}
           setKeyword={setKeyword}
-          addButtonText="Add New Tax"
+          addButtonText="Add New Department"
           onAdd={handleAdd}
+          permission={PERMISSIONS.DEPARTMENT_LIST}
         />
       </div>
 
-      <TaxTable
-         data={data?.data || []}
+      <DepartmentsTable
+        data={data?.data || []}
         page={data?.pagination.currentPage}
         perPage={data?.pagination.perPage}
         total={data?.pagination?.total}
@@ -62,7 +64,7 @@ const TaxList = () => {
         changePerPage={(perPage) => setPerPage(perPage)}
       />
 
-      <TaxForm
+      <DepartmentsForm
         page={page}
         setPage={setPage}
         mode={mode}
@@ -76,4 +78,4 @@ const TaxList = () => {
   );
 };
 
-export default TaxList;
+export default DepartmentsList;

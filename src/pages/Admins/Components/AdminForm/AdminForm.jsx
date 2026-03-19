@@ -32,7 +32,6 @@ const AdminForm = ({
   const isAdd = mode === "add";
 
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
-  console.log(initData,"initDataInAdminForm");
   const [adminDrawerOpen, setAdminDrawerOpen] = useState(false);
   const [selectedPermissions, setSelectedPermissions] = useState([]);
 

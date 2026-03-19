@@ -2,11 +2,12 @@ import React, { useEffect, useState } from "react";
 import { LIMITS } from "../../variables/constants";
 import useApiQuery from "../../hooks/useApiQuery";
 import ListHeader from "../../component/ListHeader/ListHeader";
-import TaxTable from "./Components/TaxTable";
-import TaxForm from "./Components/TaxForms/TaxForm";
-import { fetchTax } from "../../api/TaxApi";
+// import { PERMISSIONS } from "../../variables/permission";
+import RatePlanForm from "./Components/RatePlanForms/RatePlanForm";
+import RatePlanTable from "./Components/RatePlanTable";
+import { fetchRatePlan } from "../../api/ratePlanApi";
 
-const TaxList = () => {
+const RatePlanList = () => {
   const [keyword, setKeyword] = useState("");
   const [status, setStatus] = useState("all");
   const [page, setPage] = useState(1);
@@ -18,8 +19,8 @@ const TaxList = () => {
   const normalStatus = status === "all" ? null : status;
 
   const { data } = useApiQuery({
-    fetchQueryName: "taxData",
-    fetchQueryFunction: fetchTax,
+    fetchQueryName: "ratePlan",
+    fetchQueryFunction: fetchRatePlan,
     params: {
       pagination: {
         page: page,
@@ -44,17 +45,18 @@ const TaxList = () => {
     <div className="w-full px-6 py-2">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
         <ListHeader
-          title="Tax List"
-          searchPlaceholder="Search Tax ..."
+          title="Rate Plan List"
+          searchPlaceholder="Search Rate Plan ..."
           keyword={keyword}
           setKeyword={setKeyword}
-          addButtonText="Add New Tax"
+          addButtonText="Add New Rate Plan"
           onAdd={handleAdd}
+          // permission={PERMISSIONS.ROOM_TYPE_CREATE}
         />
       </div>
 
-      <TaxTable
-         data={data?.data || []}
+      <RatePlanTable
+        data={data?.data || []}
         page={data?.pagination.currentPage}
         perPage={data?.pagination.perPage}
         total={data?.pagination?.total}
@@ -62,7 +64,7 @@ const TaxList = () => {
         changePerPage={(perPage) => setPerPage(perPage)}
       />
 
-      <TaxForm
+      <RatePlanForm
         page={page}
         setPage={setPage}
         mode={mode}
@@ -76,4 +78,4 @@ const TaxList = () => {
   );
 };
 
-export default TaxList;
+export default RatePlanList;

@@ -2,11 +2,11 @@ import React, { useEffect, useState } from "react";
 import { LIMITS } from "../../variables/constants";
 import useApiQuery from "../../hooks/useApiQuery";
 import ListHeader from "../../component/ListHeader/ListHeader";
-import TaxTable from "./Components/TaxTable";
-import TaxForm from "./Components/TaxForms/TaxForm";
-import { fetchTax } from "../../api/TaxApi";
+import AgencyTable from './Components/AgencyTable';
+import AgencyForm from './Components/AgencyForm/AgencyForm';
+import { fetchPartner } from './../../api/partnerApi';
 
-const TaxList = () => {
+const AgencyList = () => {
   const [keyword, setKeyword] = useState("");
   const [status, setStatus] = useState("all");
   const [page, setPage] = useState(1);
@@ -17,9 +17,9 @@ const TaxList = () => {
 
   const normalStatus = status === "all" ? null : status;
 
-  const { data } = useApiQuery({
-    fetchQueryName: "taxData",
-    fetchQueryFunction: fetchTax,
+  const { data, isLoading, error } = useApiQuery({
+    fetchQueryName: "agencies",
+    fetchQueryFunction: fetchPartner ,
     params: {
       pagination: {
         page: page,
@@ -27,6 +27,7 @@ const TaxList = () => {
       },
       keyword,
       status: normalStatus,
+      partnerType : "Agency" 
     },
   });
 
@@ -39,22 +40,20 @@ const TaxList = () => {
     setMode("add");
     setDrawerOpen(true);
   };
-
   return (
     <div className="w-full px-6 py-2">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
         <ListHeader
-          title="Tax List"
-          searchPlaceholder="Search Tax ..."
+          searchPlaceholder="Search Agencies ..."
           keyword={keyword}
           setKeyword={setKeyword}
-          addButtonText="Add New Tax"
+          addButtonText="Add New Agency"
           onAdd={handleAdd}
         />
       </div>
 
-      <TaxTable
-         data={data?.data || []}
+      <AgencyTable
+        data={data?.data || []}
         page={data?.pagination.currentPage}
         perPage={data?.pagination.perPage}
         total={data?.pagination?.total}
@@ -62,18 +61,18 @@ const TaxList = () => {
         changePerPage={(perPage) => setPerPage(perPage)}
       />
 
-      <TaxForm
-        page={page}
-        setPage={setPage}
+      <AgencyForm
         mode={mode}
         setMode={setMode}
-        drawerOpen={drawerOpen}
-        setDrawerOpen={setDrawerOpen}
         selectedData={selectedData}
         setSelectedData={setSelectedData}
+        drawerOpen={drawerOpen}
+        setDrawerOpen={setDrawerOpen}
+        page={page}
+        setPage={setPage}
       />
     </div>
   );
 };
 
-export default TaxList;
+export default AgencyList;
