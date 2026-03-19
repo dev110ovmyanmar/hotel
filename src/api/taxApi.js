@@ -1,7 +1,7 @@
 import { apiClient } from "./apiClient";
 
 export const fetchTax = async (params) => {
-  const { data } = await apiClient.get("/taxs", { params });
+  const { data } = await apiClient.get("/taxes", { params });
   return data.response;
 };
 
