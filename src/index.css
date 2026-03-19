@@ -59,7 +59,7 @@
   --ant-border-radius: 5px;
 }
 .ant-select {
-  --ant-border-radius: 0px;
+  --ant-border-radius: 5px;
 }
 .ant-picker {
   --ant-border-radius: 0px;
