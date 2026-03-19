@@ -5,7 +5,7 @@ import ReservationMenu from "./ReservationMenu";
 
 const ReservationList = () => {
   return (
-    <div>
+     <div className="w-full px-6 py-2">
       <ReservationHeader />
       <ReservationMenu />
     </div>
@@ -13,3 +13,4 @@ const ReservationList = () => {
 };
 
 export default ReservationList;
+

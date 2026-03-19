@@ -1,5 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { Form, Input, Button, Drawer, Row, Col, Divider } from "antd";
+import {
+  Form,
+  Input,
+  Button,
+  Drawer,
+  Row,
+  Col,
+  Divider,
+  Table,
+  Card,
+  Tag,
+} from "antd";
 import Toast from "../../../../component/Toast/Toast";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
 import useApiQuery from "../../../../hooks/useApiQuery";
@@ -21,6 +32,7 @@ const RoomTypeForm = ({
   drawerOpen,
   setDrawerOpen,
   setPage,
+  page,
 }) => {
   const [form] = Form.useForm();
   const [roomTypeAmenityOpen, setRoomTypeAmenityOpen] = useState(false);
@@ -34,12 +46,13 @@ const RoomTypeForm = ({
   const createRoomTypes = useApiMutation({
     mutationFn: createRoomType,
     invalidateKeys: [["roomTypeData"]],
+    shouldInvalidate: page === 1,
   });
 
   const editRoomTypes = useApiMutation({
     mutationFn: editRoomType,
     invalidateKeys: [["roomTypeData"]],
-  });
+ });
 
   const { data } = useApiQuery({
     fetchQueryName: "roomTypeData",
@@ -77,7 +90,6 @@ const RoomTypeForm = ({
     if (isEdit) {
       const editValues = {
         ...values,
-
         uuid: data?.uuid,
       };
 
@@ -90,12 +102,53 @@ const RoomTypeForm = ({
     }
   };
 
+  const amenityColumns = [
+    {
+      title: "Name",
+      dataIndex: ["amenity", "name"],
+      key: "name",
+    },
+    {
+      title: "Extra Price (MMK)",
+      dataIndex: "extraPrice",
+      key: "extraPrice",
+      render: (price) => price?.toLocaleString(),
+    },
+    {
+      title: "Is Free",
+      dataIndex: "isFree",
+      key: "isFree",
+      render: (_, record) => (
+        <Tag color={record.isFree ? "green" : "red"}>
+          {record.isFree ? "TRUE" : "FALSE"}
+        </Tag>
+      ),
+    },
+    {
+      title: "Action",
+      key: "action",
+      width: 80,
+      align: "center",
+      render: (_, record) => (
+        <Button
+          type="text"
+          icon={<EditOutlined />}
+          onClick={() => {
+            setAmenityMode("edit");
+            setSelectedAmenity(record);
+            setRoomTypeAmenityOpen(true);
+          }}
+        />
+      ),
+    },
+  ];
+
   return (
     <div>
       <Drawer
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
-        size={500}
+        size={600}
         title={
           <div className="flex justify-between items-center">
             <span>
@@ -131,7 +184,7 @@ const RoomTypeForm = ({
           onFinish={onFinish}
           disabled={isView}
         >
-          <Row gutter={16}>
+          <Row gutter={24}>
             <Col span={16}>
               <Form.Item
                 label="Name"
@@ -208,7 +261,7 @@ const RoomTypeForm = ({
                 name="basePrice"
                 rules={[{ required: true, message: "Please enter base price" }]}
               >
-                <Input addonAfter="MMK"/>
+                <Input addonAfter="MMK" />
               </Form.Item>
             </Col>
           </Row>
@@ -225,12 +278,10 @@ const RoomTypeForm = ({
             <TextArea />
           </Form.Item>
 
-          <Divider />
-
           {!isAdd && (
-            <div className="mt-4">
-              <div className="flex justify-between items-center text-base font-semibold mb-2">
-                <span>Room Type Amenity Data</span>
+            <Card className="mt-5 shadow-sm  border border-gray-100 bg-gray-100!">
+              <div className="flex justify-between items-center text-base font-semibold mb-5">
+                <span>Room Type Amenity </span>
 
                 {!isView && (
                   <Button
@@ -241,19 +292,21 @@ const RoomTypeForm = ({
                       setRoomTypeAmenityOpen(true);
                     }}
                   >
-                    Add Amenity
+                    Add Room Type Amenity
                   </Button>
                 )}
               </div>
 
-              {data?.roomTypeAmenities?.length > 0 ? (
+              {/* {data?.roomTypeAmenities?.length > 0 ? (
                 data.roomTypeAmenities.map((amenity) => (
                   <div
                     key={amenity.uuid}
                     className="flex items-center justify-between mb-2 pb-1"
                   >
                     <span>
-                      {amenity.amenity?.name} : {amenity?.extraPrice?.toLocaleString()} MMK
+                      {amenity.amenity?.name} :
+                      {amenity?.extraPrice?.toLocaleString()} MMK :
+                      {amenity?.isFree ? "True" : "False"}
                     </span>
                     <Button
                       type="text"
@@ -270,8 +323,22 @@ const RoomTypeForm = ({
                 <span className="text-gray-400">
                   No room type amenity added
                 </span>
+              )} */}
+              {data?.roomTypeAmenities?.length > 0 ? (
+                <Table
+                  columns={amenityColumns}
+                  dataSource={data.roomTypeAmenities}
+                  rowKey="uuid"
+                  pagination={false}
+                  size="small"
+                  className="mb-5"
+                />
+              ) : (
+                <span className="text-gray-400">
+                  No room type amenity added
+                </span>
               )}
-            </div>
+            </Card>
           )}
         </Form>
       </Drawer>

@@ -8,7 +8,6 @@ import { getServices } from "../../api/serviceApi";
 
 const ServiceList = () => {
   const [keyword, setKeyword] = useState("");
-  const [status, setStatus] = useState("all");
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(LIMITS.PAGE_SIZE);
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -41,7 +40,6 @@ const ServiceList = () => {
     <div className="w-full px-6 py-2">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
         <ListHeader
-          // title="Service List"
           searchPlaceholder="Search Service ..."
           keyword={keyword}
           setKeyword={setKeyword}

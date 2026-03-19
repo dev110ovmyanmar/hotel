@@ -6,7 +6,6 @@ import TaxTable from "./Components/TaxTable";
 import TaxForm from "./Components/TaxForms/TaxForm";
 import { fetchTax } from "../../api/TaxApi";
 
-
 const TaxList = () => {
   const [keyword, setKeyword] = useState("");
   const [status, setStatus] = useState("all");
@@ -55,7 +54,7 @@ const TaxList = () => {
       </div>
 
       <TaxTable
-        data={data?.data || []}
+         data={data?.data || []}
         page={data?.pagination.currentPage}
         perPage={data?.pagination.perPage}
         total={data?.pagination?.total}
@@ -64,14 +63,14 @@ const TaxList = () => {
       />
 
       <TaxForm
-        drawerOpen={drawerOpen}
-        setDrawerOpen={setDrawerOpen}
+        page={page}
         setPage={setPage}
         mode={mode}
         setMode={setMode}
+        drawerOpen={drawerOpen}
+        setDrawerOpen={setDrawerOpen}
         selectedData={selectedData}
         setSelectedData={setSelectedData}
-        width={500}
       />
     </div>
   );
