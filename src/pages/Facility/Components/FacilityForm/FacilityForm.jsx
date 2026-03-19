@@ -1,14 +1,16 @@
-import React, { useEffect, useState } from "react";
-import { Form, Input, Button, Select, Image, Drawer, AutoComplete } from "antd";
+import React, { useEffect } from "react";
+import { Form, Input, Button, Select, Drawer } from "antd";
 import Toast from "../../../../component/Toast/Toast";
-import { CloseOutlined } from "@ant-design/icons";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
 import useApiQuery from "../../../../hooks/useApiQuery";
 import { queryClient } from "../../../../app/queryClient";
-import { getServiceDetails, upsertService } from "../../../../api/serviceApi";
 import FormButtons from "../../../../component/FormButtons/FormButtons";
+import {
+  getFacilityDetails,
+  upsertFacility,
+} from "../../../../api/facilityApi";
 
-const ServiceForm = ({
+const FacilityForm = ({
   mode,
   setMode,
   selectedData,
@@ -18,7 +20,6 @@ const ServiceForm = ({
   page,
   setPage,
 }) => {
-  console.log(page, "page");
   const [form] = Form.useForm();
 
   const isView = mode === "view";
@@ -26,18 +27,12 @@ const ServiceForm = ({
   const isAdd = mode === "add";
 
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
-  const billingType = initData?.statuses?.billing_type;
-  const serviceType = initData?.statuses?.service_type;
   const status = initData?.statuses?.status;
+  const facilityType = initData?.statuses?.facility_type;
 
-  const billingTypesList = billingType?.map((type) => ({
+  const facilityTypesList = facilityType?.map((type) => ({
     value: type.uuid,
     label: type.name,
-  }));
-
-  const servicesTypesList = serviceType?.map((service) => ({
-    value: service.uuid,
-    label: service.name,
   }));
 
   const statusList = status
@@ -47,20 +42,20 @@ const ServiceForm = ({
       label: status.name,
     }));
 
-  const createService = useApiMutation({
-    mutationFn: upsertService,
-    invalidateKeys: [["services"]],
+  const createFacility = useApiMutation({
+    mutationFn: upsertFacility,
+    invalidateKeys: [["facilities"]],
     shouldInvalidate: page === 1,
   });
 
-  const editService = useApiMutation({
-    mutationFn: upsertService,
-    invalidateKeys: [["services"]],
+  const editFacility = useApiMutation({
+    mutationFn: upsertFacility,
+    invalidateKeys: [["facilities"]],
   });
 
   const { data, isLoading, error } = useApiQuery({
-    fetchQueryName: "service-details",
-    fetchQueryFunction: getServiceDetails,
+    fetchQueryName: "facility-details",
+    fetchQueryFunction: getFacilityDetails,
     params: { uuid: selectedData?.uuid },
     options: {
       enabled: !!selectedData?.uuid,
@@ -69,28 +64,25 @@ const ServiceForm = ({
 
   useEffect(() => {
     if (!isAdd && data) {
+      console.log(data,"data")
       form.setFieldsValue({
         ...data,
-        billingType: data?.billingType?.uuid,
-        serviceType: data?.serviceType?.uuid,
+        facilityType: data?.facilityType.uuid ,
         status: data?.status?.uuid,
       });
       setSelectedData(data);
     }
   }, [data]);
 
-  console.log(form.getFieldValue("serviceType"), "servicetype");
-
   const onFinish = (values) => {
     if (isAdd) {
       const createValues = {
         ...values,
-        serviceType: { uuid: values.serviceType },
-        billingType: { uuid: values.billingType },
+        facilityType: { uuid: values.facilityType },
         status: { uuid: values.status },
       };
 
-      createService.mutate(createValues, {
+      createFacility.mutate(createValues, {
         onSuccess: () => {
           form.resetFields();
           setDrawerOpen(false);
@@ -101,17 +93,16 @@ const ServiceForm = ({
     }
     if (isEdit) {
       const editValues = {
-        ...values, // merge new form values
-        serviceType: { uuid: values.serviceType },
-        billingType: { uuid: values.billingType },
+        ...values,
+        facilityType: { uuid: values.facilityType },
         status: { uuid: values.status },
         uuid: data?.uuid,
       };
 
-      editService.mutate(editValues, {
+      editFacility.mutate(editValues, {
         onSuccess: () => {
           setDrawerOpen(false);
-          Toast.success("Service Updated Successfully!");
+          Toast.success("facility Updated Successfully!");
         },
       });
     }
@@ -123,28 +114,14 @@ const ServiceForm = ({
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
         size={500}
-        // closable={false}
-        // extra={
-        //   <CloseOutlined
-        //     onClick={() => setDrawerOpen(false)}
-        //     style={{ fontSize: 18, cursor: "pointer" }}
-        //   />
-        // }
-        // title={
-        //   mode === "view"
-        //     ? "Service Details"
-        //     : mode === "edit"
-        //       ? "Edit Service"
-        //       : "Create Service"
-        // }
         title={
           <div className="flex justify-between items-center">
             <span>
               {mode === "view"
-                ? "Service Details"
+                ? "Facility Details"
                 : mode === "edit"
-                  ? "Edit Service"
-                  : "Create Service"}
+                  ? "Edit Facility"
+                  : "Create Facility"}
             </span>
             {isView ? (
               <Button
@@ -158,7 +135,7 @@ const ServiceForm = ({
             ) : (
               <FormButtons
                 onClick={() => form.submit()}
-                isPending={createService.isPending || editService.isPending}
+                isPending={createFacility.isPending || editFacility.isPending}
                 mode={mode}
               />
             )}
@@ -179,17 +156,17 @@ const ServiceForm = ({
             <Input readOnly={isView} />
           </Form.Item>
 
-          <Form.Item label="Base Price" name="basePrice" >
-            <Input readOnly={isView}/>
+          <Form.Item label="Capacity" name="capacity" readOnly={isView}>
+            <Input />
           </Form.Item>
 
           <Form.Item
-            label="Service Type"
-            name="serviceType"
-            rules={[{ required: true, message: "Service Type is Required" }]}
+           label="Facility Type"
+            name="facilityType"
+            rules={[{ required: true, message: "Facility Type is Required" }]}
             getValueProps={(value) => ({
               value: isView
-                ? servicesTypesList.find((item) => item.value === value)?.label
+                ? facilityTypesList.find((item) => item.value === value)?.label
                 : value,
             })}
           >
@@ -203,41 +180,14 @@ const ServiceForm = ({
                       .toLowerCase()
                       .includes(input.toLowerCase()),
                 }}
-                options={servicesTypesList}
-                placeholder="Select Service Type"
+                options={facilityTypesList}
+                placeholder="Select Facility Type"
               />
             )}
           </Form.Item>
 
-          <Form.Item
-            label="Billing Type"
-            name="billingType"
-            rules={[{ required: true, message: "Billing Type is Required" }]}
-            getValueProps={(value) => ({
-              value: isView
-                ? billingTypesList.find((item) => item.value === value)?.label
-                : value,
-            })}
-          >
-            {isView ? (
-              <Input readOnly={isView} />
-            ) : (
-              <Select
-                showSearch={{
-                  filterOption: (input, option) =>
-                    (option?.label ?? "")
-                      .toLowerCase()
-                      .includes(input.toLowerCase()),
-                }}
-                options={billingTypesList}
-                placeholder="Select Billing Type"
-                open={isView ? false : undefined}
-              />
-            )}
-          </Form.Item>
-
-          <Form.Item
-            label="Status"
+           <Form.Item
+           label="Status"
             name="status"
             rules={[{ required: true, message: "Status is Required" }]}
             getValueProps={(value) => ({
@@ -249,12 +199,21 @@ const ServiceForm = ({
             {isView ? (
               <Input readOnly={isView} />
             ) : (
-              <Select options={statusList} open={isView ? false : undefined} />
+              <Select
+                showSearch={{
+                  filterOption: (input, option) =>
+                    (option?.label ?? "")
+                      .toLowerCase()
+                      .includes(input.toLowerCase()),
+                }}
+                options={statusList}
+                placeholder="Select Status"
+              />
             )}
           </Form.Item>
 
           <Form.Item label="Description" name="description">
-            <Input.TextArea readOnly={isView} />
+            <Input.TextArea />
           </Form.Item>
         </Form>
       </Drawer>
@@ -262,4 +221,4 @@ const ServiceForm = ({
   );
 };
 
-export default ServiceForm;
+export default FacilityForm;
