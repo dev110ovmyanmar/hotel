@@ -1,24 +1,23 @@
 import React, { useState, useMemo, useEffect } from "react";
 import {
-  fetchCategoryData, //Api function name
-  fetchCategoryDetail,
-  upsertCategory,
+  getCategories
 } from "../../api/categoryApi";
 import useApiQuery from "../../hooks/useApiQuery";
-import { queryClient } from "../../app/queryClient";
-import { useApiMutation } from "../../hooks/useApiMutation";
 import ListHeader from "../../component/ListHeader/ListHeader";
 import CategoryTable from "./components/CategoryTable";
 import CategoryForm from "./components/CategoryForm";
-import Toast from "../../component/Toast/Toast";
+import { LIMITS } from "../../variables/constants";
+import { queryClient } from "../../app/queryClient";
 
 const CategoryListing = () => {
-  const [open, setOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
   const [currentMode, setCurrentMode] = useState("add");
   const [keyword, setKeyword] = useState("");
+  const [page, setPage] = useState(1);
+  const [perPage, setPerPage] = useState(LIMITS.PAGE_SIZE);
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
-  const initData = queryClient.getQueryData(["initData"]);
+  const initData = queryClient.getQueryData(["initData", "authenticated"]);
 
   const statusOptions =
     initData?.statuses?.status
@@ -28,78 +27,45 @@ const CategoryListing = () => {
         label: item.name,
       })) || [];
 
-  const { data, refetch, isLoading } = useApiQuery({
-    fetchQueryName: "categoryData",
-    fetchQueryFunction: fetchCategoryData,
-    params: { keyword }, // Pass keyword to API if supported
-  });
-
-  const categories = data?.response?.data || [];
-
-  const { data: detailRes, isLoading: isLoadingDetail } = useApiQuery({
-    fetchQueryName: ["categoryDetail", selectedRow?.uuid],
-    fetchQueryFunction: fetchCategoryDetail,
-    params: { uuid: selectedRow?.uuid },
-    options: {
-      enabled:
-        !!open &&
-        !!selectedRow?.uuid &&
-        (currentMode === "view" || currentMode === "edit"),
-      staleTime: 0,
+  const { data, isLoading, error } = useApiQuery({
+    fetchQueryName: "categories",
+    fetchQueryFunction: getCategories,
+    params: {
+      pagination: 
+      { page: page, 
+        perPage: perPage
+      },
+      keyword,
     },
   });
 
-  const detailData = detailRes?.response || null;
 
-  // Mutations
-  const { mutate: upsertMutate } = useApiMutation({
-    mutationFn: upsertCategory,
-    invalidateKeys: ["categoryData"],
-    options: {
-      onSuccess: () => {
-        refetch();
-        Toast.success(
-          `Category ${currentMode === "add" ? "created" : "updated"} successfully`,
-        );
-        handleClose();
-      },
-    },
-  });
+  const categories = data?.data || [];
 
-  const handleSubmit = (values) => {
-    const payload = {
-      name: values.name,
-      status: {
-        uuid: values.statusUuid,
-      },
-    };
-
-    if (currentMode !== "add") {
-      payload.uuid = selectedRow?.uuid;
-    }
-    upsertMutate(payload);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-    setSelectedRow(null);
-  };
+     useEffect(() => {
+      setPage(1);
+    }, [keyword, perPage]);
 
   const handleAdd = () => {
     setCurrentMode("add");
-    setOpen(true);
+    setDrawerOpen(true);
   };
 
   const handleView = (record) => {
     setSelectedRow(record);
     setCurrentMode("view");
-    setOpen(true);
+    setDrawerOpen(true);
   };
 
   const handleEdit = (record) => {
     setSelectedRow(record);
     setCurrentMode("edit");
-    setOpen(true);
+    setDrawerOpen(true);
+  };
+
+  
+  const switchToEdit = () => {
+    setCurrentMode("edit");
   };
 
   return (
@@ -119,15 +85,23 @@ const CategoryListing = () => {
         onView={handleView}
         onEdit={handleEdit}
         loading={isLoading}
+        page={data?.response?.pagination?.currentPage || page}
+        perPage={data?.response?.pagination?.perPage || perPage}
+        total={data?.response?.pagination?.total}
+        changePage={(page) => setPage(page)}
+        changePerPage={(perPage) => setPerPage(perPage)}
       />
+
       <CategoryForm
-        initialValues={currentMode === "add" ? null : detailData}
         mode={currentMode}
-        onSubmit={handleSubmit}
-        open={open}
-        onClose={handleClose}
-        loading={isLoadingDetail && currentMode !== "add"}
-        switchToEdit={() => setCurrentMode("edit")}
+        page={data?.response?.pagination?.currentPage || page}
+        setPage={setPage}
+        drawerOpen={drawerOpen}
+        setDrawerOpen={setDrawerOpen}
+        switchToEdit={switchToEdit}
+        loading={isLoading}
+        selectedRow={selectedRow}
+        setSelectedRow={setSelectedRow}
         statusOptions={statusOptions}
       />
     </div>
@@ -135,3 +109,4 @@ const CategoryListing = () => {
 };
 
 export default CategoryListing;
+

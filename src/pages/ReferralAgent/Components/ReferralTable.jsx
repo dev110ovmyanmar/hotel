@@ -1,11 +1,10 @@
 import { Dropdown, Space, Table, Tag, Button } from "antd";
 import { useState } from "react";
-import { AiTwotoneEye } from "react-icons/ai";
-import { FiEdit } from "react-icons/fi";
 import { EditOutlined, EyeOutlined, MoreOutlined } from "@ant-design/icons";
-import AmenitiesForm from "./AmenitiesForm/AmenitiesForm";
+import ReferralForm from './ReferralForm/ReferralForm';
 
-const AmenitiesTable = ({
+
+const ReferralTable = ({
   data,
   page,
   perPage,
@@ -31,16 +30,52 @@ const AmenitiesTable = ({
       render: (text) => <div>{text}</div>,
     },
     {
-      title: "Is Free",
-      dataIndex: "isFree",
-      key: "isFree",
-      render: (text) => <div>{text === true ? "True" : "False"}</div>,
+      title: "Contact Person",
+      dataIndex: "contactPerson",
+      key: "contactPerson",
+      render: (text) => <div>{text}</div>,
     },
     {
-      title: "Visibility",
-      dataIndex: "visibility",
-      key: "visibility",
-      render: (text) => <div>{text === true ? "True" : "False"}</div>,
+      title: "Email",
+      dataIndex: "email",
+      key: "email",
+      render: (text) => <div>{text? text : "-"}</div>,
+    },
+    {
+      title: "Phone",
+      dataIndex: "phone",
+      key: "phone",
+      render: (text) => <div>{text? text : "-"}</div>,
+    },
+    {
+      title: "Address",
+      dataIndex: "address",
+      key: "address",
+      render: (text) => <div>{text}</div>,
+    },
+    {
+      title: "Charge Type",
+      dataIndex: ["chargeType","name"],
+      key: "chargeType",
+      render: (text) => <div>{text}</div>,
+    },
+    {
+      title: "Charge Value",
+      dataIndex: "chargeValue",
+      key: "chargeValue",
+      render: (text) => <div>{text}</div>,
+    },
+    {
+      title: "Remark",
+      dataIndex: "remark",
+      key: "remark",
+      render: (text) => <div>{text? text : "-"}</div>,
+    },
+    {
+      title: "Status",
+      dataIndex: ["status","name"],
+      key: "status",
+      render: (text) => <Tag className={text === "Active" ? "!text-green-500 " : "!text-red-500"}>{text === "Active" ? "Active" : "Inactive"}</Tag>,
     },
     {
       title: "Action",
@@ -113,7 +148,7 @@ const AmenitiesTable = ({
         }}
       />
 
-      <AmenitiesForm
+      <ReferralForm
         mode={mode}
         setMode={setMode}
         drawerOpen={drawerOpen}
@@ -126,4 +161,4 @@ const AmenitiesTable = ({
   );
 };
 
-export default AmenitiesTable;
+export default ReferralTable;

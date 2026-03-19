@@ -11,70 +11,170 @@ import {
   Card,
   Tag,
   Empty,
-  Space,
-  AutoComplete,
 } from "antd";
 import { PlusOutlined, EditOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import SettingForm from "./SettingForm";
+import { getPropertyDetails, upsertProperty } from "../../../api/propertyApi";
 import FormButtons from "../../../component/FormButtons/FormButtons";
+import { useApiMutation } from "../../../hooks/useApiMutation";
+import useApiQuery from "../../../hooks/useApiQuery";
+import Toast from "../../../component/Toast/Toast";
+import { isSet, property } from "lodash";
 
 const PropertyForm = ({
-  open,
-  onClose,
-  initialValues,
-  setInitialValues,
-  onFinish,
   mode,
   loading,
-  isSaving,
+  drawerOpen,
+  setDrawerOpen,
+  selectedRow,
+  setSelectedRow,
   propertyTypes,
   countryOptions,
   cityOptions,
   currencyOptions,
   onCountryChange,
-  DrawerTitle,
   switchToEdit,
+  page,
+  setPage,
+  setSelectedCountryUuid
 }) => {
   const [form] = Form.useForm();
   const [settingDrawer, setSettingDrawer] = useState(false);
   const [editingSetting, setEditingSetting] = useState(null);
+  
   const isView = mode === "view";
+  const isEdit = mode === "edit";
   const isAdd = mode === "add";
 
-  useEffect(() => {
-    if (open && initialValues) {
-      form.setFieldsValue({
-        ...initialValues,
-        checkinTime: initialValues.checkinTime
-          ? dayjs(initialValues.checkinTime, "HH:mm:ss")
-          : null,
-        checkoutTime: initialValues.checkoutTime
-          ? dayjs(initialValues.checkoutTime, "HH:mm:ss")
-          : null,
-        property_type_uuid: initialValues.type?.uuid,
-        country_uuid: initialValues.country?.uuid,
-        city_uuid: initialValues.city?.uuid,
-        currency_uuid: initialValues.currency?.uuid,
-      });
-    } else {
-      form.resetFields();
+  const timezone = dayjs.tz.guess();
+
+  const formattedTimezone =
+    timezone === "Asia/Rangoon" ? "Asia/Yangon" : timezone;
+
+  const createProperty = useApiMutation({
+    mutationFn: upsertProperty,
+    invalidateKeys: [["properties"]],
+    shouldInvalidate: page === 1
+  });
+
+  const editProperty = useApiMutation({
+    mutationFn: upsertProperty,
+    invalidateKeys: [["properties"]],
+  });
+
+  const{ data, isLoading, error } = useApiQuery({
+    fetchQueryName: "properties_details",
+    fetchQueryFunction: getPropertyDetails,
+    params: { uuid: selectedRow?.uuid},
+    options: {
+      enabled: !!selectedRow?.uuid && (isEdit || isView) && drawerOpen,
     }
-  }, [open, initialValues, form]);
+  })
 
-  // const validateTimes = () => {
-  //   const checkIn = form.getFieldValue("checkInTime");
-  //   const checkOut = form.getFieldValue("checkOutTime");
-  //   if (checkIn && checkOut && !checkOut.isAfter(checkIn)) {
-  //     return Promise.reject(new Error("Check-out must be after Check-in time"));
-  //   }
-  //   return Promise.resolve();
-  // };
+  useEffect(() => {
+    if(isAdd){
+      form.resetFields();
+    }else if (data) {
+      if (data.country?.uuid) {
+        onCountryChange(data.country.uuid);
+      }
+      form.setFieldsValue({
+        ...data,
+        checkinTime: data.checkinTime
+          ? dayjs(data.checkinTime, "HH:mm:ss")
+          : null,
+        checkoutTime: data.checkoutTime
+          ? dayjs(data.checkoutTime, "HH:mm:ss")
+          : null,
+        property_type_uuid: data.type?.uuid,
+        country_uuid: data.country?.uuid,
+        city_uuid: data.city?.uuid,
+        currency_uuid: data.currency?.uuid,
+      });
+    }
+  }, [drawerOpen, data, form, mode, onCountryChange]);
 
-  // const openSettingEdit = (setting) => {
-  //   setEditingSetting(setting);
-  //   setSettingDrawer(true);
-  // };
+  const handlePropertySubmit = (values) => {
+    const isSettingUpdate = !!values.setting;
+    let payload;
+    // update payload
+    if(isSettingUpdate){
+      payload = {
+      uuid: values.uuid || "",
+      name: values.name,
+      type: { uuid: values.property_type_uuid },
+      address: values.address,
+      country: { uuid: values.country_uuid },
+      city: { uuid: values.city_uuid },
+      currency: { uuid: values.currency_uuid },
+      email: values.email,
+      phone: values.phone,
+      checkinTime: values.checkinTime?.format("HH:mm:ss"),
+      checkoutTime: values.checkoutTime?.format("HH:mm:ss"),
+      timezone: formattedTimezone,
+      setting: {
+        uuid: values.setting?.uuid || "",
+        key: values.setting?.key || "",
+        value: values.setting?.value || ""
+      }
+    };
+    } else {
+      // create payload
+      const activeSetting = selectedRow?.settingsArray?.[0];
+      payload = {
+        uuid: values.uuid || "",
+        name: values.name,
+        type: { uuid: values.property_type_uuid },
+        address: values.address,
+        country: { uuid: values.country_uuid },
+        city: { uuid: values.city_uuid },
+        currency: { uuid: values.currency_uuid },
+        email: values.email,
+        phone: values.phone,
+        checkinTime: values.checkinTime?.format("HH:mm:ss"),
+        checkoutTime: values.checkoutTime?.format("HH:mm:ss"),
+        timezone: formattedTimezone,
+        setting: activeSetting
+          ? {
+              key: activeSetting.key,
+              value: activeSetting.value,
+            }
+          : undefined,
+      };
+    }
+    
+    if(isAdd){
+      createProperty.mutate(payload, {
+        onSuccess: () => {
+          form.resetFields();
+          setPage(1);
+          setDrawerOpen(false);
+          Toast.success("Property Created Successfully!");
+        }
+      });
+    }
+    if(isEdit){
+      editProperty.mutate(payload, {
+        onSuccess: () => {
+          setDrawerOpen(false);
+          Toast.success("Property Updated Successfully!");
+        }
+      });
+    }
+  };
+
+  const onClose = () => {
+    form.resetFields();
+    setDrawerOpen(false);
+    setSelectedRow(null);
+  }
+
+    const DrawerTitle = isView
+    ? "Property View"
+    : isEdit
+    ? "Propety Edit"
+    : "Property Create";
 
   return (
     <Drawer
@@ -89,17 +189,17 @@ const PropertyForm = ({
             <FormButtons
               onClick={() => form.submit()}
               mode={mode}
-              loading={isSaving}
+              loading={loading}
             />
           )}
         </div>
       }
       size={500}
       onClose={onClose}
-      open={open}
+      open={drawerOpen}
     >
       <Spin spinning={loading}>
-        <Form form={form} layout="vertical" onFinish={onFinish}>
+        <Form form={form} layout="vertical" onFinish={handlePropertySubmit}>
           <Form.Item name="uuid" hidden>
             <Input />
           </Form.Item>
@@ -241,7 +341,7 @@ const PropertyForm = ({
         <Divider />
         {!isAdd && (
           <div className="flex justify-between items-center mb-4">
-            <h3 className="text-lg font-bold">Settings</h3>
+            <h3 className="text-lg font-bold">Settings ({data?.settings?.length || 0})</h3>
             {!isView && (
               <Button
                 type="dashed"
@@ -259,24 +359,44 @@ const PropertyForm = ({
 
         {!isAdd && (
           <div className="space-y-4">
-            {initialValues?.settingsArray?.map((s, idx) => (
-              <Card
-                key={idx}
-                size="small"
-                title={
-                  <Tag color={s.uuid ? "blue" : "green"}>
-                    {s.key.toUpperCase()}
-                  </Tag>
-                }
-                // extra={!isView && <Button type="link" icon={<EditOutlined />} onClick={() => openSettingEdit(s)}>Edit</Button>}
-              >
-                <pre className="text-xs bg-gray-50 p-2 overflow-auto font-mono max-h-40">
-                  {JSON.stringify(s.value, null, 2)}
-                </pre>
-              </Card>
-            ))}
-            {(!initialValues?.settingsArray ||
-              initialValues.settingsArray.length === 0) && (
+            {isLoading ? (
+              <div className="text-center py-4">
+                <Spin size="small" /> Loading settings...
+              </div>
+            ) : data?.settings && data.settings.length > 0 ? (
+              data.settings.map((s, idx) => (
+                <Card
+                  key={s.uuid || idx}
+                  size="small"
+                  title={
+                    <Tag color={s.uuid ? "blue" : "green"}>
+                      {s.settingKey?.toUpperCase()}
+                    </Tag>
+                  }
+                  // extra={!isView && (
+                  //   <Button 
+                  //     type="link" 
+                  //     icon={<EditOutlined />} 
+                  //     onClick={() => {
+                  //       setEditingSetting({
+                  //         uuid: s.uuid,
+                  //         key: s.settingKey,
+                  //         value: s.settingValue 
+                  //       });
+                  //       setSettingDrawer(true);
+                  //     }}
+                  //   >
+                  //     Edit
+                  //   </Button>
+                  // )}
+                >
+                  <div className="text-sm">
+                    <strong>Key:</strong> {s.settingKey}<br/>
+                    <strong>Value:</strong> {s.settingValue}
+                  </div>
+                </Card>
+              ))
+            ) : (
               <Empty description="No settings added" />
             )}
           </div>
@@ -291,16 +411,16 @@ const PropertyForm = ({
       >
         <SettingForm
           initialValues={editingSetting}
-          isSaving={isSaving}
+          // isSaving={isSaving}
           onFinish={(settingVals) => {
-            if (initialValues?.uuid) {
+            if (data?.uuid) {
               // 1. Get all current values from the main property form
               const mainFormValues = form.getFieldsValue();
 
               // 2. Combine them into the format handlePropertySubmit expects
               const combinedPayload = {
                 ...mainFormValues,
-                uuid: initialValues.uuid,
+                uuid: data.uuid,
                 setting: {
                   key: settingVals.key,
                   value: settingVals.value,
@@ -308,13 +428,7 @@ const PropertyForm = ({
               };
 
               // 3. Trigger the API call
-              onFinish(combinedPayload);
-              setSettingDrawer(false);
-            } else {
-              // Logic for new properties (local state update)
-              let newArray = [...(initialValues?.settingsArray || [])];
-              newArray = [settingVals, ...newArray];
-              setInitialValues({ ...initialValues, settingsArray: newArray });
+              handlePropertySubmit(combinedPayload);
               setSettingDrawer(false);
             }
           }}

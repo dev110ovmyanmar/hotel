@@ -36,6 +36,9 @@ import {
   SettingOutlined,
   AuditOutlined,
   RiseOutlined,
+  AndroidOutlined,
+  QqOutlined,
+  CodeSandboxOutlined,
 } from "@ant-design/icons";
 import { lazy } from "react";
 import { FiMap } from "react-icons/fi";
@@ -94,6 +97,20 @@ const PaymentList = lazy(() => import("../../pages/Payment/PaymentList"));
 
 const Taxs = lazy(() => import("../../pages/Tax/TaxList"));
 
+const Agencies = lazy(() => import("../../pages/Agencies/AgencyList"));
+
+const Company = lazy(() => import("../../pages/Company/CompanyList"));
+
+const ReferralAgent = lazy(
+  () => import("../../pages/ReferralAgent/ReferralList"),
+);
+
+const FacilityList = lazy(() => import("../../pages/Facility/FacilityList"));
+
+const FacilityPackageList = lazy(
+  () => import("../../pages/FacilityPackage/FacilityPackageList"),
+);
+
 export const authRoutes = [
   {
     key: 1,
@@ -109,8 +126,8 @@ export const authRoutes = [
     label: "Reservation Calendar",
     icon: <CalendarOutlined style={{ fontSize: "20px" }} />,
     component: <Calendar />,
-    permission: PERMISSIONS.AVAILABILITY_CALENDAR_LIST,
     isPrivate: false,
+    permission: PERMISSIONS.AVAILABILITY_CALENDAR_LIST,
   },
   {
     key: 3,
@@ -166,7 +183,8 @@ export const authRoutes = [
         label: "Rooms",
         icon: <ApartmentOutlined style={{ fontSize: "20px" }} />,
         component: <Room />,
-        permission: PERMISSIONS.ROOM_LIST
+        permission: "room.list",
+        permission: PERMISSIONS.ROOM_LIST,
       },
       {
         key: 5.2,
@@ -174,7 +192,7 @@ export const authRoutes = [
         label: "Room Types",
         icon: <AppstoreOutlined style={{ fontSize: "20px" }} />,
         component: <RoomType />,
-        permission: PERMISSIONS.ROOM_TYPE_LIST
+        permission: PERMISSIONS.ROOM_TYPE_LIST,
       },
       {
         key: 5.3,
@@ -190,7 +208,7 @@ export const authRoutes = [
         label: "Floors",
         icon: <LayoutOutlined style={{ fontSize: "20px" }} />,
         component: <Floor />,
-        permission: PERMISSIONS.FLOOR_LIST
+        permission: PERMISSIONS.FLOOR_LIST,
       },
       {
         key: 5.5,
@@ -199,7 +217,7 @@ export const authRoutes = [
         icon: <FiMap style={{ fontSize: "20px" }} />,
         isPrivate: true,
         component: <AmenitiesList />,
-        permission: PERMISSIONS.AMENITY_LIST
+        permission: PERMISSIONS.AMENITY_LIST,
       },
     ],
   },
@@ -237,39 +255,49 @@ export const authRoutes = [
   //   component: <PropertiesListing />,
   //   permission: "property.list",
   // },
-  {
-    key: 7,
-    label: "Partners",
-    isPrivate: false,
-    icon: <ShopOutlined style={{ fontSize: "20px" }} />,
-    nested: [
-      // {
-      //   key: 7.1,
-      //   label: "Agencies",
-      //   path: "/partners/agencies",
-      //   icon: <ApartmentOutlined style={{ fontSize: "20px" }} />,
-      //   // component: < />,
-      //   // permission: ".list",
-      // },
-      // {
-      //   key: 7.2,
-      //   label: "Companies",
-      //   path: "/partners/companies",
-      //   icon: <DatabaseOutlined style={{ fontSize: "20px" }} />,
-      //   isPrivate: true,
-      //   // component: < />,
-      //   // permission: ".list",
-      // },
-      // {
-      //   key: 7.3,
-      //   label: "Referral Agents",
-      //   path: "/partners/referral-agents",
-      //   icon: <DiffOutlined style={{ fontSize: "20px" }} />,
-      //   // component: </>,
-      //   // permission: ".list",
-      // },
-    ],
-  },
+  // {
+  //   key: 7,
+  //   label: "Settings",
+  //   isPrivate: false,
+  //   icon: <PropertySafetyOutlined style={{ fontSize: "20px" }} />,
+  //   nested: [
+  //     {
+  //       key: 7.1,
+  //       path: "/property-management/properties",
+  //       label: "Properties",
+  //       icon: <PropertySafetyOutlined style={{ fontSize: "20px" }} />,
+  //       component: <PropertiesListing />,
+  //       permission: "property.list",
+  //     },
+  //     {
+  //       key: 7.2,
+  //       label: "Policy",
+  //       path: "/policy",
+  //       icon: <MdOutlinePolicy style={{ fontSize: "20px" }} />,
+  //       isPrivate: true,
+  //       component: <PolicyList />,
+  //       permission: "policy.list",
+  //     },
+  //     {
+  //       key: 7.3,
+  //       label: "Privacy Policy",
+  //       path: "/privacy-policy",
+  //       icon: <FileProtectOutlined style={{ fontSize: "20px" }} />,
+  //       isPrivate: true,
+  //       component: <PrivacyPolicy />,
+  //       // permission: "privacy-policy.list",
+  //     },
+  //     {
+  //       key: 7.4,
+  //       label: "Location",
+  //       path: "/location",
+  //       icon: <EnvironmentOutlined style={{ fontSize: "20px" }} />,
+  //       isPrivate: true,
+  //       component: <LocationList />,
+  //       permission: "location.list",
+  //     },
+  //   ],
+  // },
   {
     key: 8,
     label: "Staff Management",
@@ -316,7 +344,7 @@ export const authRoutes = [
         icon: <TagsOutlined style={{ fontSize: "20px" }} />,
         isPrivate: true,
         component: <CategoryListing />,
-        permission: PERMISSIONS.CATEGORY_LIST
+        permission: PERMISSIONS.CATEGORY_LIST,
       },
       {
         key: 9.3,
@@ -325,7 +353,7 @@ export const authRoutes = [
         icon: <DeploymentUnitOutlined style={{ fontSize: "20px" }} />,
         isPrivate: true,
         component: <UnitListing />,
-        permission: PERMISSIONS.UNIT_LIST
+        permission: PERMISSIONS.UNIT_LIST,
       },
     ],
   },
@@ -401,31 +429,30 @@ export const authRoutes = [
     isPrivate: false,
     icon: <ShopOutlined style={{ fontSize: "20px" }} />,
     nested: [
-      // {
-      //   key: 12.1,
-      //   label: "Facilities",
-      //   path: "/facility-management/facilities",
-      //   icon: <ApartmentOutlined style={{ fontSize: "20px" }} />,
-      //   // component: < />,
-      //   // permission: ".list",
-      // },
-      // {
-      //   key: 12.2,
-      //   label: "Packages",
-      //   path: "/facility-management/packages",
-      //   icon: <DatabaseOutlined style={{ fontSize: "20px" }} />,
-      //   isPrivate: true,
-      //   // component: < />,
-      //   // permission: ".list",
-      // },
+      {
+        key: 12.1,
+        label: "Facilities",
+        path: "/facility-management/facilities",
+        icon: <ApartmentOutlined style={{ fontSize: "20px" }} />,
+        component: <FacilityList />,
+        // permission: PERMISSIONS.FACILITY_LIST,
+      },
+      {
+        key: 12.2,
+        label: "Packages",
+        path: "/facility-management/packages",
+        icon: <DatabaseOutlined style={{ fontSize: "20px" }} />,
+        isPrivate: true,
+        component: <FacilityPackageList />,
+        // permission: PERMISSIONS.FACILITY_PACKAGE_LIST,
+      },
       // {
       //   key: 12.3,
       //   label: "Bookings",
       //   path: "/facility-management/bookings",
       //   icon: <DiffOutlined style={{ fontSize: "20px" }} />,
       //   // component: </>,
-        //  permission: PERMISSIONS.BOOKING_LIST,
-      //
+      //   // permission: ".list",
       // },
     ],
   },
@@ -441,7 +468,7 @@ export const authRoutes = [
         path: "/services-management/services",
         icon: <SecurityScanOutlined style={{ fontSize: "20px" }} />,
         component: <ServiceList />,
-        permission: PERMISSIONS.SERVICE_LIST,
+        // permission: PERMISSIONS.SERVICE_LIST,
       },
       // {
       //   key: 13.2,
@@ -588,7 +615,7 @@ export const authRoutes = [
         label: "Country & City",
         path: "/settings/country-city",
         icon: <DiffOutlined style={{ fontSize: "20px" }} />,
-        // component: <ServiceList />,
+        component: <ServiceList />,
         // permission: ".list",
       },
       {
@@ -623,12 +650,42 @@ export const authRoutes = [
         icon: <MdPayments style={{ fontSize: "20px" }} />,
         isPrivate: true,
         component: <PaymentList />,
-        permission:PERMISSIONS.PAYMENT_LIST,
+        permission: PERMISSIONS.PAYMENT_LIST,
       },
     ],
   },
   {
     key: 17,
+    label: "Partners",
+    icon: <WalletOutlined style={{ fontSize: "20px" }} />,
+    nested: [
+      {
+        key: 17.1,
+        label: "Agencies",
+        path: "/partners/agencies",
+        icon: <DollarOutlined style={{ fontSize: "20px" }} />,
+        component: <Agencies />,
+      },
+      {
+        key: 17.2,
+        label: "Companies",
+        path: "/partners/company",
+        icon: <MdPayments style={{ fontSize: "20px" }} />,
+        isPrivate: true,
+        component: <Company />,
+      },
+      {
+        key: 17.3,
+        label: "Referral Agents",
+        path: "/partners/referral-agent",
+        icon: <MdPayments style={{ fontSize: "20px" }} />,
+        isPrivate: true,
+        component: <ReferralAgent />,
+      },
+    ],
+  },
+  {
+    key: 18,
     label: "Location",
     path: "/location",
     icon: <EnvironmentOutlined style={{ fontSize: "20px" }} />,
@@ -636,6 +693,7 @@ export const authRoutes = [
     component: <LocationList />,
     permission: PERMISSIONS.LOCATION_LIST,
   },
+
   {
     key: 19,
     label: "Meal Plan",
@@ -643,7 +701,7 @@ export const authRoutes = [
     icon: <JavaOutlined style={{ fontSize: "20px" }} />,
     isPrivate: true,
     component: <MeanPlanList />,
-    permission: PERMISSIONS.MEAL_PLAN_LIST,
+    //  permission: PERMISSIONS.MEAL_PLAN_LIST,
   },
   {
     key: 20,

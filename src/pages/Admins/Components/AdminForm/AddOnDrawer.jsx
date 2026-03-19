@@ -11,6 +11,7 @@ const AddOnDrawer = ({
   selectedPermissions,
   onSave
 }) => {
+
   const [checkedIds, setCheckedIds] = useState([]);
 
   useEffect(() => {
@@ -76,6 +77,7 @@ const AddOnDrawer = ({
     >
 
       {rolePermissions?.map((module) => {
+        // Change Allow id
         const ids = module.permissions.map((p) => p.id);
         const allChecked = ids.every((id) => checkedIds.includes(id));
 

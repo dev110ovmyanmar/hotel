@@ -220,6 +220,8 @@ export default function SignIn() {
           saveState(LOCAL_STORAGE_KEYS.sessionId, data.XSessionToken);
           saveState(LOCAL_STORAGE_KEYS.adminRole, data.role.name);
 
+          saveState(LOCAL_STORAGE_KEYS.loginAdminDetails,data);
+
           // Fetch the AUTHENTICATED version of initData
           const initData = await queryClient.fetchQuery({
             queryKey: ["initData", "authenticated"],

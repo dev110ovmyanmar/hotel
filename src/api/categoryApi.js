@@ -1,18 +1,26 @@
 import { apiClient } from "./apiClient";
 
-export const fetchCategoryData = async (params = {}) => {
-  const { data } = await apiClient.get("/categories", { params });
-  return data;
+// FETCH LIST (GET usually stays with params)
+export const getCategories = async (params) => {
+  const { data } = await apiClient.get("/categories", {params})
+  return data.response;
 };
 
-export const fetchCategoryDetail = async ({ uuid }) => {
-  if (!uuid) return null;
-  const { data } = await apiClient.get("/category", { params: { uuid } });
-  return data;
+// GET DETAIL
+export const getCategoryDetail = async (params) => {
+  const { data } = await apiClient.get("/category", 
+  {params});
+  return data.response;
 };
 
-// Simplified: Using one upsert function since the logic is identical
-export const upsertCategory = async (payload) => {
-  const { data } = await apiClient.post("category/upsert", null, {params: payload});
-  return data;
+export const upsertCategory = async (params) => {
+  const { data } = await apiClient.post
+  ("/category/upsert", 
+    params
+  );
+  return data.response;
 };
+
+
+
+

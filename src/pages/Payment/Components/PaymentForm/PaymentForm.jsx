@@ -28,7 +28,7 @@ const PaymentForm = ({
   const isEdit = mode === "edit";
   const isAdd = mode === "add";
 
-  const initData = queryClient.getQueryData(["initData"]);
+  const initData = queryClient.getQueryData(["initData", "authenticated"]);
   const status = initData?.statuses.status;
   const provider = initData?.statuses.provider;
   const providerType = initData?.statuses.provider_type;
@@ -36,13 +36,13 @@ const PaymentForm = ({
   const createPaymentFunction = useApiMutation({
     mutationFn: createPayment,
     invalidateKeys: [["payments"]],
-    page: page
+    shouldInvalidate: page === 1
   });
 
   const editPaymentFunction = useApiMutation({
     mutationFn: editPayment,
     invalidateKeys: [["payments"]],
-    page:page
+    
   });
 
   const { data, isPending, error } = useApiQuery({
