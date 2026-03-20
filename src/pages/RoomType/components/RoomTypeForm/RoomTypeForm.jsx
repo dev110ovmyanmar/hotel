@@ -22,7 +22,7 @@ import {
 } from "../../../../api/roomApi";
 import TextArea from "antd/es/input/TextArea";
 import RoomTypeAmenityForm from "./RoomTypeAmenityForm";
-import { EditOutlined } from "@ant-design/icons";
+import { EditOutlined, PlusOutlined } from "@ant-design/icons";
 
 const RoomTypeForm = ({
   mode,
@@ -52,7 +52,7 @@ const RoomTypeForm = ({
   const editRoomTypes = useApiMutation({
     mutationFn: editRoomType,
     invalidateKeys: [["roomTypeData"]],
- });
+  });
 
   const { data } = useApiQuery({
     fetchQueryName: "roomTypeData",
@@ -182,27 +182,16 @@ const RoomTypeForm = ({
           layout="vertical"
           style={{ width: "100%" }}
           onFinish={onFinish}
-          disabled={isView}
         >
           <Row gutter={24}>
             <Col span={16}>
-              <Form.Item
-                label="Name"
-                name="name"
-                rules={[
-                  { required: true, message: "Please enter room type name" },
-                ]}
-              >
-                <Input />
+              <Form.Item label="Name" name="name" rules={[{ required: true }]}>
+                <Input readOnly={isView} />
               </Form.Item>
             </Col>
             <Col span={8}>
-              <Form.Item
-                label="Code"
-                name="code"
-                rules={[{ required: true, message: "Please enter short name" }]}
-              >
-                <Input />
+              <Form.Item label="Code" name="code" rules={[{ required: true }]}>
+                <Input readOnly={isView} />
               </Form.Item>
             </Col>
           </Row>
@@ -212,33 +201,27 @@ const RoomTypeForm = ({
               <Form.Item
                 label="Max Adults"
                 name="maxAdults"
-                rules={[
-                  { required: true, message: "Please enter maximum adults" },
-                ]}
+                rules={[{ required: true }]}
               >
-                <Input />
+                <Input readOnly={isView} />
               </Form.Item>
             </Col>
             <Col span={8}>
               <Form.Item
                 label="Max Children"
                 name="maxChildren"
-                rules={[
-                  { required: true, message: "Please enter maximum children" },
-                ]}
+                rules={[{ required: true }]}
               >
-                <Input />
+                <Input readOnly={isView} />
               </Form.Item>
             </Col>
             <Col span={8}>
               <Form.Item
                 label="Max Occupancy"
                 name="maxOccupancy"
-                rules={[
-                  { required: true, message: "Please enter maximum occupancy" },
-                ]}
+                rules={[{ required: true }]}
               >
-                <Input />
+                <Input readOnly={isView} />
               </Form.Item>
             </Col>
           </Row>
@@ -248,26 +231,24 @@ const RoomTypeForm = ({
               <Form.Item
                 label="Total Rooms"
                 name="totalRooms"
-                rules={[
-                  { required: true, message: "Please enter total rooms" },
-                ]}
+                rules={[{ required: true }]}
               >
-                <Input />
+                <Input readOnly={isView} />
               </Form.Item>
             </Col>
             <Col span={12}>
               <Form.Item
                 label="Base Price"
                 name="basePrice"
-                rules={[{ required: true, message: "Please enter base price" }]}
+                rules={[{ required: true }]}
               >
-                <Input addonAfter="MMK" />
+                <Input addonAfter="MMK" readOnly={isView} />
               </Form.Item>
             </Col>
           </Row>
 
           <Form.Item label="Room Size" name="areaSize">
-            <Input />
+            <Input readOnly={isView} />
           </Form.Item>
 
           <Form.Item
@@ -275,7 +256,7 @@ const RoomTypeForm = ({
             name="description"
             placeholder="Enter full room description"
           >
-            <TextArea />
+            <TextArea readOnly={isView} />
           </Form.Item>
 
           {!isAdd && (
@@ -286,6 +267,7 @@ const RoomTypeForm = ({
                 {!isView && (
                   <Button
                     type="primary"
+                    icon={<PlusOutlined  />}
                     onClick={() => {
                       setAmenityMode("add");
                       setSelectedAmenity(null);
@@ -297,33 +279,6 @@ const RoomTypeForm = ({
                 )}
               </div>
 
-              {/* {data?.roomTypeAmenities?.length > 0 ? (
-                data.roomTypeAmenities.map((amenity) => (
-                  <div
-                    key={amenity.uuid}
-                    className="flex items-center justify-between mb-2 pb-1"
-                  >
-                    <span>
-                      {amenity.amenity?.name} :
-                      {amenity?.extraPrice?.toLocaleString()} MMK :
-                      {amenity?.isFree ? "True" : "False"}
-                    </span>
-                    <Button
-                      type="text"
-                      icon={<EditOutlined />}
-                      onClick={() => {
-                        setAmenityMode("edit");
-                        setSelectedAmenity(amenity);
-                        setRoomTypeAmenityOpen(true);
-                      }}
-                    />
-                  </div>
-                ))
-              ) : (
-                <span className="text-gray-400">
-                  No room type amenity added
-                </span>
-              )} */}
               {data?.roomTypeAmenities?.length > 0 ? (
                 <Table
                   columns={amenityColumns}

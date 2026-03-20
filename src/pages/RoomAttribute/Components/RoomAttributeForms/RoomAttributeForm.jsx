@@ -126,14 +126,13 @@ const RoomAttributeForm = ({
           layout="vertical"
           style={{ width: "100%" }}
           onFinish={onFinish}
-          disabled={isView}
         >
           <Form.Item
             label="Name"
             name="name"
-            rules={[{ required: true, message: "Please enter room type name" }]}
+            rules={[{ required: true}]}
           >
-            <Input />
+            <Input readOnly={isView}/>
           </Form.Item>
         </Form>
       </Drawer>

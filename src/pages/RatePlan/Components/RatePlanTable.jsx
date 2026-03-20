@@ -23,16 +23,29 @@ const RatePlanTable = ({
       title: "ID",
       dataIndex: "id",
       key: "id",
+      width: 50,
     },
     {
       title: "Name",
       dataIndex: "name",
       key: "name",
+      width: 150,
     },
     {
       title: "Code",
       dataIndex: "code",
       key: "code",
+      width: 70,
+    },
+    {
+      title: "Policy",
+      dataIndex: ["policy", "name"],
+      key: "policy",
+    },
+    {
+      title: "Meal Plan",
+      dataIndex: ["mealPlan", "name"],
+      key: "mealPlan",
     },
     {
       title: "Action",
@@ -44,7 +57,7 @@ const RatePlanTable = ({
             key: "view",
             label: "View",
             icon: <EyeOutlined style={{ fontSize: "12px" }} />,
-            // permission: PERMISSIONS.ROOM_TYPE_VIEW,
+            permission: PERMISSIONS.RATE_PLAN_VIEW,
             onClick: () => {
               setDrawerOpen(true);
               setMode("view");
@@ -55,7 +68,7 @@ const RatePlanTable = ({
             key: "edit",
             label: "Edit",
             icon: <EditOutlined style={{ fontSize: "12px" }} />,
-            // permission: PERMISSIONS.ROOM_TYPE_EDIT,
+            permission: PERMISSIONS.RATE_PLAN_EDIT,
             onClick: () => {
               setDrawerOpen(true);
               setMode("edit");

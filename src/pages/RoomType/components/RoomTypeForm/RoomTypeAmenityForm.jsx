@@ -104,7 +104,11 @@ const RoomAttributesForm = ({
     <Drawer
       title={
         <div className="flex justify-between items-center">
-          <span>{mode === "edit" ? "Edit Attribute" : "Add Attribute"}</span>
+          <span>
+            {mode === "edit"
+              ? "Edit Room Type Amenity"
+              : "Add Room Type Amenity"}
+          </span>
           <FormButtons
             onClick={() => form.submit()}
             isPending={
@@ -136,30 +140,11 @@ const RoomAttributesForm = ({
             />
           </Form.Item>
 
-          {/* <Form.Item
-            label="Is Free"
-            name="isFree"
-            valuePropName="checked"
-            getValueFromEvent={(checked) => (checked ? 1 : 0)}
-            rules={[{ required: true, message: "Is Free is required" }]}
-          >
-            <Switch
-              checkedChildren="Yes"
-              unCheckedChildren="No"
-              onChange={(checked) => {
-                if (checked) {
-                  form.setFieldsValue({ extraPrice: 0 });
-                }
-              }}
-            />
-          </Form.Item> */}
-
           <Form.Item
             label="Is Free"
             name="isFree"
             valuePropName="checked"
-            getValueFromEvent={(checked) => (checked ? 1 : 0)}
-            rules={[{ required: true, message: "Is Free is required" }]}
+            rules={[{ required: true }]}
           >
             <Switch
               checkedChildren="Yes"
@@ -167,6 +152,8 @@ const RoomAttributesForm = ({
               onChange={(checked) => {
                 if (checked) {
                   form.setFieldsValue({ extraPrice: 0 });
+                } else {
+                  form.setFieldsValue({ extraPrice: undefined });
                 }
               }}
             />
