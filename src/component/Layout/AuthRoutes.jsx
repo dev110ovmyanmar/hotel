@@ -191,6 +191,15 @@ export const authRoutes = [
       //   icon: <DiffOutlined style={{ fontSize: "20px" }} />,
       //   // component: </>,
       // },
+      {
+        key: 4.4,
+        label: "Meal Plan",
+        path: "/meal-plan",
+        icon: <JavaOutlined style={{ fontSize: "20px" }} />,
+        isPrivate: true,
+        component: <MeanPlanList />,
+        permission: PERMISSIONS.MEAL_PLAN_LIST,
+      },
     ],
   },
 
@@ -711,15 +720,6 @@ export const authRoutes = [
         component: <ReferralAgent />,
       },
     ],
-  },
-  {
-    key: 19,
-    label: "Meal Plan",
-    path: "/meal-plan",
-    icon: <JavaOutlined style={{ fontSize: "20px" }} />,
-    isPrivate: true,
-    component: <MeanPlanList />,
-    permission: PERMISSIONS.MEAL_PLAN_LIST,
   },
   {
     key: 20,

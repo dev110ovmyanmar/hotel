@@ -14,6 +14,7 @@ import Toast from './../../../../component/Toast/Toast';
 import usePermission from './../../../../hooks/usePermission';
 import { PERMISSIONS } from './../../../../variables/permission';
 import { initial } from "lodash";
+import Status from './../../../../component/Status/Status';
 
 const AdminForm = ({
   mode,
@@ -112,7 +113,6 @@ const AdminForm = ({
     if (!isAdd && data) {
       form.setFieldsValue({
         ...data,
-        status: data?.status?.uuid,
         role: data?.role?.uuid,
       });
       setSelectedData(data);
@@ -124,7 +124,7 @@ const AdminForm = ({
       const createValues = {
         ...values,
         role: { uuid: values.role },
-        status: { uuid: values.status },
+        status:  values.status,
       };
 
       upsertAdmins.mutate(createValues, {
@@ -140,7 +140,7 @@ const AdminForm = ({
       const editValues = {
         ...values, // merge new form values
         role: { uuid: values.role },
-        status: { uuid: values.status },
+        status:  values.status,
         uuid: data?.uuid,
       };
 
@@ -191,7 +191,7 @@ const AdminForm = ({
             ) : (
               <FormButton
                 onClick={() => form.submit()}
-                isPending={upsertAdmin.isPending}
+                isPending={upsertAdmins.isPending}
                 mode={mode}
               />
             )}
@@ -257,34 +257,7 @@ const AdminForm = ({
             <Input readOnly={isView} />
           </Form.Item>
 
-          <Form.Item
-            label="Status"
-            name="status"
-            rules={[{ required: true, message: "Status is Required" }]}
-            getValueProps={(value) => {
-              return ({
-                value: isView
-                  ? initData?.statuses?.status?.find((item) => item.uuid === value)?.name
-                  : value,
-              })
-            }}
-          >
-            {
-              isView ?
-                <Input readOnly={isView} /> :
-                <Select
-                  showSearch={{
-                    filterOption: (input, option) =>
-                      (option?.label ?? "")
-                        .toLowerCase()
-                        .includes(input.toLowerCase()),
-                  }}
-                  options={statuses}
-                  open={isView ? false : undefined}
-                />
-            }
-
-          </Form.Item>
+          <Status isView={isView} />
 
           {
             isEdit && (
