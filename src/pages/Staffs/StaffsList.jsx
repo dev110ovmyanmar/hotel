@@ -2,10 +2,10 @@ import React, { useEffect, useState } from "react";
 import { LIMITS } from "../../variables/constants";
 import useApiQuery from "../../hooks/useApiQuery";
 import ListHeader from "../../component/ListHeader/ListHeader";
-import { PERMISSIONS } from "../../variables/permission";
 import StaffsForm from "./Components/StaffsForms/StaffsForm";
 import StaffsTable from "./Components/StaffsTable";
 import { fetchStaff } from "../../api/staffApi";
+import { PERMISSIONS } from "../../variables/permission";
 
 const StaffsList = () => {
   const [keyword, setKeyword] = useState("");

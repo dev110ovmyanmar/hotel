@@ -52,7 +52,6 @@ import { MdOutlineSupportAgent } from "react-icons/md";
 import { MdGroups3 } from "react-icons/md";
 import { isPending } from "@reduxjs/toolkit";
 
-
 const Dashboard = lazy(() => import("../../pages/Dashboard/Dashboard"));
 const Calendar = lazy(() => import("../../pages/Calendar/Calendar"));
 const Reservation = lazy(
@@ -63,7 +62,9 @@ const ReservationForm = lazy(
 );
 const Guest = lazy(() => import("../../pages/Guest/GuestList"));
 const Booking = lazy(() => import("../../pages/Booking/Booking"));
-const Department = lazy(() => import("../../pages/Departments/DepartmentsList"))
+const Department = lazy(
+  () => import("../../pages/Departments/DepartmentsList"),
+);
 const RoomType = lazy(() => import("../../pages/RoomType/RoomTypeList"));
 const Room = lazy(() => import("../../pages/Room/RoomList"));
 const RoomAttribute = lazy(
@@ -121,7 +122,11 @@ const FacilityPackageList = lazy(
 const Staff = lazy(() => import("../../pages/Staffs/StaffsList"));
 const RatePlan = lazy(() => import("../../pages/RatePlan/RatePlanList"));
 
-const GuestListing = lazy(() => import("../../pages/GuestsListing/NewGuestListing"));
+const GuestListing = lazy(
+  () => import("../../pages/GuestsListing/NewGuestListing"),
+);
+
+const GuestNotesListing = lazy(() => import("../../pages/GuestNotes/GuestNotesListing"))
 
 export const authRoutes = [
   {
@@ -165,8 +170,8 @@ export const authRoutes = [
         path: "/rates-availability/rate-plans",
         label: "Rate Plans",
         icon: <ApartmentOutlined style={{ fontSize: "20px" }} />,
-        component: < RatePlan />,
-        // permission: ".list",
+        component: <RatePlan />,
+        permission: PERMISSIONS.RATE_PLAN_LIST,
       },
       {
         key: 4.2,
@@ -325,18 +330,18 @@ export const authRoutes = [
         label: "Staffs",
         path: "/staff-management/staffs",
         icon: <ApartmentOutlined style={{ fontSize: "20px" }} />,
-        component: < Staff />,
-        // permission: ".list",
+        component: <Staff />,
+        permission: PERMISSIONS.STAFF_LIST,
       },
-      // {
-      //   key: 8.2,
-      //   label: "Departments",
-      //   path: "/staff-management/departments",
-      //   icon: <DatabaseOutlined style={{ fontSize: "20px" }} />,
-      //   isPrivate: true,
-      //   // component: < />,
-      //   // permission: ".list",
-      // },
+      {
+        key: 8.2,
+        label: "Departments",
+        path: "/staff-management/departments",
+        icon: <DatabaseOutlined style={{ fontSize: "20px" }} />,
+        isPrivate: true,
+        component: <Department />,
+        permission: PERMISSIONS.DEPARTMENT_LIST,
+      },
     ],
   },
   {
@@ -707,31 +712,40 @@ export const authRoutes = [
     icon: <JavaOutlined style={{ fontSize: "20px" }} />,
     isPrivate: true,
     component: <MeanPlanList />,
-     permission: PERMISSIONS.MEAL_PLAN_LIST,
+    permission: PERMISSIONS.MEAL_PLAN_LIST,
   },
   {
     key: 20,
-    path: "/guest-listing/",
+    path: "/guest-list/",
     label: "Guests",
-    component: <GuestListing/>,
+    component: <GuestListing />,
     icon: <UsergroupAddOutlined style={{ fontSize: "20px" }} />,
     isPrivate: false,
-    // permission: guest.list,
+    permission: PERMISSIONS.GUEST_LIST,
   },
   {
     key: 21,
+    path: "/guest-note-list/",
+    label: "Guest Notes",
+    component: <GuestNotesListing />,
+    icon: <UsergroupAddOutlined style={{ fontSize: "20px" }} />,
+    isPrivate: false, 
+    permission: PERMISSIONS.GUEST_NOTE_LIST,
+  },
+  {
+    key: 22,
     path: "/change-password/",
     component: <ChangePassword />,
     isPrivate: false,
   },
   {
-    key: 22,
+    key: 23,
     path: "/profile/",
     component: <Profile />,
     isPrivate: false,
   },
   {
-    key: 23,
+    key: 24,
     path: "/reservation-form/",
     component: <ReservationForm />,
     isPrivate: false,
@@ -739,7 +753,6 @@ export const authRoutes = [
 ];
 
 const AuthRoutes = () => {
-  
   const routesOptions = useMemo(() => {
     return _.flatten(
       _.map(authRoutes, (route) => (route.nested ? route.nested : route)),

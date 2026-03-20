@@ -2,6 +2,8 @@ import { Dropdown, Space, Table, Tag } from "antd";
 import { useState } from "react";
 import { MoreOutlined, EyeOutlined, EditOutlined } from "@ant-design/icons";
 import TaxForm from "./TaxForms/TaxForm";
+import usePermission from "../../../hooks/usePermission";
+import { PERMISSIONS } from "../../../variables/permission";
 
 const TaxTable = ({
   data,
@@ -11,6 +13,7 @@ const TaxTable = ({
   changePage,
   changePerPage,
 }) => {
+  const { hasPermission } = usePermission();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mode, setMode] = useState(null);
   const [selectedData, setSelectedData] = useState(null);
@@ -42,31 +45,7 @@ const TaxTable = ({
         </Tag>
       ),
     },
-    // {
-    //   title: "Charge Value ",
-    //   dataIndex: "chargeValue",
-    //   key: "chargeValue",
-    // },
-    // {
-    //   title: "Charge Type ",
-    //   dataIndex: ["chargeType", "name"],
-    //   key: "chargeType",
-    //   width: 160,
-    // },
-    // {
-    //   title: "Charge Value",
-    //   key: "chargeValue",
-    //   render: (_, record) => {
-    //     const value = record?.chargeValue;
-    //     const type = record?.chargeType?.name;
 
-    //     return (
-    //       <span>
-    //         {value} {type}
-    //       </span>
-    //     );
-    //   },
-    // },
     {
       title: "Charge Value",
       key: "chargeValue",
@@ -90,42 +69,44 @@ const TaxTable = ({
       render: (_, record) => {
         const smallStyle = { fontSize: "12px" };
 
-        const items = [
+        const actions = [
           {
-            key: "1",
-            label: (
-              <Space
-                size={4}
-                style={smallStyle}
-                onClick={() => {
-                  setDrawerOpen(true);
-                  setMode("view");
-                  setSelectedData(record);
-                }}
-              >
-                <EyeOutlined style={{ fontSize: "12px" }} />
-                <span style={{ fontSize: "14px" }}>View</span>
-              </Space>
-            ),
+            key: "view",
+            label: "View",
+            icon: <EyeOutlined style={{ fontSize: "12px" }} />,
+            permission: PERMISSIONS.TAX_VIEW,
+            onClick: () => {
+              setDrawerOpen(true);
+              setMode("view");
+              setSelectedData(record);
+            },
           },
           {
-            key: "2",
-            label: (
-              <Space
-                size={4}
-                style={smallStyle}
-                onClick={() => {
-                  setDrawerOpen(true);
-                  setMode("edit");
-                  setSelectedData(record);
-                }}
-              >
-                <EditOutlined style={{ fontSize: "12px" }} />
-                <span style={{ fontSize: "14px" }}>Edit</span>
-              </Space>
-            ),
+            key: "edit",
+            label: "Edit",
+            icon: <EditOutlined style={{ fontSize: "12px" }} />,
+            permission: PERMISSIONS.TAX_EDIT,
+            onClick: () => {
+              setDrawerOpen(true);
+              setMode("edit");
+              setSelectedData(record);
+            },
           },
         ];
+
+        const items = actions
+          .filter(
+            (action) => !action.permission || hasPermission(action.permission),
+          )
+          .map((action) => ({
+            key: action.key,
+            label: (
+              <Space size={4} style={smallStyle} onClick={action.onClick}>
+                {action.icon}
+                <span style={{ fontSize: "14px" }}>{action.label}</span>
+              </Space>
+            ),
+          }));
 
         return (
           <Dropdown menu={{ items }} trigger={["click"]}>
