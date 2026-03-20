@@ -136,6 +136,7 @@ export const PERMISSIONS = {
   GUEST_NOTE_LIST: "guest-note.list",
   GUEST_NOTE_CREATE: "guest-note.create",
   GUEST_NOTE_EDIT: "guest-note.edit",
+  GUEST_NOTE_VIEW: "guest-note.view",
 
   // Department
   DEPARTMENT_LIST: "department.list",

@@ -126,6 +126,8 @@ const GuestListing = lazy(
   () => import("../../pages/GuestsListing/NewGuestListing"),
 );
 
+const GuestNotesListing = lazy(() => import("../../pages/GuestNotes/GuestNotesListing"))
+
 export const authRoutes = [
   {
     key: 1,
@@ -714,27 +716,36 @@ export const authRoutes = [
   },
   {
     key: 20,
-    path: "/guest-listing/",
+    path: "/guest-list/",
     label: "Guests",
     component: <GuestListing />,
     icon: <UsergroupAddOutlined style={{ fontSize: "20px" }} />,
     isPrivate: false,
-    // permission: guest.list,
+    permission: PERMISSIONS.GUEST_LIST,
   },
   {
     key: 21,
+    path: "/guest-note-list/",
+    label: "Guest Notes",
+    component: <GuestNotesListing />,
+    icon: <UsergroupAddOutlined style={{ fontSize: "20px" }} />,
+    isPrivate: false, 
+    permission: PERMISSIONS.GUEST_NOTE_LIST,
+  },
+  {
+    key: 22,
     path: "/change-password/",
     component: <ChangePassword />,
     isPrivate: false,
   },
   {
-    key: 22,
+    key: 23,
     path: "/profile/",
     component: <Profile />,
     isPrivate: false,
   },
   {
-    key: 23,
+    key: 24,
     path: "/reservation-form/",
     component: <ReservationForm />,
     isPrivate: false,
