@@ -29,7 +29,7 @@ const MeanPlanForm = ({
   const isEdit = mode === "edit";
   const isAdd = mode === "add";
 
-  const initData = queryClient.getQueryData(["initData", "authenticated"])?.statuses?.status;
+  // const initData = queryClient.getQueryData(["initData", "authenticated"])?.statuses?.status;
 
   const upsertMealPlans = useApiMutation({
     mutationFn: upsertMealPlan,
