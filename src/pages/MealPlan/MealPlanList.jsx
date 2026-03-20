@@ -4,7 +4,7 @@ import useApiQuery from "../../hooks/useApiQuery";
 import MeanPlanTable from './Components/MeanPlanTable';
 import MeanPlanForm from './Components/MealPlanForm/MealPlanForm';
 import ListHeader from './../../component/ListHeader/ListHeader';
-import { fetchMealPlan } from './../../api/mealPlanFunctionApi';
+import { fetchMealPlan } from './../../api/mealPlanApi';
 
 const MeanPlanList = () => {
   const [keyword, setKeyword] = useState("");
@@ -72,7 +72,7 @@ const MeanPlanList = () => {
         setMode={setMode}
         selectedData={selectedData}
         setSelectedData={setSelectedData}
-        width={500}
+        
       />
     </div>
   )
