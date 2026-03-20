@@ -184,26 +184,42 @@ const StaffsForm = ({
           </div>
         }
       >
-        <Form
-          form={form}
-          layout="vertical"
-          onFinish={onFinish}
-          disabled={isView}
-        >
+        <Form form={form} layout="vertical" onFinish={onFinish}>
           <Form.Item
             label="Name"
             name="name"
             rules={[{ required: true, message: "Please enter name" }]}
           >
-            <Input placeholder="Enter staff name" />
+            <Input placeholder="Enter staff name" readOnly={isView} />
           </Form.Item>
 
           <Form.Item
             label="Department"
             name="department"
-            rules={[{ required: true, message: "Please select departmment" }]}
+            rules={[{ required: true }]}
+            getValueProps={(value) => ({
+              value: isView
+                ? departments.find((item) => item.value === value)?.label
+                : value,
+            })}
           >
-            <Select options={departments} placeholder="Select department" />
+            {isView ? (
+              <Input readOnly={isView} />
+            ) : (
+              <Select
+                showSearch={{
+                  filterOption: (input, option) =>
+                    (option?.label ?? "")
+                      .toLowerCase()
+                      .includes(input.toLowerCase()),
+                }}
+                options={departments}
+                placeholder="Select Department"
+                onChange={() => {
+                  form.setFieldValue("chargeValue", undefined);
+                }}
+              />
+            )}
           </Form.Item>
 
           <Form.Item
@@ -221,56 +237,113 @@ const StaffsForm = ({
           >
             <Row gutter={5}>
               <Col span={4}>
-                <Form.Item name="nrcSrNo" rules={[{ required: true }]}>
-                  <Select
-                    options={region}
-                    placeholder="Region"
-                    onChange={(value) => {
-                      setSelectedRegion(value);
-                      form.setFieldsValue({ nrcTownship: null });
-                    }}
-                  />
+                <Form.Item
+                  name="nrcSrNo"
+                  rules={[{ required: true }]}
+                  getValueProps={(value) => ({
+                    value: isView
+                      ? region.find((item) => item.value === value)?.label
+                      : value,
+                  })}
+                >
+                  {isView ? (
+                    <Input readOnly={isView} />
+                  ) : (
+                    <Select
+                      showSearch={{
+                        filterOption: (input, option) =>
+                          (option?.label ?? "")
+                            .toLowerCase()
+                            .includes(input.toLowerCase()),
+                      }}
+                      options={region}
+                      placeholder="Select Region"
+                      onChange={(value) => {
+                        setSelectedRegion(value);
+                        form.setFieldsValue({ nrcTownship: null });
+                      }}
+                    />
+                  )}
                 </Form.Item>
               </Col>
 
-              <Col span={1} className="text-center">
+              <Col span={1} className="text-center font-bold">
                 /
               </Col>
 
               <Col span={7}>
-                <Form.Item name="nrcTownship" rules={[{ required: true }]}>
-                  <Select
-                    options={township}
-                    placeholder="Township"
-                    disabled={!selectedRegion || isView}
-                  />
+                <Form.Item
+                  name="nrcTownship"
+                  rules={[{ required: true }]}
+                  getValueProps={(value) => ({
+                    value: isView
+                      ? township.find((item) => item.value === value)?.label
+                      : value,
+                  })}
+                >
+                  {isView ? (
+                    <Input readOnly={isView} />
+                  ) : (
+                    <Select
+                      showSearch={{
+                        filterOption: (input, option) =>
+                          (option?.label ?? "")
+                            .toLowerCase()
+                            .includes(input.toLowerCase()),
+                      }}
+                      options={township}
+                      placeholder="Select Township"
+                      disabled={!selectedRegion}
+                    />
+                  )}
                 </Form.Item>
               </Col>
 
               <Col span={4}>
-                <Form.Item name="nrcType" rules={[{ required: true }]}>
-                  <Select options={citizenship} placeholder="Type" />
+                <Form.Item
+                  name="nrcType"
+                  rules={[{ required: true }]}
+                  getValueProps={(value) => ({
+                    value: isView
+                      ? citizenship.find((item) => item.value === value)?.label
+                      : value,
+                  })}
+                >
+                  {isView ? (
+                    <Input readOnly={isView} />
+                  ) : (
+                    <Select
+                      showSearch={{
+                        filterOption: (input, option) =>
+                          (option?.label ?? "")
+                            .toLowerCase()
+                            .includes(input.toLowerCase()),
+                      }}
+                      options={citizenship}
+                      placeholder="Select Type"
+                    />
+                  )}
                 </Form.Item>
               </Col>
 
               <Col span={8}>
                 <Form.Item name="nrcNumber" rules={[{ required: true }]}>
-                  <Input placeholder="Number" />
+                  <Input placeholder="Number" readOnly={isView} />
                 </Form.Item>
               </Col>
             </Row>
           </Form.Item>
 
           <Form.Item label="Email" name="email">
-            <Input placeholder="Enter email" />
+            <Input placeholder="Enter email" readOnly={isView} />
           </Form.Item>
 
           <Form.Item label="Phone" name="phone">
-            <Input placeholder="Enter phone" />
+            <Input placeholder="Enter phone" readOnly={isView} />
           </Form.Item>
 
           <Form.Item label="Passport" name="passport">
-            <Input placeholder="Enter passport" />
+            <Input placeholder="Enter passport" readOnly={isView} />
           </Form.Item>
 
           <Form.Item
@@ -278,11 +351,33 @@ const StaffsForm = ({
             name="joinedAt"
             rules={[{ required: true, message: "Please select Date" }]}
           >
-            <DatePicker className="w-full" />
+            <DatePicker className="w-full" disabled={isView} />
           </Form.Item>
 
-          <Form.Item label="Gender" name="genderUuid">
-            <Select options={genders} placeholder="Select gender" />
+          <Form.Item
+            label="Gender"
+            name="genderUuid"
+            rules={[{ required: true }]}
+            getValueProps={(value) => ({
+              value: isView
+                ? genders.find((item) => item.value === value)?.label
+                : value,
+            })}
+          >
+            {isView ? (
+              <Input readOnly={isView} />
+            ) : (
+              <Select
+                showSearch={{
+                  filterOption: (input, option) =>
+                    (option?.label ?? "")
+                      .toLowerCase()
+                      .includes(input.toLowerCase()),
+                }}
+                options={genders}
+                placeholder="Select Gender"
+              />
+            )}
           </Form.Item>
         </Form>
       </Drawer>
