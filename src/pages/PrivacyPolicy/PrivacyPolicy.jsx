@@ -25,13 +25,15 @@ const PrivacyPolicy = () => {
     params: {},
   });
 
-  const initData = queryClient.getQueryData(["initData"]);
+  const initData = queryClient.getQueryData(["initData", "authenticated"]);
 
   const statusOptions =
-    initData?.statuses?.status?.map((item) => ({
-      value: item.uuid,
-      label: item.name,
-    })) || [];
+    initData?.statuses?.status
+      ?.filter((item) => item.name.toLowerCase() !== "blocked")
+      ?.map((item) => ({
+        value: item.uuid,
+        label: item.name,
+      })) || [];
 
   const cleanHTML = (html) => (html ? html.replace(/<p><br><\/p>/gi, "").trim() : "");
 
