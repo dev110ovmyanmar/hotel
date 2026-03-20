@@ -39,12 +39,18 @@ import {
   AndroidOutlined,
   QqOutlined,
   CodeSandboxOutlined,
+  UsergroupAddOutlined,
 } from "@ant-design/icons";
 import { lazy } from "react";
 import { FiMap } from "react-icons/fi";
 import { MdOutlinePolicy } from "react-icons/md";
 import { MdPayments } from "react-icons/md";
 import { PERMISSIONS } from "../../variables/permission";
+import { BiGroup } from "react-icons/bi";
+import { BsBuildings } from "react-icons/bs";
+import { MdOutlineSupportAgent } from "react-icons/md";
+import { MdGroups3 } from "react-icons/md";
+import { isPending } from "@reduxjs/toolkit";
 
 const Dashboard = lazy(() => import("../../pages/Dashboard/Dashboard"));
 const Calendar = lazy(() => import("../../pages/Calendar/Calendar"));
@@ -56,8 +62,9 @@ const ReservationForm = lazy(
 );
 const Guest = lazy(() => import("../../pages/Guest/GuestList"));
 const Booking = lazy(() => import("../../pages/Booking/Booking"));
-const Staff =lazy(()=>import ("../../pages/Staffs/StaffsList"))
-const Department =lazy(()=> import("../../pages/Departments/DepartmentsList"))
+const Department = lazy(
+  () => import("../../pages/Departments/DepartmentsList"),
+);
 const RoomType = lazy(() => import("../../pages/RoomType/RoomTypeList"));
 const Room = lazy(() => import("../../pages/Room/RoomList"));
 const RoomAttribute = lazy(
@@ -98,7 +105,6 @@ const MeanPlanList = lazy(() => import("../../pages/MealPlan/MealPlanList"));
 const PaymentList = lazy(() => import("../../pages/Payment/PaymentList"));
 
 const Taxs = lazy(() => import("../../pages/Tax/TaxList"));
-const RatePlan =lazy(()=> import("../../pages/RatePlan/RatePlanList"))
 
 const Agencies = lazy(() => import("../../pages/Agencies/AgencyList"));
 
@@ -116,6 +122,9 @@ const FacilityPackageList = lazy(
 const Staff = lazy(() => import("../../pages/Staffs/StaffsList"));
 const RatePlan = lazy(() => import("../../pages/RatePlan/RatePlanList"));
 
+const GuestListing = lazy(
+  () => import("../../pages/GuestsListing/NewGuestListing"),
+);
 
 export const authRoutes = [
   {
@@ -142,15 +151,12 @@ export const authRoutes = [
     icon: <ScheduleOutlined style={{ fontSize: "20px" }} />,
     component: <Reservation />,
     isPrivate: false,
-     nested: [
-      {
-        key: 2.1,
-        path: "/reservation/guest-details/",
-        component: <Guest />,
-      },
-    ],
   },
-
+  {
+    key: 3.1,
+    path: "/reservation/guest-details/",
+    component: <Guest />,
+  },
   {
     key: 4,
     label: "Rates & Availability",
@@ -162,8 +168,8 @@ export const authRoutes = [
         path: "/rates-availability/rate-plans",
         label: "Rate Plans",
         icon: <ApartmentOutlined style={{ fontSize: "20px" }} />,
-        component: < RatePlan />,
-        // permission: ".list",
+        component: <RatePlan />,
+        permission: PERMISSIONS.RATE_PLAN_LIST,
       },
       {
         key: 4.2,
@@ -322,18 +328,18 @@ export const authRoutes = [
         label: "Staffs",
         path: "/staff-management/staffs",
         icon: <ApartmentOutlined style={{ fontSize: "20px" }} />,
-        component: < Staff />,
-        // permission: ".list",
+        component: <Staff />,
+        permission: PERMISSIONS.STAFF_LIST,
       },
-      // {
-      //   key: 8.2,
-      //   label: "Departments",
-      //   path: "/staff-management/departments",
-      //   icon: <DatabaseOutlined style={{ fontSize: "20px" }} />,
-      //   isPrivate: true,
-      //   // component: < />,
-      //   // permission: ".list",
-      // },
+      {
+        key: 8.2,
+        label: "Departments",
+        path: "/staff-management/departments",
+        icon: <DatabaseOutlined style={{ fontSize: "20px" }} />,
+        isPrivate: true,
+        component: <Department />,
+        permission: PERMISSIONS.DEPARTMENT_LIST,
+      },
     ],
   },
   {
@@ -448,7 +454,7 @@ export const authRoutes = [
         path: "/facility-management/facilities",
         icon: <ApartmentOutlined style={{ fontSize: "20px" }} />,
         component: <FacilityList />,
-        // permission: PERMISSIONS.FACILITY_LIST,
+        permission: PERMISSIONS.FACILITY_LIST,
       },
       {
         key: 12.2,
@@ -457,7 +463,7 @@ export const authRoutes = [
         icon: <DatabaseOutlined style={{ fontSize: "20px" }} />,
         isPrivate: true,
         component: <FacilityPackageList />,
-        // permission: PERMISSIONS.FACILITY_PACKAGE_LIST,
+        permission: PERMISSIONS.FACILITY_PACKAGE_LIST,
       },
       // {
       //   key: 12.3,
@@ -628,8 +634,8 @@ export const authRoutes = [
         label: "Country & City",
         path: "/settings/country-city",
         icon: <DiffOutlined style={{ fontSize: "20px" }} />,
-        component: <ServiceList />,
-        // permission: ".list",
+        component: <LocationList />,
+        permission: PERMISSIONS.LOCATION_LIST,
       },
       {
         key: 15.6,
@@ -638,7 +644,7 @@ export const authRoutes = [
         icon: <FileProtectOutlined style={{ fontSize: "20px" }} />,
         isPrivate: true,
         component: <PrivacyPolicy />,
-        permission: PERMISSIONS.PRIVACY_POLICY_LIST,
+        // permission: PERMISSIONS.PRIVACY_POLICY_LIST,
       },
     ],
   },
@@ -670,20 +676,20 @@ export const authRoutes = [
   {
     key: 17,
     label: "Partners",
-    icon: <WalletOutlined style={{ fontSize: "20px" }} />,
+    icon: <MdGroups3 style={{ fontSize: "20px" }} />,
     nested: [
       {
         key: 17.1,
         label: "Agencies",
         path: "/partners/agencies",
-        icon: <DollarOutlined style={{ fontSize: "20px" }} />,
+        icon: <BiGroup style={{ fontSize: "20px" }} />,
         component: <Agencies />,
       },
       {
         key: 17.2,
         label: "Companies",
         path: "/partners/company",
-        icon: <MdPayments style={{ fontSize: "20px" }} />,
+        icon: <BsBuildings style={{ fontSize: "20px" }} />,
         isPrivate: true,
         component: <Company />,
       },
@@ -691,22 +697,12 @@ export const authRoutes = [
         key: 17.3,
         label: "Referral Agents",
         path: "/partners/referral-agent",
-        icon: <MdPayments style={{ fontSize: "20px" }} />,
+        icon: <MdOutlineSupportAgent style={{ fontSize: "20px" }} />,
         isPrivate: true,
         component: <ReferralAgent />,
       },
     ],
   },
-  {
-    key: 18,
-    label: "Location",
-    path: "/location",
-    icon: <EnvironmentOutlined style={{ fontSize: "20px" }} />,
-    isPrivate: true,
-    component: <LocationList />,
-    permission: PERMISSIONS.LOCATION_LIST,
-  },
-
   {
     key: 19,
     label: "Meal Plan",
@@ -714,22 +710,31 @@ export const authRoutes = [
     icon: <JavaOutlined style={{ fontSize: "20px" }} />,
     isPrivate: true,
     component: <MeanPlanList />,
-    //  permission: PERMISSIONS.MEAL_PLAN_LIST,
+    permission: PERMISSIONS.MEAL_PLAN_LIST,
   },
   {
     key: 20,
+    path: "/guest-listing/",
+    label: "Guests",
+    component: <GuestListing />,
+    icon: <UsergroupAddOutlined style={{ fontSize: "20px" }} />,
+    isPrivate: false,
+    // permission: guest.list,
+  },
+  {
+    key: 21,
     path: "/change-password/",
     component: <ChangePassword />,
     isPrivate: false,
   },
   {
-    key: 21,
+    key: 22,
     path: "/profile/",
     component: <Profile />,
     isPrivate: false,
   },
   {
-    key: 22,
+    key: 23,
     path: "/reservation-form/",
     component: <ReservationForm />,
     isPrivate: false,
@@ -737,17 +742,6 @@ export const authRoutes = [
 ];
 
 const AuthRoutes = () => {
-  // const routesOptions = _.flatten(
-  //   _.map(authRoutes, (route) => {
-  //     if (route.nested) {
-  //       return route.nested;
-  //     }
-  //     return route;
-  //   }),
-  // );
-
-  // Flatten routes including nested ones
-
   const routesOptions = useMemo(() => {
     return _.flatten(
       _.map(authRoutes, (route) => (route.nested ? route.nested : route)),
@@ -765,10 +759,6 @@ const AuthRoutes = () => {
       <Routes>
         {routesOptions.map((option) => (
           <Route
-            // key={option.key}
-            // path={`/${option?.path}`}
-            // element={option.component}
-
             key={option.key}
             path={option.path}
             element={

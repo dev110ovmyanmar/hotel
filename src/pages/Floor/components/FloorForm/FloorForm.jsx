@@ -132,17 +132,18 @@ const FloorForm = ({
             name="name"
             rules={[{ required: true, message: "Please enter floor name" }]}
           >
-            <Input />
+            <Input readOnly={isView}/>
           </Form.Item>
           <Form.Item
             label="Floor / Zone"
             name="floorNo"
             rules={[{ required: true, message: "Please enter floor no" }]}
           >
-            <Input />
+            <Input readOnly={isView}/>
           </Form.Item>
+          
           <Form.Item label="Descriptiom" name="description">
-            <TextArea />
+            <TextArea readOnly={isView}/>
           </Form.Item>
         </Form>
       </Drawer>

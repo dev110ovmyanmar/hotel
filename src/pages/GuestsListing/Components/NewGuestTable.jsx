@@ -1,8 +1,8 @@
 import React from "react";
 import { Table } from "antd";
-import useInventoryColumns from "./useInventoryColumns";
+import useGuestColumns from "./useNewGuestColumns";
 
-const InventoryTable = ({
+const GuestTable = ({
   dataSource,
   loading,
   onEdit,
@@ -12,9 +12,8 @@ const InventoryTable = ({
   changePage,
   changePerPage,
   total,
-
 }) => {
-  const columns = useInventoryColumns(onEdit, onView);
+  const columns = useGuestColumns(onEdit, onView);
 
   return (
     <div id="scrollId" className="w-full h-[63vh]">
@@ -40,4 +39,4 @@ const InventoryTable = ({
   );
 };
 
-export default InventoryTable;
+export default GuestTable;

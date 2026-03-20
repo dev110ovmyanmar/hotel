@@ -2,25 +2,23 @@ import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { setCategories } from "../../services/categorySlice";
 import { setUnits } from "../../services/unitSlice";
-import {
-  fetchInventoryData,
-  fetchInventoryDetail,
-  upsertInventory,
-} from "../../api/inventoryApi";
-import { fetchCategoryData } from "../../api/categoryApi";
-import { fetchUnitData } from "../../api/unitApi";
+import { getServiceInventory } from "../../api/serviceInventoryApi";
+import { getCategories } from "../../api/categoryApi";
+import { getUnits } from "../../api/unitApi";
 import useApiQuery from "../../hooks/useApiQuery";
-import { useApiMutation } from "../../hooks/useApiMutation";
 import ListHeader from "../../component/ListHeader/ListHeader";
 import InventoryTable from "./components/InventoryTable";
 import InventoryForm from "./components/InventoryForm";
-import Toast from "../../component/Toast/Toast";
+import { LIMITS } from "../../variables/constants";
+
 
 const InventoryListing = () => {
-  const [open, setOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
   const [currentMode, setCurrentMode] = useState("add");
   const [keyword, setKeyword] = useState("");
+  const [page, setPage] = useState(1);
+  const [perPage, setPerPage] = useState(LIMITS.PAGE_SIZE);
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const dispatch = useDispatch();
 
   // 1. Access categories and units from Redux
@@ -32,7 +30,7 @@ const InventoryListing = () => {
   // 2. Fetch categories and units if Redux is empty
   const { data: categoryData } = useApiQuery({
     fetchQueryName: "categoryDataForInventory",
-    fetchQueryFunction: fetchCategoryData,
+    fetchQueryFunction: getCategories,
     options: {
       enabled: categoriesFromRedux.length === 0,
     },
@@ -40,7 +38,7 @@ const InventoryListing = () => {
 
   const { data: unitData } = useApiQuery({
     fetchQueryName: "unitDataForInventory",
-    fetchQueryFunction: fetchUnitData,
+    fetchQueryFunction: getUnits,
     options: {
       enabled: unitsFromRedux.length === 0,
     },
@@ -48,14 +46,14 @@ const InventoryListing = () => {
 
   // 3. Populate Redux with categories and units when fetched
   useEffect(() => {
-    if (categoryData?.response?.data && categoriesFromRedux.length === 0) {
-      dispatch(setCategories(categoryData.response.data));
+    if (categoryData?.data && categoriesFromRedux.length === 0) {
+      dispatch(setCategories(categoryData.data));
     }
   }, [categoryData, categoriesFromRedux.length, dispatch]);
 
   useEffect(() => {
-    if (unitData?.response?.data && unitsFromRedux.length === 0) {
-      dispatch(setUnits(unitData.response.data));
+    if (unitData?.data && unitsFromRedux.length === 0) {
+      dispatch(setUnits(unitData.data));
     }
   }, [unitData, unitsFromRedux.length, dispatch]);
 
@@ -73,68 +71,23 @@ const InventoryListing = () => {
     })) || [];
 
   // 5. Fetch Inventory Listing Data
-  const { data, refetch, isLoading } = useApiQuery({
-    fetchQueryName: "inventoryData",
-    fetchQueryFunction: fetchInventoryData,
-    params: { keyword },
-  });
-
-  const inventoryItems = data?.response?.data || [];
-
-  // 6. Fetch Inventory Detail
-  const { data: detailRes, isLoading: isLoadingDetail } = useApiQuery({
-    fetchQueryName: ["inventoryDetail", selectedRow?.uuid],
-    fetchQueryFunction: fetchInventoryDetail,
-    params: { uuid: selectedRow?.uuid },
-    options: {
-      enabled:
-        !!open &&
-        !!selectedRow?.uuid &&
-        (currentMode === "view" || currentMode === "edit"),
-      staleTime: 0,
+  const { data, isLoading, error } = useApiQuery({
+    fetchQueryName: "service_inventories",
+    fetchQueryFunction: getServiceInventory,
+    params: {
+      pagination: 
+      { page: page, 
+        perPage: perPage
+      },
+      keyword,
     },
   });
 
-  const detailData = detailRes?.response || null;
+  const serviceInventories = data?.data || [];
 
-  // 7. Mutation
-  const { mutate: upsertMutate, isPending: isSubmitting } = useApiMutation({
-    mutationFn: upsertInventory,
-    invalidateKeys: ["inventoryData"],
-    options: {
-      onSuccess: () => {
-        refetch();
-        Toast.success(
-          `Item ${currentMode === "add" ? "created" : "updated"} successfully`,
-        );
-        handleClose();
-      },
-    },
-  });
-
-  const handleSubmit = (values) => {
-    const payload = {
-      name: values.name,
-      reorderLevel: values.reorderLevel,
-      unitPrice: values.unitPrice, // Keep as unitPrice
-      unitCost: values.unitCost,
-      stockQuantity: values.stockQuantity,
-      laundryStatus: values.laundryStatus ? 1 : 0,
-      isFree: values.isFree ? 1 : 0,
-      category: {
-        uuid: values.categoryUuid,
-      },
-      unit: {
-        uuid: values.unitUuid,
-      },
-    };
-
-    if (currentMode !== "add") {
-      payload.uuid = selectedRow?.uuid;
-    }
-
-    upsertMutate(payload);
-  };
+  useEffect(() => {
+      setPage(1);
+  }, [keyword, perPage]);
 
   const handleClose = () => {
     setOpen(false);
@@ -143,24 +96,29 @@ const InventoryListing = () => {
 
   const handleAdd = () => {
     setCurrentMode("add");
-    setOpen(true);
+    setDrawerOpen(true);
   };
+
   const handleView = (record) => {
     setSelectedRow(record);
     setCurrentMode("view");
-    setOpen(true);
+    setDrawerOpen(true);
   };
+
   const handleEdit = (record) => {
     setSelectedRow(record);
     setCurrentMode("edit");
-    setOpen(true);
+    setDrawerOpen(true);
+  };
+
+  const switchToEdit = () => {
+    setCurrentMode("edit");
   };
 
   return (
     <div className="w-full px-6 py-2">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
         <ListHeader
-          // title="Inventory List"
           searchPlaceholder="Search Items ..."
           keyword={keyword}
           setKeyword={setKeyword}
@@ -170,26 +128,32 @@ const InventoryListing = () => {
       </div>
 
       <InventoryTable
-        dataSource={inventoryItems}
+        dataSource={serviceInventories}
         onView={handleView}
         onEdit={handleEdit}
         loading={isLoading}
+        page={data?.pagination?.currentPage || page}
+        perPage={data?.pagination?.perPage || perPage}
+        total={data?.pagination?.total}
+        changePage={(page) => setPage(page)}
+        changePerPage={(perPage) => setPerPage(perPage)}
       />
 
       <InventoryForm
-        initialValues={currentMode === "add" ? null : detailData || selectedRow}
         mode={currentMode}
-        onSubmit={handleSubmit}
-        open={open}
-        onClose={handleClose}
-        loading={isLoadingDetail && currentMode !== "add"}
-        switchToEdit={() => setCurrentMode("edit")}
+        page={data?.pagination?.currentPage || page}
+        drawerOpen={drawerOpen}
+        setDrawerOpen={setDrawerOpen}
+        loading={isLoading}
+        switchToEdit={switchToEdit}
         categoryOptions={categoryOptions} // Now powered by Redux
         unitOptions={unitOptions}
-        submitting={isSubmitting}
+        selectedRow={selectedRow}
+        setSelectedRow={setSelectedRow}
       />
     </div>
   );
 };
 
 export default InventoryListing;
+
