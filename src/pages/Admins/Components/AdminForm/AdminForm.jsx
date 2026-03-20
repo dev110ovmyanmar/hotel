@@ -1,19 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { Form, Input, Button, Select, Image, Drawer, AutoComplete } from "antd";
-import { CloseOutlined } from "@ant-design/icons";
-import { useApiMutation } from "../../../../hooks/useApiMutation";
+import { Form, Input, Button, Select, Image, Drawer, AutoComplete } from "antd"; import { useApiMutation } from "../../../../hooks/useApiMutation";
 import useApiQuery from "../../../../hooks/useApiQuery";
 import { queryClient } from "../../../../app/queryClient";
 import {
-  adminDetailsFunApi,
-  createAdminFun,
-  editAdminFun,
-} from "../../../../api/adminFunctionApi";
+  adminDetails,
+  upsertAdmin,
+  adminPermission
+} from "../../../../api/adminApi";
 import FormButton from "../../../../component/FormButtons/FormButtons";
 import { Divider } from 'antd';
 import AddOnDrawer from './AddOnDrawer';
-import { adminPermission } from './../../../../api/adminFunctionApi';
 import Toast from './../../../../component/Toast/Toast';
+import usePermission from './../../../../hooks/usePermission';
+import { PERMISSIONS } from './../../../../variables/permission';
+import { initial } from "lodash";
 
 const AdminForm = ({
   mode,
@@ -27,12 +27,13 @@ const AdminForm = ({
 }) => {
   const [form] = Form.useForm();
 
+  const { hasPermission } = usePermission();
+
   const isView = mode === "view";
   const isEdit = mode === "edit";
   const isAdd = mode === "add";
 
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
-  console.log(initData,"initDataInAdminForm");
   const [adminDrawerOpen, setAdminDrawerOpen] = useState(false);
   const [selectedPermissions, setSelectedPermissions] = useState([]);
 
@@ -46,20 +47,15 @@ const AdminForm = ({
     label: status.name,
   }));
 
-  const createAdminFunction = useApiMutation({
-    mutationFn: createAdminFun,
+  const upsertAdmins = useApiMutation({
+    mutationFn: upsertAdmin,
     invalidateKeys: [["admins"]],
-    shouldInvalidate: page === 1
+    shouldInvalidate: isEdit ? true : page === 1
   });
 
-  const editAdminFunction = useApiMutation({
-    mutationFn: editAdminFun,
-    invalidateKeys: [["admins"]],
-  });
-
-  const { data, isLoading, error } = useApiQuery({
+  const { data } = useApiQuery({
     fetchQueryName: "admin-details",
-    fetchQueryFunction: adminDetailsFunApi,
+    fetchQueryFunction: adminDetails,
     params: { uuid: selectedData?.uuid },
     options: {
       enabled: !!selectedData?.uuid,
@@ -89,7 +85,7 @@ const AdminForm = ({
   const addOnAdminPermission = useApiMutation({
     mutationFn: adminPermission,
     invalidateKeys: [["admins"]],
-    page: page
+
   });
 
 
@@ -131,7 +127,7 @@ const AdminForm = ({
         status: { uuid: values.status },
       };
 
-      createAdminFunction.mutate(createValues, {
+      upsertAdmins.mutate(createValues, {
         onSuccess: () => {
           form.resetFields();
           setDrawerOpen(false);
@@ -148,7 +144,7 @@ const AdminForm = ({
         uuid: data?.uuid,
       };
 
-      editAdminFunction.mutate(editValues, {
+      upsertAdmins.mutate(editValues, {
         onSuccess: () => {
           setDrawerOpen(false);
           Toast.success("Admin Updated Successfully!");
@@ -195,9 +191,7 @@ const AdminForm = ({
             ) : (
               <FormButton
                 onClick={() => form.submit()}
-                isPending={
-                  mode === "add" ? createAdminFunction.isPending : editAdminFunction.isPending
-                }
+                isPending={upsertAdmin.isPending}
                 mode={mode}
               />
             )}
@@ -209,16 +203,16 @@ const AdminForm = ({
           layout="vertical"
           style={{ width: "100%" }}
           onFinish={onFinish}
-          disabled={isView}
+
 
         >
           <Form.Item
             label="Name"
             name="name"
             rules={[{ required: true, message: "Admin Name is Required" }]}
-            aut
+
           >
-            <Input />
+            <Input readOnly={isView} />
           </Form.Item>
 
           <Form.Item
@@ -226,34 +220,70 @@ const AdminForm = ({
             name="email"
             rules={[{ required: true, message: "Admin Email is Required" }]}
           >
-            <Input />
+            <Input readOnly={isView} />
           </Form.Item>
 
           <Form.Item
             name="role"
             label="Role"
-            rules={[{ required: true, message: "Role is Required" }]}>
-            <Select
-              showSearch
-              options={roles}
-              open={isView ? false : undefined}
-            />
+            rules={[{ required: true, message: "Role is Required" }]}
+            getValueProps={(value) => {
+              return ({
+                value: isView
+                  ? initData?.roles.find((item) => item.uuid === value)?.name
+                  : value,
+              })
+            }}
+          >
+
+            {
+              isView ?
+                <Input readOnly={isView} /> :
+                <Select
+                  showSearch={{
+                    filterOption: (input, option) =>
+                      (option?.label ?? "")
+                        .toLowerCase()
+                        .includes(input.toLowerCase()),
+                  }}
+                  options={roles}
+                  open={isView ? false : undefined}
+                />
+            }
+
           </Form.Item>
 
-          <Form.Item label="Staff" name="staff" readOnly={isView}>
-            <Input />
+          <Form.Item label="Staff" name="staff" >
+            <Input readOnly={isView} />
           </Form.Item>
 
           <Form.Item
             label="Status"
             name="status"
             rules={[{ required: true, message: "Status is Required" }]}
+            getValueProps={(value) => {
+              return ({
+                value: isView
+                  ? initData?.statuses?.status?.find((item) => item.uuid === value)?.name
+                  : value,
+              })
+            }}
           >
-            <Select
-              showSearch
-              options={statuses}
-              open={isView ? false : undefined}
-            />
+            {
+              isView ?
+                <Input readOnly={isView} /> :
+                <Select
+                  showSearch={{
+                    filterOption: (input, option) =>
+                      (option?.label ?? "")
+                        .toLowerCase()
+                        .includes(input.toLowerCase()),
+                  }}
+                  options={statuses}
+                  open={isView ? false : undefined}
+                />
+            }
+
           </Form.Item>
 
           {
@@ -261,57 +291,64 @@ const AdminForm = ({
               <div className="mt-6">
                 <Divider />
 
-                <div
-                  style={{
-                    background: "#f5f5f5",
-                    padding: "15px",
-                    borderRadius: "8px",
-                    marginBottom: "20px",
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
-                >
-                  <span className="font-bold">
-                    Current Permissions
-                  </span>
-
-                  {changesNotAllowList?.length <= 0 ? null : (
-                    <Button
-                      type="primary"
-                      onClick={() => adminDrawerFunction("notAllow")}
+                {
+                  changesNotAllowList?.length <= 0 ? null :
+                    <div
+                      style={{
+                        background: "#f5f5f5",
+                        padding: "15px",
+                        borderRadius: "8px",
+                        marginBottom: "20px",
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                      }}
                     >
-                      View
-                    </Button>
-                  )}
+                      <span className="font-bold">
+                        Current Permissions
+                      </span>
 
-                </div>
+                      {/* {changesNotAllowList?.length <= 0 ? null : ( */}
+                      <Button
+                        type="primary"
+                        onClick={() => adminDrawerFunction("notAllow")}
+                      >
+                        View
+                      </Button>
+                      {/* )} */}
 
-                <div
-                  style={{
-                    background: "#f5f5f5",
-                    padding: "15px",
-                    borderRadius: "8px",
-                    marginBottom: "20px",
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
-                >
-                  <span className="font-bold">
-                    Additional Permissions
-                  </span>
+                    </div>
+                }
 
-                  {changesAllowList?.length <= 0 ? null : (
-                    <Button
-                      type="primary"
-                      onClick={() => adminDrawerFunction("allow")}
+
+                {
+                  !hasPermission(PERMISSIONS.ADMIN_PERMISSION)
+                    || changesAllowList?.length <= 0 ?
+                    null :
+                    <div
+                      style={{
+                        background: "#f5f5f5",
+                        padding: "15px",
+                        borderRadius: "8px",
+                        marginBottom: "20px",
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                      }}
+
                     >
-                      Add On 
-                    </Button>
-                  )}
+                      <span className="font-bold">
+                        Additional Permissions
+                      </span>
 
-                </div>
+                      <Button
+                        type="primary"
+                        onClick={() => adminDrawerFunction("allow")}
+                      >
+                        Add On
+                      </Button>
+                    </div>
+                }
 
                 <AddOnDrawer
                   mode={allowMode}

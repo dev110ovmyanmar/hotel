@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { LIMITS } from "../../variables/constants";
+import { fetchRoom } from "../../api/roomApi";
 import useApiQuery from "../../hooks/useApiQuery";
 import ListHeader from "../../component/ListHeader/ListHeader";
-import { fetchRoom } from "../../api/roomApi";
 import RoomTable from "./components/RoomTable";
 import RoomForm from "./components/Room/RoomForm";
+import { PERMISSIONS } from "../../variables/permission";
 
 const RoomList = () => {
   const [keyword, setKeyword] = useState("");
@@ -50,6 +51,7 @@ const RoomList = () => {
           setKeyword={setKeyword}
           addButtonText="Add New Room"
           onAdd={handleAdd}
+          permission={PERMISSIONS.ROOM_CREATE}
         />
       </div>
 
@@ -63,14 +65,14 @@ const RoomList = () => {
       />
 
       <RoomForm
-        drawerOpen={drawerOpen}
-        setDrawerOpen={setDrawerOpen}
+        page={page}
         setPage={setPage}
         mode={mode}
         setMode={setMode}
+        drawerOpen={drawerOpen}
+        setDrawerOpen={setDrawerOpen}
         selectedData={selectedData}
         setSelectedData={setSelectedData}
-        width={500}
       />
     </div>
   );

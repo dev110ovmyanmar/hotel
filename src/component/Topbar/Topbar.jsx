@@ -27,6 +27,7 @@ import { useApiMutation } from "../../hooks/useApiMutation.js";
 import { ReloadOutlined } from "@ant-design/icons";
 import { queryClient } from "../../app/queryClient.js";
 import { setUserData } from "../../services/authSlice.js";
+import { persister } from './../../app/QueryProvider';
 
 const { Header } = Layout;
 
@@ -73,6 +74,7 @@ const Topbar = withDirection(function (props) {
     try {
       setLoading(true);
       await logout.mutateAsync();
+      await persister.removeClient();
       queryClient.clear();
       localStorage.clear();
       navigate("/signin");
@@ -177,7 +179,7 @@ const Topbar = withDirection(function (props) {
             icon={<PlusOutlined />}
             size="middle"
             className="bg-purple-600 hover:bg-purple-700 border-none ml-7"
-            onClick={() => navigate("/add-reservation")}
+            onClick={() => navigate("/reservation-form")}
           >
             Add Reservation
           </Button>
