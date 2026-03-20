@@ -5,6 +5,7 @@ import ListHeader from "../../component/ListHeader/ListHeader";
 import TaxTable from "./Components/TaxTable";
 import TaxForm from "./Components/TaxForms/TaxForm";
 import { fetchTax } from "../../api/TaxApi";
+import { PERMISSIONS } from "../../variables/permission";
 
 const TaxList = () => {
   const [keyword, setKeyword] = useState("");
@@ -50,11 +51,12 @@ const TaxList = () => {
           setKeyword={setKeyword}
           addButtonText="Add New Tax"
           onAdd={handleAdd}
+          permission={PERMISSIONS.TAX_CREATE}
         />
       </div>
 
       <TaxTable
-         data={data?.data || []}
+        data={data?.data || []}
         page={data?.pagination.currentPage}
         perPage={data?.pagination.perPage}
         total={data?.pagination?.total}

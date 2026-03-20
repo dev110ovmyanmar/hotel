@@ -30,10 +30,12 @@ const DepartmentsForm = ({
 
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
 
-  const statuses = initData?.statuses?.status?.map((status) => ({
-    value: status.uuid,
-    label: status.name,
-  }));
+  const statuses = initData?.statuses?.status
+    ?.filter((item) => item.code !== "blocked")
+    ?.map((status) => ({
+      value: status.uuid,
+      label: status.name,
+    }));
 
   const createDepartments = useApiMutation({
     mutationFn: createDepartment,
@@ -138,14 +140,13 @@ const DepartmentsForm = ({
           layout="vertical"
           style={{ width: "100%" }}
           onFinish={onFinish}
-          disabled={isView}
         >
           <Form.Item
             label="Name"
             name="name"
             rules={[{ required: true, message: "Name is Required" }]}
           >
-            <Input />
+            <Input readOnly={isView}/>
           </Form.Item>
 
           <Form.Item
@@ -153,24 +154,39 @@ const DepartmentsForm = ({
             name="code"
             rules={[{ required: true, message: "Code is Required" }]}
           >
-            <Input />
-          </Form.Item>
-
-          <Form.Item label="Description" name="description">
-            <TextArea />
+            <Input readOnly={isView}/>
           </Form.Item>
 
           <Form.Item
             label="Status"
             name="status"
             rules={[{ required: true, message: "Status is Required" }]}
+            getValueProps={(value) => ({
+              value: isView
+                ? statuses.find((item) => item.value === value)?.label
+                : value,
+            })}
           >
-            <Select
-              showSearch
-              options={statuses}
-              open={isView ? false : undefined}
-            />
+            {isView ? (
+              <Input readOnly={isView} />
+            ) : (
+              <Select
+                showSearch={{
+                  filterOption: (input, option) =>
+                    (option?.label ?? "")
+                      .toLowerCase()
+                      .includes(input.toLowerCase()),
+                }}
+                options={statuses}
+                placeholder="Select Status"
+              />
+            )}
           </Form.Item>
+         
+          <Form.Item label="Description" name="description">
+            <TextArea readOnly={isView}/>
+          </Form.Item>
+
         </Form>
       </Drawer>
     </div>

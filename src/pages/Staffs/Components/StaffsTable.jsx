@@ -1,9 +1,9 @@
 import { Dropdown, Space, Table } from "antd";
 import { useState } from "react";
+import StaffsForm from "./StaffsForms/StaffsForm";
 import { MoreOutlined, EyeOutlined, EditOutlined } from "@ant-design/icons";
 import usePermission from "../../../hooks/usePermission";
 import { PERMISSIONS } from "../../../variables/permission";
-import StaffsForm from "./StaffsForms/StaffsForm";
 
 const StaffsTable = ({
   data,
@@ -14,7 +14,6 @@ const StaffsTable = ({
   changePerPage,
 }) => {
   const { hasPermission } = usePermission();
-
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mode, setMode] = useState(null);
   const [selectedData, setSelectedData] = useState(null);

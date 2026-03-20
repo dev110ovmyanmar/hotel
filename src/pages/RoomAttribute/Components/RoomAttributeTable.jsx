@@ -59,7 +59,6 @@ const RoomAttributeTable = ({
           },
         ];
 
-        // Filter actions by permission
         const items = actions
           .filter(
             (action) => !action.permission || hasPermission(action.permission),
