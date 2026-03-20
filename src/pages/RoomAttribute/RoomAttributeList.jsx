@@ -5,6 +5,7 @@ import ListHeader from "../../component/ListHeader/ListHeader";
 import { fetchRoomAttribute } from "../../api/roomApi";
 import RoomAttributeTable from "./Components/RoomAttributeTable";
 import RoomAttributeForm from "./Components/RoomAttributeForms/RoomAttributeform";
+import { PERMISSIONS } from "../../variables/permission";
 
 const RoomAttributeList = () => {
   const [keyword, setKeyword] = useState("");
@@ -50,6 +51,7 @@ const RoomAttributeList = () => {
           setKeyword={setKeyword}
           addButtonText="Add New Room Attribute"
           onAdd={handleAdd}
+          permission={PERMISSIONS.ROOM_ATTRIBUTE_CREATE}
         />
       </div>
 
@@ -63,14 +65,14 @@ const RoomAttributeList = () => {
       />
 
       <RoomAttributeForm
-        drawerOpen={drawerOpen}
-        setDrawerOpen={setDrawerOpen}
+        page={page}
         setPage={setPage}
         mode={mode}
         setMode={setMode}
+        drawerOpen={drawerOpen}
+        setDrawerOpen={setDrawerOpen}
         selectedData={selectedData}
         setSelectedData={setSelectedData}
-        width={500}
       />
     </div>
   );

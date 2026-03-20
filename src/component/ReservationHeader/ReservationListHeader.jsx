@@ -16,7 +16,7 @@ const ReservationListHeader = ({
           <Button
             type="primary"
             // icon={<PlusOutlined />}
-            onClick={onAdd}
+            onClick={onAddGuest}
             className="bg-blue-600"
           >
             {addButtonText}

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { Drawer, Checkbox, Button, Divider } from "antd";
-import { editAmenitiesFun } from './../../../../api/amenitiesFunctionApi';
 
 const AddOnDrawer = ({
   mode,
@@ -57,7 +56,7 @@ const AddOnDrawer = ({
     <Drawer
       open={open}
       onClose={onClose}
-      width={500}
+      
       title={
         <div className="flex justify-between items-center">
           <span>

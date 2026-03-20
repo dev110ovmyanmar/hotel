@@ -93,7 +93,9 @@ const RoomAttributesForm = ({
     <Drawer
       title={
         <div className="flex justify-between items-center">
-          <span>{mode === "edit" ? "Edit Attribute" : "Add Attribute"}</span>
+          <span>
+            {mode === "edit" ? "Edit Room Attribute" : "Add Room Attribute"}
+          </span>
           <FormButtons
             onClick={() => form.submit()}
             isPending={createAttribute.isPending || editAttribute.isPending}
@@ -108,15 +110,14 @@ const RoomAttributesForm = ({
         <Form.Item
           label="Room Attribute"
           name="roomAttributeUuid"
-          rules={[{ required: true, message: "Select attribute" }]}
+          rules={[{ required: true }]}
         >
-          <Select options={roomAttributes} placeholder="Select Attribute" />
+          <Select
+            options={roomAttributes}
+            placeholder="Select Room Attribute"
+          />
         </Form.Item>
-        <Form.Item
-          label="Value"
-          name="value"
-          rules={[{ required: true, message: "Please enter value" }]}
-        >
+        <Form.Item label="Value" name="value" rules={[{ required: true }]}>
           <Input />
         </Form.Item>
       </Form>

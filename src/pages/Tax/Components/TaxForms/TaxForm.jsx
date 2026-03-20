@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Form, Input, Button, Select, Drawer, Switch, Row, Col } from "antd";
 import Toast from "../../../../component/Toast/Toast";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
@@ -15,6 +15,7 @@ const TaxForm = ({
   drawerOpen,
   setDrawerOpen,
   setPage,
+  page,
 }) => {
   const [form] = Form.useForm();
 
@@ -22,7 +23,8 @@ const TaxForm = ({
   const isEdit = mode === "edit";
   const isAdd = mode === "add";
 
-  const initData = queryClient.getQueryData(["initData"]);
+  const initData = queryClient.getQueryData(["initData", "authenticated"]);
+  const chargeTypeValue = Form.useWatch("charge_type", form);
 
   const chargeCategory = initData?.statuses?.charge_category?.map(
     (category) => ({
@@ -43,19 +45,28 @@ const TaxForm = ({
     }),
   );
 
-  const statuses = initData?.statuses?.status?.map((status) => ({
-    value: status.uuid,
-    label: status.name,
+  const perUnit = initData?.statuses?.per_unit?.map((unit) => ({
+    value: unit.uuid,
+    label: unit.name,
   }));
+
+  const statuses = initData?.statuses?.status
+    ?.filter((item) => item.code !== "blocked")
+    ?.map((status) => ({
+      value: status.uuid,
+      label: status.name,
+    }));
 
   const createTaxs = useApiMutation({
     mutationFn: createTax,
     invalidateKeys: [["taxData"]],
+    page: page,
   });
 
   const editTaxs = useApiMutation({
     mutationFn: editTax,
     invalidateKeys: [["taxData"]],
+    page: page,
   });
 
   const { data } = useApiQuery({
@@ -74,6 +85,7 @@ const TaxForm = ({
         charge_category: data?.chargeCategory?.uuid,
         charge_type: data?.chargeType?.uuid,
         charge_apply_type: data?.chargeApplyType?.uuid,
+        per_unit: data?.perUnit?.uuid,
         status: data?.status?.uuid,
       });
       setSelectedData(data);
@@ -87,12 +99,12 @@ const TaxForm = ({
         chargeCategory: { uuid: values.charge_category },
         chargeType: { uuid: values.charge_type },
         chargeApplyType: { uuid: values.charge_apply_type },
+        perUnit: { uuid: values.per_unit },
         status: { uuid: values.status },
       };
 
       createTaxs.mutate(createValues, {
         onSuccess: () => {
-          queryClient.invalidateQueries(["taxList"]);
           form.resetFields();
           setDrawerOpen(false);
           setPage(1);
@@ -106,12 +118,12 @@ const TaxForm = ({
         chargeCategory: { uuid: values.charge_category },
         chargeType: { uuid: values.charge_type },
         chargeApplyType: { uuid: values.charge_apply_type },
+        perUnit: { uuid: values.per_unit },
         status: { uuid: values.status },
         uuid: data?.uuid,
       };
       editTaxs.mutate(editValues, {
         onSuccess: () => {
-          queryClient.invalidateQueries(["taxList"]);
           setDrawerOpen(false);
           Toast.success("Tax Updated Successfully!");
         },
@@ -158,38 +170,65 @@ const TaxForm = ({
           layout="vertical"
           style={{ width: "100%" }}
           onFinish={onFinish}
-          disabled={isView}
         >
           <Form.Item
             label="Name"
             name="name"
             rules={[{ required: true, message: "Tax Name is Required" }]}
           >
-            <Input />
+            <Input readOnly={isView} />
+          </Form.Item>
+
+          <Form.Item
+            label="Charge Category"
+            name="charge_category"
+            rules={[{ required: true, message: "Charge Category is Required" }]}
+            getValueProps={(value) => ({
+              value: isView
+                ? chargeCategory.find((item) => item.value === value)?.label
+                : value,
+            })}
+          >
+            {isView ? (
+              <Input readOnly={isView} />
+            ) : (
+              <Select
+                showSearch={{
+                  filterOption: (input, option) =>
+                    (option?.label ?? "")
+                      .toLowerCase()
+                      .includes(input.toLowerCase()),
+                }}
+                options={chargeCategory}
+                placeholder="Select Charge Category"
+              />
+            )}
           </Form.Item>
 
           <Form.Item
             label="Per Unit"
-            name="perUnit"
-            rules={[{ required: true, message: "Tax perUnit  is Required" }]}
+            name="per_unit"
+            rules={[{ required: true, message: "Per Unit is Required" }]}
+            getValueProps={(value) => ({
+              value: isView
+                ? perUnit.find((item) => item.value === value)?.label
+                : value,
+            })}
           >
-            <Input />
-          </Form.Item>
-
-          <Form.Item
-            label="Remark"
-            name="remark"
-            rules={[{ required: true, message: "Tax remark   is Required" }]}
-          >
-            <Input />
-          </Form.Item>
-
-          <Form.Item
-            label="Charge Value "
-            name="chargeValue"
-            rules={[{ required: true, message: "Tax remark   is Required" }]}
-          >
-            <Input />
+            {isView ? (
+              <Input readOnly={isView} />
+            ) : (
+              <Select
+                showSearch={{
+                  filterOption: (input, option) =>
+                    (option?.label ?? "")
+                      .toLowerCase()
+                      .includes(input.toLowerCase()),
+                }}
+                options={perUnit}
+                placeholder="Select Per Unit"
+              />
+            )}
           </Form.Item>
 
           <Form.Item
@@ -198,33 +237,81 @@ const TaxForm = ({
             valuePropName="checked"
             normalize={(value) => (value ? 1 : 0)}
           >
-            <Switch checkedChildren="True" unCheckedChildren="False" />
+            <Switch
+              checkedChildren="True"
+              unCheckedChildren="False"
+              disabled={isView}
+            />
           </Form.Item>
 
           <Row gutter={16}>
             <Col span={12}>
               <Form.Item
-                label="Charge Category"
-                name="charge_category"
-                rules={[{ required: true, message: "Please select status" }]}
-              >
-                <Select
-                  showSearch
-                  options={chargeCategory}
-                  placeholder="Select Status"
-                />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
                 label="Charge Type"
                 name="charge_type"
-                rules={[{ required: true, message: "Please select status" }]}
+                rules={[{ required: true }]}
+                getValueProps={(value) => ({
+                  value: isView
+                    ? chargeType.find((item) => item.value === value)?.label
+                    : value,
+                })}
               >
-                <Select
-                  showSearch
-                  options={chargeType}
-                  placeholder="Select Status"
+                {isView ? (
+                  <Input readOnly={isView} />
+                ) : (
+                  <Select
+                    showSearch={{
+                      filterOption: (input, option) =>
+                        (option?.label ?? "")
+                          .toLowerCase()
+                          .includes(input.toLowerCase()),
+                    }}
+                    options={chargeType}
+                    placeholder="Select Charge Type"
+                    onChange={() => {
+                      form.setFieldValue("chargeValue", undefined);
+                    }}
+                  />
+                )}
+              </Form.Item>
+            </Col>
+
+            <Col span={12}>
+              <Form.Item
+                label="Charge Value"
+                name="chargeValue"
+                rules={[
+                  { required: true, message: "Charge value is required" },
+                  {
+                    validator: (_, value) => {
+                      const selectedType =
+                        initData?.statuses?.charge_type?.find(
+                          (ct) => ct.uuid === chargeTypeValue,
+                        );
+
+                      if (selectedType?.code === "percentage") {
+                        const numValue = Number(value);
+                        if (isNaN(numValue) || numValue < 1 || numValue > 100) {
+                          return Promise.reject(
+                            new Error("Percentage must be between 1 and 100"),
+                          );
+                        }
+                      }
+                      return Promise.resolve();
+                    },
+                  },
+                ]}
+              >
+                <Input
+                  type="number"
+                  min={1}
+                  addonAfter={(() => {
+                    const selected = initData?.statuses?.charge_type?.find(
+                      (ct) => ct.uuid === chargeTypeValue,
+                    );
+                    return selected?.code === "percentage" ? "%" : "MMK";
+                  })()}
+                  readOnly={isView}
                 />
               </Form.Item>
             </Col>
@@ -235,13 +322,30 @@ const TaxForm = ({
               <Form.Item
                 label="Charge Apply Type"
                 name="charge_apply_type"
-                rules={[{ required: true, message: "Please select status" }]}
+                rules={[
+                  { required: true, message: "Charge Apply Type is Required" },
+                ]}
+                getValueProps={(value) => ({
+                  value: isView
+                    ? chargeApplyType.find((item) => item.value === value)
+                        ?.label
+                    : value,
+                })}
               >
-                <Select
-                  showSearch
-                  options={chargeApplyType}
-                  placeholder="Select Status"
-                />
+                {isView ? (
+                  <Input readOnly={isView} />
+                ) : (
+                  <Select
+                    showSearch={{
+                      filterOption: (input, option) =>
+                        (option?.label ?? "")
+                          .toLowerCase()
+                          .includes(input.toLowerCase()),
+                    }}
+                    options={chargeApplyType}
+                    placeholder="Select Charge Apply Type"
+                  />
+                )}
               </Form.Item>
             </Col>
 
@@ -249,16 +353,34 @@ const TaxForm = ({
               <Form.Item
                 label="Status"
                 name="status"
-                rules={[{ required: true, message: "Please select status" }]}
+                rules={[{ required: true, message: "Status is Required" }]}
+                getValueProps={(value) => ({
+                  value: isView
+                    ? statuses.find((item) => item.value === value)?.label
+                    : value,
+                })}
               >
-                <Select
-                  showSearch
-                  options={statuses}
-                  placeholder="Select Status"
-                />
+                {isView ? (
+                  <Input readOnly={isView} />
+                ) : (
+                  <Select
+                    showSearch={{
+                      filterOption: (input, option) =>
+                        (option?.label ?? "")
+                          .toLowerCase()
+                          .includes(input.toLowerCase()),
+                    }}
+                    options={statuses}
+                    placeholder="Select Status"
+                  />
+                )}
               </Form.Item>
             </Col>
           </Row>
+
+          <Form.Item label="Remark" name="remark">
+            <Input readOnly={isView} />
+          </Form.Item>
         </Form>
       </Drawer>
     </div>

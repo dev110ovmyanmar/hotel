@@ -5,7 +5,7 @@ import ListHeader from "../../component/ListHeader/ListHeader";
 import TaxTable from "./Components/TaxTable";
 import TaxForm from "./Components/TaxForms/TaxForm";
 import { fetchTax } from "../../api/TaxApi";
-
+import { PERMISSIONS } from "../../variables/permission";
 
 const TaxList = () => {
   const [keyword, setKeyword] = useState("");
@@ -51,6 +51,7 @@ const TaxList = () => {
           setKeyword={setKeyword}
           addButtonText="Add New Tax"
           onAdd={handleAdd}
+          permission={PERMISSIONS.TAX_CREATE}
         />
       </div>
 
@@ -64,14 +65,14 @@ const TaxList = () => {
       />
 
       <TaxForm
-        drawerOpen={drawerOpen}
-        setDrawerOpen={setDrawerOpen}
+        page={page}
         setPage={setPage}
         mode={mode}
         setMode={setMode}
+        drawerOpen={drawerOpen}
+        setDrawerOpen={setDrawerOpen}
         selectedData={selectedData}
         setSelectedData={setSelectedData}
-        width={500}
       />
     </div>
   );

@@ -1,6 +1,6 @@
 import { apiClient } from "./apiClient";
 
-export const locationListFunctionApi = async (params) => {
+export const fetchLocation = async (params) => {
     const {data} = await apiClient.get(
         "/locations",
         {params}
@@ -8,7 +8,7 @@ export const locationListFunctionApi = async (params) => {
     return data.response;
 };
 
-export const createLocationFun = async (params) => {
+export const upsertLocation = async (params) => {
     const {data} = await apiClient.post(
         "/location/upsert",
         params
@@ -16,15 +16,7 @@ export const createLocationFun = async (params) => {
     return data.response;
 }
 
-export const editLocationFun = async (params) => {
-    const {data} = await apiClient.post(
-        "/location/upsert",
-        params
-    );
-    return data.response;
-}
-
-export const locationDetailsFun = async (params) => {
+export const locationDetails = async (params) => {
     const {data} = await apiClient.get(
         "/location",
         {params}

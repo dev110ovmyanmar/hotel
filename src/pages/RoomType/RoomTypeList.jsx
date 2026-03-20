@@ -5,6 +5,7 @@ import ListHeader from "../../component/ListHeader/ListHeader";
 import { fetchRoomType } from "../../api/roomApi";
 import RoomTypeTable from "./components/RoomTypeTable";
 import RoomTypeForm from "./components/RoomTypeForm/RoomTypeForm";
+import { PERMISSIONS } from "../../variables/permission";
 
 const RoomTypeList = () => {
   const [keyword, setKeyword] = useState("");
@@ -50,6 +51,7 @@ const RoomTypeList = () => {
           setKeyword={setKeyword}
           addButtonText="Add New Room Type"
           onAdd={handleAdd}
+          permission={PERMISSIONS.ROOM_TYPE_CREATE}
         />
       </div>
 
@@ -63,14 +65,14 @@ const RoomTypeList = () => {
       />
 
       <RoomTypeForm
-        drawerOpen={drawerOpen}
-        setDrawerOpen={setDrawerOpen}
+        page={page}
         setPage={setPage}
         mode={mode}
         setMode={setMode}
+        drawerOpen={drawerOpen}
+        setDrawerOpen={setDrawerOpen}
         selectedData={selectedData}
         setSelectedData={setSelectedData}
-        width={500}
       />
     </div>
   );

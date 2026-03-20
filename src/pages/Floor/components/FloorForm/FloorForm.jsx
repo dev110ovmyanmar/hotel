@@ -3,17 +3,18 @@ import { Form, Input, Button, Drawer } from "antd";
 import Toast from "../../../../component/Toast/Toast";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
 import useApiQuery from "../../../../hooks/useApiQuery";
-import FormButton from "../../../../component/FormButtons/FormButtons";
 import { createFloor, editFloor, floorDetail } from "../../../../api/floorApi";
-import TextArea from "antd/es/input/TextArea";
+import FormButtons from "./../../../../component/FormButtons/FormButtons";
+
+const { TextArea } = Input;
 
 const FloorForm = ({
   mode,
   setMode,
   selectedData,
-  setSelectedData,
   drawerOpen,
   setDrawerOpen,
+  page,
   setPage,
 }) => {
   const [form] = Form.useForm();
@@ -25,6 +26,7 @@ const FloorForm = ({
   const createFloors = useApiMutation({
     mutationFn: createFloor,
     invalidateKeys: [["floorData"]],
+    shouldInvalidate: page === 1,
   });
 
   const editFloors = useApiMutation({
@@ -32,7 +34,7 @@ const FloorForm = ({
     invalidateKeys: [["floorData"]],
   });
 
-  const { data, isLoading, error } = useApiQuery({
+  const { data } = useApiQuery({
     fetchQueryName: "floorData",
     fetchQueryFunction: floorDetail,
     params: { uuid: selectedData?.uuid },
@@ -46,29 +48,31 @@ const FloorForm = ({
       form.setFieldsValue({
         ...data,
       });
-      setSelectedData(data);
     }
-  }, [data]);
+  }, [data, isAdd]);
+
+  useEffect(() => {
+    if (isAdd) {
+      form.resetFields();
+    }
+  }, [isAdd]);
 
   const onFinish = (values) => {
     if (isAdd) {
-      const createValues = {
-        ...values,
-      };
-
-      createFloors.mutate(createValues, {
+      createFloors.mutate(values, {
         onSuccess: () => {
-          form.resetFields();
-          setDrawerOpen(false);
           setPage(1);
+          setDrawerOpen(false);
           Toast.success("Floor Created Successfully!");
+          form.resetFields();
         },
       });
     }
+
     if (isEdit) {
       const editValues = {
         ...values,
-        uuid: data?.uuid,
+        uuid: selectedData?.uuid,
       };
 
       editFloors.mutate(editValues, {
@@ -81,11 +85,12 @@ const FloorForm = ({
   };
 
   return (
-    <div>
+    <div className="flex justify-center">
       <Drawer
+        destroyOnClose
+        size={500}
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
-        size={500}
         title={
           <div className="flex justify-between items-center">
             <span>
@@ -93,7 +98,7 @@ const FloorForm = ({
                 ? "Floor Details"
                 : mode === "edit"
                   ? "Edit Floor"
-                  : "Create Floor"}
+                  : "Add Floor"}
             </span>
             {isView ? (
               <Button
@@ -105,9 +110,11 @@ const FloorForm = ({
                 Edit
               </Button>
             ) : (
-              <FormButton
+              <FormButtons
                 onClick={() => form.submit()}
-                isPending={createFloors.isPending || editFloors.isPending}
+                isPending={
+                  isAdd ? createFloors.isPending : editFloors.isPending
+                }
                 mode={mode}
               />
             )}
@@ -117,26 +124,26 @@ const FloorForm = ({
         <Form
           form={form}
           layout="vertical"
-          style={{ width: "100%" }}
+          validateTrigger="onSubmit"
           onFinish={onFinish}
-          disabled={isView}
         >
           <Form.Item
             label="Name"
             name="name"
             rules={[{ required: true, message: "Please enter floor name" }]}
           >
-            <Input />
+            <Input readOnly={isView}/>
           </Form.Item>
           <Form.Item
-            label="Floor No"
+            label="Floor / Zone"
             name="floorNo"
             rules={[{ required: true, message: "Please enter floor no" }]}
           >
-            <Input />
+            <Input readOnly={isView}/>
           </Form.Item>
+          
           <Form.Item label="Descriptiom" name="description">
-            <TextArea />
+            <TextArea readOnly={isView}/>
           </Form.Item>
         </Form>
       </Drawer>

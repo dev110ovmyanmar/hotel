@@ -1,5 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { Form, Input, Button, Drawer, Row, Col, Divider } from "antd";
+import {
+  Form,
+  Input,
+  Button,
+  Drawer,
+  Row,
+  Col,
+  Divider,
+  Table,
+  Card,
+  Tag,
+} from "antd";
 import Toast from "../../../../component/Toast/Toast";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
 import useApiQuery from "../../../../hooks/useApiQuery";
@@ -11,7 +22,7 @@ import {
 } from "../../../../api/roomApi";
 import TextArea from "antd/es/input/TextArea";
 import RoomTypeAmenityForm from "./RoomTypeAmenityForm";
-import { EditOutlined } from "@ant-design/icons";
+import { EditOutlined, PlusOutlined } from "@ant-design/icons";
 
 const RoomTypeForm = ({
   mode,
@@ -21,6 +32,7 @@ const RoomTypeForm = ({
   drawerOpen,
   setDrawerOpen,
   setPage,
+  page,
 }) => {
   const [form] = Form.useForm();
   const [roomTypeAmenityOpen, setRoomTypeAmenityOpen] = useState(false);
@@ -34,6 +46,7 @@ const RoomTypeForm = ({
   const createRoomTypes = useApiMutation({
     mutationFn: createRoomType,
     invalidateKeys: [["roomTypeData"]],
+    shouldInvalidate: page === 1,
   });
 
   const editRoomTypes = useApiMutation({
@@ -77,7 +90,6 @@ const RoomTypeForm = ({
     if (isEdit) {
       const editValues = {
         ...values,
-
         uuid: data?.uuid,
       };
 
@@ -90,12 +102,53 @@ const RoomTypeForm = ({
     }
   };
 
+  const amenityColumns = [
+    {
+      title: "Name",
+      dataIndex: ["amenity", "name"],
+      key: "name",
+    },
+    {
+      title: "Extra Price (MMK)",
+      dataIndex: "extraPrice",
+      key: "extraPrice",
+      render: (price) => price?.toLocaleString(),
+    },
+    {
+      title: "Is Free",
+      dataIndex: "isFree",
+      key: "isFree",
+      render: (_, record) => (
+        <Tag color={record.isFree ? "green" : "red"}>
+          {record.isFree ? "TRUE" : "FALSE"}
+        </Tag>
+      ),
+    },
+    {
+      title: "Action",
+      key: "action",
+      width: 80,
+      align: "center",
+      render: (_, record) => (
+        <Button
+          type="text"
+          icon={<EditOutlined />}
+          onClick={() => {
+            setAmenityMode("edit");
+            setSelectedAmenity(record);
+            setRoomTypeAmenityOpen(true);
+          }}
+        />
+      ),
+    },
+  ];
+
   return (
     <div>
       <Drawer
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
-        size={500}
+        size={600}
         title={
           <div className="flex justify-between items-center">
             <span>
@@ -129,27 +182,16 @@ const RoomTypeForm = ({
           layout="vertical"
           style={{ width: "100%" }}
           onFinish={onFinish}
-          disabled={isView}
         >
-          <Row gutter={16}>
+          <Row gutter={24}>
             <Col span={16}>
-              <Form.Item
-                label="Name"
-                name="name"
-                rules={[
-                  { required: true, message: "Please enter room type name" },
-                ]}
-              >
-                <Input />
+              <Form.Item label="Name" name="name" rules={[{ required: true }]}>
+                <Input readOnly={isView} />
               </Form.Item>
             </Col>
             <Col span={8}>
-              <Form.Item
-                label="Code"
-                name="code"
-                rules={[{ required: true, message: "Please enter short name" }]}
-              >
-                <Input />
+              <Form.Item label="Code" name="code" rules={[{ required: true }]}>
+                <Input readOnly={isView} />
               </Form.Item>
             </Col>
           </Row>
@@ -159,33 +201,27 @@ const RoomTypeForm = ({
               <Form.Item
                 label="Max Adults"
                 name="maxAdults"
-                rules={[
-                  { required: true, message: "Please enter maximum adults" },
-                ]}
+                rules={[{ required: true }]}
               >
-                <Input />
+                <Input readOnly={isView} />
               </Form.Item>
             </Col>
             <Col span={8}>
               <Form.Item
                 label="Max Children"
                 name="maxChildren"
-                rules={[
-                  { required: true, message: "Please enter maximum children" },
-                ]}
+                rules={[{ required: true }]}
               >
-                <Input />
+                <Input readOnly={isView} />
               </Form.Item>
             </Col>
             <Col span={8}>
               <Form.Item
                 label="Max Occupancy"
                 name="maxOccupancy"
-                rules={[
-                  { required: true, message: "Please enter maximum occupancy" },
-                ]}
+                rules={[{ required: true }]}
               >
-                <Input />
+                <Input readOnly={isView} />
               </Form.Item>
             </Col>
           </Row>
@@ -195,26 +231,24 @@ const RoomTypeForm = ({
               <Form.Item
                 label="Total Rooms"
                 name="totalRooms"
-                rules={[
-                  { required: true, message: "Please enter total rooms" },
-                ]}
+                rules={[{ required: true }]}
               >
-                <Input />
+                <Input readOnly={isView} />
               </Form.Item>
             </Col>
             <Col span={12}>
               <Form.Item
                 label="Base Price"
                 name="basePrice"
-                rules={[{ required: true, message: "Please enter base price" }]}
+                rules={[{ required: true }]}
               >
-                <Input addonAfter="MMK"/>
+                <Input addonAfter="MMK" readOnly={isView} />
               </Form.Item>
             </Col>
           </Row>
 
           <Form.Item label="Room Size" name="areaSize">
-            <Input />
+            <Input readOnly={isView} />
           </Form.Item>
 
           <Form.Item
@@ -222,56 +256,44 @@ const RoomTypeForm = ({
             name="description"
             placeholder="Enter full room description"
           >
-            <TextArea />
+            <TextArea readOnly={isView} />
           </Form.Item>
 
-          <Divider />
-
           {!isAdd && (
-            <div className="mt-4">
-              <div className="flex justify-between items-center text-base font-semibold mb-2">
-                <span>Room Type Amenity Data</span>
+            <Card className="mt-5 shadow-sm  border border-gray-100 bg-gray-100!">
+              <div className="flex justify-between items-center text-base font-semibold mb-5">
+                <span>Room Type Amenity </span>
 
                 {!isView && (
                   <Button
                     type="primary"
+                    icon={<PlusOutlined  />}
                     onClick={() => {
                       setAmenityMode("add");
                       setSelectedAmenity(null);
                       setRoomTypeAmenityOpen(true);
                     }}
                   >
-                    Add Amenity
+                    Add Room Type Amenity
                   </Button>
                 )}
               </div>
 
               {data?.roomTypeAmenities?.length > 0 ? (
-                data.roomTypeAmenities.map((amenity) => (
-                  <div
-                    key={amenity.uuid}
-                    className="flex items-center justify-between mb-2 pb-1"
-                  >
-                    <span>
-                      {amenity.amenity?.name} : {amenity?.extraPrice?.toLocaleString()} MMK
-                    </span>
-                    <Button
-                      type="text"
-                      icon={<EditOutlined />}
-                      onClick={() => {
-                        setAmenityMode("edit");
-                        setSelectedAmenity(amenity);
-                        setRoomTypeAmenityOpen(true);
-                      }}
-                    />
-                  </div>
-                ))
+                <Table
+                  columns={amenityColumns}
+                  dataSource={data.roomTypeAmenities}
+                  rowKey="uuid"
+                  pagination={false}
+                  size="small"
+                  className="mb-5"
+                />
               ) : (
                 <span className="text-gray-400">
                   No room type amenity added
                 </span>
               )}
-            </div>
+            </Card>
           )}
         </Form>
       </Drawer>

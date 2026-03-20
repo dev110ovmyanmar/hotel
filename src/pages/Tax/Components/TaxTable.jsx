@@ -1,7 +1,9 @@
-import { Dropdown, Space, Table } from "antd";
+import { Dropdown, Space, Table, Tag } from "antd";
 import { useState } from "react";
 import { MoreOutlined, EyeOutlined, EditOutlined } from "@ant-design/icons";
 import TaxForm from "./TaxForms/TaxForm";
+import usePermission from "../../../hooks/usePermission";
+import { PERMISSIONS } from "../../../variables/permission";
 
 const TaxTable = ({
   data,
@@ -11,6 +13,7 @@ const TaxTable = ({
   changePage,
   changePerPage,
 }) => {
+  const { hasPermission } = usePermission();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mode, setMode] = useState(null);
   const [selectedData, setSelectedData] = useState(null);
@@ -27,70 +30,83 @@ const TaxTable = ({
       key: "name",
     },
     {
-      title: "Per Unit",
-      dataIndex: "perUnit",
-      key: "perUnit",
+      title: "Charge Apply Type",
+      dataIndex: ["chargeApplyType", "name"],
+      key: "chargeApplyType",
       width: 160,
     },
     {
       title: "Inclusive",
       dataIndex: "isInclusive",
       key: "isInclusive",
-      render: (text) => <div>{text ? "True" : "False"}</div>,
-    },
-    {
-      title: "Remark ",
-      dataIndex: "remark",
-      key: "remark",
-      width: 160,
-    },
-    {
-      title: "Charge Value ",
-      dataIndex: "chargeValue",
-      key: "chargeValue",
+      render: (_, record) => (
+        <Tag color={record.isInclusive ? "green" : "red"}>
+          {record.isInclusive ? "TRUE" : "FALSE"}
+        </Tag>
+      ),
     },
 
+    {
+      title: "Charge Value",
+      key: "chargeValue",
+      render: (_, record) => {
+        const value = record?.chargeValue;
+        const type = record?.chargeType?.name;
+
+        if (type === "Percentage") {
+          return <span>{value}%</span>;
+        }
+
+        if (type === "Flat") {
+          return <span>{value} MMK</span>;
+        }
+
+        return value;
+      },
+    },
     {
       title: "Action",
       render: (_, record) => {
         const smallStyle = { fontSize: "12px" };
 
-        const items = [
+        const actions = [
           {
-            key: "1",
-            label: (
-              <Space
-                size={4}
-                style={smallStyle}
-                onClick={() => {
-                  setDrawerOpen(true);
-                  setMode("view");
-                  setSelectedData(record);
-                }}
-              >
-                <EyeOutlined style={{ fontSize: "12px" }} />
-                <span style={{ fontSize: "14px" }}>View</span>
-              </Space>
-            ),
+            key: "view",
+            label: "View",
+            icon: <EyeOutlined style={{ fontSize: "12px" }} />,
+            permission: PERMISSIONS.TAX_VIEW,
+            onClick: () => {
+              setDrawerOpen(true);
+              setMode("view");
+              setSelectedData(record);
+            },
           },
           {
-            key: "2",
-            label: (
-              <Space
-                size={4}
-                style={smallStyle}
-                onClick={() => {
-                  setDrawerOpen(true);
-                  setMode("edit");
-                  setSelectedData(record);
-                }}
-              >
-                <EditOutlined style={{ fontSize: "12px" }} />
-                <span style={{ fontSize: "14px" }}>Edit</span>
-              </Space>
-            ),
+            key: "edit",
+            label: "Edit",
+            icon: <EditOutlined style={{ fontSize: "12px" }} />,
+            permission: PERMISSIONS.TAX_EDIT,
+            onClick: () => {
+              setDrawerOpen(true);
+              setMode("edit");
+              setSelectedData(record);
+            },
           },
         ];
+
+        const items = actions
+          .filter(
+            (action) => !action.permission || hasPermission(action.permission),
+          )
+          .map((action) => ({
+            key: action.key,
+            label: (
+              <Space size={4} style={smallStyle} onClick={action.onClick}>
+                {action.icon}
+                <span style={{ fontSize: "14px" }}>{action.label}</span>
+              </Space>
+            ),
+          }));
 
         return (
           <Dropdown menu={{ items }} trigger={["click"]}>
@@ -122,13 +138,13 @@ const TaxTable = ({
       />
 
       <TaxForm
+        page={page}
         mode={mode}
         setMode={setMode}
         drawerOpen={drawerOpen}
         setDrawerOpen={setDrawerOpen}
         selectedData={selectedData}
         setSelectedData={setSelectedData}
-        width={500}
       />
     </div>
   );

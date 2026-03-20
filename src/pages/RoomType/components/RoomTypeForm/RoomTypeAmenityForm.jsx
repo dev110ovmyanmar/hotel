@@ -22,6 +22,7 @@ const RoomAttributesForm = ({
 
   const isAdd = mode === "add";
   const isEdit = mode === "edit";
+  const isFree = Form.useWatch("isFree", form);
 
   const { data: roomMetaData } = useApiQuery({
     fetchQueryName: "roomMetaData",
@@ -94,11 +95,20 @@ const RoomAttributesForm = ({
     }
   };
 
+  const handleClose = () => {
+    form.resetFields();
+    setDrawerOpen(false);
+  };
+
   return (
     <Drawer
       title={
         <div className="flex justify-between items-center">
-          <span>{mode === "edit" ? "Edit Attribute" : "Add Attribute"}</span>
+          <span>
+            {mode === "edit"
+              ? "Edit Room Type Amenity"
+              : "Add Room Type Amenity"}
+          </span>
           <FormButtons
             onClick={() => form.submit()}
             isPending={
@@ -110,47 +120,54 @@ const RoomAttributesForm = ({
         </div>
       }
       open={open}
-      onClose={() => setDrawerOpen(false)}
+      onClose={handleClose}
     >
-      <Form form={form} layout="vertical" onFinish={onFinish}>
-        <Form.Item
-          label="Room Amenity"
-          name="roomTypeAmenityUuid"
-          rules={[{ required: true, message: "Select attribute" }]}
+      {open && (
+        <Form
+          form={form}
+          layout="vertical"
+          onFinish={onFinish}
+          initialValues={{ isFree: 0 }}
         >
-          <Select options={roomTypeAmenities} placeholder="Select Attribute" />
-        </Form.Item>
+          <Form.Item
+            label="Room Amenity"
+            name="roomTypeAmenityUuid"
+            rules={[{ required: true, message: "Select attribute" }]}
+          >
+            <Select
+              options={roomTypeAmenities}
+              placeholder="Select Attribute"
+            />
+          </Form.Item>
 
-        <Form.Item
-          label="Extra Price"
-          name="extraPrice"
-          rules={[{ required: true, message: "Please enter extra price" }]}
-        >
-          <Input addonAfter="MMK" />
-        </Form.Item>
+          <Form.Item
+            label="Is Free"
+            name="isFree"
+            valuePropName="checked"
+            rules={[{ required: true }]}
+          >
+            <Switch
+              checkedChildren="Yes"
+              unCheckedChildren="No"
+              onChange={(checked) => {
+                if (checked) {
+                  form.setFieldsValue({ extraPrice: 0 });
+                } else {
+                  form.setFieldsValue({ extraPrice: undefined });
+                }
+              }}
+            />
+          </Form.Item>
 
-        {/* <Form.Item
-          label="Is Free"
-          name="isFree"
-          rules={[{ required: true, message: "Is Free is required" }]}
-        >
-          <Select
-            options={[
-              { label: "Yes", value: 1 },
-              { label: "No", value: 0 },
-            ]}
-          />
-        </Form.Item> */}
-        <Form.Item
-          label="Is Free"
-          name="isFree"
-          valuePropName="checked"
-          getValueFromEvent={(checked) => (checked ? 1 : 0)}
-          rules={[{ required: true, message: "Is Free is required" }]}
-        >
-          <Switch checkedChildren="Yes" unCheckedChildren="No" />
-        </Form.Item>
-      </Form>
+          <Form.Item
+            label="Extra Price"
+            name="extraPrice"
+            rules={[{ required: true, message: "Please enter extra price" }]}
+          >
+            <Input addonAfter="MMK" readOnly={isFree} />
+          </Form.Item>
+        </Form>
+      )}
     </Drawer>
   );
 };
