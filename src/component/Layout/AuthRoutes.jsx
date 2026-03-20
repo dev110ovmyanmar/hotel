@@ -39,6 +39,7 @@ import {
   AndroidOutlined,
   QqOutlined,
   CodeSandboxOutlined,
+  UsergroupAddOutlined,
 } from "@ant-design/icons";
 import { lazy } from "react";
 import { FiMap } from "react-icons/fi";
@@ -49,6 +50,7 @@ import { BiGroup } from "react-icons/bi";
 import { BsBuildings } from "react-icons/bs";
 import { MdOutlineSupportAgent } from "react-icons/md";
 import { MdGroups3 } from "react-icons/md";
+import { isPending } from "@reduxjs/toolkit";
 
 
 const Dashboard = lazy(() => import("../../pages/Dashboard/Dashboard"));
@@ -119,6 +121,7 @@ const FacilityPackageList = lazy(
 const Staff = lazy(() => import("../../pages/Staffs/StaffsList"));
 const RatePlan = lazy(() => import("../../pages/RatePlan/RatePlanList"));
 
+const GuestListing = lazy(() => import("../../pages/GuestsListing/NewGuestListing"));
 
 export const authRoutes = [
   {
@@ -638,7 +641,7 @@ export const authRoutes = [
         icon: <FileProtectOutlined style={{ fontSize: "20px" }} />,
         isPrivate: true,
         component: <PrivacyPolicy />,
-        permission: PERMISSIONS.PRIVACY_POLICY_LIST,
+        // permission: PERMISSIONS.PRIVACY_POLICY_LIST,
       },
     ],
   },
@@ -708,18 +711,27 @@ export const authRoutes = [
   },
   {
     key: 20,
+    path: "/guest-listing/",
+    label: "Guests",
+    component: <GuestListing/>,
+    icon: <UsergroupAddOutlined style={{ fontSize: "20px" }} />,
+    isPrivate: false,
+    // permission: guest.list,
+  },
+  {
+    key: 21,
     path: "/change-password/",
     component: <ChangePassword />,
     isPrivate: false,
   },
   {
-    key: 21,
+    key: 22,
     path: "/profile/",
     component: <Profile />,
     isPrivate: false,
   },
   {
-    key: 22,
+    key: 23,
     path: "/reservation-form/",
     component: <ReservationForm />,
     isPrivate: false,
