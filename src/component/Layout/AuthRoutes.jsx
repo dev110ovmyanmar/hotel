@@ -115,10 +115,12 @@ const ReferralAgent = lazy(
 );
 
 const FacilityList = lazy(() => import("../../pages/Facility/FacilityList"));
-
 const FacilityPackageList = lazy(
   () => import("../../pages/FacilityPackage/FacilityPackageList"),
 );
+const FacilityListPackagesTable = lazy(
+  () => import("../../pages/Facility/FacilityListPackagesTable"),
+);  
 const Staff = lazy(() => import("../../pages/Staffs/StaffsList"));
 const RatePlan = lazy(() => import("../../pages/RatePlan/RatePlanList"));
 
@@ -476,6 +478,11 @@ export const authRoutes = [
       //   // permission: ".list",
       // },
     ],
+  },
+  {
+    key: 25,
+    path: `/facility-management/facilities/:facilityId/packages`,
+    component: <FacilityListPackagesTable />
   },
   {
     key: 13,

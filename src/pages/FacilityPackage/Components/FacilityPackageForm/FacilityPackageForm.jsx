@@ -276,7 +276,7 @@ const FacilityPackageForm = ({
             name="remark"
             rules={[{ required: true, message: "Remark is Required" }]}
           >
-            <Input readOnly={isView} />
+           <Input.TextArea readOnly={isView}/>
           </Form.Item>
         </Form>
       </Drawer>

@@ -5,6 +5,7 @@
 import { getFacilitPackageList } from "../../api/facilityPackageApi";
 import FacilityPackageTable from "./Components/FacilityPackageTable";
 import FacilityPackageForm from "./Components/FacilityPackageForm/FacilityPackageForm";
+import { PERMISSIONS } from "../../variables/permission";
  
  const FacilityPackageList = () => {
    const [keyword, setKeyword] = useState("");
@@ -45,6 +46,7 @@ import FacilityPackageForm from "./Components/FacilityPackageForm/FacilityPackag
            setKeyword={setKeyword}
            addButtonText="Add New Facility Package"
            onAdd={handleAdd}
+           permission={PERMISSIONS.FACILITY_PACKAGE_CREATE}
          />
        </div>
  
