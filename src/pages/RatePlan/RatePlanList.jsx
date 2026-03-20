@@ -2,10 +2,10 @@ import React, { useEffect, useState } from "react";
 import { LIMITS } from "../../variables/constants";
 import useApiQuery from "../../hooks/useApiQuery";
 import ListHeader from "../../component/ListHeader/ListHeader";
-// import { PERMISSIONS } from "../../variables/permission";
 import RatePlanForm from "./Components/RatePlanForms/RatePlanForm";
 import RatePlanTable from "./Components/RatePlanTable";
 import { fetchRatePlan } from "../../api/ratePlanApi";
+import { PERMISSIONS } from "../../variables/permission";
 
 const RatePlanList = () => {
   const [keyword, setKeyword] = useState("");
@@ -51,7 +51,7 @@ const RatePlanList = () => {
           setKeyword={setKeyword}
           addButtonText="Add New Rate Plan"
           onAdd={handleAdd}
-          // permission={PERMISSIONS.ROOM_TYPE_CREATE}
+          permission={PERMISSIONS.RATE_PLAN_CREATE}
         />
       </div>
 
