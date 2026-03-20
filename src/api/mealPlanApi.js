@@ -5,12 +5,7 @@ export const fetchMealPlan = async (params) => {
   return data.response;
 };
 
-export const createMealPlan = async (params) => {
-  const { data } = await apiClient.post("/meal-plan/upsert", params);
-  return data.response;
-};
-
-export const editMealPlan = async (params) => {
+export const upsertMealPlan = async (params) => {
   const { data } = await apiClient.post("/meal-plan/upsert", params);
   return data.response;
 };
