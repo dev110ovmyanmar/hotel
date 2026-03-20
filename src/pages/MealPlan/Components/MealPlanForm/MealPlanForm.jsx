@@ -1,18 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { Form, Input, Button, Drawer, Space, Select } from "antd";
 import Toast from "../../../../component/Toast/Toast";
-import { CloseOutlined } from "@ant-design/icons";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
 import useApiQuery from "../../../../hooks/useApiQuery";
-import { loadState } from "./../../../../utils/Utils";
-import { LOCAL_STORAGE_KEYS } from "./../../../../variables/constants";
 import FormButtons from "./../../../../component/FormButtons/FormButtons";
 import { queryClient } from "./../../../../app/queryClient";
 import {
-  createMealPlan,
-  editMealPlan,
+  upsertMealPlan,
   mealPlanDetails,
-} from "../../../../api/mealPlanFunctionApi";
+} from "../../../../api/mealPlanApi";
+import Status from './../../../../component/Status/Status';
+
 const { TextArea } = Input;
 
 const MeanPlanForm = ({
@@ -33,20 +31,14 @@ const MeanPlanForm = ({
 
   const initData = queryClient.getQueryData(["initData", "authenticated"])?.statuses?.status;
 
-  const createMealPlanFunction = useApiMutation({
-    mutationFn: createMealPlan,
+  const upsertMealPlans = useApiMutation({
+    mutationFn: upsertMealPlan,
     invalidateKeys: [["mealPlans"]],
-    shouldInvalidate : page === 1
-  });
-
-  const editMealPlanFunction = useApiMutation({
-    mutationFn: editMealPlan,
-    invalidateKeys: [["mealPlans"]],
-    
+    shouldInvalidate : isEdit? true : page === 1
   });
 
   const { data, isPending, error } = useApiQuery({
-    fetchQueryName: "mealPlans",
+    fetchQueryName: "meal-plan-details",
     fetchQueryFunction: mealPlanDetails,
     params: { uuid: selectedData?.uuid },
     options: {
@@ -73,7 +65,7 @@ const MeanPlanForm = ({
 
   const onFinish = (values) => {
     if (isAdd) {
-      createMealPlanFunction.mutate(values, {
+      upsertMealPlans.mutate(values, {
         onSuccess: () => {
           setPage(1);
           setDrawerOpen(false);
@@ -89,7 +81,7 @@ const MeanPlanForm = ({
         uuid: selectedData?.uuid,
       };
 
-      editMealPlanFunction.mutate(editValues, {
+      upsertMealPlans.mutate(editValues, {
         onSuccess: () => {
           setDrawerOpen(false);
           Toast.success("Meal Plan Updated Successfully!");
@@ -126,11 +118,7 @@ const MeanPlanForm = ({
             ) : (
               <FormButtons
                 onClick={() => form.submit()}
-                isPending={
-                  isAdd
-                    ? createMealPlanFunction.isPending
-                    : editMealPlanFunction.isPending
-                }
+                isPending={upsertMealPlans?.isPending}
                 mode={mode}
               />
             )}
@@ -151,20 +139,9 @@ const MeanPlanForm = ({
             <Input readOnly={isView} />
           </Form.Item>
 
-          <Form.Item
-            label="Status"
-            name={["status", "uuid"]}
-            rules={[{ required: true, message: "Status  is Required" }]}
-          >
-            <Select
-              options={initData?.map((item) => ({
-                label: item.name,
-                value: item.uuid,
-              }))}
-              open={isView ? false : undefined}
-            ></Select>
-          </Form.Item>
-          
+
+          <Status isView={isView}/>
+
           <Form.Item label="Description" name="description">
             <TextArea></TextArea>
           </Form.Item>
