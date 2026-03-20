@@ -4,10 +4,9 @@ import Toast from "../../../../component/Toast/Toast";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
 import useApiQuery from "../../../../hooks/useApiQuery";
 import {
-  createPolicyFun,
-  editPolicyFun,
-  policyDetailsFun,
-} from "../../../../api/policyFunctionApi";
+  upsertPolicy,
+  policyDetails,
+} from "../../../../api/policyApi";
 import FormButtons from "../../../../component/FormButtons/FormButtons";
 import { loadState } from "./../../../../utils/Utils";
 import { LOCAL_STORAGE_KEYS } from "./../../../../variables/constants";
@@ -50,21 +49,16 @@ const PolicyForm = ({
     setAddPolicyRuleDrawer(true)
   };
 
-  const createPolicyFunction = useApiMutation({
-    mutationFn: createPolicyFun,
+  const upsertPolicys = useApiMutation({
+    mutationFn: upsertPolicy,
     invalidateKeys: [["policies"]],
                                       // false             false
-    shouldInvalidate: addPolicyRule ? !addPolicyRule : page === 1,
-  });
-
-  const editPolicyFunction = useApiMutation({
-    mutationFn: editPolicyFun,
-    invalidateKeys: [["policies"]],
+    shouldInvalidate: addPolicyRule ? !addPolicyRule : isEdit? true : page === 1,
   });
 
   const { data, isPending, error } = useApiQuery({
     fetchQueryName: "policy-detail",
-    fetchQueryFunction: policyDetailsFun,
+    fetchQueryFunction: policyDetails,
     params: { uuid: selectedData?.uuid },
     options: {
       enabled: !!selectedData?.uuid,
@@ -95,7 +89,7 @@ const PolicyForm = ({
         },
       };
 
-      createPolicyFunction.mutate(modifiedValue, {
+      upsertPolicys.mutate(modifiedValue, {
         onSuccess: () => {
           setPage(1);
           setDrawerOpen(false);
@@ -114,7 +108,7 @@ const PolicyForm = ({
         uuid: selectedData?.uuid,
       };
 
-      editPolicyFunction.mutate(editValues, {
+      upsertPolicys.mutate(editValues, {
         onSuccess: () => {
           setDrawerOpen(false);
           Toast.success("Policy Updated Successfully!");
@@ -231,7 +225,7 @@ const PolicyForm = ({
     };
 
     if (addPolicyRule) {
-      createPolicyFunction.mutate(modifiedPolicyRule, {
+      upsertPolicys.mutate(modifiedPolicyRule, {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: ["policy-detail", { uuid: selectedData?.uuid }] });
           Toast.success("Policy Rule Created Successfully");
@@ -241,7 +235,7 @@ const PolicyForm = ({
     };
 
     if (editPolicyRule) {
-      editPolicyFunction.mutate(modifiedPolicyRule, {
+      upsertPolicys.mutate(modifiedPolicyRule, {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: ["policy-detail", { uuid: selectedData?.uuid }] });
           Toast.success("Policy Rule Updated Successfully");
@@ -279,11 +273,7 @@ const PolicyForm = ({
             ) : (
               <FormButtons
                 onClick={() => form.submit()}
-                isPending={
-                  isAdd
-                    ? createPolicyFunction.isPending
-                    : editPolicyFunction.isPending
-                }
+                isPending={upsertPolicys?.isPending}
                 mode={mode}
               />
             )}

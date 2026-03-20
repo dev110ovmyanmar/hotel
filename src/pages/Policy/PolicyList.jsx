@@ -5,7 +5,7 @@ import FilterBar from "../../component/FilterBar/FilterBar";
 import useApiQuery from "../../hooks/useApiQuery";
 import PolicyTable from "./Components/PolicyTable";
 import PolicyForm from "./Components/PolicyForm/PolicyForm";
-import { policyListFun } from "../../api/policyFunctionApi";
+import { fetchPolicy } from "../../api/policyApi";
 import ListHeader from "../../component/ListHeader/ListHeader";
 
 // PolicyList
@@ -22,7 +22,7 @@ const PolicyList = () => {
 
   const { data, isLoading, error } = useApiQuery({
     fetchQueryName: "policies",
-    fetchQueryFunction: policyListFun,
+    fetchQueryFunction: fetchPolicy,
     params: {
       pagination: {
         page: page,
@@ -74,7 +74,7 @@ const PolicyList = () => {
         mode={mode}
         selectedData={selectedData}
         setSelectedData={setSelectedData}
-        width={500}
+        
 
       />
     </div>
