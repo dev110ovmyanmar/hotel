@@ -141,7 +141,7 @@ const AmenitiesForm = ({
           >
             <Input readOnly={isView} />
           </Form.Item>
-          
+
           <Form.Item
             label="Code"
             name="code"
@@ -151,18 +151,26 @@ const AmenitiesForm = ({
           </Form.Item>
 
           <Row gutter={16}>
-            <Col span={6}>
+            <Col span={12}>
               <Form.Item label="Is Free" name="isFree" valuePropName="checked">
-                <Switch disabled={isView} />
+                <Switch
+                  checkedChildren="True"
+                  unCheckedChildren="False"
+                  disabled={isView} />
               </Form.Item>
             </Col>
-            <Col span={6}>
+
+            <Col span={12}>
               <Form.Item
                 label="Visibility"
                 name="visibility"
                 valuePropName="checked"
               >
-                <Switch disabled={isView} />
+                <Switch
+                  disabled={isView}
+                  checkedChildren="True"
+                  unCheckedChildren="False"
+                />
               </Form.Item>
             </Col>
           </Row>
