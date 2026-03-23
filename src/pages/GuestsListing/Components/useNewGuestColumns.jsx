@@ -1,9 +1,9 @@
 import { Button, Dropdown, Typography } from "antd";
-import { EditOutlined, EyeOutlined, MoreOutlined } from "@ant-design/icons";
+import { EditOutlined, EyeOutlined, FileTextOutlined, MoreOutlined } from "@ant-design/icons";
 
 const { Text } = Typography;
 
-export default function useGuestColumns(onEdit, onView) {
+export default function useGuestColumns(onEdit, onView, onViewNotes) {
   return [
     {
       title: "ID",
@@ -58,10 +58,12 @@ export default function useGuestColumns(onEdit, onView) {
             onClick: ({ key }) => {
               if (key === "1") onView(record);
               if (key === "2") onEdit(record);
+              if (key === "3") onViewNotes(record);
             },
             items: [
               { key: "1", label: "View", icon: <EyeOutlined /> },
               { key: "2", label: "Edit", icon: <EditOutlined /> },
+              { key: "3", label: "Guest Notes", icon: <FileTextOutlined /> },
             ],
           }}
           trigger={["click"]}

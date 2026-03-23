@@ -7,13 +7,14 @@ const GuestTable = ({
   loading,
   onEdit,
   onView,
+  onViewNotes,
   page,
   perPage,
   changePage,
   changePerPage,
   total,
 }) => {
-  const columns = useGuestColumns(onEdit, onView);
+  const columns = useGuestColumns(onEdit, onView, onViewNotes);
 
   return (
     <div id="scrollId" className="w-full h-[63vh]">
@@ -24,7 +25,7 @@ const GuestTable = ({
         dataSource={dataSource}
         rowKey="uuid"
         className="mx-5"
-        pagination={{ 
+        pagination={{
           current: page,
           pageSize: perPage,
           total: total,
@@ -33,7 +34,7 @@ const GuestTable = ({
             changePerPage(perPage);
           },
           showSizeChanger: true,
-       }}
+        }}
       />
     </div>
   );
