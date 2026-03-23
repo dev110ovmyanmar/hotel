@@ -4,12 +4,17 @@ import { MoreOutlined } from '@ant-design/icons';
 import { EditOutlined } from '@ant-design/icons';
 import { EyeOutlined } from '@ant-design/icons';
 import PaymentForm from './PaymentForm/PaymentForm';
+import ColorStatusTag from './../../../component/ColorStatusTag/ColorStatusTag';
+import { PERMISSIONS } from './../../../variables/permission';
+import usePermission from './../../../hooks/usePermission';
 
 // PaymentTable
 const PaymentTable = ({ data, page, perPage, total, changePage, changePerPage }) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mode, setMode] = useState("");
   const [selectedData, setSelectedData] = useState({});
+
+  const {hasPermission} = usePermission();
 
   const columns = [
     {
@@ -45,55 +50,52 @@ const PaymentTable = ({ data, page, perPage, total, changePage, changePerPage })
       title: 'Status',
       dataIndex: 'status',
       key: 'status',
-      render: status => 
-      <Tag 
-        className = {status?.name == "Active" ? 
-              "!text-green-400" : 
-              "!text-red-400"}>
-        {status?.name?.toUpperCase()}
-      </Tag>
+      render: (text) => <ColorStatusTag status={text} />
     },
     {
       title: "Action",
       render: (_, record) => {
         const smallStyle = { fontSize: "12px" };
 
-        const items = [
+        const actions = [
           {
-            key: "1",
-            label: (
-              <Space
-                size={4}
-                style={smallStyle}
-                onClick={() => {
-                  setDrawerOpen(true);
-                  setMode("view");
-                  setSelectedData(record);
-                }}
-              >
-                <EyeOutlined style={{ fontSize: "12px" }} />
-                <span style={{ fontSize: "14px" }}>View</span>
-              </Space>
-            ),
+            key: "view",
+            label: "View",
+            icon: <EyeOutlined style={{ fontSize: "12px" }} />,
+            permission: PERMISSIONS.PAYMENT_VIEW,
+            onClick: () => {
+              setDrawerOpen(true);
+              setMode("view");
+              setSelectedData(record);
+            },
           },
           {
-            key: "2",
-            label: (
-              <Space
-                size={4}
-                style={smallStyle}
-                onClick={() => {
-                  setDrawerOpen(true);
-                  setMode("edit");
-                  setSelectedData(record);
-                }}
-              >
-                <EditOutlined style={{ fontSize: "12px" }} />
-                <span style={{ fontSize: "14px" }}>Edit</span>
-              </Space>
-            ),
-          },
+            key: "edit",
+            label: "Edit",
+            icon: <EditOutlined style={{ fontSize: "12px" }} />,
+            permission: PERMISSIONS.PAYMENT_EDIT,
+            onClick: () => {
+              setDrawerOpen(true);
+              setMode("edit");
+              setSelectedData(record);
+            },
+          }
         ];
+
+        const items = actions
+          .filter(
+            (action) =>
+              (!action.permission || hasPermission(action.permission)) && !action.hidden,
+          )
+          .map((action) => ({
+            key: action.key,
+            label: (
+              <Space size={4} style={smallStyle} onClick={action.onClick}>
+                {action.icon}
+                <span style={{ fontSize: "14px" }}>{action.label}</span>
+              </Space>
+            ),
+          }));
 
         return (
           <Dropdown menu={{ items }} trigger={["click"]}>
@@ -131,7 +133,6 @@ const PaymentTable = ({ data, page, perPage, total, changePage, changePerPage })
         setDrawerOpen={setDrawerOpen}
         selectedData={selectedData}
         setSelectedData={setSelectedData}
-        width={500}
         page={page}
       />
     </div>
