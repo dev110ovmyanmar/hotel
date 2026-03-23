@@ -10,15 +10,7 @@ export const fetchPayment = async (params) => {
     return data.response;
 };
 
-export const createPayment = async (params) => {
-    const {data} = await apiClient.post(
-        "/payment/upsert",
-        params
-    );
-    return data.response;
-};
-
-export const editPayment = async (params)=>{
+export const upsertPayment = async (params) => {
     const {data} = await apiClient.post(
         "/payment/upsert",
         params

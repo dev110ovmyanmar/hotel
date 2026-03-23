@@ -15,6 +15,9 @@ import {
 } from "../../../../api/partnerApi";
 import FormButtons from "../../../../component/FormButtons/FormButtons";
 import { queryClient } from './../../../../app/queryClient';
+import Status from './../../../../component/Status/Status';
+
+const { TextArea } = Input;
 
 const ReferralForm = ({
   mode,
@@ -39,21 +42,21 @@ const ReferralForm = ({
   const upsertPartners = useApiMutation({
     mutationFn: upsertPartner,
     invalidateKeys: [["referral-agents"]],
-    shouldInvalidate: isEdit? true :page === 1
+    shouldInvalidate: isEdit ? true : page === 1
 
   });
 
   const { data, isPending, error } = useApiQuery({
     fetchQueryName: "referral-agents-details",
     fetchQueryFunction: partnerDetails,
-    params: { 
+    params: {
       uuid: selectedData?.uuid,
       partnerType: "Referral Agent"
     },
     options: {
       enabled: !!selectedData?.uuid,
     },
-    
+
   });
 
   useEffect(() => {
@@ -129,7 +132,7 @@ const ReferralForm = ({
             ) : (
               <FormButtons
                 onClick={() => form.submit()}
-                isPending={upsertPartners.isPending }
+                isPending={upsertPartners.isPending}
                 mode={mode}
               />
             )}
@@ -155,13 +158,7 @@ const ReferralForm = ({
           <Form.Item
             label="Card No"
             name="cardNo"
-          >
-            <Input readOnly={isView} />
-          </Form.Item>
-
-          <Form.Item
-            label="Contact Person"
-            name="contactPerson"
+            rules={[{ required: true, message: "Card No is Required" }]}
           >
             <Input readOnly={isView} />
           </Form.Item>
@@ -183,14 +180,6 @@ const ReferralForm = ({
           </Form.Item>
 
           <Form.Item
-            label="Address"
-            name="address"
-          >
-            <Input readOnly={isView} />
-          </Form.Item>
-
-
-          <Form.Item
             label="Charge Type"
             name={["chargeType", "uuid"]}
             rules={[{ required: true, message: "Charge Type is Required" }]}
@@ -204,7 +193,7 @@ const ReferralForm = ({
                   }
                 ))
               }
-              open = {isView? false: undefined}
+              open={isView ? false : undefined}
             ></Select>
           </Form.Item>
 
@@ -213,33 +202,24 @@ const ReferralForm = ({
             name="chargeValue"
             rules={[{ required: true, message: "Charge Value is Required" }]}
           >
-            <Input readOnly={isView}/>
+            <Input readOnly={isView} />
+          </Form.Item>
+
+          <Form.Item
+            label="Address"
+            name="address"
+          >
+            <TextArea readOnly={isView} />
           </Form.Item>
 
           <Form.Item
             label="Remark"
             name="remark"
           >
-            <Input readOnly={isView}/>
+            <TextArea readOnly={isView} />
           </Form.Item>
 
-          <Form.Item
-            label="Status"
-            name={["status", "uuid"]}
-            rules={[{ required: true, message: "Status is Required" }]}
-          >
-            <Select
-              options={
-                status?.map(item => (
-                  {
-                    label: item.name,
-                    value: item.uuid
-                  }
-                ))
-              }
-              open = {isView? false: undefined}
-            ></Select>
-          </Form.Item>
+          <Status/>
         </Form>
       </Drawer>
     </div>

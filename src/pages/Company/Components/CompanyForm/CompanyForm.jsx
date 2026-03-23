@@ -15,6 +15,9 @@ import {
 } from "../../../../api/partnerApi";
 import FormButtons from "../../../../component/FormButtons/FormButtons";
 import { queryClient } from './../../../../app/queryClient';
+import Status from './../../../../component/Status/Status';
+
+const {TextArea} = Input;
 
 const CompanyForm = ({
   mode,
@@ -153,16 +156,9 @@ const CompanyForm = ({
           </Form.Item>
 
           <Form.Item
-            label="Card No"
-            name="cardNo"
-          >
-            <Input readOnly={isView} />
-          </Form.Item>
-
-          <Form.Item
-            label="Contact Person"
+            label="Contact Person Name"
             name="contactPerson"
-            rules={[{ required: true, message: "Contact Person is Required" }]}
+            rules={[{ required: true, message: "Contact Person Name is Required" }]}
           >
             <Input readOnly={isView} />
           </Form.Item>
@@ -170,6 +166,7 @@ const CompanyForm = ({
           <Form.Item
             label="Email"
             name="email"
+            rules={[{ required: true, message: "Email is Required" }]}
           >
             <Input readOnly={isView} />
           </Form.Item>
@@ -177,18 +174,10 @@ const CompanyForm = ({
           <Form.Item
             label="Phone"
             name="phone"
+            rules={[{ required: true, message: "Phone is Required" }]}
           >
             <Input readOnly={isView} />
           </Form.Item>
-
-          <Form.Item
-            label="Address"
-            name="address"
-            rules={[{ required: true, message: "Address is Required" }]}
-          >
-            <Input readOnly={isView} />
-          </Form.Item>
-
 
           <Form.Item
             label="Charge Type"
@@ -217,29 +206,21 @@ const CompanyForm = ({
           </Form.Item>
 
           <Form.Item
-            label="Remark"
-            name="remark"
+            label="Address"
+            name="address"
+            rules={[{ required: true, message: "Address is Required" }]}
           >
-            <Input readOnly={isView}/>
+            <TextArea readOnly={isView} />
           </Form.Item>
 
           <Form.Item
-            label="Status"
-            name={["status", "uuid"]}
-            rules={[{ required: true, message: "Status is Required" }]}
+            label="Remark"
+            name="remark"
           >
-            <Select
-              options={
-                status?.map(item => (
-                  {
-                    label: item.name,
-                    value: item.uuid
-                  }
-                ))
-              }
-              open = {isView? false: undefined}
-            ></Select>
+            <TextArea readOnly={isView}/>
           </Form.Item>
+
+          <Status/>
         </Form>
       </Drawer>
     </div>
