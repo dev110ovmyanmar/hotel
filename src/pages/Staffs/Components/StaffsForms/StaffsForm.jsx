@@ -334,24 +334,16 @@ const StaffsForm = ({
             </Row>
           </Form.Item>
 
-          <Form.Item label="Email" name="email">
-            <Input placeholder="Enter email" readOnly={isView} />
+          <Form.Item label="Passport" name="passport">
+            <Input placeholder="Enter passport" readOnly={isView} />
           </Form.Item>
 
           <Form.Item label="Phone" name="phone">
             <Input placeholder="Enter phone" readOnly={isView} />
           </Form.Item>
 
-          <Form.Item label="Passport" name="passport">
-            <Input placeholder="Enter passport" readOnly={isView} />
-          </Form.Item>
-
-          <Form.Item
-            label="Joined Date"
-            name="joinedAt"
-            rules={[{ required: true, message: "Please select Date" }]}
-          >
-            <DatePicker className="w-full" disabled={isView} />
+          <Form.Item label="Email" name="email">
+            <Input placeholder="Enter email" readOnly={isView} />
           </Form.Item>
 
           <Form.Item
@@ -378,6 +370,14 @@ const StaffsForm = ({
                 placeholder="Select Gender"
               />
             )}
+          </Form.Item>
+
+          <Form.Item
+            label="Joined Date"
+            name="joinedAt"
+            rules={[{ required: true, message: "Please select Date" }]}
+          >
+            <DatePicker className="w-full" disabled={isView} />
           </Form.Item>
         </Form>
       </Drawer>

@@ -20,15 +20,9 @@ const DepartmentsTable = ({
   const [selectedData, setSelectedData] = useState(null);
 
   const columns = [
-    { title: "ID", dataIndex: "id", key: "id", width: 70 },
+    { title: "ID", dataIndex: "id", key: "id" },
     { title: "Name", dataIndex: "name", key: "name" },
     { title: "Code", dataIndex: "code", key: "code" },
-    {
-      title: "Description",
-      dataIndex: "description",
-      key: "description",
-      render: (text) => text || "-",
-    },
     {
       title: "Status",
       dataIndex: "status",
