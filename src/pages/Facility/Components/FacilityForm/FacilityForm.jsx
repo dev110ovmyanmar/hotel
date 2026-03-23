@@ -213,7 +213,7 @@ const FacilityForm = ({
           </Form.Item>
 
           <Form.Item label="Description" name="description">
-            <Input.TextArea />
+            <Input.TextArea readOnly={isView}/>
           </Form.Item>
         </Form>
       </Drawer>

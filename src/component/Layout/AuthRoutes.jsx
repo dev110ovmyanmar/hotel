@@ -115,16 +115,20 @@ const ReferralAgent = lazy(
 );
 
 const FacilityList = lazy(() => import("../../pages/Facility/FacilityList"));
-
 const FacilityPackageList = lazy(
   () => import("../../pages/FacilityPackage/FacilityPackageList"),
 );
+const FacilityListPackagesTable = lazy(
+  () => import("../../pages/Facility/FacilityListPackagesTable"),
+);  
 const Staff = lazy(() => import("../../pages/Staffs/StaffsList"));
 const RatePlan = lazy(() => import("../../pages/RatePlan/RatePlanList"));
 
 const GuestListing = lazy(
   () => import("../../pages/GuestsListing/NewGuestListing"),
 );
+
+const GuestNotesListing = lazy(() => import("../../pages/GuestNotes/GuestNotesListing"))
 
 export const authRoutes = [
   {
@@ -485,6 +489,11 @@ export const authRoutes = [
     ],
   },
   {
+    key: 25,
+    path: `/facility-management/facilities/:facilityId/packages`,
+    component: <FacilityListPackagesTable />
+  },
+  {
     key: 13,
     label: "Services Management",
     isPrivate: false,
@@ -714,27 +723,36 @@ export const authRoutes = [
   },
   {
     key: 20,
-    path: "/guest-listing/",
+    path: "/guest-list/",
     label: "Guests",
     component: <GuestListing />,
     icon: <UsergroupAddOutlined style={{ fontSize: "20px" }} />,
     isPrivate: false,
-    // permission: guest.list,
+    permission: PERMISSIONS.GUEST_LIST,
   },
   {
     key: 21,
+    path: "/guest-note-list/",
+    label: "Guest Notes",
+    component: <GuestNotesListing />,
+    icon: <UsergroupAddOutlined style={{ fontSize: "20px" }} />,
+    isPrivate: false, 
+    permission: PERMISSIONS.GUEST_NOTE_LIST,
+  },
+  {
+    key: 22,
     path: "/change-password/",
     component: <ChangePassword />,
     isPrivate: false,
   },
   {
-    key: 22,
+    key: 23,
     path: "/profile/",
     component: <Profile />,
     isPrivate: false,
   },
   {
-    key: 23,
+    key: 24,
     path: "/reservation-form/",
     component: <ReservationForm />,
     isPrivate: false,

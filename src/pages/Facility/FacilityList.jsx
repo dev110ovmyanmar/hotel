@@ -5,6 +5,7 @@ import ListHeader from "../../component/ListHeader/ListHeader";
 import FacilityForm from "./Components/FacilityForm/FacilityForm";
 import FacilityTable from "./Components/FacilityTable";
 import { getFacilitList } from "../../api/facilityApi";
+import { PERMISSIONS } from "../../variables/permission";
 
 const FacilityList = () => {
   const [keyword, setKeyword] = useState("");
@@ -45,6 +46,7 @@ const FacilityList = () => {
           setKeyword={setKeyword}
           addButtonText="Add New Facility"
           onAdd={handleAdd}
+          permission={PERMISSIONS.FACILITY_CREATE}
         />
       </div>
 
