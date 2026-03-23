@@ -120,7 +120,7 @@ const FacilityPackageList = lazy(
 );
 const FacilityListPackagesTable = lazy(
   () => import("../../pages/Facility/FacilityListPackagesTable"),
-);  
+);
 const Staff = lazy(() => import("../../pages/Staffs/StaffsList"));
 const RatePlan = lazy(() => import("../../pages/RatePlan/RatePlanList"));
 
@@ -128,7 +128,13 @@ const GuestListing = lazy(
   () => import("../../pages/GuestsListing/NewGuestListing"),
 );
 
-const GuestNotesListing = lazy(() => import("../../pages/GuestNotes/GuestNotesListing"))
+const GuestNotesListing = lazy(
+  () => import("../../pages/GuestNotes/GuestNotesListing"),
+);
+
+const SeasonalRate = lazy(
+  () => import("../../pages/SeasonalRate/SeasonalRateList"),
+);
 
 export const authRoutes = [
   {
@@ -200,6 +206,15 @@ export const authRoutes = [
         component: <MeanPlanList />,
         permission: PERMISSIONS.MEAL_PLAN_LIST,
       },
+      {
+        key: 4.5,
+        label: "Seasonal Rate",
+        path: "/rates-availability/seasonal-rate",
+        icon: <DatabaseOutlined style={{ fontSize: "20px" }} />,
+        isPrivate: true,
+        component: <SeasonalRate />,
+        permission: PERMISSIONS.SEASONAL_RATE_LIST,
+      },
     ],
   },
 
@@ -215,7 +230,6 @@ export const authRoutes = [
         label: "Rooms",
         icon: <ApartmentOutlined style={{ fontSize: "20px" }} />,
         component: <Room />,
-        permission: "room.list",
         permission: PERMISSIONS.ROOM_LIST,
       },
       {
@@ -491,7 +505,7 @@ export const authRoutes = [
   {
     key: 25,
     path: `/facility-management/facilities/:facilityId/packages`,
-    component: <FacilityListPackagesTable />
+    component: <FacilityListPackagesTable />,
   },
   {
     key: 13,
@@ -736,7 +750,7 @@ export const authRoutes = [
     label: "Guest Notes",
     component: <GuestNotesListing />,
     icon: <UsergroupAddOutlined style={{ fontSize: "20px" }} />,
-    isPrivate: false, 
+    isPrivate: false,
     permission: PERMISSIONS.GUEST_NOTE_LIST,
   },
   {

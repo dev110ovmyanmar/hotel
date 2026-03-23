@@ -352,10 +352,6 @@ const RatePlanForm = ({
             <Checkbox.Group options={channelOptions} disabled={isView} />
           </Form.Item>
 
-          <Form.Item label="Public" name="isPublic" valuePropName="checked">
-            <Switch checkedChildren="Yes" unCheckedChildren="No"   disabled={isView}/>
-          </Form.Item>
-
           <Form.Item
             label="Status"
             name="status"
