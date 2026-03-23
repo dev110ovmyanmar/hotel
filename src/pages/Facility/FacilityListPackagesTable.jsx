@@ -1,14 +1,16 @@
-import { Dropdown, Space, Table, Tag, Button } from "antd";
+import { Dropdown, Space, Table } from "antd";
 import { useState } from "react";
 import { MoreOutlined } from "@ant-design/icons";
 import { EyeOutlined } from "@ant-design/icons";
 import { EditOutlined } from "@ant-design/icons";
-import ServiceForm from "./ServiceForm/ServiceForm";
-import { PERMISSIONS } from "../../../variables/permission";
-import usePermission from "../../../hooks/usePermission";
+import { useLocation, useParams } from "react-router-dom";
+import useApiQuery from "../../hooks/useApiQuery";
+import { getFacilityDetails } from "../../api/facilityApi";
+import { PERMISSIONS } from "../../variables/permission";
+import usePermission from "../../hooks/usePermission";
+import FacilityListPackageForm from "./Components/FacilityForm/FacilityListPackageForm";
 
-const ServiceTable = ({
-  data,
+const FacilityListPackagesTable = ({
   page,
   setPage,
   perPage,
@@ -17,10 +19,20 @@ const ServiceTable = ({
   changePerPage,
 }) => {
   const { hasPermission } = usePermission();
+  const { facilityId } = useParams();
 
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mode, setMode] = useState(null);
   const [selectedData, setSelectedData] = useState({});
+
+  const { data, isLoading, error } = useApiQuery({
+    fetchQueryName: "facility-details",
+    fetchQueryFunction: getFacilityDetails,
+    params: { uuid: facilityId },
+    options: {
+      enabled: !!facilityId,
+    },
+  });
 
   const columns = [
     {
@@ -33,35 +45,40 @@ const ServiceTable = ({
       dataIndex: "name",
       key: "name",
     },
+    // {
+    //   title: "Facility",
+    //   dataIndex: ["facility", "name"],
+    //   key: "facility",
+    // },
+    // {
+    //   title: "Pricing Type",
+    //   dataIndex: ["pricingType", "name"],
+    //   key: "pricingType",
+    // },
     {
-      title: "Price (MMK)",
+      title: "Base Price",
       dataIndex: "basePrice",
       key: "basePrice",
     },
     {
-      title: "Property",
-      dataIndex: ["property", "name"],
-      key: "property",
+      title: "Included Hours",
+      dataIndex: "includedHours",
+      key: "includedHours",
     },
     {
-      title: "Billing Type",
-      dataIndex: ["billingType", "name"],
-      key: "billingType",
+      title: "Included Pax",
+      dataIndex: "includedPax",
+      key: "includedPax",
     },
     {
-      title: "Service Type",
-      dataIndex: ["serviceType", "name"],
-      key: "serviceType",
+      title: "Extra Hour Price",
+      dataIndex: "extraHourPrice",
+      key: "extraHourPrice",
     },
     {
-      title: "Status",
-      dataIndex: ["status", "name"],
-      key: "status",
-      render: (_, record) => (
-        <Tag color={record?.status?.name === "Active" ? "green" : "red"}>
-          {record?.status?.name.toUpperCase()}
-        </Tag>
-      ),
+      title: "Extra Pax Price",
+      dataIndex: "extraPaxPrice",
+      key: "extraPaxPrice",
     },
     {
       title: "Action",
@@ -73,24 +90,24 @@ const ServiceTable = ({
             key: "view",
             label: "View",
             icon: <EyeOutlined style={{ fontSize: "12px" }} />,
-            permission: PERMISSIONS.SERVICE_VIEW,
+            permission: PERMISSIONS.FACILITY_PACKAGE_VIEW,
             onClick: () => {
               setDrawerOpen(true);
               setMode("view");
               setSelectedData(record);
             },
           },
-          {
-            key: "edit",
-            label: "Edit",
-            icon: <EditOutlined style={{ fontSize: "12px" }} />,
-            permission: PERMISSIONS.SERVICE_EDIT,
-            onClick: () => {
-              setDrawerOpen(true);
-              setMode("edit");
-              setSelectedData(record);
-            },
-          },
+          //   {
+          //     key: "edit",
+          //     label: "Edit",
+          //     icon: <EditOutlined style={{ fontSize: "12px" }} />,
+          //     // permission: PERMISSIONS.FACILITY_PACKAGE_EDIT,
+          //     onClick: () => {
+          //       setDrawerOpen(true);
+          //       setMode("edit");
+          //       setSelectedData(record);
+          //     },
+          //   },
         ];
 
         // Filter actions by permission
@@ -123,7 +140,7 @@ const ServiceTable = ({
         tableLayout="fixed"
         scroll={{ x: 1000 }}
         columns={columns}
-        dataSource={data}
+        dataSource={data?.facilityPackages}
         rowKey="uuid"
         pagination={{
           current: page,
@@ -137,7 +154,7 @@ const ServiceTable = ({
         }}
       />
 
-      <ServiceForm
+      <FacilityListPackageForm
         page={page}
         setPage={setPage}
         mode={mode}
@@ -146,10 +163,9 @@ const ServiceTable = ({
         setDrawerOpen={setDrawerOpen}
         selectedData={selectedData}
         setSelectedData={setSelectedData}
-        width={500}
       />
     </div>
   );
 };
 
-export default ServiceTable;
+export default FacilityListPackagesTable;

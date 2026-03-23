@@ -5,8 +5,8 @@ import { saveState } from "../../../utils";
 import { LOCAL_STORAGE_KEYS } from "../../../variables/constants";
 import { useApiMutation } from "../../../hooks/useApiMutation";
 import { login } from "../../../api/authApi";
-import signin from "../../../assets/images/signin.png";
-import hotellogotext from "../../../assets/images/hotellogotext.png";
+import signIn from "../../../assets/images/signIn.jpg";
+import whiteLogo from "../../../assets/images/whiteLogo.png";
 
 import { queryClient } from "../../../app/queryClient";
 import { fetchInitData } from "../../../api/initDataApi";
@@ -25,7 +25,7 @@ export default function SignIn() {
         try {
           saveState(LOCAL_STORAGE_KEYS.sessionId, data.XSessionToken);
           saveState(LOCAL_STORAGE_KEYS.adminRole, data.role.name);
-          saveState(LOCAL_STORAGE_KEYS.loginAdminDetails,data);
+          saveState(LOCAL_STORAGE_KEYS.loginAdminDetails, data);
 
           // Fetch the AUTHENTICATED version of initData
           const initData = await queryClient.fetchQuery({
@@ -37,7 +37,10 @@ export default function SignIn() {
           });
 
           if (initData) {
-            const permissions = saveState(LOCAL_STORAGE_KEYS.initPermissions,initData.permissions);
+            const permissions = saveState(
+              LOCAL_STORAGE_KEYS.initPermissions,
+              initData.permissions,
+            );
             dispatch(setUserData({ permissions }));
 
             // Clean up any 'public' data leftover in the cache
@@ -51,26 +54,26 @@ export default function SignIn() {
     },
   });
 
-   useEffect(() => {
-        const fetchIPAddress = async () => {
-          try {
-            // don't allow cross-origin requests
-            // const response = await fetch("https://ipapi.co/json/");
-    
-            //allow cross-origin requests.
-            const response = await fetch("https://api.ipify.org/?format=json");
-            if (!response.ok) {
-              throw new Error("Network response was not ok");
-            }
-            const data = await response.json(); // Parse JSON from the response
-            setIpAddress(data.ip); // Update state with the IP address
-          } catch (error) {
-            console.error("Error fetching IP address:", error);
-          }
-        };
-    
-        fetchIPAddress(); // Call the function
-      }, []);
+  useEffect(() => {
+    const fetchIPAddress = async () => {
+      try {
+        // don't allow cross-origin requests
+        // const response = await fetch("https://ipapi.co/json/");
+
+        //allow cross-origin requests.
+        const response = await fetch("https://api.ipify.org/?format=json");
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const data = await response.json(); // Parse JSON from the response
+        setIpAddress(data.ip); // Update state with the IP address
+      } catch (error) {
+        console.error("Error fetching IP address:", error);
+      }
+    };
+
+    fetchIPAddress(); // Call the function
+  }, []);
 
   const handleLogin = (values) => {
     mutate({
@@ -80,64 +83,66 @@ export default function SignIn() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="w-full max-w-7xl flex flex-col md:flex-row items-center justify-between">
-        <div className="w-full md:w-1/2 flex justify-center mb-10 md:mb-0">
-          <img
-            src={signin}
-            alt="Sign in"
-            className="w-full max-w-md md:max-w-2xl lg:max-w-4xl h-160 object-cover"
-          />
-        </div>
-
-        <div className="w-full md:w-1/2 flex justify-center bg-white">
-          <div className="w-full max-w-md px-6 py-6">
-            <div className="text-center mb-6">
-              <div className="flex justify-center">
-                <img src={hotellogotext} alt="logo" className="max-w-[200px]" />
-              </div>
-              <p className="text-gray-500 font-bold tracking-wide text-sm mt-2">
-                Property Management System
-              </p>
-            </div>
-
-            <h2 className="text-center text-lg text-gray-600 font-semibold mb-6">
-              Login
-            </h2>
-
-            <Form layout="vertical" onFinish={handleLogin}>
-              <Form.Item
-                label="Email"
-                name="email"
-                rules={[{ required: true, message: "Email is required" }]}
-              >
-                <Input size="large" placeholder="Enter your email" />
-              </Form.Item>
-
-              <Form.Item
-                label="Password"
-                name="password"
-                rules={[{ required: true, message: "Password is required" }]}
-              >
-                <Input.Password size="large" placeholder="Enter password" />
-              </Form.Item>
-
-              <Button
-                type="primary"
-                htmlType="submit"
-                block
-                loading={isPending}
-                size="large"
-              >
-                Login
-              </Button>
-            </Form>
-
-            <p className="text-center text-gray-400 text-sm mt-8">
-              © Oriental Vigour 2026. All rights reserved.
-            </p>
+    <div
+      className="min-h-screen flex items-center justify-center bg-cover bg-center"
+      style={{ backgroundImage: `url(${signIn})` }}
+    >
+      <div
+        className="w-full max-w-md mx-auto backdrop-blur-xl rounded-xl shadow-2xl px-8 py-10 border"
+        style={{ borderColor: "#fff" }}
+      >
+        <div className="text-center mb-6">
+          <div className="flex justify-center">
+            <img src={whiteLogo} alt="logo" className="max-w-[200px]" />
           </div>
+          <p className="text-amber-50/100 font-medium tracking-widest text-base mt-6">
+            Property Management System
+          </p>
         </div>
+        <h2 className="text-center text-amber-50/90 text-xl tracking-wide font-medium mb-6">
+          Login
+        </h2>
+
+        <Form layout="vertical" onFinish={handleLogin}>
+          <Form.Item
+            label={<span style={{ color: "#ffffff" }}>Email</span>}
+            name="email"
+            rules={[{ required: true, message: "Email is required" }]}
+            className="text-amber-50"
+          >
+            <Input
+              size="large"
+              placeholder="example123@gmail.com"
+              className="!bg-white/10 !text-amber-50 !rounded-md placeholder:!text-gray-300"
+            />
+          </Form.Item>
+
+          <Form.Item
+            label={<span style={{ color: "#ffffff" }}>Password</span>}
+            name="password"
+            rules={[{ required: true, message: "Password is required" }]}
+          >
+            <Input.Password
+              size="large"
+              placeholder=". . . . . . "
+              className="!bg-white/10 !text-amber-50 !rounded-md font-semibold "
+            />
+          </Form.Item>
+
+          <Button
+            type="primary"
+            htmlType="submit"
+            block
+            loading={isPending}
+            size="large"
+            className="!rounded-md mt-5"
+          >
+            Login
+          </Button>
+        </Form>
+        <p className="text-center text-gray-300 text-sm mt-8">
+          © Oriental Vigour 2026. All rights reserved.
+        </p>
       </div>
     </div>
   );

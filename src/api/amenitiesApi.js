@@ -1,6 +1,6 @@
 import { apiClient } from "./apiClient"
 
-export const amenitiesListFun = async (params) => {
+export const fetchAmenities = async (params) => {
     const {data} = await apiClient.get(
         `/amenities`,
         {params}
@@ -8,7 +8,7 @@ export const amenitiesListFun = async (params) => {
     return data.response;
 };
 
-export const createAmenitiesFun = async (params) => {
+export const upsertAmenity = async (params) => {
     const {data} = await apiClient.post(
         `/amenity/upsert`,
         params
@@ -16,20 +16,11 @@ export const createAmenitiesFun = async (params) => {
     return data.response;
 }
 
-export const editAmenitiesFun = async (params) => {
-    const {data} = await apiClient.post(
-        `/amenity/upsert`,
-        params
-    );
-    return data.response;
-}
-
-export const amenitiesDetailsFun = async (params) => {
+export const amenitiesDetails = async (params) => {
     const {data} = await apiClient.get(
         `/amenity`,
         {params}
     );
 
-    console.log(data.response,"amenitiesDetailsFun")
     return data.response;
 }

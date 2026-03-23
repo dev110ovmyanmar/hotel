@@ -1,14 +1,13 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { LIMITS } from "../../variables/constants";
-import ContentBanner from "../../component/ContentBanner/ContentBanner";
-import FilterBar from "../../component/FilterBar/FilterBar";
 import useApiQuery from "../../hooks/useApiQuery";
-import { fetchAmenities } from "../../api/amenitiesApi";
-import AmenitiesTable from "./Components/AmenitiesTable";
-import AmenitiesForm from "./Components/AmenitiesForm/AmenitiesForm";
 import ListHeader from "../../component/ListHeader/ListHeader";
+import SeasonalRateForm from "./Components/SeasonalRateForms/SeasonalRateForm";
+import SeasonalRateTable from "./Components/SeasonalRateTable";
+import { fetchSeasonlRate } from "../../api/seasonalRateApi";
+import { PERMISSIONS } from "../../variables/permission";
 
-const AmenitiesList = () => {
+const SeasonalRateList = () => {
   const [keyword, setKeyword] = useState("");
   const [status, setStatus] = useState("all");
   const [page, setPage] = useState(1);
@@ -19,9 +18,9 @@ const AmenitiesList = () => {
 
   const normalStatus = status === "all" ? null : status;
 
-  const { data, isLoading, error } = useApiQuery({
-    fetchQueryName: "amenities",
-    fetchQueryFunction: fetchAmenities,
+  const { data } = useApiQuery({
+    fetchQueryName: "SeasonlRate",
+    fetchQueryFunction: fetchSeasonlRate,
     params: {
       pagination: {
         page: page,
@@ -41,20 +40,22 @@ const AmenitiesList = () => {
     setMode("add");
     setDrawerOpen(true);
   };
+
   return (
     <div className="w-full px-6 py-2">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
         <ListHeader
-          title="Amenitities List"
-          searchPlaceholder="Search Amenitities ..."
+          title="Seasonal Rate List"
+          searchPlaceholder="Search Seasonal Rate ..."
           keyword={keyword}
           setKeyword={setKeyword}
-          addButtonText="Add New Amenitities"
+          addButtonText="Add New Seasonal Rate"
           onAdd={handleAdd}
+          permission={PERMISSIONS.SEASONAL_RATE_CREATE}
         />
       </div>
 
-      <AmenitiesTable
+      <SeasonalRateTable
         data={data?.data || []}
         page={data?.pagination.currentPage}
         perPage={data?.pagination.perPage}
@@ -63,18 +64,18 @@ const AmenitiesList = () => {
         changePerPage={(perPage) => setPerPage(perPage)}
       />
 
-      <AmenitiesForm
-        mode={mode}
-        setMode={setMode}
-        selectedData={selectedData}
-        setSelectedData={setSelectedData}
-        drawerOpen={drawerOpen}
-        setDrawerOpen={setDrawerOpen}
+      <SeasonalRateForm
         page={page}
         setPage={setPage}
+        mode={mode}
+        setMode={setMode}
+        drawerOpen={drawerOpen}
+        setDrawerOpen={setDrawerOpen}
+        selectedData={selectedData}
+        setSelectedData={setSelectedData}
       />
     </div>
   );
 };
 
-export default AmenitiesList;
+export default SeasonalRateList;

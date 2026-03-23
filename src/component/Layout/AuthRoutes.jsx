@@ -115,9 +115,11 @@ const ReferralAgent = lazy(
 );
 
 const FacilityList = lazy(() => import("../../pages/Facility/FacilityList"));
-
 const FacilityPackageList = lazy(
   () => import("../../pages/FacilityPackage/FacilityPackageList"),
+);
+const FacilityListPackagesTable = lazy(
+  () => import("../../pages/Facility/FacilityListPackagesTable"),
 );
 const Staff = lazy(() => import("../../pages/Staffs/StaffsList"));
 const RatePlan = lazy(() => import("../../pages/RatePlan/RatePlanList"));
@@ -126,7 +128,13 @@ const GuestListing = lazy(
   () => import("../../pages/GuestsListing/NewGuestListing"),
 );
 
-const GuestNotesListing = lazy(() => import("../../pages/GuestNotes/GuestNotesListing"))
+const GuestNotesListing = lazy(
+  () => import("../../pages/GuestsListing/GuestNotes/GuestNotesListing"),
+);
+
+const SeasonalRate = lazy(
+  () => import("../../pages/SeasonalRate/SeasonalRateList"),
+);
 
 export const authRoutes = [
   {
@@ -180,7 +188,7 @@ export const authRoutes = [
         icon: <DatabaseOutlined style={{ fontSize: "20px" }} />,
         isPrivate: true,
         component: <InventoryListing />,
-        permission: PERMISSIONS.INVENTORY_LIST,
+        permission: PERMISSIONS.SERVICE_INVENTORY_LIST,
       },
       // {
       //   key: 4.3,
@@ -189,6 +197,24 @@ export const authRoutes = [
       //   icon: <DiffOutlined style={{ fontSize: "20px" }} />,
       //   // component: </>,
       // },
+      {
+        key: 4.4,
+        label: "Meal Plan",
+        path: "/meal-plan",
+        icon: <JavaOutlined style={{ fontSize: "20px" }} />,
+        isPrivate: true,
+        component: <MeanPlanList />,
+        permission: PERMISSIONS.MEAL_PLAN_LIST,
+      },
+      {
+        key: 4.5,
+        label: "Seasonal Rate",
+        path: "/rates-availability/seasonal-rate",
+        icon: <DatabaseOutlined style={{ fontSize: "20px" }} />,
+        isPrivate: true,
+        component: <SeasonalRate />,
+        permission: PERMISSIONS.SEASONAL_RATE_LIST,
+      },
     ],
   },
 
@@ -204,7 +230,6 @@ export const authRoutes = [
         label: "Rooms",
         icon: <ApartmentOutlined style={{ fontSize: "20px" }} />,
         component: <Room />,
-        permission: "room.list",
         permission: PERMISSIONS.ROOM_LIST,
       },
       {
@@ -478,6 +503,11 @@ export const authRoutes = [
     ],
   },
   {
+    key: 25,
+    path: `/facility-management/facilities/:facilityId/packages`,
+    component: <FacilityListPackagesTable />,
+  },
+  {
     key: 13,
     label: "Services Management",
     isPrivate: false,
@@ -604,7 +634,7 @@ export const authRoutes = [
         path: "/settings/properties",
         icon: <ApartmentOutlined style={{ fontSize: "20px" }} />,
         component: <PropertiesListing />,
-        // permission: ".list",
+        permission: PERMISSIONS.PROPERTY_LIST,
       },
       {
         key: 15.2,
@@ -646,7 +676,7 @@ export const authRoutes = [
         icon: <FileProtectOutlined style={{ fontSize: "20px" }} />,
         isPrivate: true,
         component: <PrivacyPolicy />,
-        // permission: PERMISSIONS.PRIVACY_POLICY_LIST,
+        permission: PERMISSIONS.PRIVACY_POLICY_VIEW,
       },
     ],
   },
@@ -706,15 +736,6 @@ export const authRoutes = [
     ],
   },
   {
-    key: 19,
-    label: "Meal Plan",
-    path: "/meal-plan",
-    icon: <JavaOutlined style={{ fontSize: "20px" }} />,
-    isPrivate: true,
-    component: <MeanPlanList />,
-    permission: PERMISSIONS.MEAL_PLAN_LIST,
-  },
-  {
     key: 20,
     path: "/guest-list/",
     label: "Guests",
@@ -724,12 +745,9 @@ export const authRoutes = [
     permission: PERMISSIONS.GUEST_LIST,
   },
   {
-    key: 21,
-    path: "/guest-note-list/",
-    label: "Guest Notes",
+    key: 25,
+    path: `/guest-list/guest-notes/:guestId`,
     component: <GuestNotesListing />,
-    icon: <UsergroupAddOutlined style={{ fontSize: "20px" }} />,
-    isPrivate: false, 
     permission: PERMISSIONS.GUEST_NOTE_LIST,
   },
   {

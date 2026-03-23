@@ -25,30 +25,20 @@ const StaffsTable = ({
       width: 70,
     },
     { title: "Name", dataIndex: "name", key: "name" },
-    { title: "Email", dataIndex: "email", key: "email" },
+
     { title: "Phone", dataIndex: "phone", key: "phone" },
     {
       title: "Department",
       dataIndex: ["department", "name"],
       key: "department",
     },
-    {
-      title: "NRC",
-      dataIndex: "nrcNo",
-      key: "nrcNo",
-    },
-    { title: "Passport", dataIndex: "passport", key: "passwpassportord" },
+
     {
       title: "Joined Date",
       dataIndex: "joinedAt",
       key: "joinedAt",
     },
-    {
-      title: "Gender",
-      dataIndex: ["gender", "name"],
-      key: "gender",
-      width: 85,
-    },
+
     {
       title: "Action",
       width: 80,

@@ -6,7 +6,7 @@ import PolicyForm from './PolicyForm/PolicyForm';
 import { EyeOutlined } from '@ant-design/icons';
 import { EditOutlined } from '@ant-design/icons';
 import { useApiMutation } from './../../../hooks/useApiMutation';
-import { createPolicyDuplicate } from './../../../api/policyFunctionApi';
+import { createPolicyDuplicate } from './../../../api/policyApi';
 import Toast from './../../../component/Toast/Toast';
 
 const PolicyTable = ({ data, page, setPage, perPage, total, changePage, changePerPage }) => {
@@ -166,7 +166,7 @@ const PolicyTable = ({ data, page, setPage, perPage, total, changePage, changePe
         setDrawerOpen={setDrawerOpen}
         selectedData={selectedData}
         setSelectedData={setSelectedData}
-        width={500}
+        
       />
     </div>
   )

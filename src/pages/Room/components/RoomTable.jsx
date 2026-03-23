@@ -2,9 +2,10 @@ import { Dropdown, Space, Table, Tag } from "antd";
 import { useState } from "react";
 import { MoreOutlined, EyeOutlined, EditOutlined } from "@ant-design/icons";
 import RoomForm from "./Room/RoomForm";
-import RoomStatusTag from "../../../component/RoomStatus/RoomStatusTag";
 import usePermission from "../../../hooks/usePermission";
 import { PERMISSIONS } from "../../../variables/permission";
+import ColorStatusTag from '../../../component/ColorStatusTag/ColorStatusTag';
+import Topbar from './../../../component/Topbar/Topbar';
 
 const RoomTable = ({
   data,
@@ -48,7 +49,7 @@ const RoomTable = ({
       title: "Status",
       dataIndex: "room_status",
       key: "status",
-      render: (_, record) => <RoomStatusTag status={record.status} />,
+      render: (_, record) => <ColorStatusTag status={record?.status} />,
     },
     {
       title: "Action",
