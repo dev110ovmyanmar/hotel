@@ -58,13 +58,6 @@ const AdminTable = ({
       render: (_, record) => <div>{record?.role.name}</div>,
     },
     {
-      title: "Staff",
-      dataIndex: "staff",
-      key: "staff",
-      render: (text) => <div>{text ? text : "-"}</div>,
-      width: 70,
-    },
-    {
       title: "Status",
       dataIndex: "status",
       key: "status",
