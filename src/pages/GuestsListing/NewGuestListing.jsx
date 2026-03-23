@@ -5,6 +5,7 @@ import ListHeader from "../../component/ListHeader/ListHeader";
 import GuestTable from "./Components/NewGuestTable";
 import GuestForm from "./Components/NewGuestForm";
 import { LIMITS } from "../../variables/constants";
+import { useNavigate } from "react-router-dom";
 
 const GuestList = () => {
   const [selectedRow, setSelectedRow] = useState(null);
@@ -13,6 +14,8 @@ const GuestList = () => {
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(LIMITS.PAGE_SIZE);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const navigate = useNavigate();
+
 
   // Fetch List Data
   const { data, isLoading } = useApiQuery({
@@ -51,6 +54,10 @@ const GuestList = () => {
     setDrawerOpen(true);
   };
 
+  const handleViewNotes = (record) => {
+    navigate(`/guest-list/guest-notes/${record.uuid}`);
+  }
+
   return (
     <div className="w-full">
       <div className="px-6 py-4">
@@ -74,6 +81,7 @@ const GuestList = () => {
         total={data?.pagination?.total}
         changePage={(page) => setPage(page)}
         changePerPage={(perPage) => setPerPage(perPage)}
+        onViewNotes={handleViewNotes}
       />
 
       <GuestForm
@@ -84,7 +92,7 @@ const GuestList = () => {
         selectedRow={selectedRow}
         setSelectedRow={setSelectedRow}
         setPage={setPage}
-        page={data?.pagination?.currentPage || page}
+        page={data?.pagination?.currentPage}
       />
     </div>
   );
