@@ -1,11 +1,11 @@
-import { Dropdown, Space, Table } from "antd";
+import { Dropdown, Space, Table, Tag } from "antd";
 import { useState } from "react";
-import StaffsForm from "./StaffsForms/StaffsForm";
 import { MoreOutlined, EyeOutlined, EditOutlined } from "@ant-design/icons";
 import usePermission from "../../../hooks/usePermission";
+import SeasonalRateForm from "./SeasonalRateForms/SeasonalRateForm";
 import { PERMISSIONS } from "../../../variables/permission";
 
-const StaffsTable = ({
+const SeasonalRateTable = ({
   data,
   page,
   perPage,
@@ -24,24 +24,38 @@ const StaffsTable = ({
       render: (_, record) => <div>{record?.id}</div>,
       width: 70,
     },
-    { title: "Name", dataIndex: "name", key: "name" },
-
-    { title: "Phone", dataIndex: "phone", key: "phone" },
     {
-      title: "Department",
-      dataIndex: ["department", "name"],
-      key: "department",
+      title: "Room Type",
+      dataIndex: ["roomType", "name"],
+      key: "roomType",
+      width: "80",
     },
-
     {
-      title: "Joined Date",
-      dataIndex: "joinedAt",
-      key: "joinedAt",
+      title: "Rate Plan",
+      dataIndex: ["ratePlan", "name"],
+      key: "ratePlan",
+      width: "80",
+    },
+    {
+      title: "Price (MMK)",
+      dataIndex: "price",
+      key: "price",
+      render: (price) => price?.toLocaleString(),
+      width: "80",
+    },
+    {
+      title: "Start date",
+      dataIndex: "startDate",
+      key: "startDate",
+    },
+    {
+      title: "End date",
+      dataIndex: "endDate",
+      key: "endDate",
     },
 
     {
       title: "Action",
-      width: 80,
       render: (_, record) => {
         const smallStyle = { fontSize: "12px" };
 
@@ -50,7 +64,7 @@ const StaffsTable = ({
             key: "view",
             label: "View",
             icon: <EyeOutlined style={{ fontSize: "12px" }} />,
-            permission: PERMISSIONS.STAFF_VIEW,
+            permission: PERMISSIONS.SEASONAL_RATE_VIEW,
             onClick: () => {
               setDrawerOpen(true);
               setMode("view");
@@ -61,7 +75,7 @@ const StaffsTable = ({
             key: "edit",
             label: "Edit",
             icon: <EditOutlined style={{ fontSize: "12px" }} />,
-            permission: PERMISSIONS.STAFF_EDIT,
+            permission: PERMISSIONS.SEASONAL_RATE_EDIT,
             onClick: () => {
               setDrawerOpen(true);
               setMode("edit");
@@ -113,7 +127,7 @@ const StaffsTable = ({
         }}
       />
 
-      <StaffsForm
+      <SeasonalRateForm
         page={page}
         mode={mode}
         setMode={setMode}
@@ -126,4 +140,4 @@ const StaffsTable = ({
   );
 };
 
-export default StaffsTable;
+export default SeasonalRateTable;

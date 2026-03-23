@@ -6,6 +6,7 @@ import useApiQuery from "../../../../hooks/useApiQuery";
 import { queryClient } from "../../../../app/queryClient";
 import FormButton from "../../../../component/FormButtons/FormButtons";
 import { createTax, editTax, TaxDetails } from "../../../../api/TaxApi";
+import TextArea from "antd/es/input/TextArea";
 
 const TaxForm = ({
   mode,
@@ -303,9 +304,8 @@ const TaxForm = ({
                 ]}
               >
                 <Input
-                  type="number"
                   min={1}
-                  addonAfter={(() => {
+                  suffix={(() => {
                     const selected = initData?.statuses?.charge_type?.find(
                       (ct) => ct.uuid === chargeTypeValue,
                     );
@@ -379,7 +379,7 @@ const TaxForm = ({
           </Row>
 
           <Form.Item label="Remark" name="remark">
-            <Input readOnly={isView} />
+            <TextArea readOnly={isView} />
           </Form.Item>
         </Form>
       </Drawer>
