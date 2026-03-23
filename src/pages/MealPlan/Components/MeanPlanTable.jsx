@@ -5,6 +5,7 @@ import MeanPlanForm from './MealPlanForm/MealPlanForm';
 import { EditOutlined } from '@ant-design/icons';
 import { EyeOutlined } from '@ant-design/icons';
 import Status from './../../../component/Status/Status';
+import ColorStatusTag from './../../../component/ColorStatusTag/ColorStatusTag';
 
 const MeanPlanTable = ({ data, page, perPage, total, changePage, changePerPage }) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -27,9 +28,7 @@ const MeanPlanTable = ({ data, page, perPage, total, changePage, changePerPage }
       title: 'Status',
       dataIndex: ["status","name"],
       key: 'status',
-      render: text => <Tag color={text === "Active" ? "green" : text === "Inactive" ? "orange" : "red"}>
-        {text}
-      </Tag>
+      render: (_,record) => <ColorStatusTag status={record?.status}/>
     },
     {
       title: 'Description',

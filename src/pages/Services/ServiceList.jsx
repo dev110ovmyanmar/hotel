@@ -5,6 +5,7 @@ import ListHeader from "../../component/ListHeader/ListHeader";
 import ServiceTable from "./Components/ServiceTable";
 import ServiceForm from "./Components/ServiceForm/ServiceForm";
 import { getServices } from "../../api/serviceApi";
+import { PERMISSIONS } from "../../variables/permission";
 
 const ServiceList = () => {
   const [keyword, setKeyword] = useState("");
@@ -45,6 +46,7 @@ const ServiceList = () => {
           setKeyword={setKeyword}
           addButtonText="Add New Service"
           onAdd={handleAdd}
+          permission={PERMISSIONS.SERVICE_CREATE}
         />
       </div>
 

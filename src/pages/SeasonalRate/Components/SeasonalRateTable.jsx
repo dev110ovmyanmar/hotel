@@ -1,13 +1,11 @@
-import { Dropdown, Space, Table, Tag, Button } from "antd";
+import { Dropdown, Space, Table, Tag } from "antd";
 import { useState } from "react";
-import { EditOutlined, EyeOutlined, MoreOutlined } from "@ant-design/icons";
-import ReferralForm from './ReferralForm/ReferralForm';
-import ColorStatusTag from './../../../component/ColorStatusTag/ColorStatusTag';
-import { PERMISSIONS } from './../../../variables/permission';
-import usePermission from './../../../hooks/usePermission';
+import { MoreOutlined, EyeOutlined, EditOutlined } from "@ant-design/icons";
+import usePermission from "../../../hooks/usePermission";
+import SeasonalRateForm from "./SeasonalRateForms/SeasonalRateForm";
+import { PERMISSIONS } from "../../../variables/permission";
 
-
-const ReferralTable = ({
+const SeasonalRateTable = ({
   data,
   page,
   perPage,
@@ -15,73 +13,47 @@ const ReferralTable = ({
   changePage,
   changePerPage,
 }) => {
+  const { hasPermission } = usePermission();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mode, setMode] = useState(null);
-  const [selectedData, setSelectedData] = useState({});
-
-  const {hasPermission} = usePermission();
+  const [selectedData, setSelectedData] = useState(null);
 
   const columns = [
     {
       title: "ID",
       render: (_, record) => <div>{record?.id}</div>,
       width: 70,
-      align: "center",
     },
     {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
-      render: (text) => <div>{text}</div>,
+      title: "Room Type",
+      dataIndex: ["roomType", "name"],
+      key: "roomType",
+      width: "80",
     },
     {
-      title: "Contact Person",
-      dataIndex: "contactPerson",
-      key: "contactPerson",
-      render: (text) => <div>{text}</div>,
+      title: "Rate Plan",
+      dataIndex: ["ratePlan", "name"],
+      key: "ratePlan",
+      width: "80",
     },
     {
-      title: "Email",
-      dataIndex: "email",
-      key: "email",
-      render: (text) => <div>{text ? text : "-"}</div>,
+      title: "Price (MMK)",
+      dataIndex: "price",
+      key: "price",
+      render: (price) => price?.toLocaleString(),
+      width: "80",
     },
     {
-      title: "Phone",
-      dataIndex: "phone",
-      key: "phone",
-      render: (text) => <div>{text ? text : "-"}</div>,
+      title: "Start date",
+      dataIndex: "startDate",
+      key: "startDate",
     },
     {
-      title: "Address",
-      dataIndex: "address",
-      key: "address",
-      render: (text) => <div>{text}</div>,
+      title: "End date",
+      dataIndex: "endDate",
+      key: "endDate",
     },
-    {
-      title: "Charge Type",
-      dataIndex: ["chargeType", "name"],
-      key: "chargeType",
-      render: (text) => <div>{text}</div>,
-    },
-    {
-      title: "Charge Value",
-      dataIndex: "chargeValue",
-      key: "chargeValue",
-      render: (text) => <div>{text}</div>,
-    },
-    {
-      title: "Remark",
-      dataIndex: "remark",
-      key: "remark",
-      render: (text) => <div>{text ? text : "-"}</div>,
-    },
-    {
-      title: "Status",
-      dataIndex: ["status", "name"],
-      key: "status",
-      render: (_, record) => <ColorStatusTag status={record?.status} />
-    },
+
     {
       title: "Action",
       render: (_, record) => {
@@ -92,7 +64,7 @@ const ReferralTable = ({
             key: "view",
             label: "View",
             icon: <EyeOutlined style={{ fontSize: "12px" }} />,
-            permission: PERMISSIONS.PARTNER_VIEW,
+            permission: PERMISSIONS.SEASONAL_RATE_VIEW,
             onClick: () => {
               setDrawerOpen(true);
               setMode("view");
@@ -103,19 +75,18 @@ const ReferralTable = ({
             key: "edit",
             label: "Edit",
             icon: <EditOutlined style={{ fontSize: "12px" }} />,
-            permission: PERMISSIONS.PARTNER_EDIT,
+            permission: PERMISSIONS.SEASONAL_RATE_EDIT,
             onClick: () => {
               setDrawerOpen(true);
               setMode("edit");
               setSelectedData(record);
             },
-          }
+          },
         ];
 
         const items = actions
           .filter(
-            (action) =>
-              (!action.permission || hasPermission(action.permission)) && !action.hidden,
+            (action) => !action.permission || hasPermission(action.permission),
           )
           .map((action) => ({
             key: action.key,
@@ -137,7 +108,7 @@ const ReferralTable = ({
   ];
 
   return (
-    <div id="scrollId" className="w-full h-[63vh] ">
+    <div id="scrollId">
       <Table
         tableLayout="fixed"
         scroll={{ x: 1000 }}
@@ -156,17 +127,17 @@ const ReferralTable = ({
         }}
       />
 
-      <ReferralForm
+      <SeasonalRateForm
+        page={page}
         mode={mode}
         setMode={setMode}
         drawerOpen={drawerOpen}
         setDrawerOpen={setDrawerOpen}
         selectedData={selectedData}
         setSelectedData={setSelectedData}
-        page={page}
       />
     </div>
   );
 };
 
-export default ReferralTable;
+export default SeasonalRateTable;

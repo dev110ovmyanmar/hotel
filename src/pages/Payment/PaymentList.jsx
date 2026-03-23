@@ -74,7 +74,7 @@ const PaymentList = () => {
         setMode={setMode}
         selectedData={selectedData}
         setSelectedData={setSelectedData}
-        width={500}
+        
       />
     </div>
   )
