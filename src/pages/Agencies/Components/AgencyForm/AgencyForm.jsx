@@ -15,6 +15,9 @@ import {
 } from "../../../../api/partnerApi";
 import FormButtons from "../../../../component/FormButtons/FormButtons";
 import { queryClient } from './../../../../app/queryClient';
+import Status from './../../../../component/Status/Status';
+
+const { TextArea } = Input;
 
 const AgencyForm = ({
   mode,
@@ -39,21 +42,21 @@ const AgencyForm = ({
   const upsertPartners = useApiMutation({
     mutationFn: upsertPartner,
     invalidateKeys: [["agencies"]],
-    shouldInvalidate: isEdit? true :page === 1
+    shouldInvalidate: isEdit ? true : page === 1
 
   });
 
   const { data, isPending, error } = useApiQuery({
     fetchQueryName: "agency-details",
     fetchQueryFunction: partnerDetails,
-    params: { 
+    params: {
       uuid: selectedData?.uuid,
       partnerType: "Agency"
     },
     options: {
       enabled: !!selectedData?.uuid,
     },
-    
+
   });
 
   useEffect(() => {
@@ -129,7 +132,7 @@ const AgencyForm = ({
             ) : (
               <FormButtons
                 onClick={() => form.submit()}
-                isPending={upsertPartners.isPending }
+                isPending={upsertPartners.isPending}
                 mode={mode}
               />
             )}
@@ -153,16 +156,9 @@ const AgencyForm = ({
           </Form.Item>
 
           <Form.Item
-            label="Card No"
-            name="cardNo"
-          >
-            <Input readOnly={isView} />
-          </Form.Item>
-
-          <Form.Item
-            label="Contact Person"
+            label="Contact Person Name"
             name="contactPerson"
-            rules={[{ required: true, message: "Contact Person is Required" }]}
+            rules={[{ required: true, message: "Contact Person's Name is Required" }]}
           >
             <Input readOnly={isView} />
           </Form.Item>
@@ -170,6 +166,7 @@ const AgencyForm = ({
           <Form.Item
             label="Email"
             name="email"
+            rules={[{ required: true, message: "Email is Required" }]}
           >
             <Input readOnly={isView} />
           </Form.Item>
@@ -178,14 +175,7 @@ const AgencyForm = ({
           <Form.Item
             label="Phone"
             name="phone"
-          >
-            <Input readOnly={isView} />
-          </Form.Item>
-
-          <Form.Item
-            label="Address"
-            name="address"
-            rules={[{ required: true, message: "Address is Required" }]}
+            rules={[{ required: true, message: "Phone is Required" }]}
           >
             <Input readOnly={isView} />
           </Form.Item>
@@ -205,7 +195,7 @@ const AgencyForm = ({
                   }
                 ))
               }
-              open = {isView? false: undefined}
+              open={isView ? false : undefined}
             ></Select>
           </Form.Item>
 
@@ -214,33 +204,25 @@ const AgencyForm = ({
             name="chargeValue"
             rules={[{ required: true, message: "Charge Value is Required" }]}
           >
-            <Input readOnly={isView}/>
+            <Input readOnly={isView} />
+          </Form.Item>
+
+          <Form.Item
+            label="Address"
+            name="address"
+            rules={[{ required: true, message: "Address is Required" }]}
+          >
+            <TextArea readOnly={isView} />
           </Form.Item>
 
           <Form.Item
             label="Remark"
             name="remark"
           >
-            <Input readOnly={isView}/>
+            <TextArea readOnly={isView} />
           </Form.Item>
 
-          <Form.Item
-            label="Status"
-            name={["status", "uuid"]}
-            rules={[{ required: true, message: "Status is Required" }]}
-          >
-            <Select
-              options={
-                status?.map(item => (
-                  {
-                    label: item.name,
-                    value: item.uuid
-                  }
-                ))
-              }
-              open = {isView? false: undefined}
-            ></Select>
-          </Form.Item>
+          <Status/>
         </Form>
       </Drawer>
     </div>
