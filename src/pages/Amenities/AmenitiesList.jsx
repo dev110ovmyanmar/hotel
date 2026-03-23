@@ -3,7 +3,7 @@ import { LIMITS } from "../../variables/constants";
 import ContentBanner from "../../component/ContentBanner/ContentBanner";
 import FilterBar from "../../component/FilterBar/FilterBar";
 import useApiQuery from "../../hooks/useApiQuery";
-import { amenitiesListFun } from "../../api/amenitiesFunctionApi";
+import { fetchAmenities } from "../../api/amenitiesApi";
 import AmenitiesTable from "./Components/AmenitiesTable";
 import AmenitiesForm from "./Components/AmenitiesForm/AmenitiesForm";
 import ListHeader from "../../component/ListHeader/ListHeader";
@@ -21,7 +21,7 @@ const AmenitiesList = () => {
 
   const { data, isLoading, error } = useApiQuery({
     fetchQueryName: "amenities",
-    fetchQueryFunction: amenitiesListFun,
+    fetchQueryFunction: fetchAmenities,
     params: {
       pagination: {
         page: page,

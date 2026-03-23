@@ -4,23 +4,17 @@ import {
   Input,
   Button,
   Drawer,
-  Space,
-  Select,
   Switch,
-  InputNumber,
   Row,
   Col,
 } from "antd";
 import Toast from "../../../../component/Toast/Toast";
-import { CloseOutlined } from "@ant-design/icons";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
 import useApiQuery from "../../../../hooks/useApiQuery";
-import { FiEdit } from "react-icons/fi";
 import {
-  amenitiesDetailsFun,
-  createAmenitiesFun,
-  editAmenitiesFun,
-} from "../../../../api/amenitiesFunctionApi";
+  amenitiesDetails,
+  upsertAmenity,
+} from "../../../../api/amenitiesApi";
 import FormButtons from "../../../../component/FormButtons/FormButtons";
 
 const AmenitiesForm = ({
@@ -39,22 +33,16 @@ const AmenitiesForm = ({
   const isEdit = mode === "edit";
   const isAdd = mode === "add";
 
-  const createAmenitiesFunction = useApiMutation({
-    mutationFn: createAmenitiesFun,
+  const upsertAmenities = useApiMutation({
+    mutationFn: upsertAmenity,
     invalidateKeys: [["amenities"]],
-    shouldInvalidate: page === 1
+    shouldInvalidate: isEdit ? true : page === 1
 
-  });
-
-  const editAmenitiesFunction = useApiMutation({
-    mutationFn: editAmenitiesFun,
-    invalidateKeys: [["amenities"]],
-    
   });
 
   const { data, isPending, error } = useApiQuery({
-    fetchQueryName: "amenities",
-    fetchQueryFunction: amenitiesDetailsFun,
+    fetchQueryName: "amenity-details",
+    fetchQueryFunction: amenitiesDetails,
     params: { uuid: selectedData?.uuid },
     options: {
       enabled: !!selectedData?.uuid,
@@ -77,7 +65,7 @@ const AmenitiesForm = ({
 
   const onFinish = (values) => {
     if (isAdd) {
-      createAmenitiesFunction.mutate(values, {
+      upsertAmenities.mutate(values, {
         onSuccess: () => {
           setPage(1);
           setDrawerOpen(false);
@@ -93,7 +81,7 @@ const AmenitiesForm = ({
         uuid: selectedData?.uuid,
       };
 
-      editAmenitiesFunction.mutate(editValues, {
+      upsertAmenities.mutate(editValues, {
         onSuccess: () => {
           setDrawerOpen(false);
           Toast.success("Country Updated Successfully!");
@@ -129,11 +117,7 @@ const AmenitiesForm = ({
             ) : (
               <FormButtons
                 onClick={() => form.submit()}
-                isPending={
-                  isAdd
-                    ? createAmenitiesFunction.isPending
-                    : editAmenitiesFunction.isPending
-                }
+                isPending={upsertAmenities?.isPending}
                 mode={mode}
               />
             )}
@@ -157,6 +141,7 @@ const AmenitiesForm = ({
           >
             <Input readOnly={isView} />
           </Form.Item>
+          
           <Form.Item
             label="Code"
             name="code"
@@ -188,3 +173,7 @@ const AmenitiesForm = ({
 };
 
 export default AmenitiesForm;
+
+
+
+
