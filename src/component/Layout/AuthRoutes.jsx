@@ -1,4 +1,3 @@
-import { AiOutlineBuild } from "react-icons/ai"; 
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { Suspense, useMemo } from "react";
 import { Route, Routes } from "react-router-dom";
@@ -41,6 +40,8 @@ import {
   QqOutlined,
   CodeSandboxOutlined,
   UsergroupAddOutlined,
+  CoffeeOutlined,
+  FormOutlined,
 } from "@ant-design/icons";
 import { lazy } from "react";
 import { FiMap } from "react-icons/fi";
@@ -52,6 +53,8 @@ import { BsBuildings } from "react-icons/bs";
 import { MdOutlineSupportAgent } from "react-icons/md";
 import { MdGroups3 } from "react-icons/md";
 import { isPending } from "@reduxjs/toolkit";
+import { MdOutlineRestaurantMenu } from "react-icons/md";
+import { AiOutlineBuild } from "react-icons/ai";
 
 const Dashboard = lazy(() => import("../../pages/Dashboard/Dashboard"));
 const Calendar = lazy(() => import("../../pages/Calendar/Calendar"));
@@ -138,6 +141,24 @@ const RoomRateList = lazy(() => import("../../pages/RoomRate/RoomRateList"));
 const SeasonalRate = lazy(
   () => import("../../pages/SeasonalRate/SeasonalRateList"),
 );
+
+const MenuCategoryList = lazy(
+  () => import("../../pages/MenuCategory/MenuCategoryList"),
+);
+
+const MenuModifierList = lazy(
+  () => import("../../pages/MenuModifier/MenuModifierList"),
+);
+
+// const AgencyContractList = lazy(
+//   () => import("../../pages/AgencyContract/AgencyContractList"),
+// );
+
+const RoomInventoryList = lazy(
+  () => import("../../pages/Room Inventory/RoomInventoryList"),
+);
+
+const SupplierList = lazy(() => import("../../pages/Suppliers/SuppliersListing"));
 
 export const authRoutes = [
   {
@@ -555,33 +576,34 @@ export const authRoutes = [
     key: 14,
     label: "F&B  Management",
     isPrivate: false,
-    icon: <ShopOutlined style={{ fontSize: "20px" }} />,
+    icon: <CoffeeOutlined style={{ fontSize: "20px" }} />,
     nested: [
-      // {
-      //   key: 14.1,
-      //   label: "Menu Categories",
-      //   path: "/f&b-management/menu-categories",
-      //   icon: <ApartmentOutlined style={{ fontSize: "20px" }} />,
-      //   // component: < />,
-      //   // permission: ".list",
-      // // },
-      // {
-      //   key: 14.2,
-      //   label: "Menu Items",
-      //   path: "/f&b-management/menu-items",
-      //   icon: <DatabaseOutlined style={{ fontSize: "20px" }} />,
-      //   isPrivate: true,
-      //   // component: < />,
-      //   // permission: ".list",
-      // },
-      // {
-      //   key: 14.3,
-      //   label: "Menu Modifiers",
-      //   path: "/f&b-management/menu-modifiers",
-      //   icon: <DiffOutlined style={{ fontSize: "20px" }} />,
-      //   // component: < />,
-      //   // permission: ".list",
-      // },
+      {
+        key: 14.1,
+        label: "Menu Categories",
+        path: "/f&b-management/menu-categories",
+        icon: <ApartmentOutlined style={{ fontSize: "20px" }} />,
+        component: <MenuCategoryList />,
+        permission: PERMISSIONS.MENU_CATEGORY_LIST,
+      },
+      {
+        key: 14.2,
+        label: "Menu Items",
+        path: "/f&b-management/menu-items",
+        icon: <UnorderedListOutlined style={{ fontSize: "20px" }} />,
+        isPrivate: true,
+        // component: < />,
+        // permission: ".list",
+      },
+      {
+        key: 14.3,
+        label: "Menu Modifiers",
+        path: "/f&b-management/menu-modifiers",
+        icon: <MdOutlineRestaurantMenu style={{ fontSize: "20px" }} />,
+        component: <MenuModifierList />,
+        // permission: ".list",
+      },
+
       // {
       //   key: 14.4,
       //   label: "Tables",
@@ -763,6 +785,15 @@ export const authRoutes = [
     // permission: PERMISSIONS.ROOM_RATE_LIST,
   },
   {
+    key: 29,
+    path: "/agency-contract",
+    label: "Agency Contract",
+    // component: <AgencyContractList />,
+    icon: <AiOutlineBuild style={{ fontSize: "20px" }} />,
+    isPrivate: false,
+    // permission: PERMISSIONS.ROOM_RATE_LIST,
+  },
+  {
     key: 22,
     path: "/change-password/",
     component: <ChangePassword />,
@@ -780,6 +811,24 @@ export const authRoutes = [
     component: <ReservationForm />,
     isPrivate: false,
   },
+  {
+    key: 26,
+    path: "/room-inventory/",
+    label: "Room Inventory",
+    component: <RoomInventoryList />,
+    icon: <FormOutlined style={{ fontSize: "20px" }} />,
+    isPrivate: false,
+    permission: PERMISSIONS.AVAILABILITY_CALENDAR_LIST,
+  },
+  {
+    key: 27,
+    path: "/supplier",
+    label: "Supplier",
+    component: <SupplierList />,
+    icon: <FormOutlined style={{ fontSize: "20px" }} />,
+    isPrivate: false,
+    permission: PERMISSIONS.SUPPLIER_LIST,
+  }
 ];
 
 const AuthRoutes = () => {

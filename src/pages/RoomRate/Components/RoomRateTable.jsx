@@ -1,28 +1,28 @@
-import { Dropdown, Space, Table, Tag } from "antd";
+import { Button, Dropdown, Modal, Space, Table, Tag } from "antd";
 import { useState } from "react";
-import { DatabaseOutlined, MoreOutlined } from "@ant-design/icons";
-import { EyeOutlined } from "@ant-design/icons";
-import { EditOutlined } from "@ant-design/icons";
-import FacilityForm from "./FacilityForm/FacilityForm";
+import {
+  MoreOutlined,
+  EyeOutlined,
+  EditOutlined,
+} from "@ant-design/icons";
+import usePermission from "../../../hooks/usePermission"; // <-- Permission hook
 import { PERMISSIONS } from "../../../variables/permission";
-import usePermission from "../../../hooks/usePermission";
-import { useNavigate } from "react-router-dom";
+import ColorStatusTag from './../../../component/ColorStatusTag/ColorStatusTag';
+import RoomRateForm from "../Components/RoomRateForm/RoomRateForm";
 
-const FacilityTable = ({
+const RoomRateTable = ({
   data,
   page,
-  setPage,
   perPage,
   total,
   changePage,
   changePerPage,
 }) => {
   const { hasPermission } = usePermission();
-  const navigate = useNavigate();
 
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mode, setMode] = useState(null);
-  const [selectedData, setSelectedData] = useState({});
+  const [selectedData, setSelectedData] = useState(null);
 
   const columns = [
     {
@@ -31,30 +31,30 @@ const FacilityTable = ({
       width: 70,
     },
     {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
+      title: "Rate Plan",
+      dataIndex: ["ratePlan", "name"],
+      key: "ratePlan",
+      render: (text) => <div>{text}</div>,
     },
     {
-      title: "Facility Type",
-      dataIndex: ["facilityType", "name"],
-      key: "facilityType",
+      title: "Room Type",
+      dataIndex: ["roomType", "name"],
+      key: "roomType",
+      render: (text) => <div>{text}</div>,
     },
     {
-      title: "Capacity",
-      dataIndex: "capacity",
-      key: "capacity",
+      title: "Price (MMK)",
+      dataIndex: "price",
+      key: "price",
+      render: (text) => <div>{text} </div>,
     },
     {
-      title: "Status",
-      dataIndex: ["status", "name"],
-      key: "status",
-      render: (_, record) => (
-        <Tag color={record?.status?.name === "Active" ? "green" : "red"}>
-          {record?.status?.name.toUpperCase()}
-        </Tag>
-      ),
+      title: "Duration Hours",
+      dataIndex: "durationHours",
+      key: "durationHours",
+      render: (text) => <div>{text}</div>,
     },
+
     {
       title: "Action",
       render: (_, record) => {
@@ -65,7 +65,7 @@ const FacilityTable = ({
             key: "view",
             label: "View",
             icon: <EyeOutlined style={{ fontSize: "12px" }} />,
-            permission: PERMISSIONS.FACILITY_VIEW,
+            // permission: PERMISSIONS.ROOM_RATE_VIEW,
             onClick: () => {
               setDrawerOpen(true);
               setMode("view");
@@ -76,35 +76,19 @@ const FacilityTable = ({
             key: "edit",
             label: "Edit",
             icon: <EditOutlined style={{ fontSize: "12px" }} />,
-            permission: PERMISSIONS.FACILITY_EDIT,
+            // permission: PERMISSIONS.ROOM_RATE_EDIT,
             onClick: () => {
               setDrawerOpen(true);
               setMode("edit");
               setSelectedData(record);
             },
           },
-          {
-            key: "facility-packages",
-            label: "Facility Packages",
-            icon: <DatabaseOutlined style={{ fontSize: "12px" }} />,
-            // permission: PERMISSIONS.FACILITY_PACKAGE_LIST,
-            onClick: () => {
-              navigate(
-                `/facility-management/facilities/${record?.uuid}/packages`,
-                // {
-                //   state: {
-                //     uuid: record?.uuid,
-                //   },
-                // },
-              );
-            },
-          },
         ];
 
-        // Filter actions by permission
         const items = actions
           .filter(
-            (action) => !action.permission || hasPermission(action.permission),
+            (action) =>
+              (!action.permission || hasPermission(action.permission)) && !action.hidden,
           )
           .map((action) => ({
             key: action.key,
@@ -126,13 +110,13 @@ const FacilityTable = ({
   ];
 
   return (
-    <div id="scrollId" className="w-full h-[63vh] ">
+    <div id="scrollId">
       <Table
         tableLayout="fixed"
         scroll={{ x: 1000 }}
         columns={columns}
         dataSource={data}
-        rowKey="uuid"
+        rowKey="roomrate"
         pagination={{
           current: page,
           pageSize: perPage,
@@ -145,18 +129,18 @@ const FacilityTable = ({
         }}
       />
 
-      <FacilityForm
+      <RoomRateForm
         page={page}
-        setPage={setPage}
         mode={mode}
         setMode={setMode}
         drawerOpen={drawerOpen}
         setDrawerOpen={setDrawerOpen}
         selectedData={selectedData}
         setSelectedData={setSelectedData}
+
       />
     </div>
   );
 };
 
-export default FacilityTable;
+export default RoomRateTable;

@@ -1,14 +1,13 @@
 import { Dropdown, Space, Table, Tag } from "antd";
 import { useState } from "react";
-import { DatabaseOutlined, MoreOutlined } from "@ant-design/icons";
+import { MoreOutlined } from "@ant-design/icons";
 import { EyeOutlined } from "@ant-design/icons";
 import { EditOutlined } from "@ant-design/icons";
-import FacilityForm from "./FacilityForm/FacilityForm";
 import { PERMISSIONS } from "../../../variables/permission";
 import usePermission from "../../../hooks/usePermission";
-import { useNavigate } from "react-router-dom";
+import MenuCategoryForm from "./MenuCategoryForms/MenuCategoryForm";
 
-const FacilityTable = ({
+const MenuCategoryTable = ({
   data,
   page,
   setPage,
@@ -18,7 +17,6 @@ const FacilityTable = ({
   changePerPage,
 }) => {
   const { hasPermission } = usePermission();
-  const navigate = useNavigate();
 
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mode, setMode] = useState(null);
@@ -28,27 +26,25 @@ const FacilityTable = ({
     {
       title: "ID",
       render: (_, record) => <div>{record?.id}</div>,
-      width: 70,
     },
     {
       title: "Name",
       dataIndex: "name",
       key: "name",
     },
+
     {
-      title: "Facility Type",
-      dataIndex: ["facilityType", "name"],
-      key: "facilityType",
+      title: "Display Oder",
+      dataIndex: "displayOrder",
+      key: "displayOrder",
+      align: "center",
     },
-    {
-      title: "Capacity",
-      dataIndex: "capacity",
-      key: "capacity",
-    },
+
     {
       title: "Status",
       dataIndex: ["status", "name"],
       key: "status",
+      align: "center",
       render: (_, record) => (
         <Tag color={record?.status?.name === "Active" ? "green" : "red"}>
           {record?.status?.name.toUpperCase()}
@@ -65,7 +61,7 @@ const FacilityTable = ({
             key: "view",
             label: "View",
             icon: <EyeOutlined style={{ fontSize: "12px" }} />,
-            permission: PERMISSIONS.FACILITY_VIEW,
+            permission: PERMISSIONS.MENU_CATEGORY_VIEW,
             onClick: () => {
               setDrawerOpen(true);
               setMode("view");
@@ -76,32 +72,15 @@ const FacilityTable = ({
             key: "edit",
             label: "Edit",
             icon: <EditOutlined style={{ fontSize: "12px" }} />,
-            permission: PERMISSIONS.FACILITY_EDIT,
+            permission: PERMISSIONS.MENU_CATEGORY_EDIT,
             onClick: () => {
               setDrawerOpen(true);
               setMode("edit");
               setSelectedData(record);
             },
           },
-          {
-            key: "facility-packages",
-            label: "Facility Packages",
-            icon: <DatabaseOutlined style={{ fontSize: "12px" }} />,
-            // permission: PERMISSIONS.FACILITY_PACKAGE_LIST,
-            onClick: () => {
-              navigate(
-                `/facility-management/facilities/${record?.uuid}/packages`,
-                // {
-                //   state: {
-                //     uuid: record?.uuid,
-                //   },
-                // },
-              );
-            },
-          },
         ];
 
-        // Filter actions by permission
         const items = actions
           .filter(
             (action) => !action.permission || hasPermission(action.permission),
@@ -145,7 +124,7 @@ const FacilityTable = ({
         }}
       />
 
-      <FacilityForm
+      <MenuCategoryForm
         page={page}
         setPage={setPage}
         mode={mode}
@@ -159,4 +138,4 @@ const FacilityTable = ({
   );
 };
 
-export default FacilityTable;
+export default MenuCategoryTable;

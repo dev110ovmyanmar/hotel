@@ -13,7 +13,7 @@ const ListHeader = ({
   setCityMode,
   setCreateDrawerOpen,
   permission,
-  showPropertyAddButton= true,
+  showCreateButton = true,
 }) => {
   const { hasPermission } = usePermission(); // permission checker
   const canCreate = hasPermission(permission);
@@ -63,7 +63,7 @@ const ListHeader = ({
         )}
       </div>
       <div className="w-full flex justify-end">
-        {canCreate && showPropertyAddButton && (
+        {canCreate && showCreateButton && (
           <Button
             type="primary"
             onClick={
