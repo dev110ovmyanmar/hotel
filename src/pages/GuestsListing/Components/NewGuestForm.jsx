@@ -105,26 +105,28 @@ const GuestForm = ({
   });
 
   const onFinish = (values) => {
+    const hasNrc = values?.srcNo && values?.township && values?.type && values?.number;
     const payload = {
       name: values.name,
       otherName: values.otherName,
       phone: values.phone,
       email: values.email,
       address: values.address,
-      nrcNo: `${values.srcNo}/${values.township}(${values.type})${values.number}`,
-      passport: values.passport,
-      dob: values.dob?.format("YYYY-MM-DD"),
-      gender: { uuid: values.gender },
-      nationality: values.nationality,
-      city: { uuid: values.city },
-      country: { uuid: values.country },
-      status: { uuid: values.status },
-      uuid: isEdit ? selectedRow?.uuid : undefined,
+      nrcNo: hasNrc ? `${values?.srcNo}/${values?.township}(${values?.type})${values?.number}` : null,
+      passport: values?.passport,
+      dob: values?.dob?.format("YYYY-MM-DD"),
+      nationality: values?.nationality,
+      gender: values.gender ? { uuid: values.gender } : null,
+      city: values.city ? { uuid: values.city } : null,
+      country: values.country ? { uuid: values.country } : null,
+      status: values.status ? { uuid: values.status } : null,
+      uuid: isEdit ? selectedRow?.uuid : null,
+
     };
 
     // Remove undefined fields
     Object.keys(payload).forEach(key => {
-      if (payload[key] === undefined) {
+      if (payload[key] === undefined || payload[key] === null) {
         delete payload[key];
       }
     });
@@ -301,7 +303,7 @@ const GuestForm = ({
                 <Input
                   readOnly={isView}
                   style={{ cursor: isView ? "default" : "text" }}
-                  placeholder="Barma"
+                  placeholder="Burmese"
                 />
               </Form.Item>
               <Form.Item label="Gender" name="gender">
