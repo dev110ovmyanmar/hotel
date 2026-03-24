@@ -39,12 +39,12 @@ const FacilityPackageTable = ({
       key: "facility",
     },
     {
-      title: "Pricing Type",
+      title: "Price Type",
       dataIndex: ["pricingType", "name"],
       key: "pricingType",
     },
     {
-      title: "Base Price",
+      title: "Base Price (MMK)",
       dataIndex: "basePrice",
       key: "basePrice",
     },
