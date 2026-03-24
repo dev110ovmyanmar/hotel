@@ -159,6 +159,7 @@ const RoomInventoryList = lazy(
 );
 
 const SupplierList = lazy(() => import("../../pages/Suppliers/SuppliersListing"));
+const RestauranttableList = lazy(() => import("../../pages/RestaurantTable/RestaurantTableLisitng"));
 
 export const authRoutes = [
   {
@@ -828,6 +829,15 @@ export const authRoutes = [
     icon: <FormOutlined style={{ fontSize: "20px" }} />,
     isPrivate: false,
     permission: PERMISSIONS.SUPPLIER_LIST,
+  },
+  {
+    key: 28,
+    path: "/restaurant-table",
+    label: "Restaurant Table",
+    component: <RestauranttableList />,
+    icon: <FormOutlined style={{ fontSize: "20px" }} />,
+    isPrivate: false,
+    permission: PERMISSIONS.RESTAURANT_TABLE_LIST,
   }
 ];
 

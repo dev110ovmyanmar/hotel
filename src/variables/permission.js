@@ -196,6 +196,12 @@ export const PERMISSIONS = {
   SUPPLIER_VIEW: "supplier.view",
   SUPPLIER_CREATE: "supplier.create",
   SUPPLIER_EDIT: "supplier.edit",
+
+  //Restaurant Table
+  RESTAURANT_TABLE_LIST: "table.list",
+  RESTAURANT_TABLE_VIEW: "table.view",
+  RESTAURANT_TABLE_CREATE: "table.create",
+  RESTAURANT_TABLE_EDIT: "table.edit",
 };
 
 
