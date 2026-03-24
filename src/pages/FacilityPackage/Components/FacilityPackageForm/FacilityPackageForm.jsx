@@ -168,9 +168,9 @@ const FacilityPackageForm = ({
           </Form.Item>
 
           <Form.Item
-            label="Facility Type"
+            label="Facility Name"
             name="facility"
-            rules={[{ required: true, message: "Facility Type is Required" }]}
+            rules={[{ required: true, message: "Facility Name is Required" }]}
             getValueProps={(value) => ({
               value: isView
                 ? facilityList.find((item) => item.value === value)?.label
@@ -193,7 +193,7 @@ const FacilityPackageForm = ({
             )}
           </Form.Item>
 
-           <Form.Item
+          <Form.Item
             label="Pricing Type"
             name="pricingType"
             rules={[{ required: true, message: "Pricing Type is Required" }]}
@@ -219,14 +219,16 @@ const FacilityPackageForm = ({
             )}
           </Form.Item>
 
-
-
           <Form.Item
             label="Base Price"
             name="basePrice"
             rules={[{ required: true, message: "Base Price is Required" }]}
           >
-            <Input readOnly={isView} />
+            {/* <Space.Compact>
+              <Input readOnly={isView} />
+              {addon}
+            </Space.Compact> */}
+            <Input readOnly={isView} suffix="MMK"/>
           </Form.Item>
 
           <div className="grid grid-cols-2 gap-4">
@@ -276,7 +278,7 @@ const FacilityPackageForm = ({
             name="remark"
             rules={[{ required: true, message: "Remark is Required" }]}
           >
-           <Input.TextArea readOnly={isView}/>
+            <Input.TextArea readOnly={isView} />
           </Form.Item>
         </Form>
       </Drawer>

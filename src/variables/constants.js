@@ -248,3 +248,6 @@ export const monthDurations = [
 ];
 
 export const DEFAULT_IP_ADDRESS = "127.0.0.1";
+
+export const MIN_AVAILABILITY_ROOM = 1;
+export const MAX_AVAILABILITY_ROOM = 200;

@@ -41,6 +41,7 @@ import {
   CodeSandboxOutlined,
   UsergroupAddOutlined,
   CoffeeOutlined,
+  FormOutlined,
 } from "@ant-design/icons";
 import { lazy } from "react";
 import { FiMap } from "react-icons/fi";
@@ -54,7 +55,6 @@ import { MdGroups3 } from "react-icons/md";
 import { isPending } from "@reduxjs/toolkit";
 import { MdOutlineRestaurantMenu } from "react-icons/md";
 import { AiOutlineBuild } from "react-icons/ai";
-
 
 const Dashboard = lazy(() => import("../../pages/Dashboard/Dashboard"));
 const Calendar = lazy(() => import("../../pages/Calendar/Calendar"));
@@ -147,12 +147,16 @@ const MenuCategoryList = lazy(
 );
 
 const MenuModifierList = lazy(
-  () => import("../../pages/MenuModifier/MenuModifierList")
+  () => import("../../pages/MenuModifier/MenuModifierList"),
 );
 
-const AgencyContractList = lazy(
-  () => import("../../pages/AgencyContract/AgencyContractList")
-)
+// const AgencyContractList = lazy(
+//   () => import("../../pages/AgencyContract/AgencyContractList"),
+// );
+
+const RoomInventoryList = lazy(
+  () => import("../../pages/Room Inventory/RoomInventoryList"),
+);
 
 export const authRoutes = [
   {
@@ -782,7 +786,7 @@ export const authRoutes = [
     key: 29,
     path: "/agency-contract",
     label: "Agency Contract",
-    component: <AgencyContractList />,
+    // component: <AgencyContractList />,
     icon: <AiOutlineBuild style={{ fontSize: "20px" }} />,
     isPrivate: false,
     // permission: PERMISSIONS.ROOM_RATE_LIST,
@@ -804,6 +808,15 @@ export const authRoutes = [
     path: "/reservation-form/",
     component: <ReservationForm />,
     isPrivate: false,
+  },
+  {
+    key: 26,
+    path: "/room-inventory/",
+    label: "Room Inventory",
+    component: <RoomInventoryList />,
+    icon: <FormOutlined style={{ fontSize: "20px" }} />,
+    isPrivate: false,
+    permission: PERMISSIONS.AVAILABILITY_CALENDAR_LIST,
   },
 ];
 

@@ -1,14 +1,14 @@
-import { Dropdown, Space, Table, Tag } from "antd";
+ 
+ import { Dropdown, Space, Table, Tag, Button, Switch, Modal } from "antd";
 import { useState } from "react";
-import { DatabaseOutlined, MoreOutlined } from "@ant-design/icons";
+import { MoreOutlined } from "@ant-design/icons";
 import { EyeOutlined } from "@ant-design/icons";
 import { EditOutlined } from "@ant-design/icons";
-import FacilityForm from "./FacilityForm/FacilityForm";
 import { PERMISSIONS } from "../../../variables/permission";
 import usePermission from "../../../hooks/usePermission";
-import { useNavigate } from "react-router-dom";
+import RoomInventoryForm from "./RoomInventoryForm/RoomInventoryForm";
 
-const FacilityTable = ({
+const RoomInventoryTable = ({
   data,
   page,
   setPage,
@@ -18,7 +18,6 @@ const FacilityTable = ({
   changePerPage,
 }) => {
   const { hasPermission } = usePermission();
-  const navigate = useNavigate();
 
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mode, setMode] = useState(null);
@@ -28,32 +27,66 @@ const FacilityTable = ({
     {
       title: "ID",
       render: (_, record) => <div>{record?.id}</div>,
-      width: 70,
+      width: "10%"
     },
     {
       title: "Name",
-      dataIndex: "name",
+      dataIndex: ["roomType", "name"],
       key: "name",
     },
     {
-      title: "Facility Type",
-      dataIndex: ["facilityType", "name"],
-      key: "facilityType",
+      title: "Available Rooms",
+      dataIndex: "availableRooms",
+      key: "availableRooms",
     },
     {
-      title: "Capacity",
-      dataIndex: "capacity",
-      key: "capacity",
+      title: "Sold Rooms",
+      dataIndex: "soldRooms",
+      key: "soldRooms",
     },
+    // {
+    //   title: "Stop Sell",
+    //   dataIndex: "stopSell",
+    //   key: "stopSell",
+    //   render: (_, record) => (
+    //     <Tag color={record.stopSell ? "green" : "red"}>
+    //       {record.stopSell ? "TRUE" : "FALSE"}
+    //     </Tag>
+    //   ),
+    // },
     {
-      title: "Status",
-      dataIndex: ["status", "name"],
-      key: "status",
-      render: (_, record) => (
-        <Tag color={record?.status?.name === "Active" ? "green" : "red"}>
-          {record?.status?.name.toUpperCase()}
-        </Tag>
-      ),
+  title: "Stop Sell",
+  dataIndex: "stopSell",
+  key: "stopSell",
+  render: (_, record) => (
+    <Switch
+      checked={record.stopSell} // current status
+      onChange={(checked) => {
+        Modal.confirm({
+          title: `Are you sure you want to set Stop Sell to ${checked ? "TRUE" : "FALSE"}?`,
+          okText: "Yes",
+          cancelText: "No",
+          onOk: () => {
+            // Update the record state here
+            record.stopSell = checked;
+
+            // Optional: Call API to save change
+            // updateStopSell(record.id, checked)
+          },
+          onCancel: () => {
+            // If canceled, revert the switch back
+            // This is needed because Switch already changed its visual state
+            record.stopSell = !checked;
+          },
+        });
+      }}
+    />
+  ),
+},
+    {
+      title: "Date",
+      dataIndex: "date",
+      key: "date",
     },
     {
       title: "Action",
@@ -65,7 +98,7 @@ const FacilityTable = ({
             key: "view",
             label: "View",
             icon: <EyeOutlined style={{ fontSize: "12px" }} />,
-            permission: PERMISSIONS.FACILITY_VIEW,
+            permission: PERMISSIONS.SERVICE_VIEW,
             onClick: () => {
               setDrawerOpen(true);
               setMode("view");
@@ -76,27 +109,11 @@ const FacilityTable = ({
             key: "edit",
             label: "Edit",
             icon: <EditOutlined style={{ fontSize: "12px" }} />,
-            permission: PERMISSIONS.FACILITY_EDIT,
+            permission: PERMISSIONS.SERVICE_EDIT,
             onClick: () => {
               setDrawerOpen(true);
               setMode("edit");
               setSelectedData(record);
-            },
-          },
-          {
-            key: "facility-packages",
-            label: "Facility Packages",
-            icon: <DatabaseOutlined style={{ fontSize: "12px" }} />,
-            // permission: PERMISSIONS.FACILITY_PACKAGE_LIST,
-            onClick: () => {
-              navigate(
-                `/facility-management/facilities/${record?.uuid}/packages`,
-                // {
-                //   state: {
-                //     uuid: record?.uuid,
-                //   },
-                // },
-              );
             },
           },
         ];
@@ -145,7 +162,7 @@ const FacilityTable = ({
         }}
       />
 
-      <FacilityForm
+      <RoomInventoryForm
         page={page}
         setPage={setPage}
         mode={mode}
@@ -159,4 +176,4 @@ const FacilityTable = ({
   );
 };
 
-export default FacilityTable;
+export default RoomInventoryTable;

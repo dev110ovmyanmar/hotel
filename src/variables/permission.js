@@ -183,6 +183,7 @@ export const PERMISSIONS = {
   // Availability Calendar
   AVAILABILITY_CALENDAR_LIST: "availability-calendar.list",
   AVAILABILITY_CALENDAR_VIEW: "availability-calendar.view",
+  AVAILABILITY_CALENDAR_UPDATE: "availability-calendar.update",
 
   // Menu Category
   MENU_CATEGORY_LIST: "menu-category.list",
