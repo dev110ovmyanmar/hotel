@@ -78,6 +78,12 @@ export const PERMISSIONS = {
   ROOM_ATTRIBUTE_VALUE_CREATE: "room-attribute-value.create",
   ROOM_ATTRIBUTE_VALUE_EDIT: "room-attribute-value.edit",
 
+  // Room Rate
+  ROOM_RATE_LIST: "room-rate.list",
+  ROOM_RATE_VIEW: "room-rate.view",
+  ROOM_RATE_CREATE: "room-rate.create",
+  ROOM_RATE_EDIT: "room-rate.edit",
+
   // Category
   CATEGORY_LIST: "category.list",
   CATEGORY_VIEW: "category.view",
