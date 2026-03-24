@@ -7,35 +7,34 @@ import useApiQuery from "../../hooks/useApiQuery";
 import PropertyTable from "./components/PropertyTable.jsx";
 import PropertyForm from "./components/PropertyForm.jsx";
 import ListHeader from "../../component/ListHeader/ListHeader.jsx";
-import dayjs from "dayjs";
 import { LIMITS } from "../../variables/constants.js";
 
 const PropertiesListing = () => {
-    const [selectedRow, setSelectedRow] = useState(null);
-    const [currentMode, setCurrentMode] = useState("add");
-    const [keyword, setKeyword] = useState("");
-    const [page, setPage] = useState(1);
-    const [perPage, setPerPage] = useState(LIMITS.PAGE_SIZE);
-    const [drawerOpen, setDrawerOpen] = useState(false);
-    const [selectedCountryUuid, setSelectedCountryUuid] = useState(null);
+  const [selectedRow, setSelectedRow] = useState(null);
+  const [currentMode, setCurrentMode] = useState("add");
+  const [keyword, setKeyword] = useState("");
+  const [page, setPage] = useState(1);
+  const [perPage, setPerPage] = useState(LIMITS.PAGE_SIZE);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [selectedCountryUuid, setSelectedCountryUuid] = useState(null);
 
   const { data, isLoading, error } = useApiQuery({
-      fetchQueryName: "properties",
-      fetchQueryFunction: getProperties,
-      params: {
-        pagination: {
-          page: page,
-          perPage: perPage
-        },
-        keyword,
+    fetchQueryName: "properties",
+    fetchQueryFunction: getProperties,
+    params: {
+      pagination: {
+        page: page,
+        perPage: perPage
       },
-    });
+      keyword,
+    },
+  });
 
   const properties = data?.data || [];
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
 
   useEffect(() => {
-      setPage(1);
+    setPage(1);
   }, [keyword, perPage]);
 
   const propertyTypes = useMemo(
@@ -104,6 +103,8 @@ const PropertiesListing = () => {
     setCurrentMode("edit");
   };
 
+  const showPropertyAddButton = properties ? false : true;
+
   return (
     <div className="w-full px-6 py-2">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
@@ -112,7 +113,8 @@ const PropertiesListing = () => {
           setKeyword={setKeyword}
           searchPlaceholder="Search Property..."
           onAdd={handleAdd}
-          showButton={false}
+          showPropertyAddButton={showPropertyAddButton}
+          // showButton={true}
           addButtonText={"Add Property"}
         />
       </div>

@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { getGuestNotes } from "../../api/guestNoteApi";
-import useApiQuery from "../../hooks/useApiQuery";
-import ListHeader from "../../component/ListHeader/ListHeader";
+import { getGuestNotes } from "../../../api/guestNoteApi";
+import useApiQuery from "../../../hooks/useApiQuery";
+import ListHeader from "../../../component/ListHeader/ListHeader";
 import GuestNotesTable from "./components/GuestNotesTable";
 import GuestNoteForm from "./components/GuestNoteForm";
-import { LIMITS } from "../../variables/constants";
+import { LIMITS } from "../../../variables/constants";
+import { useParams } from "react-router-dom";
 
-const GuestList = () => {
+const GuestNotesListing = () => {
   const [selectedRow, setSelectedRow] = useState(null);
   const [currentMode, setCurrentMode] = useState("add");
   const [keyword, setKeyword] = useState("");
@@ -14,18 +15,22 @@ const GuestList = () => {
   const [perPage, setPerPage] = useState(LIMITS.PAGE_SIZE);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
+  const { guestId: guestUuid } = useParams();
+
   // Fetch List Data
-  const { data, isLoading } = useApiQuery({
+const { data, isLoading } = useApiQuery({
     fetchQueryName: "guestNotes",
     fetchQueryFunction: getGuestNotes,
-    params: {
-      pagination: { page, perPage },
-      keyword,
-    },
+    params: { 
+      pagination: {
+        page: page,
+        perPage: perPage
+      },
+      keyword, 
+      guest: { uuid: guestUuid } },
   });
 
   const guestNotes = data?.data || [];
-  const pagination = data?.pagination || {};
 
   // Reset page to 1 when searching
   useEffect(() => {
@@ -64,7 +69,7 @@ const GuestList = () => {
         />
       </div>
 
-    <GuestNotesTable
+      <GuestNotesTable
         dataSource={guestNotes}
         onView={handleView}
         onEdit={handleEdit}
@@ -74,7 +79,7 @@ const GuestList = () => {
         total={data?.pagination?.total}
         changePage={(page) => setPage(page)}
         changePerPage={(perPage) => setPerPage(perPage)}
-    />
+      />
 
       <GuestNoteForm
         mode={currentMode}
@@ -84,10 +89,13 @@ const GuestList = () => {
         selectedRow={selectedRow}
         setSelectedRow={setSelectedRow}
         setPage={setPage}
-        page={data?.pagination?.currentPage || page}
+        page={page}
+        // page={data?.pagination?.currentPage}
+        guestUuid={guestUuid}
+        // guestName={guestName}
       />
     </div>
   );
 };
 
-export default GuestList;
+export default GuestNotesListing;

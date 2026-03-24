@@ -17,13 +17,13 @@ export default function useGuestNotesColumns(onEdit, onView) {
       dataIndex: ["guest", "name"],
       key: "name",
     },
-    {
-      title: "NRC No.",
-      // Accessing nested property in guest object
-      dataIndex: ["guest", "nrcNo"],
-      key: "nrcNo",
-      render: (nrcNo) => <Text>{nrcNo}</Text>,
-    },
+    // {
+    //   title: "NRC No.",
+    //   // Accessing nested property in guest object
+    //   dataIndex: ["guest", "nrcNo"],
+    //   key: "nrcNo",
+    //   render: (nrcNo) => <Text>{nrcNo}</Text>,
+    // },
     {
       title: "Note",
       dataIndex: "note",
@@ -33,7 +33,7 @@ export default function useGuestNotesColumns(onEdit, onView) {
     {
       title: "Actions",
       key: "actions",
-      width: 100,
+      // width: 100,
       fixed: 'right',
       render: (_, record) => (
         <Dropdown

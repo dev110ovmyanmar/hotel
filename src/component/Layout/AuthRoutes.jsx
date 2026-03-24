@@ -130,7 +130,7 @@ const GuestListing = lazy(
 );
 
 const GuestNotesListing = lazy(
-  () => import("../../pages/GuestNotes/GuestNotesListing"),
+  () => import("../../pages/GuestsListing/GuestNotes/GuestNotesListing"),
 );
 
 const RoomRateList = lazy(() => import("../../pages/RoomRate/RoomRateList"));
@@ -191,7 +191,7 @@ export const authRoutes = [
         icon: <DatabaseOutlined style={{ fontSize: "20px" }} />,
         isPrivate: true,
         component: <InventoryListing />,
-        permission: PERMISSIONS.INVENTORY_LIST,
+        permission: PERMISSIONS.SERVICE_INVENTORY_LIST,
       },
       // {
       //   key: 4.3,
@@ -637,7 +637,7 @@ export const authRoutes = [
         path: "/settings/properties",
         icon: <ApartmentOutlined style={{ fontSize: "20px" }} />,
         component: <PropertiesListing />,
-        // permission: ".list",
+        permission: PERMISSIONS.PROPERTY_LIST,
       },
       {
         key: 15.2,
@@ -679,7 +679,7 @@ export const authRoutes = [
         icon: <FileProtectOutlined style={{ fontSize: "20px" }} />,
         isPrivate: true,
         component: <PrivacyPolicy />,
-        // permission: PERMISSIONS.PRIVACY_POLICY_LIST,
+        permission: PERMISSIONS.PRIVACY_POLICY_VIEW,
       },
     ],
   },
@@ -748,12 +748,9 @@ export const authRoutes = [
     permission: PERMISSIONS.GUEST_LIST,
   },
   {
-    key: 21,
-    path: "/guest-note-list/",
-    label: "Guest Notes",
+    key: 25,
+    path: `/guest-list/guest-notes/:guestId`,
     component: <GuestNotesListing />,
-    icon: <UsergroupAddOutlined style={{ fontSize: "20px" }} />,
-    isPrivate: false,
     permission: PERMISSIONS.GUEST_NOTE_LIST,
   },
   {
