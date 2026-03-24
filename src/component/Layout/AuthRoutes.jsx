@@ -158,6 +158,8 @@ const RoomInventoryList = lazy(
   () => import("../../pages/Room Inventory/RoomInventoryList"),
 );
 
+const SupplierList = lazy(() => import("../../pages/Suppliers/SuppliersListing"));
+
 export const authRoutes = [
   {
     key: 1,
@@ -818,6 +820,15 @@ export const authRoutes = [
     isPrivate: false,
     permission: PERMISSIONS.AVAILABILITY_CALENDAR_LIST,
   },
+  {
+    key: 27,
+    path: "/supplier",
+    label: "Supplier",
+    component: <SupplierList />,
+    icon: <FormOutlined style={{ fontSize: "20px" }} />,
+    isPrivate: false,
+    permission: PERMISSIONS.SUPPLIER_LIST,
+  }
 ];
 
 const AuthRoutes = () => {

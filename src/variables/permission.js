@@ -190,4 +190,12 @@ export const PERMISSIONS = {
   MENU_CATEGORY_VIEW: "menu-category.view",
   MENU_CATEGORY_CREATE: "menu-category.create",
   MENU_CATEGORY_EDIT: "menu-category.edit",
+
+  //Supplier
+  SUPPLIER_LIST: "supplier.list",
+  SUPPLIER_VIEW: "supplier.view",
+  SUPPLIER_CREATE: "supplier.create",
+  SUPPLIER_EDIT: "supplier.edit",
 };
+
+
