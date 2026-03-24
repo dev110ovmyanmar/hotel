@@ -151,7 +151,7 @@ const RoomRateForm = ({
             getValueProps={(value) => {
               return ({
                 value: isView
-                  ? fetchRatePlanList?.data?.find((item) => item.uuid === value)?.name
+                  ? ratePlanMetas?.rate_plans?.find((item) => item.uuid === value)?.name
                   : value,
               })
             }}
@@ -171,7 +171,7 @@ const RoomRateForm = ({
             getValueProps={(value) => {
               return ({
                 value: isView
-                  ? fetchRoomTypeList?.data?.find((item) => item.uuid === value)?.name
+                  ? ratePlanMetas?.room_types?.find((item) => item.uuid === value)?.name
                   : value,
               })
             }}
