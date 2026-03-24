@@ -26,7 +26,7 @@ export const PERMISSIONS = {
   ROLE_CREATE: "role.create",
   ROLE_EDIT: "role.edit",
 
-//permission
+  //permission
   PERMISSION_LIST: "permission.list",
   PERMISSION_VIEW: "permission.view",
   PERMISSION_CREATE: "permission.create",
@@ -77,6 +77,12 @@ export const PERMISSIONS = {
   ROOM_ATTRIBUTE_EDIT: "room-attribute.edit",
   ROOM_ATTRIBUTE_VALUE_CREATE: "room-attribute-value.create",
   ROOM_ATTRIBUTE_VALUE_EDIT: "room-attribute-value.edit",
+
+  // Room Rate
+  ROOM_RATE_LIST: "room-rate.list",
+  ROOM_RATE_VIEW: "room-rate.view",
+  ROOM_RATE_CREATE: "room-rate.create",
+  ROOM_RATE_EDIT: "room-rate.edit",
 
   // Category
   CATEGORY_LIST: "category.list",
@@ -177,4 +183,10 @@ export const PERMISSIONS = {
   // Availability Calendar
   AVAILABILITY_CALENDAR_LIST: "availability-calendar.list",
   AVAILABILITY_CALENDAR_VIEW: "availability-calendar.view",
+
+  // Menu Category
+  MENU_CATEGORY_LIST: "menu-category.list",
+  MENU_CATEGORY_VIEW: "menu-category.view",
+  MENU_CATEGORY_CREATE: "menu-category.create",
+  MENU_CATEGORY_EDIT: "menu-category.edit",
 };

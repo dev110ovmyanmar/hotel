@@ -1,13 +1,16 @@
-import { Dropdown, Space, Table, Tag, Button } from "antd";
+import { Button, Dropdown, Modal, Space, Table, Tag } from "antd";
 import { useState } from "react";
-import { EditOutlined, EyeOutlined, MoreOutlined } from "@ant-design/icons";
-import CompanyForm from './CompanyForm/CompanyForm';
+import {
+  MoreOutlined,
+  EyeOutlined,
+  EditOutlined,
+} from "@ant-design/icons";
+import usePermission from "../../../hooks/usePermission"; // <-- Permission hook
+import { PERMISSIONS } from "../../../variables/permission";
 import ColorStatusTag from './../../../component/ColorStatusTag/ColorStatusTag';
-import { PERMISSIONS } from './../../../variables/permission';
-import usePermission from './../../../hooks/usePermission';
+import RoomRateForm from "../Components/RoomRateForm/RoomRateForm";
 
-
-const CompanyTable = ({
+const RoomRateTable = ({
   data,
   page,
   perPage,
@@ -15,70 +18,43 @@ const CompanyTable = ({
   changePage,
   changePerPage,
 }) => {
+  const { hasPermission } = usePermission();
+
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mode, setMode] = useState(null);
-  const [selectedData, setSelectedData] = useState({});
-
-  const { hasPermission } = usePermission();
+  const [selectedData, setSelectedData] = useState(null);
 
   const columns = [
     {
       title: "ID",
       render: (_, record) => <div>{record?.id}</div>,
       width: 70,
-      align: "center",
     },
     {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
+      title: "Rate Plan",
+      dataIndex: ["ratePlan", "name"],
+      key: "ratePlan",
       render: (text) => <div>{text}</div>,
     },
     {
-      title: "Contact Person",
-      dataIndex: "contactPerson",
-      key: "contactPerson",
+      title: "Room Type",
+      dataIndex: ["roomType", "name"],
+      key: "roomType",
       render: (text) => <div>{text}</div>,
     },
     {
-      title: "Email",
-      dataIndex: "email",
-      key: "email",
-      render: (text) => <div>{text ? text : "-"}</div>,
+      title: "Price (MMK)",
+      dataIndex: "price",
+      key: "price",
+      render: (text) => <div>{text} </div>,
     },
     {
-      title: "Phone",
-      dataIndex: "phone",
-      key: "phone",
-      render: (text) => <div>{text ? text : "-"}</div>,
-    },
-    {
-      title: "Address",
-      dataIndex: "address",
-      key: "address",
+      title: "Duration Hours",
+      dataIndex: "durationHours",
+      key: "durationHours",
       render: (text) => <div>{text}</div>,
     },
-    {
-      title: "Charge Value",
-      dataIndex: "chargeValue",
-      key: "chargeValue",
-      render: (_, record) => {
-        const chargeValue = record?.chargeValue;
-        const chargeTypeName = record?.chargeType?.code;
 
-        if (chargeTypeName === "flat") {
-          return <div>{chargeValue} MMK</div>
-        } else {
-          return <div>{chargeValue} %</div>
-        }
-      },
-    },
-    {
-      title: "Status",
-      dataIndex: ["status", "name"],
-      key: "status",
-      render: (_, record) => <ColorStatusTag status={record?.status} />
-    },
     {
       title: "Action",
       render: (_, record) => {
@@ -89,7 +65,7 @@ const CompanyTable = ({
             key: "view",
             label: "View",
             icon: <EyeOutlined style={{ fontSize: "12px" }} />,
-            permission: PERMISSIONS.PARTNER_VIEW,
+            // permission: PERMISSIONS.ROOM_RATE_VIEW,
             onClick: () => {
               setDrawerOpen(true);
               setMode("view");
@@ -100,13 +76,13 @@ const CompanyTable = ({
             key: "edit",
             label: "Edit",
             icon: <EditOutlined style={{ fontSize: "12px" }} />,
-            permission: PERMISSIONS.PARTNER_EDIT,
+            // permission: PERMISSIONS.ROOM_RATE_EDIT,
             onClick: () => {
               setDrawerOpen(true);
               setMode("edit");
               setSelectedData(record);
             },
-          }
+          },
         ];
 
         const items = actions
@@ -134,13 +110,13 @@ const CompanyTable = ({
   ];
 
   return (
-    <div id="scrollId" className="w-full h-[63vh] ">
+    <div id="scrollId">
       <Table
         tableLayout="fixed"
         scroll={{ x: 1000 }}
         columns={columns}
         dataSource={data}
-        rowKey="uuid"
+        rowKey="roomrate"
         pagination={{
           current: page,
           pageSize: perPage,
@@ -153,17 +129,18 @@ const CompanyTable = ({
         }}
       />
 
-      <CompanyForm
+      <RoomRateForm
+        page={page}
         mode={mode}
         setMode={setMode}
         drawerOpen={drawerOpen}
         setDrawerOpen={setDrawerOpen}
         selectedData={selectedData}
         setSelectedData={setSelectedData}
-        page={page}
+
       />
     </div>
   );
 };
 
-export default CompanyTable;
+export default RoomRateTable;

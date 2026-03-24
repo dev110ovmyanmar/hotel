@@ -1,3 +1,4 @@
+import { AiOutlineBuild } from "react-icons/ai";
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { Suspense, useMemo } from "react";
 import { Route, Routes } from "react-router-dom";
@@ -40,6 +41,7 @@ import {
   QqOutlined,
   CodeSandboxOutlined,
   UsergroupAddOutlined,
+  CoffeeOutlined,
 } from "@ant-design/icons";
 import { lazy } from "react";
 import { FiMap } from "react-icons/fi";
@@ -129,11 +131,17 @@ const GuestListing = lazy(
 );
 
 const GuestNotesListing = lazy(
-  () => import("../../pages/GuestNotes/GuestNotesListing"),
+  () => import("../../pages/GuestsListing/GuestNotes/GuestNotesListing"),
 );
+
+const RoomRateList = lazy(() => import("../../pages/RoomRate/RoomRateList"));
 
 const SeasonalRate = lazy(
   () => import("../../pages/SeasonalRate/SeasonalRateList"),
+);
+
+const MenuCategoryList = lazy(
+  () => import("../../pages/MenuCategory/MenuCategoryList"),
 );
 
 export const authRoutes = [
@@ -188,7 +196,7 @@ export const authRoutes = [
         icon: <DatabaseOutlined style={{ fontSize: "20px" }} />,
         isPrivate: true,
         component: <InventoryListing />,
-        permission: PERMISSIONS.INVENTORY_LIST,
+        permission: PERMISSIONS.SERVICE_INVENTORY_LIST,
       },
       // {
       //   key: 4.3,
@@ -552,25 +560,25 @@ export const authRoutes = [
     key: 14,
     label: "F&B  Management",
     isPrivate: false,
-    icon: <ShopOutlined style={{ fontSize: "20px" }} />,
+    icon: <CoffeeOutlined style={{ fontSize: "20px" }} />,
     nested: [
-      // {
-      //   key: 14.1,
-      //   label: "Menu Categories",
-      //   path: "/f&b-management/menu-categories",
-      //   icon: <ApartmentOutlined style={{ fontSize: "20px" }} />,
-      //   // component: < />,
-      //   // permission: ".list",
-      // // },
-      // {
-      //   key: 14.2,
-      //   label: "Menu Items",
-      //   path: "/f&b-management/menu-items",
-      //   icon: <DatabaseOutlined style={{ fontSize: "20px" }} />,
-      //   isPrivate: true,
-      //   // component: < />,
-      //   // permission: ".list",
-      // },
+      {
+        key: 14.1,
+        label: "Menu Categories",
+        path: "/f&b-management/menu-categories",
+        icon: <ApartmentOutlined style={{ fontSize: "20px" }} />,
+        component: <MenuCategoryList />,
+        permission: PERMISSIONS.MENU_CATEGORY_LIST,
+      },
+      {
+        key: 14.2,
+        label: "Menu Items",
+        path: "/f&b-management/menu-items",
+        icon: <UnorderedListOutlined style={{ fontSize: "20px" }} />,
+        isPrivate: true,
+        // component: < />,
+        // permission: ".list",
+      },
       // {
       //   key: 14.3,
       //   label: "Menu Modifiers",
@@ -634,7 +642,7 @@ export const authRoutes = [
         path: "/settings/properties",
         icon: <ApartmentOutlined style={{ fontSize: "20px" }} />,
         component: <PropertiesListing />,
-        // permission: ".list",
+        permission: PERMISSIONS.PROPERTY_LIST,
       },
       {
         key: 15.2,
@@ -676,7 +684,7 @@ export const authRoutes = [
         icon: <FileProtectOutlined style={{ fontSize: "20px" }} />,
         isPrivate: true,
         component: <PrivacyPolicy />,
-        // permission: PERMISSIONS.PRIVACY_POLICY_LIST,
+        permission: PERMISSIONS.PRIVACY_POLICY_VIEW,
       },
     ],
   },
@@ -745,13 +753,19 @@ export const authRoutes = [
     permission: PERMISSIONS.GUEST_LIST,
   },
   {
-    key: 21,
-    path: "/guest-note-list/",
-    label: "Guest Notes",
+    key: 25,
+    path: `/guest-list/guest-notes/:guestId`,
     component: <GuestNotesListing />,
-    icon: <UsergroupAddOutlined style={{ fontSize: "20px" }} />,
-    isPrivate: false,
     permission: PERMISSIONS.GUEST_NOTE_LIST,
+  },
+  {
+    key: 28,
+    path: "/room-rate",
+    label: "Room Rate",
+    component: <RoomRateList />,
+    icon: <AiOutlineBuild style={{ fontSize: "20px" }} />,
+    isPrivate: false,
+    // permission: PERMISSIONS.ROOM_RATE_LIST,
   },
   {
     key: 22,

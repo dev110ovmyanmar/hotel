@@ -1,83 +1,55 @@
-import { Dropdown, Space, Table, Tag, Button } from "antd";
+import { Dropdown, Space, Table, Tag } from "antd";
 import { useState } from "react";
-import { EditOutlined, EyeOutlined, MoreOutlined } from "@ant-design/icons";
-import AgencyForm from './AgencyForm/AgencyForm';
-import { PERMISSIONS } from './../../../variables/permission';
-import usePermission from './../../../hooks/usePermission';
-import ColorStatusTag from './../../../component/ColorStatusTag/ColorStatusTag';
+import { MoreOutlined } from "@ant-design/icons";
+import { EyeOutlined } from "@ant-design/icons";
+import { EditOutlined } from "@ant-design/icons";
+import { PERMISSIONS } from "../../../variables/permission";
+import usePermission from "../../../hooks/usePermission";
+import MenuCategoryForm from "./MenuCategoryForms/MenuCategoryForm";
 
-
-const AgencyTable = ({
+const MenuCategoryTable = ({
   data,
   page,
+  setPage,
   perPage,
   total,
   changePage,
   changePerPage,
 }) => {
+  const { hasPermission } = usePermission();
+
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mode, setMode] = useState(null);
   const [selectedData, setSelectedData] = useState({});
-
-  const { hasPermission } = usePermission();
 
   const columns = [
     {
       title: "ID",
       render: (_, record) => <div>{record?.id}</div>,
-      width: 70,
-      align: "center",
     },
     {
       title: "Name",
       dataIndex: "name",
       key: "name",
-      render: (text) => <div>{text}</div>,
     },
-    {
-      title: "Contact Person",
-      dataIndex: "contactPerson",
-      key: "contactPerson",
-      render: (text) => <div>{text}</div>,
-    },
-    {
-      title: "Email",
-      dataIndex: "email",
-      key: "email",
-      render: (text) => <div>{text ? text : "-"}</div>,
-    },
-    {
-      title: "Phone",
-      dataIndex: "phone",
-      key: "phone",
-      render: (text) => <div>{text ? text : "-"}</div>,
-    },
-    {
-      title: "Address",
-      dataIndex: "address",
-      key: "address",
-      render: (text) => <div>{text}</div>,
-    },
-    {
-      title: "Charge Value",
-      dataIndex: "chargeValue",
-      key: "chargeValue",
-      render: (_, record) => {
-        const chargeValue = record?.chargeValue;
-        const chargeTypeName = record?.chargeType?.code;
 
-        if (chargeTypeName === "flat") {
-          return <div>{chargeValue} MMK</div>
-        } else {
-          return <div>{chargeValue} %</div>
-        }
-      },
+    {
+      title: "Display Oder",
+      dataIndex: "displayOrder",
+      key: "displayOrder",
+      align: "center",
     },
+
     {
       title: "Status",
       dataIndex: ["status", "name"],
       key: "status",
-      render: (_, record) => <ColorStatusTag status={record?.status} />,
+      align: "center",
+      render: (_, record) => (
+        <Tag color={record?.status?.name === "Active" ? "green" : "red"}>
+          {record?.status?.name.toUpperCase()}
+        </Tag>
+      ),
     },
     {
       title: "Action",
@@ -89,7 +61,7 @@ const AgencyTable = ({
             key: "view",
             label: "View",
             icon: <EyeOutlined style={{ fontSize: "12px" }} />,
-            permission: PERMISSIONS.PARTNER_VIEW,
+            permission: PERMISSIONS.MENU_CATEGORY_VIEW,
             onClick: () => {
               setDrawerOpen(true);
               setMode("view");
@@ -100,7 +72,7 @@ const AgencyTable = ({
             key: "edit",
             label: "Edit",
             icon: <EditOutlined style={{ fontSize: "12px" }} />,
-            permission: PERMISSIONS.PARTNER_EDIT,
+            permission: PERMISSIONS.MENU_CATEGORY_EDIT,
             onClick: () => {
               setDrawerOpen(true);
               setMode("edit");
@@ -109,17 +81,19 @@ const AgencyTable = ({
           },
         ];
 
-        const items = actions.filter(
-          action => (!action.permission || hasPermission(action.permission)) && !action.hidden
-        ).map(action => ({
-          key: action.key,
-          label: (
-            <Space size={4} style={smallStyle} onClick={action.onClick}>
-              {action.icon}
-              <span style={{ fontSize: "14px" }}>{action.label}</span>
-            </Space>
+        const items = actions
+          .filter(
+            (action) => !action.permission || hasPermission(action.permission),
           )
-        }))
+          .map((action) => ({
+            key: action.key,
+            label: (
+              <Space size={4} style={smallStyle} onClick={action.onClick}>
+                {action.icon}
+                <span style={{ fontSize: "14px" }}>{action.label}</span>
+              </Space>
+            ),
+          }));
 
         return (
           <Dropdown menu={{ items }} trigger={["click"]}>
@@ -150,17 +124,18 @@ const AgencyTable = ({
         }}
       />
 
-      <AgencyForm
+      <MenuCategoryForm
+        page={page}
+        setPage={setPage}
         mode={mode}
         setMode={setMode}
         drawerOpen={drawerOpen}
         setDrawerOpen={setDrawerOpen}
         selectedData={selectedData}
         setSelectedData={setSelectedData}
-        page={page}
       />
     </div>
   );
 };
 
-export default AgencyTable;
+export default MenuCategoryTable;
