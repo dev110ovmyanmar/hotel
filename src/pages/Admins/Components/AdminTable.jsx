@@ -14,6 +14,7 @@ import { LOCAL_STORAGE_KEYS } from "./../../../variables/constants";
 import Toast from "../../../component/Toast/Toast";
 import usePermission from "../../../hooks/usePermission"; // <-- Permission hook
 import { PERMISSIONS } from "../../../variables/permission";
+import ColorStatusTag from './../../../component/ColorStatusTag/ColorStatusTag';
 
 const AdminTable = ({
   data,
@@ -57,21 +58,10 @@ const AdminTable = ({
       render: (_, record) => <div>{record?.role.name}</div>,
     },
     {
-      title: "Staff",
-      dataIndex: "staff",
-      key: "staff",
-      render: (text) => <div>{text ? text : "-"}</div>,
-      width: 70,
-    },
-    {
       title: "Status",
       dataIndex: "status",
       key: "status",
-      render: (_, record) => (
-        <Tag color={record?.status?.name === "Active" ? "green" : "red"}>
-          {record?.status?.name}
-        </Tag>
-      ),
+      render: (_, record) => <ColorStatusTag status={record?.status}/>,
       width: 150,
     },
     {

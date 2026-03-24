@@ -1,14 +1,15 @@
 
 import React, { useEffect, useState } from "react";
-import { Form, Input, Button, Drawer, Space, Select ,Switch } from "antd";
+import { Form, Input, Button, Drawer, Space, Select, Switch } from "antd";
 import Toast from "../../../../component/Toast/Toast";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
 import useApiQuery from "../../../../hooks/useApiQuery";
 import { loadState } from './../../../../utils/Utils';
 import { LOCAL_STORAGE_KEYS } from './../../../../variables/constants';
 import FormButtons from './../../../../component/FormButtons/FormButtons';
-import {createPayment , editPayment , paymentDetails} from "../../../../api/paymentApi";
+import { upsertPayment, paymentDetails } from "../../../../api/paymentApi";
 import { queryClient } from './../../../../app/queryClient';
+import Status from './../../../../component/Status/Status';
 
 // Add PaymentForm
 const PaymentForm = ({
@@ -32,21 +33,16 @@ const PaymentForm = ({
   const status = initData?.statuses.status;
   const provider = initData?.statuses.provider;
   const providerType = initData?.statuses.provider_type;
+  const cashName = providerType.find(item => item?.name === "Cash")?.name;
 
-  const createPaymentFunction = useApiMutation({
-    mutationFn: createPayment,
+  const upsertPayments = useApiMutation({
+    mutationFn: upsertPayment,
     invalidateKeys: [["payments"]],
-    shouldInvalidate: page === 1
-  });
-
-  const editPaymentFunction = useApiMutation({
-    mutationFn: editPayment,
-    invalidateKeys: [["payments"]],
-    
+    shouldInvalidate: isEdit ? true : page === 1
   });
 
   const { data, isPending, error } = useApiQuery({
-    fetchQueryName: "payments",
+    fetchQueryName: "payment-details",
     fetchQueryFunction: paymentDetails,
     params: { uuid: selectedData?.uuid },
     options: {
@@ -57,7 +53,7 @@ const PaymentForm = ({
   useEffect(() => {
     if (!isAdd && data) {
       form.setFieldsValue({
-        ...data,        
+        ...data,
       });
     }
   }, [data, isAdd]);
@@ -70,7 +66,7 @@ const PaymentForm = ({
 
   const onFinish = (values) => {
     if (isAdd) {
-      createPaymentFunction.mutate(values, {
+      upsertPayments.mutate(values, {
         onSuccess: () => {
           setPage(1);
           setDrawerOpen(false);
@@ -87,7 +83,7 @@ const PaymentForm = ({
       };
 
 
-      editPaymentFunction.mutate(editValues, {
+      upsertPayments.mutate(editValues, {
         onSuccess: () => {
           setDrawerOpen(false);
           Toast.success("Payment Updated Successfully!");
@@ -95,6 +91,13 @@ const PaymentForm = ({
       })
     }
   };
+
+  const selectedType = Form.useWatch(["type", "uuid"], form);
+
+  const selectedTypeName = providerType?.find(
+    (item) => item.uuid === selectedType
+  )?.name;
+
 
   return (
     <div className="flex justify-center" >
@@ -123,9 +126,7 @@ const PaymentForm = ({
             ) : (
               <FormButtons
                 onClick={() => form.submit()}
-                isPending={
-                  isAdd ? createPaymentFunction.isPending : editPaymentFunction.isPending
-                }
+                isPending={upsertPayments?.isPending}
                 mode={mode}
               />
             )}
@@ -137,7 +138,7 @@ const PaymentForm = ({
           layout="vertical"
           style={{ width: "100%" }}
           onFinish={onFinish}
-          initialValues = {{
+          initialValues={{
             isOnline: false
           }}
 
@@ -146,49 +147,42 @@ const PaymentForm = ({
             <Input readOnly={isView} />
           </Form.Item>
 
-          <Form.Item label="Provider Type" name={["type","uuid"]} rules={[{ required: true, message: "Provider Type is Required" }]}>
+          <Form.Item label="Provider Type" name={["type", "uuid"]} rules={[{ required: true, message: "Provider Type is Required" }]}>
             <Select
               showSearch={{ optionFilterProp: 'label' }}
-              options = {
-                providerType?.map(item=>(
-                  {label:item?.name , value : item?.uuid}
-                ))
-              }
-              open = {isView? false : undefined}
-            >
-
-            </Select>
-          </Form.Item>
-
-          <Form.Item label="Provider" name={["provider","uuid"]} rules={[{ required: true, message: "Provider is Required" }]}>
-            <Select
-              showSearch={{ optionFilterProp: 'label' }}
-              options = {
-                provider?.map(item=>(
-                  {label:item?.name , value : item?.uuid}
-                ))
-              }
-              open = {isView? false : undefined}
-            >
-            </Select>
-          </Form.Item>
-
-          <Form.Item label="Is Online" name="isOnline" valuePropName="checked" rules={[{ required: true, message: "is Online is Required" }]}>
-            <Switch disabled={isView}/>
-          </Form.Item>
-
-          <Form.Item label="Status" name={["status", "uuid"]} rules={[{ required: true, message: "Status  is Required" }]}>
-            <Select
               options={
-                status?.map((item) => ({
-                  label: item.name,
-                  value: item.uuid
-                }))
+                providerType?.map(item => (
+                  { label: item?.name, value: item?.uuid }
+                ))
               }
               open={isView ? false : undefined}
             >
+
             </Select>
           </Form.Item>
+
+          {selectedType && selectedTypeName !== "Cash" && (
+            <Form.Item
+              label="Provider"
+              name={["provider", "uuid"]}
+              rules={[{ required: true, message: "Provider is Required" }]}
+            >
+              <Select
+                showSearch={{ optionFilterProp: "label" }}
+                options={provider?.map((item) => ({
+                  label: item?.name,
+                  value: item?.uuid,
+                }))}
+                open={isView ? false : undefined}
+              />
+            </Form.Item>
+          )}
+
+          <Form.Item label="Is Online" name="isOnline" valuePropName="checked" rules={[{ required: true, message: "is Online is Required" }]}>
+            <Switch disabled={isView} />
+          </Form.Item>
+
+          <Status/>
 
         </Form>
       </Drawer >

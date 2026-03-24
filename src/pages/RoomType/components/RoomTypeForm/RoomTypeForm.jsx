@@ -6,10 +6,10 @@ import {
   Drawer,
   Row,
   Col,
-  Divider,
   Table,
   Card,
   Tag,
+  InputNumber,
 } from "antd";
 import Toast from "../../../../component/Toast/Toast";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
@@ -23,6 +23,28 @@ import {
 import TextArea from "antd/es/input/TextArea";
 import RoomTypeAmenityForm from "./RoomTypeAmenityForm";
 import { EditOutlined, PlusOutlined } from "@ant-design/icons";
+
+const onChange = (value) => {
+  console.log("changed", value);
+};
+
+const sharedProps = {
+  mode: "spinner",
+  min: 1,
+  max: 10,
+  defaultValue: 1,
+  onChange,
+  style: { width: 150 },
+};
+
+const childSharedProps = {
+  mode: "spinner",
+  min: 0,
+  max: 10,
+  defaultValue: 0,
+  onChange,
+  style: { width: 150 },
+};
 
 const RoomTypeForm = ({
   mode,
@@ -182,6 +204,10 @@ const RoomTypeForm = ({
           layout="vertical"
           style={{ width: "100%" }}
           onFinish={onFinish}
+          initialValues={{
+            maxAdults: 1,
+            maxOccupancy: 1,
+          }}
         >
           <Row gutter={24}>
             <Col span={16}>
@@ -196,23 +222,34 @@ const RoomTypeForm = ({
             </Col>
           </Row>
 
-          <Row gutter={16}>
+          <Row gutter={24}>
             <Col span={8}>
               <Form.Item
                 label="Max Adults"
                 name="maxAdults"
-                rules={[{ required: true }]}
+                rules={[
+                  { required: true },
+                  // {
+                  //   type: "number",
+                  //   min: 1,
+                  // },
+                ]}
               >
-                <Input readOnly={isView} />
+                <InputNumber
+                  {...sharedProps}
+                  placeholder="Outlined"
+                  readOnly={isView}
+                  width={20}
+                />
               </Form.Item>
             </Col>
             <Col span={8}>
-              <Form.Item
-                label="Max Children"
-                name="maxChildren"
-                rules={[{ required: true }]}
-              >
-                <Input readOnly={isView} />
+              <Form.Item label="Max Children" name="maxChildren">
+                <InputNumber
+                  {...childSharedProps}
+                  placeholder="Outlined"
+                  readOnly={isView}
+                />
               </Form.Item>
             </Col>
             <Col span={8}>
@@ -221,7 +258,11 @@ const RoomTypeForm = ({
                 name="maxOccupancy"
                 rules={[{ required: true }]}
               >
-                <Input readOnly={isView} />
+                <InputNumber
+                  {...sharedProps}
+                  placeholder="Outlined"
+                  readOnly={isView}
+                />
               </Form.Item>
             </Col>
           </Row>
@@ -242,7 +283,7 @@ const RoomTypeForm = ({
                 name="basePrice"
                 rules={[{ required: true }]}
               >
-                <Input addonAfter="MMK" readOnly={isView} />
+                <Input suffix="MMK" readOnly={isView} />
               </Form.Item>
             </Col>
           </Row>
@@ -267,7 +308,7 @@ const RoomTypeForm = ({
                 {!isView && (
                   <Button
                     type="primary"
-                    icon={<PlusOutlined  />}
+                    icon={<PlusOutlined />}
                     onClick={() => {
                       setAmenityMode("add");
                       setSelectedAmenity(null);

@@ -23,19 +23,17 @@ const RatePlanTable = ({
       title: "ID",
       dataIndex: "id",
       key: "id",
-      width: 50,
+      width: 70,
     },
     {
       title: "Name",
       dataIndex: "name",
       key: "name",
-      width: 150,
     },
     {
       title: "Code",
       dataIndex: "code",
       key: "code",
-      width: 70,
     },
     {
       title: "Policy",

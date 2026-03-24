@@ -67,7 +67,6 @@ const ServiceList = () => {
         mode={mode}
         selectedData={selectedData}
         setSelectedData={setSelectedData}
-        width={500}
       />
     </div>
   );

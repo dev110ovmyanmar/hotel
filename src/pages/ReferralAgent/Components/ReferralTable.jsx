@@ -2,6 +2,9 @@ import { Dropdown, Space, Table, Tag, Button } from "antd";
 import { useState } from "react";
 import { EditOutlined, EyeOutlined, MoreOutlined } from "@ant-design/icons";
 import ReferralForm from './ReferralForm/ReferralForm';
+import ColorStatusTag from './../../../component/ColorStatusTag/ColorStatusTag';
+import { PERMISSIONS } from './../../../variables/permission';
+import usePermission from './../../../hooks/usePermission';
 
 
 const ReferralTable = ({
@@ -15,6 +18,8 @@ const ReferralTable = ({
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mode, setMode] = useState(null);
   const [selectedData, setSelectedData] = useState({});
+
+  const {hasPermission} = usePermission();
 
   const columns = [
     {
@@ -30,94 +35,88 @@ const ReferralTable = ({
       render: (text) => <div>{text}</div>,
     },
     {
-      title: "Contact Person",
-      dataIndex: "contactPerson",
-      key: "contactPerson",
-      render: (text) => <div>{text}</div>,
-    },
-    {
       title: "Email",
       dataIndex: "email",
       key: "email",
-      render: (text) => <div>{text? text : "-"}</div>,
+      render: (text) => <div>{text ? text : "-"}</div>,
     },
     {
       title: "Phone",
       dataIndex: "phone",
       key: "phone",
-      render: (text) => <div>{text? text : "-"}</div>,
-    },
-    {
-      title: "Address",
-      dataIndex: "address",
-      key: "address",
-      render: (text) => <div>{text}</div>,
-    },
-    {
-      title: "Charge Type",
-      dataIndex: ["chargeType","name"],
-      key: "chargeType",
-      render: (text) => <div>{text}</div>,
+      render: (text) => <div>{text ? text : "-"}</div>,
     },
     {
       title: "Charge Value",
       dataIndex: "chargeValue",
       key: "chargeValue",
-      render: (text) => <div>{text}</div>,
+      render: (_,record) => {
+        const chargeValue = record?.chargeValue;
+        const chargeTypeName = record?.chargeType?.code;
+
+        if(chargeTypeName === "flat"){
+            return <div>{chargeValue} MMK</div>
+        } else {
+          return <div>{chargeValue} %</div>
+        }
+      }
     },
-    {
-      title: "Remark",
-      dataIndex: "remark",
-      key: "remark",
-      render: (text) => <div>{text? text : "-"}</div>,
-    },
+    // {
+    //   title: "Remark",
+    //   dataIndex: "remark",
+    //   key: "remark",
+    //   render: (text) => <div>{text ? text : "-"}</div>,
+    // },
     {
       title: "Status",
-      dataIndex: ["status","name"],
+      dataIndex: ["status", "name"],
       key: "status",
-      render: (text) => <Tag className={text === "Active" ? "!text-green-500 " : "!text-red-500"}>{text === "Active" ? "Active" : "Inactive"}</Tag>,
+      render: (_, record) => <ColorStatusTag status={record?.status} />
     },
     {
       title: "Action",
       render: (_, record) => {
         const smallStyle = { fontSize: "12px" };
 
-        const items = [
+        const actions = [
           {
-            key: "1",
-            label: (
-              <Space
-                size={4}
-                style={smallStyle}
-                onClick={() => {
-                  setDrawerOpen(true);
-                  setMode("view");
-                  setSelectedData(record);
-                }}
-              >
-                <EyeOutlined style={{ fontSize: "12px" }} />
-                <span style={{ fontSize: "14px" }}>View</span>
-              </Space>
-            ),
+            key: "view",
+            label: "View",
+            icon: <EyeOutlined style={{ fontSize: "12px" }} />,
+            permission: PERMISSIONS.PARTNER_VIEW,
+            onClick: () => {
+              setDrawerOpen(true);
+              setMode("view");
+              setSelectedData(record);
+            },
           },
           {
-            key: "2",
-            label: (
-              <Space
-                size={4}
-                style={smallStyle}
-                onClick={() => {
-                  setDrawerOpen(true);
-                  setMode("edit");
-                  setSelectedData(record);
-                }}
-              >
-                <EditOutlined style={{ fontSize: "12px" }} />
-                <span style={{ fontSize: "14px" }}>Edit</span>
-              </Space>
-            ),
-          },
+            key: "edit",
+            label: "Edit",
+            icon: <EditOutlined style={{ fontSize: "12px" }} />,
+            permission: PERMISSIONS.PARTNER_EDIT,
+            onClick: () => {
+              setDrawerOpen(true);
+              setMode("edit");
+              setSelectedData(record);
+            },
+          }
         ];
+
+        const items = actions
+          .filter(
+            (action) =>
+              (!action.permission || hasPermission(action.permission)) && !action.hidden,
+          )
+          .map((action) => ({
+            key: action.key,
+            label: (
+              <Space size={4} style={smallStyle} onClick={action.onClick}>
+                {action.icon}
+                <span style={{ fontSize: "14px" }}>{action.label}</span>
+              </Space>
+            ),
+          }));
 
         return (
           <Dropdown menu={{ items }} trigger={["click"]}>

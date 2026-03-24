@@ -36,11 +36,6 @@ const FacilityTable = ({
       key: "name",
     },
     {
-      title: "Property",
-      dataIndex: ["property", "name"],
-      key: "property",
-    },
-    {
       title: "Facility Type",
       dataIndex: ["facilityType", "name"],
       key: "facilityType",

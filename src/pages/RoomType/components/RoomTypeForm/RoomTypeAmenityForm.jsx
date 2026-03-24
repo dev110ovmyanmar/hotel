@@ -164,7 +164,7 @@ const RoomAttributesForm = ({
             name="extraPrice"
             rules={[{ required: true, message: "Please enter extra price" }]}
           >
-            <Input addonAfter="MMK" readOnly={isFree} />
+            <Input suffix="MMK" readOnly={isFree} />
           </Form.Item>
         </Form>
       )}
