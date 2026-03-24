@@ -124,8 +124,8 @@ export default function SignIn() {
           >
             <Input.Password
               size="large"
-              placeholder=". . . . . . "
-              className="!bg-white/10 !text-amber-50 !rounded-md font-semibold "
+              placeholder="Password"
+              className="!bg-white/10 !text-amber-50 !rounded-md"
             />
           </Form.Item>
 
