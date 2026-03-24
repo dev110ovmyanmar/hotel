@@ -26,7 +26,7 @@ export const PERMISSIONS = {
   ROLE_CREATE: "role.create",
   ROLE_EDIT: "role.edit",
 
-//permission
+  //permission
   PERMISSION_LIST: "permission.list",
   PERMISSION_VIEW: "permission.view",
   PERMISSION_CREATE: "permission.create",
@@ -183,4 +183,10 @@ export const PERMISSIONS = {
   // Availability Calendar
   AVAILABILITY_CALENDAR_LIST: "availability-calendar.list",
   AVAILABILITY_CALENDAR_VIEW: "availability-calendar.view",
+
+  // Menu Category
+  MENU_CATEGORY_LIST: "menu-category.list",
+  MENU_CATEGORY_VIEW: "menu-category.view",
+  MENU_CATEGORY_CREATE: "menu-category.create",
+  MENU_CATEGORY_EDIT: "menu-category.edit",
 };
