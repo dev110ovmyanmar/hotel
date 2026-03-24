@@ -4,7 +4,9 @@ import {
   Input,
   Button,
   Drawer,
-  Select
+  Select,
+  Row,
+  Col
 } from "antd";
 import Toast from "../../../../component/Toast/Toast";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
@@ -17,7 +19,7 @@ import FormButtons from "../../../../component/FormButtons/FormButtons";
 import { queryClient } from './../../../../app/queryClient';
 import Status from './../../../../component/Status/Status';
 
-const {TextArea} = Input;
+const { TextArea } = Input;
 
 const CompanyForm = ({
   mode,
@@ -37,26 +39,27 @@ const CompanyForm = ({
 
   const initData = queryClient.getQueryData(["initData", "authenticated"])?.statuses;
   const chargeType = initData?.charge_type;
-  const status = initData?.status;
+
+  const chargeTypeValue = Form.useWatch(["chargeType","uuid"], form);
 
   const upsertPartners = useApiMutation({
     mutationFn: upsertPartner,
     invalidateKeys: [["companys"]],
-    shouldInvalidate: isEdit? true :page === 1
+    shouldInvalidate: isEdit ? true : page === 1
 
   });
 
   const { data, isPending, error } = useApiQuery({
     fetchQueryName: "company-details",
     fetchQueryFunction: partnerDetails,
-    params: { 
+    params: {
       uuid: selectedData?.uuid,
       partnerType: "Company"
     },
     options: {
       enabled: !!selectedData?.uuid,
     },
-    
+
   });
 
   useEffect(() => {
@@ -132,7 +135,7 @@ const CompanyForm = ({
             ) : (
               <FormButtons
                 onClick={() => form.submit()}
-                isPending={upsertPartners.isPending }
+                isPending={upsertPartners.isPending}
                 mode={mode}
               />
             )}
@@ -179,31 +182,76 @@ const CompanyForm = ({
             <Input readOnly={isView} />
           </Form.Item>
 
-          <Form.Item
-            label="Charge Type"
-            name={["chargeType", "uuid"]}
-            rules={[{ required: true, message: "Charge Type is Required" }]}
-          >
-            <Select
-              options={
-                chargeType?.map(item => (
-                  {
-                    label: item.name,
-                    value: item.uuid
-                  }
-                ))
-              }
-              open = {isView? false: undefined}
-            ></Select>
-          </Form.Item>
+          <Row gutter={16}>
+            <Col span={12}>
+              <Form.Item
+                label="Charge Type"
+                name={["chargeType", "uuid"]}
+                rules={[{ required: true, message: "Charge Type is Required" }]}
+                getValueProps={(value) => ({
+                  value: isView
+                    ? chargeType.find((item) => item.value === value)?.label
+                    : value,
+                })}
+              >
+                {
+                  isView ?
+                    <Input readOnly={isView} /> :
+                    <Select
+                      options={
+                        chargeType?.map(item => (
+                          {
+                            label: item.name,
+                            value: item.uuid
+                          }
+                        ))
+                      }
+                      placeholder="Select Charge Type"
 
-          <Form.Item
-            label="Charge Value "
-            name="chargeValue"
-            rules={[{ required: true, message: "Charge Value is Required" }]}
-          >
-            <Input readOnly={isView}/>
-          </Form.Item>
+                    ></Select>
+                }
+              </Form.Item>
+            </Col>
+
+            <Col span={12}>
+              <Form.Item
+                label="Charge Value "
+                name="chargeValue"
+                rules={[
+                  { required: true, message: "Charge Value is Required" },
+                  {
+                    validator: (_, value) => {
+                      const selectedType =
+                        chargeType?.find(
+                          (item) => item.uuid === chargeTypeValue,
+                        );
+
+                      if (selectedType?.code === "percentage") {
+                        const numValue = Number(value);
+                        if (isNaN(numValue) || numValue < 1 || numValue > 100) {
+                          return Promise.reject(
+                            new Error("Percentage must be between 1 and 100"),
+                          );
+                        }
+                      }
+                      return Promise.resolve();
+                    },
+                  },
+                ]}
+              >
+                <Input
+                  type="number"
+                  min={1}
+                  addonAfter={(() => {
+                    const selected = chargeType?.find(
+                      (item) => item.uuid === chargeTypeValue,
+                    );
+                    return selected?.code === "percentage" ? "%" : "MMK";
+                  })()}
+                  readOnly={isView} />
+              </Form.Item>
+            </Col>
+          </Row>
 
           <Form.Item
             label="Address"
@@ -217,10 +265,10 @@ const CompanyForm = ({
             label="Remark"
             name="remark"
           >
-            <TextArea readOnly={isView}/>
+            <TextArea readOnly={isView} />
           </Form.Item>
 
-          <Status/>
+          <Status />
         </Form>
       </Drawer>
     </div>

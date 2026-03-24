@@ -19,7 +19,7 @@ const CompanyTable = ({
   const [mode, setMode] = useState(null);
   const [selectedData, setSelectedData] = useState({});
 
-  const {hasPermission} = usePermission();
+  const { hasPermission } = usePermission();
 
   const columns = [
     {
@@ -59,22 +59,19 @@ const CompanyTable = ({
       render: (text) => <div>{text}</div>,
     },
     {
-      title: "Charge Type",
-      dataIndex: ["chargeType", "name"],
-      key: "chargeType",
-      render: (text) => <div>{text}</div>,
-    },
-    {
       title: "Charge Value",
       dataIndex: "chargeValue",
       key: "chargeValue",
-      render: (text) => <div>{text}</div>,
-    },
-    {
-      title: "Remark",
-      dataIndex: "remark",
-      key: "remark",
-      render: (text) => <div>{text ? text : "-"}</div>,
+      render: (_, record) => {
+        const chargeValue = record?.chargeValue;
+        const chargeTypeName = record?.chargeType?.code;
+
+        if (chargeTypeName === "flat") {
+          return <div>{chargeValue} MMK</div>
+        } else {
+          return <div>{chargeValue} %</div>
+        }
+      },
     },
     {
       title: "Status",

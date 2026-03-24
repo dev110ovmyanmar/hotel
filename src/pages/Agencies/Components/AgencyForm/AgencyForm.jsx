@@ -4,7 +4,10 @@ import {
   Input,
   Button,
   Drawer,
-  Select
+  Select,
+  InputNumber,
+  Row,
+  Col
 } from "antd";
 import Toast from "../../../../component/Toast/Toast";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
@@ -37,7 +40,8 @@ const AgencyForm = ({
 
   const initData = queryClient.getQueryData(["initData", "authenticated"])?.statuses;
   const chargeType = initData?.charge_type;
-  const status = initData?.status;
+
+  const chargeTypeValue = Form.useWatch(["chargeType","uuid"], form);
 
   const upsertPartners = useApiMutation({
     mutationFn: upsertPartner,
@@ -180,32 +184,76 @@ const AgencyForm = ({
             <Input readOnly={isView} />
           </Form.Item>
 
+          <Row gutter={16}>
+            <Col span={12}>
+              <Form.Item
+                label="Charge Type"
+                name={["chargeType", "uuid"]}
+                rules={[{ required: true, message: "Charge Type is Required" }]}
+                getValueProps={(value) => ({
+                  value: isView
+                    ? chargeType.find((item) => item.value === value)?.label
+                    : value,
+                })}
+              >
+                {
+                  isView ?
+                    <Input readOnly={isView} /> :
+                    <Select
+                      options={
+                        chargeType?.map(item => (
+                          {
+                            label: item.name,
+                            value: item.uuid
+                          }
+                        ))
+                      }
+                      placeholder="Select Charge Type"
 
-          <Form.Item
-            label="Charge Type"
-            name={["chargeType", "uuid"]}
-            rules={[{ required: true, message: "Charge Type is Required" }]}
-          >
-            <Select
-              options={
-                chargeType?.map(item => (
+                    ></Select>
+                }
+              </Form.Item>
+            </Col>
+
+            <Col span={12}>
+              <Form.Item
+                label="Charge Value "
+                name="chargeValue"
+                rules={[
+                  { required: true, message: "Charge Value is Required" },
                   {
-                    label: item.name,
-                    value: item.uuid
-                  }
-                ))
-              }
-              open={isView ? false : undefined}
-            ></Select>
-          </Form.Item>
+                    validator: (_, value) => {
+                      const selectedType =
+                        chargeType?.find(
+                          (item) => item.uuid === chargeTypeValue,
+                        );
 
-          <Form.Item
-            label="Charge Value "
-            name="chargeValue"
-            rules={[{ required: true, message: "Charge Value is Required" }]}
-          >
-            <Input readOnly={isView} />
-          </Form.Item>
+                      if (selectedType?.code === "percentage") {
+                        const numValue = Number(value);
+                        if (isNaN(numValue) || numValue < 1 || numValue > 100) {
+                          return Promise.reject(
+                            new Error("Percentage must be between 1 and 100"),
+                          );
+                        }
+                      }
+                      return Promise.resolve();
+                    },
+                  },
+                ]}
+              >
+                <Input
+                  type="number"
+                  min={1}
+                  addonAfter={(() => {
+                    const selected = chargeType?.find(
+                      (item) => item.uuid === chargeTypeValue,
+                    );
+                    return selected?.code === "percentage" ? "%" : "MMK";
+                  })()}
+                  readOnly={isView} />
+              </Form.Item>
+            </Col>
+          </Row>
 
           <Form.Item
             label="Address"
@@ -222,7 +270,7 @@ const AgencyForm = ({
             <TextArea readOnly={isView} />
           </Form.Item>
 
-          <Status/>
+          <Status placeholder="Select Status"/>
         </Form>
       </Drawer>
     </div>

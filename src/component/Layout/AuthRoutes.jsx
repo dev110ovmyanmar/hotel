@@ -1,3 +1,4 @@
+import { AiOutlineBuild } from "react-icons/ai"; 
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { Suspense, useMemo } from "react";
 import { Route, Routes } from "react-router-dom";
@@ -131,6 +132,8 @@ const GuestListing = lazy(
 const GuestNotesListing = lazy(
   () => import("../../pages/GuestsListing/GuestNotes/GuestNotesListing"),
 );
+
+const RoomRateList = lazy(() => import("../../pages/RoomRate/RoomRateList"));
 
 const SeasonalRate = lazy(
   () => import("../../pages/SeasonalRate/SeasonalRateList"),
@@ -749,6 +752,15 @@ export const authRoutes = [
     path: `/guest-list/guest-notes/:guestId`,
     component: <GuestNotesListing />,
     permission: PERMISSIONS.GUEST_NOTE_LIST,
+  },
+  {
+    key: 28,
+    path: "/room-rate",
+    label: "Room Rate",
+    component: <RoomRateList />,
+    icon: <AiOutlineBuild style={{ fontSize: "20px" }} />,
+    isPrivate: false,
+    // permission: PERMISSIONS.ROOM_RATE_LIST,
   },
   {
     key: 22,
