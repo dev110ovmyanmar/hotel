@@ -1,4 +1,3 @@
-import { AiOutlineBuild } from "react-icons/ai";
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { Suspense, useMemo } from "react";
 import { Route, Routes } from "react-router-dom";
@@ -53,6 +52,9 @@ import { BsBuildings } from "react-icons/bs";
 import { MdOutlineSupportAgent } from "react-icons/md";
 import { MdGroups3 } from "react-icons/md";
 import { isPending } from "@reduxjs/toolkit";
+import { MdOutlineRestaurantMenu } from "react-icons/md";
+import { AiOutlineBuild } from "react-icons/ai";
+
 
 const Dashboard = lazy(() => import("../../pages/Dashboard/Dashboard"));
 const Calendar = lazy(() => import("../../pages/Calendar/Calendar"));
@@ -143,6 +145,14 @@ const SeasonalRate = lazy(
 const MenuCategoryList = lazy(
   () => import("../../pages/MenuCategory/MenuCategoryList"),
 );
+
+const MenuModifierList = lazy(
+  () => import("../../pages/MenuModifier/MenuModifierList")
+);
+
+const AgencyContractList = lazy(
+  () => import("../../pages/AgencyContract/AgencyContractList")
+)
 
 export const authRoutes = [
   {
@@ -579,14 +589,15 @@ export const authRoutes = [
         // component: < />,
         // permission: ".list",
       },
-      // {
-      //   key: 14.3,
-      //   label: "Menu Modifiers",
-      //   path: "/f&b-management/menu-modifiers",
-      //   icon: <DiffOutlined style={{ fontSize: "20px" }} />,
-      //   // component: < />,
-      //   // permission: ".list",
-      // },
+      {
+        key: 14.3,
+        label: "Menu Modifiers",
+        path: "/f&b-management/menu-modifiers",
+        icon: <MdOutlineRestaurantMenu style={{ fontSize: "20px" }} />,
+        component: <MenuModifierList />,
+        // permission: ".list",
+      },
+
       // {
       //   key: 14.4,
       //   label: "Tables",
@@ -763,6 +774,15 @@ export const authRoutes = [
     path: "/room-rate",
     label: "Room Rate",
     component: <RoomRateList />,
+    icon: <AiOutlineBuild style={{ fontSize: "20px" }} />,
+    isPrivate: false,
+    // permission: PERMISSIONS.ROOM_RATE_LIST,
+  },
+  {
+    key: 29,
+    path: "/agency-contract",
+    label: "Agency Contract",
+    component: <AgencyContractList />,
     icon: <AiOutlineBuild style={{ fontSize: "20px" }} />,
     isPrivate: false,
     // permission: PERMISSIONS.ROOM_RATE_LIST,
