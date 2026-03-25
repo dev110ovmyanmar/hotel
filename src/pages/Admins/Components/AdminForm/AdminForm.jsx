@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Form, Input, Button, Select, Image, Drawer, AutoComplete } from "antd"; import { useApiMutation } from "../../../../hooks/useApiMutation";
+import { Form, Input, Button, Select, Divider, Drawer, Modal } from "antd"; 
+import { useApiMutation } from "../../../../hooks/useApiMutation";
 import useApiQuery from "../../../../hooks/useApiQuery";
 import { queryClient } from "../../../../app/queryClient";
 import {
@@ -8,7 +9,6 @@ import {
   adminPermission
 } from "../../../../api/adminApi";
 import FormButton from "../../../../component/FormButtons/FormButtons";
-import { Divider } from 'antd';
 import AddOnDrawer from './AddOnDrawer';
 import Toast from './../../../../component/Toast/Toast';
 import usePermission from './../../../../hooks/usePermission';
@@ -38,15 +38,16 @@ const AdminForm = ({
   const [adminDrawerOpen, setAdminDrawerOpen] = useState(false);
   const [selectedPermissions, setSelectedPermissions] = useState([]);
 
+  // Modal
+  const [openModal, setOpenModal] = useState(false);
+  const [initialRole, setInitialRole] = useState(null);
+  const [finalValues, setFinalValues] = useState(null);
+
   const roles = initData?.roles?.map((role) => ({
     value: role.uuid,
     label: role.name,
   }));
 
-  const statuses = initData?.statuses?.status?.map((status) => ({
-    value: status.uuid,
-    label: status.name,
-  }));
 
   const upsertAdmins = useApiMutation({
     mutationFn: upsertAdmin,
@@ -63,8 +64,8 @@ const AdminForm = ({
     },
   });
 
+  // Add On Permission
   const [allowMode, setAllowMode] = useState(""); // "allow" or "notAllow"
-
 
   const changesNotAllowList = data?.permissions?.changesNotAllowList;
   const changesAllowList = data?.permissions?.changesAllowList;
@@ -119,12 +120,44 @@ const AdminForm = ({
     }
   }, [data]);
 
+  useEffect(() => {
+    if (data?.role?.uuid) {
+      setInitialRole(data?.role?.uuid)
+    }
+  }, [data])
+
+  const formButtonSubmit = () => {
+    const values = form.getFieldsValue();
+
+    if (isEdit && initialRole) {
+      const isChanged = values.role !== initialRole;
+
+      if (isChanged) {
+        setFinalValues(values);
+        setOpenModal(true);
+        return;
+      }
+    }
+    onFinish(values);
+  };
+
+  const handleOk = () => {
+    if (finalValues) {
+      onFinish(finalValues)
+    }
+    setOpenModal(false);
+  }
+
+  const cancelButton = () => {
+    setOpenModal(false)
+  };
+
   const onFinish = (values) => {
     if (isAdd) {
       const createValues = {
         ...values,
         role: { uuid: values.role },
-        status:  values.status,
+        status: values.status,
       };
 
       upsertAdmins.mutate(createValues, {
@@ -140,7 +173,7 @@ const AdminForm = ({
       const editValues = {
         ...values, // merge new form values
         role: { uuid: values.role },
-        status:  values.status,
+        status: values.status,
         uuid: data?.uuid,
       };
 
@@ -163,6 +196,7 @@ const AdminForm = ({
       setSelectedPermissions(allowPermissionIds);
     }
   }, [data]);
+
 
   return (
     <div>
@@ -190,7 +224,7 @@ const AdminForm = ({
               </Button>
             ) : (
               <FormButton
-                onClick={() => form.submit()}
+                onClick={formButtonSubmit}
                 isPending={upsertAdmins.isPending}
                 mode={mode}
               />
@@ -203,8 +237,6 @@ const AdminForm = ({
           layout="vertical"
           style={{ width: "100%" }}
           onFinish={onFinish}
-
-
         >
           <Form.Item
             label="Name"
@@ -247,7 +279,7 @@ const AdminForm = ({
                         .includes(input.toLowerCase()),
                   }}
                   options={roles}
-                  open={isView ? false : undefined}
+                  
                 />
             }
 
@@ -339,6 +371,22 @@ const AdminForm = ({
           }
 
         </Form>
+
+        <Modal
+          title="Confirmation Box"
+          open={openModal}
+          onOk={handleOk}
+          okText="Confirm"
+          okButtonProps={{
+            // loading: loading,
+          }}
+          onCancel={cancelButton}
+        > 
+          <Divider/>
+          <div className="text-md !mt-3">
+            Changing the role will update permissions. Do you want to continue?
+          </div>
+        </Modal>
       </Drawer>
     </div>
   );
