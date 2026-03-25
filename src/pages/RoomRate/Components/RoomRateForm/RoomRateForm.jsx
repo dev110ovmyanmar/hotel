@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Form, Input, Button, Select, Drawer, InputNumber } from "antd";
+import { useParams, useLocation } from "react-router-dom";
+import { Form, Input, Button, Select, Drawer, Row, Col } from "antd";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
 import useApiQuery from "../../../../hooks/useApiQuery";
 import FormButton from "../../../../component/FormButtons/FormButtons";
 import Toast from './../../../../component/Toast/Toast';
 import usePermission from './../../../../hooks/usePermission';
 import { upsertRoomRate, roomRateDetails } from "../../../../api/roomRateApi";
-import {ratePlanMeta} from "../../../../api/ratePlanApi";
+import { ratePlanMeta } from "../../../../api/ratePlanApi";
 
 const RoomRateForm = ({
   mode,
@@ -26,15 +27,18 @@ const RoomRateForm = ({
   const isEdit = mode === "edit";
   const isAdd = mode === "add";
 
-  const {data: ratePlanMetas} = useApiQuery({
+  const { ratePlanId } = useParams();
+
+  const { state } = useLocation();
+  const pricingType = state?.ratePlan?.pricingType?.code;
+
+  console.log(pricingType, "StateInLocationRoomRateForm");
+
+
+  const { data: ratePlanMetas } = useApiQuery({
     fetchQueryName: "rate-plan-meta",
     fetchQueryFunction: ratePlanMeta
   })
-
-  const ratePlanOptions = ratePlanMetas?.rate_plans?.map(item => ({
-    label: item.name,
-    value: item.uuid
-  }));
 
   const roomTypeOptions = ratePlanMetas?.room_types?.map(item => ({
     label: item.name,
@@ -68,13 +72,14 @@ const RoomRateForm = ({
   if (roomRateDetailData) {
     console.log(roomRateDetailData, "roomRateDetailData")
   }
-
   const onFinish = (values) => {
-    console.log(values,"ValuesOnFinish");
+    console.log(values, "ValuesInOnFinish")
     if (isAdd) {
       const createValues = {
         ...values,
-        ratePlan: values?.ratePlan,
+        ratePlan: {
+          uuid: ratePlanId
+        },
         roomType: values?.roomType
       };
 
@@ -89,8 +94,10 @@ const RoomRateForm = ({
     }
     if (isEdit) {
       const editValues = {
-        ...values, // merge new form values
-        ratePlan: values?.ratePlan,
+        ...values,
+        ratePlan: {
+          uuid: ratePlanId
+        },
         roomType: values?.roomType,
         uuid: roomRateDetailData?.uuid,
       };
@@ -143,26 +150,10 @@ const RoomRateForm = ({
           layout="vertical"
           style={{ width: "100%" }}
           onFinish={onFinish}
+          initialValues={{
+            durationHours: 0
+          }}
         >
-          <Form.Item
-            label="Rate Plan"
-            name={["ratePlan", "uuid"]}
-            rules={[{ required: true, message: "Rate Plan is Required" }]}
-            getValueProps={(value) => {
-              return ({
-                value: isView
-                  ? ratePlanMetas?.rate_plans?.find((item) => item.uuid === value)?.name
-                  : value,
-              })
-            }}
-          >
-            {
-              isView ?
-                <Input readOnly={isView} /> :
-                <Select options={ratePlanOptions} />
-            }
-          </Form.Item>
-
 
           <Form.Item
             label="Room Type"
@@ -188,19 +179,85 @@ const RoomRateForm = ({
             name="price"
             rules={[{ required: true, message: "Price is Required" }]}
           >
-            <Input 
+            <Input
               readOnly={isView}
-              suffix="MMK" 
-              />
+              suffix="MMK"
+            />
           </Form.Item>
 
-          <Form.Item
-            label="Duration Hours"
-            name="durationHours"
-            rules={[{ required: true, message: "Duration Hours is Required" }]}
-          >
-            <InputNumber readOnly={isView} style={{ width: "100%" }} />
+          {
+            pricingType !== "daily" &&
+            <Form.Item
+              label="Duration Hours"
+              name="durationHours"
+              rules={[{ required: true, message: "Duration Hours is Required" }]}
+            >
+              <Input
+                readOnly={isView}
+                suffix="hrs"
+              />
+            </Form.Item>
+          }
+
+          <Form.Item label="Daily Room Prices" name="weekdays">
+            <div style={{ display: "flex", flexDirection: "column" }}>
+
+              <Row gutter={16}>
+                <Col span={12}>
+                  <Form.Item label="Mon" name={["weekdays", "mon"]} style={{ marginBottom: 1 }}>
+                    <Input readOnly={isView} />
+                  </Form.Item>
+                </Col>
+                <Col span={12}>
+                  <Form.Item label="Tue" name={["weekdays", "tue"]} style={{ marginBottom: 1 }}>
+                    <Input readOnly={isView} />
+                  </Form.Item>
+                </Col>
+              </Row>
+
+              <Row gutter={16}>
+                <Col span={12}>
+                  <Form.Item label="Wed" name={["weekdays", "wed"]} style={{ marginBottom: 1 }}>
+                    <Input readOnly={isView} />
+                  </Form.Item>
+                </Col>
+                <Col span={12}>
+                  <Form.Item label="Thur" name={["weekdays", "thu"]} style={{ marginBottom: 1 }}>
+                    <Input readOnly={isView} />
+                  </Form.Item>
+                </Col>
+              </Row>
+
+              <Row gutter={16}>
+                <Col span={12}>
+                  <Form.Item label="Fri" name={["weekdays", "fri"]} style={{ marginBottom: 1 }}>
+                    <Input readOnly={isView} />
+                  </Form.Item>
+                </Col>
+                <Col span={12}>
+                  <Form.Item label="Sat" name={["weekdays", "sat"]} style={{ marginBottom: 1 }}>
+                    <Input readOnly={isView} />
+                  </Form.Item>
+                </Col>
+              </Row>
+
+              <Row gutter={16}>
+                <Col span={12}>
+                  <Form.Item label="Sun" name={["weekdays", "sun"]} style={{ marginBottom: 1 }}>
+                    <Input readOnly={isView} />
+                  </Form.Item>
+                </Col>
+              </Row>
+
+
+
+
+
+
+
+            </div>
           </Form.Item>
+
         </Form>
       </Drawer>
     </div>

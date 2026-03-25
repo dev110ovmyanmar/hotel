@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useParams, useLocation  } from "react-router-dom";
 import { LIMITS } from "../../variables/constants";
 import useApiQuery from "../../hooks/useApiQuery";
 import ListHeader from "../../component/ListHeader/ListHeader";
@@ -16,6 +17,8 @@ const RoomRateList = () => {
   const [mode, setMode] = useState("add");
   const [selectedData, setSelectedData] = useState(null);
 
+  const {state} = useLocation();
+  
   const normalStatus = status === "all" ? null : status;
 
   const { data, isLoading, error } = useApiQuery({
@@ -28,6 +31,9 @@ const RoomRateList = () => {
       },
       keyword,
       status: normalStatus,
+      ratePlan: {
+        uuid : state?.ratePlan?.uuid
+      }
     },
   });
 
