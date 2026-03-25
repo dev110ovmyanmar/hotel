@@ -27,11 +27,12 @@ import { useApiMutation } from "../../hooks/useApiMutation.js";
 import { ReloadOutlined } from "@ant-design/icons";
 import { queryClient } from "../../app/queryClient.js";
 import { setUserData } from "../../services/authSlice.js";
-import { persister } from './../../app/QueryProvider';
+import { persister } from "./../../app/QueryProvider";
 import { loadState } from "../../utils/Utils";
 import { LOCAL_STORAGE_KEYS } from "../../variables/constants";
 import useApiQuery from "../../hooks/useApiQuery";
 import { adminDetails } from "../../api/adminApi";
+import { saveState } from "../../utils/Utils.js";
 
 const { Header } = Layout;
 
@@ -69,8 +70,8 @@ const Topbar = withDirection(function (props) {
 
       if (freshData?.permissions) {
         dispatch(setUserData({ permissions: freshData.permissions }));
+        saveState("InitPermissions", freshData.permissions);
       }
-
     } catch (error) {
       console.error("Refetch failed", error);
     } finally {
@@ -160,14 +161,15 @@ const Topbar = withDirection(function (props) {
   return (
     <>
       <Header
-        className={`bg-white! fixed w-full h-25 flex justify-between z-1000 border-b border-gray-300 transition-all ${isCollapsed
+        className={`bg-white! fixed w-full h-25 flex justify-between z-1000 border-b border-gray-300 transition-all ${
+          isCollapsed
             ? props["data-rtl"] === "rtl"
               ? "px-[15px] md:pl-[31px] md:pr-[109px]!"
               : "px-[15px] md:pr-[31px] md:pl-[109px]!"
             : props["data-rtl"] === "rtl"
               ? "pl-[260px] pr-[15px] md:pl-[265px] md:pr-[31px]!"
               : "pr-[15px] pl-[260px] md:pr-[31px] md:pl-[265px]!"
-          }`}
+        }`}
       >
         {/* Left Section */}
         <div className="flex items-center py-2 gap-2">

@@ -23,3 +23,11 @@ export const getAvailabilityCalendarDetails = async (params) => {
     );
     return data.response;
 };
+
+export const updateStopSell = async (params) => {
+    const { data } = await apiClient.put(
+        "/availability-calendar/stop-sell",
+        params
+    );
+    return data.response;
+};
