@@ -637,7 +637,7 @@ export const authRoutes = [
         component: <RestauranttableList />,
         icon: <FormOutlined style={{ fontSize: "20px" }} />,
         isPrivate: false,
-        // permission: PERMISSIONS.RESTAURANT_TABLE_LIST,
+        permission: PERMISSIONS.RESTAURANT_TABLE_LIST,
       },
       {
         key: 14.5,

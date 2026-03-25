@@ -4,6 +4,7 @@ import { AiTwotoneEye } from "react-icons/ai";
 import { FiEdit } from "react-icons/fi";
 import { EditOutlined, EyeOutlined, MoreOutlined } from "@ant-design/icons";
 import AmenitiesForm from "./AmenitiesForm/AmenitiesForm";
+import BooleanTag from "../../../component/BooleanTag/BooleanTag";
 
 const AmenitiesTable = ({
   data,
@@ -34,13 +35,25 @@ const AmenitiesTable = ({
       title: "Is Free",
       dataIndex: "isFree",
       key: "isFree",
-      render: (text) => <div>{text === true ? "True" : "False"}</div>,
+      render: (text) =>
+        // <div>{text === true ? "True" : "False"}</div>
+        <BooleanTag
+          value={text}
+          trueText="Yes"
+          falseText="No"
+        />,
     },
     {
       title: "Visibility",
       dataIndex: "visibility",
       key: "visibility",
-      render: (text) => <div>{text === true ? "True" : "False"}</div>,
+      render: (text) =>
+        // <div>{text === true ? "True" : "False"}</div>
+        <BooleanTag
+          value={text}
+          trueText="Yes"
+          falseText="No"
+        />,
     },
     {
       title: "Action",

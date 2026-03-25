@@ -1,7 +1,12 @@
-import { Tag, Dropdown, Button } from "antd";
+import { Tag, Dropdown, Button, Space } from "antd";
 import { EditOutlined, EyeOutlined, MoreOutlined } from "@ant-design/icons";
+import usePermission from "../../../hooks/usePermission";
+import { PERMISSIONS } from "../../../variables/permission";
+import BooleanTag from "../../../component/BooleanTag/BooleanTag";
 
 export default function useServiceInventoryColumns(onEdit, onView) {
+  const { hasPermission } = usePermission();
+
   return [
     {
       title: "ID",
@@ -38,7 +43,6 @@ export default function useServiceInventoryColumns(onEdit, onView) {
       width: 110,
       render: (price) => (
         <span className="font-medium">
-          {/* {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(price || 0)} */}
           {price}
         </span>
       ),
@@ -65,7 +69,11 @@ export default function useServiceInventoryColumns(onEdit, onView) {
       align: "center",
       width: 90,
       render: (status) => (
-        <Tag color={status ? "blue" : "default"}>{status ? "Yes" : "No"}</Tag>
+        <BooleanTag
+          value={status}
+          trueText="Washable"
+          falseText="N/A"
+        />
       ),
     },
     {
@@ -75,7 +83,11 @@ export default function useServiceInventoryColumns(onEdit, onView) {
       align: "center",
       width: 80,
       render: (free) => (
-        <Tag color={free ? "blue" : "default"}>{free ? "Yes" : "No"}</Tag>
+        <BooleanTag
+          value={free}
+          trueText="Gift"
+          falseText="Sale"
+        />
       ),
     },
     {
@@ -83,34 +95,51 @@ export default function useServiceInventoryColumns(onEdit, onView) {
       key: "actions",
       width: 80,
       fixed: "right",
-      render: (_, record) => (
-        <Dropdown
-          menu={{
-            items: [
-              {
-                key: "1",
-                label: "View",
-                icon: <EyeOutlined />,
-                onClick: () => onView(record),
-              },
-              {
-                key: "2",
-                label: "Edit",
-                icon: <EditOutlined />,
-                onClick: () => onEdit(record),
-              },
-            ],
-          }}
-          trigger={["click"]}
-        >
-          <Button
-            icon={<MoreOutlined />}
-            size="small"
-            type="text"
-            onClick={(e) => e.stopPropagation()}
-          />
-        </Dropdown>
-      ),
+      render: (_, record) => {
+        const actions = [
+          {
+            key: "view",
+            label: "View",
+            icon: <EyeOutlined />,
+            permission: PERMISSIONS.SERVICE_INVENTORY_VIEW,
+            onClick: () => onView(record),
+          },
+          {
+            key: "edit",
+            label: "Edit",
+            icon: <EditOutlined />,
+            permission: PERMISSIONS.SERVICE_INVENTORY_EDIT,
+            onClick: () => onEdit(record),
+          },
+        ];
+
+        // 2. Filter based on permissions
+        const items = actions
+          .filter((action) => !action.permission || hasPermission(action.permission))
+          .map((action) => ({
+            key: action.key,
+            label: (
+              <Space size={8} onClick={action.onClick}>
+                {action.icon}
+                <span>{action.label}</span>
+              </Space>
+            ),
+          }));
+
+        // 3. Only show dropdown if there are items available for this user
+        if (items.length === 0) return null;
+
+        return (
+          <Dropdown menu={{ items }} trigger={["click"]}>
+            <Button
+              icon={<MoreOutlined />}
+              size="small"
+              type="text"
+              onClick={(e) => e.stopPropagation()}
+            />
+          </Dropdown>
+        );
+      },
     },
   ];
 }

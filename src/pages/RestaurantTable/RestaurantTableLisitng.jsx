@@ -5,6 +5,8 @@ import ListHeader from "../../component/ListHeader/ListHeader";
 import RestaurantTableForm from "./components/RestaurantTableForm";
 import RestauranttableTable from "./components/RestauranttableTable";
 import { LIMITS } from "../../variables/constants";
+import { PERMISSIONS } from "../../variables/permission";
+import usePermission from "../../hooks/usePermission";
 
 const RestaurantTableListing = () => {
     const [selectedRow, setSelectedRow] = useState(null);
@@ -13,6 +15,7 @@ const RestaurantTableListing = () => {
     const [page, setPage] = useState(1);
     const [perPage, setPerPage] = useState(LIMITS.PAGE_SIZE);
     const [drawerOpen, setDrawerOpen] = useState(false);
+
 
     // Fetch List Data
     const { data, isLoading } = useApiQuery({
@@ -63,6 +66,7 @@ const RestaurantTableListing = () => {
                     setKeyword={setKeyword}
                     addButtonText="Add New Restaurant Table"
                     onAdd={handleAdd}
+                    permission={PERMISSIONS.RESTAURANT_TABLE_CREATE}
                 />
             </div>
 

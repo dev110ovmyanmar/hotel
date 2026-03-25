@@ -110,7 +110,7 @@ import ProfileForm from "./ProfileForm";
 import { loadState } from "../../utils/Utils";
 import { LOCAL_STORAGE_KEYS } from "../../variables/constants";
 import useApiQuery from "../../hooks/useApiQuery";
-import useApiMutation from "../../hooks/useApiMutation";
+import { useApiMutation } from "../../hooks/useApiMutation";
 import { adminDetails, upsertAdmin } from "../../api/adminApi";
 import Toast from "../../component/Toast/Toast";
 import { Form } from "antd";
