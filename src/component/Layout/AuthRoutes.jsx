@@ -233,6 +233,13 @@ export const authRoutes = [
       },
     ],
   },
+  {
+    key: 4.9,
+    path: "/rates-availability/rate-plans/:ratePlanId/room-rate",
+    component: <RoomRateList />,
+    isPrivate: false,
+    // permission: PERMISSIONS.ROOM_RATE_LIST,
+  },
 
   {
     key: 5,
@@ -793,15 +800,6 @@ export const authRoutes = [
     path: `/guest-list/guest-notes/:guestId`,
     component: <GuestNotesListing />,
     permission: PERMISSIONS.GUEST_NOTE_LIST,
-  },
-  {
-    key: 28,
-    path: "/room-rate",
-    label: "Room Rate",
-    component: <RoomRateList />,
-    icon: <AiOutlineBuild style={{ fontSize: "20px" }} />,
-    isPrivate: false,
-    // permission: PERMISSIONS.ROOM_RATE_LIST,
   },
   {
     key: 29,
