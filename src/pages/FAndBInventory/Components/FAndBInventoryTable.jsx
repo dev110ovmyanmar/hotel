@@ -1,14 +1,14 @@
-import { Dropdown, Space, Table, Tag, Button } from "antd";
+import { Dropdown, Space, Table } from "antd";
 import { useState } from "react";
 import { MoreOutlined } from "@ant-design/icons";
 import { EyeOutlined } from "@ant-design/icons";
 import { EditOutlined } from "@ant-design/icons";
-import ServiceForm from "./ServiceForm/ServiceForm";
 import { PERMISSIONS } from "../../../variables/permission";
 import usePermission from "../../../hooks/usePermission";
+import FAndBInventoryForm from "./FAndBInventoryForm/FAndBInventoryForm";
 import ColorStatusTag from "../../../component/ColorStatusTag/ColorStatusTag";
 
-const ServiceTable = ({
+const FAndBInventoryTable = ({
   data,
   page,
   setPage,
@@ -35,24 +35,34 @@ const ServiceTable = ({
       key: "name",
     },
     {
-      title: "Price (MMK)",
-      dataIndex: "basePrice",
-      key: "basePrice",
+      title: "Category",
+      dataIndex: ["category", "name"],
+      key: "category",
     },
     {
-      title: "Property",
-      dataIndex: ["property", "name"],
-      key: "property",
+      title: "Supplier",
+      dataIndex: ["supplier", "name"],
+      key: "supplier",
     },
     {
-      title: "Billing Type",
-      dataIndex: ["billingType", "name"],
-      key: "billingType",
+      title: "Unit",
+      dataIndex: ["unit", "name"],
+      key: "unit",
     },
     {
-      title: "Service Type",
-      dataIndex: ["serviceType", "name"],
-      key: "serviceType",
+      title: "Purchase Price (MMK)",
+      dataIndex: "unitCost",
+      key: "unitCost",
+    },
+     {
+      title: "Selling Price (MMK)",
+      dataIndex: "unitPrice",
+      key: "unitPrice",
+    },
+    {
+      title: "Reorder Level",
+      dataIndex: "reorderLevel",
+      key: "reorderLevel",
     },
     {
       title: "Status",
@@ -70,7 +80,7 @@ const ServiceTable = ({
             key: "view",
             label: "View",
             icon: <EyeOutlined style={{ fontSize: "12px" }} />,
-            permission: PERMISSIONS.SERVICE_VIEW,
+            permission: PERMISSIONS.FOOD_AND_BEVERAGE_INVENTORY_VIEW,
             onClick: () => {
               setDrawerOpen(true);
               setMode("view");
@@ -81,7 +91,7 @@ const ServiceTable = ({
             key: "edit",
             label: "Edit",
             icon: <EditOutlined style={{ fontSize: "12px" }} />,
-            permission: PERMISSIONS.SERVICE_EDIT,
+            permission: PERMISSIONS.FOOD_AND_BEVERAGE_INVENTORY_EDIT,
             onClick: () => {
               setDrawerOpen(true);
               setMode("edit");
@@ -134,7 +144,7 @@ const ServiceTable = ({
         }}
       />
 
-      <ServiceForm
+      <FAndBInventoryForm
         page={page}
         setPage={setPage}
         mode={mode}
@@ -143,10 +153,9 @@ const ServiceTable = ({
         setDrawerOpen={setDrawerOpen}
         selectedData={selectedData}
         setSelectedData={setSelectedData}
-        width={500}
       />
     </div>
   );
 };
 
-export default ServiceTable;
+export default FAndBInventoryTable;
