@@ -6,6 +6,7 @@ import { EditOutlined } from "@ant-design/icons";
 import ServiceForm from "./ServiceForm/ServiceForm";
 import { PERMISSIONS } from "../../../variables/permission";
 import usePermission from "../../../hooks/usePermission";
+import ColorStatusTag from "../../../component/ColorStatusTag/ColorStatusTag";
 
 const ServiceTable = ({
   data,
@@ -57,11 +58,7 @@ const ServiceTable = ({
       title: "Status",
       dataIndex: ["status", "name"],
       key: "status",
-      render: (_, record) => (
-        <Tag color={record?.status?.name === "Active" ? "green" : "red"}>
-          {record?.status?.name.toUpperCase()}
-        </Tag>
-      ),
+      render: (_, record) => <ColorStatusTag status={record?.status} />,
     },
     {
       title: "Action",

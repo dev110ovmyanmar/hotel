@@ -106,26 +106,54 @@ import React, { useState } from "react";
 import { Button, Avatar, Typography, Drawer } from "antd";
 import { EditOutlined } from "@ant-design/icons";
 import ProfileForm from "./ProfileForm";
-import { useSelector } from "react-redux";
+// import { useSelector } from "react-redux";
+import { loadState } from "../../utils/Utils";
+import { LOCAL_STORAGE_KEYS } from "../../variables/constants";
+import useApiQuery from "../../hooks/useApiQuery";
+import { useApiMutation } from "../../hooks/useApiMutation";
+import { adminDetails, upsertAdmin } from "../../api/adminApi";
+import Toast from "../../component/Toast/Toast";
+import { Form } from "antd";
 
 const { Title, Text } = Typography;
 
-const ProfilePage = ({ onClose }) => {
+const ProfilePage = ({ profileData }) => {
+  const [form] = Form.useForm();
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [editingSection, setEditingSection] = useState(null);
-  const auth = useSelector((state) => state.auth || {});
+  // const auth = useSelector((state) => state.auth || {});
+  const uuid = loadState(LOCAL_STORAGE_KEYS.loginAdminDetails)?.uuid;
+  const roleUuid = loadState(LOCAL_STORAGE_KEYS.loginAdminDetails)?.role?.uuid;
+
+
+  const upsertAdmins = useApiMutation({
+    mutationFn: upsertAdmin,
+    invalidateKeys: [["login-admin-details"]],
+  });
+
+  const { data: loginAdminDetails } = useApiQuery({
+    fetchQueryName: "login-admin-details",
+    fetchQueryFunction: adminDetails,
+    params: { uuid },
+  });
 
   const userInfo = {
-    name: auth.user?.name || "Admin Name",
-    role: auth.role || "Admin",
+    name: loginAdminDetails?.name,
+    role: loginAdminDetails?.role?.name,
   };
 
   const personalInfoInitial = {
-    name: auth.user?.name || "Natashia",
-    dob: "12-10-1990",
-    email: "info@binary-fusion.com",
-    phone: "(+62) 821 2554-5846",
-    userRole: "Admin",
+    // name: auth.user?.name || "Natashia",
+    // dob: "12-10-1990",
+    // email: "info@binary-fusion.com",
+    // phone: "(+62) 821 2554-5846",
+    // userRole: "Admin",
+
+    name: loginAdminDetails?.name,
+    role: loginAdminDetails?.role?.name,
+    email: loginAdminDetails?.email,
+    status: loginAdminDetails?.status?.name
+
   };
 
   const showDrawer = (section) => {
@@ -139,7 +167,22 @@ const ProfilePage = ({ onClose }) => {
   };
 
   const handleSave = (values) => {
-    console.log(`${editingSection} updated:`, values);
+    const editValues = {
+      ...values,
+      uuid: uuid,
+      role: {
+        uuid: roleUuid
+      },
+      status: {
+        uuid: loginAdminDetails?.status.uuid
+      }
+
+    };
+    upsertAdmins.mutate(editValues, {
+      onSuccess: () => {
+        Toast.success("Information Updated Successfully!")
+      }
+    })
     closeDrawer();
   };
 
@@ -169,7 +212,7 @@ const ProfilePage = ({ onClose }) => {
             Edit
           </Button>
         </div>
-        <div className="grid grid-cols-3 gap-x-12 gap-y-6">
+        <div className="grid grid-cols-2 gap-x-12 gap-y-6">
           {Object.entries(personalInfoInitial).map(([key, value]) => (
             <div key={key}>
               <Text strong>{key.replace(/([A-Z])/g, " $1")}:</Text>
@@ -181,13 +224,21 @@ const ProfilePage = ({ onClose }) => {
 
       {/* Edit Drawer */}
       <Drawer
-        title={`Edit ${editingSection === "personal" ? "Personal Info" : ""}`}
         onClose={closeDrawer}
         open={drawerVisible}
         footer={null}
+        title={
+          <div className="flex justify-between gap-4">
+            {`Edit ${editingSection === "personal" ? "Personal Info" : ""}`}
+            <Button type="primary" onClick={() => form.submit()} >
+              Update
+            </Button>
+          </div>
+        }
       >
         {editingSection === "personal" && (
           <ProfileForm
+            form={form}
             initialValues={personalInfoInitial}
             onSave={handleSave}
             onCancel={closeDrawer}

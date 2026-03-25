@@ -1,71 +1,74 @@
-import { Dropdown, Space, Table, Tag, Button } from "antd";
+import { Dropdown, Space, Table } from "antd";
 import { useState } from "react";
-import { EditOutlined, EyeOutlined, MoreOutlined } from "@ant-design/icons";
-import ReferralForm from './ReferralForm/ReferralForm';
-import ColorStatusTag from './../../../component/ColorStatusTag/ColorStatusTag';
-import { PERMISSIONS } from './../../../variables/permission';
-import usePermission from './../../../hooks/usePermission';
+import { MoreOutlined } from "@ant-design/icons";
+import { EyeOutlined } from "@ant-design/icons";
+import { EditOutlined } from "@ant-design/icons";
+import { PERMISSIONS } from "../../../variables/permission";
+import usePermission from "../../../hooks/usePermission";
+import FAndBInventoryForm from "./FAndBInventoryForm/FAndBInventoryForm";
+import ColorStatusTag from "../../../component/ColorStatusTag/ColorStatusTag";
 
-
-const ReferralTable = ({
+const FAndBInventoryTable = ({
   data,
   page,
+  setPage,
   perPage,
   total,
   changePage,
   changePerPage,
 }) => {
+  const { hasPermission } = usePermission();
+
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mode, setMode] = useState(null);
   const [selectedData, setSelectedData] = useState({});
-
-  const {hasPermission} = usePermission();
 
   const columns = [
     {
       title: "ID",
       render: (_, record) => <div>{record?.id}</div>,
       width: 70,
-      align: "center",
     },
     {
       title: "Name",
       dataIndex: "name",
       key: "name",
-      render: (text) => <div>{text}</div>,
     },
     {
-      title: "Email",
-      dataIndex: "email",
-      key: "email",
-      render: (text) => <div>{text ? text : "-"}</div>,
+      title: "Category",
+      dataIndex: ["category", "name"],
+      key: "category",
     },
     {
-      title: "Phone",
-      dataIndex: "phone",
-      key: "phone",
-      render: (text) => <div>{text ? text : "-"}</div>,
+      title: "Supplier",
+      dataIndex: ["supplier", "name"],
+      key: "supplier",
     },
     {
-      title: "Charge Value",
-      dataIndex: "chargeValue",
-      key: "chargeValue",
-      render: (_,record) => {
-        const chargeValue = record?.chargeValue;
-        const chargeTypeName = record?.chargeType?.code;
-
-        if(chargeTypeName === "flat"){
-          return <div>{chargeValue} MMK</div>
-        } else {
-          return <div>{chargeValue} %</div>
-        }
-      }
+      title: "Unit",
+      dataIndex: ["unit", "name"],
+      key: "unit",
+    },
+    {
+      title: "Purchase Price (MMK)",
+      dataIndex: "unitCost",
+      key: "unitCost",
+    },
+     {
+      title: "Selling Price (MMK)",
+      dataIndex: "unitPrice",
+      key: "unitPrice",
+    },
+    {
+      title: "Reorder Level",
+      dataIndex: "reorderLevel",
+      key: "reorderLevel",
     },
     {
       title: "Status",
       dataIndex: ["status", "name"],
       key: "status",
-      render: (_, record) => <ColorStatusTag status={record?.status} />
+      render: (_, record) => <ColorStatusTag status={record?.status} />,
     },
     {
       title: "Action",
@@ -77,7 +80,7 @@ const ReferralTable = ({
             key: "view",
             label: "View",
             icon: <EyeOutlined style={{ fontSize: "12px" }} />,
-            permission: PERMISSIONS.PARTNER_VIEW,
+            permission: PERMISSIONS.FOOD_AND_BEVERAGE_INVENTORY_VIEW,
             onClick: () => {
               setDrawerOpen(true);
               setMode("view");
@@ -88,19 +91,19 @@ const ReferralTable = ({
             key: "edit",
             label: "Edit",
             icon: <EditOutlined style={{ fontSize: "12px" }} />,
-            permission: PERMISSIONS.PARTNER_EDIT,
+            permission: PERMISSIONS.FOOD_AND_BEVERAGE_INVENTORY_EDIT,
             onClick: () => {
               setDrawerOpen(true);
               setMode("edit");
               setSelectedData(record);
             },
-          }
+          },
         ];
 
+        // Filter actions by permission
         const items = actions
           .filter(
-            (action) =>
-              (!action.permission || hasPermission(action.permission)) && !action.hidden,
+            (action) => !action.permission || hasPermission(action.permission),
           )
           .map((action) => ({
             key: action.key,
@@ -141,17 +144,18 @@ const ReferralTable = ({
         }}
       />
 
-      <ReferralForm
+      <FAndBInventoryForm
+        page={page}
+        setPage={setPage}
         mode={mode}
         setMode={setMode}
         drawerOpen={drawerOpen}
         setDrawerOpen={setDrawerOpen}
         selectedData={selectedData}
         setSelectedData={setSelectedData}
-        page={page}
       />
     </div>
   );
 };
 
-export default ReferralTable;
+export default FAndBInventoryTable;

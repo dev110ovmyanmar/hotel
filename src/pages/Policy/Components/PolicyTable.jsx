@@ -65,12 +65,6 @@ const PolicyTable = ({ data, page, setPage, perPage, total, changePage, changePe
       render: text => <div>{text}</div>,
     },
     {
-      title: 'Description',
-      dataIndex: 'description',
-      key: 'description',
-      render: text => <div>{text}</div>,
-    },
-    {
       title: "Action",
       render: (_, record) => {
         const smallStyle = { fontSize: "12px" };

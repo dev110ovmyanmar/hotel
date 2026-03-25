@@ -42,6 +42,7 @@ import {
   UsergroupAddOutlined,
   CoffeeOutlined,
   FormOutlined,
+  TrophyOutlined,
 } from "@ant-design/icons";
 import { lazy } from "react";
 import { FiMap } from "react-icons/fi";
@@ -158,8 +159,15 @@ const RoomInventoryList = lazy(
   () => import("../../pages/Room Inventory/RoomInventoryList"),
 );
 
-const SupplierList = lazy(() => import("../../pages/Suppliers/SuppliersListing"));
-const RestauranttableList = lazy(() => import("../../pages/RestaurantTable/RestaurantTableLisitng"));
+const SupplierList = lazy(
+  () => import("../../pages/Suppliers/SuppliersListing"),
+);
+const RestauranttableList = lazy(
+  () => import("../../pages/RestaurantTable/RestaurantTableLisitng"),
+);
+const FAndBInventoryList = lazy(
+  () => import("../../pages/FAndBInventory/FAndBInventoryList"),
+);
 
 export const authRoutes = [
   {
@@ -206,17 +214,19 @@ export const authRoutes = [
         component: <RatePlan />,
         permission: PERMISSIONS.RATE_PLAN_LIST,
       },
-      // {
-      //   key: 4.3,
-      //   path: "/rates-availability/",
-      //   label: "Restrictions / Stop Sell",
-      //   icon: <DiffOutlined style={{ fontSize: "20px" }} />,
-      //   // component: </>,
-      // },
+      {
+        key: 4.2,
+        path: "/rates-availability/room-inventory/",
+        label: "Room Inventory",
+        component: <RoomInventoryList />,
+        icon: <FormOutlined style={{ fontSize: "20px" }} />,
+        isPrivate: false,
+        permission: PERMISSIONS.AVAILABILITY_CALENDAR_LIST,
+      },
       {
         key: 4.4,
         label: "Meal Plan",
-        path: "/meal-plan",
+        path: "/rates-availability/meal-plan",
         icon: <JavaOutlined style={{ fontSize: "20px" }} />,
         isPrivate: true,
         component: <MeanPlanList />,
@@ -232,6 +242,13 @@ export const authRoutes = [
         permission: PERMISSIONS.SEASONAL_RATE_LIST,
       },
     ],
+  },
+  {
+    key: 4.9,
+    path: "/rates-availability/rate-plans/:ratePlanId/room-rate",
+    component: <RoomRateList />,
+    isPrivate: false,
+    // permission: PERMISSIONS.ROOM_RATE_LIST,
   },
 
   {
@@ -620,8 +637,17 @@ export const authRoutes = [
         component: <RestauranttableList />,
         icon: <FormOutlined style={{ fontSize: "20px" }} />,
         isPrivate: false,
-        // permission: PERMISSIONS.RESTAURANT_TABLE_LIST,
-      }
+        permission: PERMISSIONS.RESTAURANT_TABLE_LIST,
+      },
+      {
+        key: 14.5,
+        path: "/f&b-management/inventory/",
+        label: "Inventory",
+        component: <FAndBInventoryList />,
+        icon: <TrophyOutlined style={{ fontSize: "20px" }} />,
+        isPrivate: false,
+        permission: PERMISSIONS.FOOD_AND_BEVERAGE_INVENTORY_LIST,
+      },
 
       // {
       //   key: 14.4,
@@ -793,15 +819,6 @@ export const authRoutes = [
     path: `/guest-list/guest-notes/:guestId`,
     component: <GuestNotesListing />,
     permission: PERMISSIONS.GUEST_NOTE_LIST,
-  },
-  {
-    key: 28,
-    path: "/room-rate",
-    label: "Room Rate",
-    component: <RoomRateList />,
-    icon: <AiOutlineBuild style={{ fontSize: "20px" }} />,
-    isPrivate: false,
-    // permission: PERMISSIONS.ROOM_RATE_LIST,
   },
   {
     key: 29,

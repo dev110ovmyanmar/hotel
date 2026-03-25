@@ -270,7 +270,7 @@ const AgencyForm = ({
             <TextArea readOnly={isView} />
           </Form.Item>
 
-          <Status placeholder="Select Status"/>
+          <Status />
         </Form>
       </Drawer>
     </div>
