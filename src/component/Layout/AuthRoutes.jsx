@@ -100,8 +100,8 @@ const CategoryListing = lazy(
   () => import("../../pages/Categories/CategoryListing"),
 );
 const UnitListing = lazy(() => import("../../pages/Units/UnitListing"));
-const InventoryListing = lazy(
-  () => import("../../pages/Inventories/InventoryListing"),
+const ServiceInventoryListing = lazy(
+  () => import("../../pages/ServicesInventories/ServiceInventoryListing"),
 );
 
 const MeanPlanList = lazy(() => import("../../pages/MealPlan/MealPlanList"));
@@ -205,15 +205,6 @@ export const authRoutes = [
         icon: <ApartmentOutlined style={{ fontSize: "20px" }} />,
         component: <RatePlan />,
         permission: PERMISSIONS.RATE_PLAN_LIST,
-      },
-      {
-        key: 4.2,
-        label: "Inventories",
-        path: "/rates-availability/inventory",
-        icon: <DatabaseOutlined style={{ fontSize: "20px" }} />,
-        isPrivate: true,
-        component: <InventoryListing />,
-        permission: PERMISSIONS.SERVICE_INVENTORY_LIST,
       },
       // {
       //   key: 4.3,
@@ -426,6 +417,15 @@ export const authRoutes = [
         component: <UnitListing />,
         permission: PERMISSIONS.UNIT_LIST,
       },
+      {
+        key: 9.4,
+        path: "/supplier",
+        label: "Supplier",
+        component: <SupplierList />,
+        icon: <ApartmentOutlined style={{ fontSize: "20px" }} />,
+        isPrivate: false,
+        permission: PERMISSIONS.SUPPLIER_LIST,
+      },
     ],
   },
   {
@@ -546,6 +546,15 @@ export const authRoutes = [
         component: <ServiceList />,
         // permission: PERMISSIONS.SERVICE_LIST,
       },
+      {
+        key: 13.2,
+        label: "Inventories",
+        path: "/services-management/inventory",
+        icon: <DatabaseOutlined style={{ fontSize: "20px" }} />,
+        isPrivate: true,
+        component: <ServiceInventoryListing />,
+        permission: PERMISSIONS.SERVICE_INVENTORY_LIST,
+      },
       // {
       //   key: 13.2,
       //   label: "Service Orders",
@@ -604,6 +613,15 @@ export const authRoutes = [
         component: <MenuModifierList />,
         // permission: ".list",
       },
+      {
+        key: 14.4,
+        path: "/f&b-management/restaurant-table",
+        label: "Restaurant Table",
+        component: <RestauranttableList />,
+        icon: <FormOutlined style={{ fontSize: "20px" }} />,
+        isPrivate: false,
+        // permission: PERMISSIONS.RESTAURANT_TABLE_LIST,
+      }
 
       // {
       //   key: 14.4,
@@ -821,24 +839,6 @@ export const authRoutes = [
     isPrivate: false,
     permission: PERMISSIONS.AVAILABILITY_CALENDAR_LIST,
   },
-  {
-    key: 27,
-    path: "/supplier",
-    label: "Supplier",
-    component: <SupplierList />,
-    icon: <FormOutlined style={{ fontSize: "20px" }} />,
-    isPrivate: false,
-    permission: PERMISSIONS.SUPPLIER_LIST,
-  },
-  {
-    key: 28,
-    path: "/restaurant-table",
-    label: "Restaurant Table",
-    component: <RestauranttableList />,
-    icon: <FormOutlined style={{ fontSize: "20px" }} />,
-    isPrivate: false,
-    permission: PERMISSIONS.RESTAURANT_TABLE_LIST,
-  }
 ];
 
 const AuthRoutes = () => {
