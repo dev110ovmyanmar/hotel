@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Table, Form, Input, Button, Drawer, Select, Divider, Space, InputNumber } from "antd";
+import { Table, Form, Input, Button, Drawer, Select, Divider, Space, InputNumber, Row, Col } from "antd";
 import Toast from "../../../../component/Toast/Toast";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
 import useApiQuery from "../../../../hooks/useApiQuery";
@@ -45,6 +45,12 @@ const PolicyForm = ({
   const chargeBaseType = initData?.statuses?.charge_base_type;
   const chargeType = initData?.statuses?.charge_type;
 
+  console.log(chargeType,"chargeType");
+
+  const chargeTypeValue = Form.useWatch(["chargeType","uuid"], policyForm);
+
+  console.log(chargeTypeValue,"chargeTypeValue");
+
   const openPolicyRule = () => {
     setAddPolicyRuleDrawer(true)
   };
@@ -52,8 +58,8 @@ const PolicyForm = ({
   const upsertPolicys = useApiMutation({
     mutationFn: upsertPolicy,
     invalidateKeys: [["policies"]],
-                                      // false             false
-    shouldInvalidate: addPolicyRule ? !addPolicyRule : isEdit? true : page === 1,
+    // false             false
+    shouldInvalidate: addPolicyRule ? !addPolicyRule : isEdit ? true : page === 1,
   });
 
   const { data, isPending, error } = useApiQuery({
@@ -126,12 +132,6 @@ const PolicyForm = ({
       width: 70,
     },
     {
-      title: 'Charge Value',
-      dataIndex: 'chargeValue',
-      key: 'chargeValue',
-      render: text => <div>{text}</div>,
-    },
-    {
       title: 'Priority',
       dataIndex: 'priority',
       key: 'priority',
@@ -144,10 +144,20 @@ const PolicyForm = ({
       render: text => <div>{text}</div>,
     },
     {
-      title: 'Charge Type',
-      dataIndex: ["chargeType", "name"],
-      key: 'chargeType',
-      render: text => <div>{text}</div>,
+      title: 'Charge Value',
+      dataIndex: 'chargeValue',
+      key: 'chargeValue',
+      render: (_,record) => {
+        console.log(record,"RecordInChargeValue")
+        const chargeValue = Number(record?.chargeValue);
+        const chargeTypeName = record?.chargeType?.code;
+
+        if(chargeTypeName === "flat"){
+          return <div>{chargeValue} MMK</div>
+        } else {
+          return <div>{chargeValue} %</div>
+        }
+      }
     },
     {
       title: 'From',
@@ -409,13 +419,7 @@ const PolicyForm = ({
                     onFinish={savePolicyRule}
                   >
 
-                    <Form.Item
-                      label="Charge Value"
-                      name="chargeValue"
-                      rules={[{ required: true, message: "Charge Name is Required" }]}
-                    >
-                      <Input readOnly={isView} />
-                    </Form.Item>
+
 
                     <Form.Item
                       label="Priority"
@@ -441,21 +445,77 @@ const PolicyForm = ({
                       </Select>
                     </Form.Item>
 
-                    <Form.Item
-                      label="Charge Type"
-                      name={["chargeType", "uuid"]}
-                      rules={[{ required: true, message: "Charge Type is Required" }]}
-                    >
-                      <Select
-                        options={
-                          chargeType?.map(item => ({
-                            label: item.name,
-                            value: item.uuid
-                          }))
-                        }
-                      >
-                      </Select>
-                    </Form.Item>
+                    <Row gutter={16}>
+                      <Col span={12}>
+                        <Form.Item
+                          label="Charge Type"
+                          name={["chargeType", "uuid"]}
+                          rules={[{ required: true, message: "Charge Type is Required" }]}
+                          getValueProps={(value) => ({
+                            value: isView
+                              ? chargeType.find((item) => item.value === value)?.label
+                              : value,
+                          })}
+                        >
+                          {
+                            isView ?
+                              <Input readOnly={isView} /> :
+                              <Select
+                                options={
+                                  chargeType?.map(item => (
+                                    {
+                                      label: item.name,
+                                      value: item.uuid
+                                    }
+                                  ))
+                                }
+                                placeholder="Select Charge Type"
+
+                              ></Select>
+                          }
+                        </Form.Item>
+                      </Col>
+
+                      <Col span={12}>
+                        <Form.Item
+                          label="Charge Value "
+                          name="chargeValue"
+                          rules={[
+                            { required: true, message: "Charge Value is Required" },
+                            {
+                              validator: (_, value) => {
+                                const selectedType =
+                                  chargeType?.find(
+                                    (item) => item.uuid === chargeTypeValue,
+                                  );
+
+                                if (selectedType?.code === "percentage") {
+                                  const numValue = Number(value);
+                                  if (isNaN(numValue) || numValue < 1 || numValue > 100) {
+                                    return Promise.reject(
+                                      new Error("Percentage must be between 1 and 100"),
+                                    );
+                                  }
+                                }
+                                return Promise.resolve();
+                              },
+                            },
+                          ]}
+                        >
+                          <Input
+                            type="number"
+                            min={1}
+                            addonAfter={(() => {
+                              const selected = chargeType?.find(
+                                (item) => item.uuid === chargeTypeValue,
+                              );
+                              console.log(selected,"SelectedInAddOnAfter");
+                              return selected?.code === "percentage" ? "%" : "MMK";
+                            })()}
+                            readOnly={isView} />
+                        </Form.Item>
+                      </Col>
+                    </Row>
 
                     <Space>
                       <Form.Item
