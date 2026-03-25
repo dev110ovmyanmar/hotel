@@ -75,7 +75,7 @@ const RoomInventoryForm = ({
       updateRoomInventory.mutate(editValues, {
         onSuccess: () => {
           setDrawerOpen(false);
-          Toast.success("Service Updated Successfully!");
+          Toast.success("Room Inventory Updated Successfully!");
         },
       });
     }
@@ -98,8 +98,8 @@ const RoomInventoryForm = ({
           <div className="flex justify-between items-center">
             <span>
               {mode === "view"
-                ? "Availability Calendar Details"
-                : "Edit Availability Calendar"}
+                ? "Room Inventory Details"
+                : "Edit Inventory Details"}
             </span>
             {isView ? (
               <Button

@@ -1,5 +1,4 @@
- 
- import { Dropdown, Space, Table, Tag, Button, Switch, Modal } from "antd";
+import { Dropdown, Space, Table, Switch, Modal } from "antd";
 import { useState } from "react";
 import { MoreOutlined } from "@ant-design/icons";
 import { EyeOutlined } from "@ant-design/icons";
@@ -7,6 +6,13 @@ import { EditOutlined } from "@ant-design/icons";
 import { PERMISSIONS } from "../../../variables/permission";
 import usePermission from "../../../hooks/usePermission";
 import RoomInventoryForm from "./RoomInventoryForm/RoomInventoryForm";
+import { updateStopSell } from "../../../api/availabilityCalendarApi";
+import { useApiMutation } from "../../../hooks/useApiMutation";
+import { Tooltip } from "antd";
+import dayjs from "dayjs";
+import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
+
+dayjs.extend(isSameOrBefore);
 
 const RoomInventoryTable = ({
   data,
@@ -23,11 +29,35 @@ const RoomInventoryTable = ({
   const [mode, setMode] = useState(null);
   const [selectedData, setSelectedData] = useState({});
 
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [switchValue, setSwitchValue] = useState(null);
+  const [selectedRecord, setSelectedRecord] = useState(null);
+  const [updatingId, setUpdatingId] = useState(null);
+
+  const updateStopSelling = useApiMutation({
+    mutationFn: updateStopSell,
+    invalidateKeys: [["availabilty-calendars"]],
+  });
+
+  const handleConfirmStopSell = () => {
+    const params = {
+      uuid: selectedRecord?.uuid,
+      stopSell: switchValue,
+    };
+
+    updateStopSelling.mutate(params, {
+      onSuccess: () => {
+        setConfirmOpen(false);
+        Toast.success("Stop Selling Updated Successfully!");
+      },
+    });
+  };
+
   const columns = [
     {
       title: "ID",
       render: (_, record) => <div>{record?.id}</div>,
-      width: "10%"
+      width: "10%",
     },
     {
       title: "Name",
@@ -54,34 +84,51 @@ const RoomInventoryTable = ({
     //     </Tag>
     //   ),
     // },
+    // {
+    //   title: "Stop Sell",
+    //   dataIndex: "stopSell",
+    //   key: "stopSell",
+    //   render: (_, record) => (
+    //     <Switch
+    //       checked={record.stopSell === true}
+    //       onChange={(checked) => {
+    //         setSelectedRecord(record);
+    //         setSwitchValue(checked);
+    //         setConfirmOpen(true);
+    //       }}
+    //     />
+    //   ),
+    // },
     {
   title: "Stop Sell",
   dataIndex: "stopSell",
   key: "stopSell",
-  render: (_, record) => (
-    <Switch
-      checked={record.stopSell} // current status
-      onChange={(checked) => {
-        Modal.confirm({
-          title: `Are you sure you want to set Stop Sell to ${checked ? "TRUE" : "FALSE"}?`,
-          okText: "Yes",
-          cancelText: "No",
-          onOk: () => {
-            // Update the record state here
-            record.stopSell = checked;
+  render: (_, record) => {
+    const isPastOrToday = dayjs(record.date).isSameOrBefore(dayjs(), "day");
 
-            // Optional: Call API to save change
-            // updateStopSell(record.id, checked)
-          },
-          onCancel: () => {
-            // If canceled, revert the switch back
-            // This is needed because Switch already changed its visual state
-            record.stopSell = !checked;
-          },
-        });
-      }}
-    />
-  ),
+    const switchComponent = (
+      <Switch
+        checked={record.stopSell === true}
+        loading={updatingId === record.id}
+        disabled={isPastOrToday || updatingId === record.id}
+        onChange={(checked) => {
+          setSelectedRecord(record);
+          setSwitchValue(checked);
+          setConfirmOpen(true);
+        }}
+      />
+    );
+
+    if (isPastOrToday) {
+      return (
+        <Tooltip title="Cannot modify past or today dates">
+          {switchComponent}
+        </Tooltip>
+      );
+    }
+
+    return switchComponent;
+  },
 },
     {
       title: "Date",
@@ -172,6 +219,22 @@ const RoomInventoryTable = ({
         selectedData={selectedData}
         setSelectedData={setSelectedData}
       />
+
+      <Modal
+        open={confirmOpen}
+        title={"Confirm Stop Selling"}
+        okText="Confirm"
+        cancelText="Cancel"
+        confirmLoading={updateStopSelling.isLoading}
+        onOk={handleConfirmStopSell}
+        onCancel={() => {setConfirmOpen(false)}}
+      >
+        <p>
+          Are you sure you want to stop selling{" "}
+          <strong>{selectedRecord?.roomType?.name}</strong> for{" "}
+          <strong>{selectedRecord?.date}</strong>?
+        </p>
+      </Modal>
     </div>
   );
 };

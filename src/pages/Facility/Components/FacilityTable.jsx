@@ -7,6 +7,7 @@ import FacilityForm from "./FacilityForm/FacilityForm";
 import { PERMISSIONS } from "../../../variables/permission";
 import usePermission from "../../../hooks/usePermission";
 import { useNavigate } from "react-router-dom";
+import ColorStatusTag from "../../../component/ColorStatusTag/ColorStatusTag";
 
 const FacilityTable = ({
   data,
@@ -49,11 +50,7 @@ const FacilityTable = ({
       title: "Status",
       dataIndex: ["status", "name"],
       key: "status",
-      render: (_, record) => (
-        <Tag color={record?.status?.name === "Active" ? "green" : "red"}>
-          {record?.status?.name.toUpperCase()}
-        </Tag>
-      ),
+      render: (_, record) => <ColorStatusTag status={record?.status} />,
     },
     {
       title: "Action",
@@ -90,12 +87,12 @@ const FacilityTable = ({
             // permission: PERMISSIONS.FACILITY_PACKAGE_LIST,
             onClick: () => {
               navigate(
-                `/facility-management/facilities/${record?.uuid}/packages`,
-                // {
-                //   state: {
-                //     uuid: record?.uuid,
-                //   },
-                // },
+                `/facility-management/facilities/${record?.id}/packages`,
+                {
+                  state: {
+                    uuid: record?.uuid,
+                  },
+                },
               );
             },
           },

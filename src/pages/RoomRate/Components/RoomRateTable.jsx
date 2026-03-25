@@ -52,7 +52,7 @@ const RoomRateTable = ({
       title: "Duration Hours",
       dataIndex: "durationHours",
       key: "durationHours",
-      render: (text) => <div>{text}</div>,
+      render: (text) => <div>{text? text : "-"}</div>,
     },
 
     {
