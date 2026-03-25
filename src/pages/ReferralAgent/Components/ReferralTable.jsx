@@ -55,18 +55,12 @@ const ReferralTable = ({
         const chargeTypeName = record?.chargeType?.code;
 
         if(chargeTypeName === "flat"){
-            return <div>{chargeValue} MMK</div>
+          return <div>{chargeValue} MMK</div>
         } else {
           return <div>{chargeValue} %</div>
         }
       }
     },
-    // {
-    //   title: "Remark",
-    //   dataIndex: "remark",
-    //   key: "remark",
-    //   render: (text) => <div>{text ? text : "-"}</div>,
-    // },
     {
       title: "Status",
       dataIndex: ["status", "name"],
