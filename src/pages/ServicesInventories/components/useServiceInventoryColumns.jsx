@@ -1,7 +1,7 @@
 import { Tag, Dropdown, Button } from "antd";
 import { EditOutlined, EyeOutlined, MoreOutlined } from "@ant-design/icons";
 
-export default function useInventoryColumns(onEdit, onView) {
+export default function useServiceInventoryColumns(onEdit, onView) {
   return [
     {
       title: "ID",
@@ -24,7 +24,14 @@ export default function useInventoryColumns(onEdit, onView) {
       width: 110,
     },
     {
-      title: "Unit Price",
+      title: "Purchase Price",
+      dataIndex: "unitCost",
+      key: "unitCost",
+      width: 120,
+      render: (cost) => <span className="font-medium">{cost}</span>,
+    },
+    {
+      title: "Selling Price",
       dataIndex: "unitPrice",
       key: "unitPrice",
       // align: "right",
@@ -35,13 +42,6 @@ export default function useInventoryColumns(onEdit, onView) {
           {price}
         </span>
       ),
-    },
-    {
-      title: "Unit Cost",
-      dataIndex: "unitCost",
-      key: "unitCost",
-      width: 120,
-      render: (cost) => <span className="font-medium">{cost}</span>,
     },
     {
       title: "Stock",
