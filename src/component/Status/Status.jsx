@@ -6,8 +6,7 @@ import { Input } from 'antd';
 
 const Status = ({
     needBlock,
-    isView,
-    placeholder
+    isView
 }) => {
     const initData = queryClient.getQueryData(["initData", "authenticated"])?.statuses.status;
 
@@ -31,13 +30,13 @@ const Status = ({
                     >
                         {
                             isView ?
-                                <Input readOnly={isView}  /> :
+                                <Input readOnly={isView} /> :
                                 <Select
                                     options={initData?.map((item) => ({
                                         label: item.name,
                                         value: item.uuid,
                                     }))}
-                                    placeholder={placeholder}
+                                    placeholder="Select Status"
                                 ></Select>
                         }
 
@@ -59,7 +58,7 @@ const Status = ({
                     >
                         {
                             isView ?
-                                <Input readOnly={isView}  /> :
+                                <Input readOnly={isView} /> :
                                 <Select
                                     options={initData?.filter(item =>
                                         item?.code !== "blocked"
@@ -67,7 +66,7 @@ const Status = ({
                                         label: item.name,
                                         value: item.uuid,
                                     }))}
-                                    placeholder={placeholder}
+                                    placeholder="Select Status"
                                 ></Select>
                         }
 
