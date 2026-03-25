@@ -1,8 +1,8 @@
 import React from "react";
 import { Table } from "antd";
-import useInventoryColumns from "./useInventoryColumns";
+import useServiceInventoryColumns from "./useServiceInventoryColumns";
 
-const InventoryTable = ({
+const ServiceInventoryTable = ({
   dataSource,
   loading,
   onEdit,
@@ -14,7 +14,7 @@ const InventoryTable = ({
   total,
 
 }) => {
-  const columns = useInventoryColumns(onEdit, onView);
+  const columns = useServiceInventoryColumns(onEdit, onView);
 
   return (
     <div id="scrollId" className="w-full h-[63vh]">
@@ -25,7 +25,7 @@ const InventoryTable = ({
         dataSource={dataSource}
         rowKey="uuid"
         className="mx-5"
-        pagination={{ 
+        pagination={{
           current: page,
           pageSize: perPage,
           total: total,
@@ -34,10 +34,10 @@ const InventoryTable = ({
             changePerPage(perPage);
           },
           showSizeChanger: true,
-       }}
+        }}
       />
     </div>
   );
 };
 
-export default InventoryTable;
+export default ServiceInventoryTable;

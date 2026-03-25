@@ -17,16 +17,6 @@ export default function useGuestColumns(onEdit, onView, onViewNotes) {
       key: "name",
     },
     {
-      title: "Other Name",
-      dataIndex: "otherName",
-      key: "otherName",
-    },
-    {
-      title: "Email",
-      dataIndex: "email",
-      key: "email",
-    },
-    {
       title: "Phone",
       dataIndex: "phone",
       key: "phone",
@@ -35,13 +25,13 @@ export default function useGuestColumns(onEdit, onView, onViewNotes) {
       title: "NRC No.",
       dataIndex: "nrcNo",
       key: "nrcNo",
-      // render: (nrcNo) => <Text copyable={{ text: nrcNo }}>{nrcNo}</Text>,
     },
     {
-      title: "DOB",
-      dataIndex: "dob",
-      key: "dob",
-    },
+      title: "Passport",
+      dataIndex: "passport",
+      key: "passport",
+    }
+    ,
     {
       title: "Nationality",
       dataIndex: "nationality",

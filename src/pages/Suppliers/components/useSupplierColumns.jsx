@@ -37,16 +37,6 @@ export default function useSupplierColumns(onEdit, onView) {
             key: "address",
         },
         {
-            title: "Website",
-            dataIndex: "website",
-            key: "website",
-        },
-        {
-            title: "Remark",
-            dataIndex: "remark",
-            key: "remark",
-        },
-        {
             title: "Actions",
             key: "actions",
             width: 100,
