@@ -202,6 +202,14 @@ export const PERMISSIONS = {
   RESTAURANT_TABLE_VIEW: "table.view",
   RESTAURANT_TABLE_CREATE: "table.create",
   RESTAURANT_TABLE_EDIT: "table.edit",
+
+      // Food and Beverage Inventory
+  FOOD_AND_BEVERAGE_INVENTORY_LIST: "fnb-inventory.list",
+  FOOD_AND_BEVERAGE_INVENTORY_VIEW: "fnb-inventory.view",
+  FOOD_AND_BEVERAGE_INVENTORY_CREATE: "fnb-inventory.create",
+  FOOD_AND_BEVERAGE_INVENTORY_EDIT: "fnb-inventory.edit",
+  
+
 };
 
 

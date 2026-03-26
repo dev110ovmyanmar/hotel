@@ -1,74 +1,69 @@
 import React, { useEffect, useState } from "react";
+import {useLocation} from "react-router-dom";
 import { LIMITS } from "../../variables/constants";
 import useApiQuery from "../../hooks/useApiQuery";
 import ListHeader from "../../component/ListHeader/ListHeader";
-import RoomInventoryForm from "./Components/RoomInventoryForm/RoomInventoryForm";
-import RoomInventoryTable from "./Components/RoomInventoryTable";
-import { getAvailabilityCalendar } from "../../api/availabilityCalendarApi";
-import { DatePicker } from "antd";
-import dayjs from "dayjs";
+import { PERMISSIONS } from "../../variables/permission";
+import {fetchPartnerContract} from "../../api/partnerContractApi";
+import AgencyContractTable from "./Components/AgencyContractTable";
+import AgencyContractForm from "./Components/AgencyContractForm/AgencyContractForm";
+import { capitalizeFirstLetter } from '../../utils/Utils';
 
-const RoomInventoryList = () => {
-  const { RangePicker } = DatePicker;
+
+const AgencyContractList = () => {
   const [keyword, setKeyword] = useState("");
+  const [status, setStatus] = useState("all");
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(LIMITS.PAGE_SIZE);
-  const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mode, setMode] = useState("add");
   const [selectedData, setSelectedData] = useState(null);
 
-  const filter = {};
-  if (startDate && endDate) {
-    filter.startDate = startDate;
-    filter.endDate = endDate;
-  }
+  const {state} = useLocation();
+
+  const normalStatus = status === "all" ? null : status;
 
   const { data, isLoading, error } = useApiQuery({
-    fetchQueryName: "availabilty-calendars",
-    fetchQueryFunction: getAvailabilityCalendar,
+    fetchQueryName: "partner-contracts",
+    fetchQueryFunction: fetchPartnerContract,
     params: {
       pagination: {
         page: page,
         perPage: perPage,
       },
-      filter,
       keyword,
+      status: normalStatus,
+      partnerType : "Agency",
+      uuid: state?.agencyRecord?.uuid
     },
   });
 
   useEffect(() => {
     setPage(1);
-  }, [keyword, perPage, startDate, endDate]);
+  }, [keyword, status, perPage]);
+
+  const handleAdd = () => {
+    setSelectedData(null);
+    setMode("add");
+    setDrawerOpen(true);
+  };
 
   return (
     <div className="w-full px-6 py-2">
+      <div className="text-lg mb-3">{capitalizeFirstLetter(state?.agencyRecord?.name)}</div>
+      
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
         <ListHeader
-          searchPlaceholder="Search availabiliy calendar..."
+          searchPlaceholder="Search  ..."
           keyword={keyword}
           setKeyword={setKeyword}
-          showCreateButton={false}
+          addButtonText="Add Contract "
+          onAdd={handleAdd}
+          // permission={PERMISSIONS.ROOM_RATE_CREATE}
         />
-
-        <div className="w-full md:w-80">
-          <RangePicker
-            style={{ width: "100%" }}
-            onChange={(dates) => {
-              if (dates) {
-                setStartDate(dayjs(dates[0]).format("YYYY-MM-DD"));
-                setEndDate(dayjs(dates[1]).format("YYYY-MM-DD"));
-              } else {
-                setStartDate(null);
-                setEndDate(null);
-              }
-            }}
-          />
-        </div>
       </div>
 
-      <RoomInventoryTable
+      <AgencyContractTable
         data={data?.data || []}
         page={data?.pagination.currentPage}
         perPage={data?.pagination.perPage}
@@ -77,12 +72,13 @@ const RoomInventoryList = () => {
         changePerPage={(perPage) => setPerPage(perPage)}
       />
 
-      <RoomInventoryForm
+      <AgencyContractForm
         drawerOpen={drawerOpen}
         setDrawerOpen={setDrawerOpen}
         page={page}
         setPage={setPage}
         mode={mode}
+        setMode={setMode}
         selectedData={selectedData}
         setSelectedData={setSelectedData}
       />
@@ -90,4 +86,4 @@ const RoomInventoryList = () => {
   );
 };
 
-export default RoomInventoryList;
+export default AgencyContractList;

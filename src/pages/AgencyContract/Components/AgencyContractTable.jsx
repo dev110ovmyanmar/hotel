@@ -1,17 +1,18 @@
-import { Dropdown, Space, Table, Tag, Button } from "antd";
+import { Dropdown, Space, Table, } from "antd";
 import { useState } from "react";
-import { MoreOutlined } from "@ant-design/icons";
-import { EyeOutlined } from "@ant-design/icons";
-import { EditOutlined } from "@ant-design/icons";
-import ServiceForm from "./ServiceForm/ServiceForm";
+import {
+  MoreOutlined,
+  EyeOutlined,
+  EditOutlined,
+} from "@ant-design/icons";
+import usePermission from "../../../hooks/usePermission"; // <-- Permission hook
 import { PERMISSIONS } from "../../../variables/permission";
-import usePermission from "../../../hooks/usePermission";
-import ColorStatusTag from "../../../component/ColorStatusTag/ColorStatusTag";
+import AgencyContractForm from "../Components/AgencyContractForm/AgencyContractForm";
+import dayjs from "dayjs";
 
-const ServiceTable = ({
+const AgencyContractTable = ({
   data,
   page,
-  setPage,
   perPage,
   total,
   changePage,
@@ -21,7 +22,7 @@ const ServiceTable = ({
 
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mode, setMode] = useState(null);
-  const [selectedData, setSelectedData] = useState({});
+  const [selectedData, setSelectedData] = useState(null);
 
   const columns = [
     {
@@ -30,35 +31,37 @@ const ServiceTable = ({
       width: 70,
     },
     {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
+      title: "Phone",
+      dataIndex: ["agency", "phone"],
+      key: "agencyPhone",
+      render: (text) => <div>{text? text : "-"}</div>,
     },
     {
-      title: "Price (MMK)",
-      dataIndex: "basePrice",
-      key: "basePrice",
+      title: "Charge Type",
+      dataIndex: ["chargeType", "name"],
+      key: "chargeType",
+      render: (_, record) => {
+        const chargeTypeName = record?.chargeType.code;
+        const chargeValue = record?.chargeValue;
+
+        if (chargeTypeName === "flat") {
+          return <div>{chargeValue} MMK</div>
+        } else {
+          return <div>{chargeValue} %</div>
+        }
+      }
     },
     {
-      title: "Property",
-      dataIndex: ["property", "name"],
-      key: "property",
+      title: "Contract Start Date",
+      dataIndex: "contractStart",
+      key: "contractStart",
+      render: (_,record) => <div>{record?.contractStart}</div>
     },
     {
-      title: "Billing Type",
-      dataIndex: ["billingType", "name"],
-      key: "billingType",
-    },
-    {
-      title: "Service Type",
-      dataIndex: ["serviceType", "name"],
-      key: "serviceType",
-    },
-    {
-      title: "Status",
-      dataIndex: ["status", "name"],
-      key: "status",
-      render: (_, record) => <ColorStatusTag status={record?.status} />,
+      title: "Contract End Date",
+      dataIndex: "contractEnd",
+      key: "contractEnd ",
+      render: (_,record) => <div>{record?.contractEnd}</div>
     },
     {
       title: "Action",
@@ -70,7 +73,7 @@ const ServiceTable = ({
             key: "view",
             label: "View",
             icon: <EyeOutlined style={{ fontSize: "12px" }} />,
-            permission: PERMISSIONS.SERVICE_VIEW,
+            // permission: PERMISSIONS.ROOM_RATE_VIEW,
             onClick: () => {
               setDrawerOpen(true);
               setMode("view");
@@ -81,7 +84,7 @@ const ServiceTable = ({
             key: "edit",
             label: "Edit",
             icon: <EditOutlined style={{ fontSize: "12px" }} />,
-            permission: PERMISSIONS.SERVICE_EDIT,
+            // permission: PERMISSIONS.ROOM_RATE_EDIT,
             onClick: () => {
               setDrawerOpen(true);
               setMode("edit");
@@ -90,10 +93,10 @@ const ServiceTable = ({
           },
         ];
 
-        // Filter actions by permission
         const items = actions
           .filter(
-            (action) => !action.permission || hasPermission(action.permission),
+            (action) =>
+              (!action.permission || hasPermission(action.permission)) && !action.hidden,
           )
           .map((action) => ({
             key: action.key,
@@ -115,13 +118,13 @@ const ServiceTable = ({
   ];
 
   return (
-    <div id="scrollId" className="w-full h-[63vh] ">
+    <div id="scrollId">
       <Table
         tableLayout="fixed"
         scroll={{ x: 1000 }}
         columns={columns}
         dataSource={data}
-        rowKey="uuid"
+        rowKey="roomrate"
         pagination={{
           current: page,
           pageSize: perPage,
@@ -134,19 +137,18 @@ const ServiceTable = ({
         }}
       />
 
-      <ServiceForm
+      <AgencyContractForm
         page={page}
-        setPage={setPage}
         mode={mode}
         setMode={setMode}
         drawerOpen={drawerOpen}
         setDrawerOpen={setDrawerOpen}
         selectedData={selectedData}
         setSelectedData={setSelectedData}
-        width={500}
+
       />
     </div>
   );
 };
 
-export default ServiceTable;
+export default AgencyContractTable;

@@ -19,7 +19,8 @@ const FacilityListPackagesTable = ({
   changePerPage,
 }) => {
   const { hasPermission } = usePermission();
-  const { facilityId } = useParams();
+  const location = useLocation();
+  const { uuid } = location.state;
 
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mode, setMode] = useState(null);
@@ -28,9 +29,9 @@ const FacilityListPackagesTable = ({
   const { data, isLoading, error } = useApiQuery({
     fetchQueryName: "facility-details",
     fetchQueryFunction: getFacilityDetails,
-    params: { uuid: facilityId },
+    params: { uuid },
     options: {
-      enabled: !!facilityId,
+      enabled: !!uuid,
     },
   });
 
