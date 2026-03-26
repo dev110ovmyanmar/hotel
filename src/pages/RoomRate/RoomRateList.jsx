@@ -7,6 +7,7 @@ import { PERMISSIONS } from "../../variables/permission";
 import {fetchRoomRate} from "../../api/roomRateApi";
 import RoomRateForm from "./Components/RoomRateForm/RoomRateForm";
 import RoomRateTable from "./Components/RoomRateTable";
+import { capitalizeFirstLetter } from "../../utils";
 
 const RoomRateList = () => {
   const [keyword, setKeyword] = useState("");
@@ -49,6 +50,8 @@ const RoomRateList = () => {
 
   return (
     <div className="w-full px-6 py-2">
+      <div className="text-lg mb-3">{capitalizeFirstLetter(state?.ratePlan?.name)}</div>
+
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
         <ListHeader
           searchPlaceholder="Search Room Rate ..."

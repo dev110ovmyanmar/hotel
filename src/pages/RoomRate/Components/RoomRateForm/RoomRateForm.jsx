@@ -32,9 +32,6 @@ const RoomRateForm = ({
   const { state } = useLocation();
   const pricingType = state?.ratePlan?.pricingType?.code;
 
-  console.log(pricingType, "StateInLocationRoomRateForm");
-
-
   const { data: ratePlanMetas } = useApiQuery({
     fetchQueryName: "rate-plan-meta",
     fetchQueryFunction: ratePlanMeta
@@ -78,7 +75,7 @@ const RoomRateForm = ({
       const createValues = {
         ...values,
         ratePlan: {
-          uuid: ratePlanId
+          uuid: state?.ratePlan?.uuid
         },
         roomType: values?.roomType
       };
@@ -248,12 +245,6 @@ const RoomRateForm = ({
                   </Form.Item>
                 </Col>
               </Row>
-
-
-
-
-
-
 
             </div>
           </Form.Item>

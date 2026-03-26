@@ -31,12 +31,6 @@ const RoomRateTable = ({
       width: 70,
     },
     {
-      title: "Rate Plan",
-      dataIndex: ["ratePlan", "name"],
-      key: "ratePlan",
-      render: (text) => <div>{text}</div>,
-    },
-    {
       title: "Room Type",
       dataIndex: ["roomType", "name"],
       key: "roomType",
