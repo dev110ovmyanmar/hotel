@@ -151,9 +151,9 @@ const MenuModifierList = lazy(
   () => import("../../pages/MenuModifier/MenuModifierList"),
 );
 
-// const AgencyContractList = lazy(
-//   () => import("../../pages/AgencyContract/AgencyContractList"),
-// );
+const AgencyContractList = lazy(
+  () => import("../../pages/AgencyContract/AgencyContractList"),
+);
 
 const RoomInventoryList = lazy(
   () => import("../../pages/Room Inventory/RoomInventoryList"),
@@ -168,6 +168,12 @@ const RestauranttableList = lazy(
 const FAndBInventoryList = lazy(
   () => import("../../pages/FAndBInventory/FAndBInventoryList"),
 );
+
+const CompanyContractList = lazy(
+  () => import("../../pages/CompanyContract/CompanyContractList"),
+);
+
+
 
 export const authRoutes = [
   {
@@ -806,6 +812,18 @@ export const authRoutes = [
     ],
   },
   {
+    key: 17.9,
+    path: "/partners/agencies/:agencyId/agency-contract",
+    component: <AgencyContractList />,
+
+  },
+  {
+    key: 17.9,
+    path: "/partners/company/:companyId/company-contract",
+    component: <CompanyContractList />,
+
+  },
+  {
     key: 20,
     path: "/guest-list/",
     label: "Guests",
@@ -819,15 +837,6 @@ export const authRoutes = [
     path: `/guest-list/guest-notes/:guestId`,
     component: <GuestNotesListing />,
     permission: PERMISSIONS.GUEST_NOTE_LIST,
-  },
-  {
-    key: 29,
-    path: "/agency-contract",
-    label: "Agency Contract",
-    // component: <AgencyContractList />,
-    icon: <AiOutlineBuild style={{ fontSize: "20px" }} />,
-    isPrivate: false,
-    // permission: PERMISSIONS.ROOM_RATE_LIST,
   },
   {
     key: 22,
