@@ -68,7 +68,7 @@ const RatePlanForm = ({
     label: meal.name,
   }));
 
-  const policy = ratePlanMetaData?.policies?.map((policy) => ({
+  const policy = ratePlanMetaData?.policies?.cancellation?.map((policy) => ({
     value: policy.uuid,
     label: policy.name,
   }));
