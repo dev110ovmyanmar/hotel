@@ -103,7 +103,7 @@ const PropertiesListing = () => {
     setCurrentMode("edit");
   };
 
-  const showPropertyAddButton = properties ? false : true;
+  const showCreateButton = properties ? false : true;
 
   return (
     <div className="w-full px-6 py-2">
@@ -113,7 +113,7 @@ const PropertiesListing = () => {
           setKeyword={setKeyword}
           searchPlaceholder="Search Property..."
           onAdd={handleAdd}
-          showPropertyAddButton={showPropertyAddButton}
+          showCreateButton={showCreateButton}
           // showButton={true}
           addButtonText={"Add Property"}
         />

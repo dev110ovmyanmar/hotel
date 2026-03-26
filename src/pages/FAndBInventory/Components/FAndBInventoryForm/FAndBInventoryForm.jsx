@@ -72,8 +72,9 @@ const FAndBInventoryForm = ({
       console.log(data, "data");
       form.setFieldsValue({
         ...data,
-        facility: data?.facility.uuid,
-        pricingType: data?.pricingType?.uuid,
+        supplier: data?.supplier?.uuid,
+        category: data?.category?.uuid,
+        unit: data?.unit?.uuid, 
       });
       setSelectedData(data);
     }
@@ -325,7 +326,7 @@ const FAndBInventoryForm = ({
               />
             </Form.Item>
           </div>
-          <Status />
+          <Status isView={isView}/>
         </Form>
       </Drawer>
     </div>

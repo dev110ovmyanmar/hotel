@@ -267,7 +267,7 @@ const ReferralForm = ({
             <TextArea readOnly={isView} />
           </Form.Item>
 
-          <Status />
+          <Status isView={isView}/>
         </Form>
       </Drawer>
     </div>
