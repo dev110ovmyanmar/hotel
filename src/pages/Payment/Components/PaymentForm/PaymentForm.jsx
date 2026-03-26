@@ -182,7 +182,7 @@ const PaymentForm = ({
             <Switch disabled={isView} />
           </Form.Item>
 
-          isView={isView}
+          <Status isView={isView} />
 
         </Form>
       </Drawer >

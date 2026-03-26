@@ -268,7 +268,7 @@ const CompanyForm = ({
             <TextArea readOnly={isView} />
           </Form.Item>
 
-         isView={isView}
+         <Status isView={isView} />
         </Form>
       </Drawer>
     </div>
