@@ -45,6 +45,7 @@ const handleSessionExpiration = (error) => {
 export const setupRequestInterceptor = (client) => {
   client.interceptors.request.use(
     (config) => {
+      console.log(config,"config")
       config.params = appendCommonParams(config.method, config.params);
       config.data = appendCommonData(config.method, config.data);
 
@@ -116,6 +117,12 @@ const generateMultipartHeaders = (method) => {
     "X-Platform-Origin": "portal",
     content: Base64.stringify(Utf8.parse(JSON.stringify(data))),
     "Auth-Date": rfc2822Date,
+    "PMS-Authorization": generateAuthorizationHeader(
+      method.toUpperCase(),
+      contentMd5,
+      "multipart/form-data",
+      iso8601Date,
+    ),
     "X-Session-Token": loadState(LOCAL_STORAGE_KEYS.sessionId) || "",
     "X-Device-Id": getDeviceId(),
     "X-Device-Name": getDeviceName(),
