@@ -1,5 +1,6 @@
 import { Tag, Dropdown, Button } from "antd";
 import { EditOutlined, EyeOutlined, MoreOutlined } from "@ant-design/icons";
+import ColorStatusTag from "../../../component/ColorStatusTag/ColorStatusTag";
 
 export default function useCategoryColumns(onEdit, onView) {
   return [
@@ -9,11 +10,7 @@ export default function useCategoryColumns(onEdit, onView) {
       title: "Status",
       dataIndex: "status",
       key: "status",
-      render: (status) => (
-        <Tag color={status?.name == "Active" ? "green" : "red"}>
-          {status?.name || "N/A"}
-        </Tag>
-      ),
+      render: (status) => <ColorStatusTag status={status} />,
     },
     {
       title: "Actions",

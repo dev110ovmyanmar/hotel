@@ -19,3 +19,8 @@ export const adminPermission = async (params) =>{
   const {data} = await apiClient.post("/admin-permission",params);
   return data.response;
 }
+
+export const adminUpload = async (params) => {
+  const { data } = await apiClient.post("/admin/upload", params, {isMultipart: true});
+  return data.response;
+};

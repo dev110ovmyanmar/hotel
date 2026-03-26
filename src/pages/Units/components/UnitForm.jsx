@@ -16,9 +16,9 @@ const UnitForm = ({
   setPage,
   selectedRow,
   setSelectedRow,
-  drawerOpen, 
+  drawerOpen,
   setDrawerOpen,
-  statusOptions 
+  statusOptions
 }) => {
   const [form] = Form.useForm();
 
@@ -27,13 +27,13 @@ const UnitForm = ({
   const isAdd = mode === "add";
 
   const { data, isLoading, error } = useApiQuery({
-      fetchQueryName: "unit_detail",
-      fetchQueryFunction: getUnitDetail,
-      params: { uuid: selectedRow?.uuid },
-      options: {
-        enabled: !!selectedRow?.uuid && (isEdit || isView) && drawerOpen,
-      }
-    });
+    fetchQueryName: "unit_detail",
+    fetchQueryFunction: getUnitDetail,
+    params: { uuid: selectedRow?.uuid },
+    options: {
+      enabled: !!selectedRow?.uuid && (isEdit || isView) && drawerOpen,
+    }
+  });
 
   useEffect(() => {
     if (isAdd) {
@@ -46,21 +46,21 @@ const UnitForm = ({
     }
   }, [data, mode]);
 
-    const createUnit = useApiMutation({
-      mutationFn: upsertUnit,
-      invalidateKeys: [["units"]],
-      shouldInvalidate: page === 1
-    });
+  const createUnit = useApiMutation({
+    mutationFn: upsertUnit,
+    invalidateKeys: [["units"]],
+    shouldInvalidate: page === 1
+  });
 
-    const editUnit = useApiMutation({
-        mutationFn: upsertUnit,
-        invalidateKeys: [["units"]],
-      });
+  const editUnit = useApiMutation({
+    mutationFn: upsertUnit,
+    invalidateKeys: [["units"]],
+  });
 
 
   const onFinish = (values) => {
     console.log('Form values:', values);
-    
+
     // Validate required fields
     if (!values.statusUuid) {
       Toast.error('Please select a status');
@@ -75,7 +75,7 @@ const UnitForm = ({
 
     console.log('Final payload:', basePayload);
 
-    if(isAdd){
+    if (isAdd) {
       createUnit.mutate(basePayload, {
         onSuccess: () => {
           form.resetFields();
@@ -88,21 +88,21 @@ const UnitForm = ({
         }
       });
     }
-    if(isEdit){
+    if (isEdit) {
       const editValues = {
         ...basePayload,
         uuid: data?.uuid,
       };
-     editUnit.mutate(editValues, {
-      onSuccess: () => {
-        setDrawerOpen(false);
-        Toast.success("Unit Updated Successfully!");
-      },
-      onError: (error) => {
-        console.error('Update error:', error);
-        Toast.error(error?.response?.data?.error?.text || 'Failed to update unit');
-      }
-     });
+      editUnit.mutate(editValues, {
+        onSuccess: () => {
+          setDrawerOpen(false);
+          Toast.success("Unit Updated Successfully!");
+        },
+        onError: (error) => {
+          console.error('Update error:', error);
+          Toast.error(error?.response?.data?.error?.text || 'Failed to update unit');
+        }
+      });
     }
   }
 
@@ -112,7 +112,7 @@ const UnitForm = ({
   const getStatusLabel = (val) =>
     statusOptions?.find((s) => s.value === val)?.label || "-";
 
-    const onClose = () => {
+  const onClose = () => {
     form.resetFields();
     setDrawerOpen(false);
     setSelectedRow(null);
@@ -121,8 +121,8 @@ const UnitForm = ({
   const DrawerTitle = isView
     ? "Unit View"
     : isEdit
-    ? "Unit Edit"
-    : "Unit Create";
+      ? "Unit Edit"
+      : "Unit Create";
 
   return (
     <Drawer
@@ -140,7 +140,7 @@ const UnitForm = ({
           )}
         </div>
       }
-      width={500} // size={500} is not a valid AntD prop, use width
+      size={550}
       onClose={onClose}
       open={drawerOpen}
       destroyOnClose
@@ -172,16 +172,17 @@ const UnitForm = ({
             label="Status"
             rules={[{ required: true, message: "Status is required" }]}
           >
-            {isView ? (
+            {/* {isView ? (
               <div className="border border-gray-200 rounded-lg px-4 h-11 flex items-center bg-gray-50 text-gray-600">
                 {getStatusLabel(currentStatusUuid)}
               </div>
-            ) : (
-              <Select
-                options={statusOptions || []}
-                placeholder="Select Status"
-              />
-            )}
+            ) : ( */}
+            <Select
+              options={statusOptions || []}
+              placeholder="Select Status"
+              open={isView ? false : undefined}
+            />
+            {/* )} */}
           </Form.Item>
         </Form>
       )}

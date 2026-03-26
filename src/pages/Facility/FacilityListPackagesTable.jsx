@@ -2,13 +2,13 @@ import { Dropdown, Space, Table } from "antd";
 import { useState } from "react";
 import { MoreOutlined } from "@ant-design/icons";
 import { EyeOutlined } from "@ant-design/icons";
-import { EditOutlined } from "@ant-design/icons";
 import { useLocation, useParams } from "react-router-dom";
 import useApiQuery from "../../hooks/useApiQuery";
 import { getFacilityDetails } from "../../api/facilityApi";
 import { PERMISSIONS } from "../../variables/permission";
 import usePermission from "../../hooks/usePermission";
 import FacilityListPackageForm from "./Components/FacilityForm/FacilityListPackageForm";
+import {capitalizeFirstLetter} from "../../utils/Utils";
 
 const FacilityListPackagesTable = ({
   page,
@@ -21,6 +21,7 @@ const FacilityListPackagesTable = ({
   const { hasPermission } = usePermission();
   const location = useLocation();
   const { uuid } = location.state;
+  const {name} = location.state;
 
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mode, setMode] = useState(null);
@@ -136,7 +137,9 @@ const FacilityListPackagesTable = ({
   ];
 
   return (
-    <div id="scrollId" className="w-full h-[63vh] ">
+    <div id="scrollId" className="w-full h-[63vh] px-6 py-2">
+      <div className="text-lg mb-3">{capitalizeFirstLetter(name)}</div>
+
       <Table
         tableLayout="fixed"
         scroll={{ x: 1000 }}
