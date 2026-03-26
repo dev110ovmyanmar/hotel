@@ -150,7 +150,7 @@ const UnitForm = ({
       ) : (
         <Form form={form} layout="vertical" onFinish={onFinish}>
           <Form.Item
-            label="Unit Name"
+            label="Name"
             name="name"
             rules={[{ required: true, message: "Please input unit name!" }]}
           >

@@ -7,7 +7,7 @@ import { useApiMutation } from "../../../hooks/useApiMutation";
 import useApiQuery from "../../../hooks/useApiQuery";
 import { upsertCategory, getCategoryDetail } from "../../../api/categoryApi";
 
-const CategoryForm = ({ 
+const CategoryForm = ({
   mode,
   categories = [],
   loading = false,
@@ -16,12 +16,12 @@ const CategoryForm = ({
   setPage,
   selectedRow,
   setSelectedRow,
-  drawerOpen, 
+  drawerOpen,
   setDrawerOpen,
-  statusOptions 
+  statusOptions
 }) => {
   const [form] = Form.useForm();
-  
+
   const isView = mode === "view";
   const isEdit = mode === "edit";
   const isAdd = mode === "add";
@@ -46,16 +46,16 @@ const CategoryForm = ({
     }
   }, [data, mode]);
 
-    const createCategory = useApiMutation({
-      mutationFn: upsertCategory,
-      invalidateKeys: [["categories"]],
-      shouldInvalidate: page === 1
-    });
+  const createCategory = useApiMutation({
+    mutationFn: upsertCategory,
+    invalidateKeys: [["categories"]],
+    shouldInvalidate: page === 1
+  });
 
-    const editCategory = useApiMutation({
-        mutationFn: upsertCategory,
-        invalidateKeys: [["categories"]],
-      });
+  const editCategory = useApiMutation({
+    mutationFn: upsertCategory,
+    invalidateKeys: [["categories"]],
+  });
 
 
   const onFinish = (values) => {
@@ -64,7 +64,7 @@ const CategoryForm = ({
       status: { uuid: values.status }
     };
 
-    if(isAdd){
+    if (isAdd) {
       createCategory.mutate(basePayload, {
         onSuccess: () => {
           form.resetFields();
@@ -74,27 +74,27 @@ const CategoryForm = ({
         },
       });
     }
-    if(isEdit){
+    if (isEdit) {
       const editValues = {
         ...basePayload,
         uuid: data?.uuid,
       };
-     editCategory.mutate(editValues, {
-      onSuccess: () => {
-        setDrawerOpen(false);
-        Toast.success("Category Updated Successfully!");
-      },
-     });
+      editCategory.mutate(editValues, {
+        onSuccess: () => {
+          setDrawerOpen(false);
+          Toast.success("Category Updated Successfully!");
+        },
+      });
     }
   }
 
-  
+
 
   // Use watch to get the value in real-time for the read-only display
   const currentStatusUuid = Form.useWatch("statusUuid", form);
   const getStatusLabel = (val) => statusOptions.find((s) => s.value === val)?.label || "-";
 
-    const onClose = () => {
+  const onClose = () => {
     form.resetFields();
     setDrawerOpen(false);
     setSelectedRow(null);
@@ -103,8 +103,8 @@ const CategoryForm = ({
   const DrawerTitle = isView
     ? "Category View"
     : isEdit
-    ? "Category Edit"
-    : "Category Create";
+      ? "Category Edit"
+      : "Category Create";
 
   return (
     <Drawer
@@ -126,7 +126,7 @@ const CategoryForm = ({
       {loading ? <Loader /> : (
         <Form form={form} layout="vertical" onFinish={onFinish}>
           <Form.Item
-            label="Category Name"
+            label="Name"
             name="name"
             rules={[{ required: true, message: "Please input category name!" }]}
           >
@@ -149,12 +149,12 @@ const CategoryForm = ({
                 placeholder="Select Status" 
               />
             )} */}
-              <Select 
-                options={statusOptions} 
-                // className="h-11" 
-                placeholder="Select Status" 
-                disabled={isView}
-              />
+            <Select
+              options={statusOptions}
+              // className="h-11" 
+              placeholder="Select Status"
+              disabled={isView}
+            />
           </Form.Item>
         </Form>
       )}

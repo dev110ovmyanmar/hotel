@@ -181,7 +181,7 @@ const ServiceInventoryForm = ({
         ) : (
           <>
             <Form.Item
-              label="Item Name"
+              label="Name"
               name="name"
               rules={[{ required: true, message: "Please input item name!" }]}
             >
@@ -321,7 +321,8 @@ const ServiceInventoryForm = ({
                         //   <StopOutlined className="!text-red-500" /> Standard / No Laundry
                         // </span>
                         <span className="font-medium">
-                          Standard / No Laundry
+                          {/* Standard / No Laundry */}
+                          N/A
                         </span>
                       )
                     },
@@ -332,7 +333,7 @@ const ServiceInventoryForm = ({
                         //   <ShopOutlined className="!text-blue-500" /> Laundry Required
                         // </span>
                         <span className="font-medium">
-                          Laundry Required
+                          Washable
                         </span>
                       )
                     },
@@ -353,8 +354,18 @@ const ServiceInventoryForm = ({
                   options={[
                     // { value: false, label: <span className="text-blue-600 font-medium">Paid Item</span> },
                     // { value: true, label: <span className="text-green-600 font-medium">Free Item</span> },
-                    { value: false, label: <span className="font-medium">Paid Item</span> },
-                    { value: true, label: <span className="font-medium">Free Item</span> },
+                    {
+                      value: false, label: <span className="font-medium">
+                        {/* Paid Item */}
+                        Sale
+                      </span>
+                    },
+                    {
+                      value: true, label: <span className="font-medium">
+                        {/* Free Item */}
+                        Gift
+                      </span>
+                    },
                   ]}
                 />
               </Form.Item>
