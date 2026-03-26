@@ -1,5 +1,6 @@
 import { Button, Dropdown, Typography } from "antd";
 import { EditOutlined, EyeOutlined, FileTextOutlined, MoreOutlined } from "@ant-design/icons";
+import ColorStatusTag from "../../../component/ColorStatusTag/ColorStatusTag";
 
 const { Text } = Typography;
 
@@ -35,6 +36,12 @@ export default function useSupplierColumns(onEdit, onView) {
             title: "Address",
             dataIndex: "address",
             key: "address",
+        },
+        {
+            title: "Status",
+            dataIndex: "status",
+            key: "status",
+            render: (status) => <ColorStatusTag status={status} />,
         },
         {
             title: "Actions",

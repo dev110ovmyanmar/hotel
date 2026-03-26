@@ -29,14 +29,14 @@ export default function useServiceInventoryColumns(onEdit, onView) {
       width: 110,
     },
     {
-      title: "Purchase Price",
+      title: "Purchase Price (MMK)",
       dataIndex: "unitCost",
       key: "unitCost",
       width: 120,
       render: (cost) => <span className="font-medium">{cost}</span>,
     },
     {
-      title: "Selling Price",
+      title: "Selling Price (MMK)",
       dataIndex: "unitPrice",
       key: "unitPrice",
       // align: "right",

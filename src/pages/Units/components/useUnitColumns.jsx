@@ -1,20 +1,17 @@
 import { Tag, Dropdown, Button } from "antd";
 import { EditOutlined, EyeOutlined, MoreOutlined } from "@ant-design/icons";
+import ColorStatusTag from "../../../component/ColorStatusTag/ColorStatusTag";
 
 export default function useUnitColumns(onEdit, onView) {
   return [
     { title: "ID", dataIndex: "id", key: "id", width: 80 },
     { title: "Name", dataIndex: "name", key: "name" },
-    {title: "Short Name", dataIndex: "shortName", key: "shortName"},
+    { title: "Short Name", dataIndex: "shortName", key: "shortName" },
     {
       title: "Status",
       dataIndex: "status",
       key: "status",
-      render: (status) => (
-        <Tag color={status?.name == "Active" ? "green" : "red"}>
-          {status?.name || "N/A"}
-        </Tag>
-      ),
+      render: (status) => <ColorStatusTag status={status} />,
     },
     {
       title: "Actions",
