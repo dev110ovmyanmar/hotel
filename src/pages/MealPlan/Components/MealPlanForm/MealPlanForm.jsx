@@ -140,7 +140,7 @@ const MeanPlanForm = ({
           </Form.Item>
 
 
-          <Status isView={isView}/>
+          <Status isView={isView} />
 
           <Form.Item label="Description" name="description">
             <TextArea></TextArea>
