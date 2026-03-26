@@ -58,7 +58,12 @@ const ServiceInventoryForm = ({
 
   useEffect(() => {
     if (isAdd) {
-      form.resetFields();
+      // form.resetFields();
+      // Set default values for NEW items here
+      form.setFieldsValue({
+        laundryStatus: false, // Default to Standard
+        isFree: false,        // Default to Paid
+      });
     } else if (data) {
       form.setFieldsValue({
         ...data,
@@ -67,7 +72,7 @@ const ServiceInventoryForm = ({
         supplierUuid: data?.supplier?.uuid,
       });
     }
-  }, [data, mode]);
+  }, [data, mode, isAdd]);
 
   const createServiceInventory = useApiMutation({
     mutationFn: upsertInventory,
@@ -176,7 +181,7 @@ const ServiceInventoryForm = ({
         ) : (
           <>
             <Form.Item
-              label="Item Name"
+              label="Name"
               name="name"
               rules={[{ required: true, message: "Please input item name!" }]}
             >
@@ -220,7 +225,6 @@ const ServiceInventoryForm = ({
                 <InputNumber
                   className="!w-full"
                   min={0}
-                  classNames="w-full"
                   readOnly={isView}
                   placeholder="Enter Selling Price"
                   suffix="MMK"
@@ -236,7 +240,7 @@ const ServiceInventoryForm = ({
                   mode="spinner"
                   min={MIN_STOCK_QUANTITY}
                   max={MAX_STOCK_QUANTITY}
-                  className="w-full"
+                  className="!w-full"
                   placeholder="Enter Stock Quantity"
                   disabled={isView} />
               </Form.Item>
@@ -297,74 +301,83 @@ const ServiceInventoryForm = ({
 
             <Divider />
 
+            {/* <div className="grid grid-cols-2 gap-3"> */}
             <div className="grid grid-cols-2 gap-3">
+              {/* Laundry Status Section as Select */}
               <Form.Item
                 label="Laundry Requirement"
                 name="laundryStatus"
-                rules={[{ required: true, message: "Please select a laundry status" }]}
+                rules={[{ required: true, message: "Please select laundry status!" }]}
               >
-                <Radio.Group className="w-full" disabled={isView}>
-                  <div className="grid grid-cols-2 gap-3">
-                    {/* Option: No / Standard */}
-                    <Radio.Button
-                      value={false}
-                      className="h-auto py-3 px-4 rounded-lg border-2 flex flex-col items-center justify-center transition-all hover:border-blue-400"
-                    >
-                      <div className="flex flex-col items-center gap-1">
-                        <span className="text-lg opacity-100 text-red-600"><StopOutlined /></span>
-                      </div>
-                    </Radio.Button>
-
-                    {/* Option: Yes / Laundry */}
-                    <Radio.Button
-                      value={true}
-                      className="h-auto py-3 px-4 rounded-lg border-2 flex flex-col items-center justify-center transition-all hover:border-blue-500 hover:bg-blue-50"
-                    >
-                      <div className="flex flex-col items-center gap-1">
-                        {/* <span className="text-lg">🧺</span> */}
-                        <span className="text-lg opacity-100 text-blue-600"><ShopOutlined /></span>
-                        {/* <span className="font-bold text-blue-600">Laundry</span> */}
-                        {/* <span className="text-[10px] uppercase tracking-wider text-blue-400 leading-none">
-            Service Item
-          </span> */}
-                      </div>
-                    </Radio.Button>
-                  </div>
-                </Radio.Group>
+                <Select
+                  disabled={isView}
+                  placeholder="Select Status"
+                  className="w-full"
+                  options={[
+                    {
+                      value: false,
+                      label: (
+                        // <span className="flex items-center gap-2">
+                        //   <StopOutlined className="!text-red-500" /> Standard / No Laundry
+                        // </span>
+                        <span className="font-medium">
+                          {/* Standard / No Laundry */}
+                          N/A
+                        </span>
+                      )
+                    },
+                    {
+                      value: true,
+                      label: (
+                        // <span className="flex items-center gap-2">
+                        //   <ShopOutlined className="!text-blue-500" /> Laundry Required
+                        // </span>
+                        <span className="font-medium">
+                          Washable
+                        </span>
+                      )
+                    },
+                  ]}
+                />
               </Form.Item>
 
-              <Form.Item name="isFree" label="Is this item free?" rules={[{ required: true, message: "Please select a Item status" }]}>
-                <Radio.Group className="w-full" disabled={isView}>
-                  <div className="grid grid-cols-2 gap-4">
-                    <Radio.Button
-                      value={false}
-                      className="h-16 flex items-center justify-center rounded-lg border-2"
-                    >
-                      <div className="text-center">
-                        <div className="text-black-600">Paid</div>
-                        {/* <div className="text-xs text-gray-400">Standard Billing</div> */}
-                      </div>
-                    </Radio.Button>
-
-                    <Radio.Button
-                      value={true}
-                      className="h-16 flex items-center justify-center rounded-lg border-2"
-                    >
-                      <div className="text-center">
-                        <div className="text-green-600">Free</div>
-                        {/* <div className="text-xs text-gray-400">Complimentary</div> */}
-                      </div>
-                    </Radio.Button>
-                  </div>
-                </Radio.Group>
+              {/* Is Free Section as Select */}
+              <Form.Item
+                label="Is this item free?"
+                name="isFree"
+                rules={[{ required: true, message: "Please select billing type!" }]}
+              >
+                <Select
+                  disabled={isView}
+                  placeholder="Select Billing Type"
+                  className="w-full"
+                  options={[
+                    // { value: false, label: <span className="text-blue-600 font-medium">Paid Item</span> },
+                    // { value: true, label: <span className="text-green-600 font-medium">Free Item</span> },
+                    {
+                      value: false, label: <span className="font-medium">
+                        {/* Paid Item */}
+                        Sale
+                      </span>
+                    },
+                    {
+                      value: true, label: <span className="font-medium">
+                        {/* Free Item */}
+                        Gift
+                      </span>
+                    },
+                  ]}
+                />
               </Form.Item>
             </div>
+            {/* </div> */}
 
           </>
         )}
       </Form>
-    </Drawer>
+    </Drawer >
   );
 };
 
 export default ServiceInventoryForm;
+

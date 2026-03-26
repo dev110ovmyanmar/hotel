@@ -98,7 +98,7 @@ const SupplierForm = ({
                 <Form form={form} layout="vertical" onFinish={onFinish} className="w-full">
                     <div className="grid grid-cols-12 gap-x-4">
                         <div className="col-span-12">
-                            <Form.Item label="Supplier Name" name="name" rules={[{ required: true }]}>
+                            <Form.Item label="Name" name="name" rules={[{ required: true }]}>
                                 <Input readOnly={isView} placeholder="e.g. Shn" />
                             </Form.Item>
                         </div>

@@ -194,7 +194,7 @@ const PropertyForm = ({
           )}
         </div>
       }
-      size={500}
+      size={550}
       onClose={onClose}
       open={drawerOpen}
     >
@@ -206,11 +206,11 @@ const PropertyForm = ({
 
           <div className="grid grid-cols-2 gap-4">
             <Form.Item
-              label="Property Name"
+              label="Name"
               name="name"
               rules={[{ required: true }]}
             >
-              <Input readOnly={isView} variant="outlined" />
+              <Input readOnly={isView} variant="outlined" placeholder="Enter Property Name" />
             </Form.Item>
             <Form.Item
               label="Property Type"
@@ -220,6 +220,7 @@ const PropertyForm = ({
               <Select
                 options={propertyTypes}
                 open={isView ? false : undefined}
+                placeholder="Select Property Type"
               />
             </Form.Item>
           </div>
@@ -230,7 +231,7 @@ const PropertyForm = ({
               name="email"
               rules={[{ required: true, type: "email" }]}
             >
-              <Input readOnly={isView} />
+              <Input readOnly={isView} placeholder="Enter Email" />
             </Form.Item>
             <Form.Item
               label="Phone"
@@ -243,7 +244,7 @@ const PropertyForm = ({
                 },
               ]}
             >
-              <Input readOnly={isView} placeholder="+95..." />
+              <Input readOnly={isView} placeholder="Enter Phone Number" />
             </Form.Item>
           </div>
 
@@ -252,7 +253,7 @@ const PropertyForm = ({
             name="address"
             rules={[{ required: true, message: "Invalid address format" }]}
           >
-            <Input.TextArea rows={2} readOnly={isView} variant="outlined" />
+            <Input.TextArea rows={2} readOnly={isView} variant="outlined" placeholder="Enter Address" />
           </Form.Item>
 
           <div className="grid grid-cols-3 gap-4">
@@ -337,6 +338,7 @@ const PropertyForm = ({
                   >
                     <Select
                       options={currencyOptions}
+                      placeholder="Select Currency"
                     />
                   </Form.Item>
                 )
@@ -364,6 +366,7 @@ const PropertyForm = ({
                     className="w-full"
                     format="HH:mm:ss"
                     onChange={() => form.validateFields(["checkOutTime"])}
+                    placeholder="Select Check-In Time"
                   />
                 </Form.Item>
             }
@@ -387,8 +390,7 @@ const PropertyForm = ({
                   <TimePicker
                     className="w-full"
                     format="HH:mm:ss"
-                  // open={isView ? false : undefined}
-                  // disabled={isView}
+                    placeholder="Select Check-Out Time"
                   />
                 </Form.Item>
               )
@@ -470,7 +472,7 @@ const PropertyForm = ({
 
       <Drawer
         title={editingSetting ? "Edit Setting" : "Add Setting"}
-        width={450}
+        size={550}
         open={settingDrawer}
         onClose={() => setSettingDrawer(false)}
       >
