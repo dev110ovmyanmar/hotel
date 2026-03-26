@@ -19,8 +19,8 @@ const Breadcrumbs = () => {
 
       return (
         <span key={currentLink}>
-          {index === 0 ? (
-            <span style={{ color: "#555", margin: "10px" }}>
+          {index === 0 || index === 2? (
+            <span style={{ color: "#555", margin: "10px" , disabled:"true"}}>
               {displayName}
             </span>
           ) : (
