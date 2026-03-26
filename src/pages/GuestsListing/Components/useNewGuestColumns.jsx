@@ -1,5 +1,6 @@
 import { Button, Dropdown, Typography } from "antd";
 import { EditOutlined, EyeOutlined, FileTextOutlined, MoreOutlined } from "@ant-design/icons";
+import ColorStatusTag from "../../../component/ColorStatusTag/ColorStatusTag";
 
 const { Text } = Typography;
 
@@ -36,6 +37,12 @@ export default function useGuestColumns(onEdit, onView, onViewNotes) {
       title: "Nationality",
       dataIndex: "nationality",
       key: "nationality",
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      render: (_, record) => <ColorStatusTag status={record?.status} />,
     },
     {
       title: "Actions",
