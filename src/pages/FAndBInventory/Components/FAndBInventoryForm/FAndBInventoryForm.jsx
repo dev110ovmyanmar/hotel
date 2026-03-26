@@ -326,7 +326,7 @@ const FAndBInventoryForm = ({
               />
             </Form.Item>
           </div>
-          <Status isView={isView}/>
+          <Status isView={isView} />
         </Form>
       </Drawer>
     </div>
