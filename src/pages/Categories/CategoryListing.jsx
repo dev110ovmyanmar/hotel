@@ -7,7 +7,7 @@ import ListHeader from "../../component/ListHeader/ListHeader";
 import CategoryTable from "./components/CategoryTable";
 import CategoryForm from "./components/CategoryForm";
 import { LIMITS } from "../../variables/constants";
-import { queryClient } from "../../app/queryClient";
+import { PERMISSIONS } from "../../variables/permission";
 
 const CategoryListing = () => {
   const [selectedRow, setSelectedRow] = useState(null);
@@ -17,22 +17,13 @@ const CategoryListing = () => {
   const [perPage, setPerPage] = useState(LIMITS.PAGE_SIZE);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
-  const initData = queryClient.getQueryData(["initData", "authenticated"]);
-
-  const statusOptions =
-    initData?.statuses?.status
-      ?.filter((item) => item.name.toLowerCase() !== "blocked")
-      ?.map((item) => ({
-        value: item.uuid,
-        label: item.name,
-      })) || [];
-
   const { data, isLoading, error } = useApiQuery({
     fetchQueryName: "categories",
     fetchQueryFunction: getCategories,
     params: {
-      pagination: 
-      { page: page, 
+      pagination:
+      {
+        page: page,
         perPage: perPage
       },
       keyword,
@@ -42,9 +33,9 @@ const CategoryListing = () => {
 
   const categories = data?.data || [];
 
-     useEffect(() => {
-      setPage(1);
-    }, [keyword, perPage]);
+  useEffect(() => {
+    setPage(1);
+  }, [keyword, perPage]);
 
   const handleAdd = () => {
     setCurrentMode("add");
@@ -63,7 +54,7 @@ const CategoryListing = () => {
     setDrawerOpen(true);
   };
 
-  
+
   const switchToEdit = () => {
     setCurrentMode("edit");
   };
@@ -77,6 +68,7 @@ const CategoryListing = () => {
           setKeyword={setKeyword}
           addButtonText="Add New Category"
           onAdd={handleAdd}
+          permission={PERMISSIONS.CATEGORY_CREATE}
         />
       </div>
 
@@ -102,11 +94,12 @@ const CategoryListing = () => {
         loading={isLoading}
         selectedRow={selectedRow}
         setSelectedRow={setSelectedRow}
-        statusOptions={statusOptions}
       />
     </div>
   );
 };
 
 export default CategoryListing;
+
+
 
