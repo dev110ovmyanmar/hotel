@@ -5,11 +5,11 @@ import FormButtons from "../../../component/FormButtons/FormButtons";
 import Toast from "../../../component/Toast/Toast";
 import { useApiMutation } from "../../../hooks/useApiMutation";
 import useApiQuery from "../../../hooks/useApiQuery";
+import { queryClient } from "../../../app/queryClient";
 import { upsertCategory, getCategoryDetail } from "../../../api/categoryApi";
 
 const CategoryForm = ({
   mode,
-  categories = [],
   loading = false,
   switchToEdit,
   page,
@@ -18,13 +18,29 @@ const CategoryForm = ({
   setSelectedRow,
   drawerOpen,
   setDrawerOpen,
-  statusOptions
 }) => {
   const [form] = Form.useForm();
 
   const isView = mode === "view";
   const isEdit = mode === "edit";
   const isAdd = mode === "add";
+
+  //status & department uuid
+  const initData = queryClient.getQueryData(["initData", "authenticated"]);
+
+  const statusOptions =
+    initData?.statuses?.status
+      ?.filter((item) => item.name.toLowerCase() !== "blocked")
+      ?.map((item) => ({
+        value: item.uuid,
+        label: item.name,
+      })) || [];
+
+  const departmentOptions =
+    initData?.departments?.map((item) => ({
+      value: item.uuid,
+      label: item.name,
+    })) || [];
 
   const { data, isLoading, error } = useApiQuery({
     fetchQueryName: "category_detail",
@@ -41,6 +57,8 @@ const CategoryForm = ({
     } else if (data) {
       form.setFieldsValue({
         ...data,
+        department: data?.department?.uuid,
+        description: data?.description,
         status: data?.status?.uuid
       });
     }
@@ -61,6 +79,8 @@ const CategoryForm = ({
   const onFinish = (values) => {
     const basePayload = {
       name: values.name,
+      department: { uuid: values.department },
+      description: values.description,
       status: { uuid: values.status }
     };
 
@@ -77,6 +97,8 @@ const CategoryForm = ({
     if (isEdit) {
       const editValues = {
         ...basePayload,
+        department: { uuid: values.department },
+        description: values.description,
         uuid: data?.uuid,
       };
       editCategory.mutate(editValues, {
@@ -88,12 +110,6 @@ const CategoryForm = ({
     }
   }
 
-
-
-  // Use watch to get the value in real-time for the read-only display
-  const currentStatusUuid = Form.useWatch("statusUuid", form);
-  const getStatusLabel = (val) => statusOptions.find((s) => s.value === val)?.label || "-";
-
   const onClose = () => {
     form.resetFields();
     setDrawerOpen(false);
@@ -101,16 +117,16 @@ const CategoryForm = ({
   };
 
   const DrawerTitle = isView
-    ? "Category View"
+    ? "Category Details"
     : isEdit
-      ? "Category Edit"
-      : "Category Create";
+      ? "Edit Category"
+      : "Add Category";
 
   return (
     <Drawer
       title={
         <div className="flex items-center justify-between w-full">
-          <span>{mode === "view" ? "View Category" : mode === "edit" ? "Edit Category" : "Add Category"}</span>
+          {DrawerTitle}
           {isView ? (
             <Button type="primary" onClick={switchToEdit}>Edit</Button>
           ) : (
@@ -118,7 +134,7 @@ const CategoryForm = ({
           )}
         </div>
       }
-      size={500} // size={500} is not a valid AntD prop, use width
+      size={550} // size={500} is not a valid AntD prop, use width
       onClose={onClose}
       open={drawerOpen}
       destroyOnClose
@@ -130,7 +146,39 @@ const CategoryForm = ({
             name="name"
             rules={[{ required: true, message: "Please input category name!" }]}
           >
-            <Input placeholder="e.g. Guest Amenities" readOnly={isView} />
+            <Input placeholder="Enter Category Name" readOnly={isView} />
+          </Form.Item>
+
+          {isView ? (
+            <Form.Item label="Department">
+              <Input
+                readOnly
+                value={data?.department?.name}
+                className="bg-white text-black cursor-default border-gray-200"
+                variant="outlined"
+              />
+            </Form.Item>
+          ) : (
+            <Form.Item label="Department" name="department"
+              rules={[{ required: true, message: "Department is required" }]} >
+              <Select
+                options={departmentOptions}
+                className="w-full"
+                showSearch
+                placeholder="Select Department"
+                filterOption={(input, option) =>
+                  option.label.toLowerCase().includes(input.toLowerCase())
+                }
+              />
+            </Form.Item>
+          )}
+
+          <Form.Item label="Description" name="description">
+            <Input.TextArea rows={2}
+              readOnly={isView}
+              style={{ cursor: isView ? "default" : "text" }}
+              placeholder="Enter Description"
+            />
           </Form.Item>
 
           <Form.Item
@@ -138,27 +186,16 @@ const CategoryForm = ({
             label="Status"
             rules={[{ required: true, message: "Status is required" }]}
           >
-            {/* {isView ? (
-              <div className="border border-gray-200 rounded-lg px-4 h-11 flex items-center bg-gray-50 text-gray-600">
-                {getStatusLabel(currentStatusUuid)}
-              </div>
-            ) : (
-              <Select 
-                options={statusOptions} 
-                className="h-11" 
-                placeholder="Select Status" 
-              />
-            )} */}
             <Select
               options={statusOptions}
-              // className="h-11" 
               placeholder="Select Status"
               disabled={isView}
             />
           </Form.Item>
         </Form>
-      )}
-    </Drawer>
+      )
+      }
+    </Drawer >
   );
 };
 

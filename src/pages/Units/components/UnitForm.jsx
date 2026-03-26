@@ -119,10 +119,10 @@ const UnitForm = ({
   };
 
   const DrawerTitle = isView
-    ? "Unit View"
+    ? "Unit Details"
     : isEdit
-      ? "Unit Edit"
-      : "Unit Create";
+      ? "Edit Unit"
+      : "Add Unit";
 
   return (
     <Drawer
