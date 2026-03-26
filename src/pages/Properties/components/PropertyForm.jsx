@@ -206,7 +206,7 @@ const PropertyForm = ({
 
           <div className="grid grid-cols-2 gap-4">
             <Form.Item
-              label="Property Name"
+              label="Name"
               name="name"
               rules={[{ required: true }]}
             >
