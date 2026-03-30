@@ -118,7 +118,7 @@ const RoomAttributesForm = ({
           />
         </Form.Item>
         <Form.Item label="Value" name="value" rules={[{ required: true }]}>
-          <Input />
+          <Input placeholder="Enter Value" />
         </Form.Item>
       </Form>
     </Drawer>

@@ -139,7 +139,7 @@ const AmenitiesForm = ({
             name="name"
             rules={[{ required: true, message: "Amenity Name is Required" }]}
           >
-            <Input readOnly={isView} />
+            <Input readOnly={isView} placeholder="Enter Amenity Name" />
           </Form.Item>
 
           <Form.Item
@@ -147,7 +147,7 @@ const AmenitiesForm = ({
             name="code"
             rules={[{ required: true, message: "Amenity Code is Required" }]}
           >
-            <Input readOnly={isView} />
+            <Input readOnly={isView} placeholder="Enter Amenity Code" />
           </Form.Item>
 
           <Row gutter={16}>

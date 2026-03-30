@@ -178,7 +178,7 @@ const RatePlanForm = ({
       <Drawer
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
-        size={600}
+        size={550}
         title={
           <div className="flex justify-between items-center">
             <span>
@@ -212,7 +212,7 @@ const RatePlanForm = ({
           layout="vertical"
           style={{ width: "100%" }}
           onFinish={onFinish}
-          // disabled={isView}
+        // disabled={isView}
         >
           <Row gutter={24}>
             <Col span={16}>
@@ -223,16 +223,16 @@ const RatePlanForm = ({
                   { required: true, message: "Please enter rate plan name" },
                 ]}
               >
-                <Input readOnly={isView} />
+                <Input readOnly={isView} placeholder="Enter Rate Plan Name" />
               </Form.Item>
             </Col>
             <Col span={8}>
               <Form.Item
                 label="Code"
                 name="code"
-                rules={[{ required: true, message: "Please enter short name" }]}
+                rules={[{ required: true, message: "Please enter rate plan code" }]}
               >
-                <Input readOnly={isView} />
+                <Input readOnly={isView} placeholder="Enter Rate Plan Code" />
               </Form.Item>
             </Col>
           </Row>
@@ -355,7 +355,7 @@ const RatePlanForm = ({
           <Form.Item
             label="Status"
             name="status"
-            rules={[{ required: true, message: "Status is Required" }]}
+            rules={[{ required: true, message: "Status is required" }]}
             getValueProps={(value) => ({
               value: isView
                 ? statuses.find((item) => item.value === value)?.label
@@ -381,9 +381,8 @@ const RatePlanForm = ({
           <Form.Item
             label="Description"
             name="description"
-            placeholder="Enter full rate plan description"
           >
-            <TextArea readOnly={isView} />
+            <TextArea readOnly={isView} placeholder="Enter Description" />
           </Form.Item>
         </Form>
       </Drawer>

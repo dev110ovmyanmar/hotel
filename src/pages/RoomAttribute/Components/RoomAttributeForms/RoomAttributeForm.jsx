@@ -130,9 +130,9 @@ const RoomAttributeForm = ({
           <Form.Item
             label="Name"
             name="name"
-            rules={[{ required: true}]}
+            rules={[{ required: true }]}
           >
-            <Input readOnly={isView}/>
+            <Input readOnly={isView} placeholder="Enter Room Attribute Name" />
           </Form.Item>
         </Form>
       </Drawer>

@@ -56,7 +56,7 @@ const AddOnDrawer = ({
     <Drawer
       open={open}
       onClose={onClose}
-      
+      size={550}
       title={
         <div className="flex justify-between items-center">
           <span>
@@ -64,7 +64,7 @@ const AddOnDrawer = ({
           </span>
           {mode === "allow" && (
             <div className="flex justify-between gap-4">
-              <Button type="primary" onClick={() =>  onSave(checkedIds) } loading={loading}>
+              <Button type="primary" onClick={() => onSave(checkedIds)} loading={loading}>
                 Save
               </Button>
             </div>

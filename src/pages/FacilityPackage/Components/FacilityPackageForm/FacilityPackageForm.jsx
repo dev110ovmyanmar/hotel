@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Form, Input, Button, Select, Image, Drawer, AutoComplete } from "antd";
+import { Form, Input, Button, Select, Image, Drawer, AutoComplete, InputNumber } from "antd";
 import Toast from "../../../../component/Toast/Toast";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
 import useApiQuery from "../../../../hooks/useApiQuery";
@@ -164,7 +164,7 @@ const FacilityPackageForm = ({
             name="name"
             rules={[{ required: true, message: "Name is Required" }]}
           >
-            <Input readOnly={isView} />
+            <Input readOnly={isView} placeholder="Enter Facility Package Name" />
           </Form.Item>
 
           <Form.Item
@@ -228,7 +228,14 @@ const FacilityPackageForm = ({
               <Input readOnly={isView} />
               {addon}
             </Space.Compact> */}
-            <Input readOnly={isView} suffix="MMK"/>
+            {/* <Input readOnly={isView} suffix="MMK" /> */}
+            <InputNumber
+              className="!w-full"
+              min={0}
+              readOnly={isView}
+              placeholder="Enter Base Price"
+              suffix="MMK"
+            />
           </Form.Item>
 
           <div className="grid grid-cols-2 gap-4">
@@ -239,7 +246,18 @@ const FacilityPackageForm = ({
                 { required: true, message: "Included Hours is Required" },
               ]}
             >
-              <Input readOnly={isView} />
+              <InputNumber
+                className="!w-full"
+                min={0}
+                readOnly={isView}
+                placeholder="Enter Included Hours"
+                {...{
+                  mode: "spinner",
+                  min: 0,
+                  max: 24,
+                  style: { width: "100%" },
+                }}
+              />
             </Form.Item>
 
             <Form.Item
@@ -247,7 +265,18 @@ const FacilityPackageForm = ({
               name="includedPax"
               rules={[{ required: true, message: "Included Pax is Required" }]}
             >
-              <Input readOnly={isView} />
+              <InputNumber
+                className="!w-full"
+                min={0}
+                readOnly={isView}
+                placeholder="Enter Included Pax"
+                {...{
+                  mode: "spinner",
+                  min: 0,
+                  max: 24,
+                  style: { width: "100%" },
+                }}
+              />
             </Form.Item>
           </div>
 
@@ -259,7 +288,13 @@ const FacilityPackageForm = ({
                 { required: true, message: "Extra Hour Price is Required" },
               ]}
             >
-              <Input readOnly={isView} />
+              <InputNumber
+                className="!w-full"
+                min={0}
+                readOnly={isView}
+                placeholder="Enter Extra Hour Price"
+                suffix="MMK"
+              />
             </Form.Item>
 
             <Form.Item
@@ -269,7 +304,13 @@ const FacilityPackageForm = ({
                 { required: true, message: "ExtraPax Price is Required" },
               ]}
             >
-              <Input readOnly={isView} />
+              <InputNumber
+                className="!w-full"
+                min={0}
+                readOnly={isView}
+                placeholder="Enter Extra Pax Price"
+                suffix="MMK"
+              />
             </Form.Item>
           </div>
 
@@ -278,7 +319,7 @@ const FacilityPackageForm = ({
             name="remark"
             rules={[{ required: true, message: "Remark is Required" }]}
           >
-            <Input.TextArea readOnly={isView} />
+            <Input.TextArea readOnly={isView} placeholder="Enter Remark" />
           </Form.Item>
         </Form>
       </Drawer>

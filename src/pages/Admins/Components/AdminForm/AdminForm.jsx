@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Form, Input, Button, Select, Divider, Drawer, Modal } from "antd"; 
+import { Form, Input, Button, Select, Divider, Drawer, Modal } from "antd";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
 import useApiQuery from "../../../../hooks/useApiQuery";
 import { queryClient } from "../../../../app/queryClient";
@@ -203,7 +203,7 @@ const AdminForm = ({
       <Drawer
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
-        size={500}
+        size={550}
         title={
           <div className="flex justify-between items-center">
             <span>
@@ -244,7 +244,7 @@ const AdminForm = ({
             rules={[{ required: true, message: "Admin Name is Required" }]}
 
           >
-            <Input readOnly={isView} />
+            <Input readOnly={isView} placeholder="Enter Admin Name" />
           </Form.Item>
 
           <Form.Item
@@ -252,7 +252,7 @@ const AdminForm = ({
             name="email"
             rules={[{ required: true, message: "Admin Email is Required" }]}
           >
-            <Input readOnly={isView} />
+            <Input readOnly={isView} placeholder="Enter Email Address" />
           </Form.Item>
 
           <Form.Item
@@ -279,7 +279,7 @@ const AdminForm = ({
                         .includes(input.toLowerCase()),
                   }}
                   options={roles}
-                  
+                  placeholder="Select Role"
                 />
             }
 
@@ -381,8 +381,8 @@ const AdminForm = ({
             // loading: loading,
           }}
           onCancel={cancelButton}
-        > 
-          <Divider/>
+        >
+          <Divider />
           <div className="text-md !mt-3">
             Changing the role will update permissions. Do you want to continue?
           </div>
