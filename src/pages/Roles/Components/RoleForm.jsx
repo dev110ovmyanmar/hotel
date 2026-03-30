@@ -19,7 +19,7 @@ const RoleForm = ({
   setPage,
   selectedRow,
   setSelectedRow,
-  drawerOpen, 
+  drawerOpen,
   setDrawerOpen,
 }) => {
   const [form] = Form.useForm();
@@ -48,7 +48,7 @@ const RoleForm = ({
   //   shouldCallAPI: !!selectedRow?.uuid && (isEdit || isView) && drawerOpen
   // });
 
-  const { data, isLoading, error} = useApiQuery({
+  const { data, isLoading, error } = useApiQuery({
     fetchQueryName: "roles_details",
     fetchQueryFunction: getRoleDetails,
     params: { uuid: selectedRow?.uuid },
@@ -63,7 +63,7 @@ const RoleForm = ({
       setCurrentPermissions([]);
     } else if (data) {
       form.setFieldsValue({ ...data });
-      
+
       const initialSelectedIds = [];
       data.permissions?.forEach((group) => {
         group.permissions?.forEach((p) => {
@@ -94,7 +94,7 @@ const RoleForm = ({
       const editValues = {
         ...values,
         uuid: data?.uuid,
-        permission:{
+        permission: {
           ids: currentPermissions.map((id) => parseInt(id, 10)),
         }
       };
@@ -114,16 +114,16 @@ const RoleForm = ({
   };
 
   const DrawerTitle = isView
-    ? "Role View"
+    ? "Role Details"
     : isEdit
-    ? "Role Edit"
-    : "Role Create";
+      ? "Role Edit"
+      : "Role Create";
 
   const handlePermissionSave = (newIds) => {
     const newIdsAsInt = newIds.map((id) => parseInt(id, 10));
 
     setCurrentPermissions(newIdsAsInt);
-      const updatePermissionsValues = {
+    const updatePermissionsValues = {
       uuid: data?.uuid,
       name: data?.name,
       code: data?.code,
@@ -178,13 +178,13 @@ const RoleForm = ({
           <Form form={form} layout="vertical" onFinish={onFinish}>
             {/* ── Role Info Fields ── */}
             <Form.Item label="Name" name="name" rules={[{ required: true }]}>
-              <Input readOnly={isView} placeholder="IT Support" />
+              <Input readOnly={isView} placeholder="Enter Role Name" />
             </Form.Item>
             <Form.Item label="Code" name="code" rules={[{ required: true }]}>
-              <Input readOnly={isView} placeholder="it_support" />
+              <Input readOnly={isView} placeholder="Enter Role Code" />
             </Form.Item>
             <Form.Item label="Description" name="description">
-              <TextArea readOnly={isView} />
+              <TextArea readOnly={isView} placeholder="Enter Description" />
             </Form.Item>
 
             {/* ── Permissions Section (edit / view only, not add) ── */}
