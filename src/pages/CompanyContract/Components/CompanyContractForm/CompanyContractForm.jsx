@@ -1,28 +1,19 @@
 import React, { useEffect, useState } from "react";
-import {
-  Form,
-  Input,
-  Button,
-  Drawer,
-  Select,
-  InputNumber,
-  Row,
-  Col
-} from "antd";
-import Toast from "../../../../component/Toast/Toast";
+import { useLocation } from "react-router-dom";
+import { Form, Input, Button, Drawer, Row, Col, Select, Space, DatePicker } from "antd";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
 import useApiQuery from "../../../../hooks/useApiQuery";
-import {
-  upsertPartner,
-  partnerDetails
-} from "../../../../api/partnerApi";
-import FormButtons from "../../../../component/FormButtons/FormButtons";
-import { queryClient } from './../../../../app/queryClient';
-import Status from './../../../../component/Status/Status';
+import FormButton from "../../../../component/FormButtons/FormButtons";
+import Toast from './../../../../component/Toast/Toast';
+import usePermission from './../../../../hooks/usePermission';
+import { upsertPartnerContract, partnerContractDetails } from "../../../../api/partnerContractApi";
+import { queryClient } from '../../../../app/queryClient';
+import { getFormattedDate } from "../../../../utils";
+import dayjs from "dayjs";
+import {capitalizeFirstLetter} from "../../../../utils/Utils";
 
-const { TextArea } = Input;
 
-const AgencyForm = ({
+const CompanyContractForm = ({
   mode,
   setMode,
   selectedData,
@@ -34,83 +25,110 @@ const AgencyForm = ({
 }) => {
   const [form] = Form.useForm();
 
+  const { state } = useLocation();
+
+  const { hasPermission } = usePermission();
+
   const isView = mode === "view";
   const isEdit = mode === "edit";
   const isAdd = mode === "add";
 
-  const initData = queryClient.getQueryData(["initData", "authenticated"])?.statuses;
-  const chargeType = initData?.charge_type;
+  const initData = queryClient.getQueryData(["initData", "authenticated"]);
+  const chargeType = initData?.statuses.charge_type;
+  
+  console.log(chargeType,"ChargeType");
 
-  const chargeTypeValue = Form.useWatch(["chargeType","uuid"], form);
+  const chargeTypeValue = Form.useWatch(["chargeType", "uuid"], form);
 
-  const upsertPartners = useApiMutation({
-    mutationFn: upsertPartner,
-    invalidateKeys: [["agencies"]],
+  const propertyName = initData?.property;
+
+  const upsertPartnerContracts = useApiMutation({
+    mutationFn: upsertPartnerContract,
+    invalidateKeys: [["partner-contracts"]],
+    options: {
+      partnerType: "Company",
+    },
     shouldInvalidate: isEdit ? true : page === 1
 
   });
 
-  const { data, isPending, error } = useApiQuery({
-    fetchQueryName: "agency-details",
-    fetchQueryFunction: partnerDetails,
+  const { data: partnerContractDetailData } = useApiQuery({
+    fetchQueryName: "partner-contract-details",
+    fetchQueryFunction: partnerContractDetails,
     params: {
       uuid: selectedData?.uuid,
-      partnerType: "Agency"
+      partnerType: "Company",
     },
     options: {
       enabled: !!selectedData?.uuid,
     },
-
   });
 
-  useEffect(() => {
-    if (!isAdd && data) {
-      form.setFieldsValue({
-        ...data
-      });
-    }
-  }, [data, isEdit]);
+  if (partnerContractDetailData) {
+    console.log(partnerContractDetailData, "partnerContractDetailData")
+  }
 
   useEffect(() => {
-    if (isAdd) {
-      form.resetFields();
+    if (!isAdd && partnerContractDetailData) {
+      form.setFieldsValue({
+        ...partnerContractDetailData,
+        contractStart: dayjs(partnerContractDetailData?.contractStart),
+        contractEnd: dayjs(partnerContractDetailData?.contractEnd),
+      });
+      setSelectedData(partnerContractDetailData);
     }
-  }, [isAdd]);
+  }, [partnerContractDetailData]);
 
   const onFinish = (values) => {
-    const modifiedValues = {
+    console.log(values, "valuesonFinish")
+    const createValues = {
       ...values,
-      partnerType: "Agency"
-    }
+      property: {
+        uuid: propertyName?.uuid,
+      },
+      partner: {
+        uuid: state?.companyRecord?.uuid
+      },
+      partnerType: "Company",
+      contractStart: getFormattedDate(values?.contractStart),
+      contractEnd: getFormattedDate(values?.contractEnd),
+    };
     if (isAdd) {
-      upsertPartners.mutate(modifiedValues, {
+      upsertPartnerContracts.mutate(createValues, {
         onSuccess: () => {
-          setPage(1);
-          setDrawerOpen(false);
-          Toast.success("Agency Created Successfully!");
           form.resetFields();
+          setDrawerOpen(false);
+          setPage(1);
+          Toast.success("Company Contract Created Successfully!");
         },
       });
     }
-
     if (isEdit) {
       const editValues = {
         ...values,
-        partnerType: "Agency",
-        uuid: selectedData?.uuid,
+        property: {
+          uuid: propertyName?.uuid,
+        },
+        partner: {
+          uuid: state?.companyRecord?.uuid
+        },
+        partnerType: "Company",
+        contractStart: getFormattedDate(values?.contractStart),
+        contractEnd: getFormattedDate(values?.contractEnd),
+        uuid: partnerContractDetailData?.uuid,
       };
 
-      upsertPartners.mutate(editValues, {
+      upsertPartnerContracts.mutate(editValues, {
         onSuccess: () => {
           setDrawerOpen(false);
-          Toast.success("Agency Updated Successfully!");
+          Toast.success("Company Contract Updated Successfully!");
         },
       });
     }
   };
 
   return (
-    <div className="flex justify-center">
+    <div>
       <Drawer
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
@@ -118,11 +136,12 @@ const AgencyForm = ({
         title={
           <div className="flex justify-between items-center">
             <span>
-              {mode === "view"
-                ? "Agency Details"
+              {/* {mode === "view"
+                ? "Company Contract Details"
                 : mode === "edit"
-                  ? "Edit Agency"
-                  : "Add New Agency"}
+                  ? "Edit Company Contract"
+                  : "Create Company Contract"} */}
+                  {capitalizeFirstLetter(state?.companyRecord?.name)}
             </span>
             {isView ? (
               <Button
@@ -134,9 +153,9 @@ const AgencyForm = ({
                 Edit
               </Button>
             ) : (
-              <FormButtons
+              <FormButton
                 onClick={() => form.submit()}
-                isPending={upsertPartners.isPending}
+                isPending={upsertPartnerContracts.isPending}
                 mode={mode}
               />
             )}
@@ -146,43 +165,17 @@ const AgencyForm = ({
         <Form
           form={form}
           layout="vertical"
-          validateTrigger="onSubmit"
+          style={{ width: "100%" }}
           onFinish={onFinish}
-
+          initialValues = {{
+            property: {
+              name: propertyName?.name,
+            },
+            company: {
+              name: state?.companyRecord?.name
+            }
+          }}
         >
-
-          <Form.Item
-            label="Name"
-            name="name"
-            rules={[{ required: true, message: "Amenity Name is Required" }]}
-          >
-            <Input readOnly={isView} />
-          </Form.Item>
-
-          <Form.Item
-            label="Contact Person Name"
-            name="contactPerson"
-            rules={[{ required: true, message: "Contact Person's Name is Required" }]}
-          >
-            <Input readOnly={isView} />
-          </Form.Item>
-
-          <Form.Item
-            label="Email"
-            name="email"
-            rules={[{ required: true, message: "Email is Required" }]}
-          >
-            <Input readOnly={isView} />
-          </Form.Item>
-
-
-          <Form.Item
-            label="Phone"
-            name="phone"
-            rules={[{ required: true, message: "Phone is Required" }]}
-          >
-            <Input readOnly={isView} />
-          </Form.Item>
 
           <Row gutter={16}>
             <Col span={12}>
@@ -255,26 +248,32 @@ const AgencyForm = ({
             </Col>
           </Row>
 
-          <Form.Item
-            label="Address"
-            name="address"
-            rules={[{ required: true, message: "Address is Required" }]}
-          >
-            <TextArea readOnly={isView} />
-          </Form.Item>
+          <Row gutter={16}>
+            <Col span={12}>
+              <Form.Item
+                label="Start Contract Date"
+                name="contractStart"
+                rules={[{ required: true, message: "Start Contract Date is Required" }]}
 
-          <Form.Item
-            label="Remark"
-            name="remark"
-          >
-            <TextArea readOnly={isView} />
-          </Form.Item>
+              >
+                <DatePicker style={{ width: "100%" }} disabled={isView} />
+              </Form.Item>
+            </Col>
 
-          <Status isView={isView} />
+            <Col span={12}>
+              <Form.Item
+                label="End Contract Date"
+                name="contractEnd"
+                rules={[{ required: true, message: "End Contract Date is Required" }]}
+              >
+                <DatePicker style={{ width: "100%" }} disabled={isView} />
+              </Form.Item>
+            </Col>
+          </Row>
         </Form>
       </Drawer>
     </div>
   );
 };
 
-export default AgencyForm;
+export default CompanyContractForm;

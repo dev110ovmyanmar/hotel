@@ -91,6 +91,7 @@ const FacilityTable = ({
                 {
                   state: {
                     uuid: record?.uuid,
+                    name: record?.name
                   },
                 },
               );

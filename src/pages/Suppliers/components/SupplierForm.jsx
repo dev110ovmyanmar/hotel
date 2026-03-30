@@ -39,7 +39,7 @@ const SupplierForm = ({
         options: { enabled: !!selectedRow?.uuid && drawerOpen },
     });
 
-    console.log("DataAPI", data);
+    // console.log("DataAPI", data);
 
     const supplierData = data;
 
@@ -98,50 +98,50 @@ const SupplierForm = ({
                 <Form form={form} layout="vertical" onFinish={onFinish} className="w-full">
                     <div className="grid grid-cols-12 gap-x-4">
                         <div className="col-span-12">
-                            <Form.Item label="Supplier Name" name="name" rules={[{ required: true }]}>
-                                <Input readOnly={isView} placeholder="e.g. Shn" />
+                            <Form.Item label="Name" name="name" rules={[{ required: true }]}>
+                                <Input readOnly={isView} placeholder="Enter Supplier Name" />
                             </Form.Item>
                         </div>
                         <div className="col-span-6">
                             <Form.Item label="Code" name="code" rules={[{ required: true }]}>
-                                <Input readOnly={isView} placeholder="SUP-001" />
+                                <Input readOnly={isView} placeholder="Enter Supplier Code" />
                             </Form.Item>
                         </div>
 
                         <div className="col-span-6">
                             <Form.Item label="Phone" name="phone" rules={[{ required: true }]}>
-                                <Input readOnly={isView} placeholder="09..." />
+                                <Input readOnly={isView} placeholder="Enter Phone Number" />
                             </Form.Item>
                         </div>
 
                         <div className="col-span-6">
                             <Form.Item label="Email" name="email">
-                                <Input readOnly={isView} placeholder="supplier@gmail.com" />
+                                <Input readOnly={isView} placeholder="Enter Email Address" />
                             </Form.Item>
                         </div>
 
                         <div className="col-span-6">
                             <Form.Item label="Contact Person" name="contactPerson" rules={[{ required: true }]}>
-                                <Input readOnly={isView} placeholder="John Doe" />
+                                <Input readOnly={isView} placeholder="Enter Contact Person" />
                             </Form.Item>
                         </div>
 
 
                         <div className="col-span-12">
                             <Form.Item label="Website" name="website">
-                                <Input readOnly={isView} placeholder="www.supplier.com" />
+                                <Input readOnly={isView} placeholder="Enter Website Address" />
                             </Form.Item>
                         </div>
 
                         <div className="col-span-12">
                             <Form.Item label="Address" name="address" rules={[{ required: true }]}>
-                                <TextArea rows={2} readOnly={isView} placeholder="Street, City..." />
+                                <TextArea rows={2} readOnly={isView} placeholder="Enter Address" />
                             </Form.Item>
                         </div>
 
                         <div className="col-span-12">
                             <Form.Item label="Remark" name="remark">
-                                <TextArea rows={2} readOnly={isView} />
+                                <TextArea rows={2} readOnly={isView} placeholder="Enter Remark" />
                             </Form.Item>
                         </div>
 

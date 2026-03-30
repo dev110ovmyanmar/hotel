@@ -1,4 +1,4 @@
-import { Button, Dropdown, Modal, Space, Table, Tag } from "antd";
+import { Dropdown, Space, Table, } from "antd";
 import { useState } from "react";
 import {
   MoreOutlined,
@@ -7,10 +7,10 @@ import {
 } from "@ant-design/icons";
 import usePermission from "../../../hooks/usePermission"; // <-- Permission hook
 import { PERMISSIONS } from "../../../variables/permission";
-import ColorStatusTag from './../../../component/ColorStatusTag/ColorStatusTag';
-import RoomRateForm from "../Components/RoomRateForm/RoomRateForm";
+import CompanyContractForm from "../Components/CompanyContractForm/CompanyContractForm";
+import dayjs from "dayjs";
 
-const RoomRateTable = ({
+const CompanyContractTable = ({
   data,
   page,
   perPage,
@@ -31,24 +31,38 @@ const RoomRateTable = ({
       width: 70,
     },
     {
-      title: "Room Type",
-      dataIndex: ["roomType", "name"],
-      key: "roomType",
-      render: (text) => <div>{text}</div>,
-    },
-    {
-      title: "Price (MMK)",
-      dataIndex: "price",
-      key: "price",
-      render: (text) => <div>{text} </div>,
-    },
-    {
-      title: "Duration Hours",
-      dataIndex: "durationHours",
-      key: "durationHours",
+      title: "Phone",
+      dataIndex: ["company", "phone"],
+      key: "companyPhone",
       render: (text) => <div>{text? text : "-"}</div>,
     },
+    {
+      title: "Charge Type",
+      dataIndex: ["chargeType", "name"],
+      key: "chargeType",
+      render: (_, record) => {
+        const chargeTypeName = record?.chargeType.code;
+        const chargeValue = record?.chargeValue;
 
+        if (chargeTypeName === "flat") {
+          return <div>{chargeValue} MMK</div>
+        } else {
+          return <div>{chargeValue} %</div>
+        }
+      }
+    },
+    {
+      title: "Contract Start Date",
+      dataIndex: "contractStart",
+      key: "contractStart",
+      render: (_,record) => <div>{record?.contractStart}</div>
+    },
+    {
+      title: "Contract End Date",
+      dataIndex: "contractEnd",
+      key: "contractEnd ",
+      render: (_,record) => <div>{record?.contractEnd}</div>
+    },
     {
       title: "Action",
       render: (_, record) => {
@@ -123,7 +137,7 @@ const RoomRateTable = ({
         }}
       />
 
-      <RoomRateForm
+      <CompanyContractForm
         page={page}
         mode={mode}
         setMode={setMode}
@@ -137,4 +151,4 @@ const RoomRateTable = ({
   );
 };
 
-export default RoomRateTable;
+export default CompanyContractTable;

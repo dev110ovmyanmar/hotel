@@ -1,6 +1,6 @@
 import { Button, Tag, Dropdown } from "antd";
 import { Typography } from "antd";
-import { EditOutlined, EyeOutlined ,MoreOutlined } from "@ant-design/icons";
+import { EditOutlined, EyeOutlined, MoreOutlined } from "@ant-design/icons";
 
 
 export default function usePropertiesColumns(onEdit, onView) {
@@ -12,7 +12,7 @@ export default function usePropertiesColumns(onEdit, onView) {
       width: 60,
     },
     {
-      title: "Hotel Name",
+      title: "Name",
       dataIndex: "name",
       key: "name",
       render: (text) => <p>{text}</p>
@@ -64,13 +64,13 @@ export default function usePropertiesColumns(onEdit, onView) {
               if (key === "2") onEdit(record);
             },
             items: [
-              { key: "1", label: "View" , icon: <EyeOutlined />},
-              { key: "2", label: "Edit" , icon: <EditOutlined /> },
+              { key: "1", label: "View", icon: <EyeOutlined /> },
+              { key: "2", label: "Edit", icon: <EditOutlined /> },
             ],
           }}
           trigger={["click"]}
         >
-          <Button icon={<MoreOutlined />} size="small" type="text"/>
+          <Button icon={<MoreOutlined />} size="small" type="text" />
         </Dropdown>
       ),
     },

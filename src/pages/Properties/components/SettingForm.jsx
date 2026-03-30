@@ -59,14 +59,14 @@ const SettingForm = ({ onFinish, initialValues }) => {
   return (
     <Form form={form} layout="vertical" onFinish={handleSubmit}>
       <Form.Item label="Setting Key" name="key" rules={[{ required: true }]}>
-        <Input placeholder="key_name" disabled={!!initialValues} />
+        <Input placeholder="Enter Setting Key" disabled={!!initialValues} />
       </Form.Item>
 
       <Form.Item label="Data Type" name="type">
         <Radio.Group optionType="button" buttonStyle="solid" className="w-full flex">
-          <Radio.Button value="string" className="flex-1 text-center">String</Radio.Button>
-          <Radio.Button value="int" className="flex-1 text-center">Int</Radio.Button>
-          <Radio.Button value="boolean" className="flex-1 text-center">Boolean</Radio.Button>
+          <Radio.Button value="string" className="flex-1 text-center">Text</Radio.Button>
+          <Radio.Button value="int" className="flex-1 text-center">Number</Radio.Button>
+          <Radio.Button value="boolean" className="flex-1 text-center">True/False</Radio.Button>
           <Radio.Button value="json" className="flex-1 text-center">JSON</Radio.Button>
         </Radio.Group>
       </Form.Item>
@@ -74,13 +74,13 @@ const SettingForm = ({ onFinish, initialValues }) => {
       <div className="mt-4 p-4 border rounded bg-gray-50">
         {selectedType === "string" && (
           <Form.Item name="value" rules={[{ required: true }]}>
-            <Input />
+            <Input placeholder="Enter Text" />
           </Form.Item>
         )}
 
         {selectedType === "int" && (
           <Form.Item name="value" rules={[{ required: true }]}>
-            <InputNumber className="w-full" />
+            <InputNumber className="w-full" placeholder="Enter Number" />
           </Form.Item>
         )}
 
@@ -92,7 +92,7 @@ const SettingForm = ({ onFinish, initialValues }) => {
 
         {selectedType === "json" && (
           <Form.Item name="value" rules={[{ required: true }]}>
-            <Input.TextArea rows={6} className="font-mono text-xs" />
+            <Input.TextArea rows={6} className="font-mono text-xs" placeholder="Enter JSON Format" />
           </Form.Item>
         )}
       </div>

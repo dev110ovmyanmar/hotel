@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useLocation  } from "react-router-dom";
+import {useLocation} from "react-router-dom";
 import { LIMITS } from "../../variables/constants";
 import useApiQuery from "../../hooks/useApiQuery";
 import ListHeader from "../../component/ListHeader/ListHeader";
 import { PERMISSIONS } from "../../variables/permission";
-import {fetchRoomRate} from "../../api/roomRateApi";
-import RoomRateForm from "./Components/RoomRateForm/RoomRateForm";
-import RoomRateTable from "./Components/RoomRateTable";
-import { capitalizeFirstLetter } from "../../utils";
+import {fetchPartnerContract} from "../../api/partnerContractApi";
+import AgencyContractTable from "./Components/AgencyContractTable";
+import AgencyContractForm from "./Components/AgencyContractForm/AgencyContractForm";
+import { capitalizeFirstLetter } from '../../utils/Utils';
 
-const RoomRateList = () => {
+
+const AgencyContractList = () => {
   const [keyword, setKeyword] = useState("");
   const [status, setStatus] = useState("all");
   const [page, setPage] = useState(1);
@@ -19,12 +20,12 @@ const RoomRateList = () => {
   const [selectedData, setSelectedData] = useState(null);
 
   const {state} = useLocation();
-  
+
   const normalStatus = status === "all" ? null : status;
 
   const { data, isLoading, error } = useApiQuery({
-    fetchQueryName: "room-rates",
-    fetchQueryFunction: fetchRoomRate,
+    fetchQueryName: "partner-contracts",
+    fetchQueryFunction: fetchPartnerContract,
     params: {
       pagination: {
         page: page,
@@ -32,9 +33,8 @@ const RoomRateList = () => {
       },
       keyword,
       status: normalStatus,
-      ratePlan: {
-        uuid : state?.ratePlan?.uuid
-      }
+      partnerType : "Agency",
+      uuid: state?.agencyRecord?.uuid
     },
   });
 
@@ -50,20 +50,20 @@ const RoomRateList = () => {
 
   return (
     <div className="w-full px-6 py-2">
-      <div className="text-lg mb-3">{capitalizeFirstLetter(state?.ratePlan?.name)}</div>
-
+      <div className="text-lg mb-3">{capitalizeFirstLetter(state?.agencyRecord?.name)}</div>
+      
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
         <ListHeader
-          searchPlaceholder="Search Room Rate ..."
+          searchPlaceholder="Search  ..."
           keyword={keyword}
           setKeyword={setKeyword}
-          addButtonText="Add New Room Rate"
+          addButtonText="Add Contract "
           onAdd={handleAdd}
           // permission={PERMISSIONS.ROOM_RATE_CREATE}
         />
       </div>
 
-      <RoomRateTable
+      <AgencyContractTable
         data={data?.data || []}
         page={data?.pagination.currentPage}
         perPage={data?.pagination.perPage}
@@ -72,7 +72,7 @@ const RoomRateList = () => {
         changePerPage={(perPage) => setPerPage(perPage)}
       />
 
-      <RoomRateForm
+      <AgencyContractForm
         drawerOpen={drawerOpen}
         setDrawerOpen={setDrawerOpen}
         page={page}
@@ -86,4 +86,4 @@ const RoomRateList = () => {
   );
 };
 
-export default RoomRateList;
+export default AgencyContractList;
