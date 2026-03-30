@@ -1,12 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { loadState } from "../utils";
 
-
 const localPermissions = loadState("InitPermissions");
 
 const initialState = {
   user: null,
-  permissions: localPermissions || [],
+  permissions: localPermissions,
 };
 
 export const authSlice = createSlice({

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from "react";
-import { Form, Input, Drawer, DatePicker, Select, Button } from "antd";
+import { Form, Input, Drawer, DatePicker, Select, Button, Space } from "antd";
 import dayjs from "dayjs";
 import { useQueryClient } from "@tanstack/react-query";
 import Loader from "../../../component/Loader/Loader";
@@ -64,6 +64,10 @@ const GuestForm = ({
     return location?.nrcTownships?.map(ts => ({ value: ts.name, label: ts.name })) || [];
   }, [watchedSrNo, initData]);
 
+  const titleOptions = useMemo(() => {
+    return initData?.statuses?.name_title?.map(t => ({ value: t.name, label: t.name })) || [];
+  }, [initData]);
+
   // 4. API Query for single Guest Detail
   const { data, isLoading } = useApiQuery({
     fetchQueryName: "guest-detail",
@@ -84,6 +88,7 @@ const GuestForm = ({
 
       form.setFieldsValue({
         ...data,
+        title: data.title,
         dob: data.dob ? dayjs(data.dob) : null,
         gender: data.gender?.uuid,
         country: data.country?.uuid,
@@ -107,6 +112,7 @@ const GuestForm = ({
   const onFinish = (values) => {
     const hasNrc = values?.srcNo && values?.township && values?.type && values?.number;
     const payload = {
+      title: values.title,
       name: values.name,
       otherName: values.otherName,
       phone: values.phone,
@@ -153,7 +159,7 @@ const GuestForm = ({
   return (
     <Drawer
       title={isView ? "Guest Details" : isEdit ? "Edit Guest" : "Add Guest"}
-      width={600}
+      size={550}
       onClose={handleClose}
       open={drawerOpen}
       extra={isView ? (
@@ -167,12 +173,35 @@ const GuestForm = ({
           {/* Name, Phone, Email, Dob */}
           <div className="grid grid-cols-12 gap-x-4">
             <div className="col-span-12">
-              <Form.Item label="Full Name" name="name" rules={[{ required: true }]}>
-                <Input
-                  readOnly={isView}
-                  style={{ cursor: isView ? "default" : "text" }}
-                  placeholder="Enter Full Name"
-                />
+              <Form.Item label="Full Name" required>
+                <Space.Compact style={{ width: '100%' }}>
+                  <Form.Item
+                    name="title"
+                    noStyle
+                    rules={[{ required: true, message: 'Title is required' }]}
+                  >
+                    <Select
+                      options={titleOptions}
+                      disabled={isView}
+                      placeholder="Select Title"
+                      style={{ width: '20%' }}
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    name="name"
+                    noStyle
+                    rules={[{ required: true, message: 'Name is required' }]}
+                  >
+                    <Input
+                      readOnly={isView}
+                      style={{
+                        width: '80%',
+                        cursor: isView ? "default" : "text"
+                      }}
+                      placeholder="Enter Full Name"
+                    />
+                  </Form.Item>
+                </Space.Compact>
               </Form.Item>
             </div>
             <div className="col-span-12">
