@@ -29,7 +29,7 @@ const GuestNoteForm = ({
 
     // 1. Fetch Detail API - Ensure we handle data.response based on your JSON structure
     const { data, isLoading } = useApiQuery({
-        fetchQueryName: "guestNotes-detail" ,
+        fetchQueryName: "guestNotes-detail",
         fetchQueryFunction: getGuestNoteDetail,
         params: { uuid: selectedRow?.uuid },
         options: { enabled: !!selectedRow?.uuid && drawerOpen },
@@ -54,7 +54,7 @@ const GuestNoteForm = ({
 
     const updateNote = useApiMutation({
         mutationFn: upsertGuestNote,
-        invalidateKeys : [ ["guestNotes"]],
+        invalidateKeys: [["guestNotes"]],
     })
 
     // 4. Handle Submit
@@ -67,13 +67,13 @@ const GuestNoteForm = ({
             },
         };
 
-        if(isAdd){
+        if (isAdd) {
             createNote.mutate(payload, {
                 onSuccess: () => {
                     handleClose();
                     setPage(1);
                     Toast.success(`Guest Note ${isEdit ? "updated" : "created"} successfully.`);
-                }            
+                }
             })
         } else {
             updateNote.mutate(payload, {
@@ -93,8 +93,8 @@ const GuestNoteForm = ({
 
     return (
         <Drawer
-            title={isView ? "View Guest Note" : isEdit ? "Edit Guest Note" : "Add Guest Note"}
-            width={500}
+            title={isView ? "Guest Note Details" : isEdit ? "Edit Guest Note" : "Add Guest Note"}
+            size={550}
             onClose={handleClose}
             open={drawerOpen}
             extra={
@@ -106,7 +106,7 @@ const GuestNoteForm = ({
                     <FormButtons
                         onClick={() => form.submit()}
                         mode={mode}
-                        isPending={ isEdit ? updateNote.isPending : createNote.isPending} 
+                        isPending={isEdit ? updateNote.isPending : createNote.isPending}
                     />
                 )
             }>

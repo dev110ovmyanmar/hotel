@@ -152,19 +152,19 @@ const UnitForm = ({
           <Form.Item
             label="Name"
             name="name"
-            rules={[{ required: true, message: "Please input unit name!" }]}
+            rules={[{ required: true, message: "Please enter unit name!" }]}
           >
-            <Input placeholder="e.g. Guest Amenities" readOnly={isView} />
+            <Input placeholder="Enter Unit Name" readOnly={isView} />
           </Form.Item>
 
           <Form.Item
             label="Short Name"
             name="shortName"
             rules={[
-              { required: true, message: "Please input unit short name!" },
+              { required: true, message: "Please enter unit short name!" },
             ]}
           >
-            <Input placeholder="e.g. Guest Amenities" readOnly={isView} />
+            <Input placeholder="Enter Unit Short Name" readOnly={isView} />
           </Form.Item>
 
           <Form.Item
