@@ -41,7 +41,7 @@ const AgencyForm = ({
   const initData = queryClient.getQueryData(["initData", "authenticated"])?.statuses;
   const chargeType = initData?.charge_type;
 
-  const chargeTypeValue = Form.useWatch(["chargeType","uuid"], form);
+  const chargeTypeValue = Form.useWatch(["chargeType", "uuid"], form);
 
   const upsertPartners = useApiMutation({
     mutationFn: upsertPartner,
@@ -154,9 +154,9 @@ const AgencyForm = ({
           <Form.Item
             label="Name"
             name="name"
-            rules={[{ required: true, message: "Amenity Name is Required" }]}
+            rules={[{ required: true, message: "Agency Name is Required" }]}
           >
-            <Input readOnly={isView} />
+            <Input readOnly={isView} placeholder="Enter Agency Name" />
           </Form.Item>
 
           <Form.Item
@@ -164,7 +164,7 @@ const AgencyForm = ({
             name="contactPerson"
             rules={[{ required: true, message: "Contact Person's Name is Required" }]}
           >
-            <Input readOnly={isView} />
+            <Input readOnly={isView} placeholder="Enter Contact Person Name" />
           </Form.Item>
 
           <Form.Item
@@ -172,7 +172,7 @@ const AgencyForm = ({
             name="email"
             rules={[{ required: true, message: "Email is Required" }]}
           >
-            <Input readOnly={isView} />
+            <Input readOnly={isView} placeholder="Enter Email Address" />
           </Form.Item>
 
 
@@ -181,7 +181,7 @@ const AgencyForm = ({
             name="phone"
             rules={[{ required: true, message: "Phone is Required" }]}
           >
-            <Input readOnly={isView} />
+            <Input readOnly={isView} placeholder="Enter Phone Number" />
           </Form.Item>
 
           <Row gutter={16}>
@@ -241,16 +241,18 @@ const AgencyForm = ({
                   },
                 ]}
               >
-                <Input
-                  type="number"
+                <InputNumber
+                  style={{ width: "100%" }}
                   min={1}
-                  addonAfter={(() => {
+                  suffix={(() => {
                     const selected = chargeType?.find(
                       (item) => item.uuid === chargeTypeValue,
                     );
                     return selected?.code === "percentage" ? "%" : "MMK";
                   })()}
-                  readOnly={isView} />
+                  readOnly={isView}
+                  placeholder="Enter Charge Value"
+                />
               </Form.Item>
             </Col>
           </Row>
@@ -260,14 +262,14 @@ const AgencyForm = ({
             name="address"
             rules={[{ required: true, message: "Address is Required" }]}
           >
-            <TextArea readOnly={isView} />
+            <TextArea readOnly={isView} placeholder="Enter Address" />
           </Form.Item>
 
           <Form.Item
             label="Remark"
             name="remark"
           >
-            <TextArea readOnly={isView} />
+            <TextArea readOnly={isView} placeholder="Enter Remark" />
           </Form.Item>
 
           <Status isView={isView} />

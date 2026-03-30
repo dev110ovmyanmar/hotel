@@ -9,6 +9,7 @@ import {
 } from "../../../../api/menuCategory";
 import useApiQuery from "../../../../hooks/useApiQuery";
 import { queryClient } from "../../../../app/queryClient";
+import Status from "../../../../component/Status/Status";
 
 const MenuCategoryForm = ({
   mode,
@@ -75,7 +76,6 @@ const MenuCategoryForm = ({
       form.setFieldsValue({
         ...data,
         displayOrder: Number(data?.displayOrder),
-        status: data?.status?.uuid,
       });
 
       setSelectedData(data);
@@ -85,7 +85,8 @@ const MenuCategoryForm = ({
     if (isAdd) {
       const createValues = {
         ...values,
-        status: { uuid: values.status },
+        // status: { uuid: values.status },
+        status: values.status,
       };
 
       createMenuCategories.mutate(createValues, {
@@ -100,7 +101,8 @@ const MenuCategoryForm = ({
     if (isEdit) {
       const editValues = {
         ...values,
-        status: { uuid: values.status },
+        // status: { uuid: values.status },
+        status: values.status,
         uuid: data?.uuid,
       };
 
@@ -160,7 +162,7 @@ const MenuCategoryForm = ({
             name="name"
             rules={[{ required: true, message: "Name is Required" }]}
           >
-            <Input readOnly={isView} />
+            <Input readOnly={isView} placeholder="Enter Menu Category Name" />
           </Form.Item>
 
           <Form.Item
@@ -168,25 +170,10 @@ const MenuCategoryForm = ({
             name="displayOrder"
             rules={[{ required: true }]}
           >
-            <InputNumber disabled={isView} className="!w-full" />
+            <InputNumber disabled={isView} className="!w-full" placeholder="Enter Display Order" />
           </Form.Item>
 
-          <Form.Item
-            label="Status"
-            name="status"
-            rules={[{ required: true, message: "Status is Required" }]}
-            getValueProps={(value) => ({
-              value: isView
-                ? statusList.find((item) => item.value === value)?.label
-                : value,
-            })}
-          >
-            {isView ? (
-              <Input readOnly={isView} />
-            ) : (
-              <Select options={statusList} open={isView ? false : undefined} />
-            )}
-          </Form.Item>
+          <Status isView={isView} />
         </Form>
       </Drawer>
     </div>
