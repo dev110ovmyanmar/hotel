@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Form, Input, Button, Select, Drawer } from "antd";
+import { Form, Input, Button, Select, Drawer, InputNumber } from "antd";
 import Toast from "../../../../component/Toast/Toast";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
 import useApiQuery from "../../../../hooks/useApiQuery";
@@ -64,10 +64,10 @@ const FacilityForm = ({
 
   useEffect(() => {
     if (!isAdd && data) {
-      console.log(data,"data")
+      console.log(data, "data")
       form.setFieldsValue({
         ...data,
-        facilityType: data?.facilityType.uuid ,
+        facilityType: data?.facilityType.uuid,
         status: data?.status?.uuid,
       });
       setSelectedData(data);
@@ -113,7 +113,7 @@ const FacilityForm = ({
       <Drawer
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
-        size={500}
+        size={550}
         title={
           <div className="flex justify-between items-center">
             <span>
@@ -153,15 +153,18 @@ const FacilityForm = ({
             name="name"
             rules={[{ required: true, message: "Name is Required" }]}
           >
-            <Input readOnly={isView} />
+            <Input readOnly={isView} placeholder="Enter Facility Name" />
           </Form.Item>
 
           <Form.Item label="Capacity" name="capacity" readOnly={isView}>
-            <Input />
+            {/* <Input placeholder="Enter Capacity" /> */}
+            <Input
+              type="number"
+              placeholder="Enter Capacity" disabled={isView} />
           </Form.Item>
 
           <Form.Item
-           label="Facility Type"
+            label="Facility Type"
             name="facilityType"
             rules={[{ required: true, message: "Facility Type is Required" }]}
             getValueProps={(value) => ({
@@ -186,8 +189,8 @@ const FacilityForm = ({
             )}
           </Form.Item>
 
-           <Form.Item
-           label="Status"
+          <Form.Item
+            label="Status"
             name="status"
             rules={[{ required: true, message: "Status is Required" }]}
             getValueProps={(value) => ({
@@ -213,7 +216,8 @@ const FacilityForm = ({
           </Form.Item>
 
           <Form.Item label="Description" name="description">
-            <Input.TextArea readOnly={isView}/>
+            <Input.TextArea readOnly={isView} rows={3}
+              placeholder="Enter Description" />
           </Form.Item>
         </Form>
       </Drawer>

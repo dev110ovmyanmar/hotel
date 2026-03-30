@@ -28,24 +28,6 @@ const onChange = (value) => {
   console.log("changed", value);
 };
 
-const sharedProps = {
-  mode: "spinner",
-  min: 1,
-  max: 10,
-  defaultValue: 1,
-  onChange,
-  style: { width: 150 },
-};
-
-const childSharedProps = {
-  mode: "spinner",
-  min: 0,
-  max: 10,
-  defaultValue: 0,
-  onChange,
-  style: { width: 150 },
-};
-
 const RoomTypeForm = ({
   mode,
   setMode,
@@ -212,12 +194,12 @@ const RoomTypeForm = ({
           <Row gutter={24}>
             <Col span={16}>
               <Form.Item label="Name" name="name" rules={[{ required: true }]}>
-                <Input readOnly={isView} />
+                <Input readOnly={isView} placeholder="Enter Room Type Name" />
               </Form.Item>
             </Col>
             <Col span={8}>
               <Form.Item label="Code" name="code" rules={[{ required: true }]}>
-                <Input readOnly={isView} />
+                <Input readOnly={isView} placeholder="Enter Room Type Code" />
               </Form.Item>
             </Col>
           </Row>
@@ -236,7 +218,15 @@ const RoomTypeForm = ({
                 ]}
               >
                 <InputNumber
-                  {...sharedProps}
+                  // {...sharedProps}
+                  {...{
+                    mode: "spinner",
+                    min: 1,
+                    max: 10,
+                    defaultValue: 1,
+                    onChange,
+                    style: { width: 150 },
+                  }}
                   placeholder="Outlined"
                   readOnly={isView}
                   width={20}
@@ -246,7 +236,16 @@ const RoomTypeForm = ({
             <Col span={8}>
               <Form.Item label="Max Children" name="maxChildren">
                 <InputNumber
-                  {...childSharedProps}
+                  {
+                  ... {
+                    mode: "spinner",
+                    min: 0,
+                    max: 10,
+                    defaultValue: 0,
+                    onChange,
+                    style: { width: 150 },
+                  }
+                  }
                   placeholder="Outlined"
                   readOnly={isView}
                 />
@@ -259,7 +258,14 @@ const RoomTypeForm = ({
                 rules={[{ required: true }]}
               >
                 <InputNumber
-                  {...sharedProps}
+                  {...{
+                    mode: "spinner",
+                    min: 1,
+                    max: 10,
+                    defaultValue: 1,
+                    onChange,
+                    style: { width: 150 },
+                  }}
                   placeholder="Outlined"
                   readOnly={isView}
                 />
@@ -274,7 +280,7 @@ const RoomTypeForm = ({
                 name="totalRooms"
                 rules={[{ required: true }]}
               >
-                <Input readOnly={isView} />
+                <Input readOnly={isView} placeholder="Enter Totals Rooms" type="number" />
               </Form.Item>
             </Col>
             <Col span={12}>
@@ -283,21 +289,26 @@ const RoomTypeForm = ({
                 name="basePrice"
                 rules={[{ required: true }]}
               >
-                <Input suffix="MMK" readOnly={isView} />
+                <InputNumber
+                  className="!w-full"
+                  min={1}
+                  readOnly={isView}
+                  placeholder="Enter Base Price"
+                  suffix="MMK"
+                />
               </Form.Item>
             </Col>
           </Row>
 
           <Form.Item label="Room Size" name="areaSize">
-            <Input readOnly={isView} />
+            <Input readOnly={isView} placeholder="Enter Room Size" />
           </Form.Item>
 
           <Form.Item
             label="Description"
             name="description"
-            placeholder="Enter full room description"
           >
-            <TextArea readOnly={isView} />
+            <TextArea readOnly={isView} placeholder="Enter Room Description" />
           </Form.Item>
 
           {!isAdd && (
