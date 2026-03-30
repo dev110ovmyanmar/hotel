@@ -171,9 +171,9 @@ const PropertyForm = ({
   }
 
   const DrawerTitle = isView
-    ? "Property View"
+    ? "Property Details"
     : isEdit
-      ? "Propety Edit"
+      ? "Property Edit"
       : "Property Create";
 
   return (
