@@ -22,8 +22,6 @@ const ProfilePage = () => {
   const uuid = loadState(LOCAL_STORAGE_KEYS.loginAdminDetails)?.uuid;
   const roleUuid = loadState(LOCAL_STORAGE_KEYS.loginAdminDetails)?.role?.uuid;
 
-  /* ---------------- API ---------------- */
-
   const { data: loginAdminDetails, refetch } = useApiQuery({
     fetchQueryName: "login-admin-details",
     fetchQueryFunction: adminDetails,
@@ -39,15 +37,11 @@ const ProfilePage = () => {
     mutationFn: adminUpload,
   });
 
-  /* ---------------- Load Existing Image ---------------- */
-
   useEffect(() => {
     if (loginAdminDetails?.file) {
       setImageUrl(loginAdminDetails.file);
     }
   }, [loginAdminDetails]);
-
-  /* ---------------- User Info ---------------- */
 
   const userInfo = {
     name: loginAdminDetails?.name,
@@ -61,8 +55,6 @@ const ProfilePage = () => {
     status: loginAdminDetails?.status?.name,
   };
 
-  /* ---------------- Drawer ---------------- */
-
   const showDrawer = (section) => {
     setEditingSection(section);
     setDrawerVisible(true);
@@ -72,8 +64,6 @@ const ProfilePage = () => {
     setDrawerVisible(false);
     setEditingSection(null);
   };
-
-  /* ---------------- Save Profile ---------------- */
 
   const handleSave = (values) => {
     const editValues = {
@@ -95,8 +85,6 @@ const ProfilePage = () => {
 
     closeDrawer();
   };
-
-  /* ---------------- Avatar Upload ---------------- */
 
   const beforeUpload = (file) => {
     const isJpgOrPng =
@@ -144,8 +132,6 @@ const ProfilePage = () => {
     </div>
   );
 
-  /* ---------------- UI ---------------- */
-
   return (
     <div className="space-y-6">
       {/* User Info */}
@@ -159,13 +145,11 @@ const ProfilePage = () => {
           disabled={loading} // Prevent double uploads while loading
         >
           {loading ? (
-            /* Show ONLY the loading spinner while the API is hitting */
             <div>
               <LoadingOutlined style={{ fontSize: 24 }} />
               <div style={{ marginTop: 8 }}>Uploading...</div>
             </div>
           ) : imageUrl ? (
-            /* Show the image if not loading and image exists */
             <img
               src={imageUrl}
               alt="avatar"
@@ -177,7 +161,6 @@ const ProfilePage = () => {
               }}
             />
           ) : (
-            /* Show the default plus button if no image and not loading */
             uploadButton
           )}
         </Upload>
