@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, Avatar, Typography, Drawer, Upload, Form, message } from "antd";
+import { Button, Typography, Drawer, Upload, Form, message } from "antd";
 import { EditOutlined, LoadingOutlined, PlusOutlined } from "@ant-design/icons";
 import ProfileForm from "./ProfileForm";
 import { loadState } from "../../utils/Utils";
@@ -100,7 +100,9 @@ const ProfilePage = () => {
 
   const beforeUpload = (file) => {
     const isJpgOrPng =
-      file.type === "image/jpeg" || file.type === "image/png" || file.type === "image/jpg";
+      file.type === "image/jpeg" ||
+      file.type === "image/png" ||
+      file.type === "image/jpg";
 
     if (!isJpgOrPng) {
       message.error("You can only upload JPG/PNG/JPEG file!");
@@ -129,7 +131,7 @@ const ProfilePage = () => {
           setLoading(false);
           message.error("Upload failed");
         },
-      }
+      },
     );
 
     return false;
@@ -146,18 +148,24 @@ const ProfilePage = () => {
 
   return (
     <div className="space-y-6">
-
       {/* User Info */}
       <div className="flex items-center space-x-6 bg-white p-6 rounded-lg shadow-sm">
-
         <Upload
           name="file"
           listType="picture-circle"
           showUploadList={false}
           beforeUpload={beforeUpload}
-          accept="image/png, image/jpeg"
+          accept="image/png, image/jpeg, image/jpg"
+          disabled={loading} // Prevent double uploads while loading
         >
-          {imageUrl ? (
+          {loading ? (
+            /* Show ONLY the loading spinner while the API is hitting */
+            <div>
+              <LoadingOutlined style={{ fontSize: 24 }} />
+              <div style={{ marginTop: 8 }}>Uploading...</div>
+            </div>
+          ) : imageUrl ? (
+            /* Show the image if not loading and image exists */
             <img
               src={imageUrl}
               alt="avatar"
@@ -169,11 +177,12 @@ const ProfilePage = () => {
               }}
             />
           ) : (
+            /* Show the default plus button if no image and not loading */
             uploadButton
           )}
         </Upload>
 
-        <div>
+        <div className="pl-7">
           <Title level={4} className="mb-0">
             {userInfo.name}
           </Title>
@@ -183,7 +192,6 @@ const ProfilePage = () => {
 
       {/* Personal Info */}
       <div className="bg-white rounded-lg shadow-sm p-6">
-
         <div className="flex justify-between items-center mb-6">
           <Title level={5} className="mb-0">
             Personal Information
@@ -201,14 +209,11 @@ const ProfilePage = () => {
         <div className="grid grid-cols-2 gap-x-12 gap-y-6">
           {Object.entries(personalInfoInitial).map(([key, value]) => (
             <div key={key}>
-              <Text strong>
-                {key.replace(/([A-Z])/g, " $1")}:
-              </Text>
+              <Text strong>{key.replace(/([A-Z])/g, " $1")}:</Text>
               <div>{value}</div>
             </div>
           ))}
         </div>
-
       </div>
 
       {/* Drawer */}
@@ -234,7 +239,6 @@ const ProfilePage = () => {
           />
         )}
       </Drawer>
-
     </div>
   );
 };

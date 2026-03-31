@@ -1,9 +1,9 @@
 import { Button, Tag, Dropdown } from "antd";
 import { Typography } from "antd";
-import { EditOutlined, EyeOutlined, MoreOutlined } from "@ant-design/icons";
+import { EditOutlined, EyeOutlined, FolderAddOutlined, MoreOutlined } from "@ant-design/icons";
 
 
-export default function usePropertiesColumns(onEdit, onView) {
+export default function usePropertiesColumns(onEdit, onView, onUpload) {
   return [
     {
       title: "ID",
@@ -62,10 +62,12 @@ export default function usePropertiesColumns(onEdit, onView) {
             onClick: ({ key }) => {
               if (key === "1") onView(record);
               if (key === "2") onEdit(record);
+              if (key === "3") onUpload(record);
             },
             items: [
               { key: "1", label: "View", icon: <EyeOutlined /> },
               { key: "2", label: "Edit", icon: <EditOutlined /> },
+              {key: "3", label: "Manage Documents", icon: <FolderAddOutlined />}
             ],
           }}
           trigger={["click"]}
