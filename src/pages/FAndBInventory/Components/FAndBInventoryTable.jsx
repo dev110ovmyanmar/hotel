@@ -7,6 +7,7 @@ import { PERMISSIONS } from "../../../variables/permission";
 import usePermission from "../../../hooks/usePermission";
 import FAndBInventoryForm from "./FAndBInventoryForm/FAndBInventoryForm";
 import ColorStatusTag from "../../../component/ColorStatusTag/ColorStatusTag";
+import PriceTag from "../../../component/PriceTag/PriceTag";
 
 const FAndBInventoryTable = ({
   data,
@@ -53,11 +54,13 @@ const FAndBInventoryTable = ({
       title: "Purchase Price (MMK)",
       dataIndex: "unitCost",
       key: "unitCost",
+      render:(text) => <PriceTag value={text} />
     },
      {
       title: "Selling Price (MMK)",
       dataIndex: "unitPrice",
       key: "unitPrice",
+      render:(text) => <PriceTag value={text} />
     },
     {
       title: "Reorder Level",

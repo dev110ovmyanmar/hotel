@@ -8,6 +8,7 @@ import {
 import usePermission from "../../../hooks/usePermission"; // <-- Permission hook
 import { PERMISSIONS } from "../../../variables/permission";
 import RoomRateForm from "../Components/RoomRateForm/RoomRateForm";
+import PriceTag from "../../../component/PriceTag/PriceTag";
 
 const RoomRateTable = ({
   data,
@@ -39,7 +40,7 @@ const RoomRateTable = ({
       title: "Price (MMK)",
       dataIndex: "price",
       key: "price",
-      render: (text) => <div>{text} </div>,
+      render:(text) => <PriceTag value={text} />
     },
     {
       title: "Duration Hours",
