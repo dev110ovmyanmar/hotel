@@ -146,7 +146,7 @@ const DepartmentsForm = ({
             name="name"
             rules={[{ required: true, message: "Name is Required" }]}
           >
-            <Input readOnly={isView}/>
+            <Input readOnly={isView} placeholder="Enter Department Name" />
           </Form.Item>
 
           <Form.Item
@@ -154,7 +154,7 @@ const DepartmentsForm = ({
             name="code"
             rules={[{ required: true, message: "Code is Required" }]}
           >
-            <Input readOnly={isView}/>
+            <Input readOnly={isView} placeholder="Enter Department Code" />
           </Form.Item>
 
           <Form.Item
@@ -182,9 +182,9 @@ const DepartmentsForm = ({
               />
             )}
           </Form.Item>
-         
+
           <Form.Item label="Description" name="description">
-            <TextArea readOnly={isView}/>
+            <TextArea readOnly={isView} placeholder="Enter Description" />
           </Form.Item>
 
         </Form>

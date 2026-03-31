@@ -201,7 +201,7 @@ const RoomForm = ({
             name="roomNo"
             rules={[{ required: true, message: "Please enter room number" }]}
           >
-            <Input placeholder="Enter Room No" readOnly={isView} />
+            <Input placeholder="Enter Room Number" readOnly={isView} />
           </Form.Item>
 
           <Form.Item

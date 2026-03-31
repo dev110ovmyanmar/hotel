@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Form, Input, Button, Drawer, Select, DatePicker } from "antd";
+import { Form, Input, Button, Drawer, Select, DatePicker, InputNumber } from "antd";
 import Toast from "../../../../component/Toast/Toast";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
 import useApiQuery from "../../../../hooks/useApiQuery";
@@ -212,7 +212,13 @@ const SeasonalRateForm = ({
           </Form.Item>
 
           <Form.Item label="Price" name="price" rules={[{ required: true }]}>
-            <Input suffix="MMK" readOnly={isView} placeholder="Enter price" />
+            <InputNumber
+              className="!w-full"
+              min={0}
+              readOnly={isView}
+              placeholder="Enter Price"
+              suffix="MMK"
+            />
           </Form.Item>
 
           <Form.Item

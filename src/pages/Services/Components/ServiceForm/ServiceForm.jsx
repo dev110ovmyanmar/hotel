@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Form, Input, Button, Select, Image, Drawer, AutoComplete } from "antd";
+import { Form, Input, Button, Select, Image, Drawer, AutoComplete, InputNumber } from "antd";
 import Toast from "../../../../component/Toast/Toast";
 import { CloseOutlined } from "@ant-design/icons";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
@@ -7,6 +7,7 @@ import useApiQuery from "../../../../hooks/useApiQuery";
 import { queryClient } from "../../../../app/queryClient";
 import { getServiceDetails, upsertService } from "../../../../api/serviceApi";
 import FormButtons from "../../../../component/FormButtons/FormButtons";
+import Status from "../../../../component/Status/Status";
 
 const ServiceForm = ({
   mode,
@@ -73,13 +74,10 @@ const ServiceForm = ({
         ...data,
         billingType: data?.billingType?.uuid,
         serviceType: data?.serviceType?.uuid,
-        status: data?.status?.uuid,
       });
       setSelectedData(data);
     }
   }, [data]);
-
-  console.log(form.getFieldValue("serviceType"), "servicetype");
 
   const onFinish = (values) => {
     if (isAdd) {
@@ -87,7 +85,7 @@ const ServiceForm = ({
         ...values,
         serviceType: { uuid: values.serviceType },
         billingType: { uuid: values.billingType },
-        status: { uuid: values.status },
+        status: values.status,
       };
 
       createService.mutate(createValues, {
@@ -104,7 +102,7 @@ const ServiceForm = ({
         ...values, // merge new form values
         serviceType: { uuid: values.serviceType },
         billingType: { uuid: values.billingType },
-        status: { uuid: values.status },
+        status: values.status,
         uuid: data?.uuid,
       };
 
@@ -176,11 +174,17 @@ const ServiceForm = ({
             name="name"
             rules={[{ required: true, message: "Name is Required" }]}
           >
-            <Input readOnly={isView} />
+            <Input readOnly={isView} placeholder="Enter Service Name" />
           </Form.Item>
 
           <Form.Item label="Base Price" name="basePrice" >
-            <Input readOnly={isView}/>
+            <InputNumber
+              className="!w-full"
+              min={0}
+              readOnly={isView}
+              placeholder="Enter Base Price"
+              suffix="MMK"
+            />
           </Form.Item>
 
           <Form.Item
@@ -236,25 +240,10 @@ const ServiceForm = ({
             )}
           </Form.Item>
 
-          <Form.Item
-            label="Status"
-            name="status"
-            rules={[{ required: true, message: "Status is Required" }]}
-            getValueProps={(value) => ({
-              value: isView
-                ? statusList.find((item) => item.value === value)?.label
-                : value,
-            })}
-          >
-            {isView ? (
-              <Input readOnly={isView} />
-            ) : (
-              <Select options={statusList} open={isView ? false : undefined} />
-            )}
-          </Form.Item>
+          <Status isView={isView} />
 
           <Form.Item label="Description" name="description">
-            <Input.TextArea readOnly={isView} />
+            <Input.TextArea readOnly={isView} rows={3} placeholder="Enter Description" />
           </Form.Item>
         </Form>
       </Drawer>

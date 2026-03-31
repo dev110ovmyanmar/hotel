@@ -93,7 +93,7 @@ const RoomRateForm = ({
       const editValues = {
         ...values,
         ratePlan: {
-          uuid: ratePlanId
+          uuid: state?.ratePlan?.uuid
         },
         roomType: values?.roomType,
         uuid: roomRateDetailData?.uuid,
@@ -113,7 +113,7 @@ const RoomRateForm = ({
       <Drawer
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
-        size={500}
+        size={550}
         title={
           <div className="flex justify-between items-center">
             <span>

@@ -109,6 +109,7 @@ const StaffsForm = ({
         nrcTownship: nrcTownship,
         nrcNumber: nrcNumber,
         joinedAt: data?.joinedAt ? dayjs(data.joinedAt) : null,
+        endedAt: data?.endedAt ? dayjs(data.endedAt) : null,
       });
       setSelectedRegion(nrcSrNo);
       setSelectedData(data);
@@ -128,6 +129,7 @@ const StaffsForm = ({
     const formattedValues = {
       ...values,
       joinedAt: getFormattedDate(values.joinedAt, false),
+      endedAt: getFormattedDate(values.endedAt, false),
       nrc: nrcObj,
       nrcNo: nrcNo,
     };
@@ -203,7 +205,7 @@ const StaffsForm = ({
             name="name"
             rules={[{ required: true, message: "Please enter name" }]}
           >
-            <Input placeholder="Enter staff name" readOnly={isView} />
+            <Input placeholder="Enter Staff Name" readOnly={isView} />
           </Form.Item>
 
           <Form.Item
@@ -348,15 +350,15 @@ const StaffsForm = ({
           </Form.Item>
 
           <Form.Item label="Passport" name="passport">
-            <Input placeholder="Enter passport" readOnly={isView} />
+            <Input placeholder="Enter Passport" readOnly={isView} />
           </Form.Item>
 
           <Form.Item label="Phone" name="phone">
-            <Input placeholder="Enter phone" readOnly={isView} />
+            <Input placeholder="Enter Phone Number" readOnly={isView} />
           </Form.Item>
 
           <Form.Item label="Email" name="email">
-            <Input placeholder="Enter email" readOnly={isView} />
+            <Input placeholder="Enter Email Address" readOnly={isView} />
           </Form.Item>
 
           <Form.Item
@@ -390,7 +392,7 @@ const StaffsForm = ({
             name="joinedAt"
             rules={[{ required: true, message: "Please select Date" }]}
           >
-            <DatePicker className="w-full" disabled={isView} />
+            <DatePicker className="w-full" disabled={isView} placeholder="Select Joined Date" />
           </Form.Item>
 
           {/* <Form.Item name="currentlyWorking" valuePropName="checked">
@@ -414,33 +416,34 @@ const StaffsForm = ({
               rules={[{ required: true, message: "Please select Date" }]}
             >
               {data?.endedAt ? (
-                dayjs(data.endedAt).format("YYYY-MM-DD")
+                // dayjs(data.endedAt).format("YYYY-MM-DD")
+                <DatePicker className="w-full" disabled={isView} placeholder="Select Left Date" />
               ) : (
                 <span className="text-green-600 font-medium pl-2.5">
                   Currently Working
                 </span>
               )}
             </Form.Item>
-          ) : 
-          isEdit &&(
-            <>
-              <Form.Item name="currentlyWorking" valuePropName="checked">
-                <Checkbox disabled={isView} onChange={handleCurrentChange}>
-                  Currently Working
-                </Checkbox>
-              </Form.Item>
-
-              {!isCurrent && (
-                <Form.Item
-                  label="Left Date"
-                  name="endedAt"
-                  rules={[{ required: true, message: "Please select Date" }]}
-                >
-                  <DatePicker className="w-full" disabled={isView} />
+          ) :
+            isEdit && (
+              <>
+                <Form.Item name="currentlyWorking" valuePropName="checked">
+                  <Checkbox disabled={isView} onChange={handleCurrentChange}>
+                    Currently Working
+                  </Checkbox>
                 </Form.Item>
-              )}
-            </>
-          )}
+
+                {!isCurrent && (
+                  <Form.Item
+                    label="Left Date"
+                    name="endedAt"
+                    rules={[{ required: true, message: "Please select Date" }]}
+                  >
+                    <DatePicker className="w-full" disabled={isView} />
+                  </Form.Item>
+                )}
+              </>
+            )}
 
           <Status isView={isView} />
         </Form>

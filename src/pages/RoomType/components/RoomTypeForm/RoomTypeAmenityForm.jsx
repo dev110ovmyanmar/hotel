@@ -1,4 +1,4 @@
-import { Drawer, Input, Form, Select, Switch } from "antd";
+import { Drawer, Input, Form, Select, Switch, InputNumber } from "antd";
 import Toast from "../../../../component/Toast/Toast";
 import {
   createRoomTypeAmenity,
@@ -102,6 +102,7 @@ const RoomAttributesForm = ({
 
   return (
     <Drawer
+      size={550}
       title={
         <div className="flex justify-between items-center">
           <span>
@@ -164,7 +165,13 @@ const RoomAttributesForm = ({
             name="extraPrice"
             rules={[{ required: true, message: "Please enter extra price" }]}
           >
-            <Input suffix="MMK" readOnly={isFree} />
+            <InputNumber
+              className="!w-full"
+              min={1}
+              readOnly={isFree}
+              placeholder="Enter Extra Price"
+              suffix="MMK"
+            />
           </Form.Item>
         </Form>
       )}

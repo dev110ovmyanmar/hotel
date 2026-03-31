@@ -74,7 +74,7 @@ const FAndBInventoryForm = ({
         ...data,
         supplier: data?.supplier?.uuid,
         category: data?.category?.uuid,
-        unit: data?.unit?.uuid, 
+        unit: data?.unit?.uuid,
       });
       setSelectedData(data);
     }
@@ -126,10 +126,10 @@ const FAndBInventoryForm = ({
           <div className="flex justify-between items-center">
             <span>
               {mode === "view"
-                ? "Facility Package Details"
+                ? "Inventory Details"
                 : mode === "edit"
-                  ? "Edit Facility Package"
-                  : "Create Facility Package"}
+                  ? "Edit Inventory"
+                  : "Create Inventory"}
             </span>
             {isView ? (
               <Button
@@ -161,7 +161,7 @@ const FAndBInventoryForm = ({
             name="name"
             rules={[{ required: true, message: "Name is Required" }]}
           >
-            <Input readOnly={isView}  placeholder="Enter Name"/>
+            <Input readOnly={isView} placeholder="Enter Name" />
           </Form.Item>
 
           <Form.Item
@@ -308,7 +308,7 @@ const FAndBInventoryForm = ({
                 disabled={isView}
               />
             </Form.Item>
-            
+
             <Form.Item
               label="Stock Quantity"
               name="stockQuantity"

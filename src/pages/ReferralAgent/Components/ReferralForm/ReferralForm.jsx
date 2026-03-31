@@ -6,7 +6,8 @@ import {
   Drawer,
   Select,
   Row,
-  Col
+  Col,
+  InputNumber
 } from "antd";
 import Toast from "../../../../component/Toast/Toast";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
@@ -40,8 +41,8 @@ const ReferralForm = ({
   const initData = queryClient.getQueryData(["initData", "authenticated"])?.statuses;
   const chargeType = initData?.charge_type;
 
-  const chargeTypeValue = Form.useWatch(["chargeType","uuid"], form);
-  
+  const chargeTypeValue = Form.useWatch(["chargeType", "uuid"], form);
+
   const upsertPartners = useApiMutation({
     mutationFn: upsertPartner,
     invalidateKeys: [["referral-agents"]],
@@ -113,7 +114,7 @@ const ReferralForm = ({
       <Drawer
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
-        size={500}
+        size={550}
         title={
           <div className="flex justify-between items-center">
             <span>
@@ -153,9 +154,9 @@ const ReferralForm = ({
           <Form.Item
             label="Name"
             name="name"
-            rules={[{ required: true, message: "Amenity Name is Required" }]}
+            rules={[{ required: true, message: "Referral Agent Name is Required" }]}
           >
-            <Input readOnly={isView} />
+            <Input readOnly={isView} placeholder="Enter Referral Agent Name" />
           </Form.Item>
 
           <Form.Item
@@ -163,14 +164,14 @@ const ReferralForm = ({
             name="cardNo"
             rules={[{ required: true, message: "Card No is Required" }]}
           >
-            <Input readOnly={isView} />
+            <Input readOnly={isView} placeholder="Enter Card Number" />
           </Form.Item>
 
           <Form.Item
             label="Email"
             name="email"
           >
-            <Input readOnly={isView} />
+            <Input readOnly={isView} placeholder="Enter Email Address" />
           </Form.Item>
 
           <Form.Item
@@ -179,7 +180,7 @@ const ReferralForm = ({
             rules={[{ required: true, message: "Phone is Required" }]}
 
           >
-            <Input readOnly={isView} />
+            <Input readOnly={isView} placeholder="Enter Phone Number" />
           </Form.Item>
 
           <Row gutter={16}>
@@ -239,16 +240,17 @@ const ReferralForm = ({
                   },
                 ]}
               >
-                <Input
-                  type="number"
+                <InputNumber
+                  className="!w-full"
                   min={1}
-                  addonAfter={(() => {
+                  suffix={(() => {
                     const selected = chargeType?.find(
                       (item) => item.uuid === chargeTypeValue,
                     );
                     return selected?.code === "percentage" ? "%" : "MMK";
                   })()}
-                  readOnly={isView} />
+                  readOnly={isView}
+                  placeholder="Enter Charge Value" />
               </Form.Item>
             </Col>
           </Row>
@@ -257,14 +259,14 @@ const ReferralForm = ({
             label="Address"
             name="address"
           >
-            <TextArea readOnly={isView} />
+            <TextArea readOnly={isView} placeholder="Enter Address" />
           </Form.Item>
 
           <Form.Item
             label="Remark"
             name="remark"
           >
-            <TextArea readOnly={isView} />
+            <TextArea readOnly={isView} placeholder="Enter Remark" />
           </Form.Item>
 
           <Status isView={isView} />

@@ -29,14 +29,15 @@ const RoomInventoryList = () => {
     fetchQueryName: "availabilty-calendars",
     fetchQueryFunction: getAvailabilityCalendar,
     params: {
-      pagination: {
-        page: page,
-        perPage: perPage,
-      },
       filter,
       keyword,
     },
   });
+
+  const roomTypeData = data?.data.map(item => ({
+    ...item.roomType,
+    rates: item.rates   
+  }));
 
   useEffect(() => {
     setPage(1);
@@ -69,12 +70,7 @@ const RoomInventoryList = () => {
       </div>
 
       <RoomInventoryTable
-        data={data?.data || []}
-        page={data?.pagination.currentPage}
-        perPage={data?.pagination.perPage}
-        total={data?.pagination?.total}
-        changePage={(page) => setPage(page)}
-        changePerPage={(perPage) => setPerPage(perPage)}
+        data={roomTypeData || []}
       />
 
       <RoomInventoryForm

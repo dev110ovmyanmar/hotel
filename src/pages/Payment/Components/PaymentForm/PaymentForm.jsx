@@ -102,7 +102,7 @@ const PaymentForm = ({
   return (
     <div className="flex justify-center" >
       <Drawer
-        size={500}
+        size={550}
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
         title={
@@ -144,7 +144,7 @@ const PaymentForm = ({
 
         >
           <Form.Item label=" Name" name="name" rules={[{ required: true, message: " Name is Required" }]}>
-            <Input readOnly={isView} />
+            <Input readOnly={isView} placeholder="Enter Payment Name" />
           </Form.Item>
 
           <Form.Item label="Provider Type" name={["type", "uuid"]} rules={[{ required: true, message: "Provider Type is Required" }]}>
@@ -156,6 +156,7 @@ const PaymentForm = ({
                 ))
               }
               open={isView ? false : undefined}
+              placeholder="Select Provider Type"
             >
 
             </Select>
@@ -174,6 +175,7 @@ const PaymentForm = ({
                   value: item?.uuid,
                 }))}
                 open={isView ? false : undefined}
+                placeholder="Select Provider Name"
               />
             </Form.Item>
           )}

@@ -25,6 +25,13 @@ const MeanPlanTable = ({ data, page, perPage, total, changePage, changePerPage }
       render: text => <div>{text}</div>,
     },
     {
+      title: 'Description',
+      dataIndex: 'description',
+      key: 'description',
+      render: text => <div>{text}</div>,
+      width:500
+    },
+    {
       title: 'Status',
       dataIndex: ["status","name"],
       key: 'status',

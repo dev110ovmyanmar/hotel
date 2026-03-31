@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import { Form, Input, Button, Drawer, Row, Col, Select, Space, DatePicker } from "antd";
+import { Form, Input, Button, Drawer, Row, Col, Select, Space, DatePicker, InputNumber } from "antd";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
 import useApiQuery from "../../../../hooks/useApiQuery";
 import FormButton from "../../../../component/FormButtons/FormButtons";
@@ -10,7 +10,7 @@ import { upsertPartnerContract, partnerContractDetails } from "../../../../api/p
 import { queryClient } from '../../../../app/queryClient';
 import { getFormattedDate } from "../../../../utils";
 import dayjs from "dayjs";
-import {capitalizeFirstLetter} from "../../../../utils/Utils";
+import { capitalizeFirstLetter } from "../../../../utils/Utils";
 
 
 const CompanyContractForm = ({
@@ -35,8 +35,6 @@ const CompanyContractForm = ({
 
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
   const chargeType = initData?.statuses.charge_type;
-  
-  console.log(chargeType,"ChargeType");
 
   const chargeTypeValue = Form.useWatch(["chargeType", "uuid"], form);
 
@@ -132,16 +130,11 @@ const CompanyContractForm = ({
       <Drawer
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
-        size={500}
+        size={550}
         title={
           <div className="flex justify-between items-center">
             <span>
-              {/* {mode === "view"
-                ? "Company Contract Details"
-                : mode === "edit"
-                  ? "Edit Company Contract"
-                  : "Create Company Contract"} */}
-                  {capitalizeFirstLetter(state?.companyRecord?.name)}
+              {capitalizeFirstLetter(state?.companyRecord?.name)}
             </span>
             {isView ? (
               <Button
@@ -167,7 +160,7 @@ const CompanyContractForm = ({
           layout="vertical"
           style={{ width: "100%" }}
           onFinish={onFinish}
-          initialValues = {{
+          initialValues={{
             property: {
               name: propertyName?.name,
             },
@@ -234,16 +227,17 @@ const CompanyContractForm = ({
                   },
                 ]}
               >
-                <Input
-                  type="number"
+                <InputNumber
+                  className="!w-full"
                   min={1}
-                  addonAfter={(() => {
+                  suffix={(() => {
                     const selected = chargeType?.find(
                       (item) => item.uuid === chargeTypeValue,
                     );
                     return selected?.code === "percentage" ? "%" : "MMK";
                   })()}
-                  readOnly={isView} />
+                  readOnly={isView}
+                  placeholder="Enter Charge Value" />
               </Form.Item>
             </Col>
           </Row>

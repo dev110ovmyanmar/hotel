@@ -99,7 +99,7 @@ const RoomInventoryForm = ({
             <span>
               {mode === "view"
                 ? "Room Inventory Details"
-                : "Edit Inventory Details"}
+                : "Edit Room Inventory"}
             </span>
             {isView ? (
               <Button
@@ -129,7 +129,7 @@ const RoomInventoryForm = ({
           <Form.Item label="Name" name="name">
             <Input readOnly={true} />
           </Form.Item>
-          
+
           <div className="grid grid-cols-2 gap-6">
             <Form.Item
               label="Aavailable Rooms"
@@ -138,7 +138,7 @@ const RoomInventoryForm = ({
                 { required: true, message: "Available Rooms is Required" },
               ]}
             >
-              <InputNumber {...sharedProps} placeholder="Outlined" disabled={isView}/>
+              <InputNumber {...sharedProps} placeholder="Outlined" disabled={isView} />
             </Form.Item>
 
             <Form.Item
@@ -163,7 +163,7 @@ const RoomInventoryForm = ({
                 }),
               ]}
             >
-              <InputNumber {...sharedProps} disabled={true}/>
+              <InputNumber {...sharedProps} disabled={true} />
             </Form.Item>
           </div>
 

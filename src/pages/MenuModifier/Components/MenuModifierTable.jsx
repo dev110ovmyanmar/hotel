@@ -1,4 +1,4 @@
-import { Dropdown,  Space, Table,  } from "antd";
+import { Dropdown, Space, Table, } from "antd";
 import { useState } from "react";
 import {
   MoreOutlined,
@@ -36,9 +36,15 @@ const MenuModifierTable = ({
       render: (text) => <div>{text}</div>,
     },
     {
-      title: "Price",
-      dataIndex: "price",
-      key: "price",
+      title: "Purchasing Price (MMK)",
+      dataIndex: "unitCost",
+      key: "unitCost",
+      render: (text) => <div>{text}</div>,
+    },
+    {
+      title: "Selling Price (MMK)",
+      dataIndex: "unitPrice",
+      key: "unitPrice",
       render: (text) => <div>{text}</div>,
     },
     {
