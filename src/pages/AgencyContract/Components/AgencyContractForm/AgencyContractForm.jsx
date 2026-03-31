@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import { Form, Input, Button, Drawer, Row, Col, Select, Space, DatePicker } from "antd";
+import { Form, Input, Button, Drawer, Row, Col, Select, Space, DatePicker, InputNumber } from "antd";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
 import useApiQuery from "../../../../hooks/useApiQuery";
 import FormButton from "../../../../component/FormButtons/FormButtons";
@@ -10,7 +10,7 @@ import { upsertPartnerContract, partnerContractDetails } from "../../../../api/p
 import { queryClient } from '../../../../app/queryClient';
 import { getFormattedDate } from "../../../../utils";
 import dayjs from "dayjs";
-import {capitalizeFirstLetter} from "../../../../utils/Utils";
+import { capitalizeFirstLetter } from "../../../../utils/Utils";
 
 
 const AgencyContractForm = ({
@@ -35,8 +35,6 @@ const AgencyContractForm = ({
 
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
   const chargeType = initData?.statuses.charge_type;
-  
-  console.log(chargeType,"ChargeType");
 
   const chargeTypeValue = Form.useWatch(["chargeType", "uuid"], form);
 
@@ -64,10 +62,6 @@ const AgencyContractForm = ({
     },
   });
 
-  if (partnerContractDetailData) {
-    console.log(partnerContractDetailData, "partnerContractDetailData")
-  }
-
   useEffect(() => {
     if (!isAdd && partnerContractDetailData) {
       form.setFieldsValue({
@@ -79,8 +73,8 @@ const AgencyContractForm = ({
     }
   }, [partnerContractDetailData]);
 
-  if(partnerContractDetailData){
-    console.log(partnerContractDetailData,"partnerContractDetailData")
+  if (partnerContractDetailData) {
+    console.log(partnerContractDetailData, "partnerContractDetailData")
   }
 
   const onFinish = (values) => {
@@ -135,7 +129,7 @@ const AgencyContractForm = ({
       <Drawer
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
-        size={500}
+        size={550}
         title={
           <div className="flex justify-between items-center">
             <span>
@@ -144,7 +138,7 @@ const AgencyContractForm = ({
                 : mode === "edit"
                   ? "Edit Agency Contract"
                   : "Create Agency Contract"} */}
-                {capitalizeFirstLetter(state?.agencyRecord?.name)}
+              {capitalizeFirstLetter(state?.agencyRecord?.name)}
             </span>
             {isView ? (
               <Button
@@ -170,7 +164,7 @@ const AgencyContractForm = ({
           layout="vertical"
           style={{ width: "100%" }}
           onFinish={onFinish}
-          initialValues = {{
+          initialValues={{
             property: {
               name: propertyName?.name,
             },
@@ -253,16 +247,17 @@ const AgencyContractForm = ({
                   },
                 ]}
               >
-                <Input
-                  type="number"
+                <InputNumber
+                  style={{ width: "100%" }}
                   min={1}
-                  addonAfter={(() => {
+                  suffix={(() => {
                     const selected = chargeType?.find(
                       (item) => item.uuid === chargeTypeValue,
                     );
                     return selected?.code === "percentage" ? "%" : "MMK";
                   })()}
-                  readOnly={isView} />
+                  readOnly={isView}
+                  placeholder="Enter Charge Value" />
               </Form.Item>
             </Col>
           </Row>
@@ -275,7 +270,7 @@ const AgencyContractForm = ({
                 rules={[{ required: true, message: "Start Contract Date is Required" }]}
 
               >
-                <DatePicker style={{ width: "100%" }} disabled={isView}/>
+                <DatePicker style={{ width: "100%" }} disabled={isView} />
               </Form.Item>
             </Col>
 

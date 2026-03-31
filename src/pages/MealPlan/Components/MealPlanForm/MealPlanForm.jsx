@@ -34,7 +34,7 @@ const MeanPlanForm = ({
   const upsertMealPlans = useApiMutation({
     mutationFn: upsertMealPlan,
     invalidateKeys: [["mealPlans"]],
-    shouldInvalidate : isEdit? true : page === 1
+    shouldInvalidate: isEdit ? true : page === 1
   });
 
   const { data, isPending, error } = useApiQuery({
@@ -94,7 +94,7 @@ const MeanPlanForm = ({
     <div className="flex justify-center">
       <Drawer
         destroyOnClose
-        size={500}
+        size={550}
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
         title={
@@ -136,14 +136,18 @@ const MeanPlanForm = ({
             name="name"
             rules={[{ required: true, message: "Meal Plan Name is Required" }]}
           >
-            <Input readOnly={isView} />
+            <Input readOnly={isView} placeholder="Enter Meal Plan Name" />
           </Form.Item>
 
 
           <Status isView={isView} />
 
           <Form.Item label="Description" name="description">
-            <TextArea></TextArea>
+            <Input.TextArea rows={2}
+              readOnly={isView}
+              style={{ cursor: isView ? "default" : "text" }}
+              placeholder="Enter Description"
+            />
           </Form.Item>
         </Form>
       </Drawer>

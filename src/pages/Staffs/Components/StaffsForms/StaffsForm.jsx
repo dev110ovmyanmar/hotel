@@ -8,6 +8,7 @@ import {
   DatePicker,
   Row,
   Col,
+  Checkbox,
 } from "antd";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
 import useApiQuery from "../../../../hooks/useApiQuery";
@@ -16,6 +17,7 @@ import FormButton from "../../../../component/FormButtons/FormButtons";
 import { createStaff, editStaff, staffDetails } from "../../../../api/staffApi";
 import dayjs from "dayjs";
 import { getFormattedDate } from "../../../../utils";
+import Status from "../../../../component/Status/Status";
 
 const StaffsForm = ({
   mode,
@@ -35,6 +37,8 @@ const StaffsForm = ({
 
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
   const [selectedRegion, setSelectedRegion] = useState(null);
+
+  const [isCurrent, setIsCurrent] = useState(false);
 
   const departments = initData?.departments?.map((department) => ({
     value: department.uuid,
@@ -62,6 +66,15 @@ const StaffsForm = ({
     value: type.code,
     label: type.code,
   }));
+
+  const handleCurrentChange = (e) => {
+    const checked = e.target.checked;
+    setIsCurrent(checked);
+
+    if (checked) {
+      form.setFieldsValue({ endedAt: null });
+    }
+  };
 
   const createStaffs = useApiMutation({
     mutationFn: createStaff,
@@ -96,6 +109,7 @@ const StaffsForm = ({
         nrcTownship: nrcTownship,
         nrcNumber: nrcNumber,
         joinedAt: data?.joinedAt ? dayjs(data.joinedAt) : null,
+        endedAt: data?.endedAt ? dayjs(data.endedAt) : null,
       });
       setSelectedRegion(nrcSrNo);
       setSelectedData(data);
@@ -115,6 +129,7 @@ const StaffsForm = ({
     const formattedValues = {
       ...values,
       joinedAt: getFormattedDate(values.joinedAt, false),
+      endedAt: getFormattedDate(values.endedAt, false),
       nrc: nrcObj,
       nrcNo: nrcNo,
     };
@@ -190,7 +205,7 @@ const StaffsForm = ({
             name="name"
             rules={[{ required: true, message: "Please enter name" }]}
           >
-            <Input placeholder="Enter staff name" readOnly={isView} />
+            <Input placeholder="Enter Staff Name" readOnly={isView} />
           </Form.Item>
 
           <Form.Item
@@ -277,7 +292,7 @@ const StaffsForm = ({
                   rules={[{ required: true }]}
                   getValueProps={(value) => ({
                     value: isView
-                      ? township.find((item) => item.value === value)?.label
+                      ? township?.find((item) => item.value === value)?.label
                       : value,
                   })}
                 >
@@ -335,15 +350,15 @@ const StaffsForm = ({
           </Form.Item>
 
           <Form.Item label="Passport" name="passport">
-            <Input placeholder="Enter passport" readOnly={isView} />
+            <Input placeholder="Enter Passport" readOnly={isView} />
           </Form.Item>
 
           <Form.Item label="Phone" name="phone">
-            <Input placeholder="Enter phone" readOnly={isView} />
+            <Input placeholder="Enter Phone Number" readOnly={isView} />
           </Form.Item>
 
           <Form.Item label="Email" name="email">
-            <Input placeholder="Enter email" readOnly={isView} />
+            <Input placeholder="Enter Email Address" readOnly={isView} />
           </Form.Item>
 
           <Form.Item
@@ -377,8 +392,60 @@ const StaffsForm = ({
             name="joinedAt"
             rules={[{ required: true, message: "Please select Date" }]}
           >
-            <DatePicker className="w-full" disabled={isView} />
+            <DatePicker className="w-full" disabled={isView} placeholder="Select Joined Date" />
           </Form.Item>
+
+          {/* <Form.Item name="currentlyWorking" valuePropName="checked">
+            <Checkbox disabled={isView} onChange={handleCurrentChange}>
+              Currently Working
+            </Checkbox>
+          </Form.Item>
+
+          {!isCurrent && <Form.Item
+            label="Left Date"
+            name="endedAt"
+            rules={[{ required: true, message: "Please select Date" }]}
+          >
+            <DatePicker className="w-full" disabled={isView} />
+          </Form.Item>} */}
+
+          {isView ? (
+            <Form.Item
+              label="Left Date"
+              name="endedAt"
+              rules={[{ required: true, message: "Please select Date" }]}
+            >
+              {data?.endedAt ? (
+                // dayjs(data.endedAt).format("YYYY-MM-DD")
+                <DatePicker className="w-full" disabled={isView} placeholder="Select Left Date" />
+              ) : (
+                <span className="text-green-600 font-medium pl-2.5">
+                  Currently Working
+                </span>
+              )}
+            </Form.Item>
+          ) :
+            isEdit && (
+              <>
+                <Form.Item name="currentlyWorking" valuePropName="checked">
+                  <Checkbox disabled={isView} onChange={handleCurrentChange}>
+                    Currently Working
+                  </Checkbox>
+                </Form.Item>
+
+                {!isCurrent && (
+                  <Form.Item
+                    label="Left Date"
+                    name="endedAt"
+                    rules={[{ required: true, message: "Please select Date" }]}
+                  >
+                    <DatePicker className="w-full" disabled={isView} />
+                  </Form.Item>
+                )}
+              </>
+            )}
+
+          <Status isView={isView} />
         </Form>
       </Drawer>
     </>

@@ -8,15 +8,16 @@ import ListHeader from "../../component/ListHeader/ListHeader";
 import UnitTable from "./components/UnitTable";
 import UnitForm from "./components/UnitForm";
 import { LIMITS } from "../../variables/constants";
+import { PERMISSIONS } from "../../variables/permission";
 
 const UnitListing = () => {
 
-    const [selectedRow, setSelectedRow] = useState(null);
-    const [currentMode, setCurrentMode] = useState("add");
-    const [keyword, setKeyword] = useState("");
-    const [page, setPage] = useState(1);
-    const [perPage, setPerPage] = useState(LIMITS.PAGE_SIZE);
-    const [drawerOpen, setDrawerOpen] = useState(false);
+  const [selectedRow, setSelectedRow] = useState(null);
+  const [currentMode, setCurrentMode] = useState("add");
+  const [keyword, setKeyword] = useState("");
+  const [page, setPage] = useState(1);
+  const [perPage, setPerPage] = useState(LIMITS.PAGE_SIZE);
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
 
@@ -32,8 +33,9 @@ const UnitListing = () => {
     fetchQueryName: "units",
     fetchQueryFunction: getUnits,
     params: {
-      pagination: 
-      { page: page, 
+      pagination:
+      {
+        page: page,
         perPage: perPage
       },
       keyword,
@@ -44,7 +46,7 @@ const UnitListing = () => {
   const units = data?.data || [];
 
   useEffect(() => {
-        setPage(1);
+    setPage(1);
   }, [keyword, perPage]);
 
   const handleClose = () => {
@@ -82,6 +84,7 @@ const UnitListing = () => {
           setKeyword={setKeyword}
           addButtonText="Add New Unit"
           onAdd={handleAdd}
+          permission={PERMISSIONS.UNIT_CREATE}
         />
       </div>
 

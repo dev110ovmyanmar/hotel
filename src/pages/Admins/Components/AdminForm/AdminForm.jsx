@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Form, Input, Button, Select, Divider, Drawer, Modal } from "antd"; 
+import { Form, Input, Button, Select, Divider, Drawer, Modal, Image } from "antd";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
 import useApiQuery from "../../../../hooks/useApiQuery";
 import { queryClient } from "../../../../app/queryClient";
@@ -15,6 +15,7 @@ import usePermission from './../../../../hooks/usePermission';
 import { PERMISSIONS } from './../../../../variables/permission';
 import { initial } from "lodash";
 import Status from './../../../../component/Status/Status';
+import { UserOutlined } from '@ant-design/icons';
 
 const AdminForm = ({
   mode,
@@ -203,7 +204,7 @@ const AdminForm = ({
       <Drawer
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
-        size={500}
+        size={550}
         title={
           <div className="flex justify-between items-center">
             <span>
@@ -238,13 +239,21 @@ const AdminForm = ({
           style={{ width: "100%" }}
           onFinish={onFinish}
         >
+          {
+            !isAdd && (
+              <Image src={data?.file} alt="image" className="!w-32 border-1 border-gray-300 rounded-full mb-3 p-1" preview={false} />
+            )
+          }
+
+
+
           <Form.Item
             label="Name"
             name="name"
             rules={[{ required: true, message: "Admin Name is Required" }]}
 
           >
-            <Input readOnly={isView} />
+            <Input readOnly={isView} placeholder="Enter Admin Name" />
           </Form.Item>
 
           <Form.Item
@@ -252,7 +261,7 @@ const AdminForm = ({
             name="email"
             rules={[{ required: true, message: "Admin Email is Required" }]}
           >
-            <Input readOnly={isView} />
+            <Input readOnly={isView} placeholder="Enter Email Address" />
           </Form.Item>
 
           <Form.Item
@@ -279,7 +288,7 @@ const AdminForm = ({
                         .includes(input.toLowerCase()),
                   }}
                   options={roles}
-                  
+                  placeholder="Select Role"
                 />
             }
 
@@ -381,8 +390,8 @@ const AdminForm = ({
             // loading: loading,
           }}
           onCancel={cancelButton}
-        > 
-          <Divider/>
+        >
+          <Divider />
           <div className="text-md !mt-3">
             Changing the role will update permissions. Do you want to continue?
           </div>

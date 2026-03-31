@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Form, Input, Button, Select, Drawer, Switch, Row, Col } from "antd";
+import { Form, Input, Button, Select, Drawer, Switch, Row, Col, InputNumber } from "antd";
 import Toast from "../../../../component/Toast/Toast";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
 import useApiQuery from "../../../../hooks/useApiQuery";
@@ -177,7 +177,7 @@ const TaxForm = ({
             name="name"
             rules={[{ required: true, message: "Tax Name is Required" }]}
           >
-            <Input readOnly={isView} />
+            <Input readOnly={isView} placeholder="Enter Tax Name" />
           </Form.Item>
 
           <Form.Item
@@ -303,15 +303,17 @@ const TaxForm = ({
                   },
                 ]}
               >
-                <Input
+                <InputNumber
+                  style={{ width: "100%" }}
                   min={1}
                   suffix={(() => {
                     const selected = initData?.statuses?.charge_type?.find(
-                      (ct) => ct.uuid === chargeTypeValue,
+                      (item) => item.uuid === chargeTypeValue,
                     );
                     return selected?.code === "percentage" ? "%" : "MMK";
                   })()}
                   readOnly={isView}
+                  placeholder="Enter Charge Value"
                 />
               </Form.Item>
             </Col>
@@ -328,7 +330,7 @@ const TaxForm = ({
                 getValueProps={(value) => ({
                   value: isView
                     ? chargeApplyType.find((item) => item.value === value)
-                        ?.label
+                      ?.label
                     : value,
                 })}
               >
@@ -379,7 +381,7 @@ const TaxForm = ({
           </Row>
 
           <Form.Item label="Remark" name="remark">
-            <TextArea readOnly={isView} />
+            <TextArea readOnly={isView} placeholder="Enter Remark" />
           </Form.Item>
         </Form>
       </Drawer>
