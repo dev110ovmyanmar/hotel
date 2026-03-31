@@ -8,6 +8,7 @@ import {
 } from "@ant-design/icons";
 import RoomPlanForm from "./RoomPlanForm/RoomPlanForm";
 import ListHeader from "../../../component/ListHeader/ListHeader";
+import PriceTag from "../../../component/PriceTag/PriceTag";
 
 const RoomPlanTable = ({ mode }) => {
   const [open, setOpen] = useState(false);
@@ -101,6 +102,7 @@ const RoomPlanTable = ({ mode }) => {
       title: "Price",
       dataIndex: "price",
       key: "price",
+      render:(text) => <PriceTag value={text} />
     },
     {
       title: "Actions",

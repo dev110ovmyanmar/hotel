@@ -4,6 +4,7 @@ import { MoreOutlined, EyeOutlined, EditOutlined } from "@ant-design/icons";
 import usePermission from "../../../hooks/usePermission";
 import { PERMISSIONS } from "../../../variables/permission";
 import RoomTypeForm from "./RoomTypeForm/RoomTypeForm";
+import PriceTag from "../../../component/PriceTag/PriceTag";
 
 const RoomTypeTable = ({
   data,
@@ -62,7 +63,7 @@ const RoomTypeTable = ({
       title: "Price (MMK)",
       dataIndex: "basePrice",
       key: "basePrice",
-      render: (price) => price?.toLocaleString(),
+      render:(text) => <PriceTag value={text} />
     },
     {
       title: "Action",

@@ -7,6 +7,7 @@ import ServiceForm from "./ServiceForm/ServiceForm";
 import { PERMISSIONS } from "../../../variables/permission";
 import usePermission from "../../../hooks/usePermission";
 import ColorStatusTag from "../../../component/ColorStatusTag/ColorStatusTag";
+import PriceTag from "../../../component/PriceTag/PriceTag";
 
 const ServiceTable = ({
   data,
@@ -38,6 +39,7 @@ const ServiceTable = ({
       title: "Price (MMK)",
       dataIndex: "basePrice",
       key: "basePrice",
+      render:(text) => <PriceTag value={text}/>
     },
     {
       title: "Property",
