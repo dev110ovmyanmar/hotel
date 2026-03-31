@@ -36,8 +36,6 @@ const CompanyContractForm = ({
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
   const chargeType = initData?.statuses.charge_type;
 
-  console.log(chargeType, "ChargeType");
-
   const chargeTypeValue = Form.useWatch(["chargeType", "uuid"], form);
 
   const propertyName = initData?.property;
@@ -132,15 +130,10 @@ const CompanyContractForm = ({
       <Drawer
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
-        size={500}
+        size={550}
         title={
           <div className="flex justify-between items-center">
             <span>
-              {/* {mode === "view"
-                ? "Company Contract Details"
-                : mode === "edit"
-                  ? "Edit Company Contract"
-                  : "Create Company Contract"} */}
               {capitalizeFirstLetter(state?.companyRecord?.name)}
             </span>
             {isView ? (
