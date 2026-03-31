@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Table, Form, Input, Button, Drawer, Select, Divider, Space, InputNumber, Row, Col } from "antd";
+import { Table, Form, Input, Button, Drawer, Select, Divider, Space, InputNumber, Row, Col, TimePicker } from "antd";
 import Toast from "../../../../component/Toast/Toast";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
 import useApiQuery from "../../../../hooks/useApiQuery";
@@ -12,6 +12,7 @@ import { loadState } from "./../../../../utils/Utils";
 import { LOCAL_STORAGE_KEYS } from "./../../../../variables/constants";
 import { queryClient } from "../../../../app/queryClient";
 import { EditOutlined } from '@ant-design/icons';
+import dayjs from "dayjs";
 
 const { TextArea } = Input;
 
@@ -45,13 +46,10 @@ const PolicyForm = ({
   const chargeBaseType = initData?.statuses?.charge_base_type;
   const chargeType = initData?.statuses?.charge_type;
 
-  console.log(chargeType,"chargeType");
-
-  const chargeTypeValue = Form.useWatch(["chargeType","uuid"], policyForm);
-
-  console.log(chargeTypeValue,"chargeTypeValue");
+  const chargeTypeValue = Form.useWatch(["chargeType", "uuid"], policyForm);
 
   const openPolicyRule = () => {
+    policyForm.resetFields();
     setAddPolicyRuleDrawer(true)
   };
 
@@ -70,6 +68,16 @@ const PolicyForm = ({
       enabled: !!selectedData?.uuid,
     },
   });
+
+  if (data) {
+    console.log(data,)
+  }
+  const cancelCode = data?.policyType?.code === "cancellation";
+  const earlyCheckin = data?.policyType?.code === "early_checkin";
+  const lateCheckout = data?.policyType?.code === "late_checkout";
+  const noShow = data?.policyType?.code === "no_show";
+
+
 
   useEffect(() => {
     if (!isAdd && data) {
@@ -132,13 +140,7 @@ const PolicyForm = ({
       width: 70,
     },
     {
-      title: 'Priority',
-      dataIndex: 'priority',
-      key: 'priority',
-      render: text => <div>{text}</div>,
-    },
-    {
-      title: 'Charge Base Type',
+      title: 'Charge Based On',
       dataIndex: ["chargeBaseType", "name"],
       key: 'chargeBaseType',
       render: text => <div>{text}</div>,
@@ -147,12 +149,11 @@ const PolicyForm = ({
       title: 'Charge Value',
       dataIndex: 'chargeValue',
       key: 'chargeValue',
-      render: (_,record) => {
-        console.log(record,"RecordInChargeValue")
+      render: (_, record) => {
         const chargeValue = Number(record?.chargeValue);
         const chargeTypeName = record?.chargeType?.code;
 
-        if(chargeTypeName === "flat"){
+        if (chargeTypeName === "flat") {
           return <div>{chargeValue} MMK</div>
         } else {
           return <div>{chargeValue} %</div>
@@ -160,16 +161,15 @@ const PolicyForm = ({
       }
     },
     {
-      title: 'From',
-      dataIndex: "fromOffset",
-      key: 'fromOffset',
-      render: text => <div>{text}</div>,
-    },
-    {
-      title: 'To',
-      dataIndex: "toOffset",
-      key: 'toOffset',
-      render: text => <div>{text}</div>,
+      title: cancelCode || noShow ? "Days Range" :"Hours Range",
+      // dataIndex: ,
+      key: 'earlycheck',
+      render: (_, record) => {
+
+        return (
+          <div>{record?.fromOffset} to {record?.toOffset} {cancelCode || noShow ? "Days" : "Hours"}</div>
+        )
+      }
     },
     {
       title: "Action",
@@ -196,14 +196,37 @@ const PolicyForm = ({
     }
   }, [addPolicyRule]);
 
-
   useEffect(() => {
     if (editPolicyRule) {
-      policyForm.setFieldsValue(
-        selectedPolicyRule
-      )
+      policyForm.setFieldsValue({
+        ...selectedPolicyRule,
+
+        chargeValue: Number(selectedPolicyRule?.chargeValue),
+
+        fromOffset: selectedPolicyRule?.fromOffset != null &&
+          (earlyCheckin || lateCheckout) ?
+          dayjs().hour(selectedPolicyRule?.fromOffset).minute(0).second(0) :
+          cancelCode ? selectedPolicyRule?.fromOffset
+            : null,
+
+        toOffset: selectedPolicyRule?.toOffset != null &&
+          (earlyCheckin || lateCheckout) ?
+          dayjs().hour(selectedPolicyRule?.toOffset).minute(0).second(0) :
+          cancelCode ? selectedPolicyRule?.toOffset
+            : null,
+      })
     }
-  }, [editPolicyRule, selectedPolicyRule])
+  }, [editPolicyRule, selectedPolicyRule]);
+
+  const formatOffset = (value) => {
+    if (!value) return null;
+
+    if (dayjs.isDayjs(value)) {
+      return value.format("H");
+    }
+
+    return String(value);
+  };
 
   const savePolicyRule = (values) => {
     const linkTouuid = form.getFieldValue("linkTo");
@@ -220,9 +243,15 @@ const PolicyForm = ({
       uuid: data?.uuid,
       policyRule:
         addPolicyRule ?
-          { ...values } :
           {
             ...values,
+            fromOffset: values?.fromOffset ? formatOffset(values?.fromOffset) : 0,
+            toOffset: values?.toOffset ? formatOffset(values?.toOffset) : 0,
+          } :
+          {
+            ...values,
+            fromOffset: values?.fromOffset ? formatOffset(values?.fromOffset) : 0,
+            toOffset: values?.toOffset ? formatOffset(values?.toOffset) : 0,
             uuid: selectedPolicyRule?.uuid
           }
       ,
@@ -261,7 +290,7 @@ const PolicyForm = ({
       <Drawer
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
-        size={500}
+        size={550}
         title={
           <div className="flex justify-between items-center">
             <span>
@@ -335,12 +364,12 @@ const PolicyForm = ({
           <Form.Item
             label="Is Active"
             name="isActive"
-            rules={[{ required: true, message: "Is Active  is Required" }]}
+            rules={[{ required: true, message: "Is Active is Required" }]}
           >
             <Select
               options={[
-                { label: "Yes", value: true },
-                { label: "No", value: false },
+                { label: "True", value: true },
+                { label: "False", value: false },
               ]}
               open={isView ? false : undefined}
             ></Select>
@@ -350,8 +379,9 @@ const PolicyForm = ({
             label="Description"
             name="description"
             rules={[{ required: true, message: "Description is Required" }]}
+
           >
-            <TextArea readOnly={isView}></TextArea>
+            <TextArea readOnly={isView} rows={4}></TextArea>
           </Form.Item>
 
 
@@ -361,7 +391,14 @@ const PolicyForm = ({
                 <Divider />
 
                 <Space className="!flex !justify-between">
-                  <div className="font-bold">Policy Rules</div>
+                  <div className="font-bold">
+                    {
+                      cancelCode? "Cancellation Policy (Days Before Arrival)":
+                      noShow? "No Show Policy (Days Before Arrival)":
+                      earlyCheckin? "Early CheckIn Policy":
+                      "Late CheckOut Policy"
+                    }
+                  </div>
 
                   <Button
                     type="primary"
@@ -386,7 +423,6 @@ const PolicyForm = ({
                 >
 
                 </Table>
-
                 <Drawer
                   title={
                     <div className="flex justify-between">
@@ -419,20 +455,10 @@ const PolicyForm = ({
                     onFinish={savePolicyRule}
                   >
 
-
-
-                    <Form.Item
-                      label="Priority"
-                      name="priority"
-                      rules={[{ required: true, message: "Priority is Required" }]}
-                    >
-                      <InputNumber readOnly={isView} style={{ width: "100%" }} />
-                    </Form.Item>
-
                     <Form.Item
                       label="Charge Base Type"
                       name={["chargeBaseType", "uuid"]}
-                      rules={[{ required: true, message: "Charge Base Type is Required" }]}
+                      rules={[{ required: true, message: "Charge Based On is Required" }]}
                     >
                       <Select
                         options={
@@ -480,6 +506,7 @@ const PolicyForm = ({
                         <Form.Item
                           label="Charge Value "
                           name="chargeValue"
+                          min={0}
                           rules={[
                             { required: true, message: "Charge Value is Required" },
                             {
@@ -504,12 +531,11 @@ const PolicyForm = ({
                         >
                           <Input
                             type="number"
-                            min={1}
+                            min={0}
                             addonAfter={(() => {
                               const selected = chargeType?.find(
                                 (item) => item.uuid === chargeTypeValue,
                               );
-                              console.log(selected,"SelectedInAddOnAfter");
                               return selected?.code === "percentage" ? "%" : "MMK";
                             })()}
                             readOnly={isView} />
@@ -517,23 +543,99 @@ const PolicyForm = ({
                       </Col>
                     </Row>
 
-                    <Space>
-                      <Form.Item
-                        label="From"
-                        name="fromOffset"
-                        rules={[{ required: true, message: "From is Required" }]}
-                      >
-                        <InputNumber readOnly={isView} />
-                      </Form.Item>
+                    {/* Depend on Policy Type */}
+                    {
+                      (cancelCode || noShow) ?
 
-                      <Form.Item
-                        label="To"
-                        name="toOffset"
-                        rules={[{ required: true, message: "To is Required" }]}
-                      >
-                        <InputNumber readOnly={isView} />
-                      </Form.Item>
-                    </Space>
+                        <Form.Item
+                          label={
+                            <>
+                              <span>{cancelCode ? "Cancel Between" : "No Show"} </span>
+                              <span style={{ fontWeight: "bold", marginLeft: "5px" }}>  (Days Before Arrival)</span>
+                            </>
+                          }
+                          name={cancelCode ? "cancelBetween" : "noShow"}
+                        >
+                          <Row gutter={16}>
+                            <Col span={12}>
+                              <Form.Item
+                                name="fromOffset"
+                                rules={[{ required: true, message: "From is Required" }]}
+                              >
+                                <InputNumber
+                                  readOnly={isView} style={{ width: "100%" }}
+                                  addonAfter="Day"
+                                  min={0}
+                                />
+                              </Form.Item>
+
+                            </Col>
+                            <Col span={12}>
+                              <Form.Item
+                                name="toOffset"
+                                rules={[{ required: true, message: "To is Required" }]}
+                              >
+                                <InputNumber
+                                  readOnly={isView} style={{ width: "100%" }}
+                                  addonAfter="Days"
+                                  min={0}
+                                />
+                              </Form.Item>
+
+                            </Col>
+                          </Row>
+                        </Form.Item> :
+
+                        (earlyCheckin || lateCheckout) ?
+                          <Form.Item
+                            label={earlyCheckin ? "Early CheckIn Between" : "Late Checkout Between"}
+                          >
+                            <Row gutter={16}>
+                              <Col span={12}>
+                                <Form.Item
+                                  name="fromOffset"
+                                  rules={[{ required: true, message: "From is required" }]}
+                                >
+                                  <TimePicker
+                                    format="H"
+                                    showNow={false}
+                                    readOnly={isView}
+                                    style={{ width: "100%" }} />
+                                </Form.Item>
+                              </Col>
+                              <Col span={12}>
+                                <Form.Item
+                                  name="toOffset"
+                                  rules={[{ required: true, message: "To is required" }]}
+                                >
+                                  <TimePicker
+                                    format="H"
+                                    showNow={false}
+                                    readOnly={isView}
+                                    style={{ width: "100%" }} />
+                                </Form.Item>
+                              </Col>
+                            </Row>
+                          </Form.Item> :
+
+                          <Form.Item
+                            label="No Show Policy"
+
+                          ></Form.Item>
+
+                    }
+
+                    <Form.Item
+                      label="Sort Order"
+                      name="priority"
+                      rules={[{ required: true, message: "Priority is Required" }]}
+                    >
+                      <InputNumber
+                        readOnly={isView} style={{ width: "100%" }}
+                        min={0}
+                      />
+                    </Form.Item>
+
                   </Form>
                 </Drawer>
               </>

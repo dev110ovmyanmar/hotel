@@ -51,11 +51,15 @@ const Topbar = withDirection(function (props) {
 
   const uuid = loadState(LOCAL_STORAGE_KEYS.loginAdminDetails)?.uuid;
 
-  const { data: loginAdminDetails } = useApiQuery({
-    fetchQueryName: "login-admin-details",
-    fetchQueryFunction: adminDetails,
-    params: { uuid },
-  });
+  const { 
+    data: loginAdminDetails,
+    refetch: fetchProfile
+  } = useApiQuery({
+        fetchQueryName: "login-admin-details",
+        fetchQueryFunction: adminDetails,
+        params: { uuid },
+        enabled: false
+      });
 
   const handleRefetchInitData = async () => {
     try {
@@ -112,9 +116,10 @@ const Topbar = withDirection(function (props) {
     [dispatch],
   );
 
-  const handleMenuClick = (action) => {
+  const handleMenuClick = async (action) => {
     if (action === "profile") {
-      setProfileDrawerOpen(true);
+      await fetchProfile();
+      setProfileDrawerOpen(true);      
     } else if (action === "password") {
       setPasswordDrawerOpen(true);
     } else if (action === "logout") {
@@ -161,15 +166,14 @@ const Topbar = withDirection(function (props) {
   return (
     <>
       <Header
-        className={`bg-white! fixed w-full h-25 flex justify-between z-1000 border-b border-gray-300 transition-all ${
-          isCollapsed
+        className={`bg-white! fixed w-full h-25 flex justify-between z-1000 border-b border-gray-300 transition-all ${isCollapsed
             ? props["data-rtl"] === "rtl"
               ? "px-[15px] md:pl-[31px] md:pr-[109px]!"
               : "px-[15px] md:pr-[31px] md:pl-[109px]!"
             : props["data-rtl"] === "rtl"
               ? "pl-[260px] pr-[15px] md:pl-[265px] md:pr-[31px]!"
               : "pr-[15px] pl-[260px] md:pr-[31px] md:pl-[265px]!"
-        }`}
+          }`}
       >
         {/* Left Section */}
         <div className="flex items-center py-2 gap-2">
@@ -280,7 +284,7 @@ const Topbar = withDirection(function (props) {
       <Drawer
         title="Change Password"
         placement="right"
-        size={500}
+        size={550}
         onClose={closePasswordDrawer}
         open={passwordDrawerOpen}
       >
@@ -289,7 +293,7 @@ const Topbar = withDirection(function (props) {
       <Drawer
         title="Profile"
         placement="right"
-        size={500}
+        size={550}
         onClose={closeProfileDrawer}
         open={profileDrawerOpen}
       >
