@@ -12,6 +12,7 @@ import { Tooltip } from "antd";
 import dayjs from "dayjs";
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
 import BooleanTag from "../../../component/BooleanTag/BooleanTag";
+import PriceTag from "../../../component/PriceTag/PriceTag";
 
 dayjs.extend(isSameOrBefore);
 
@@ -81,6 +82,7 @@ const RoomInventoryTable = ({
       title: "Base Price",
       dataIndex: "basePrice",
       key: "basePrice",
+      render:(text) => <PriceTag value={text} />
     },
     {
       title: "Extra Bed",
