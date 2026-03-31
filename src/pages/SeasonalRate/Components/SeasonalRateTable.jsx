@@ -4,6 +4,7 @@ import { MoreOutlined, EyeOutlined, EditOutlined } from "@ant-design/icons";
 import usePermission from "../../../hooks/usePermission";
 import SeasonalRateForm from "./SeasonalRateForms/SeasonalRateForm";
 import { PERMISSIONS } from "../../../variables/permission";
+import PriceTag from "../../../component/PriceTag/PriceTag";
 
 const SeasonalRateTable = ({
   data,
@@ -45,7 +46,7 @@ const SeasonalRateTable = ({
       title: "Price (MMK)",
       dataIndex: "basePrice",
       key: "basePrice",
-      render: (basePrice) => basePrice?.toLocaleString(),
+      render: (text) => <PriceTag value={text}/>,
       width: "80",
     },
     {
@@ -117,7 +118,7 @@ const SeasonalRateTable = ({
     { title: 'Rate Plan', dataIndex: ['ratePlan','name'], key: 'ratePlan' },
     { title: 'Start Date', dataIndex: 'startDate', key: 'startDate', render:(text)=><div>{String(text)}</div> },
     { title: 'End Date', dataIndex: 'endDate', key: 'endDate', render:(text)=><div>{String(text)}</div> },
-    { title: 'Price (MMK)', dataIndex: 'price', key: 'price', render:(text)=><div>{text.toLocaleString()}</div> },
+    { title: 'Price (MMK)', dataIndex: 'price', key: 'price', render:(text)=><PriceTag value={text}/> },
   ];
 
   const expandedRowRender = (record) => (
