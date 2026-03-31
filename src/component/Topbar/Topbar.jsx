@@ -53,12 +53,10 @@ const Topbar = withDirection(function (props) {
 
   const { 
     data: loginAdminDetails,
-    refetch: fetchProfile
   } = useApiQuery({
         fetchQueryName: "login-admin-details",
         fetchQueryFunction: adminDetails,
         params: { uuid },
-        enabled: false
       });
 
   const handleRefetchInitData = async () => {
@@ -118,7 +116,6 @@ const Topbar = withDirection(function (props) {
 
   const handleMenuClick = async (action) => {
     if (action === "profile") {
-      await fetchProfile();
       setProfileDrawerOpen(true);      
     } else if (action === "password") {
       setPasswordDrawerOpen(true);
