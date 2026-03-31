@@ -7,6 +7,7 @@ const PropertyTable = ({
    isLoading,
    onEdit,
    onView,
+   onUpload,
    page,
    perPage,
    changePage,
@@ -14,7 +15,7 @@ const PropertyTable = ({
    total,
    }) => {
 
-  const columns = usePropertiesColumns(onEdit, onView);
+  const columns = usePropertiesColumns(onEdit, onView, onUpload);
 
   return (
             <div id="scrollId" className="w-full h-[63vh]">
