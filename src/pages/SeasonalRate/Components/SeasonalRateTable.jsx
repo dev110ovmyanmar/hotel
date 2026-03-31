@@ -25,33 +25,38 @@ const SeasonalRateTable = ({
       width: 70,
     },
     {
-      title: "Room Type",
-      dataIndex: ["roomType", "name"],
-      key: "roomType",
+      title: "Room Name",
+      dataIndex: "name",
+      key: "roomTypeName",
+    },
+    {
+      title: "Total Rooms",
+      dataIndex: "totalRooms",
+      key: "totalRooms",
       width: "80",
     },
     {
-      title: "Rate Plan",
-      dataIndex: ["ratePlan", "name"],
-      key: "ratePlan",
+      title: "Available Rooms",
+      dataIndex: "availableRooms",
+      key: "availableRooms",
       width: "80",
     },
     {
       title: "Price (MMK)",
-      dataIndex: "price",
-      key: "price",
-      render: (price) => price?.toLocaleString(),
+      dataIndex: "basePrice",
+      key: "basePrice",
+      render: (basePrice) => basePrice?.toLocaleString(),
       width: "80",
     },
     {
-      title: "Start date",
-      dataIndex: "startDate",
-      key: "startDate",
+      title: "Extra Bed",
+      dataIndex: "extraBed",
+      key: "extraBed",
     },
     {
-      title: "End date",
-      dataIndex: "endDate",
-      key: "endDate",
+      title: "Max Occupancy",
+      dataIndex: "maxOccupancy",
+      key: "maxOccupancy",
     },
 
     {
@@ -64,7 +69,7 @@ const SeasonalRateTable = ({
             key: "view",
             label: "View",
             icon: <EyeOutlined style={{ fontSize: "12px" }} />,
-            permission: PERMISSIONS.SEASONAL_RATE_VIEW,
+            // permission: PERMISSIONS.SEASONAL_RATE_VIEW,
             onClick: () => {
               setDrawerOpen(true);
               setMode("view");
@@ -107,6 +112,18 @@ const SeasonalRateTable = ({
     },
   ];
 
+  const expandColumns = [
+    { title: 'ID', dataIndex: 'id', key: 'id' },
+    { title: 'Rate Plan', dataIndex: ['ratePlan','name'], key: 'ratePlan' },
+    { title: 'Start Date', dataIndex: 'startDate', key: 'startDate', render:(text)=><div>{String(text)}</div> },
+    { title: 'End Date', dataIndex: 'endDate', key: 'endDate', render:(text)=><div>{String(text)}</div> },
+    { title: 'Price (MMK)', dataIndex: 'price', key: 'price', render:(text)=><div>{text.toLocaleString()}</div> },
+  ];
+
+  const expandedRowRender = (record) => (
+    <Table columns={expandColumns} dataSource={record?.rates} pagination={false} />
+  );
+
   return (
     <div id="scrollId">
       <Table
@@ -115,16 +132,7 @@ const SeasonalRateTable = ({
         columns={columns}
         dataSource={data}
         rowKey="uuid"
-        pagination={{
-          current: page,
-          pageSize: perPage,
-          total: total,
-          onChange: (page, perPage) => {
-            changePage(page);
-            changePerPage(perPage);
-          },
-          showSizeChanger: true,
-        }}
+        expandable={{expandedRowRender,defaultExpandedRowKeys:['0']}}
       />
 
       <SeasonalRateForm
