@@ -145,8 +145,10 @@ const UnitForm = ({
       open={drawerOpen}
       destroyOnClose
     >
-      {loading ? (
-        <Loader />
+      {isLoading ? (
+        <div className="flex items-center justify-center h-full min-h-[300px]">
+          <Loader />
+        </div>
       ) : (
         <Form form={form} layout="vertical" onFinish={onFinish}>
           <Form.Item

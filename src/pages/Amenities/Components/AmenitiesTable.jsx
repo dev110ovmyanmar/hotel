@@ -13,6 +13,7 @@ const AmenitiesTable = ({
   total,
   changePage,
   changePerPage,
+  loading
 }) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mode, setMode] = useState(null);
@@ -61,7 +62,7 @@ const AmenitiesTable = ({
       key: "code",
       render: (text) =>
         <div>{text}</div>
-        
+
     },
     {
       title: "Action",
@@ -121,6 +122,7 @@ const AmenitiesTable = ({
         scroll={{ x: 1000 }}
         columns={columns}
         dataSource={data}
+        loading={loading}
         rowKey="uuid"
         pagination={{
           current: page,

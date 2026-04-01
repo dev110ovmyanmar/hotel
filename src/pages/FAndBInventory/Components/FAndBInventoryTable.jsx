@@ -17,6 +17,7 @@ const FAndBInventoryTable = ({
   total,
   changePage,
   changePerPage,
+  loading
 }) => {
   const { hasPermission } = usePermission();
 
@@ -54,13 +55,13 @@ const FAndBInventoryTable = ({
       title: "Purchase Price (MMK)",
       dataIndex: "unitCost",
       key: "unitCost",
-      render:(text) => <PriceTag value={text} />
+      render: (text) => <PriceTag value={text} />
     },
-     {
+    {
       title: "Selling Price (MMK)",
       dataIndex: "unitPrice",
       key: "unitPrice",
-      render:(text) => <PriceTag value={text} />
+      render: (text) => <PriceTag value={text} />
     },
     {
       title: "Reorder Level",
@@ -134,6 +135,7 @@ const FAndBInventoryTable = ({
         scroll={{ x: 1000 }}
         columns={columns}
         dataSource={data}
+        loading={loading}
         rowKey="uuid"
         pagination={{
           current: page,

@@ -12,6 +12,7 @@ const RoomAttributeTable = ({
   total,
   changePage,
   changePerPage,
+  loading,
 }) => {
   const { hasPermission } = usePermission();
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -100,6 +101,7 @@ const RoomAttributeTable = ({
           },
           showSizeChanger: true,
         }}
+        loading={loading}
       />
 
       <RoomAttributeForm

@@ -36,7 +36,7 @@ const PermissionForm = ({
   const isEdit = mode === "edit";
   const isAdd = mode === "add";
 
-  const { data, isLoading, refetch } = useApiQuery({
+  const { data, isLoading } = useApiQuery({
     fetchQueryName: "permission-detail",
     fetchQueryFunction: getPermissionDetail,
     params: { uuid: selectedRow?.uuid },
@@ -91,7 +91,6 @@ const PermissionForm = ({
       editPermission.mutate(editValues, {
         onSuccess: () => {
           setDrawerOpen(false);
-          refetch();
           Toast.success("Permission Updated Successfully!");
         },
       });
@@ -161,7 +160,7 @@ const PermissionForm = ({
         onClose={onClose}
         open={drawerOpen}
       >
-        {loading ? (
+        {isLoading ? (
           <div className="flex justify-center items-center h-64">
             <Loader />
           </div>
