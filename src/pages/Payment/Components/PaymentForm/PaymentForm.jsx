@@ -102,7 +102,7 @@ const PaymentForm = ({
   return (
     <div className="flex justify-center" >
       <Drawer
-        size={500}
+        size={550}
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
         title={

@@ -56,6 +56,14 @@ const AmenitiesTable = ({
         />,
     },
     {
+      title: "Code",
+      dataIndex: "code",
+      key: "code",
+      render: (text) =>
+        <div>{text}</div>
+        
+    },
+    {
       title: "Action",
       render: (_, record) => {
         const smallStyle = { fontSize: "12px" };

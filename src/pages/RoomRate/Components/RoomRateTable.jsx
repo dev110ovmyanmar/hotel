@@ -7,8 +7,8 @@ import {
 } from "@ant-design/icons";
 import usePermission from "../../../hooks/usePermission"; // <-- Permission hook
 import { PERMISSIONS } from "../../../variables/permission";
-import ColorStatusTag from './../../../component/ColorStatusTag/ColorStatusTag';
 import RoomRateForm from "../Components/RoomRateForm/RoomRateForm";
+import PriceTag from "../../../component/PriceTag/PriceTag";
 
 const RoomRateTable = ({
   data,
@@ -40,13 +40,13 @@ const RoomRateTable = ({
       title: "Price (MMK)",
       dataIndex: "price",
       key: "price",
-      render: (text) => <div>{text} </div>,
+      render:(text) => <PriceTag value={text} />
     },
     {
       title: "Duration Hours",
       dataIndex: "durationHours",
       key: "durationHours",
-      render: (text) => <div>{text? text : "-"}</div>,
+      render: (text) => <div>{text ? text : "-"}</div>,
     },
 
     {
@@ -105,9 +105,9 @@ const RoomRateTable = ({
 
   return (
     <div id="scrollId">
-      <Table
+      {/* <Table
         tableLayout="fixed"
-        scroll={{ x: 1000 }}
+        scroll={{ x: 1000 }}j
         columns={columns}
         dataSource={data}
         rowKey="roomrate"
@@ -121,7 +121,27 @@ const RoomRateTable = ({
           },
           showSizeChanger: true,
         }}
-      />
+        classNames="!mb-50"
+      /> */}
+      <div className="flex-1 overflow-auto">
+        <Table
+          tableLayout="fixed"
+          scroll={{ x: 1000, y: "calc(100vh - 360px)" }} // 👈 key fix
+          columns={columns}
+          dataSource={data}
+          rowKey="roomrate"
+          pagination={{
+            current: page,
+            pageSize: perPage,
+            total: total,
+            onChange: (page, perPage) => {
+              changePage(page);
+              changePerPage(perPage);
+            },
+            showSizeChanger: true,
+          }}
+        />
+      </div>
 
       <RoomRateForm
         page={page}

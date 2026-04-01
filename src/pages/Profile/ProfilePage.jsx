@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, Avatar, Typography, Drawer, Upload, Form, message } from "antd";
+import { Button, Typography, Drawer, Upload, Form, message } from "antd";
 import { EditOutlined, LoadingOutlined, PlusOutlined } from "@ant-design/icons";
 import ProfileForm from "./ProfileForm";
 import { loadState } from "../../utils/Utils";
@@ -22,8 +22,6 @@ const ProfilePage = () => {
   const uuid = loadState(LOCAL_STORAGE_KEYS.loginAdminDetails)?.uuid;
   const roleUuid = loadState(LOCAL_STORAGE_KEYS.loginAdminDetails)?.role?.uuid;
 
-  /* ---------------- API ---------------- */
-
   const { data: loginAdminDetails, refetch } = useApiQuery({
     fetchQueryName: "login-admin-details",
     fetchQueryFunction: adminDetails,
@@ -39,15 +37,11 @@ const ProfilePage = () => {
     mutationFn: adminUpload,
   });
 
-  /* ---------------- Load Existing Image ---------------- */
-
   useEffect(() => {
     if (loginAdminDetails?.file) {
       setImageUrl(loginAdminDetails.file);
     }
   }, [loginAdminDetails]);
-
-  /* ---------------- User Info ---------------- */
 
   const userInfo = {
     name: loginAdminDetails?.name,
@@ -61,8 +55,6 @@ const ProfilePage = () => {
     status: loginAdminDetails?.status?.name,
   };
 
-  /* ---------------- Drawer ---------------- */
-
   const showDrawer = (section) => {
     setEditingSection(section);
     setDrawerVisible(true);
@@ -72,8 +64,6 @@ const ProfilePage = () => {
     setDrawerVisible(false);
     setEditingSection(null);
   };
-
-  /* ---------------- Save Profile ---------------- */
 
   const handleSave = (values) => {
     const editValues = {
@@ -96,11 +86,11 @@ const ProfilePage = () => {
     closeDrawer();
   };
 
-  /* ---------------- Avatar Upload ---------------- */
-
   const beforeUpload = (file) => {
     const isJpgOrPng =
-      file.type === "image/jpeg" || file.type === "image/png" || file.type === "image/jpg";
+      file.type === "image/jpeg" ||
+      file.type === "image/png" ||
+      file.type === "image/jpg";
 
     if (!isJpgOrPng) {
       message.error("You can only upload JPG/PNG/JPEG file!");
@@ -129,7 +119,7 @@ const ProfilePage = () => {
           setLoading(false);
           message.error("Upload failed");
         },
-      }
+      },
     );
 
     return false;
@@ -142,22 +132,24 @@ const ProfilePage = () => {
     </div>
   );
 
-  /* ---------------- UI ---------------- */
-
   return (
     <div className="space-y-6">
-
       {/* User Info */}
       <div className="flex items-center space-x-6 bg-white p-6 rounded-lg shadow-sm">
-
         <Upload
           name="file"
           listType="picture-circle"
           showUploadList={false}
           beforeUpload={beforeUpload}
-          accept="image/png, image/jpeg"
+          accept="image/png, image/jpeg, image/jpg"
+          disabled={loading} // Prevent double uploads while loading
         >
-          {imageUrl ? (
+          {loading ? (
+            <div>
+              <LoadingOutlined style={{ fontSize: 24 }} />
+              <div style={{ marginTop: 8 }}>Uploading...</div>
+            </div>
+          ) : imageUrl ? (
             <img
               src={imageUrl}
               alt="avatar"
@@ -173,7 +165,7 @@ const ProfilePage = () => {
           )}
         </Upload>
 
-        <div>
+        <div className="pl-7">
           <Title level={4} className="mb-0">
             {userInfo.name}
           </Title>
@@ -183,7 +175,6 @@ const ProfilePage = () => {
 
       {/* Personal Info */}
       <div className="bg-white rounded-lg shadow-sm p-6">
-
         <div className="flex justify-between items-center mb-6">
           <Title level={5} className="mb-0">
             Personal Information
@@ -201,14 +192,11 @@ const ProfilePage = () => {
         <div className="grid grid-cols-2 gap-x-12 gap-y-6">
           {Object.entries(personalInfoInitial).map(([key, value]) => (
             <div key={key}>
-              <Text strong>
-                {key.replace(/([A-Z])/g, " $1")}:
-              </Text>
+              <Text strong>{key.replace(/([A-Z])/g, " $1")}:</Text>
               <div>{value}</div>
             </div>
           ))}
         </div>
-
       </div>
 
       {/* Drawer */}
@@ -234,7 +222,6 @@ const ProfilePage = () => {
           />
         )}
       </Drawer>
-
     </div>
   );
 };

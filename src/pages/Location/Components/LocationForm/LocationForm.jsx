@@ -192,7 +192,7 @@ const LocationForm = ({
       {isView && (
         <Drawer
           destroyOnClose
-          size={500}
+          size={550}
           open={drawerOpen}
           onClose={() => setDrawerOpen(false)}
           title={
