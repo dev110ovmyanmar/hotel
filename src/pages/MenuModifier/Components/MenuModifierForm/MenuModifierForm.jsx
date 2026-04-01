@@ -6,6 +6,7 @@ import FormButton from "../../../../component/FormButtons/FormButtons";
 import Toast from './../../../../component/Toast/Toast';
 import usePermission from './../../../../hooks/usePermission';
 import { upsertMenuModifier, menuModifierDetails } from "../../../../api/menuModifierApi";
+import Loader from "../../../../component/Loader/Loader";
 
 const MenuModifierForm = ({
   mode,
@@ -31,7 +32,7 @@ const MenuModifierForm = ({
     shouldInvalidate: isEdit ? true : page === 1
   });
 
-  const { data: menuModifierDetailData } = useApiQuery({
+  const { data: menuModifierDetailData, isLoading } = useApiQuery({
     fetchQueryName: "menu-modifier-details",
     fetchQueryFunction: menuModifierDetails,
     params: { uuid: selectedData?.uuid },
@@ -110,64 +111,72 @@ const MenuModifierForm = ({
           </div>
         }
       >
-        <Form
-          form={form}
-          layout="vertical"
-          style={{ width: "100%" }}
-          onFinish={onFinish}
-        >
-          <Form.Item
-            label="Name"
-            name="name"
-            rules={[{ required: true, message: "Name is Required" }]}
-          >
-            <Input
-              readOnly={isView}
-              placeholder="Enter Menu Modifier Name"
-            />
-          </Form.Item>
-          <Form.Item
-            label="Purchase Price"
-            name="unitCost"
-            rules={[{ required: true, message: "Purchase Price is Required" }]}
-          >
-            <InputNumber
-              disabled={isView}
-              min={1}
-              className="!w-full"
-              placeholder="Enter Price"
-              suffix="MMK"
-            />
-          </Form.Item>
+        {
+          isLoading ? (
+            <div className="flex items-center justify-center h-full min-h-[300px]">
+              <Loader />
+            </div>
+          ) : (
+            <Form
+              form={form}
+              layout="vertical"
+              style={{ width: "100%" }}
+              onFinish={onFinish}
+            >
+              <Form.Item
+                label="Name"
+                name="name"
+                rules={[{ required: true, message: "Name is Required" }]}
+              >
+                <Input
+                  readOnly={isView}
+                  placeholder="Enter Menu Modifier Name"
+                />
+              </Form.Item>
+              <Form.Item
+                label="Purchase Price"
+                name="unitCost"
+                rules={[{ required: true, message: "Purchase Price is Required" }]}
+              >
+                <InputNumber
+                  disabled={isView}
+                  min={1}
+                  className="!w-full"
+                  placeholder="Enter Price"
+                  suffix="MMK"
+                />
+              </Form.Item>
 
-          <Form.Item
-            label="Selling Price"
-            name="unitPrice"
-            rules={[
-              { required: true, message: 'Please enter selling price' },
-              ({ getFieldValue }) => ({
-                validator(_, value) {
-                  const purchasePrice = getFieldValue('unitCost');
-                  // Only validate if both values exist
-                  if (!value || !purchasePrice || value > purchasePrice) {
-                    return Promise.resolve();
-                  }
-                  return Promise.reject(new Error('Selling price must be higher than purchase price'));
-                },
-              }),
-            ]}
-          >
-            <InputNumber
-              disabled={isView}
-              min={1}
-              className="!w-full"
-              placeholder="Enter Price"
-              suffix="MMK"
-            />
-          </Form.Item>
-        </Form>
+              <Form.Item
+                label="Selling Price"
+                name="unitPrice"
+                rules={[
+                  { required: true, message: 'Please enter selling price' },
+                  ({ getFieldValue }) => ({
+                    validator(_, value) {
+                      const purchasePrice = getFieldValue('unitCost');
+                      // Only validate if both values exist
+                      if (!value || !purchasePrice || value > purchasePrice) {
+                        return Promise.resolve();
+                      }
+                      return Promise.reject(new Error('Selling price must be higher than purchase price'));
+                    },
+                  }),
+                ]}
+              >
+                <InputNumber
+                  disabled={isView}
+                  min={1}
+                  className="!w-full"
+                  placeholder="Enter Price"
+                  suffix="MMK"
+                />
+              </Form.Item>
+            </Form>
+          )
+        }
       </Drawer>
-    </div>
+    </div >
   );
 };
 

@@ -10,7 +10,6 @@ import { upsertCategory, getCategoryDetail } from "../../../api/categoryApi";
 
 const CategoryForm = ({
   mode,
-  loading = false,
   switchToEdit,
   page,
   setPage,
@@ -139,61 +138,64 @@ const CategoryForm = ({
       open={drawerOpen}
       destroyOnClose
     >
-      {loading ? <Loader /> : (
-        <Form form={form} layout="vertical" onFinish={onFinish}>
-          <Form.Item
-            label="Name"
-            name="name"
-            rules={[{ required: true, message: "Please input category name!" }]}
-          >
-            <Input placeholder="Enter Category Name" readOnly={isView} />
-          </Form.Item>
+      {isLoading ?
+        <div className="flex items-center justify-center h-full min-h-[300px]">
+          <Loader />
+        </div> : (
+          <Form form={form} layout="vertical" onFinish={onFinish}>
+            <Form.Item
+              label="Name"
+              name="name"
+              rules={[{ required: true, message: "Please input category name!" }]}
+            >
+              <Input placeholder="Enter Category Name" readOnly={isView} />
+            </Form.Item>
 
-          {isView ? (
-            <Form.Item label="Department">
-              <Input
-                readOnly
-                value={data?.department?.name}
-                className="bg-white text-black cursor-default border-gray-200"
-                variant="outlined"
+            {isView ? (
+              <Form.Item label="Department">
+                <Input
+                  readOnly
+                  value={data?.department?.name}
+                  className="bg-white text-black cursor-default border-gray-200"
+                  variant="outlined"
+                />
+              </Form.Item>
+            ) : (
+              <Form.Item label="Department" name="department"
+                rules={[{ required: true, message: "Department is required" }]} >
+                <Select
+                  options={departmentOptions}
+                  className="w-full"
+                  showSearch
+                  placeholder="Select Department"
+                  filterOption={(input, option) =>
+                    option.label.toLowerCase().includes(input.toLowerCase())
+                  }
+                />
+              </Form.Item>
+            )}
+
+            <Form.Item label="Description" name="description">
+              <Input.TextArea rows={2}
+                readOnly={isView}
+                style={{ cursor: isView ? "default" : "text" }}
+                placeholder="Enter Description"
               />
             </Form.Item>
-          ) : (
-            <Form.Item label="Department" name="department"
-              rules={[{ required: true, message: "Department is required" }]} >
+
+            <Form.Item
+              name="status"
+              label="Status"
+              rules={[{ required: true, message: "Status is required" }]}
+            >
               <Select
-                options={departmentOptions}
-                className="w-full"
-                showSearch
-                placeholder="Select Department"
-                filterOption={(input, option) =>
-                  option.label.toLowerCase().includes(input.toLowerCase())
-                }
+                options={statusOptions}
+                placeholder="Select Status"
+                disabled={isView}
               />
             </Form.Item>
-          )}
-
-          <Form.Item label="Description" name="description">
-            <Input.TextArea rows={2}
-              readOnly={isView}
-              style={{ cursor: isView ? "default" : "text" }}
-              placeholder="Enter Description"
-            />
-          </Form.Item>
-
-          <Form.Item
-            name="status"
-            label="Status"
-            rules={[{ required: true, message: "Status is required" }]}
-          >
-            <Select
-              options={statusOptions}
-              placeholder="Select Status"
-              disabled={isView}
-            />
-          </Form.Item>
-        </Form>
-      )
+          </Form>
+        )
       }
     </Drawer >
   );

@@ -13,6 +13,7 @@ const SeasonalRateTable = ({
   total,
   changePage,
   changePerPage,
+  loading
 }) => {
   const { hasPermission } = usePermission();
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -46,7 +47,7 @@ const SeasonalRateTable = ({
       title: "Price (MMK)",
       dataIndex: "basePrice",
       key: "basePrice",
-      render: (text) => <PriceTag value={text}/>,
+      render: (text) => <PriceTag value={text} />,
       width: "80",
     },
     {
@@ -115,10 +116,10 @@ const SeasonalRateTable = ({
 
   const expandColumns = [
     { title: 'ID', dataIndex: 'id', key: 'id' },
-    { title: 'Rate Plan', dataIndex: ['ratePlan','name'], key: 'ratePlan' },
-    { title: 'Start Date', dataIndex: 'startDate', key: 'startDate', render:(text)=><div>{String(text)}</div> },
-    { title: 'End Date', dataIndex: 'endDate', key: 'endDate', render:(text)=><div>{String(text)}</div> },
-    { title: 'Price (MMK)', dataIndex: 'price', key: 'price', render:(text)=><PriceTag value={text}/> },
+    { title: 'Rate Plan', dataIndex: ['ratePlan', 'name'], key: 'ratePlan' },
+    { title: 'Start Date', dataIndex: 'startDate', key: 'startDate', render: (text) => <div>{String(text)}</div> },
+    { title: 'End Date', dataIndex: 'endDate', key: 'endDate', render: (text) => <div>{String(text)}</div> },
+    { title: 'Price (MMK)', dataIndex: 'price', key: 'price', render: (text) => <PriceTag value={text} /> },
   ];
 
   const expandedRowRender = (record) => (
@@ -133,7 +134,8 @@ const SeasonalRateTable = ({
         columns={columns}
         dataSource={data}
         rowKey="uuid"
-        expandable={{expandedRowRender,defaultExpandedRowKeys:['0']}}
+        expandable={{ expandedRowRender, defaultExpandedRowKeys: ['0'] }}
+        loading={loading}
       />
 
       <SeasonalRateForm

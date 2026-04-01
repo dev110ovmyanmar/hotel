@@ -17,6 +17,7 @@ const FacilityTable = ({
   total,
   changePage,
   changePerPage,
+  loading
 }) => {
   const { hasPermission } = usePermission();
   const navigate = useNavigate();
@@ -130,6 +131,7 @@ const FacilityTable = ({
         scroll={{ x: 1000 }}
         columns={columns}
         dataSource={data}
+        loading={loading}
         rowKey="uuid"
         pagination={{
           current: page,

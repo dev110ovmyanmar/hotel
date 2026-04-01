@@ -23,7 +23,6 @@ export default function useUnitColumns(onEdit, onView) {
       title: "Short Name",
       dataIndex: "shortName",
       key: "shortName",
-      width: 120
     },
     {
       title: "Status",

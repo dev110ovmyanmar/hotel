@@ -9,6 +9,7 @@ import {
   editRoomAttribute,
   roomAttributeDetails,
 } from "../../../../api/roomApi";
+import Loader from "../../../../component/Loader/Loader"
 
 const RoomAttributeForm = ({
   mode,
@@ -37,7 +38,7 @@ const RoomAttributeForm = ({
     invalidateKeys: [["roomAttributeData"]],
   });
 
-  const { data } = useApiQuery({
+  const { data, isLoading } = useApiQuery({
     fetchQueryName: "roomAttributeData",
     fetchQueryFunction: roomAttributeDetails,
     params: { uuid: selectedData?.uuid },
@@ -90,7 +91,7 @@ const RoomAttributeForm = ({
       <Drawer
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
-        size={500}
+        size={550}
         title={
           <div className="flex justify-between items-center">
             <span>
@@ -121,22 +122,31 @@ const RoomAttributeForm = ({
           </div>
         }
       >
-        <Form
-          form={form}
-          layout="vertical"
-          style={{ width: "100%" }}
-          onFinish={onFinish}
-        >
-          <Form.Item
-            label="Name"
-            name="name"
-            rules={[{ required: true }]}
-          >
-            <Input readOnly={isView} placeholder="Enter Room Attribute Name" />
-          </Form.Item>
-        </Form>
+        {
+          isLoading ? (
+            <div className="flex items-center justify-center h-full min-h-[300px]">
+              <Loader />
+            </div>
+          ) :
+            (
+              <Form
+                form={form}
+                layout="vertical"
+                style={{ width: "100%" }}
+                onFinish={onFinish}
+              >
+                <Form.Item
+                  label="Name"
+                  name="name"
+                  rules={[{ required: true }]}
+                >
+                  <Input readOnly={isView} placeholder="Enter Room Attribute Name" />
+                </Form.Item>
+              </Form>
+            )
+        }
       </Drawer>
-    </div>
+    </div >
   );
 };
 

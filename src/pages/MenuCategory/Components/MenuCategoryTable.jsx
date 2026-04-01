@@ -15,6 +15,7 @@ const MenuCategoryTable = ({
   total,
   changePage,
   changePerPage,
+  loading
 }) => {
   const { hasPermission } = usePermission();
 
@@ -111,6 +112,7 @@ const MenuCategoryTable = ({
         scroll={{ x: 1000 }}
         columns={columns}
         dataSource={data}
+        loading={loading}
         rowKey="uuid"
         pagination={{
           current: page,

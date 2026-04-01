@@ -12,6 +12,7 @@ import {
 } from "../../../../api/seasonalRateApi";
 import dayjs from "dayjs";
 import { getFormattedDate } from "../../../../utils";
+import Loader from "../../../../component/Loader/Loader";
 
 const SeasonalRateForm = ({
   mode,
@@ -54,7 +55,7 @@ const SeasonalRateForm = ({
     invalidateKeys: [["SeasonlRate"]],
   });
 
-  const { data } = useApiQuery({
+  const { data, isLoading } = useApiQuery({
     fetchQueryName: "SeasonlRate",
     fetchQueryFunction: seasonlRateDetails,
     params: { uuid: selectedData?.uuid },
@@ -63,7 +64,6 @@ const SeasonalRateForm = ({
     },
   });
 
-  console.log(data, "data");
   useEffect(() => {
     if (!isAdd && data && ratePlanMetaData) {
       form.setFieldsValue({
@@ -153,106 +153,114 @@ const SeasonalRateForm = ({
           </div>
         }
       >
-        <Form
-          form={form}
-          layout="vertical"
-          style={{ width: "100%" }}
-          onFinish={onFinish}
-        >
-          <Form.Item
-            label="Room Type"
-            name="roomTypeUuid"
-            rules={[{ required: true }]}
-            getValueProps={(value) => ({
-              value: isView
-                ? roomTypes.find((item) => item.value === value)?.label
-                : value,
-            })}
-          >
-            {isView ? (
-              <Input readOnly={isView} />
-            ) : (
-              <Select
-                showSearch={{
-                  filterOption: (input, option) =>
-                    (option?.label ?? "")
-                      .toLowerCase()
-                      .includes(input.toLowerCase()),
-                }}
-                options={roomTypes}
-                placeholder="Select Seasonal Rate"
-              />
-            )}
-          </Form.Item>
+        {
+          isLoading ? (
+            <div className="flex items-center justify-center h-full min-h-[300px]">
+              <Loader />
+            </div>
+          ) : (
+            <Form
+              form={form}
+              layout="vertical"
+              style={{ width: "100%" }}
+              onFinish={onFinish}
+            >
+              <Form.Item
+                label="Room Type"
+                name="roomTypeUuid"
+                rules={[{ required: true }]}
+                getValueProps={(value) => ({
+                  value: isView
+                    ? roomTypes.find((item) => item.value === value)?.label
+                    : value,
+                })}
+              >
+                {isView ? (
+                  <Input readOnly={isView} />
+                ) : (
+                  <Select
+                    showSearch={{
+                      filterOption: (input, option) =>
+                        (option?.label ?? "")
+                          .toLowerCase()
+                          .includes(input.toLowerCase()),
+                    }}
+                    options={roomTypes}
+                    placeholder="Select Seasonal Rate"
+                  />
+                )}
+              </Form.Item>
 
-          <Form.Item
-            label="Rate Plan"
-            name="ratePlanUuid"
-            rules={[{ required: true }]}
-            getValueProps={(value) => ({
-              value: isView
-                ? ratePlans.find((item) => item.value === value)?.label
-                : value,
-            })}
-          >
-            {isView ? (
-              <Input readOnly={isView} />
-            ) : (
-              <Select
-                showSearch={{
-                  filterOption: (input, option) =>
-                    (option?.label ?? "")
-                      .toLowerCase()
-                      .includes(input.toLowerCase()),
-                }}
-                options={ratePlans}
-                placeholder="Select Rate Plan"
-              />
-            )}
-          </Form.Item>
+              <Form.Item
+                label="Rate Plan"
+                name="ratePlanUuid"
+                rules={[{ required: true }]}
+                getValueProps={(value) => ({
+                  value: isView
+                    ? ratePlans.find((item) => item.value === value)?.label
+                    : value,
+                })}
+              >
+                {isView ? (
+                  <Input readOnly={isView} />
+                ) : (
+                  <Select
+                    showSearch={{
+                      filterOption: (input, option) =>
+                        (option?.label ?? "")
+                          .toLowerCase()
+                          .includes(input.toLowerCase()),
+                    }}
+                    options={ratePlans}
+                    placeholder="Select Rate Plan"
+                  />
+                )}
+              </Form.Item>
 
-          <Form.Item label="Price" name="price" rules={[{ required: true }]}>
-            <InputNumber
-              className="!w-full"
-              min={0}
-              readOnly={isView}
-              placeholder="Enter Price"
-              suffix="MMK"
-            />
-          </Form.Item>
+              <Form.Item label="Price" name="price" rules={[{ required: true }]}>
+                <InputNumber
+                  className="!w-full"
+                  min={0}
+                  readOnly={isView}
+                  placeholder="Enter Price"
+                  suffix="MMK"
+                />
+              </Form.Item>
 
-          <Form.Item
-            label="Start Date"
-            name="startDate"
-            rules={[{ required: true, message: "Please select Start Date" }]}
-          >
-            <DatePicker
-              className="w-full"
-              disabled={isView}
-              disabledDate={(current) => {
-                return current && current < dayjs().startOf("day");
-              }}
-            />
-          </Form.Item>
+              <Form.Item
+                label="Start Date"
+                name="startDate"
+                rules={[{ required: true, message: "Please select Start Date" }]}
+              >
+                <DatePicker
+                  className="w-full"
+                  disabled={isView}
+                  disabledDate={(current) => {
+                    return current && current < dayjs().startOf("day");
+                  }}
+                />
+              </Form.Item>
 
-          <Form.Item
-            label="End date"
-            name="endDate"
-            rules={[{ required: true, message: "Please select End Date" }]}
-          >
-            <DatePicker
-              className="w-full"
-              disabled={isView}
-              disabledDate={(current) => {
-                return (
-                  current && current < dayjs().add(1, "day").startOf("day")
-                );
-              }}
-            />
-          </Form.Item>
-        </Form>
+              <Form.Item
+                label="End date"
+                name="endDate"
+                rules={[{ required: true, message: "Please select End Date" }]}
+              >
+                <DatePicker
+                  className="w-full"
+                  disabled={isView}
+                  disabledDate={(current) => {
+                    return (
+                      current && current < dayjs().add(1, "day").startOf("day")
+                    );
+                  }}
+                />
+              </Form.Item>
+            </Form>
+          )
+        }
       </Drawer>
-    </div>
+    </div >
   );
 };
 
