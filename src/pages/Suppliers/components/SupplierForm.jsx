@@ -94,7 +94,11 @@ const SupplierForm = ({
                 <FormButtons onClick={() => form.submit()} mode={mode} isPending={upsertMutation.isPending} />
             )}
         >
-            {isLoading ? <Loader /> : (
+            {isLoading ? (
+                <div className="flex items-center justify-center h-full min-h-[300px]">
+                    <Loader />
+                </div>
+            ) : (
                 <Form form={form} layout="vertical" onFinish={onFinish} className="w-full">
                     <div className="grid grid-cols-12 gap-x-4">
                         <div className="col-span-12">

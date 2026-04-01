@@ -17,6 +17,7 @@ const ServiceTable = ({
   total,
   changePage,
   changePerPage,
+  loading
 }) => {
   const { hasPermission } = usePermission();
 
@@ -39,7 +40,7 @@ const ServiceTable = ({
       title: "Price (MMK)",
       dataIndex: "basePrice",
       key: "basePrice",
-      render:(text) => <PriceTag value={text}/>
+      render: (text) => <PriceTag value={text} />
     },
     {
       title: "Property",
@@ -123,6 +124,7 @@ const ServiceTable = ({
         scroll={{ x: 1000 }}
         columns={columns}
         dataSource={data}
+        loading={loading}
         rowKey="uuid"
         pagination={{
           current: page,

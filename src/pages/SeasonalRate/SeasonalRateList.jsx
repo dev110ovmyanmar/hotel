@@ -18,7 +18,7 @@ const SeasonalRateList = () => {
 
   const normalStatus = status === "all" ? null : status;
 
-  const { data } = useApiQuery({
+  const { data, isLoading } = useApiQuery({
     fetchQueryName: "SeasonlRate",
     fetchQueryFunction: fetchSeasonlRate,
     params: {
@@ -27,7 +27,7 @@ const SeasonalRateList = () => {
     },
   });
 
-  const seasonalRoomTypeData = data?.data?.map(item=>({
+  const seasonalRoomTypeData = data?.data?.map(item => ({
     ...item.roomType,
     rates: item.rates
   }));
@@ -51,13 +51,13 @@ const SeasonalRateList = () => {
           setKeyword={setKeyword}
           addButtonText="Add New Seasonal Rate"
           onAdd={handleAdd}
-          // permission={PERMISSIONS.SEASONAL_RATE_CREATE}
+        // permission={PERMISSIONS.SEASONAL_RATE_CREATE}
         />
       </div>
 
       <SeasonalRateTable
         data={seasonalRoomTypeData || []}
-
+        loading={isLoading}
       />
 
       <SeasonalRateForm

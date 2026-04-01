@@ -17,7 +17,7 @@ const MeanPlanList = () => {
 
   const normalStatus = status === "all" ? null : status;
 
-  const { data, isPending, error } = useApiQuery({
+  const { data, isLoading, error } = useApiQuery({
     fetchQueryName: "mealPlans",
     fetchQueryFunction: fetchMealPlan,
     params: {
@@ -61,6 +61,7 @@ const MeanPlanList = () => {
         total={data?.pagination?.total}
         changePage={(page) => setPage(page)}
         changePerPage={(perPage) => setPerPage(perPage)}
+        loading={isLoading}
       />
 
       <MeanPlanForm
@@ -72,7 +73,7 @@ const MeanPlanList = () => {
         setMode={setMode}
         selectedData={selectedData}
         setSelectedData={setSelectedData}
-        
+
       />
     </div>
   )

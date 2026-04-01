@@ -205,7 +205,7 @@ const GuestForm = ({
               </Form.Item>
             </div>
             <div className="col-span-12">
-              <Form.Item label="Other name" name="otherName">
+              <Form.Item label="Other Name" name="otherName">
                 <Input
                   readOnly={isView}
                   style={{ cursor: isView ? "default" : "text" }}
@@ -332,7 +332,7 @@ const GuestForm = ({
                 <Input
                   readOnly={isView}
                   style={{ cursor: isView ? "default" : "text" }}
-                  placeholder="Burmese"
+                  placeholder="Enter Nationality"
                 />
               </Form.Item>
               <Form.Item label="Gender" name="gender">

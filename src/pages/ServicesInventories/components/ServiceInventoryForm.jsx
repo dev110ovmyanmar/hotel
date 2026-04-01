@@ -12,7 +12,6 @@ import { MIN_REORDER_LEVEL, MAX_REORDER_LEVEL, MIN_STOCK_QUANTITY, MAX_STOCK_QUA
 
 const ServiceInventoryForm = ({
   mode,
-  loading = false,
   switchToEdit,
   page,
   setPage,
@@ -176,8 +175,10 @@ const ServiceInventoryForm = ({
       destroyOnClose
     >
       <Form form={form} layout="vertical" onFinish={handleSubmit}>
-        {loading ? (
-          <Loader />
+        {isLoading ? (
+          <div className="flex items-center justify-center h-full min-h-[300px]">
+            <Loader />
+          </div>
         ) : (
           <>
             <Form.Item

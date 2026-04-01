@@ -18,7 +18,7 @@ const RoomTypeList = () => {
 
   const normalStatus = status === "all" ? null : status;
 
-  const { data } = useApiQuery({
+  const { data, isLoading } = useApiQuery({
     fetchQueryName: "roomTypeData",
     fetchQueryFunction: fetchRoomType,
     params: {
@@ -62,6 +62,7 @@ const RoomTypeList = () => {
         total={data?.pagination?.total}
         changePage={(page) => setPage(page)}
         changePerPage={(perPage) => setPerPage(perPage)}
+        loading={isLoading}
       />
 
       <RoomTypeForm
