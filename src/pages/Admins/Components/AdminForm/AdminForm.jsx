@@ -15,6 +15,7 @@ import usePermission from './../../../../hooks/usePermission';
 import { PERMISSIONS } from './../../../../variables/permission';
 import { initial } from "lodash";
 import Status from './../../../../component/Status/Status';
+import { adminMeta } from "../../../../api/adminApi";
 import { UserOutlined } from '@ant-design/icons';
 
 const AdminForm = ({
@@ -64,6 +65,21 @@ const AdminForm = ({
       enabled: !!selectedData?.uuid,
     },
   });
+
+  const { data: adminMetaData } = useApiQuery({
+    fetchQueryName: "admin-meta",
+    fetchQueryFunction: adminMeta,
+    options: {
+      enabled: !!selectedData?.uuid,
+    },
+  });
+
+  const staffList = adminMetaData?.staffs?.map((staff) => ({
+    value: staff.uuid,
+    label: staff.name,
+  }));
+
+
 
   // Add On Permission
   const [allowMode, setAllowMode] = useState(""); // "allow" or "notAllow"
@@ -116,6 +132,8 @@ const AdminForm = ({
       form.setFieldsValue({
         ...data,
         role: data?.role?.uuid,
+        staff: data?.staff?.uuid,
+
       });
       setSelectedData(data);
     }
@@ -159,6 +177,8 @@ const AdminForm = ({
         ...values,
         role: { uuid: values.role },
         status: values.status,
+        staff: { uuid: values.staff },
+
       };
 
       upsertAdmins.mutate(createValues, {
@@ -175,6 +195,7 @@ const AdminForm = ({
         ...values, // merge new form values
         role: { uuid: values.role },
         status: values.status,
+        staff: { uuid: values.staff },
         uuid: data?.uuid,
       };
 
@@ -294,8 +315,17 @@ const AdminForm = ({
 
           </Form.Item>
 
-          <Form.Item label="Staff" name="staff" >
-            <Input readOnly={isView} />
+          <Form.Item label="Staff" name="staff" className="flex-2">
+            <Select
+              showSearch={{
+                filterOption: (input, option) =>
+                  (option?.label ?? "")
+                    .toLowerCase()
+                    .includes(input.toLowerCase()),
+              }}
+              options={staffList}
+              placeholder="Select Staff"
+            />
           </Form.Item>
 
           <Status isView={isView} />
