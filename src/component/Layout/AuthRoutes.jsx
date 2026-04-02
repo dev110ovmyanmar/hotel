@@ -156,7 +156,7 @@ const AgencyContractList = lazy(
 );
 
 const RoomInventoryList = lazy(
-  () => import("../../pages/Room Inventory/RoomInventoryList"),
+  () => import("../../pages/RoomInventory/RoomInventoryList"),
 );
 
 const SupplierList = lazy(
@@ -173,7 +173,15 @@ const CompanyContractList = lazy(
   () => import("../../pages/CompanyContract/CompanyContractList"),
 );
 
+const MenuItemList = lazy(() => import("../../pages/MenuItem/MenuItemList"));
 
+const ExtraBedRateList = lazy(
+  () => import("../../pages/ExtraBedRate/ExtraBedRateList"),
+);
+
+const GuestFileUpload = lazy(
+  () => import("../../pages/GuestsListing/Components/NewGuestUploadForm"),
+);
 
 export const authRoutes = [
   {
@@ -625,8 +633,8 @@ export const authRoutes = [
         path: "/f&b-management/menu-items",
         icon: <UnorderedListOutlined style={{ fontSize: "20px" }} />,
         isPrivate: true,
-        // component: < />,
-        // permission: ".list",
+        component: <MenuItemList />,
+        permission: PERMISSIONS.MENU_ITEM_LIST,
       },
       {
         key: 14.3,
@@ -815,13 +823,11 @@ export const authRoutes = [
     key: 17.9,
     path: "/partners/agencies/:agencyId/agency-contract",
     component: <AgencyContractList />,
-
   },
   {
     key: 17.9,
     path: "/partners/company/:companyId/company-contract",
     component: <CompanyContractList />,
-
   },
   {
     key: 20,
@@ -864,6 +870,22 @@ export const authRoutes = [
     icon: <FormOutlined style={{ fontSize: "20px" }} />,
     isPrivate: false,
     permission: PERMISSIONS.AVAILABILITY_CALENDAR_LIST,
+  },
+  {
+    key: 27,
+    path: "/exta-bed-rate/",
+    label: "Extra Bed Rate",
+    component: <ExtraBedRateList />,
+    icon: <FormOutlined style={{ fontSize: "20px" }} />,
+    isPrivate: false,
+    permission: PERMISSIONS.EXTRA_BED_RATE_LIST,
+  },
+  {
+    key: 28,
+    label: "Guest",
+    path: "/guest",
+    icon: <ApartmentOutlined style={{ fontSize: "20px" }} />,
+    component: <GuestFileUpload />,
   },
 ];
 
