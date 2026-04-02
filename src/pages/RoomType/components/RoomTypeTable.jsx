@@ -4,6 +4,7 @@ import { MoreOutlined, EyeOutlined, EditOutlined } from "@ant-design/icons";
 import usePermission from "../../../hooks/usePermission";
 import { PERMISSIONS } from "../../../variables/permission";
 import RoomTypeForm from "./RoomTypeForm/RoomTypeForm";
+import PriceTag from "../../../component/PriceTag/PriceTag";
 
 const RoomTypeTable = ({
   data,
@@ -12,6 +13,7 @@ const RoomTypeTable = ({
   total,
   changePage,
   changePerPage,
+  loading
 }) => {
   const { hasPermission } = usePermission();
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -62,7 +64,7 @@ const RoomTypeTable = ({
       title: "Price (MMK)",
       dataIndex: "basePrice",
       key: "basePrice",
-      render: (price) => price?.toLocaleString(),
+      render: (text) => <PriceTag value={text} />
     },
     {
       title: "Action",
@@ -135,6 +137,7 @@ const RoomTypeTable = ({
           },
           showSizeChanger: true,
         }}
+        loading={loading}
       />
 
       <RoomTypeForm

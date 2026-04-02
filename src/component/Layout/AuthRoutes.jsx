@@ -1,4 +1,3 @@
-import { AiOutlineBuild } from "react-icons/ai";
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { Suspense, useMemo } from "react";
 import { Route, Routes } from "react-router-dom";
@@ -42,6 +41,8 @@ import {
   CodeSandboxOutlined,
   UsergroupAddOutlined,
   CoffeeOutlined,
+  FormOutlined,
+  TrophyOutlined,
 } from "@ant-design/icons";
 import { lazy } from "react";
 import { FiMap } from "react-icons/fi";
@@ -53,6 +54,8 @@ import { BsBuildings } from "react-icons/bs";
 import { MdOutlineSupportAgent } from "react-icons/md";
 import { MdGroups3 } from "react-icons/md";
 import { isPending } from "@reduxjs/toolkit";
+import { MdOutlineRestaurantMenu } from "react-icons/md";
+import { AiOutlineBuild } from "react-icons/ai";
 
 const Dashboard = lazy(() => import("../../pages/Dashboard/Dashboard"));
 const Calendar = lazy(() => import("../../pages/Calendar/Calendar"));
@@ -98,8 +101,8 @@ const CategoryListing = lazy(
   () => import("../../pages/Categories/CategoryListing"),
 );
 const UnitListing = lazy(() => import("../../pages/Units/UnitListing"));
-const InventoryListing = lazy(
-  () => import("../../pages/Inventories/InventoryListing"),
+const ServiceInventoryListing = lazy(
+  () => import("../../pages/ServicesInventories/ServiceInventoryListing"),
 );
 
 const MeanPlanList = lazy(() => import("../../pages/MealPlan/MealPlanList"));
@@ -142,6 +145,42 @@ const SeasonalRate = lazy(
 
 const MenuCategoryList = lazy(
   () => import("../../pages/MenuCategory/MenuCategoryList"),
+);
+
+const MenuModifierList = lazy(
+  () => import("../../pages/MenuModifier/MenuModifierList"),
+);
+
+const AgencyContractList = lazy(
+  () => import("../../pages/AgencyContract/AgencyContractList"),
+);
+
+const RoomInventoryList = lazy(
+  () => import("../../pages/RoomInventory/RoomInventoryList"),
+);
+
+const SupplierList = lazy(
+  () => import("../../pages/Suppliers/SuppliersListing"),
+);
+const RestauranttableList = lazy(
+  () => import("../../pages/RestaurantTable/RestaurantTableLisitng"),
+);
+const FAndBInventoryList = lazy(
+  () => import("../../pages/FAndBInventory/FAndBInventoryList"),
+);
+
+const CompanyContractList = lazy(
+  () => import("../../pages/CompanyContract/CompanyContractList"),
+);
+
+const MenuItemList = lazy(() => import("../../pages/MenuItem/MenuItemList"));
+
+const ExtraBedRateList = lazy(
+  () => import("../../pages/ExtraBedRate/ExtraBedRateList"),
+);
+
+const GuestFileUpload = lazy(
+  () => import("../../pages/GuestsListing/Components/NewGuestUploadForm"),
 );
 
 export const authRoutes = [
@@ -191,24 +230,17 @@ export const authRoutes = [
       },
       {
         key: 4.2,
-        label: "Inventories",
-        path: "/rates-availability/inventory",
-        icon: <DatabaseOutlined style={{ fontSize: "20px" }} />,
-        isPrivate: true,
-        component: <InventoryListing />,
-        permission: PERMISSIONS.SERVICE_INVENTORY_LIST,
+        path: "/rates-availability/room-inventory/",
+        label: "Room Inventory",
+        component: <RoomInventoryList />,
+        icon: <FormOutlined style={{ fontSize: "20px" }} />,
+        isPrivate: false,
+        permission: PERMISSIONS.AVAILABILITY_CALENDAR_LIST,
       },
-      // {
-      //   key: 4.3,
-      //   path: "/rates-availability/",
-      //   label: "Restrictions / Stop Sell",
-      //   icon: <DiffOutlined style={{ fontSize: "20px" }} />,
-      //   // component: </>,
-      // },
       {
         key: 4.4,
         label: "Meal Plan",
-        path: "/meal-plan",
+        path: "/rates-availability/meal-plan",
         icon: <JavaOutlined style={{ fontSize: "20px" }} />,
         isPrivate: true,
         component: <MeanPlanList />,
@@ -224,6 +256,13 @@ export const authRoutes = [
         permission: PERMISSIONS.SEASONAL_RATE_LIST,
       },
     ],
+  },
+  {
+    key: 4.9,
+    path: "/rates-availability/rate-plans/:ratePlanId/room-rate",
+    component: <RoomRateList />,
+    isPrivate: false,
+    // permission: PERMISSIONS.ROOM_RATE_LIST,
   },
 
   {
@@ -409,6 +448,15 @@ export const authRoutes = [
         component: <UnitListing />,
         permission: PERMISSIONS.UNIT_LIST,
       },
+      {
+        key: 9.4,
+        path: "/supplier",
+        label: "Supplier",
+        component: <SupplierList />,
+        icon: <ApartmentOutlined style={{ fontSize: "20px" }} />,
+        isPrivate: false,
+        permission: PERMISSIONS.SUPPLIER_LIST,
+      },
     ],
   },
   {
@@ -529,6 +577,15 @@ export const authRoutes = [
         component: <ServiceList />,
         // permission: PERMISSIONS.SERVICE_LIST,
       },
+      {
+        key: 13.2,
+        label: "Inventories",
+        path: "/services-management/inventory",
+        icon: <DatabaseOutlined style={{ fontSize: "20px" }} />,
+        isPrivate: true,
+        component: <ServiceInventoryListing />,
+        permission: PERMISSIONS.SERVICE_INVENTORY_LIST,
+      },
       // {
       //   key: 13.2,
       //   label: "Service Orders",
@@ -576,17 +633,36 @@ export const authRoutes = [
         path: "/f&b-management/menu-items",
         icon: <UnorderedListOutlined style={{ fontSize: "20px" }} />,
         isPrivate: true,
-        // component: < />,
+        component: <MenuItemList />,
+        permission: PERMISSIONS.MENU_ITEM_LIST,
+      },
+      {
+        key: 14.3,
+        label: "Menu Modifiers",
+        path: "/f&b-management/menu-modifiers",
+        icon: <MdOutlineRestaurantMenu style={{ fontSize: "20px" }} />,
+        component: <MenuModifierList />,
         // permission: ".list",
       },
-      // {
-      //   key: 14.3,
-      //   label: "Menu Modifiers",
-      //   path: "/f&b-management/menu-modifiers",
-      //   icon: <DiffOutlined style={{ fontSize: "20px" }} />,
-      //   // component: < />,
-      //   // permission: ".list",
-      // },
+      {
+        key: 14.4,
+        path: "/f&b-management/restaurant-table",
+        label: "Restaurant Table",
+        component: <RestauranttableList />,
+        icon: <FormOutlined style={{ fontSize: "20px" }} />,
+        isPrivate: false,
+        permission: PERMISSIONS.RESTAURANT_TABLE_LIST,
+      },
+      {
+        key: 14.5,
+        path: "/f&b-management/inventory/",
+        label: "Inventory",
+        component: <FAndBInventoryList />,
+        icon: <TrophyOutlined style={{ fontSize: "20px" }} />,
+        isPrivate: false,
+        permission: PERMISSIONS.FOOD_AND_BEVERAGE_INVENTORY_LIST,
+      },
+
       // {
       //   key: 14.4,
       //   label: "Tables",
@@ -744,6 +820,16 @@ export const authRoutes = [
     ],
   },
   {
+    key: 17.9,
+    path: "/partners/agencies/:agencyId/agency-contract",
+    component: <AgencyContractList />,
+  },
+  {
+    key: 17.9,
+    path: "/partners/company/:companyId/company-contract",
+    component: <CompanyContractList />,
+  },
+  {
     key: 20,
     path: "/guest-list/",
     label: "Guests",
@@ -757,15 +843,6 @@ export const authRoutes = [
     path: `/guest-list/guest-notes/:guestId`,
     component: <GuestNotesListing />,
     permission: PERMISSIONS.GUEST_NOTE_LIST,
-  },
-  {
-    key: 28,
-    path: "/room-rate",
-    label: "Room Rate",
-    component: <RoomRateList />,
-    icon: <AiOutlineBuild style={{ fontSize: "20px" }} />,
-    isPrivate: false,
-    // permission: PERMISSIONS.ROOM_RATE_LIST,
   },
   {
     key: 22,
@@ -784,6 +861,31 @@ export const authRoutes = [
     path: "/reservation-form/",
     component: <ReservationForm />,
     isPrivate: false,
+  },
+  {
+    key: 26,
+    path: "/room-inventory/",
+    label: "Room Inventory",
+    component: <RoomInventoryList />,
+    icon: <FormOutlined style={{ fontSize: "20px" }} />,
+    isPrivate: false,
+    permission: PERMISSIONS.AVAILABILITY_CALENDAR_LIST,
+  },
+  {
+    key: 27,
+    path: "/exta-bed-rate/",
+    label: "Extra Bed Rate",
+    component: <ExtraBedRateList />,
+    icon: <FormOutlined style={{ fontSize: "20px" }} />,
+    isPrivate: false,
+    permission: PERMISSIONS.EXTRA_BED_RATE_LIST,
+  },
+  {
+    key: 28,
+    label: "Guest",
+    path: "/guest",
+    icon: <ApartmentOutlined style={{ fontSize: "20px" }} />,
+    component: <GuestFileUpload />,
   },
 ];
 

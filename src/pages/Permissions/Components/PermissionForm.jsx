@@ -27,7 +27,7 @@ const PermissionForm = ({
   setPage,
   selectedRow,
   setSelectedRow,
-  drawerOpen, 
+  drawerOpen,
   setDrawerOpen,
 }) => {
   const [form] = Form.useForm();
@@ -36,7 +36,7 @@ const PermissionForm = ({
   const isEdit = mode === "edit";
   const isAdd = mode === "add";
 
-    const { data, isLoading, refetch } = useApiQuery({
+  const { data, isLoading } = useApiQuery({
     fetchQueryName: "permission-detail",
     fetchQueryFunction: getPermissionDetail,
     params: { uuid: selectedRow?.uuid },
@@ -49,9 +49,9 @@ const PermissionForm = ({
 
   useEffect(() => {
     if (!isAdd && data) {
-      form.setFieldsValue({...data});
+      form.setFieldsValue({ ...data });
       setSelectedRow(data);
-    } 
+    }
   }, [data]);
 
   const createPermission = useApiMutation({
@@ -65,11 +65,11 @@ const PermissionForm = ({
     invalidateKeys: [["permissions"]],
   });
 
-    const onFinish = (values) => {
-    if(isAdd){
+  const onFinish = (values) => {
+    if (isAdd) {
       const code = values.code || "";
       const extractedModule = code.includes(".")
-      ? code.split(".")[0] : values.module || "general";
+        ? code.split(".")[0] : values.module || "general";
       const createValues = {
         ...values, module: extractedModule
       };
@@ -83,18 +83,17 @@ const PermissionForm = ({
         },
       });
     }
-    if(isEdit){
+    if (isEdit) {
       const editValues = {
         ...values,
         uuid: data?.uuid,
       };
-     editPermission.mutate(editValues, {
-      onSuccess: () => {
-        setDrawerOpen(false);
-        refetch();
-        Toast.success("Permission Updated Successfully!");
-      },
-     });
+      editPermission.mutate(editValues, {
+        onSuccess: () => {
+          setDrawerOpen(false);
+          Toast.success("Permission Updated Successfully!");
+        },
+      });
     }
   }
 
@@ -104,7 +103,7 @@ const PermissionForm = ({
     setSelectedRow(null);
   };
 
-    const DrawerTitle = isView
+  const DrawerTitle = isView
     ? "Permission View"
     : isEdit
       ? "Permission Edit"
@@ -157,11 +156,11 @@ const PermissionForm = ({
             )}
           </div>
         }
-        size={500}
+        size={550}
         onClose={onClose}
         open={drawerOpen}
       >
-        {loading ? (
+        {isLoading ? (
           <div className="flex justify-center items-center h-64">
             <Loader />
           </div>
@@ -184,7 +183,7 @@ const PermissionForm = ({
                 <Input
                   readOnly={isView}
                   style={{ cursor: isView ? "default" : "text" }}
-                  placeholder="room view"
+                  placeholder="Enter Permission Name"
                 />
               </Form.Item>
 
@@ -199,7 +198,7 @@ const PermissionForm = ({
                 <Input
                   readOnly={isView}
                   style={{ cursor: isView ? "default" : "text" }}
-                  placeholder="room.view"
+                  placeholder="Enter Permission Code"
                 />
               </Form.Item>
 
@@ -224,10 +223,10 @@ const PermissionForm = ({
 
               <Form.Item label="Description" name="description">
                 <TextArea
-                  rows={4}
+                  rows={3}
                   readOnly={isView}
                   style={{ cursor: isView ? "default" : "text" }}
-                  placeholder="Enter description for related permission"
+                  placeholder="Enter Description"
                 />
               </Form.Item>
             </Form>

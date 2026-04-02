@@ -7,6 +7,7 @@ import FacilityForm from "./FacilityForm/FacilityForm";
 import { PERMISSIONS } from "../../../variables/permission";
 import usePermission from "../../../hooks/usePermission";
 import { useNavigate } from "react-router-dom";
+import ColorStatusTag from "../../../component/ColorStatusTag/ColorStatusTag";
 
 const FacilityTable = ({
   data,
@@ -16,6 +17,7 @@ const FacilityTable = ({
   total,
   changePage,
   changePerPage,
+  loading
 }) => {
   const { hasPermission } = usePermission();
   const navigate = useNavigate();
@@ -36,11 +38,6 @@ const FacilityTable = ({
       key: "name",
     },
     {
-      title: "Property",
-      dataIndex: ["property", "name"],
-      key: "property",
-    },
-    {
       title: "Facility Type",
       dataIndex: ["facilityType", "name"],
       key: "facilityType",
@@ -54,11 +51,7 @@ const FacilityTable = ({
       title: "Status",
       dataIndex: ["status", "name"],
       key: "status",
-      render: (_, record) => (
-        <Tag color={record?.status?.name === "Active" ? "green" : "red"}>
-          {record?.status?.name.toUpperCase()}
-        </Tag>
-      ),
+      render: (_, record) => <ColorStatusTag status={record?.status} />,
     },
     {
       title: "Action",
@@ -95,12 +88,13 @@ const FacilityTable = ({
             // permission: PERMISSIONS.FACILITY_PACKAGE_LIST,
             onClick: () => {
               navigate(
-                `/facility-management/facilities/${record?.uuid}/packages`,
-                // {
-                //   state: {
-                //     uuid: record?.uuid,
-                //   },
-                // },
+                `/facility-management/facilities/${record?.id}/packages`,
+                {
+                  state: {
+                    uuid: record?.uuid,
+                    name: record?.name
+                  },
+                },
               );
             },
           },
@@ -137,6 +131,7 @@ const FacilityTable = ({
         scroll={{ x: 1000 }}
         columns={columns}
         dataSource={data}
+        loading={loading}
         rowKey="uuid"
         pagination={{
           current: page,

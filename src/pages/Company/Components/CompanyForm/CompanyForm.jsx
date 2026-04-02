@@ -6,7 +6,8 @@ import {
   Drawer,
   Select,
   Row,
-  Col
+  Col,
+  InputNumber
 } from "antd";
 import Toast from "../../../../component/Toast/Toast";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
@@ -40,7 +41,7 @@ const CompanyForm = ({
   const initData = queryClient.getQueryData(["initData", "authenticated"])?.statuses;
   const chargeType = initData?.charge_type;
 
-  const chargeTypeValue = Form.useWatch(["chargeType","uuid"], form);
+  const chargeTypeValue = Form.useWatch(["chargeType", "uuid"], form);
 
   const upsertPartners = useApiMutation({
     mutationFn: upsertPartner,
@@ -113,7 +114,7 @@ const CompanyForm = ({
       <Drawer
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
-        size={500}
+        size={550}
         title={
           <div className="flex justify-between items-center">
             <span>
@@ -153,9 +154,9 @@ const CompanyForm = ({
           <Form.Item
             label="Name"
             name="name"
-            rules={[{ required: true, message: "Amenity Name is Required" }]}
+            rules={[{ required: true, message: "Company Name is Required" }]}
           >
-            <Input readOnly={isView} />
+            <Input readOnly={isView} placeholder="Enter Company Name" />
           </Form.Item>
 
           <Form.Item
@@ -163,7 +164,7 @@ const CompanyForm = ({
             name="contactPerson"
             rules={[{ required: true, message: "Contact Person Name is Required" }]}
           >
-            <Input readOnly={isView} />
+            <Input readOnly={isView} placeholder="Enter Contact Person Name" />
           </Form.Item>
 
           <Form.Item
@@ -171,7 +172,7 @@ const CompanyForm = ({
             name="email"
             rules={[{ required: true, message: "Email is Required" }]}
           >
-            <Input readOnly={isView} />
+            <Input readOnly={isView} placeholder="Enter Email Address" />
           </Form.Item>
 
           <Form.Item
@@ -179,7 +180,7 @@ const CompanyForm = ({
             name="phone"
             rules={[{ required: true, message: "Phone is Required" }]}
           >
-            <Input readOnly={isView} />
+            <Input readOnly={isView} placeholder="Enter Phone Number" />
           </Form.Item>
 
           <Row gutter={16}>
@@ -190,7 +191,7 @@ const CompanyForm = ({
                 rules={[{ required: true, message: "Charge Type is Required" }]}
                 getValueProps={(value) => ({
                   value: isView
-                    ? chargeType.find((item) => item.value === value)?.label
+                    ? chargeType.find((item) => item.uuid === value)?.name
                     : value,
                 })}
               >
@@ -239,16 +240,17 @@ const CompanyForm = ({
                   },
                 ]}
               >
-                <Input
-                  type="number"
+                <InputNumber
+                  className="!w-full"
                   min={1}
-                  addonAfter={(() => {
+                  suffix={(() => {
                     const selected = chargeType?.find(
                       (item) => item.uuid === chargeTypeValue,
                     );
                     return selected?.code === "percentage" ? "%" : "MMK";
                   })()}
-                  readOnly={isView} />
+                  readOnly={isView}
+                  placeholder="Enter Charge Value" />
               </Form.Item>
             </Col>
           </Row>
@@ -258,17 +260,17 @@ const CompanyForm = ({
             name="address"
             rules={[{ required: true, message: "Address is Required" }]}
           >
-            <TextArea readOnly={isView} />
+            <TextArea readOnly={isView} placeholder="Enter Address" />
           </Form.Item>
 
           <Form.Item
             label="Remark"
             name="remark"
           >
-            <TextArea readOnly={isView} />
+            <TextArea readOnly={isView} placeholder="Enter Remark" />
           </Form.Item>
 
-          <Status />
+          <Status isView={isView} />
         </Form>
       </Drawer>
     </div>

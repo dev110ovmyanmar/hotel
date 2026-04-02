@@ -1,5 +1,7 @@
+import { GiMushroomHouse } from "react-icons/gi";
 import { Dropdown, Space, Table } from "antd";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { MoreOutlined, EyeOutlined, EditOutlined } from "@ant-design/icons";
 import usePermission from "../../../hooks/usePermission";
 import { PERMISSIONS } from "../../../variables/permission";
@@ -12,11 +14,14 @@ const RatePlanTable = ({
   total,
   changePage,
   changePerPage,
+  loading
 }) => {
   const { hasPermission } = usePermission();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mode, setMode] = useState(null);
   const [selectedData, setSelectedData] = useState(null);
+
+  const navigate = useNavigate();
 
   const columns = [
     {
@@ -73,6 +78,20 @@ const RatePlanTable = ({
               setSelectedData(record);
             },
           },
+          {
+            key: "roomRate",
+            label: "Room Rate",
+            icon: <GiMushroomHouse style={{ fontSize: "12px" }} />,
+            // permission: PERMISSIONS.RATE_PLAN_EDIT,
+            onClick: () => {
+              navigate(
+                `/rates-availability/rate-plans/${record?.id}/room-rate`,
+                { state: { ratePlan: record } }
+              )
+
+            },
+          },
+
         ];
 
         const items = actions
@@ -106,6 +125,7 @@ const RatePlanTable = ({
         columns={columns}
         dataSource={data}
         rowKey="uuid"
+        loading={loading}
         pagination={{
           current: page,
           pageSize: perPage,

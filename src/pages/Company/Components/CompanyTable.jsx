@@ -1,5 +1,7 @@
+import { AiOutlineDropbox } from "react-icons/ai"; 
 import { Dropdown, Space, Table, Tag, Button } from "antd";
 import { useState } from "react";
+import {useNavigate} from "react-router-dom";
 import { EditOutlined, EyeOutlined, MoreOutlined } from "@ant-design/icons";
 import CompanyForm from './CompanyForm/CompanyForm';
 import ColorStatusTag from './../../../component/ColorStatusTag/ColorStatusTag';
@@ -18,6 +20,8 @@ const CompanyTable = ({
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mode, setMode] = useState(null);
   const [selectedData, setSelectedData] = useState({});
+
+  const navigate = useNavigate();      
 
   const { hasPermission } = usePermission();
 
@@ -105,6 +109,21 @@ const CompanyTable = ({
               setDrawerOpen(true);
               setMode("edit");
               setSelectedData(record);
+            },
+          },
+          {
+            key: "companyContract",
+            label: "Contract",
+            icon: <AiOutlineDropbox style={{ fontSize: "12px" }} />,
+            // permission: PERMISSIONS.PARTNER_EDIT,
+            onClick: () => {
+              navigate(
+                `/partners/company/${record?.id}/company-contract`,
+                { state :
+                  {companyRecord : record}
+                }
+
+              )
             },
           }
         ];

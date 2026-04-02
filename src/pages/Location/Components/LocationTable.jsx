@@ -5,7 +5,7 @@ import LocationForm from "./LocationForm/LocationForm";
 import usePermission from "../../../hooks/usePermission"; // Permission hook
 import { PERMISSIONS } from "../../../variables/permission";
 
-const LocationTable = ({ data, page, setPage, perPage, total, changePage, changePerPage }) => {
+const LocationTable = ({ data, page, setPage, perPage, total, changePage, changePerPage, loading }) => {
   const { hasPermission } = usePermission();
 
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -14,17 +14,17 @@ const LocationTable = ({ data, page, setPage, perPage, total, changePage, change
   const [selectedData, setSelectedData] = useState(null);
 
   const columns = [
-    { 
-      title: "ID", 
-      dataIndex: "id", 
-      key: "id", 
-      width: 70, 
-      align: "center" 
+    {
+      title: "ID",
+      dataIndex: "id",
+      key: "id",
+      width: 70,
+      align: "center"
     },
-    { 
-      title: "Country", 
-      dataIndex: "name", 
-      key: "name" 
+    {
+      title: "Country",
+      dataIndex: "name",
+      key: "name"
     },
     {
       title: "Action",
@@ -85,6 +85,7 @@ const LocationTable = ({ data, page, setPage, perPage, total, changePage, change
         scroll={{ x: 1000 }}
         columns={columns}
         dataSource={data}
+        loading={loading}
         rowKey="uuid"
         pagination={{
           current: page,

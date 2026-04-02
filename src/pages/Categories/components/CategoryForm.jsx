@@ -5,26 +5,41 @@ import FormButtons from "../../../component/FormButtons/FormButtons";
 import Toast from "../../../component/Toast/Toast";
 import { useApiMutation } from "../../../hooks/useApiMutation";
 import useApiQuery from "../../../hooks/useApiQuery";
+import { queryClient } from "../../../app/queryClient";
 import { upsertCategory, getCategoryDetail } from "../../../api/categoryApi";
 
-const CategoryForm = ({ 
+const CategoryForm = ({
   mode,
-  categories = [],
-  loading = false,
   switchToEdit,
   page,
   setPage,
   selectedRow,
   setSelectedRow,
-  drawerOpen, 
+  drawerOpen,
   setDrawerOpen,
-  statusOptions 
 }) => {
   const [form] = Form.useForm();
-  
+
   const isView = mode === "view";
   const isEdit = mode === "edit";
   const isAdd = mode === "add";
+
+  //status & department uuid
+  const initData = queryClient.getQueryData(["initData", "authenticated"]);
+
+  const statusOptions =
+    initData?.statuses?.status
+      ?.filter((item) => item.name.toLowerCase() !== "blocked")
+      ?.map((item) => ({
+        value: item.uuid,
+        label: item.name,
+      })) || [];
+
+  const departmentOptions =
+    initData?.departments?.map((item) => ({
+      value: item.uuid,
+      label: item.name,
+    })) || [];
 
   const { data, isLoading, error } = useApiQuery({
     fetchQueryName: "category_detail",
@@ -41,30 +56,34 @@ const CategoryForm = ({
     } else if (data) {
       form.setFieldsValue({
         ...data,
+        department: data?.department?.uuid,
+        description: data?.description,
         status: data?.status?.uuid
       });
     }
   }, [data, mode]);
 
-    const createCategory = useApiMutation({
-      mutationFn: upsertCategory,
-      invalidateKeys: [["categories"]],
-      shouldInvalidate: page === 1
-    });
+  const createCategory = useApiMutation({
+    mutationFn: upsertCategory,
+    invalidateKeys: [["categories"]],
+    shouldInvalidate: page === 1
+  });
 
-    const editCategory = useApiMutation({
-        mutationFn: upsertCategory,
-        invalidateKeys: [["categories"]],
-      });
+  const editCategory = useApiMutation({
+    mutationFn: upsertCategory,
+    invalidateKeys: [["categories"]],
+  });
 
 
   const onFinish = (values) => {
     const basePayload = {
       name: values.name,
+      department: { uuid: values.department },
+      description: values.description,
       status: { uuid: values.status }
     };
 
-    if(isAdd){
+    if (isAdd) {
       createCategory.mutate(basePayload, {
         onSuccess: () => {
           form.resetFields();
@@ -74,43 +93,39 @@ const CategoryForm = ({
         },
       });
     }
-    if(isEdit){
+    if (isEdit) {
       const editValues = {
         ...basePayload,
+        department: { uuid: values.department },
+        description: values.description,
         uuid: data?.uuid,
       };
-     editCategory.mutate(editValues, {
-      onSuccess: () => {
-        setDrawerOpen(false);
-        Toast.success("Category Updated Successfully!");
-      },
-     });
+      editCategory.mutate(editValues, {
+        onSuccess: () => {
+          setDrawerOpen(false);
+          Toast.success("Category Updated Successfully!");
+        },
+      });
     }
   }
 
-  
-
-  // Use watch to get the value in real-time for the read-only display
-  const currentStatusUuid = Form.useWatch("statusUuid", form);
-  const getStatusLabel = (val) => statusOptions.find((s) => s.value === val)?.label || "-";
-
-    const onClose = () => {
+  const onClose = () => {
     form.resetFields();
     setDrawerOpen(false);
     setSelectedRow(null);
   };
 
   const DrawerTitle = isView
-    ? "Category View"
+    ? "Category Details"
     : isEdit
-    ? "Category Edit"
-    : "Category Create";
+      ? "Edit Category"
+      : "Add Category";
 
   return (
     <Drawer
       title={
         <div className="flex items-center justify-between w-full">
-          <span>{mode === "view" ? "View Category" : mode === "edit" ? "Edit Category" : "Add Category"}</span>
+          {DrawerTitle}
           {isView ? (
             <Button type="primary" onClick={switchToEdit}>Edit</Button>
           ) : (
@@ -118,47 +133,71 @@ const CategoryForm = ({
           )}
         </div>
       }
-      size={500} // size={500} is not a valid AntD prop, use width
+      size={550} // size={500} is not a valid AntD prop, use width
       onClose={onClose}
       open={drawerOpen}
       destroyOnClose
     >
-      {loading ? <Loader /> : (
-        <Form form={form} layout="vertical" onFinish={onFinish}>
-          <Form.Item
-            label="Category Name"
-            name="name"
-            rules={[{ required: true, message: "Please input category name!" }]}
-          >
-            <Input placeholder="e.g. Guest Amenities" readOnly={isView} />
-          </Form.Item>
+      {isLoading ?
+        <div className="flex items-center justify-center h-full min-h-[300px]">
+          <Loader />
+        </div> : (
+          <Form form={form} layout="vertical" onFinish={onFinish}>
+            <Form.Item
+              label="Name"
+              name="name"
+              rules={[{ required: true, message: "Please input category name!" }]}
+            >
+              <Input placeholder="Enter Category Name" readOnly={isView} />
+            </Form.Item>
 
-          <Form.Item
-            name="status"
-            label="Status"
-            rules={[{ required: true, message: "Status is required" }]}
-          >
-            {/* {isView ? (
-              <div className="border border-gray-200 rounded-lg px-4 h-11 flex items-center bg-gray-50 text-gray-600">
-                {getStatusLabel(currentStatusUuid)}
-              </div>
+            {isView ? (
+              <Form.Item label="Department">
+                <Input
+                  readOnly
+                  value={data?.department?.name}
+                  className="bg-white text-black cursor-default border-gray-200"
+                  variant="outlined"
+                />
+              </Form.Item>
             ) : (
-              <Select 
-                options={statusOptions} 
-                className="h-11" 
-                placeholder="Select Status" 
+              <Form.Item label="Department" name="department"
+                rules={[{ required: true, message: "Department is required" }]} >
+                <Select
+                  options={departmentOptions}
+                  className="w-full"
+                  showSearch
+                  placeholder="Select Department"
+                  filterOption={(input, option) =>
+                    option.label.toLowerCase().includes(input.toLowerCase())
+                  }
+                />
+              </Form.Item>
+            )}
+
+            <Form.Item label="Description" name="description">
+              <Input.TextArea rows={2}
+                readOnly={isView}
+                style={{ cursor: isView ? "default" : "text" }}
+                placeholder="Enter Description"
               />
-            )} */}
-              <Select 
-                options={statusOptions} 
-                // className="h-11" 
-                placeholder="Select Status" 
+            </Form.Item>
+
+            <Form.Item
+              name="status"
+              label="Status"
+              rules={[{ required: true, message: "Status is required" }]}
+            >
+              <Select
+                options={statusOptions}
+                placeholder="Select Status"
                 disabled={isView}
               />
-          </Form.Item>
-        </Form>
-      )}
-    </Drawer>
+            </Form.Item>
+          </Form>
+        )
+      }
+    </Drawer >
   );
 };
 

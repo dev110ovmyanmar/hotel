@@ -1,13 +1,12 @@
 import React, { useState, useMemo, useEffect } from "react";
-import {
-  getProperties,
-} from "../../api/propertyApi.js";
+import { getProperties } from "../../api/propertyApi.js";
 import { queryClient } from "../../app/queryClient.js";
 import useApiQuery from "../../hooks/useApiQuery";
 import PropertyTable from "./components/PropertyTable.jsx";
 import PropertyForm from "./components/PropertyForm.jsx";
 import ListHeader from "../../component/ListHeader/ListHeader.jsx";
 import { LIMITS } from "../../variables/constants.js";
+import PropertyDocumentsDrawer from "./components/PropertyDocumentsDrawer.jsx";
 
 const PropertiesListing = () => {
   const [selectedRow, setSelectedRow] = useState(null);
@@ -16,6 +15,7 @@ const PropertiesListing = () => {
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(LIMITS.PAGE_SIZE);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [documentDrawerOpen, setDocumentDrawerOpen] = useState(false);
   const [selectedCountryUuid, setSelectedCountryUuid] = useState(null);
 
   const { data, isLoading, error } = useApiQuery({
@@ -24,7 +24,7 @@ const PropertiesListing = () => {
     params: {
       pagination: {
         page: page,
-        perPage: perPage
+        perPage: perPage,
       },
       keyword,
     },
@@ -94,6 +94,11 @@ const PropertiesListing = () => {
     setDrawerOpen(true);
   };
 
+  const handelUpload = (record) => {
+    setSelectedRow(record);
+    setDocumentDrawerOpen(true);
+  };
+
   const onClose = () => {
     setDrawerOpen(false);
     setSelectedRow(null);
@@ -103,7 +108,7 @@ const PropertiesListing = () => {
     setCurrentMode("edit");
   };
 
-  const showPropertyAddButton = properties ? false : true;
+  const showCreateButton = properties ? false : true;
 
   return (
     <div className="w-full px-6 py-2">
@@ -113,7 +118,7 @@ const PropertiesListing = () => {
           setKeyword={setKeyword}
           searchPlaceholder="Search Property..."
           onAdd={handleAdd}
-          showPropertyAddButton={showPropertyAddButton}
+          showCreateButton={showCreateButton}
           // showButton={true}
           addButtonText={"Add Property"}
         />
@@ -123,6 +128,7 @@ const PropertiesListing = () => {
         dataSource={properties}
         onView={handleView}
         onEdit={handleEdit}
+        onUpload={handelUpload}
         loading={isLoading}
         page={data?.response?.pagination?.currentPage || page}
         perPage={data?.response?.pagination?.perPage || perPage}
@@ -146,6 +152,11 @@ const PropertiesListing = () => {
         onCountryChange={setSelectedCountryUuid}
       />
 
+      <PropertyDocumentsDrawer
+        open={documentDrawerOpen}
+        onClose={() => setDocumentDrawerOpen(false)}
+        property={selectedRow}
+      />
     </div>
   );
 };

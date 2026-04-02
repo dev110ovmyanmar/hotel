@@ -18,18 +18,19 @@ const SeasonalRateList = () => {
 
   const normalStatus = status === "all" ? null : status;
 
-  const { data } = useApiQuery({
+  const { data, isLoading } = useApiQuery({
     fetchQueryName: "SeasonlRate",
     fetchQueryFunction: fetchSeasonlRate,
     params: {
-      pagination: {
-        page: page,
-        perPage: perPage,
-      },
       keyword,
       status: normalStatus,
     },
   });
+
+  const seasonalRoomTypeData = data?.data?.map(item => ({
+    ...item.roomType,
+    rates: item.rates
+  }));
 
   useEffect(() => {
     setPage(1);
@@ -45,23 +46,18 @@ const SeasonalRateList = () => {
     <div className="w-full px-6 py-2">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
         <ListHeader
-          title="Seasonal Rate List"
           searchPlaceholder="Search Seasonal Rate ..."
           keyword={keyword}
           setKeyword={setKeyword}
           addButtonText="Add New Seasonal Rate"
           onAdd={handleAdd}
-          permission={PERMISSIONS.SEASONAL_RATE_CREATE}
+        // permission={PERMISSIONS.SEASONAL_RATE_CREATE}
         />
       </div>
 
       <SeasonalRateTable
-        data={data?.data || []}
-        page={data?.pagination.currentPage}
-        perPage={data?.pagination.perPage}
-        total={data?.pagination?.total}
-        changePage={(page) => setPage(page)}
-        changePerPage={(perPage) => setPerPage(perPage)}
+        data={seasonalRoomTypeData || []}
+        loading={isLoading}
       />
 
       <SeasonalRateForm

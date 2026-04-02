@@ -1,10 +1,12 @@
 import { Dropdown, Space, Table, Tag, Button } from "antd";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { EditOutlined, EyeOutlined, MoreOutlined } from "@ant-design/icons";
 import AgencyForm from './AgencyForm/AgencyForm';
 import { PERMISSIONS } from './../../../variables/permission';
 import usePermission from './../../../hooks/usePermission';
 import ColorStatusTag from './../../../component/ColorStatusTag/ColorStatusTag';
+import { FaFileContract } from "react-icons/fa"; 
 
 
 const AgencyTable = ({
@@ -20,6 +22,8 @@ const AgencyTable = ({
   const [selectedData, setSelectedData] = useState({});
 
   const { hasPermission } = usePermission();
+
+  const navigate = useNavigate();
 
   const columns = [
     {
@@ -105,6 +109,18 @@ const AgencyTable = ({
               setDrawerOpen(true);
               setMode("edit");
               setSelectedData(record);
+            },
+          },
+          {
+            key: "contract",
+            label: "Contract",
+            icon: <FaFileContract style={{ fontSize: "12px" }} />,
+            // permission: PERMISSIONS.PARTNER_EDIT,
+            onClick: () => {
+              navigate(
+                `/partners/agencies/${record?.id}/agency-contract`,
+                {state: {agencyRecord : record}}
+              )
             },
           },
         ];

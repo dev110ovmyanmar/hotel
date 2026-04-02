@@ -9,6 +9,8 @@ import {
 } from "../../../../api/menuCategory";
 import useApiQuery from "../../../../hooks/useApiQuery";
 import { queryClient } from "../../../../app/queryClient";
+import Status from "../../../../component/Status/Status";
+import Loader from "../../../../component/Loader/Loader";
 
 const MenuCategoryForm = ({
   mode,
@@ -48,7 +50,7 @@ const MenuCategoryForm = ({
     invalidateKeys: [["menuCategory"]],
   });
 
-  const { data } = useApiQuery({
+  const { data, isLoading } = useApiQuery({
     fetchQueryName: "menuCategory-details",
     fetchQueryFunction: menuCategoryDetails,
     params: { uuid: selectedData?.uuid },
@@ -75,7 +77,6 @@ const MenuCategoryForm = ({
       form.setFieldsValue({
         ...data,
         displayOrder: Number(data?.displayOrder),
-        status: data?.status?.uuid,
       });
 
       setSelectedData(data);
@@ -85,7 +86,8 @@ const MenuCategoryForm = ({
     if (isAdd) {
       const createValues = {
         ...values,
-        status: { uuid: values.status },
+        // status: { uuid: values.status },
+        status: values.status,
       };
 
       createMenuCategories.mutate(createValues, {
@@ -100,7 +102,8 @@ const MenuCategoryForm = ({
     if (isEdit) {
       const editValues = {
         ...values,
-        status: { uuid: values.status },
+        // status: { uuid: values.status },
+        status: values.status,
         uuid: data?.uuid,
       };
 
@@ -149,47 +152,41 @@ const MenuCategoryForm = ({
           </div>
         }
       >
-        <Form
-          form={form}
-          layout="vertical"
-          style={{ width: "100%" }}
-          onFinish={onFinish}
-        >
-          <Form.Item
-            label="Name"
-            name="name"
-            rules={[{ required: true, message: "Name is Required" }]}
-          >
-            <Input readOnly={isView} />
-          </Form.Item>
+        {
+          isLoading ? (
+            <div className="flex items-center justify-center h-full min-h-[300px]">
+              <Loader />
+            </div>
+          ) :
+            (
+              <Form
+                form={form}
+                layout="vertical"
+                style={{ width: "100%" }}
+                onFinish={onFinish}
+              >
+                <Form.Item
+                  label="Name"
+                  name="name"
+                  rules={[{ required: true, message: "Name is Required" }]}
+                >
+                  <Input readOnly={isView} placeholder="Enter Menu Category Name" />
+                </Form.Item>
 
-          <Form.Item
-            label="Display Order"
-            name="displayOrder"
-            rules={[{ required: true }]}
-          >
-            <InputNumber disabled={isView} className="!w-full" />
-          </Form.Item>
+                <Form.Item
+                  label="Display Order"
+                  name="displayOrder"
+                  rules={[{ required: true }]}
+                >
+                  <InputNumber disabled={isView} className="!w-full" placeholder="Enter Display Order" />
+                </Form.Item>
 
-          <Form.Item
-            label="Status"
-            name="status"
-            rules={[{ required: true, message: "Status is Required" }]}
-            getValueProps={(value) => ({
-              value: isView
-                ? statusList.find((item) => item.value === value)?.label
-                : value,
-            })}
-          >
-            {isView ? (
-              <Input readOnly={isView} />
-            ) : (
-              <Select options={statusList} open={isView ? false : undefined} />
-            )}
-          </Form.Item>
-        </Form>
+                <Status isView={isView} />
+              </Form>
+            )
+        }
       </Drawer>
-    </div>
+    </div >
   );
 };
 

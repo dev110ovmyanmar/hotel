@@ -27,7 +27,12 @@ import { useApiMutation } from "../../hooks/useApiMutation.js";
 import { ReloadOutlined } from "@ant-design/icons";
 import { queryClient } from "../../app/queryClient.js";
 import { setUserData } from "../../services/authSlice.js";
-import { persister } from './../../app/QueryProvider';
+import { persister } from "./../../app/QueryProvider";
+import { loadState } from "../../utils/Utils";
+import { LOCAL_STORAGE_KEYS } from "../../variables/constants";
+import useApiQuery from "../../hooks/useApiQuery";
+import { adminDetails } from "../../api/adminApi";
+import { saveState } from "../../utils/Utils.js";
 
 const { Header } = Layout;
 
@@ -44,6 +49,16 @@ const Topbar = withDirection(function (props) {
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
+  const uuid = loadState(LOCAL_STORAGE_KEYS.loginAdminDetails)?.uuid;
+
+  const { 
+    data: loginAdminDetails,
+  } = useApiQuery({
+        fetchQueryName: "login-admin-details",
+        fetchQueryFunction: adminDetails,
+        params: { uuid },
+      });
+
   const handleRefetchInitData = async () => {
     try {
       setRefreshing(true);
@@ -57,8 +72,8 @@ const Topbar = withDirection(function (props) {
 
       if (freshData?.permissions) {
         dispatch(setUserData({ permissions: freshData.permissions }));
+        saveState("InitPermissions", freshData.permissions);
       }
-
     } catch (error) {
       console.error("Refetch failed", error);
     } finally {
@@ -99,9 +114,9 @@ const Topbar = withDirection(function (props) {
     [dispatch],
   );
 
-  const handleMenuClick = (action) => {
+  const handleMenuClick = async (action) => {
     if (action === "profile") {
-      setProfileDrawerOpen(true);
+      setProfileDrawerOpen(true);      
     } else if (action === "password") {
       setPasswordDrawerOpen(true);
     } else if (action === "logout") {
@@ -148,15 +163,14 @@ const Topbar = withDirection(function (props) {
   return (
     <>
       <Header
-        className={`bg-white! fixed w-full h-25 flex justify-between z-1000 border-b border-gray-300 transition-all ${
-          isCollapsed
+        className={`bg-white! fixed w-full h-25 flex justify-between z-1000 border-b border-gray-300 transition-all ${isCollapsed
             ? props["data-rtl"] === "rtl"
               ? "px-[15px] md:pl-[31px] md:pr-[109px]!"
               : "px-[15px] md:pr-[31px] md:pl-[109px]!"
             : props["data-rtl"] === "rtl"
               ? "pl-[260px] pr-[15px] md:pl-[265px] md:pr-[31px]!"
               : "pr-[15px] pl-[260px] md:pr-[31px] md:pl-[265px]!"
-        }`}
+          }`}
       >
         {/* Left Section */}
         <div className="flex items-center py-2 gap-2">
@@ -197,7 +211,7 @@ const Topbar = withDirection(function (props) {
             type="text"
             icon={
               theme === "light" ? (
-                <MoonOutlined style={{ fontSize: 20, marginTop: 30  }} />
+                <MoonOutlined style={{ fontSize: 20, marginTop: 30 }} />
               ) : (
                 <SunOutlined style={{ fontSize: 20 }} />
               )
@@ -209,7 +223,7 @@ const Topbar = withDirection(function (props) {
           <Button
             type="text"
             loading={refreshing}
-            icon={<ReloadOutlined style={{ fontSize: 18, marginTop: 30  }} />}
+            icon={<ReloadOutlined style={{ fontSize: 18, marginTop: 30 }} />}
             className="bg-gray-200 hover:bg-gray-300 text-gray-700"
             onClick={handleRefetchInitData}
           />
@@ -256,7 +270,7 @@ const Topbar = withDirection(function (props) {
                   <UserOutlined />
                 </div>
                 <span className="hidden md:block text-gray-700 font-medium">
-                  Admin
+                  {loginAdminDetails?.role?.name}
                 </span>
               </div>
             </div>
@@ -267,7 +281,7 @@ const Topbar = withDirection(function (props) {
       <Drawer
         title="Change Password"
         placement="right"
-        size={500}
+        size={550}
         onClose={closePasswordDrawer}
         open={passwordDrawerOpen}
       >
@@ -276,11 +290,11 @@ const Topbar = withDirection(function (props) {
       <Drawer
         title="Profile"
         placement="right"
-        size={500}
+        size={550}
         onClose={closeProfileDrawer}
         open={profileDrawerOpen}
       >
-        <ProfilePage onClose={closeProfileDrawer} />
+        <ProfilePage onClose={closeProfileDrawer} profileData />
       </Drawer>
     </>
   );

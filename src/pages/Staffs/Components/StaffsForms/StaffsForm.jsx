@@ -8,6 +8,7 @@ import {
   DatePicker,
   Row,
   Col,
+  Checkbox,
 } from "antd";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
 import useApiQuery from "../../../../hooks/useApiQuery";
@@ -16,6 +17,8 @@ import FormButton from "../../../../component/FormButtons/FormButtons";
 import { createStaff, editStaff, staffDetails } from "../../../../api/staffApi";
 import dayjs from "dayjs";
 import { getFormattedDate } from "../../../../utils";
+import Status from "../../../../component/Status/Status";
+import Loader from "../../../../component/Loader/Loader";
 
 const StaffsForm = ({
   mode,
@@ -35,6 +38,8 @@ const StaffsForm = ({
 
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
   const [selectedRegion, setSelectedRegion] = useState(null);
+
+  const [isCurrent, setIsCurrent] = useState(false);
 
   const departments = initData?.departments?.map((department) => ({
     value: department.uuid,
@@ -63,6 +68,15 @@ const StaffsForm = ({
     label: type.code,
   }));
 
+  const handleCurrentChange = (e) => {
+    const checked = e.target.checked;
+    setIsCurrent(checked);
+
+    if (checked) {
+      form.setFieldsValue({ endedAt: null });
+    }
+  };
+
   const createStaffs = useApiMutation({
     mutationFn: createStaff,
     invalidateKeys: [["staffData"]],
@@ -74,7 +88,7 @@ const StaffsForm = ({
     invalidateKeys: [["staffData"]],
   });
 
-  const { data } = useApiQuery({
+  const { data, isLoading } = useApiQuery({
     fetchQueryName: "staffData",
     fetchQueryFunction: staffDetails,
     params: { uuid: selectedData?.uuid },
@@ -96,6 +110,7 @@ const StaffsForm = ({
         nrcTownship: nrcTownship,
         nrcNumber: nrcNumber,
         joinedAt: data?.joinedAt ? dayjs(data.joinedAt) : null,
+        endedAt: data?.endedAt ? dayjs(data.endedAt) : null,
       });
       setSelectedRegion(nrcSrNo);
       setSelectedData(data);
@@ -115,6 +130,7 @@ const StaffsForm = ({
     const formattedValues = {
       ...values,
       joinedAt: getFormattedDate(values.joinedAt, false),
+      endedAt: getFormattedDate(values.endedAt, false),
       nrc: nrcObj,
       nrcNo: nrcNo,
     };
@@ -184,65 +200,30 @@ const StaffsForm = ({
           </div>
         }
       >
-        <Form form={form} layout="vertical" onFinish={onFinish}>
-          <Form.Item
-            label="Name"
-            name="name"
-            rules={[{ required: true, message: "Please enter name" }]}
-          >
-            <Input placeholder="Enter staff name" readOnly={isView} />
-          </Form.Item>
-
-          <Form.Item
-            label="Department"
-            name="department"
-            rules={[{ required: true }]}
-            getValueProps={(value) => ({
-              value: isView
-                ? departments.find((item) => item.value === value)?.label
-                : value,
-            })}
-          >
-            {isView ? (
-              <Input readOnly={isView} />
-            ) : (
-              <Select
-                showSearch={{
-                  filterOption: (input, option) =>
-                    (option?.label ?? "")
-                      .toLowerCase()
-                      .includes(input.toLowerCase()),
-                }}
-                options={departments}
-                placeholder="Select Department"
-                onChange={() => {
-                  form.setFieldValue("chargeValue", undefined);
-                }}
-              />
-            )}
-          </Form.Item>
-
-          <Form.Item
-            label="Position "
-            name="position"
-            rules={[{ required: true, message: "Please enter position" }]}
-          >
-            <Input placeholder="Enter Room Type" />
-          </Form.Item>
-
-          <Form.Item
-            label="NRC No"
-            name="nrcNo"
-            rules={[{ required: true, message: "" }]}
-          >
-            <Row gutter={5}>
-              <Col span={4}>
+        {
+          isLoading ?
+            (
+              <div className="flex items-center justify-center h-full min-h-[300px]">
+                <Loader />
+              </div>
+            ) :
+            (
+              <Form form={form} layout="vertical" onFinish={onFinish}>
                 <Form.Item
-                  name="nrcSrNo"
+                  label="Name"
+                  name="name"
+                  rules={[{ required: true, message: "Please enter name" }]}
+                >
+                  <Input placeholder="Enter Staff Name" readOnly={isView} />
+                </Form.Item>
+
+                <Form.Item
+                  label="Department"
+                  name="department"
                   rules={[{ required: true }]}
                   getValueProps={(value) => ({
                     value: isView
-                      ? region.find((item) => item.value === value)?.label
+                      ? departments.find((item) => item.value === value)?.label
                       : value,
                   })}
                 >
@@ -256,28 +237,146 @@ const StaffsForm = ({
                             .toLowerCase()
                             .includes(input.toLowerCase()),
                       }}
-                      options={region}
-                      placeholder="Select Region"
-                      onChange={(value) => {
-                        setSelectedRegion(value);
-                        form.setFieldsValue({ nrcTownship: null });
+                      options={departments}
+                      placeholder="Select Department"
+                      onChange={() => {
+                        form.setFieldValue("chargeValue", undefined);
                       }}
                     />
                   )}
                 </Form.Item>
-              </Col>
 
-              <Col span={1} className="text-center font-bold">
-                /
-              </Col>
-
-              <Col span={7}>
                 <Form.Item
-                  name="nrcTownship"
+                  label="Position "
+                  name="position"
+                  rules={[{ required: true, message: "Please enter position" }]}
+                >
+                  <Input placeholder="Enter Room Type" />
+                </Form.Item>
+
+                <Form.Item
+                  label="NRC No"
+                  name="nrcNo"
+                  rules={[{ required: true, message: "" }]}
+                >
+                  <Row gutter={5}>
+                    <Col span={4}>
+                      <Form.Item
+                        name="nrcSrNo"
+                        rules={[{ required: true }]}
+                        getValueProps={(value) => ({
+                          value: isView
+                            ? region.find((item) => item.value === value)?.label
+                            : value,
+                        })}
+                      >
+                        {isView ? (
+                          <Input readOnly={isView} />
+                        ) : (
+                          <Select
+                            showSearch={{
+                              filterOption: (input, option) =>
+                                (option?.label ?? "")
+                                  .toLowerCase()
+                                  .includes(input.toLowerCase()),
+                            }}
+                            options={region}
+                            placeholder="Select Region"
+                            onChange={(value) => {
+                              setSelectedRegion(value);
+                              form.setFieldsValue({ nrcTownship: null });
+                            }}
+                          />
+                        )}
+                      </Form.Item>
+                    </Col>
+
+                    <Col span={1} className="text-center font-bold">
+                      /
+                    </Col>
+
+                    <Col span={7}>
+                      <Form.Item
+                        name="nrcTownship"
+                        rules={[{ required: true }]}
+                        getValueProps={(value) => ({
+                          value: isView
+                            ? township?.find((item) => item.value === value)?.label
+                            : value,
+                        })}
+                      >
+                        {isView ? (
+                          <Input readOnly={isView} />
+                        ) : (
+                          <Select
+                            showSearch={{
+                              filterOption: (input, option) =>
+                                (option?.label ?? "")
+                                  .toLowerCase()
+                                  .includes(input.toLowerCase()),
+                            }}
+                            options={township}
+                            placeholder="Select Township"
+                            disabled={!selectedRegion}
+                          />
+                        )}
+                      </Form.Item>
+                    </Col>
+
+                    <Col span={4}>
+                      <Form.Item
+                        name="nrcType"
+                        rules={[{ required: true }]}
+                        getValueProps={(value) => ({
+                          value: isView
+                            ? citizenship.find((item) => item.value === value)?.label
+                            : value,
+                        })}
+                      >
+                        {isView ? (
+                          <Input readOnly={isView} />
+                        ) : (
+                          <Select
+                            showSearch={{
+                              filterOption: (input, option) =>
+                                (option?.label ?? "")
+                                  .toLowerCase()
+                                  .includes(input.toLowerCase()),
+                            }}
+                            options={citizenship}
+                            placeholder="Select Type"
+                          />
+                        )}
+                      </Form.Item>
+                    </Col>
+
+                    <Col span={8}>
+                      <Form.Item name="nrcNumber" rules={[{ required: true }]}>
+                        <Input placeholder="Number" readOnly={isView} />
+                      </Form.Item>
+                    </Col>
+                  </Row>
+                </Form.Item>
+
+                <Form.Item label="Passport" name="passport">
+                  <Input placeholder="Enter Passport" readOnly={isView} />
+                </Form.Item>
+
+                <Form.Item label="Phone" name="phone">
+                  <Input placeholder="Enter Phone Number" readOnly={isView} />
+                </Form.Item>
+
+                <Form.Item label="Email" name="email">
+                  <Input placeholder="Enter Email Address" readOnly={isView} />
+                </Form.Item>
+
+                <Form.Item
+                  label="Gender"
+                  name="genderUuid"
                   rules={[{ required: true }]}
                   getValueProps={(value) => ({
                     value: isView
-                      ? township.find((item) => item.value === value)?.label
+                      ? genders.find((item) => item.value === value)?.label
                       : value,
                   })}
                 >
@@ -291,96 +390,75 @@ const StaffsForm = ({
                             .toLowerCase()
                             .includes(input.toLowerCase()),
                       }}
-                      options={township}
-                      placeholder="Select Township"
-                      disabled={!selectedRegion}
+                      options={genders}
+                      placeholder="Select Gender"
                     />
                   )}
                 </Form.Item>
-              </Col>
 
-              <Col span={4}>
                 <Form.Item
-                  name="nrcType"
-                  rules={[{ required: true }]}
-                  getValueProps={(value) => ({
-                    value: isView
-                      ? citizenship.find((item) => item.value === value)?.label
-                      : value,
-                  })}
+                  label="Joined Date"
+                  name="joinedAt"
+                  rules={[{ required: true, message: "Please select Date" }]}
                 >
-                  {isView ? (
-                    <Input readOnly={isView} />
-                  ) : (
-                    <Select
-                      showSearch={{
-                        filterOption: (input, option) =>
-                          (option?.label ?? "")
-                            .toLowerCase()
-                            .includes(input.toLowerCase()),
-                      }}
-                      options={citizenship}
-                      placeholder="Select Type"
-                    />
-                  )}
+                  <DatePicker className="w-full" disabled={isView} placeholder="Select Joined Date" />
                 </Form.Item>
-              </Col>
 
-              <Col span={8}>
-                <Form.Item name="nrcNumber" rules={[{ required: true }]}>
-                  <Input placeholder="Number" readOnly={isView} />
-                </Form.Item>
-              </Col>
-            </Row>
+                {/* <Form.Item name="currentlyWorking" valuePropName="checked">
+            <Checkbox disabled={isView} onChange={handleCurrentChange}>
+              Currently Working
+            </Checkbox>
           </Form.Item>
 
-          <Form.Item label="Passport" name="passport">
-            <Input placeholder="Enter passport" readOnly={isView} />
-          </Form.Item>
-
-          <Form.Item label="Phone" name="phone">
-            <Input placeholder="Enter phone" readOnly={isView} />
-          </Form.Item>
-
-          <Form.Item label="Email" name="email">
-            <Input placeholder="Enter email" readOnly={isView} />
-          </Form.Item>
-
-          <Form.Item
-            label="Gender"
-            name="genderUuid"
-            rules={[{ required: true }]}
-            getValueProps={(value) => ({
-              value: isView
-                ? genders.find((item) => item.value === value)?.label
-                : value,
-            })}
-          >
-            {isView ? (
-              <Input readOnly={isView} />
-            ) : (
-              <Select
-                showSearch={{
-                  filterOption: (input, option) =>
-                    (option?.label ?? "")
-                      .toLowerCase()
-                      .includes(input.toLowerCase()),
-                }}
-                options={genders}
-                placeholder="Select Gender"
-              />
-            )}
-          </Form.Item>
-
-          <Form.Item
-            label="Joined Date"
-            name="joinedAt"
+          {!isCurrent && <Form.Item
+            label="Left Date"
+            name="endedAt"
             rules={[{ required: true, message: "Please select Date" }]}
           >
             <DatePicker className="w-full" disabled={isView} />
-          </Form.Item>
-        </Form>
-      </Drawer>
+          </Form.Item>} */}
+
+                {isView ? (
+                  <Form.Item
+                    label="Left Date"
+                    name="endedAt"
+                    rules={[{ required: true, message: "Please select Date" }]}
+                  >
+                    {data?.endedAt ? (
+                      // dayjs(data.endedAt).format("YYYY-MM-DD")
+                      <DatePicker className="w-full" disabled={isView} placeholder="Select Left Date" />
+                    ) : (
+                      <span className="text-green-600 font-medium pl-2.5">
+                        Currently Working
+                      </span>
+                    )}
+                  </Form.Item>
+                ) :
+                  isEdit && (
+                    <>
+                      <Form.Item name="currentlyWorking" valuePropName="checked">
+                        <Checkbox disabled={isView} onChange={handleCurrentChange}>
+                          Currently Working
+                        </Checkbox>
+                      </Form.Item>
+
+                      {!isCurrent && (
+                        <Form.Item
+                          label="Left Date"
+                          name="endedAt"
+                          rules={[{ required: true, message: "Please select Date" }]}
+                        >
+                          <DatePicker className="w-full" disabled={isView} />
+                        </Form.Item>
+                      )}
+                    </>
+                  )}
+
+                <Status isView={isView} />
+              </Form >
+            )
+        }
+      </Drawer >
     </>
   );
 };

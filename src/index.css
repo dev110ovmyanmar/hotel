@@ -176,3 +176,9 @@
 .ant-input-number-outlined {
   --ant-border-radius: 5px;
 }
+
+#upload .ant-upload-select {
+ width: 200px;
+ height: 200px;
+}
+

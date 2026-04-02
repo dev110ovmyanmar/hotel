@@ -12,6 +12,7 @@ const DepartmentsTable = ({
   total,
   changePage,
   changePerPage,
+  loading
 }) => {
   const { hasPermission } = usePermission();
 
@@ -94,6 +95,7 @@ const DepartmentsTable = ({
         columns={columns}
         dataSource={data}
         rowKey="uuid"
+        loading={loading}
         pagination={{
           current: page,
           pageSize: perPage,

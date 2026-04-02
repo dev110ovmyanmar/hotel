@@ -2,13 +2,14 @@ import { Dropdown, Space, Table } from "antd";
 import { useState } from "react";
 import { MoreOutlined } from "@ant-design/icons";
 import { EyeOutlined } from "@ant-design/icons";
-import { EditOutlined } from "@ant-design/icons";
-import { useLocation, useParams } from "react-router-dom";
+import { renderMatches, useLocation, useParams } from "react-router-dom";
 import useApiQuery from "../../hooks/useApiQuery";
 import { getFacilityDetails } from "../../api/facilityApi";
 import { PERMISSIONS } from "../../variables/permission";
 import usePermission from "../../hooks/usePermission";
 import FacilityListPackageForm from "./Components/FacilityForm/FacilityListPackageForm";
+import { capitalizeFirstLetter } from "../../utils/Utils";
+import PriceTag from "../../component/PriceTag/PriceTag";
 
 const FacilityListPackagesTable = ({
   page,
@@ -19,7 +20,9 @@ const FacilityListPackagesTable = ({
   changePerPage,
 }) => {
   const { hasPermission } = usePermission();
-  const { facilityId } = useParams();
+  const location = useLocation();
+  const { uuid } = location.state;
+  const { name } = location.state;
 
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mode, setMode] = useState(null);
@@ -28,9 +31,9 @@ const FacilityListPackagesTable = ({
   const { data, isLoading, error } = useApiQuery({
     fetchQueryName: "facility-details",
     fetchQueryFunction: getFacilityDetails,
-    params: { uuid: facilityId },
+    params: { uuid },
     options: {
-      enabled: !!facilityId,
+      enabled: !!uuid,
     },
   });
 
@@ -59,6 +62,7 @@ const FacilityListPackagesTable = ({
       title: "Base Price",
       dataIndex: "basePrice",
       key: "basePrice",
+      render: (text) => <PriceTag value={text} />
     },
     {
       title: "Included Hours",
@@ -74,11 +78,13 @@ const FacilityListPackagesTable = ({
       title: "Extra Hour Price",
       dataIndex: "extraHourPrice",
       key: "extraHourPrice",
+      render: (text) => <PriceTag value={text} />
     },
     {
       title: "Extra Pax Price",
       dataIndex: "extraPaxPrice",
       key: "extraPaxPrice",
+      render: (text) => <PriceTag value={text} />
     },
     {
       title: "Action",
@@ -135,12 +141,15 @@ const FacilityListPackagesTable = ({
   ];
 
   return (
-    <div id="scrollId" className="w-full h-[63vh] ">
+    <div id="scrollId" className="w-full h-[63vh] px-6 py-2">
+      <div className="text-lg mb-3">{capitalizeFirstLetter(name)}</div>
+
       <Table
         tableLayout="fixed"
         scroll={{ x: 1000 }}
         columns={columns}
         dataSource={data?.facilityPackages}
+        loading={isLoading}
         rowKey="uuid"
         pagination={{
           current: page,

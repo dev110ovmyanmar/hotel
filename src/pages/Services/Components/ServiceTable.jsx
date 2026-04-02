@@ -6,6 +6,8 @@ import { EditOutlined } from "@ant-design/icons";
 import ServiceForm from "./ServiceForm/ServiceForm";
 import { PERMISSIONS } from "../../../variables/permission";
 import usePermission from "../../../hooks/usePermission";
+import ColorStatusTag from "../../../component/ColorStatusTag/ColorStatusTag";
+import PriceTag from "../../../component/PriceTag/PriceTag";
 
 const ServiceTable = ({
   data,
@@ -15,6 +17,7 @@ const ServiceTable = ({
   total,
   changePage,
   changePerPage,
+  loading
 }) => {
   const { hasPermission } = usePermission();
 
@@ -37,6 +40,7 @@ const ServiceTable = ({
       title: "Price (MMK)",
       dataIndex: "basePrice",
       key: "basePrice",
+      render: (text) => <PriceTag value={text} />
     },
     {
       title: "Property",
@@ -57,11 +61,7 @@ const ServiceTable = ({
       title: "Status",
       dataIndex: ["status", "name"],
       key: "status",
-      render: (_, record) => (
-        <Tag color={record?.status?.name === "Active" ? "green" : "red"}>
-          {record?.status?.name.toUpperCase()}
-        </Tag>
-      ),
+      render: (_, record) => <ColorStatusTag status={record?.status} />,
     },
     {
       title: "Action",
@@ -124,6 +124,7 @@ const ServiceTable = ({
         scroll={{ x: 1000 }}
         columns={columns}
         dataSource={data}
+        loading={loading}
         rowKey="uuid"
         pagination={{
           current: page,

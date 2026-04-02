@@ -16,6 +16,7 @@ import {
   upsertAmenity,
 } from "../../../../api/amenitiesApi";
 import FormButtons from "../../../../component/FormButtons/FormButtons";
+import Loader from "../../../../component/Loader/Loader"
 
 const AmenitiesForm = ({
   mode,
@@ -40,7 +41,7 @@ const AmenitiesForm = ({
 
   });
 
-  const { data, isPending, error } = useApiQuery({
+  const { data, isLoading, error } = useApiQuery({
     fetchQueryName: "amenity-details",
     fetchQueryFunction: amenitiesDetails,
     params: { uuid: selectedData?.uuid },
@@ -95,7 +96,7 @@ const AmenitiesForm = ({
       <Drawer
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
-        size={500}
+        size={550}
         title={
           <div className="flex justify-between items-center">
             <span>
@@ -124,59 +125,67 @@ const AmenitiesForm = ({
           </div>
         }
       >
-        <Form
-          form={form}
-          layout="vertical"
-          validateTrigger="onSubmit"
-          onFinish={onFinish}
-          initialValues={{
-            isFree: false,
-            visibility: false,
-          }}
-        >
-          <Form.Item
-            label="Name"
-            name="name"
-            rules={[{ required: true, message: "Amenity Name is Required" }]}
-          >
-            <Input readOnly={isView} />
-          </Form.Item>
-
-          <Form.Item
-            label="Code"
-            name="code"
-            rules={[{ required: true, message: "Amenity Code is Required" }]}
-          >
-            <Input readOnly={isView} />
-          </Form.Item>
-
-          <Row gutter={16}>
-            <Col span={12}>
-              <Form.Item label="Is Free" name="isFree" valuePropName="checked">
-                <Switch
-                  checkedChildren="True"
-                  unCheckedChildren="False"
-                  disabled={isView} />
-              </Form.Item>
-            </Col>
-
-            <Col span={12}>
+        {
+          isLoading ? (
+            <div className="flex items-center justify-center h-full min-h-[300px]">
+              <Loader />
+            </div>
+          ) : (
+            <Form
+              form={form}
+              layout="vertical"
+              validateTrigger="onSubmit"
+              onFinish={onFinish}
+              initialValues={{
+                isFree: false,
+                visibility: false,
+              }}
+            >
               <Form.Item
-                label="Visibility"
-                name="visibility"
-                valuePropName="checked"
+                label="Name"
+                name="name"
+                rules={[{ required: true, message: "Amenity Name is Required" }]}
               >
-                <Switch
-                  disabled={isView}
-                  checkedChildren="True"
-                  unCheckedChildren="False"
-                />
+                <Input readOnly={isView} placeholder="Enter Amenity Name" />
               </Form.Item>
-            </Col>
-          </Row>
-        </Form>
+
+              <Form.Item
+                label="Code"
+                name="code"
+                rules={[{ required: true, message: "Amenity Code is Required" }]}
+              >
+                <Input readOnly={isView} placeholder="Enter Amenity Code" />
+              </Form.Item>
+
+              <Row gutter={16}>
+                <Col span={12}>
+                  <Form.Item label="Is Free" name="isFree" valuePropName="checked">
+                    <Switch
+                      checkedChildren="True"
+                      unCheckedChildren="False"
+                      disabled={isView} />
+                  </Form.Item>
+                </Col>
+
+                <Col span={12}>
+                  <Form.Item
+                    label="Visibility"
+                    name="visibility"
+                    valuePropName="checked"
+                  >
+                    <Switch
+                      disabled={isView}
+                      checkedChildren="True"
+                      unCheckedChildren="False"
+                    />
+                  </Form.Item>
+                </Col>
+              </Row>
+            </Form>
+          )
+        }
       </Drawer>
-    </div>
+    </div >
   );
 };
 

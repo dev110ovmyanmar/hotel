@@ -14,6 +14,7 @@ const RoomTable = ({
   total,
   changePage,
   changePerPage,
+  loading
 }) => {
   const { hasPermission } = usePermission();
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -122,6 +123,7 @@ const RoomTable = ({
           },
           showSizeChanger: true,
         }}
+        loading={loading}
       />
 
       <RoomForm

@@ -10,6 +10,7 @@ import {
   mealPlanDetails,
 } from "../../../../api/mealPlanApi";
 import Status from './../../../../component/Status/Status';
+import Loader from "../../../../component/Loader/Loader";
 
 const { TextArea } = Input;
 
@@ -34,10 +35,10 @@ const MeanPlanForm = ({
   const upsertMealPlans = useApiMutation({
     mutationFn: upsertMealPlan,
     invalidateKeys: [["mealPlans"]],
-    shouldInvalidate : isEdit? true : page === 1
+    shouldInvalidate: isEdit ? true : page === 1
   });
 
-  const { data, isPending, error } = useApiQuery({
+  const { data, isLoading, error } = useApiQuery({
     fetchQueryName: "meal-plan-details",
     fetchQueryFunction: mealPlanDetails,
     params: { uuid: selectedData?.uuid },
@@ -94,7 +95,7 @@ const MeanPlanForm = ({
     <div className="flex justify-center">
       <Drawer
         destroyOnClose
-        size={500}
+        size={550}
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
         title={
@@ -125,29 +126,40 @@ const MeanPlanForm = ({
           </div>
         }
       >
-        <Form
-          form={form}
-          layout="vertical"
-          validateTrigger="onSubmit"
-          onFinish={onFinish}
-        >
-          <Form.Item
-            label="Meal Plan Name"
-            name="name"
-            rules={[{ required: true, message: "Meal Plan Name is Required" }]}
+        {isLoading ? (
+          <div className="flex items-center justify-center h-full min-h-[300px]">
+            <Loader />
+          </div>
+        ) : (
+          <Form
+            form={form}
+            layout="vertical"
+            validateTrigger="onSubmit"
+            onFinish={onFinish}
           >
-            <Input readOnly={isView} />
-          </Form.Item>
+            <Form.Item
+              label="Meal Plan Name"
+              name="name"
+              rules={[{ required: true, message: "Meal Plan Name is Required" }]}
+            >
+              <Input readOnly={isView} placeholder="Enter Meal Plan Name" />
+            </Form.Item>
 
 
-          <Status isView={isView}/>
+            <Status isView={isView} />
 
-          <Form.Item label="Description" name="description">
-            <TextArea></TextArea>
-          </Form.Item>
-        </Form>
-      </Drawer>
-    </div>
+            <Form.Item label="Description" name="description">
+              <Input.TextArea rows={2}
+                readOnly={isView}
+                style={{ cursor: isView ? "default" : "text" }}
+                placeholder="Enter Description"
+              />
+            </Form.Item>
+          </Form>
+        )
+        }
+      </Drawer >
+    </div >
   );
 };
 

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Form, Input, Button, Select, Image, Drawer, AutoComplete } from "antd"; import { useApiMutation } from "../../../../hooks/useApiMutation";
+import { Form, Input, Button, Select, Divider, Drawer, Modal, Image } from "antd";
+import { useApiMutation } from "../../../../hooks/useApiMutation";
 import useApiQuery from "../../../../hooks/useApiQuery";
 import { queryClient } from "../../../../app/queryClient";
 import {
@@ -8,13 +9,15 @@ import {
   adminPermission
 } from "../../../../api/adminApi";
 import FormButton from "../../../../component/FormButtons/FormButtons";
-import { Divider } from 'antd';
 import AddOnDrawer from './AddOnDrawer';
 import Toast from './../../../../component/Toast/Toast';
 import usePermission from './../../../../hooks/usePermission';
 import { PERMISSIONS } from './../../../../variables/permission';
 import { initial } from "lodash";
 import Status from './../../../../component/Status/Status';
+import { adminMeta } from "../../../../api/adminApi";
+import { UserOutlined } from '@ant-design/icons';
+import Loader from "../../../../component/Loader/Loader";
 
 const AdminForm = ({
   mode,
@@ -38,15 +41,16 @@ const AdminForm = ({
   const [adminDrawerOpen, setAdminDrawerOpen] = useState(false);
   const [selectedPermissions, setSelectedPermissions] = useState([]);
 
+  // Modal
+  const [openModal, setOpenModal] = useState(false);
+  const [initialRole, setInitialRole] = useState(null);
+  const [finalValues, setFinalValues] = useState(null);
+
   const roles = initData?.roles?.map((role) => ({
     value: role.uuid,
     label: role.name,
   }));
 
-  const statuses = initData?.statuses?.status?.map((status) => ({
-    value: status.uuid,
-    label: status.name,
-  }));
 
   const upsertAdmins = useApiMutation({
     mutationFn: upsertAdmin,
@@ -54,7 +58,7 @@ const AdminForm = ({
     shouldInvalidate: isEdit ? true : page === 1
   });
 
-  const { data } = useApiQuery({
+  const { data, isLoading } = useApiQuery({
     fetchQueryName: "admin-details",
     fetchQueryFunction: adminDetails,
     params: { uuid: selectedData?.uuid },
@@ -63,8 +67,23 @@ const AdminForm = ({
     },
   });
 
-  const [allowMode, setAllowMode] = useState(""); // "allow" or "notAllow"
+  const { data: adminMetaData } = useApiQuery({
+    fetchQueryName: "admin-meta",
+    fetchQueryFunction: adminMeta,
+    options: {
+      enabled: !!selectedData?.uuid,
+    },
+  });
 
+  const staffList = adminMetaData?.staffs?.map((staff) => ({
+    value: staff.uuid,
+    label: staff.name,
+  }));
+
+
+
+  // Add On Permission
+  const [allowMode, setAllowMode] = useState(""); // "allow" or "notAllow"
 
   const changesNotAllowList = data?.permissions?.changesNotAllowList;
   const changesAllowList = data?.permissions?.changesAllowList;
@@ -114,17 +133,53 @@ const AdminForm = ({
       form.setFieldsValue({
         ...data,
         role: data?.role?.uuid,
+        staff: data?.staff?.uuid,
+
       });
       setSelectedData(data);
     }
   }, [data]);
+
+  useEffect(() => {
+    if (data?.role?.uuid) {
+      setInitialRole(data?.role?.uuid)
+    }
+  }, [data])
+
+  const formButtonSubmit = () => {
+    const values = form.getFieldsValue();
+
+    if (isEdit && initialRole) {
+      const isChanged = values.role !== initialRole;
+
+      if (isChanged) {
+        setFinalValues(values);
+        setOpenModal(true);
+        return;
+      }
+    }
+    onFinish(values);
+  };
+
+  const handleOk = () => {
+    if (finalValues) {
+      onFinish(finalValues)
+    }
+    setOpenModal(false);
+  }
+
+  const cancelButton = () => {
+    setOpenModal(false)
+  };
 
   const onFinish = (values) => {
     if (isAdd) {
       const createValues = {
         ...values,
         role: { uuid: values.role },
-        status:  values.status,
+        status: values.status,
+        staff: { uuid: values.staff },
+
       };
 
       upsertAdmins.mutate(createValues, {
@@ -140,7 +195,8 @@ const AdminForm = ({
       const editValues = {
         ...values, // merge new form values
         role: { uuid: values.role },
-        status:  values.status,
+        status: values.status,
+        staff: { uuid: values.staff },
         uuid: data?.uuid,
       };
 
@@ -164,12 +220,13 @@ const AdminForm = ({
     }
   }, [data]);
 
+
   return (
     <div>
       <Drawer
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
-        size={500}
+        size={550}
         title={
           <div className="flex justify-between items-center">
             <span>
@@ -190,7 +247,7 @@ const AdminForm = ({
               </Button>
             ) : (
               <FormButton
-                onClick={() => form.submit()}
+                onClick={formButtonSubmit}
                 isPending={upsertAdmins.isPending}
                 mode={mode}
               />
@@ -198,147 +255,186 @@ const AdminForm = ({
           </div>
         }
       >
-        <Form
-          form={form}
-          layout="vertical"
-          style={{ width: "100%" }}
-          onFinish={onFinish}
+        {
+          isLoading ?
+            <div className="flex items-center justify-center h-full min-h-[300px]">
+              <Loader />
+            </div>
+            : (
+              <Form
+                form={form}
+                layout="vertical"
+                style={{ width: "100%" }}
+                onFinish={onFinish}
+              >
+                {
+                  !isAdd && (
+                    <Image src={data?.file} alt="image" className="!w-32 border-1 border-gray-300 rounded-full mb-3 p-1" preview={false} />
+                  )
+                }
 
 
-        >
-          <Form.Item
-            label="Name"
-            name="name"
-            rules={[{ required: true, message: "Admin Name is Required" }]}
 
-          >
-            <Input readOnly={isView} />
-          </Form.Item>
+                <Form.Item
+                  label="Name"
+                  name="name"
+                  rules={[{ required: true, message: "Admin Name is Required" }]}
 
-          <Form.Item
-            label="Email"
-            name="email"
-            rules={[{ required: true, message: "Admin Email is Required" }]}
-          >
-            <Input readOnly={isView} />
-          </Form.Item>
+                >
+                  <Input readOnly={isView} placeholder="Enter Admin Name" />
+                </Form.Item>
 
-          <Form.Item
-            name="role"
-            label="Role"
-            rules={[{ required: true, message: "Role is Required" }]}
-            getValueProps={(value) => {
-              return ({
-                value: isView
-                  ? initData?.roles.find((item) => item.uuid === value)?.name
-                  : value,
-              })
-            }}
-          >
+                <Form.Item
+                  label="Email"
+                  name="email"
+                  rules={[{ required: true, message: "Admin Email is Required" }]}
+                >
+                  <Input readOnly={isView} placeholder="Enter Email Address" />
+                </Form.Item>
 
-            {
-              isView ?
-                <Input readOnly={isView} /> :
-                <Select
-                  showSearch={{
-                    filterOption: (input, option) =>
-                      (option?.label ?? "")
-                        .toLowerCase()
-                        .includes(input.toLowerCase()),
+                <Form.Item
+                  name="role"
+                  label="Role"
+                  rules={[{ required: true, message: "Role is Required" }]}
+                  getValueProps={(value) => {
+                    return ({
+                      value: isView
+                        ? initData?.roles.find((item) => item.uuid === value)?.name
+                        : value,
+                    })
                   }}
-                  options={roles}
-                  open={isView ? false : undefined}
-                />
-            }
+                >
 
-          </Form.Item>
+                  {
+                    isView ?
+                      <Input readOnly={isView} /> :
+                      <Select
+                        showSearch={{
+                          filterOption: (input, option) =>
+                            (option?.label ?? "")
+                              .toLowerCase()
+                              .includes(input.toLowerCase()),
+                        }}
+                        options={roles}
+                        placeholder="Select Role"
+                      />
+                  }
 
-          <Form.Item label="Staff" name="staff" >
-            <Input readOnly={isView} />
-          </Form.Item>
+                </Form.Item>
 
-          <Status isView={isView} />
+                <Form.Item label="Staff" name="staff" className="flex-2">
+                  <Select
+                    showSearch={{
+                      filterOption: (input, option) =>
+                        (option?.label ?? "")
+                          .toLowerCase()
+                          .includes(input.toLowerCase()),
+                    }}
+                    options={staffList}
+                    placeholder="Select Staff"
+                  />
+                </Form.Item>
 
-          {
-            isEdit && (
-              <div className="mt-6">
-                <Divider />
-
-                {
-                  changesNotAllowList?.length <= 0 ? null :
-                    <div
-                      style={{
-                        background: "#f5f5f5",
-                        padding: "15px",
-                        borderRadius: "8px",
-                        marginBottom: "20px",
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                      }}
-                    >
-                      <span className="font-bold">
-                        Current Permissions
-                      </span>
-
-                      {/* {changesNotAllowList?.length <= 0 ? null : ( */}
-                      <Button
-                        type="primary"
-                        onClick={() => adminDrawerFunction("notAllow")}
-                      >
-                        View
-                      </Button>
-                      {/* )} */}
-
-                    </div>
-                }
-
+                <Status isView={isView} />
 
                 {
-                  !hasPermission(PERMISSIONS.ADMIN_PERMISSION)
-                    || changesAllowList?.length <= 0 ?
-                    null :
-                    <div
-                      style={{
-                        background: "#f5f5f5",
-                        padding: "15px",
-                        borderRadius: "8px",
-                        marginBottom: "20px",
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                      }}
+                  isEdit && (
+                    <div className="mt-6">
+                      <Divider />
 
-                    >
-                      <span className="font-bold">
-                        Additional Permissions
-                      </span>
+                      {
+                        changesNotAllowList?.length <= 0 ? null :
+                          <div
+                            style={{
+                              background: "#f5f5f5",
+                              padding: "15px",
+                              borderRadius: "8px",
+                              marginBottom: "20px",
+                              display: "flex",
+                              justifyContent: "space-between",
+                              alignItems: "center",
+                            }}
+                          >
+                            <span className="font-bold">
+                              Current Permissions
+                            </span>
 
-                      <Button
-                        type="primary"
-                        onClick={() => adminDrawerFunction("allow")}
-                      >
-                        Add On
-                      </Button>
+                            {/* {changesNotAllowList?.length <= 0 ? null : ( */}
+                            <Button
+                              type="primary"
+                              onClick={() => adminDrawerFunction("notAllow")}
+                            >
+                              View
+                            </Button>
+                            {/* )} */}
+
+                          </div>
+                      }
+
+
+                      {
+                        !hasPermission(PERMISSIONS.ADMIN_PERMISSION)
+                          || changesAllowList?.length <= 0 ?
+                          null :
+                          <div
+                            style={{
+                              background: "#f5f5f5",
+                              padding: "15px",
+                              borderRadius: "8px",
+                              marginBottom: "20px",
+                              display: "flex",
+                              justifyContent: "space-between",
+                              alignItems: "center",
+                            }}
+
+                          >
+                            <span className="font-bold">
+                              Additional Permissions
+                            </span>
+
+                            <Button
+                              type="primary"
+                              onClick={() => adminDrawerFunction("allow")}
+                            >
+                              Add On
+                            </Button>
+                          </div>
+                      }
+
+                      <AddOnDrawer
+                        mode={allowMode}
+                        open={adminDrawerOpen}
+                        onClose={() => setAdminDrawerOpen(false)}
+                        loading={addOnAdminPermission.isPending}
+                        rolePermissions={allowMode === "notAllow" ? changesNotAllowList : changesAllowList}
+                        selectedPermissions={allowMode === "notAllow" ? notAllowPermissionIds : selectedPermissions}
+                        onSave={onSave}
+                      />
+
                     </div>
+
+                  )
                 }
 
-                <AddOnDrawer
-                  mode={allowMode}
-                  open={adminDrawerOpen}
-                  onClose={() => setAdminDrawerOpen(false)}
-                  loading={addOnAdminPermission.isPending}
-                  rolePermissions={allowMode === "notAllow" ? changesNotAllowList : changesAllowList}
-                  selectedPermissions={allowMode === "notAllow" ? notAllowPermissionIds : selectedPermissions}
-                  onSave={onSave}
-                />
-
-              </div>
-
+              </Form>
             )
-          }
+        }
 
-        </Form>
+        <Modal
+          title="Confirmation Box"
+          open={openModal}
+          onOk={handleOk}
+          okText="Confirm"
+          okButtonProps={{
+            // loading: loading,
+          }}
+          onCancel={cancelButton}
+        >
+          <Divider />
+          <div className="text-md !mt-3">
+            Changing the role will update permissions. Do you want to continue?
+          </div>
+        </Modal>
       </Drawer>
     </div>
   );

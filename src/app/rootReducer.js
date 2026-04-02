@@ -1,14 +1,12 @@
 import { combineReducers } from "redux";
 import appReducer from "../services/appSlice";
 import adminProfileReducer from './../services/profileDetailsSlice';
-import categoryReducer from '../services/categorySlice';
-import unitReducer from '../services/unitSlice';
+import authReducer from "../services/authSlice";
 
 const reducer = combineReducers({
-    app: appReducer,
-    adminProfile: adminProfileReducer,
-    category: categoryReducer,
-    unit: unitReducer
+  app: appReducer,
+  auth: authReducer,
+  adminProfile: adminProfileReducer,
 });
 
 const rootReducer = (state, action) => {

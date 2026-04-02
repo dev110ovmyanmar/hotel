@@ -86,8 +86,8 @@ export const LOCAL_STORAGE_KEYS = {
   adminIdentifier: "AdminIdentifier",
   adminRole: "AdminRole",
   superAdmin: "SuperAdmin",
-  deviceId:"DeviceId",
-  deviceName:"DeviceName",
+  deviceId: "DeviceId",
+  deviceName: "DeviceName",
   initData: "Init_Data",
   loginAdminDetails: "Admin_Details",
   initPermissions: "InitPermissions",
@@ -248,3 +248,17 @@ export const monthDurations = [
 ];
 
 export const DEFAULT_IP_ADDRESS = "127.0.0.1";
+
+export const MIN_AVAILABILITY_ROOM = 1;
+export const MAX_AVAILABILITY_ROOM = 200;
+
+//Restaurant Table
+export const MIN_SEAT_CAPACITY = 1;
+export const MAX_SEAT_CAPACITY = 50;
+
+//Service Inventory
+export const MIN_REORDER_LEVEL = 0;
+export const MAX_REORDER_LEVEL = 200;
+
+export const MIN_STOCK_QUANTITY = 0;
+export const MAX_STOCK_QUANTITY = 200;

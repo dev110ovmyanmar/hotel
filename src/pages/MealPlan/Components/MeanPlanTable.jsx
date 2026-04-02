@@ -7,7 +7,7 @@ import { EyeOutlined } from '@ant-design/icons';
 import Status from './../../../component/Status/Status';
 import ColorStatusTag from './../../../component/ColorStatusTag/ColorStatusTag';
 
-const MeanPlanTable = ({ data, page, perPage, total, changePage, changePerPage }) => {
+const MeanPlanTable = ({ data, page, perPage, total, changePage, changePerPage, loading }) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mode, setMode] = useState("");
   const [selectedData, setSelectedData] = useState({});
@@ -25,16 +25,17 @@ const MeanPlanTable = ({ data, page, perPage, total, changePage, changePerPage }
       render: text => <div>{text}</div>,
     },
     {
-      title: 'Status',
-      dataIndex: ["status","name"],
-      key: 'status',
-      render: (_,record) => <ColorStatusTag status={record?.status}/>
-    },
-    {
       title: 'Description',
       dataIndex: 'description',
       key: 'description',
       render: text => <div>{text}</div>,
+      width: 500
+    },
+    {
+      title: 'Status',
+      dataIndex: ["status", "name"],
+      key: 'status',
+      render: (_, record) => <ColorStatusTag status={record?.status} />
     },
     {
       title: "Action",
@@ -93,6 +94,7 @@ const MeanPlanTable = ({ data, page, perPage, total, changePage, changePerPage }
         tableLayout="fixed"
         scroll={{ x: 1000 }}
         columns={columns}
+        loading={loading}
         dataSource={data}
         rowKey="uuid"
         pagination={{
