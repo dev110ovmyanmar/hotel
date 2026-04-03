@@ -172,22 +172,40 @@ const PolicyForm = ({
         )
       }
     },
-    {
-      title: "Action",
-      render: (_, record) => {
-        return (
-          <EditOutlined
-            style={{ fontSize: "12px" }}
-            onClick={() => {
-              setPolicyRuleMode("editRule");
-              setAddPolicyRuleDrawer(true);
-              setSelectedPolicyRule(record);
+    // {
+    //   title: "Action",
+    //   render: (_, record) => {
+    //     return (
+    //       <EditOutlined
+    //         style={{ fontSize: "12px" }}
+    //         onClick={() => {
+    //           setPolicyRuleMode("editRule");
+    //           setAddPolicyRuleDrawer(true);
+    //           setSelectedPolicyRule(record);
 
-            }}
-          />
-        );
-      },
-    },
+    //         }}
+    //       />
+    //     );
+    //   },
+    // },
+    (!isView ?
+      {
+        title: "Action",
+        render: (_, record) => {
+          return (
+            <EditOutlined
+              style={{ fontSize: "12px" }}
+              onClick={() => {
+                setPolicyRuleMode("editRule");
+                setAddPolicyRuleDrawer(true);
+                setSelectedPolicyRule(record);
+
+              }}
+            />
+          );
+        },
+      } : {})
+
   ];
 
 
@@ -203,31 +221,10 @@ const PolicyForm = ({
         ...selectedPolicyRule,
 
         chargeValue: Number(selectedPolicyRule?.chargeValue),
-
-        fromOffset: selectedPolicyRule?.fromOffset != null &&
-          (earlyCheckin || lateCheckout) ?
-          dayjs().hour(selectedPolicyRule?.fromOffset).minute(0).second(0) :
-          cancelCode ? selectedPolicyRule?.fromOffset
-            : null,
-
-        toOffset: selectedPolicyRule?.toOffset != null &&
-          (earlyCheckin || lateCheckout) ?
-          dayjs().hour(selectedPolicyRule?.toOffset).minute(0).second(0) :
-          cancelCode ? selectedPolicyRule?.toOffset
-            : null,
       })
     }
   }, [editPolicyRule, selectedPolicyRule]);
 
-  const formatOffset = (value) => {
-    if (!value) return null;
-
-    if (dayjs.isDayjs(value)) {
-      return value.format("H");
-    }
-
-    return String(value);
-  };
 
   const savePolicyRule = (values) => {
     const linkTouuid = form.getFieldValue("linkTo");
@@ -246,13 +243,9 @@ const PolicyForm = ({
         addPolicyRule ?
           {
             ...values,
-            fromOffset: values?.fromOffset ? formatOffset(values?.fromOffset) : 0,
-            toOffset: values?.toOffset ? formatOffset(values?.toOffset) : 0,
           } :
           {
             ...values,
-            fromOffset: values?.fromOffset ? formatOffset(values?.fromOffset) : 0,
-            toOffset: values?.toOffset ? formatOffset(values?.toOffset) : 0,
             uuid: selectedPolicyRule?.uuid
           }
       ,
@@ -393,7 +386,7 @@ const PolicyForm = ({
 
 
               {
-                isEdit && (
+                (isEdit || isView) && (
                   <>
                     <Divider />
 
@@ -414,6 +407,7 @@ const PolicyForm = ({
                             setPolicyRuleMode("addRule");
                         }
                         }
+                        hidden={isView}
                       >
                         Add New Policy Rule
                       </Button>
@@ -431,7 +425,6 @@ const PolicyForm = ({
 
                     </Table>
                     <Drawer
-                      size={550}
                       title={
                         <div className="flex justify-between">
                           {
@@ -552,86 +545,44 @@ const PolicyForm = ({
                         </Row>
 
                         {/* Depend on Policy Type */}
-                        {
-                          (cancelCode || noShow) ?
-
-                            <Form.Item
-                              label={
-                                <>
-                                  <span>{cancelCode ? "Cancel Between" : "No Show"} </span>
-                                  <span style={{ fontWeight: "bold", marginLeft: "5px" }}>  (Days Before Arrival)</span>
-                                </>
-                              }
-                              name={cancelCode ? "cancelBetween" : "noShow"}
-                            >
-                              <Row gutter={16}>
-                                <Col span={12}>
-                                  <Form.Item
-                                    name="fromOffset"
-                                    rules={[{ required: true, message: "From is Required" }]}
-                                  >
-                                    <InputNumber
-                                      readOnly={isView} style={{ width: "100%" }}
-                                      addonAfter="Day"
-                                      min={0}
-                                    />
-                                  </Form.Item>
-
-                                </Col>
-                                <Col span={12}>
-                                  <Form.Item
-                                    name="toOffset"
-                                    rules={[{ required: true, message: "To is Required" }]}
-                                  >
-                                    <InputNumber
-                                      readOnly={isView} style={{ width: "100%" }}
-                                      addonAfter="Days"
-                                      min={0}
-                                    />
-                                  </Form.Item>
-
-                                </Col>
-                              </Row>
-                            </Form.Item> :
-
-                            (earlyCheckin || lateCheckout) ?
+                        <Form.Item
+                          label={
+                            <>
+                              <span>{cancelCode ? "Cancel Between" : "No Show"} </span>
+                              <span style={{ fontWeight: "bold", marginLeft: "5px" }}>  (Days Before Arrival)</span>
+                            </>
+                          }
+                          name={cancelCode ? "cancelBetween" : "noShow"}
+                        >
+                          <Row gutter={16}>
+                            <Col span={12}>
                               <Form.Item
-                                label={earlyCheckin ? "Early CheckIn Between" : "Late Checkout Between"}
+                                name="fromOffset"
+                                rules={[{ required: true, message: "From is Required" }]}
                               >
-                                <Row gutter={16}>
-                                  <Col span={12}>
-                                    <Form.Item
-                                      name="fromOffset"
-                                      rules={[{ required: true, message: "From is required" }]}
-                                    >
-                                      <TimePicker
-                                        format="H"
-                                        showNow={false}
-                                        readOnly={isView}
-                                        style={{ width: "100%" }} />
-                                    </Form.Item>
-                                  </Col>
-                                  <Col span={12}>
-                                    <Form.Item
-                                      name="toOffset"
-                                      rules={[{ required: true, message: "To is required" }]}
-                                    >
-                                      <TimePicker
-                                        format="H"
-                                        showNow={false}
-                                        readOnly={isView}
-                                        style={{ width: "100%" }} />
-                                    </Form.Item>
-                                  </Col>
-                                </Row>
-                              </Form.Item> :
+                                <InputNumber
+                                  readOnly={isView} style={{ width: "100%" }}
+                                  addonAfter={(earlyCheckin || lateCheckout) ? "Hrs" : "Day"}
+                                  min={0}
+                                />
+                              </Form.Item>
 
+                            </Col>
+                            <Col span={12}>
                               <Form.Item
-                                label="No Show Policy"
+                                name="toOffset"
+                                rules={[{ required: true, message: "To is Required" }]}
+                              >
+                                <InputNumber
+                                  readOnly={isView} style={{ width: "100%" }}
+                                  addonAfter={earlyCheckin || lateCheckout ? "Hrs" : "Days"}
+                                  min={0}
+                                />
+                              </Form.Item>
 
-                              ></Form.Item>
-
-                        }
+                            </Col>
+                          </Row>
+                        </Form.Item>
 
                         <Form.Item
                           label="Sort Order"
