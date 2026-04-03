@@ -7,6 +7,7 @@ import { PERMISSIONS } from "../../../variables/permission";
 import usePermission from "../../../hooks/usePermission";
 import FAndBInventoryForm from "./FAndBInventoryForm/FAndBInventoryForm";
 import ColorStatusTag from "../../../component/ColorStatusTag/ColorStatusTag";
+import PriceTag from "../../../component/PriceTag/PriceTag";
 
 const FAndBInventoryTable = ({
   data,
@@ -16,6 +17,7 @@ const FAndBInventoryTable = ({
   total,
   changePage,
   changePerPage,
+  loading,
 }) => {
   const { hasPermission } = usePermission();
 
@@ -27,7 +29,6 @@ const FAndBInventoryTable = ({
     {
       title: "ID",
       render: (_, record) => <div>{record?.id}</div>,
-      width: 70,
     },
     {
       title: "Name",
@@ -53,11 +54,13 @@ const FAndBInventoryTable = ({
       title: "Purchase Price (MMK)",
       dataIndex: "unitCost",
       key: "unitCost",
+      render: (text) => <PriceTag value={text} />,
     },
-     {
+    {
       title: "Selling Price (MMK)",
       dataIndex: "unitPrice",
       key: "unitPrice",
+      render: (text) => <PriceTag value={text} />,
     },
     {
       title: "Reorder Level",
@@ -124,13 +127,36 @@ const FAndBInventoryTable = ({
     },
   ];
 
+  const expandColumns = [
+    { title: "ID", dataIndex: "id", key: "id" },
+    { title: "Menu Item", dataIndex: ["menuItem", "name"], key: "name" },
+    { title: "Quantity", dataIndex: "quantityPerItem", key: "quantityPerItem" },
+    { title: "Unit", dataIndex: ["unit", "name"], key: "unit" },
+  ];
+
+  const expandedRowRender = (record) => {
+    return (
+      <>
+        <Table
+          columns={expandColumns}
+          dataSource={record.menuInventoryMappings || []}
+          rowKey="uuid"
+          pagination={false}
+          size="small"
+        />
+      </>
+    );
+  };
+
   return (
     <div id="scrollId" className="w-full h-[63vh] ">
       <Table
         tableLayout="fixed"
         scroll={{ x: 1000 }}
         columns={columns}
+        expandable={{ expandedRowRender, defaultExpandedRowKeys: ["0"] }}
         dataSource={data}
+        loading={loading}
         rowKey="uuid"
         pagination={{
           current: page,

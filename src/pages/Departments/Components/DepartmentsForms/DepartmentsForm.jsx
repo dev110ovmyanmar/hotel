@@ -11,6 +11,7 @@ import {
   departmentDetails,
   editDepartment,
 } from "../../../../api/departmentApi";
+import Loader from "../../../../component/Loader/Loader"
 
 const DepartmentsForm = ({
   mode,
@@ -48,7 +49,7 @@ const DepartmentsForm = ({
     invalidateKeys: [["departmentsdata"]],
   });
 
-  const { data } = useApiQuery({
+  const { data, isLoading } = useApiQuery({
     fetchQueryName: "departmentsdata",
     fetchQueryFunction: departmentDetails,
     params: { uuid: selectedData?.uuid },
@@ -135,61 +136,71 @@ const DepartmentsForm = ({
           </div>
         }
       >
-        <Form
-          form={form}
-          layout="vertical"
-          style={{ width: "100%" }}
-          onFinish={onFinish}
-        >
-          <Form.Item
-            label="Name"
-            name="name"
-            rules={[{ required: true, message: "Name is Required" }]}
-          >
-            <Input readOnly={isView} placeholder="Enter Department Name" />
-          </Form.Item>
+        {
+          isLoading ? (
+            <div className="flex items-center justify-center h-full min-h-[300px]">
+              <Loader />
+            </div>
+          )
+            :
+            (
+              <Form
+                form={form}
+                layout="vertical"
+                style={{ width: "100%" }}
+                onFinish={onFinish}
+              >
+                <Form.Item
+                  label="Name"
+                  name="name"
+                  rules={[{ required: true, message: "Name is Required" }]}
+                >
+                  <Input readOnly={isView} placeholder="Enter Department Name" />
+                </Form.Item>
 
-          <Form.Item
-            label="Code"
-            name="code"
-            rules={[{ required: true, message: "Code is Required" }]}
-          >
-            <Input readOnly={isView} placeholder="Enter Department Code" />
-          </Form.Item>
+                <Form.Item
+                  label="Code"
+                  name="code"
+                  rules={[{ required: true, message: "Code is Required" }]}
+                >
+                  <Input readOnly={isView} placeholder="Enter Department Code" />
+                </Form.Item>
 
-          <Form.Item
-            label="Status"
-            name="status"
-            rules={[{ required: true, message: "Status is Required" }]}
-            getValueProps={(value) => ({
-              value: isView
-                ? statuses.find((item) => item.value === value)?.label
-                : value,
-            })}
-          >
-            {isView ? (
-              <Input readOnly={isView} />
-            ) : (
-              <Select
-                showSearch={{
-                  filterOption: (input, option) =>
-                    (option?.label ?? "")
-                      .toLowerCase()
-                      .includes(input.toLowerCase()),
-                }}
-                options={statuses}
-                placeholder="Select Status"
-              />
-            )}
-          </Form.Item>
+                <Form.Item
+                  label="Status"
+                  name="status"
+                  rules={[{ required: true, message: "Status is Required" }]}
+                  getValueProps={(value) => ({
+                    value: isView
+                      ? statuses.find((item) => item.value === value)?.label
+                      : value,
+                  })}
+                >
+                  {isView ? (
+                    <Input readOnly={isView} />
+                  ) : (
+                    <Select
+                      showSearch={{
+                        filterOption: (input, option) =>
+                          (option?.label ?? "")
+                            .toLowerCase()
+                            .includes(input.toLowerCase()),
+                      }}
+                      options={statuses}
+                      placeholder="Select Status"
+                    />
+                  )}
+                </Form.Item>
 
-          <Form.Item label="Description" name="description">
-            <TextArea readOnly={isView} placeholder="Enter Description" />
-          </Form.Item>
+                <Form.Item label="Description" name="description">
+                  <TextArea readOnly={isView} placeholder="Enter Description" />
+                </Form.Item>
 
-        </Form>
+              </Form>
+            )
+        }
       </Drawer>
-    </div>
+    </div >
   );
 };
 

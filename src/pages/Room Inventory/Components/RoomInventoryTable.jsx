@@ -12,6 +12,7 @@ import { Tooltip } from "antd";
 import dayjs from "dayjs";
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
 import BooleanTag from "../../../component/BooleanTag/BooleanTag";
+import PriceTag from "../../../component/PriceTag/PriceTag";
 
 dayjs.extend(isSameOrBefore);
 
@@ -23,7 +24,7 @@ const RoomInventoryTable = ({
   total,
   changePage,
   changePerPage,
-  
+  loading,
 }) => {
   const { hasPermission } = usePermission();
 
@@ -81,6 +82,7 @@ const RoomInventoryTable = ({
       title: "Base Price",
       dataIndex: "basePrice",
       key: "basePrice",
+      render: (text) => <PriceTag value={text} />
     },
     {
       title: "Extra Bed",
@@ -181,9 +183,9 @@ const RoomInventoryTable = ({
     { title: 'ID', dataIndex: 'id', key: 'id' },
     { title: 'Date', dataIndex: 'date', key: 'date' },
     { title: 'Available Rooms', dataIndex: 'availableRooms', key: 'availableRooms' },
-    { title: 'soldRooms', dataIndex: 'Sold Rooms', key: 'soldRooms' ,render:(text)=><div>{text? text : "-"}</div>},
+    { title: 'soldRooms', dataIndex: 'Sold Rooms', key: 'soldRooms', render: (text) => <div>{text ? text : "-"}</div> },
     { title: 'totaAvailableRooms', dataIndex: 'totaAvailableRooms', key: 'totaAvailableRooms' },
-    { title: 'stopSell', dataIndex: 'stopSell', key: 'stopSell',render:(text)=> <BooleanTag/> },
+    { title: 'stopSell', dataIndex: 'stopSell', key: 'stopSell', render: (text) => <BooleanTag /> },
   ];
 
   const expandedRowRender = (record) => {
@@ -193,6 +195,7 @@ const RoomInventoryTable = ({
         dataSource={record.rates || []}
         rowKey="uuid"
         pagination={false}
+        loading={loading}
       />
     )
   };
@@ -205,6 +208,7 @@ const RoomInventoryTable = ({
         columns={columns}
         dataSource={data}
         rowKey="uuid"
+        loading={loading}
         expandable={{ expandedRowRender, defaultExpandedRowKeys: ['0'] }}
       />
 

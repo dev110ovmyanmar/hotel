@@ -5,6 +5,7 @@ import { useApiMutation } from "../../../../hooks/useApiMutation";
 import useApiQuery from "../../../../hooks/useApiQuery";
 import { createFloor, editFloor, floorDetail } from "../../../../api/floorApi";
 import FormButtons from "./../../../../component/FormButtons/FormButtons";
+import Loader from "../../../../component/Loader/Loader";
 
 const { TextArea } = Input;
 
@@ -34,7 +35,7 @@ const FloorForm = ({
     invalidateKeys: [["floorData"]],
   });
 
-  const { data } = useApiQuery({
+  const { data, isLoading } = useApiQuery({
     fetchQueryName: "floorData",
     fetchQueryFunction: floorDetail,
     params: { uuid: selectedData?.uuid },
@@ -121,33 +122,41 @@ const FloorForm = ({
           </div>
         }
       >
-        <Form
-          form={form}
-          layout="vertical"
-          validateTrigger="onSubmit"
-          onFinish={onFinish}
-        >
-          <Form.Item
-            label="Name"
-            name="name"
-            rules={[{ required: true, message: "Please enter floor name" }]}
-          >
-            <Input readOnly={isView} placeholder="Enter Floor Name" />
-          </Form.Item>
-          <Form.Item
-            label="Floor / Zone"
-            name="floorNo"
-            rules={[{ required: true, message: "Please enter floor no" }]}
-          >
-            <Input readOnly={isView} placeholder="Enter Floor Number" />
-          </Form.Item>
+        {
+          isLoading ? (
+            <div className="flex items-center justify-center h-full min-h-[300px]">
+              <Loader />
+            </div>
+          ) : (
+            <Form
+              form={form}
+              layout="vertical"
+              validateTrigger="onSubmit"
+              onFinish={onFinish}
+            >
+              <Form.Item
+                label="Name"
+                name="name"
+                rules={[{ required: true, message: "Please enter floor name" }]}
+              >
+                <Input readOnly={isView} placeholder="Enter Floor Name" />
+              </Form.Item>
+              <Form.Item
+                label="Floor / Zone"
+                name="floorNo"
+                rules={[{ required: true, message: "Please enter floor no" }]}
+              >
+                <Input readOnly={isView} placeholder="Enter Floor Number" />
+              </Form.Item>
 
-          <Form.Item label="Description" name="description">
-            <TextArea readOnly={isView} placeholder="Enter Floor Description" />
-          </Form.Item>
-        </Form>
-      </Drawer>
-    </div>
+              <Form.Item label="Description" name="description">
+                <TextArea readOnly={isView} placeholder="Enter Floor Description" />
+              </Form.Item>
+            </Form>
+          )
+        }
+      </Drawer >
+    </div >
   );
 };
 

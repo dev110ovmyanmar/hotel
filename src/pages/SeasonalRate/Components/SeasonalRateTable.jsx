@@ -4,6 +4,7 @@ import { MoreOutlined, EyeOutlined, EditOutlined } from "@ant-design/icons";
 import usePermission from "../../../hooks/usePermission";
 import SeasonalRateForm from "./SeasonalRateForms/SeasonalRateForm";
 import { PERMISSIONS } from "../../../variables/permission";
+import PriceTag from "../../../component/PriceTag/PriceTag";
 
 const SeasonalRateTable = ({
   data,
@@ -12,6 +13,7 @@ const SeasonalRateTable = ({
   total,
   changePage,
   changePerPage,
+  loading
 }) => {
   const { hasPermission } = usePermission();
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -45,7 +47,7 @@ const SeasonalRateTable = ({
       title: "Price (MMK)",
       dataIndex: "basePrice",
       key: "basePrice",
-      render: (basePrice) => basePrice?.toLocaleString(),
+      render: (text) => <PriceTag value={text} />,
       width: "80",
     },
     {
@@ -114,10 +116,10 @@ const SeasonalRateTable = ({
 
   const expandColumns = [
     { title: 'ID', dataIndex: 'id', key: 'id' },
-    { title: 'Rate Plan', dataIndex: ['ratePlan','name'], key: 'ratePlan' },
-    { title: 'Start Date', dataIndex: 'startDate', key: 'startDate', render:(text)=><div>{String(text)}</div> },
-    { title: 'End Date', dataIndex: 'endDate', key: 'endDate', render:(text)=><div>{String(text)}</div> },
-    { title: 'Price (MMK)', dataIndex: 'price', key: 'price', render:(text)=><div>{text.toLocaleString()}</div> },
+    { title: 'Rate Plan', dataIndex: ['ratePlan', 'name'], key: 'ratePlan' },
+    { title: 'Start Date', dataIndex: 'startDate', key: 'startDate', render: (text) => <div>{String(text)}</div> },
+    { title: 'End Date', dataIndex: 'endDate', key: 'endDate', render: (text) => <div>{String(text)}</div> },
+    { title: 'Price (MMK)', dataIndex: 'price', key: 'price', render: (text) => <PriceTag value={text} /> },
   ];
 
   const expandedRowRender = (record) => (
@@ -132,7 +134,8 @@ const SeasonalRateTable = ({
         columns={columns}
         dataSource={data}
         rowKey="uuid"
-        expandable={{expandedRowRender,defaultExpandedRowKeys:['0']}}
+        expandable={{ expandedRowRender, defaultExpandedRowKeys: ['0'] }}
+        loading={loading}
       />
 
       <SeasonalRateForm

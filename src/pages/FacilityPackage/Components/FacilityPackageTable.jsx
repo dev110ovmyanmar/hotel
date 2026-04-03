@@ -6,6 +6,7 @@ import { EditOutlined } from "@ant-design/icons";
 import FacilityPackageForm from "./FacilityPackageForm/FacilityPackageForm";
 import { PERMISSIONS } from "../../../variables/permission";
 import usePermission from "../../../hooks/usePermission";
+import PriceTag from "../../../component/PriceTag/PriceTag";
 
 const FacilityPackageTable = ({
   data,
@@ -15,6 +16,7 @@ const FacilityPackageTable = ({
   total,
   changePage,
   changePerPage,
+  loading
 }) => {
   const { hasPermission } = usePermission();
 
@@ -47,6 +49,7 @@ const FacilityPackageTable = ({
       title: "Base Price (MMK)",
       dataIndex: "basePrice",
       key: "basePrice",
+      render: (text) => <PriceTag value={text} />
     },
     {
       title: "Included Hours",
@@ -62,11 +65,13 @@ const FacilityPackageTable = ({
       title: "Extra Hour Price",
       dataIndex: "extraHourPrice",
       key: "extraHourPrice",
+      render: (text) => <PriceTag value={text} />
     },
     {
       title: "Extra Pax Price",
       dataIndex: "extraPaxPrice",
       key: "extraPaxPrice",
+      render: (text) => <PriceTag value={text} />
     },
     {
       title: "Action",
@@ -129,6 +134,7 @@ const FacilityPackageTable = ({
         scroll={{ x: 1000 }}
         columns={columns}
         dataSource={data}
+        loading={loading}
         rowKey="uuid"
         pagination={{
           current: page,

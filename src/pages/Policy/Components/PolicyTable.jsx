@@ -9,20 +9,20 @@ import { useApiMutation } from './../../../hooks/useApiMutation';
 import { createPolicyDuplicate } from './../../../api/policyApi';
 import Toast from './../../../component/Toast/Toast';
 
-const PolicyTable = ({ data, page, setPage, perPage, total, changePage, changePerPage }) => {
+const PolicyTable = ({ data, page, setPage, perPage, total, changePage, changePerPage, loading }) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mode, setMode] = useState(null);
   const [selectedData, setSelectedData] = useState({});
 
   const duplicatePolicy = useApiMutation({
-    mutationFn : createPolicyDuplicate,
-    invalidateKeys : [["policies"]],
+    mutationFn: createPolicyDuplicate,
+    invalidateKeys: [["policies"]],
     page: page
   });
 
-  const duplicateClick = (uuid) =>{
-    duplicatePolicy.mutate(uuid,{
-      onSuccess : () =>{
+  const duplicateClick = (uuid) => {
+    duplicatePolicy.mutate(uuid, {
+      onSuccess: () => {
         Toast.success("Duplicated Successfully")
       }
     })
@@ -138,6 +138,7 @@ const PolicyTable = ({ data, page, setPage, perPage, total, changePage, changePe
         scroll={{ x: 1000 }}
         columns={columns}
         dataSource={data}
+        loading={loading}
         rowKey="uuid"
         pagination={{
           current: page,
@@ -160,7 +161,7 @@ const PolicyTable = ({ data, page, setPage, perPage, total, changePage, changePe
         setDrawerOpen={setDrawerOpen}
         selectedData={selectedData}
         setSelectedData={setSelectedData}
-        
+
       />
     </div>
   )

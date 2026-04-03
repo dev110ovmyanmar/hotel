@@ -19,6 +19,7 @@ import { FiEdit } from "react-icons/fi";
 import ListHeader from "./../../../../component/ListHeader/ListHeader";
 import FormButtons from "./../../../../component/FormButtons/FormButtons";
 import { queryClient } from './../../../../app/queryClient';
+import Loader from "../../../../component/Loader/Loader";
 
 const LocationForm = ({
   page,
@@ -48,11 +49,11 @@ const LocationForm = ({
   const upsertLocations = useApiMutation({
     mutationFn: upsertLocation,
     invalidateKeys: [["locations"]],
-    shouldInvalidate : isEdit? true : page === 1
-    
+    shouldInvalidate: isEdit ? true : page === 1
+
   });
 
-  const { data, isPending, error } = useApiQuery({
+  const { data, isLoading, error } = useApiQuery({
     fetchQueryName: "location-detail",
     fetchQueryFunction: locationDetails,
     params: { uuid: selectedData?.uuid },
@@ -152,7 +153,7 @@ const LocationForm = ({
           queryClient.invalidateQueries(["locations"]);
           setCreateDrawerOpen(false);
           Toast.success("City Create Successfully!");
-          
+
         },
       });
     }
@@ -215,6 +216,7 @@ const LocationForm = ({
             dataSource={data?.city}
             rowKey="uuid"
             className="my-3"
+            loading={isLoading}
             pagination={false}
           ></Table>
 
@@ -237,17 +239,25 @@ const LocationForm = ({
               </div>
             }
           >
-            <Form form={cityForm} onFinish={onCityFinish} layout="vertical">
-              <Form.Item
-                label="City"
-                name={["city", "name"]}
-                rules={[{ required: true, message: "City is required" }]}
-              >
-                <Input />
-              </Form.Item>
-            </Form>
+            {
+              isLoading ? (
+                <div className="flex items-center justify-center h-full min-h-[300px]">
+                  <Loader />
+                </div>
+              ) : (
+                <Form form={cityForm} onFinish={onCityFinish} layout="vertical">
+                  <Form.Item
+                    label="City"
+                    name={["city", "name"]}
+                    rules={[{ required: true, message: "City is required" }]}
+                  >
+                    <Input />
+                  </Form.Item>
+                </Form>
+              )
+            }
           </Drawer>
-        </Drawer>
+        </Drawer >
       )}
 
       <Modal
@@ -289,7 +299,7 @@ const LocationForm = ({
           )}
         </Form>
       </Modal>
-    </div>
+    </div >
   );
 };
 

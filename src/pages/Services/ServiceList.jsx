@@ -1,4 +1,4 @@
- import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { LIMITS } from "../../variables/constants";
 import useApiQuery from "../../hooks/useApiQuery";
 import ListHeader from "../../component/ListHeader/ListHeader";
@@ -57,6 +57,7 @@ const ServiceList = () => {
         total={data?.pagination?.total}
         changePage={(page) => setPage(page)}
         changePerPage={(perPage) => setPerPage(perPage)}
+        loading={isLoading}
       />
 
       <ServiceForm

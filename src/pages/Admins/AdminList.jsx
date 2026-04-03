@@ -62,6 +62,7 @@ const AdminList = () => {
         total={data?.pagination?.total}
         changePage={(page) => setPage(page)}
         changePerPage={(perPage) => setPerPage(perPage)}
+        loading={isLoading}
       />
 
       <AdminForm
@@ -73,7 +74,6 @@ const AdminList = () => {
         setMode={setMode}
         selectedData={selectedData}
         setSelectedData={setSelectedData}
-        
       />
     </div>
   );

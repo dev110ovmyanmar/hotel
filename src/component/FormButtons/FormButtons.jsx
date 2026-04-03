@@ -2,9 +2,8 @@ import React from "react";
 import { Button } from "antd";
 
 const FormButtons = ({ mode, isPending, onClick }) => {
-  const isAdd = mode === "add";
+  const isAdd = mode === "add" || mode === "item-add";
   
-
   return (
     <div className="flex justify-between gap-4">
       <Button type="primary" onClick={onClick} loading={isPending}>

@@ -8,6 +8,7 @@ import {
 import usePermission from "../../../hooks/usePermission"; // <-- Permission hook
 import { PERMISSIONS } from "../../../variables/permission";
 import MenuModifierForm from "../Components/MenuModifierForm/MenuModifierForm";
+import PriceTag from "../../../component/PriceTag/PriceTag";
 
 const MenuModifierTable = ({
   data,
@@ -16,6 +17,7 @@ const MenuModifierTable = ({
   total,
   changePage,
   changePerPage,
+  loading
 }) => {
   const { hasPermission } = usePermission();
 
@@ -39,13 +41,13 @@ const MenuModifierTable = ({
       title: "Purchasing Price (MMK)",
       dataIndex: "unitCost",
       key: "unitCost",
-      render: (text) => <div>{text}</div>,
+      render: (text) => <PriceTag value={text} />
     },
     {
       title: "Selling Price (MMK)",
       dataIndex: "unitPrice",
       key: "unitPrice",
-      render: (text) => <div>{text}</div>,
+      render: (text) => <PriceTag value={text} />
     },
     {
       title: "Action",
@@ -108,6 +110,7 @@ const MenuModifierTable = ({
         scroll={{ x: 1000 }}
         columns={columns}
         dataSource={data}
+        loading={loading}
         rowKey="roomrate"
         pagination={{
           current: page,
