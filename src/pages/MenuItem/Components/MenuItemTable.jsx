@@ -1,11 +1,12 @@
-import { Dropdown, Space, Table, Tag } from "antd";
+import { Button, Dropdown, Space, Table, Tag } from "antd";
 import { useState } from "react";
-import { MoreOutlined } from "@ant-design/icons";
+import { MoreOutlined, PlusOutlined } from "@ant-design/icons";
 import { EyeOutlined } from "@ant-design/icons";
 import { EditOutlined } from "@ant-design/icons";
 import MenuItemForm from "./MenuItemForms/MenuItemForm";
 import { PERMISSIONS } from "../../../variables/permission";
 import usePermission from "../../../hooks/usePermission";
+import ItemsForm from "./MenuItemForms/ItemsForm";
 
 const MenuItemTable = ({
   data,
@@ -19,8 +20,10 @@ const MenuItemTable = ({
   const { hasPermission } = usePermission();
 
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [itemDrawerOpen, setItemDrawerOpen] = useState(false);
   const [mode, setMode] = useState(null);
   const [selectedData, setSelectedData] = useState({});
+  const [selectedItem, setSelectedItem] = useState(null);
 
   const columns = [
     {
@@ -125,29 +128,93 @@ const MenuItemTable = ({
     },
   ];
 
+   const expandColumns = [
+    { title: "ID", dataIndex: "id", key: "id" },
+    { title: "F&B Inventory Name", dataIndex: ["fnbInventoryItem","name"], key: "name" },
+    { title: "Quantity", dataIndex: "quantityPerItem", key: "quantityPerItem" },
+    { title: "Unit", dataIndex: ["unit","name"], key: "unit" },
+    {
+      title: "Action",
+      render: (_, record) => {
+        const smallStyle = { fontSize: "12px" };
+
+        const actions = [
+          {
+            key: "edit",
+            label: "Edit",
+            icon: <EditOutlined style={{ fontSize: "12px" }} />,
+            // permission: PERMISSIONS.SERVICE_EDIT,
+            onClick: () => {
+              setItemDrawerOpen(true);
+              setMode("item-edit");
+              setSelectedItem(record);
+            },
+          },
+        ];
+
+        // Filter actions by permission
+        const items = actions
+          .filter(
+            (action) => !action.permission || hasPermission(action.permission),
+          )
+          .map((action) => ({
+            key: action.key,
+            label: (
+              <Space size={4} style={smallStyle} onClick={action.onClick}>
+                {action.icon}
+                <span style={{ fontSize: "14px" }}>{action.label}</span>
+              </Space>
+            ),
+          }));
+
+        return (
+          <Dropdown menu={{ items }} trigger={["click"]}>
+            <MoreOutlined style={{ fontSize: "16px" }} />
+          </Dropdown>
+        );
+      },
+    },
+  ];
+
+  const expandedRowRender = (record) => {
+    return (
+      <>
+        <div className="flex justify-between items-center mb-3">
+          <Button
+            className="py-4! rounded-[5px]!"
+            type="primary"
+            size="small"
+            icon={<PlusOutlined />}
+            onClick={() => {
+              setSelectedItem({menuUuid: record?.uuid});
+              setMode("item-add");
+              setItemDrawerOpen(true);
+            }}
+          >
+          F&B Inventory Item
+          </Button>
+        </div>
+
+        <Table
+          columns={expandColumns}
+          dataSource={record.menuInventoryMappings || []}
+          rowKey="uuid"
+          pagination={false}
+          size="small"
+        />
+      </>
+    );
+  };
+
   return (
     <div id="scrollId" className="w-full h-[63vh] ">
       <Table
         tableLayout="fixed"
         scroll={{ x: 1000 }}
         columns={columns}
+        expandable={{ expandedRowRender, defaultExpandedRowKeys: ["0"] }}
         dataSource={data}
         rowKey="uuid"
-        expandable={{
-          expandedRowRender: (record) => (
-            <div style={{ padding: "0px 45px" }}>
-              {record.menuModifiers
-                ?.filter((m) => m.selected)
-                .map((modifier, index) => (
-                  <div key={modifier.uuid}>
-                    {index + 1}. {modifier.name}- {modifier.unitCost} MMK
-                  </div>
-                ))}
-            </div>
-          ),
-          rowExpandable: (record) =>
-            record.menuModifiers?.some((m) => m.selected),
-        }}
         pagination={{
           current: page,
           pageSize: perPage,
@@ -169,6 +236,15 @@ const MenuItemTable = ({
         setDrawerOpen={setDrawerOpen}
         selectedData={selectedData}
         setSelectedData={setSelectedData}
+      />
+
+       <ItemsForm
+        mode={mode}
+        setMode={setMode}
+        setSelectedItem={setSelectedItem}
+        selectedItem={selectedItem}
+        drawerOpen={itemDrawerOpen}
+        setDrawerOpen={setItemDrawerOpen}
       />
     </div>
   );
