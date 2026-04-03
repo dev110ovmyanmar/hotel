@@ -19,6 +19,8 @@ import {
 import FormButtons from "../../../../component/FormButtons/FormButtons";
 import { queryClient } from './../../../../app/queryClient';
 import Status from './../../../../component/Status/Status';
+import ImageUpload from "../../../../component/ImageUpload/ImageUpload";
+import { fetchAgencyUpload } from "../../../../api/agencyUploadApi";
 
 const { TextArea } = Input;
 
@@ -29,6 +31,8 @@ const AgencyForm = ({
   setSelectedData,
   drawerOpen,
   setDrawerOpen,
+  imageDrawerOpen,
+  setImageDrawerOpen,
   page,
   setPage,
 }) => {
@@ -60,7 +64,6 @@ const AgencyForm = ({
     options: {
       enabled: !!selectedData?.uuid,
     },
-
   });
 
   useEffect(() => {
@@ -108,6 +111,11 @@ const AgencyForm = ({
       });
     }
   };
+
+  const partnerUpload = useApiMutation({
+        mutationFn: fetchAgencyUpload,
+        invalidateKeys: [["agency-details", { uuid: selectedData?.uuid }]],
+    });
 
   return (
     <div className="flex justify-center">
@@ -274,6 +282,29 @@ const AgencyForm = ({
 
           <Status isView={isView} />
         </Form>
+      </Drawer>
+
+      <Drawer
+        size={550}
+        title={
+          <div className="flex justify-between gap-4">
+            <span>Image Upload</span>
+            {/* <Button type="primary" onClick={saveImageUpload} >
+              Upload
+            </Button> */}
+          </div>
+        }
+        open={imageDrawerOpen}
+        onClose={() => setImageDrawerOpen(false)}
+
+      >
+
+        <ImageUpload 
+          partneruuid={selectedData?.uuid} 
+          agencyFileList={data?.agencyFiles}
+          handleUploadMutation={partnerUpload} 
+          />
+
       </Drawer>
     </div>
   );
