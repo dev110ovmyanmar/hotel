@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { Form, Input, Button, Select, Image, Drawer, AutoComplete, InputNumber } from "antd";
+import React, { useEffect } from "react";
+import { Form, Input, Button, Select, Drawer, InputNumber } from "antd";
 import Toast from "../../../../component/Toast/Toast";
-import { CloseOutlined } from "@ant-design/icons";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
 import useApiQuery from "../../../../hooks/useApiQuery";
 import { queryClient } from "../../../../app/queryClient";
@@ -20,7 +19,6 @@ const ServiceForm = ({
   page,
   setPage,
 }) => {
-  console.log(page, "page");
   const [form] = Form.useForm();
 
   const isView = mode === "view";
@@ -30,7 +28,6 @@ const ServiceForm = ({
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
   const billingType = initData?.statuses?.billing_type;
   const serviceType = initData?.statuses?.service_type;
-  const status = initData?.statuses?.status;
 
   const billingTypesList = billingType?.map((type) => ({
     value: type.uuid,
@@ -41,13 +38,6 @@ const ServiceForm = ({
     value: service.uuid,
     label: service.name,
   }));
-
-  const statusList = status
-    ?.filter((item) => item.code !== "blocked")
-    ?.map((status) => ({
-      value: status.uuid,
-      label: status.name,
-    }));
 
   const createService = useApiMutation({
     mutationFn: upsertService,
@@ -122,20 +112,6 @@ const ServiceForm = ({
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
         size={550}
-        // closable={false}
-        // extra={
-        //   <CloseOutlined
-        //     onClick={() => setDrawerOpen(false)}
-        //     style={{ fontSize: 18, cursor: "pointer" }}
-        //   />
-        // }
-        // title={
-        //   mode === "view"
-        //     ? "Service Details"
-        //     : mode === "edit"
-        //       ? "Edit Service"
-        //       : "Create Service"
-        // }
         title={
           <div className="flex justify-between items-center">
             <span>
@@ -187,7 +163,7 @@ const ServiceForm = ({
 
                 <Form.Item label="Base Price" name="basePrice" >
                   <InputNumber
-                    className="!w-full"
+                    className="w-full!"
                     min={0}
                     readOnly={isView}
                     placeholder="Enter Base Price"

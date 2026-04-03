@@ -175,13 +175,13 @@ const CompanyContractList = lazy(
 
 const MenuItemList = lazy(() => import("../../pages/MenuItem/MenuItemList"));
 
-const ExtraBedRateList = lazy(
-  () => import("../../pages/ExtraBedRate/ExtraBedRateList"),
-);
+// const ExtraBedRateList = lazy(
+//   () => import("../../pages/ExtraBedRate/ExtraBedRateList"),
+// );
 
-const GuestFileUpload = lazy(
-  () => import("../../pages/GuestsListing/Components/NewGuestUploadForm"),
-);
+// const GuestFileUpload = lazy(
+//   () => import("../../pages/GuestsListing/Components/NewGuestUploadForm"),
+// );
 
 export const authRoutes = [
   {
@@ -875,7 +875,7 @@ export const authRoutes = [
     key: 27,
     path: "/exta-bed-rate/",
     label: "Extra Bed Rate",
-    component: <ExtraBedRateList />,
+    // component: <ExtraBedRateList />,
     icon: <FormOutlined style={{ fontSize: "20px" }} />,
     isPrivate: false,
     permission: PERMISSIONS.EXTRA_BED_RATE_LIST,
@@ -885,7 +885,7 @@ export const authRoutes = [
     label: "Guest",
     path: "/guest",
     icon: <ApartmentOutlined style={{ fontSize: "20px" }} />,
-    component: <GuestFileUpload />,
+    // component: <GuestFileUpload />,
   },
 ];
 
