@@ -101,48 +101,52 @@ const RestaurantTableForm = ({
                 <FormButtons onClick={() => form.submit()} mode={mode} isPending={upsertMutation.isPending} />
             )}
         >
-            {isLoading ? <Loader /> : (
-                <Form form={form} layout="vertical" onFinish={onFinish} className="w-full">
-                    <div className="grid grid-cols-12 gap-x-4">
+            {isLoading ?
+                <div className="flex items-center justify-center h-full min-h-[300px]">
+                    <Loader />
+                </div>
+                : (
+                    <Form form={form} layout="vertical" onFinish={onFinish} className="w-full">
+                        <div className="grid grid-cols-12 gap-x-4">
 
-                        <div className="col-span-6">
-                            <Form.Item
-                                label="Restaurant Table Number"
-                                name="tableNo"
-                                rules={[{ required: true, message: 'Please input table number' }]}
-                            >
-                                <Input readOnly={isView} placeholder="Enter Table Number" />
-                            </Form.Item>
+                            <div className="col-span-6">
+                                <Form.Item
+                                    label="Restaurant Table Number"
+                                    name="tableNo"
+                                    rules={[{ required: true, message: 'Please input table number' }]}
+                                >
+                                    <Input readOnly={isView} placeholder="Enter Table Number" />
+                                </Form.Item>
+                            </div>
+
+                            <div className="col-span-6">
+                                <Form.Item
+                                    label="Restaurant Table (Seats)"
+                                    name="capacity"
+                                    rules={[{ required: true, message: 'Please input capacity' }]}
+                                >
+                                    <InputNumber {...sharedProps} placeholder="Enter Seats Quantity" disabled={isView} />
+
+                                </Form.Item>
+                            </div>
+
+                            <div className="col-span-12 mt-4">
+                                <Form.Item
+                                    label="Status"
+                                    name="tableStatus"
+                                    rules={[{ required: true, message: 'Please select status' }]}
+                                >
+                                    <Select
+                                        placeholder="Select Table Status"
+                                        disabled={isView}
+                                        options={tableStatusOptions}
+                                    />
+                                </Form.Item>
+                            </div>
+
                         </div>
-
-                        <div className="col-span-6">
-                            <Form.Item
-                                label="Restaurant Table (Seats)"
-                                name="capacity"
-                                rules={[{ required: true, message: 'Please input capacity' }]}
-                            >
-                                <InputNumber {...sharedProps} placeholder="Enter Seats Quantity" disabled={isView} />
-
-                            </Form.Item>
-                        </div>
-
-                        <div className="col-span-12 mt-4">
-                            <Form.Item
-                                label="Status"
-                                name="tableStatus"
-                                rules={[{ required: true, message: 'Please select status' }]}
-                            >
-                                <Select
-                                    placeholder="Select Table Status"
-                                    disabled={isView}
-                                    options={tableStatusOptions}
-                                />
-                            </Form.Item>
-                        </div>
-
-                    </div>
-                </Form>
-            )}
+                    </Form>
+                )}
         </Drawer>
     );
 };

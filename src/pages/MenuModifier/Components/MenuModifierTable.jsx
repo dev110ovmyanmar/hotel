@@ -17,6 +17,7 @@ const MenuModifierTable = ({
   total,
   changePage,
   changePerPage,
+  loading
 }) => {
   const { hasPermission } = usePermission();
 
@@ -40,13 +41,13 @@ const MenuModifierTable = ({
       title: "Purchasing Price (MMK)",
       dataIndex: "unitCost",
       key: "unitCost",
-      render:(text) => <PriceTag value={text} />
+      render: (text) => <PriceTag value={text} />
     },
     {
       title: "Selling Price (MMK)",
       dataIndex: "unitPrice",
       key: "unitPrice",
-      render:(text) => <PriceTag value={text} />
+      render: (text) => <PriceTag value={text} />
     },
     {
       title: "Action",
@@ -109,6 +110,7 @@ const MenuModifierTable = ({
         scroll={{ x: 1000 }}
         columns={columns}
         dataSource={data}
+        loading={loading}
         rowKey="roomrate"
         pagination={{
           current: page,

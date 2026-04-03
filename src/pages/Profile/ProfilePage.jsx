@@ -1,6 +1,20 @@
 import React, { useState, useEffect } from "react";
-import { Button, Avatar, Typography, Drawer, Upload, Form, message } from "antd";
-import { EditOutlined, LoadingOutlined, PlusOutlined } from "@ant-design/icons";
+import {
+  Button,
+  Typography,
+  Drawer,
+  Upload,
+  Form,
+  message,
+  Image,
+  Tooltip,
+} from "antd";
+import {
+  EditOutlined,
+  LoadingOutlined,
+  PlusOutlined,
+  EyeOutlined,
+} from "@ant-design/icons";
 import ProfileForm from "./ProfileForm";
 import { loadState } from "../../utils/Utils";
 import { LOCAL_STORAGE_KEYS } from "../../variables/constants";
@@ -18,11 +32,10 @@ const ProfilePage = () => {
   const [editingSection, setEditingSection] = useState(null);
   const [loading, setLoading] = useState(false);
   const [imageUrl, setImageUrl] = useState("");
+  const [previewVisible, setPreviewVisible] = useState(false);
 
   const uuid = loadState(LOCAL_STORAGE_KEYS.loginAdminDetails)?.uuid;
   const roleUuid = loadState(LOCAL_STORAGE_KEYS.loginAdminDetails)?.role?.uuid;
-
-  /* ---------------- API ---------------- */
 
   const { data: loginAdminDetails, refetch } = useApiQuery({
     fetchQueryName: "login-admin-details",
@@ -39,20 +52,11 @@ const ProfilePage = () => {
     mutationFn: adminUpload,
   });
 
-  /* ---------------- Load Existing Image ---------------- */
-
   useEffect(() => {
     if (loginAdminDetails?.file) {
       setImageUrl(loginAdminDetails.file);
     }
   }, [loginAdminDetails]);
-
-  /* ---------------- User Info ---------------- */
-
-  const userInfo = {
-    name: loginAdminDetails?.name,
-    role: loginAdminDetails?.role?.name,
-  };
 
   const personalInfoInitial = {
     name: loginAdminDetails?.name,
@@ -60,8 +64,6 @@ const ProfilePage = () => {
     email: loginAdminDetails?.email,
     status: loginAdminDetails?.status?.name,
   };
-
-  /* ---------------- Drawer ---------------- */
 
   const showDrawer = (section) => {
     setEditingSection(section);
@@ -73,18 +75,12 @@ const ProfilePage = () => {
     setEditingSection(null);
   };
 
-  /* ---------------- Save Profile ---------------- */
-
   const handleSave = (values) => {
     const editValues = {
       ...values,
       uuid: uuid,
-      role: {
-        uuid: roleUuid,
-      },
-      status: {
-        uuid: loginAdminDetails?.status?.uuid,
-      },
+      role: { uuid: roleUuid },
+      status: { uuid: loginAdminDetails?.status?.uuid },
     };
 
     upsertAdmins.mutate(editValues, {
@@ -96,26 +92,22 @@ const ProfilePage = () => {
     closeDrawer();
   };
 
-  /* ---------------- Avatar Upload ---------------- */
-
   const beforeUpload = (file) => {
     const isJpgOrPng =
-      file.type === "image/jpeg" || file.type === "image/png" || file.type === "image/jpg";
-
+      file.type === "image/jpeg" ||
+      file.type === "image/png" ||
+      file.type === "image/jpg";
     if (!isJpgOrPng) {
       message.error("You can only upload JPG/PNG/JPEG file!");
       return Upload.LIST_IGNORE;
     }
-
     const isLt2M = file.size / 1024 / 1024 < 2;
-
     if (!isLt2M) {
       message.error("Image must be smaller than 2MB!");
       return Upload.LIST_IGNORE;
     }
 
     setLoading(true);
-
     uploadMutation.mutate(
       { file },
       {
@@ -129,100 +121,120 @@ const ProfilePage = () => {
           setLoading(false);
           message.error("Upload failed");
         },
-      }
+      },
     );
-
     return false;
   };
 
-  const uploadButton = (
-    <div>
-      {loading ? <LoadingOutlined /> : <PlusOutlined />}
-      <div style={{ marginTop: 8 }}>Upload</div>
-    </div>
-  );
-
-  /* ---------------- UI ---------------- */
-
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-w-4xl mx-auto p-4">
+      {/* 1. Header Section */}
+      <div className="bg-white rounded-xl shadow-sm p-8 flex flex-col items-center sm:flex-row sm:space-x-10">
+        {/* Avatar Container */}
+        <div className="relative mb-6 sm:mb-0">
+          {/* Main Image Circle */}
+          <div className="w-32 h-32 rounded-full border-2 border-gray-100 overflow-hidden bg-gray-50 flex items-center justify-center shadow-sm">
+            {loading ? (
+              <LoadingOutlined className="text-3xl text-blue-500" />
+            ) : imageUrl ? (
+              <img
+                src={imageUrl}
+                alt="avatar"
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <PlusOutlined className="text-3xl text-gray-300" />
+            )}
+          </div>
 
-      {/* User Info */}
-      <div className="flex items-center space-x-6 bg-white p-6 rounded-lg shadow-sm">
-
-        <Upload
-          name="file"
-          listType="picture-circle"
-          showUploadList={false}
-          beforeUpload={beforeUpload}
-          accept="image/png, image/jpeg"
-        >
-          {imageUrl ? (
-            <img
-              src={imageUrl}
-              alt="avatar"
-              style={{
-                width: "100%",
-                height: "100%",
-                objectFit: "cover",
-                borderRadius: "50%",
-              }}
-            />
-          ) : (
-            uploadButton
+          {/* LEFT SIDE: PREVIEW */}
+          {imageUrl && !loading && (
+            <div className="absolute left-0 top-[95%] -translate-x-[10%] -translate-y-[80%] z-10">
+              <Tooltip title="Preview Image">
+                <Button
+                  shape="circle"
+                  size="middle"
+                  icon={<EyeOutlined />}
+                  className="shadow-md bg-white border-gray-200 hover:text-blue-500 flex items-center justify-center"
+                  onClick={() => setPreviewVisible(true)}
+                />
+              </Tooltip>
+            </div>
           )}
-        </Upload>
 
-        <div>
-          <Title level={4} className="mb-0">
-            {userInfo.name}
+          {/* RIGHT SIDE: EDIT */}
+          {!loading && (
+            <div className="absolute right-0 top-[95%] translate-x-[10%] -translate-y-[80%] z-10">
+              <Upload
+                showUploadList={false}
+                beforeUpload={beforeUpload}
+                accept="image/*"
+              >
+                <Tooltip title="Update Photo">
+                  <Button
+                    shape="circle"
+                    size="middle"
+                    type="primary"
+                    icon={<EditOutlined />}
+                    className="shadow-md flex items-center justify-center"
+                  />
+                </Tooltip>
+              </Upload>
+            </div>
+          )}
+        </div>
+
+        {/* User Identity Text */}
+        <div className="text-center sm:text-left flex-1">
+          <Title level={2} className="mb-1 !text-gray-800">
+            {loginAdminDetails?.name || "User Name"}
           </Title>
-          <Text type="secondary">{userInfo.role}</Text>
+          <Text className="text-lg text-gray-500 italic">
+            {loginAdminDetails?.role?.name || "Position"}
+          </Text>
         </div>
       </div>
 
-      {/* Personal Info */}
-      <div className="bg-white rounded-lg shadow-sm p-6">
-
-        <div className="flex justify-between items-center mb-6">
-          <Title level={5} className="mb-0">
+      {/* 2. Personal Information Card */}
+      <div className="bg-white rounded-xl shadow-sm p-8">
+        <div className="flex justify-between items-center mb-8 pb-4 border-b border-gray-50">
+          <Title level={4} className="mb-0 !text-gray-700">
             Personal Information
           </Title>
-
           <Button
             type="primary"
             icon={<EditOutlined />}
             onClick={() => showDrawer("personal")}
+            className="rounded-lg"
           >
-            Edit
+            Edit Profile
           </Button>
         </div>
 
-        <div className="grid grid-cols-2 gap-x-12 gap-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-y-8 gap-x-16">
           {Object.entries(personalInfoInitial).map(([key, value]) => (
-            <div key={key}>
-              <Text strong>
-                {key.replace(/([A-Z])/g, " $1")}:
+            <div key={key} className="flex flex-col">
+              <Text className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">
+                {key.replace(/([A-Z])/g, " $1")}
               </Text>
-              <div>{value}</div>
+              <Text className="text-base text-gray-800 font-medium">
+                {value || "—"}
+              </Text>
             </div>
           ))}
         </div>
-
       </div>
 
-      {/* Drawer */}
+      {/* Drawer & Image Preview Logic */}
       <Drawer
         onClose={closeDrawer}
         open={drawerVisible}
-        footer={null}
-        title={
-          <div className="flex justify-between gap-4">
-            {`Edit ${editingSection === "personal" ? "Personal Info" : ""}`}
-            <Button type="primary" onClick={() => form.submit()}>
-              Update
-            </Button>
-          </div>
+        width={420}
+        title={<span className="font-bold">Edit Profile</span>}
+        extra={
+          <Button type="primary" onClick={() => form.submit()}>
+            Update
+          </Button>
         }
       >
         {editingSection === "personal" && (
@@ -235,6 +247,14 @@ const ProfilePage = () => {
         )}
       </Drawer>
 
+      <Image
+        src={imageUrl}
+        style={{ display: "none" }}
+        preview={{
+          visible: previewVisible,
+          onVisibleChange: (vis) => setPreviewVisible(vis),
+        }}
+      />
     </div>
   );
 };

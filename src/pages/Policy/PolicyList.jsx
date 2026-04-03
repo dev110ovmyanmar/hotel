@@ -63,6 +63,7 @@ const PolicyList = () => {
         total={data?.pagination?.total}
         changePage={(page) => setPage(page)}
         changePerPage={(perPage) => setPerPage(perPage)}
+        loading={isLoading}
       />
 
       <PolicyForm
@@ -74,7 +75,7 @@ const PolicyList = () => {
         mode={mode}
         selectedData={selectedData}
         setSelectedData={setSelectedData}
-        
+
 
       />
     </div>

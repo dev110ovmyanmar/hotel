@@ -36,7 +36,7 @@ const RoomInventoryList = () => {
 
   const roomTypeData = data?.data.map(item => ({
     ...item.roomType,
-    rates: item.rates   
+    rates: item.rates
   }));
 
   useEffect(() => {
@@ -71,6 +71,7 @@ const RoomInventoryList = () => {
 
       <RoomInventoryTable
         data={roomTypeData || []}
+        loading={isLoading}
       />
 
       <RoomInventoryForm

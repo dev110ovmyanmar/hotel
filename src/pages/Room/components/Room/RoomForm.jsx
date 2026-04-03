@@ -23,6 +23,7 @@ import RoomAttributesForm from "./RoomAttributesForm";
 import { EditOutlined, PlusOutlined } from "@ant-design/icons";
 import { PERMISSIONS } from "../../../../variables/permission";
 import usePermission from "../../../../hooks/usePermission";
+import Loader from "../../../../component/Loader/Loader"
 
 const RoomForm = ({
   mode,
@@ -77,7 +78,7 @@ const RoomForm = ({
     invalidateKeys: [["roomData"]],
   });
 
-  const { data } = useApiQuery({
+  const { data, isLoading } = useApiQuery({
     fetchQueryName: "roomData",
     fetchQueryFunction: roomDetails,
     params: { uuid: selectedData?.uuid },
@@ -195,130 +196,139 @@ const RoomForm = ({
           </div>
         }
       >
-        <Form form={form} layout="vertical" onFinish={onFinish}>
-          <Form.Item
-            label="Room No"
-            name="roomNo"
-            rules={[{ required: true, message: "Please enter room number" }]}
-          >
-            <Input placeholder="Enter Room Number" readOnly={isView} />
-          </Form.Item>
+        {
+          isLoading ? (
+            <div className="flex items-center justify-center h-full min-h-[300px]">
+              <Loader />
+            </div>
+          ) :
+            (
+              <Form form={form} layout="vertical" onFinish={onFinish}>
+                <Form.Item
+                  label="Room No"
+                  name="roomNo"
+                  rules={[{ required: true, message: "Please enter room number" }]}
+                >
+                  <Input placeholder="Enter Room Number" readOnly={isView} />
+                </Form.Item>
 
-          <Form.Item
-            label="Floor"
-            name="floorUuid"
-            rules={[{ required: true, message: "Floor is Required" }]}
-            getValueProps={(value) => ({
-              value: isView
-                ? floors.find((item) => item.value === value)?.label
-                : value,
-            })}
-          >
-            {isView ? (
-              <Input readOnly={isView} />
-            ) : (
-              <Select
-                showSearch={{
-                  filterOption: (input, option) =>
-                    (option?.label ?? "")
-                      .toLowerCase()
-                      .includes(input.toLowerCase()),
-                }}
-                options={floors}
-                placeholder="Select Floor"
-              />
-            )}
-          </Form.Item>
+                <Form.Item
+                  label="Floor"
+                  name="floorUuid"
+                  rules={[{ required: true, message: "Floor is Required" }]}
+                  getValueProps={(value) => ({
+                    value: isView
+                      ? floors.find((item) => item.value === value)?.label
+                      : value,
+                  })}
+                >
+                  {isView ? (
+                    <Input readOnly={isView} />
+                  ) : (
+                    <Select
+                      showSearch={{
+                        filterOption: (input, option) =>
+                          (option?.label ?? "")
+                            .toLowerCase()
+                            .includes(input.toLowerCase()),
+                      }}
+                      options={floors}
+                      placeholder="Select Floor"
+                    />
+                  )}
+                </Form.Item>
 
-          <Form.Item
-            label="Room Type"
-            name="roomTypeUuid"
-            rules={[{ required: true, message: "Room Type is Required" }]}
-            getValueProps={(value) => ({
-              value: isView
-                ? roomType.find((item) => item.value === value)?.label
-                : value,
-            })}
-          >
-            {isView ? (
-              <Input readOnly={isView} />
-            ) : (
-              <Select
-                showSearch={{
-                  filterOption: (input, option) =>
-                    (option?.label ?? "")
-                      .toLowerCase()
-                      .includes(input.toLowerCase()),
-                }}
-                options={roomType}
-                placeholder="Select Room Type"
-              />
-            )}
-          </Form.Item>
+                <Form.Item
+                  label="Room Type"
+                  name="roomTypeUuid"
+                  rules={[{ required: true, message: "Room Type is Required" }]}
+                  getValueProps={(value) => ({
+                    value: isView
+                      ? roomType.find((item) => item.value === value)?.label
+                      : value,
+                  })}
+                >
+                  {isView ? (
+                    <Input readOnly={isView} />
+                  ) : (
+                    <Select
+                      showSearch={{
+                        filterOption: (input, option) =>
+                          (option?.label ?? "")
+                            .toLowerCase()
+                            .includes(input.toLowerCase()),
+                      }}
+                      options={roomType}
+                      placeholder="Select Room Type"
+                    />
+                  )}
+                </Form.Item>
 
-          <Form.Item
-            label="Status"
-            name="status"
-            rules={[{ required: true, message: "Status is Required" }]}
-            getValueProps={(value) => ({
-              value: isView
-                ? statuses.find((item) => item.value === value)?.label
-                : value,
-            })}
-          >
-            {isView ? (
-              <Input readOnly={isView} />
-            ) : (
-              <Select
-                showSearch={{
-                  filterOption: (input, option) =>
-                    (option?.label ?? "")
-                      .toLowerCase()
-                      .includes(input.toLowerCase()),
-                }}
-                options={statuses}
-                placeholder="Select Status"
-              />
-            )}
-          </Form.Item>
+                <Form.Item
+                  label="Status"
+                  name="status"
+                  rules={[{ required: true, message: "Status is Required" }]}
+                  getValueProps={(value) => ({
+                    value: isView
+                      ? statuses.find((item) => item.value === value)?.label
+                      : value,
+                  })}
+                >
+                  {isView ? (
+                    <Input readOnly={isView} />
+                  ) : (
+                    <Select
+                      showSearch={{
+                        filterOption: (input, option) =>
+                          (option?.label ?? "")
+                            .toLowerCase()
+                            .includes(input.toLowerCase()),
+                      }}
+                      options={statuses}
+                      placeholder="Select Status"
+                    />
+                  )}
+                </Form.Item>
 
-          {!isAdd && (
-            <Card className="mt-5 shadow-sm  border border-gray-100 bg-gray-100!">
-              <div className="flex justify-between text-base items-center font-semibold mb-2">
-                <span>Room Attribute Value</span>
+                {!isAdd && (
+                  <Card className="mt-5 shadow-sm  border border-gray-100 bg-gray-100!">
+                    <div className="flex justify-between text-base items-center font-semibold mb-2">
+                      <span>Room Attribute Value</span>
 
-                {!isView && (
-                  <Button
-                    type="primary"
-                    icon={<PlusOutlined />}
-                    onClick={() => {
-                      setAttributeMode("add");
-                      setSelectedAttribute(null);
-                      setAttributeOpen(true);
-                    }}
-                    permission={PERMISSIONS.ROOM_ATTRIBUTE_VALUE_CREATE}
-                  >
-                    Add Room Attribute
-                  </Button>
+                      {!isView && (
+                        <Button
+                          type="primary"
+                          icon={<PlusOutlined />}
+                          onClick={() => {
+                            setAttributeMode("add");
+                            setSelectedAttribute(null);
+                            setAttributeOpen(true);
+                          }}
+                          permission={PERMISSIONS.ROOM_ATTRIBUTE_VALUE_CREATE}
+                        >
+                          Add Room Attribute
+                        </Button>
+                      )}
+                    </div>
+
+                    {data?.roomAttributeValues?.length > 0 ? (
+                      <Table
+                        columns={attributeColumns}
+                        dataSource={data.roomAttributeValues}
+                        rowKey="uuid"
+                        pagination={false}
+                        size="small"
+                        className="mt-5"
+                      />
+                    ) : (
+                      <span className="text-gray-400">No attributes added</span>
+                    )}
+                  </Card>
                 )}
-              </div>
-
-              {data?.roomAttributeValues?.length > 0 ? (
-                <Table
-                  columns={attributeColumns}
-                  dataSource={data.roomAttributeValues}
-                  rowKey="uuid"
-                  pagination={false}
-                  size="small"
-                  className="mt-5"
-                />
-              ) : (
-                <span className="text-gray-400">No attributes added</span>
-              )}
-            </Card>
-          )}
-        </Form>
-      </Drawer>
+              </Form >
+            )
+        }
+      </Drawer >
 
       <RoomAttributesForm
         mode={attributeMode}

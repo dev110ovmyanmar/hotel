@@ -13,6 +13,7 @@ import { LOCAL_STORAGE_KEYS } from "./../../../../variables/constants";
 import { queryClient } from "../../../../app/queryClient";
 import { EditOutlined } from '@ant-design/icons';
 import dayjs from "dayjs";
+import Loader from "../../../../component/Loader/Loader";
 
 const { TextArea } = Input;
 
@@ -60,7 +61,7 @@ const PolicyForm = ({
     shouldInvalidate: addPolicyRule ? !addPolicyRule : isEdit ? true : page === 1,
   });
 
-  const { data, isPending, error } = useApiQuery({
+  const { data, isLoading, error } = useApiQuery({
     fetchQueryName: "policy-detail",
     fetchQueryFunction: policyDetails,
     params: { uuid: selectedData?.uuid },
@@ -161,7 +162,7 @@ const PolicyForm = ({
       }
     },
     {
-      title: cancelCode || noShow ? "Days Range" :"Hours Range",
+      title: cancelCode || noShow ? "Days Range" : "Hours Range",
       // dataIndex: ,
       key: 'earlycheck',
       render: (_, record) => {
@@ -171,22 +172,40 @@ const PolicyForm = ({
         )
       }
     },
-    {
-      title: "Action",
-      render: (_, record) => {
-        return (
-          <EditOutlined
-            style={{ fontSize: "12px" }}
-            onClick={() => {
-              setPolicyRuleMode("editRule");
-              setAddPolicyRuleDrawer(true);
-              setSelectedPolicyRule(record);
+    // {
+    //   title: "Action",
+    //   render: (_, record) => {
+    //     return (
+    //       <EditOutlined
+    //         style={{ fontSize: "12px" }}
+    //         onClick={() => {
+    //           setPolicyRuleMode("editRule");
+    //           setAddPolicyRuleDrawer(true);
+    //           setSelectedPolicyRule(record);
 
-            }}
-          />
-        );
-      },
-    },
+    //         }}
+    //       />
+    //     );
+    //   },
+    // },
+    (!isView ?
+      {
+        title: "Action",
+        render: (_, record) => {
+          return (
+            <EditOutlined
+              style={{ fontSize: "12px" }}
+              onClick={() => {
+                setPolicyRuleMode("editRule");
+                setAddPolicyRuleDrawer(true);
+                setSelectedPolicyRule(record);
+
+              }}
+            />
+          );
+        },
+      } : {})
+
   ];
 
 
@@ -202,31 +221,10 @@ const PolicyForm = ({
         ...selectedPolicyRule,
 
         chargeValue: Number(selectedPolicyRule?.chargeValue),
-
-        fromOffset: selectedPolicyRule?.fromOffset != null &&
-          (earlyCheckin || lateCheckout) ?
-          dayjs().hour(selectedPolicyRule?.fromOffset).minute(0).second(0) :
-          cancelCode ? selectedPolicyRule?.fromOffset
-            : null,
-
-        toOffset: selectedPolicyRule?.toOffset != null &&
-          (earlyCheckin || lateCheckout) ?
-          dayjs().hour(selectedPolicyRule?.toOffset).minute(0).second(0) :
-          cancelCode ? selectedPolicyRule?.toOffset
-            : null,
       })
     }
   }, [editPolicyRule, selectedPolicyRule]);
 
-  const formatOffset = (value) => {
-    if (!value) return null;
-
-    if (dayjs.isDayjs(value)) {
-      return value.format("H");
-    }
-
-    return String(value);
-  };
 
   const savePolicyRule = (values) => {
     const linkTouuid = form.getFieldValue("linkTo");
@@ -245,13 +243,9 @@ const PolicyForm = ({
         addPolicyRule ?
           {
             ...values,
-            fromOffset: values?.fromOffset ? formatOffset(values?.fromOffset) : 0,
-            toOffset: values?.toOffset ? formatOffset(values?.toOffset) : 0,
           } :
           {
             ...values,
-            fromOffset: values?.fromOffset ? formatOffset(values?.fromOffset) : 0,
-            toOffset: values?.toOffset ? formatOffset(values?.toOffset) : 0,
             uuid: selectedPolicyRule?.uuid
           }
       ,
@@ -319,234 +313,238 @@ const PolicyForm = ({
           </div>
         }
       >
-        <Form
-          form={form}
-          layout="vertical"
-          validateTrigger="onSubmit"
-          onFinish={onFinish}
-          readOnly={isView}
-        >
-          <Form.Item
-            label="Name"
-            name="name"
-            rules={[{ required: true, message: "Policy Name is Required" }]}
-          >
-            <Input />
-          </Form.Item>
+        {
+          isLoading ? (
+            <div className="flex items-center justify-center h-full min-h-[300px]">
+              <Loader />
+            </div>
+          ) : (
+            <Form
+              form={form}
+              layout="vertical"
+              validateTrigger="onSubmit"
+              onFinish={onFinish}
+              readOnly={isView}
+            >
+              <Form.Item
+                label="Name"
+                name="name"
+                rules={[{ required: true, message: "Policy Name is Required" }]}
+              >
+                <Input />
+              </Form.Item>
 
-          <Form.Item
-            label="Link To"
-            name="linkTo"
-            rules={[{ required: true, message: "Link To is Required" }]}
-          >
-            <Select
-              options={linkTo?.map((item) => ({
-                label: item?.name,
-                value: item?.uuid,
-              }))}
-            ></Select>
-          </Form.Item>
+              <Form.Item
+                label="Link To"
+                name="linkTo"
+                rules={[{ required: true, message: "Link To is Required" }]}
+              >
+                <Select
+                  options={linkTo?.map((item) => ({
+                    label: item?.name,
+                    value: item?.uuid,
+                  }))}
+                ></Select>
+              </Form.Item>
 
-          <Form.Item
-            label="Type"
-            name={["policyType", "uuid"]}
-            rules={[{ required: true, message: "Policy Name is Required" }]}
-          >
-            <Select
-              options={policyType?.map((item) => ({
-                label: item.name,
-                value: item.uuid,
-              }))}
-              open={isView ? false : undefined}
-            ></Select>
-          </Form.Item>
+              <Form.Item
+                label="Type"
+                name={["policyType", "uuid"]}
+                rules={[{ required: true, message: "Policy Name is Required" }]}
+              >
+                <Select
+                  options={policyType?.map((item) => ({
+                    label: item.name,
+                    value: item.uuid,
+                  }))}
+                  open={isView ? false : undefined}
+                ></Select>
+              </Form.Item>
 
-          <Form.Item
-            label="Is Active"
-            name="isActive"
-            rules={[{ required: true, message: "Is Active is Required" }]}
-          >
-            <Select
-              options={[
-                { label: "True", value: true },
-                { label: "False", value: false },
-              ]}
-              open={isView ? false : undefined}
-            ></Select>
-          </Form.Item>
+              <Form.Item
+                label="Is Active"
+                name="isActive"
+                rules={[{ required: true, message: "Is Active is Required" }]}
+              >
+                <Select
+                  options={[
+                    { label: "True", value: true },
+                    { label: "False", value: false },
+                  ]}
+                  open={isView ? false : undefined}
+                ></Select>
+              </Form.Item>
 
-          <Form.Item
-            label="Description"
-            name="description"
-            rules={[{ required: true, message: "Description is Required" }]}
+              <Form.Item
+                label="Description"
+                name="description"
+                rules={[{ required: true, message: "Description is Required" }]}
 
-          >
-            <TextArea readOnly={isView} rows={4}></TextArea>
-          </Form.Item>
+              >
+                <TextArea readOnly={isView} rows={4}></TextArea>
+              </Form.Item>
 
 
-          {
-            isEdit && (
-              <>
-                <Divider />
+              {
+                (isEdit || isView) && (
+                  <>
+                    <Divider />
 
-                <Space className="!flex !justify-between">
-                  <div className="font-bold">
-                    {
-                      cancelCode? "Cancellation Policy (Days Before Arrival)":
-                      noShow? "No Show Policy (Days Before Arrival)":
-                      earlyCheckin? "Early CheckIn Policy":
-                      "Late CheckOut Policy"
-                    }
-                  </div>
+                    <Space className="!flex !justify-between">
+                      <div className="font-bold">
+                        {
+                          cancelCode ? "Cancellation Policy (Days Before Arrival)" :
+                            noShow ? "No Show Policy (Days Before Arrival)" :
+                              earlyCheckin ? "Early CheckIn Policy" :
+                                "Late CheckOut Policy"
+                        }
+                      </div>
 
-                  <Button
-                    type="primary"
-                    onClick={() => {
-                      openPolicyRule(),
-                        setPolicyRuleMode("addRule");
-                    }
-                    }
-                  >
-                    Add New Policy Rule
-                  </Button>
-                </Space>
-
-                <Table
-                  rowKey="id"
-                  dataSource={data?.policyRules}
-                  // dataSource={selectedData?.policyRules }
-                  // dataSource={policyRuleData}
-                  columns={columns}
-                  pagination={false}
-                  className="my-3"
-                >
-
-                </Table>
-                <Drawer
-                  title={
-                    <div className="flex justify-between">
-                      {
-                        addPolicyRule ?
-                          <span>Add New Policy Rule</span> :
-                          <span>Edit Policy Rule</span>
-                      }
                       <Button
                         type="primary"
-                        htmlType="submit"
-                        onClick={() => policyForm.submit()}
-                      >
-                        {
-                          addPolicyRule ? "Create" : "Update"
+                        onClick={() => {
+                          openPolicyRule(),
+                            setPolicyRuleMode("addRule");
                         }
+                        }
+                        hidden={isView}
+                      >
+                        Add New Policy Rule
                       </Button>
-                    </div>
-                  }
-                  open={addPolicyRuleDrawer}
-                  onClose={() => {
-                    setAddPolicyRuleDrawer(false),
-                      setSelectedPolicyRule({})
-                  }}
-                >
-                  <Form
-                    layout="vertical"
-                    form={policyForm}
-                    validateTrigger="onSubmit"
-                    onFinish={savePolicyRule}
-                  >
+                    </Space>
 
-                    <Form.Item
-                      label="Charge Base Type"
-                      name={["chargeBaseType", "uuid"]}
-                      rules={[{ required: true, message: "Charge Based On is Required" }]}
+                    <Table
+                      rowKey="id"
+                      dataSource={data?.policyRules}
+                      // dataSource={selectedData?.policyRules }
+                      // dataSource={policyRuleData}
+                      columns={columns}
+                      pagination={false}
+                      className="my-3"
                     >
-                      <Select
-                        options={
-                          chargeBaseType?.map(item => ({
-                            label: item.name,
-                            value: item.uuid
-                          }))
-                        }
-                      >
-                      </Select>
-                    </Form.Item>
 
-                    <Row gutter={16}>
-                      <Col span={12}>
-                        <Form.Item
-                          label="Charge Type"
-                          name={["chargeType", "uuid"]}
-                          rules={[{ required: true, message: "Charge Type is Required" }]}
-                          getValueProps={(value) => ({
-                            value: isView
-                              ? chargeType.find((item) => item.value === value)?.label
-                              : value,
-                          })}
-                        >
+                    </Table>
+                    <Drawer
+                      title={
+                        <div className="flex justify-between">
                           {
-                            isView ?
-                              <Input readOnly={isView} /> :
-                              <Select
-                                options={
-                                  chargeType?.map(item => (
-                                    {
-                                      label: item.name,
-                                      value: item.uuid
-                                    }
-                                  ))
-                                }
-                                placeholder="Select Charge Type"
-
-                              ></Select>
+                            addPolicyRule ?
+                              <span>Add New Policy Rule</span> :
+                              <span>Edit Policy Rule</span>
                           }
-                        </Form.Item>
-                      </Col>
-
-                      <Col span={12}>
-                        <Form.Item
-                          label="Charge Value "
-                          name="chargeValue"
-                          min={0}
-                          rules={[
-                            { required: true, message: "Charge Value is Required" },
+                          <Button
+                            type="primary"
+                            htmlType="submit"
+                            onClick={() => policyForm.submit()}
+                          >
                             {
-                              validator: (_, value) => {
-                                const selectedType =
-                                  chargeType?.find(
+                              addPolicyRule ? "Create" : "Update"
+                            }
+                          </Button>
+                        </div>
+                      }
+                      open={addPolicyRuleDrawer}
+                      onClose={() => {
+                        setAddPolicyRuleDrawer(false),
+                          setSelectedPolicyRule({})
+                      }}
+                    >
+                      <Form
+                        layout="vertical"
+                        form={policyForm}
+                        validateTrigger="onSubmit"
+                        onFinish={savePolicyRule}
+                      >
+
+                        <Form.Item
+                          label="Charge Base Type"
+                          name={["chargeBaseType", "uuid"]}
+                          rules={[{ required: true, message: "Charge Based On is Required" }]}
+                        >
+                          <Select
+                            options={
+                              chargeBaseType?.map(item => ({
+                                label: item.name,
+                                value: item.uuid
+                              }))
+                            }
+                          >
+                          </Select>
+                        </Form.Item>
+
+                        <Row gutter={16}>
+                          <Col span={12}>
+                            <Form.Item
+                              label="Charge Type"
+                              name={["chargeType", "uuid"]}
+                              rules={[{ required: true, message: "Charge Type is Required" }]}
+                              getValueProps={(value) => ({
+                                value: isView
+                                  ? chargeType.find((item) => item.value === value)?.label
+                                  : value,
+                              })}
+                            >
+                              {
+                                isView ?
+                                  <Input readOnly={isView} /> :
+                                  <Select
+                                    options={
+                                      chargeType?.map(item => (
+                                        {
+                                          label: item.name,
+                                          value: item.uuid
+                                        }
+                                      ))
+                                    }
+                                    placeholder="Select Charge Type"
+
+                                  ></Select>
+                              }
+                            </Form.Item>
+                          </Col>
+
+                          <Col span={12}>
+                            <Form.Item
+                              label="Charge Value "
+                              name="chargeValue"
+                              min={0}
+                              rules={[
+                                { required: true, message: "Charge Value is Required" },
+                                {
+                                  validator: (_, value) => {
+                                    const selectedType =
+                                      chargeType?.find(
+                                        (item) => item.uuid === chargeTypeValue,
+                                      );
+
+                                    if (selectedType?.code === "percentage") {
+                                      const numValue = Number(value);
+                                      if (isNaN(numValue) || numValue < 1 || numValue > 100) {
+                                        return Promise.reject(
+                                          new Error("Percentage must be between 1 and 100"),
+                                        );
+                                      }
+                                    }
+                                    return Promise.resolve();
+                                  },
+                                },
+                              ]}
+                            >
+                              <Input
+                                type="number"
+                                min={0}
+                                addonAfter={(() => {
+                                  const selected = chargeType?.find(
                                     (item) => item.uuid === chargeTypeValue,
                                   );
+                                  return selected?.code === "percentage" ? "%" : "MMK";
+                                })()}
+                                readOnly={isView} />
+                            </Form.Item>
+                          </Col>
+                        </Row>
 
-                                if (selectedType?.code === "percentage") {
-                                  const numValue = Number(value);
-                                  if (isNaN(numValue) || numValue < 1 || numValue > 100) {
-                                    return Promise.reject(
-                                      new Error("Percentage must be between 1 and 100"),
-                                    );
-                                  }
-                                }
-                                return Promise.resolve();
-                              },
-                            },
-                          ]}
-                        >
-                          <Input
-                            type="number"
-                            min={0}
-                            addonAfter={(() => {
-                              const selected = chargeType?.find(
-                                (item) => item.uuid === chargeTypeValue,
-                              );
-                              return selected?.code === "percentage" ? "%" : "MMK";
-                            })()}
-                            readOnly={isView} />
-                        </Form.Item>
-                      </Col>
-                    </Row>
-
-                    {/* Depend on Policy Type */}
-                    {
-                      (cancelCode || noShow) ?
-
+                        {/* Depend on Policy Type */}
                         <Form.Item
                           label={
                             <>
@@ -564,7 +562,7 @@ const PolicyForm = ({
                               >
                                 <InputNumber
                                   readOnly={isView} style={{ width: "100%" }}
-                                  addonAfter="Day"
+                                  addonAfter={(earlyCheckin || lateCheckout) ? "Hrs" : "Day"}
                                   min={0}
                                 />
                               </Form.Item>
@@ -577,74 +575,37 @@ const PolicyForm = ({
                               >
                                 <InputNumber
                                   readOnly={isView} style={{ width: "100%" }}
-                                  addonAfter="Days"
+                                  addonAfter={earlyCheckin || lateCheckout ? "Hrs" : "Days"}
                                   min={0}
                                 />
                               </Form.Item>
 
                             </Col>
                           </Row>
-                        </Form.Item> :
+                        </Form.Item>
 
-                        (earlyCheckin || lateCheckout) ?
-                          <Form.Item
-                            label={earlyCheckin ? "Early CheckIn Between" : "Late Checkout Between"}
-                          >
-                            <Row gutter={16}>
-                              <Col span={12}>
-                                <Form.Item
-                                  name="fromOffset"
-                                  rules={[{ required: true, message: "From is required" }]}
-                                >
-                                  <TimePicker
-                                    format="H"
-                                    showNow={false}
-                                    readOnly={isView}
-                                    style={{ width: "100%" }} />
-                                </Form.Item>
-                              </Col>
-                              <Col span={12}>
-                                <Form.Item
-                                  name="toOffset"
-                                  rules={[{ required: true, message: "To is required" }]}
-                                >
-                                  <TimePicker
-                                    format="H"
-                                    showNow={false}
-                                    readOnly={isView}
-                                    style={{ width: "100%" }} />
-                                </Form.Item>
-                              </Col>
-                            </Row>
-                          </Form.Item> :
+                        <Form.Item
+                          label="Sort Order"
+                          name="priority"
+                          rules={[{ required: true, message: "Priority is Required" }]}
+                        >
+                          <InputNumber
+                            readOnly={isView} style={{ width: "100%" }}
+                            min={0}
+                          />
+                        </Form.Item>
 
-                          <Form.Item
-                            label="No Show Policy"
+                      </Form>
+                    </Drawer>
+                  </>
+                )
+              }
 
-                          ></Form.Item>
-
-                    }
-
-                    <Form.Item
-                      label="Sort Order"
-                      name="priority"
-                      rules={[{ required: true, message: "Priority is Required" }]}
-                    >
-                      <InputNumber
-                        readOnly={isView} style={{ width: "100%" }}
-                        min={0}
-                      />
-                    </Form.Item>
-
-                  </Form>
-                </Drawer>
-              </>
-            )
-          }
-
-        </Form>
-      </Drawer>
-    </div>
+            </Form>
+          )
+        }
+      </Drawer >
+    </div >
   );
 };
 

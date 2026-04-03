@@ -23,11 +23,12 @@ const AdminTable = ({
   total,
   changePage,
   changePerPage,
+  loading,
 }) => {
   const { hasPermission } = usePermission();
 
   const localAdminDetails = loadState(LOCAL_STORAGE_KEYS.loginAdminDetails)?.uuid;
-  
+
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mode, setMode] = useState(null);
   const [selectedData, setSelectedData] = useState(null);
@@ -61,7 +62,7 @@ const AdminTable = ({
       title: "Status",
       dataIndex: "status",
       key: "status",
-      render: (_, record) => <ColorStatusTag status={record?.status}/>,
+      render: (_, record) => <ColorStatusTag status={record?.status} />,
       width: 150,
     },
     {
@@ -104,7 +105,7 @@ const AdminTable = ({
               setSelectedData(record);
             },
           },
-        ];       
+        ];
 
         // Filter actions based on permission & hidden flags
         const items = actions
@@ -156,6 +157,7 @@ const AdminTable = ({
         columns={columns}
         dataSource={data}
         rowKey="adminIdentifier"
+        loading={loading}
         pagination={{
           current: page,
           pageSize: perPage,
@@ -176,7 +178,7 @@ const AdminTable = ({
         setDrawerOpen={setDrawerOpen}
         selectedData={selectedData}
         setSelectedData={setSelectedData}
-        
+
       />
 
       <Modal

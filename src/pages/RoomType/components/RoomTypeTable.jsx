@@ -13,6 +13,7 @@ const RoomTypeTable = ({
   total,
   changePage,
   changePerPage,
+  loading
 }) => {
   const { hasPermission } = usePermission();
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -63,7 +64,7 @@ const RoomTypeTable = ({
       title: "Price (MMK)",
       dataIndex: "basePrice",
       key: "basePrice",
-      render:(text) => <PriceTag value={text} />
+      render: (text) => <PriceTag value={text} />
     },
     {
       title: "Action",
@@ -136,6 +137,7 @@ const RoomTypeTable = ({
           },
           showSizeChanger: true,
         }}
+        loading={loading}
       />
 
       <RoomTypeForm

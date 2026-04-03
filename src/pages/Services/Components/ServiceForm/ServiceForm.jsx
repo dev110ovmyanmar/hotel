@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from "react";
-import { Form, Input, Button, Select, Image, Drawer, AutoComplete, InputNumber } from "antd";
+import React, { useEffect } from "react";
+import { Form, Input, Button, Select, Drawer, InputNumber } from "antd";
 import Toast from "../../../../component/Toast/Toast";
-import { CloseOutlined } from "@ant-design/icons";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
 import useApiQuery from "../../../../hooks/useApiQuery";
 import { queryClient } from "../../../../app/queryClient";
 import { getServiceDetails, upsertService } from "../../../../api/serviceApi";
 import FormButtons from "../../../../component/FormButtons/FormButtons";
 import Status from "../../../../component/Status/Status";
+import Loader from "../../../../component/Loader/Loader";
 
 const ServiceForm = ({
   mode,
@@ -19,7 +19,6 @@ const ServiceForm = ({
   page,
   setPage,
 }) => {
-  console.log(page, "page");
   const [form] = Form.useForm();
 
   const isView = mode === "view";
@@ -29,7 +28,6 @@ const ServiceForm = ({
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
   const billingType = initData?.statuses?.billing_type;
   const serviceType = initData?.statuses?.service_type;
-  const status = initData?.statuses?.status;
 
   const billingTypesList = billingType?.map((type) => ({
     value: type.uuid,
@@ -40,13 +38,6 @@ const ServiceForm = ({
     value: service.uuid,
     label: service.name,
   }));
-
-  const statusList = status
-    ?.filter((item) => item.code !== "blocked")
-    ?.map((status) => ({
-      value: status.uuid,
-      label: status.name,
-    }));
 
   const createService = useApiMutation({
     mutationFn: upsertService,
@@ -120,21 +111,7 @@ const ServiceForm = ({
       <Drawer
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
-        size={500}
-        // closable={false}
-        // extra={
-        //   <CloseOutlined
-        //     onClick={() => setDrawerOpen(false)}
-        //     style={{ fontSize: 18, cursor: "pointer" }}
-        //   />
-        // }
-        // title={
-        //   mode === "view"
-        //     ? "Service Details"
-        //     : mode === "edit"
-        //       ? "Edit Service"
-        //       : "Create Service"
-        // }
+        size={550}
         title={
           <div className="flex justify-between items-center">
             <span>
@@ -163,91 +140,100 @@ const ServiceForm = ({
           </div>
         }
       >
-        <Form
-          form={form}
-          layout="vertical"
-          style={{ width: "100%" }}
-          onFinish={onFinish}
-        >
-          <Form.Item
-            label="Name"
-            name="name"
-            rules={[{ required: true, message: "Name is Required" }]}
-          >
-            <Input readOnly={isView} placeholder="Enter Service Name" />
-          </Form.Item>
+        {
+          isLoading ? (
+            <div className="flex items-center justify-center h-full min-h-[300px]">
+              <Loader />
+            </div>
+          ) :
+            (
+              <Form
+                form={form}
+                layout="vertical"
+                style={{ width: "100%" }}
+                onFinish={onFinish}
+              >
+                <Form.Item
+                  label="Name"
+                  name="name"
+                  rules={[{ required: true, message: "Name is Required" }]}
+                >
+                  <Input readOnly={isView} placeholder="Enter Service Name" />
+                </Form.Item>
 
-          <Form.Item label="Base Price" name="basePrice" >
-            <InputNumber
-              className="!w-full"
-              min={0}
-              readOnly={isView}
-              placeholder="Enter Base Price"
-              suffix="MMK"
-            />
-          </Form.Item>
+                <Form.Item label="Base Price" name="basePrice" >
+                  <InputNumber
+                    className="w-full!"
+                    min={0}
+                    readOnly={isView}
+                    placeholder="Enter Base Price"
+                    suffix="MMK"
+                  />
+                </Form.Item>
 
-          <Form.Item
-            label="Service Type"
-            name="serviceType"
-            rules={[{ required: true, message: "Service Type is Required" }]}
-            getValueProps={(value) => ({
-              value: isView
-                ? servicesTypesList.find((item) => item.value === value)?.label
-                : value,
-            })}
-          >
-            {isView ? (
-              <Input readOnly={isView} />
-            ) : (
-              <Select
-                showSearch={{
-                  filterOption: (input, option) =>
-                    (option?.label ?? "")
-                      .toLowerCase()
-                      .includes(input.toLowerCase()),
-                }}
-                options={servicesTypesList}
-                placeholder="Select Service Type"
-              />
-            )}
-          </Form.Item>
+                <Form.Item
+                  label="Service Type"
+                  name="serviceType"
+                  rules={[{ required: true, message: "Service Type is Required" }]}
+                  getValueProps={(value) => ({
+                    value: isView
+                      ? servicesTypesList.find((item) => item.value === value)?.label
+                      : value,
+                  })}
+                >
+                  {isView ? (
+                    <Input readOnly={isView} />
+                  ) : (
+                    <Select
+                      showSearch={{
+                        filterOption: (input, option) =>
+                          (option?.label ?? "")
+                            .toLowerCase()
+                            .includes(input.toLowerCase()),
+                      }}
+                      options={servicesTypesList}
+                      placeholder="Select Service Type"
+                    />
+                  )}
+                </Form.Item>
 
-          <Form.Item
-            label="Billing Type"
-            name="billingType"
-            rules={[{ required: true, message: "Billing Type is Required" }]}
-            getValueProps={(value) => ({
-              value: isView
-                ? billingTypesList.find((item) => item.value === value)?.label
-                : value,
-            })}
-          >
-            {isView ? (
-              <Input readOnly={isView} />
-            ) : (
-              <Select
-                showSearch={{
-                  filterOption: (input, option) =>
-                    (option?.label ?? "")
-                      .toLowerCase()
-                      .includes(input.toLowerCase()),
-                }}
-                options={billingTypesList}
-                placeholder="Select Billing Type"
-                open={isView ? false : undefined}
-              />
-            )}
-          </Form.Item>
+                <Form.Item
+                  label="Billing Type"
+                  name="billingType"
+                  rules={[{ required: true, message: "Billing Type is Required" }]}
+                  getValueProps={(value) => ({
+                    value: isView
+                      ? billingTypesList.find((item) => item.value === value)?.label
+                      : value,
+                  })}
+                >
+                  {isView ? (
+                    <Input readOnly={isView} />
+                  ) : (
+                    <Select
+                      showSearch={{
+                        filterOption: (input, option) =>
+                          (option?.label ?? "")
+                            .toLowerCase()
+                            .includes(input.toLowerCase()),
+                      }}
+                      options={billingTypesList}
+                      placeholder="Select Billing Type"
+                      open={isView ? false : undefined}
+                    />
+                  )}
+                </Form.Item>
 
-          <Status isView={isView} />
+                <Status isView={isView} />
 
-          <Form.Item label="Description" name="description">
-            <Input.TextArea readOnly={isView} rows={3} placeholder="Enter Description" />
-          </Form.Item>
-        </Form>
+                <Form.Item label="Description" name="description">
+                  <Input.TextArea readOnly={isView} rows={3} placeholder="Enter Description" />
+                </Form.Item>
+              </Form>
+            )
+        }
       </Drawer>
-    </div>
+    </div >
   );
 };
 
