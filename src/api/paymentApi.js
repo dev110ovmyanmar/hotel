@@ -25,3 +25,12 @@ export const paymentDetails = async (params) =>{
     );
     return data.response;
 }    
+
+export const paymentUpload = async(params) => {
+  const { data } = await apiClient.post(
+    "/payment/upload",
+     params,
+      {isMultipart: true}  
+  );
+  return data.response;
+};
