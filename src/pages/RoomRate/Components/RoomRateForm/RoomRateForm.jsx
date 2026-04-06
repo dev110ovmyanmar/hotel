@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useLocation } from "react-router-dom";
-import { Form, Input, Button, Select, Drawer, Row, Col } from "antd";
+import { Form, Input, Button, Select, Drawer, Row, Col, InputNumber } from "antd";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
 import useApiQuery from "../../../../hooks/useApiQuery";
 import FormButton from "../../../../component/FormButtons/FormButtons";
@@ -176,9 +176,10 @@ const RoomRateForm = ({
             name="price"
             rules={[{ required: true, message: "Price is Required" }]}
           >
-            <Input
+            <InputNumber
               readOnly={isView}
               suffix="MMK"
+              style={{width:"100%"}}
             />
           </Form.Item>
 
@@ -202,12 +203,12 @@ const RoomRateForm = ({
               <Row gutter={16}>
                 <Col span={12}>
                   <Form.Item label="Mon" name={["weekdays", "mon"]} style={{ marginBottom: 1 }}>
-                    <Input readOnly={isView} />
+                    <InputNumber readOnly={isView} style={{width:"100%"}} suffix="MMK" />
                   </Form.Item>
                 </Col>
                 <Col span={12}>
                   <Form.Item label="Tue" name={["weekdays", "tue"]} style={{ marginBottom: 1 }}>
-                    <Input readOnly={isView} />
+                    <InputNumber readOnly={isView} style={{width:"100%"}} suffix="MMK"/>
                   </Form.Item>
                 </Col>
               </Row>
@@ -215,12 +216,12 @@ const RoomRateForm = ({
               <Row gutter={16}>
                 <Col span={12}>
                   <Form.Item label="Wed" name={["weekdays", "wed"]} style={{ marginBottom: 1 }}>
-                    <Input readOnly={isView} />
+                    <InputNumber readOnly={isView} style={{width:"100%"}} suffix="MMK"/>
                   </Form.Item>
                 </Col>
                 <Col span={12}>
                   <Form.Item label="Thur" name={["weekdays", "thu"]} style={{ marginBottom: 1 }}>
-                    <Input readOnly={isView} />
+                    <InputNumber readOnly={isView} style={{width:"100%"}} suffix="MMK"/>
                   </Form.Item>
                 </Col>
               </Row>
@@ -228,12 +229,12 @@ const RoomRateForm = ({
               <Row gutter={16}>
                 <Col span={12}>
                   <Form.Item label="Fri" name={["weekdays", "fri"]} style={{ marginBottom: 1 }}>
-                    <Input readOnly={isView} />
+                    <InputNumber readOnly={isView} style={{width:"100%"}} suffix="MMK"/>
                   </Form.Item>
                 </Col>
                 <Col span={12}>
                   <Form.Item label="Sat" name={["weekdays", "sat"]} style={{ marginBottom: 1 }}>
-                    <Input readOnly={isView} />
+                    <InputNumber readOnly={isView} style={{width:"100%"}} suffix="MMK"/>
                   </Form.Item>
                 </Col>
               </Row>
@@ -241,7 +242,7 @@ const RoomRateForm = ({
               <Row gutter={16}>
                 <Col span={12}>
                   <Form.Item label="Sun" name={["weekdays", "sun"]} style={{ marginBottom: 1 }}>
-                    <Input readOnly={isView} />
+                    <InputNumber readOnly={isView} style={{width:"100%"}} suffix="MMK"/>
                   </Form.Item>
                 </Col>
               </Row>

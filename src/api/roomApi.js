@@ -90,3 +90,13 @@ export const editRoomTypeAmenity = async (params) => {
   const { data } = await apiClient.post("/room-type-amenity/upsert", params);
   return data.response;
 };
+
+
+export const fetchRoomTypeUpload = async (params) => {
+    const {data} = await apiClient.post(
+        `/room-type/upload`,
+        params,
+        {isMultipart: true}
+    );
+    return data.response;
+}

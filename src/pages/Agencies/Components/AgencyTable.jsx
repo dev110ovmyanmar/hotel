@@ -8,7 +8,6 @@ import usePermission from './../../../hooks/usePermission';
 import ColorStatusTag from './../../../component/ColorStatusTag/ColorStatusTag';
 import { FaFileContract } from "react-icons/fa";
 import ImageUpload from "../../../component/ImageUpload/ImageUpload";
-import { fetchAgencyUpload } from "../../../api/agencyUploadApi";
 import { useApiMutation } from "../../../hooks/useApiMutation";
 
 
@@ -116,8 +115,8 @@ const AgencyTable = ({
             },
           },
           {
-            key: "manageDocuments",
-            label: "Manage Documents",
+            key: "managefiles",
+            label: "Manage Files",
             icon: <FolderAddOutlined style={{ fontSize: "12px" }} />,
             onClick: () => {
               setImageDrawerOpen(true);

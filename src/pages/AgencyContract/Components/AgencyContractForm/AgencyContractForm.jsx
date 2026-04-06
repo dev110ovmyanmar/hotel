@@ -11,6 +11,8 @@ import { queryClient } from '../../../../app/queryClient';
 import { getFormattedDate } from "../../../../utils";
 import dayjs from "dayjs";
 import { capitalizeFirstLetter } from "../../../../utils/Utils";
+import ImageUpload from "../../../../component/ImageUpload/ImageUpload";
+import { fetchAgencyUpload } from "../../../../api/partnerApi";
 
 
 const AgencyContractForm = ({
@@ -20,6 +22,8 @@ const AgencyContractForm = ({
   setSelectedData,
   drawerOpen,
   setDrawerOpen,
+  imageDrawerOpen,
+  setImageDrawerOpen,
   page,
   setPage,
 }) => {
@@ -73,9 +77,6 @@ const AgencyContractForm = ({
     }
   }, [partnerContractDetailData]);
 
-  if (partnerContractDetailData) {
-    console.log(partnerContractDetailData, "partnerContractDetailData")
-  }
 
   const onFinish = (values) => {
     const createValues = {
@@ -124,6 +125,11 @@ const AgencyContractForm = ({
     }
   };
 
+  const partnerUpload = useApiMutation({
+    mutationFn: fetchAgencyUpload,
+    invalidateKeys: [["partner-contract-details", { uuid: partnerContractDetailData?.uuid }]],
+  });
+
   return (
     <div>
       <Drawer
@@ -133,11 +139,6 @@ const AgencyContractForm = ({
         title={
           <div className="flex justify-between items-center">
             <span>
-              {/* {mode === "view"
-                ? `${capitalizeFirstLetter(partnerContractDetailData?.agency?.name)}`
-                : mode === "edit"
-                  ? "Edit Agency Contract"
-                  : "Create Agency Contract"} */}
               {capitalizeFirstLetter(state?.agencyRecord?.name)}
             </span>
             {isView ? (
@@ -173,23 +174,6 @@ const AgencyContractForm = ({
             }
           }}
         >
-
-          {/* <Form.Item
-            label="Property Name"
-            name={["property", "name"]}
-            rules={[{ required: true, message: "Property Name is Required" }]}
-          >
-            <Input readOnly/>
-          </Form.Item>
-
-          <Form.Item
-            label="Agency Name"
-            name={["agency", "name"]}
-            rules={[{ required: true, message: "Agency Name is Required" }]}
-          >
-            <Input readOnly/>
-          </Form.Item> */}
-
           <Row gutter={16}>
             <Col span={12}>
               <Form.Item
@@ -287,6 +271,14 @@ const AgencyContractForm = ({
 
         </Form>
       </Drawer>
+
+      <ImageUpload
+        agencyContractuuid={partnerContractDetailData?.uuid}
+        agencyFileList={partnerContractDetailData?.agencyContractFiles}
+        handleUploadMutation={partnerUpload}
+        imageDrawerOpen={imageDrawerOpen}
+        setImageDrawerOpen={setImageDrawerOpen}
+      />
     </div>
   );
 };

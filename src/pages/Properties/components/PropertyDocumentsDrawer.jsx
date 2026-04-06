@@ -16,7 +16,7 @@ const PropertyDocumentsDrawer = ({ open, onClose, property }) => {
 
   const uploadMutation = useApiMutation({
     mutationFn: propertyUpload,
-    invalidateKeys: [["properties_details", property?.uuid]],
+    invalidateKeys: [["properties_details", { uuid: property?.uuid }]],
   });
 
   const getFile = (type) =>
@@ -30,42 +30,32 @@ const PropertyDocumentsDrawer = ({ open, onClose, property }) => {
       onClose={onClose}
       destroyOnHidden
     >
-      {/* Property Icon */}
-      <Row justify="center" gutter={[64, 64]}>
-        <Col>
-          <ImageUploadCard
-            label="Logo"
-            type="property_icon"
-            property={property}
-            uploadMutation={uploadMutation}
-            imageUrl={data?.file}
-            size="large"
-          />
-        </Col>
-      </Row>
+      <ImageUploadCard
+        label="Logo"
+        type="property_icon"
+        property={property}
+        uploadMutation={uploadMutation}
+        imageUrl={data?.file}
+        smallSizes={true}
 
-      {/* Email + Login Photos */}
-      <Row gutter={[32, 32]} justify="center" style={{ marginTop: 40 }}>
-        <Col span={10}>
-          <ImageUploadCard
-            label="Email Logo"
-            type="email_photo"
-            property={property}
-            uploadMutation={uploadMutation}
-            imageUrl={getFile("email_photo")}
-          />
-        </Col>
+      />
 
-        <Col span={10}>
-          <ImageUploadCard
-            label="Login Logo"
-            type="login_photo"
-            property={property}
-            uploadMutation={uploadMutation}
-            imageUrl={getFile("login_photo")}
-          />
-        </Col>
-      </Row>
+      <ImageUploadCard
+        label="Email Photo"
+        type="email_photo"
+        property={property}
+        uploadMutation={uploadMutation}
+        imageUrl={getFile("email_photo")}
+      />
+
+      <ImageUploadCard
+        label="Login Photo"
+        type="login_photo"
+        property={property}
+        uploadMutation={uploadMutation}
+        imageUrl={getFile("login_photo")}
+      />
+
     </Drawer>
   );
 };
