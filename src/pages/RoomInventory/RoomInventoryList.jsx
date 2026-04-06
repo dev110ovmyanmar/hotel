@@ -36,7 +36,7 @@ const RoomInventoryList = () => {
 
   const roomTypeData = data?.data.map(item => ({
     ...item.roomType,
-    rates: item.rates   
+    calendars: item.calendars   
   }));
 
   useEffect(() => {
