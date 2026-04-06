@@ -7,7 +7,15 @@ export const getAvailabilityCalendar = async (params) => {
     );
     return data.response;
 };
-    
+
+export const createAvailabilityCalendar = async (params) => {
+    const { data } = await apiClient.post(
+        "/availability-calendar/create",
+        params
+    );
+    return data.response;
+}
+
 export const updateAvailabilityCalendar = async (params) => {
     const { data } = await apiClient.put(
         "/availability-calendar/update",

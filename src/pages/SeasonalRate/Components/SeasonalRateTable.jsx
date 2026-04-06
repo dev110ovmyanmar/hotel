@@ -13,7 +13,7 @@ const SeasonalRateTable = ({
   total,
   changePage,
   changePerPage,
-  loading
+  loading,
 }) => {
   const { hasPermission } = usePermission();
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -38,12 +38,6 @@ const SeasonalRateTable = ({
       width: "80",
     },
     {
-      title: "Available Rooms",
-      dataIndex: "availableRooms",
-      key: "availableRooms",
-      width: "80",
-    },
-    {
       title: "Price (MMK)",
       dataIndex: "basePrice",
       key: "basePrice",
@@ -60,7 +54,29 @@ const SeasonalRateTable = ({
       dataIndex: "maxOccupancy",
       key: "maxOccupancy",
     },
+  ];
 
+  const expandColumns = [
+    { title: "ID", dataIndex: "id", key: "id" },
+    { title: "Rate Plan", dataIndex: ["ratePlan", "name"], key: "ratePlan" },
+    {
+      title: "Start Date",
+      dataIndex: "startDate",
+      key: "startDate",
+      render: (text) => <div>{String(text)}</div>,
+    },
+    {
+      title: "End Date",
+      dataIndex: "endDate",
+      key: "endDate",
+      render: (text) => <div>{String(text)}</div>,
+    },
+    {
+      title: "Price (MMK)",
+      dataIndex: "price",
+      key: "price",
+      render: (text) => <PriceTag value={text} />,
+    },
     {
       title: "Action",
       render: (_, record) => {
@@ -71,7 +87,7 @@ const SeasonalRateTable = ({
             key: "view",
             label: "View",
             icon: <EyeOutlined style={{ fontSize: "12px" }} />,
-            // permission: PERMISSIONS.SEASONAL_RATE_VIEW,
+            permission: PERMISSIONS.SEASONAL_RATE_VIEW,
             onClick: () => {
               setDrawerOpen(true);
               setMode("view");
@@ -114,17 +130,18 @@ const SeasonalRateTable = ({
     },
   ];
 
-  const expandColumns = [
-    { title: 'ID', dataIndex: 'id', key: 'id' },
-    { title: 'Rate Plan', dataIndex: ['ratePlan', 'name'], key: 'ratePlan' },
-    { title: 'Start Date', dataIndex: 'startDate', key: 'startDate', render: (text) => <div>{String(text)}</div> },
-    { title: 'End Date', dataIndex: 'endDate', key: 'endDate', render: (text) => <div>{String(text)}</div> },
-    { title: 'Price (MMK)', dataIndex: 'price', key: 'price', render: (text) => <PriceTag value={text} /> },
-  ];
-
-  const expandedRowRender = (record) => (
-    <Table columns={expandColumns} dataSource={record?.rates} pagination={false} />
-  );
+  const expandedRowRender = (record) => {
+    console.log(record, "record");
+    return (
+      <Table
+        className="custom-table-style"
+        columns={expandColumns}
+        dataSource={record?.rates}
+        pagination={false}
+        size="small"
+      />
+    );
+  };
 
   return (
     <div id="scrollId">
@@ -134,7 +151,7 @@ const SeasonalRateTable = ({
         columns={columns}
         dataSource={data}
         rowKey="uuid"
-        expandable={{ expandedRowRender, defaultExpandedRowKeys: ['0'] }}
+        expandable={{ expandedRowRender, defaultExpandedRowKeys: ["0"] }}
         loading={loading}
       />
 
