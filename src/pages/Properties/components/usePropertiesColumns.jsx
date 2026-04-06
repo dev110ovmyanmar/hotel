@@ -56,25 +56,27 @@ export default function usePropertiesColumns(onEdit, onView, onUpload) {
       title: "Actions",
       key: "actions",
       width: 80,
-      render: (_, record) => (
-        <Dropdown
-          menu={{
-            onClick: ({ key }) => {
-              if (key === "1") onView(record);
-              if (key === "2") onEdit(record);
-              if (key === "3") onUpload(record);
-            },
-            items: [
-              { key: "1", label: "View", icon: <EyeOutlined /> },
-              { key: "2", label: "Edit", icon: <EditOutlined /> },
-              {key: "3", label: "Manage Documents", icon: <FolderAddOutlined />}
-            ],
-          }}
-          trigger={["click"]}
-        >
-          <Button icon={<MoreOutlined />} size="small" type="text" />
-        </Dropdown>
-      ),
+      render: (_, record) => {
+        return (
+          <Dropdown
+            menu={{
+              onClick: ({ key }) => {
+                if (key === "1") onView(record);
+                if (key === "2") onEdit(record);
+                if (key === "3") onUpload(record);
+              },
+              items: [
+                { key: "1", label: "View", icon: <EyeOutlined /> },
+                { key: "2", label: "Edit", icon: <EditOutlined /> },
+                { key: "3", label: "Manage Files", icon: <FolderAddOutlined /> }
+              ],
+            }}
+            trigger={["click"]}
+          >
+            <Button icon={<MoreOutlined />} size="small" type="text" />
+          </Dropdown>
+        )
+      },
     },
   ];
 }

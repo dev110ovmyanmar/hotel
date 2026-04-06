@@ -14,11 +14,13 @@ import { useApiMutation } from "../../../../hooks/useApiMutation";
 import useApiQuery from "../../../../hooks/useApiQuery";
 import {
   upsertPartner,
-  partnerDetails
+  partnerDetails,
+  fetchAgencyUpload
 } from "../../../../api/partnerApi";
 import FormButtons from "../../../../component/FormButtons/FormButtons";
 import { queryClient } from './../../../../app/queryClient';
 import Status from './../../../../component/Status/Status';
+import ImageUpload from "../../../../component/ImageUpload/ImageUpload";
 
 const { TextArea } = Input;
 
@@ -29,6 +31,8 @@ const AgencyForm = ({
   setSelectedData,
   drawerOpen,
   setDrawerOpen,
+  imageDrawerOpen,
+  setImageDrawerOpen,
   page,
   setPage,
 }) => {
@@ -60,7 +64,6 @@ const AgencyForm = ({
     options: {
       enabled: !!selectedData?.uuid,
     },
-
   });
 
   useEffect(() => {
@@ -108,6 +111,11 @@ const AgencyForm = ({
       });
     }
   };
+
+  const agencyUpload = useApiMutation({
+    mutationFn: fetchAgencyUpload,
+    invalidateKeys: [["agency-details", { uuid: selectedData?.uuid }]],
+  });
 
   return (
     <div className="flex justify-center">
@@ -275,6 +283,16 @@ const AgencyForm = ({
           <Status isView={isView} />
         </Form>
       </Drawer>
+
+
+      <ImageUpload
+        partneruuid={selectedData?.uuid}
+        agencyFileList={data?.agencyFiles}
+        handleUploadMutation={agencyUpload}
+        imageDrawerOpen={imageDrawerOpen}
+        setImageDrawerOpen={setImageDrawerOpen}
+      />
+
     </div>
   );
 };

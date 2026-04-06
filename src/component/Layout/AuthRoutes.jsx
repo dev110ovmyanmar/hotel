@@ -43,6 +43,8 @@ import {
   CoffeeOutlined,
   FormOutlined,
   TrophyOutlined,
+  HolderOutlined,
+  HomeOutlined,
 } from "@ant-design/icons";
 import { lazy } from "react";
 import { FiMap } from "react-icons/fi";
@@ -156,7 +158,7 @@ const AgencyContractList = lazy(
 );
 
 const RoomInventoryList = lazy(
-  () => import("../../pages/Room Inventory/RoomInventoryList"),
+  () => import("../../pages/RoomInventory/RoomInventoryList"),
 );
 
 const SupplierList = lazy(
@@ -171,6 +173,24 @@ const FAndBInventoryList = lazy(
 
 const CompanyContractList = lazy(
   () => import("../../pages/CompanyContract/CompanyContractList"),
+);
+
+const MenuItemList = lazy(() => import("../../pages/MenuItem/MenuItemList"));
+
+const ExtraBedRateList = lazy(
+  () => import("../../pages/ExtraBedRate/ExtraBedRateList"),
+);
+
+// const GuestFileUpload = lazy(
+//   () => import("../../pages/GuestsListing/Components/NewGuestUploadForm"),
+// );
+
+const HouseKeepingStatusesListing = lazy(
+  () => import("../../pages/HouseKeeping/HouseKeepingStatusesListing"),
+);
+
+const HouseKeepingTaskListing = lazy(
+  () => import("../../pages/HouseKeepingTask/HouseKeepingTaskListing"),
 );
 
 
@@ -246,6 +266,15 @@ export const authRoutes = [
         isPrivate: true,
         component: <SeasonalRate />,
         permission: PERMISSIONS.SEASONAL_RATE_LIST,
+      },
+      {
+        key: 27,
+        path: "/rates-availability/exta-bed-rate/",
+        label: "Extra Bed Rate",
+        component: <ExtraBedRateList />,
+        icon: <FormOutlined style={{ fontSize: "20px" }} />,
+        isPrivate: true,
+        permission: PERMISSIONS.EXTRA_BED_RATE_LIST,
       },
     ],
   },
@@ -625,8 +654,8 @@ export const authRoutes = [
         path: "/f&b-management/menu-items",
         icon: <UnorderedListOutlined style={{ fontSize: "20px" }} />,
         isPrivate: true,
-        // component: < />,
-        // permission: ".list",
+        component: <MenuItemList />,
+        permission: PERMISSIONS.MENU_ITEM_LIST,
       },
       {
         key: 14.3,
@@ -815,13 +844,11 @@ export const authRoutes = [
     key: 17.9,
     path: "/partners/agencies/:agencyId/agency-contract",
     component: <AgencyContractList />,
-
   },
   {
     key: 17.9,
     path: "/partners/company/:companyId/company-contract",
     component: <CompanyContractList />,
-
   },
   {
     key: 20,
@@ -834,7 +861,7 @@ export const authRoutes = [
   },
   {
     key: 25,
-    path: `/guest-list/guest-notes/:guestId`,
+    path: `/guest-list/guests/:guestId/notes`,
     component: <GuestNotesListing />,
     permission: PERMISSIONS.GUEST_NOTE_LIST,
   },
@@ -864,6 +891,27 @@ export const authRoutes = [
     icon: <FormOutlined style={{ fontSize: "20px" }} />,
     isPrivate: false,
     permission: PERMISSIONS.AVAILABILITY_CALENDAR_LIST,
+  },
+  {
+    key: 27,
+    label: "House Keeping",
+    icon: <HolderOutlined style={{ fontSize: "20px" }} />,
+    nested: [
+      {
+        key: 27.1,
+        label: "Room Status Board",
+        path: "/house-keeping/room-status-board",
+        icon: <HomeOutlined style={{ fontSize: "20px" }} />,
+        component: <HouseKeepingStatusesListing />,
+      },
+      {
+        key: 27.2,
+        label: "Cleaning Schedule",
+        path: "/house-keeping/cleaning-schedule",
+        icon: <ApartmentOutlined style={{ fontSize: "20px" }} />,
+        component: <HouseKeepingTaskListing />,
+      },
+    ],
   },
 ];
 

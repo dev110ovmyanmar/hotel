@@ -24,7 +24,6 @@ import {
   MAX_AVAILABILITY_ROOM,
   MIN_AVAILABILITY_ROOM,
 } from "../../../../variables/constants";
-import Loader from "../../../../component/Loader/Loader";
 
 const RoomInventoryForm = ({
   mode,
@@ -121,77 +120,68 @@ const RoomInventoryForm = ({
           </div>
         }
       >
-        {
-          isLoading ? (
-            <div className="flex items-center justify-center h-full min-h-[300px]">
-              <Loader />
-            </div>
-          ) :
-            (
-              <Form
-                form={form}
-                layout="vertical"
-                style={{ width: "100%" }}
-                onFinish={onFinish}
-              >
-                <Form.Item label="Name" name="name">
-                  <Input readOnly={true} />
-                </Form.Item>
+        <Form
+          form={form}
+          layout="vertical"
+          style={{ width: "100%" }}
+          onFinish={onFinish}
+        >
+          <Form.Item label="Name" name="name">
+            <Input readOnly={true} />
+          </Form.Item>
 
-                <div className="grid grid-cols-2 gap-6">
-                  <Form.Item
-                    label="Aavailable Rooms"
-                    name="availableRooms"
-                    rules={[
-                      { required: true, message: "Available Rooms is Required" },
-                    ]}
-                  >
-                    <InputNumber {...sharedProps} placeholder="Outlined" disabled={isView} />
-                  </Form.Item>
+          <div className="grid grid-cols-2 gap-6">
+            <Form.Item
+              label="Aavailable Rooms"
+              name="availableRooms"
+              rules={[
+                { required: true, message: "Available Rooms is Required" },
+              ]}
+            >
+              <InputNumber {...sharedProps} placeholder="Outlined" disabled={isView} />
+            </Form.Item>
 
-                  <Form.Item
-                    label="Sold Rooms"
-                    name="soldRooms"
-                    dependencies={["availableRooms"]}
-                    rules={[
-                      ({ getFieldValue }) => ({
-                        validator(_, value) {
-                          const availableRooms = getFieldValue("availableRooms");
+            <Form.Item
+              label="Sold Rooms"
+              name="soldRooms"
+              dependencies={["availableRooms"]}
+              rules={[
+                ({ getFieldValue }) => ({
+                  validator(_, value) {
+                    const availableRooms = getFieldValue("availableRooms");
 
-                          if (value === undefined || value <= availableRooms) {
-                            return Promise.resolve();
-                          }
+                    if (value === undefined || value <= availableRooms) {
+                      return Promise.resolve();
+                    }
 
-                          return Promise.reject(
-                            new Error(
-                              "Sold rooms cannot be greater than available rooms",
-                            ),
-                          );
-                        },
-                      }),
-                    ]}
-                  >
-                    <InputNumber {...sharedProps} disabled={true} />
-                  </Form.Item>
-                </div>
+                    return Promise.reject(
+                      new Error(
+                        "Sold rooms cannot be greater than available rooms",
+                      ),
+                    );
+                  },
+                }),
+              ]}
+            >
+              <InputNumber {...sharedProps} disabled={true} />
+            </Form.Item>
+          </div>
 
-                <Form.Item
-                  label="Stop Sell"
-                  name="stopSell"
-                  valuePropName="checked"
-                  normalize={(value) => (value ? 1 : 0)}
-                >
-                  <Switch
-                    checkedChildren="True"
-                    unCheckedChildren="False"
-                    disabled={true}
-                  />
-                </Form.Item>
-              </Form>
-            )
-        }
+          <Form.Item
+            label="Stop Sell"
+            name="stopSell"
+            valuePropName="checked"
+            normalize={(value) => (value ? 1 : 0)}
+          >
+            <Switch
+              checkedChildren="True"
+              unCheckedChildren="False"
+              disabled={true}
+            />
+          </Form.Item>
+        </Form>
       </Drawer>
-    </div >
+    </div>
   );
 };
 

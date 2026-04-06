@@ -1,12 +1,14 @@
-import { Dropdown, Space, Table, Tag, Button } from "antd";
+import { Dropdown, Space, Table, Tag, Button, Drawer } from "antd";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { EditOutlined, EyeOutlined, MoreOutlined } from "@ant-design/icons";
+import { EditOutlined, EyeOutlined, FolderAddOutlined, MoreOutlined } from "@ant-design/icons";
 import AgencyForm from './AgencyForm/AgencyForm';
 import { PERMISSIONS } from './../../../variables/permission';
 import usePermission from './../../../hooks/usePermission';
 import ColorStatusTag from './../../../component/ColorStatusTag/ColorStatusTag';
-import { FaFileContract } from "react-icons/fa"; 
+import { FaFileContract } from "react-icons/fa";
+import ImageUpload from "../../../component/ImageUpload/ImageUpload";
+import { useApiMutation } from "../../../hooks/useApiMutation";
 
 
 const AgencyTable = ({
@@ -20,6 +22,7 @@ const AgencyTable = ({
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mode, setMode] = useState(null);
   const [selectedData, setSelectedData] = useState({});
+  const [imageDrawerOpen, setImageDrawerOpen] = useState(false);
 
   const { hasPermission } = usePermission();
 
@@ -112,6 +115,15 @@ const AgencyTable = ({
             },
           },
           {
+            key: "managefiles",
+            label: "Manage Files",
+            icon: <FolderAddOutlined style={{ fontSize: "12px" }} />,
+            onClick: () => {
+              setImageDrawerOpen(true);
+              setSelectedData(record);
+            },
+          },
+          {
             key: "contract",
             label: "Contract",
             icon: <FaFileContract style={{ fontSize: "12px" }} />,
@@ -119,7 +131,7 @@ const AgencyTable = ({
             onClick: () => {
               navigate(
                 `/partners/agencies/${record?.id}/agency-contract`,
-                {state: {agencyRecord : record}}
+                { state: { agencyRecord: record } }
               )
             },
           },
@@ -146,6 +158,7 @@ const AgencyTable = ({
     },
   ];
 
+
   return (
     <div id="scrollId" className="w-full h-[63vh] ">
       <Table
@@ -171,10 +184,14 @@ const AgencyTable = ({
         setMode={setMode}
         drawerOpen={drawerOpen}
         setDrawerOpen={setDrawerOpen}
+        imageDrawerOpen={imageDrawerOpen}
+        setImageDrawerOpen={setImageDrawerOpen}
         selectedData={selectedData}
         setSelectedData={setSelectedData}
-        page={page}
+        page={page} 
       />
+
+      
     </div>
   );
 };

@@ -12,7 +12,8 @@ const RoomInventoryList = () => {
   const { RangePicker } = DatePicker;
   const [keyword, setKeyword] = useState("");
   const [page, setPage] = useState(1);
-  const [perPage, setPerPage] = useState(LIMITS.PAGE_SIZE);
+  // const [perPage, setPerPage] = useState(LIMITS.PAGE_SIZE);
+  const [perPage, setPerPage] = useState(13);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [drawerOpen, setDrawerOpen] = useState(false);

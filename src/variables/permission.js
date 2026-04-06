@@ -183,6 +183,7 @@ export const PERMISSIONS = {
   // Availability Calendar
   AVAILABILITY_CALENDAR_LIST: "availability-calendar.list",
   AVAILABILITY_CALENDAR_VIEW: "availability-calendar.view",
+  AVAILABILITY_CALENDAR_CREATE: "availability-calendar.create",
   AVAILABILITY_CALENDAR_UPDATE: "availability-calendar.edit",
 
   // Menu Category
@@ -203,13 +204,21 @@ export const PERMISSIONS = {
   RESTAURANT_TABLE_CREATE: "table.create",
   RESTAURANT_TABLE_EDIT: "table.edit",
 
-      // Food and Beverage Inventory
+  // Food and Beverage Inventory
   FOOD_AND_BEVERAGE_INVENTORY_LIST: "fnb-inventory.list",
   FOOD_AND_BEVERAGE_INVENTORY_VIEW: "fnb-inventory.view",
   FOOD_AND_BEVERAGE_INVENTORY_CREATE: "fnb-inventory.create",
   FOOD_AND_BEVERAGE_INVENTORY_EDIT: "fnb-inventory.edit",
-  
 
+  // Menu Item
+  MENU_ITEM_LIST: "menu.list",
+  MENU_ITEM_VIEW: "menu.view",
+  MENU_ITEM_CREATE: "menu.create",
+  MENU_ITEM_EDIT: "menu.edit",
+
+  // Extra bed rate
+  EXTRA_BED_RATE_LIST: "extra-bed-rate.list",
+  EXTRA_BED_RATE_VIEW: "extra-bed-rate.view",
+  EXTRA_BED_RATE_CREATE: "extra-bed-rate.create",
+  EXTRA_BED_RATE_EDIT: "extra-bed-rate.edit",
 };
-
-
