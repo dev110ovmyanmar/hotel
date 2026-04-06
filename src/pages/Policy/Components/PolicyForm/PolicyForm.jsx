@@ -279,6 +279,25 @@ const PolicyForm = ({
 
   };
 
+  let fieldName;
+
+  if (cancelCode) {
+    fieldName = "cancelBetween";
+  } else if (earlyCheckin) {
+    fieldName = "earlyCheckin";
+  } else if (lateCheckout) {
+    fieldName = "lateCheckout";
+  } else if (noShow) {
+    fieldName = "noShow";
+  }
+
+  const labelText = cancelCode ? "Cancel Between" :
+    earlyCheckin ? "Early Check-in Between" :
+      lateCheckout ? "Late Check-out Between" :
+        noShow ? "No Show" : "Something";
+
+  const extraText = (cancelCode || noShow) ? "(Days Before Arrival)" : null;
+
   return (
     <div className="flex justify-center">
       <Drawer
@@ -548,11 +567,11 @@ const PolicyForm = ({
                         <Form.Item
                           label={
                             <>
-                              <span>{cancelCode ? "Cancel Between" : "No Show"} </span>
-                              <span style={{ fontWeight: "bold", marginLeft: "5px" }}>  (Days Before Arrival)</span>
+                              <span>{labelText} </span>
+                              <span style={{ fontWeight: "bold", marginLeft: "5px" }}>{extraText}</span>
                             </>
                           }
-                          name={cancelCode ? "cancelBetween" : "noShow"}
+                          name={fieldName}
                         >
                           <Row gutter={16}>
                             <Col span={12}>

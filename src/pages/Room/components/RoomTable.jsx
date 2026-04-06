@@ -40,10 +40,10 @@ const RoomTable = ({
       key: "roomTypeName",
     },
     {
-      title: "Floor Name",
-      dataIndex: ["floor", "name"],
+      title: "Floor",
+      dataIndex: "floor",
       key: "floorName",
-      width: 160,
+      render: (floor) => `${floor.name} (${floor.floorNo})`,
     },
 
     {
