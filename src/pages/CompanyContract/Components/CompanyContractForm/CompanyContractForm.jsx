@@ -11,6 +11,8 @@ import { queryClient } from '../../../../app/queryClient';
 import { getFormattedDate } from "../../../../utils";
 import dayjs from "dayjs";
 import { capitalizeFirstLetter } from "../../../../utils/Utils";
+import ImageUpload from "../../../../component/ImageUpload/ImageUpload";
+import { fetchCompanyUpload } from "../../../../api/partnerApi";
 
 
 const CompanyContractForm = ({
@@ -20,6 +22,8 @@ const CompanyContractForm = ({
   setSelectedData,
   drawerOpen,
   setDrawerOpen,
+  imageDrawerOpen,
+  setImageDrawerOpen,
   page,
   setPage,
 }) => {
@@ -62,9 +66,6 @@ const CompanyContractForm = ({
     },
   });
 
-  if (partnerContractDetailData) {
-    console.log(partnerContractDetailData, "partnerContractDetailData")
-  }
 
   useEffect(() => {
     if (!isAdd && partnerContractDetailData) {
@@ -124,6 +125,15 @@ const CompanyContractForm = ({
       });
     }
   };
+
+  const companyUpload = useApiMutation({
+    mutationFn: fetchCompanyUpload,
+    invalidateKeys: [["partner-contract-details", { uuid: partnerContractDetailData?.uuid }]],
+  });
+
+  if(partnerContractDetailData){
+    console.log(partnerContractDetailData,"partnerContractDetailData")
+  }
 
   return (
     <div>
@@ -266,6 +276,15 @@ const CompanyContractForm = ({
           </Row>
         </Form>
       </Drawer>
+
+      <ImageUpload
+        companyContractuuid={partnerContractDetailData?.uuid}
+        agencyFileList={partnerContractDetailData?.companyContractFiles}
+        handleUploadMutation={companyUpload}
+        imageDrawerOpen={imageDrawerOpen}
+        setImageDrawerOpen={setImageDrawerOpen}
+
+      />
     </div>
   );
 };

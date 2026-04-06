@@ -4,6 +4,7 @@ import {
   MoreOutlined,
   EyeOutlined,
   EditOutlined,
+  FolderAddOutlined,
 } from "@ant-design/icons";
 import usePermission from "../../../hooks/usePermission"; // <-- Permission hook
 import { PERMISSIONS } from "../../../variables/permission";
@@ -23,6 +24,7 @@ const CompanyContractTable = ({
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mode, setMode] = useState(null);
   const [selectedData, setSelectedData] = useState(null);
+  const [imageDrawerOpen, setImageDrawerOpen] = useState(false);
 
   const columns = [
     {
@@ -34,7 +36,7 @@ const CompanyContractTable = ({
       title: "Phone",
       dataIndex: ["company", "phone"],
       key: "companyPhone",
-      render: (text) => <div>{text? text : "-"}</div>,
+      render: (text) => <div>{text ? text : "-"}</div>,
     },
     {
       title: "Charge Type",
@@ -55,13 +57,13 @@ const CompanyContractTable = ({
       title: "Contract Start Date",
       dataIndex: "contractStart",
       key: "contractStart",
-      render: (_,record) => <div>{record?.contractStart}</div>
+      render: (_, record) => <div>{record?.contractStart}</div>
     },
     {
       title: "Contract End Date",
       dataIndex: "contractEnd",
       key: "contractEnd ",
-      render: (_,record) => <div>{record?.contractEnd}</div>
+      render: (_, record) => <div>{record?.contractEnd}</div>
     },
     {
       title: "Action",
@@ -88,6 +90,16 @@ const CompanyContractTable = ({
             onClick: () => {
               setDrawerOpen(true);
               setMode("edit");
+              setSelectedData(record);
+            },
+          },
+          {
+            key: "manageFiles",
+            label: "Manage Files",
+            icon: <FolderAddOutlined style={{ fontSize: "12px" }} />,
+            // permission: PERMISSIONS.ROOM_RATE_EDIT,
+            onClick: () => {
+              setImageDrawerOpen(true);
               setSelectedData(record);
             },
           },
@@ -143,6 +155,8 @@ const CompanyContractTable = ({
         setMode={setMode}
         drawerOpen={drawerOpen}
         setDrawerOpen={setDrawerOpen}
+        imageDrawerOpen={imageDrawerOpen}
+        setImageDrawerOpen={setImageDrawerOpen}
         selectedData={selectedData}
         setSelectedData={setSelectedData}
 
