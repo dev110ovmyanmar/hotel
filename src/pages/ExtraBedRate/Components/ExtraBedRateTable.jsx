@@ -1,0 +1,180 @@
+import { Dropdown, Space, Table } from "antd";
+import { useState } from "react";
+import { MoreOutlined, EyeOutlined, EditOutlined } from "@ant-design/icons";
+import { PERMISSIONS } from "../../../variables/permission";
+import usePermission from "../../../hooks/usePermission";
+import ExtraBedRateForm from "./ExtraBedRateForms/ExtraBedRateForm";
+
+const ExtraBedRateTable = ({ data, page, setPage }) => {
+  const { hasPermission } = usePermission();
+
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [mode, setMode] = useState(null);
+  const [selectedData, setSelectedData] = useState({});
+  const [expandedRowKeys, setExpandedRowKeys] = useState([]);
+
+  const nestedColumns = [
+    {
+      title: "ID",
+      render: (_, record) => <div>{record?.id}</div>,
+      width: 70,
+    },
+    {
+      title: "Start Date",
+      dataIndex: "startDate",
+      key: "startDate",
+    },
+    {
+      title: "End Date",
+      dataIndex: "endDate",
+      key: "endDate",
+    },
+    {
+      title: "Age Type",
+      dataIndex: ["ageType", "name"],
+      key: "ageType",
+    },
+    {
+      title: "Rate Plan",
+      dataIndex: ["ratePlan", "name"],
+      key: "ratePlan",
+    },
+    {
+      title: "Price (MMK)",
+      dataIndex: "price",
+      key: "price",
+      render: (price) => price?.toLocaleString(),
+    },
+  ];
+
+  const expandedRowRender = (record) => (
+    <Table
+      columns={nestedColumns}
+      dataSource={record.rates || []}
+      pagination={false}
+      rowKey="id"
+      size="small"
+      bordered
+    />
+  );
+
+  const columns = [
+    {
+      title: "ID",
+      dataIndex: ["roomType", "id"],
+      key: "id",
+      width: 150,
+    },
+    {
+      title: "Room Type",
+      dataIndex: ["roomType", "name"],
+      key: "roomType",
+    },
+    {
+      title: "Base Price (MMK)",
+      dataIndex: ["roomType", "basePrice"],
+      key: "basePrice",
+      render: (price) => price?.toLocaleString(),
+      width: 200,
+      align: "end",
+    },
+    {
+      title: "Action",
+      render: (_, record) => {
+        const actions = [
+          {
+            key: "view",
+            label: "View",
+            icon: <EyeOutlined style={{ fontSize: "12px" }} />,
+            permission: PERMISSIONS.EXTRA_BED_RATE_VIEW,
+            onClick: () => {
+              setDrawerOpen(true);
+              setMode("view");
+              setSelectedData({
+                ...record,
+                uuid: record?.rates?.[0]?.uuid,
+              });
+            },
+          },
+          {
+            key: "edit",
+            label: "Edit",
+            icon: <EditOutlined style={{ fontSize: "12px" }} />,
+            permission: PERMISSIONS.EXTRA_BED_RATE_EDIT,
+            onClick: () => {
+              setDrawerOpen(true);
+              setMode("edit");
+              setSelectedData({
+                ...record,
+                uuid: record?.rates?.[0]?.uuid,
+              });
+            },
+          },
+        ];
+
+        const items = actions
+          .filter(
+            (action) => !action.permission || hasPermission(action.permission),
+          )
+          .map((action) => ({
+            key: action.key,
+            label: (
+              <Space size={4} onClick={action.onClick}>
+                {action.icon}
+                <span>{action.label}</span>
+              </Space>
+            ),
+          }));
+
+        return (
+          <Dropdown menu={{ items }} trigger={["click"]}>
+            <MoreOutlined style={{ fontSize: "16px", cursor: "pointer" }} />
+          </Dropdown>
+        );
+      },
+    },
+  ];
+
+  return (
+    <div id="scrollId" className="w-full h-[63vh]">
+      <Table
+        tableLayout="fixed"
+        scroll={{ x: 1000 }}
+        columns={columns}
+        dataSource={data}
+        rowKey={(record) => record.roomType?.id}
+        expandable={{
+          expandedRowKeys,
+
+          // onExpand: (expanded, record) => { //only one row open
+          //   const key = record.roomType?.id;
+          //   setExpandedRowKeys(expanded ? [key] : []);
+          // },
+
+          onExpand: (expanded, record) => {
+            const key = record.roomType?.id;
+
+            setExpandedRowKeys((prev) =>
+              expanded ? [...prev, key] : prev.filter((k) => k !== key),
+            );
+          },
+          expandedRowRender,
+          rowExpandable: (record) => record.rates && record.rates.length > 0,
+        }}
+      />
+
+      <ExtraBedRateForm
+        page={page}
+        setPage={setPage}
+        mode={mode}
+        setMode={setMode}
+        drawerOpen={drawerOpen}
+        setDrawerOpen={setDrawerOpen}
+        selectedData={selectedData}
+        setSelectedData={setSelectedData}
+      />
+    </div>
+  );
+};
+
+export default ExtraBedRateTable;

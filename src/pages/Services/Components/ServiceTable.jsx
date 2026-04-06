@@ -1,6 +1,6 @@
 import { Dropdown, Space, Table, Tag, Button } from "antd";
 import { useState } from "react";
-import { MoreOutlined } from "@ant-design/icons";
+import { MoreOutlined, PlusOutlined } from "@ant-design/icons";
 import { EyeOutlined } from "@ant-design/icons";
 import { EditOutlined } from "@ant-design/icons";
 import ServiceForm from "./ServiceForm/ServiceForm";
@@ -8,6 +8,7 @@ import { PERMISSIONS } from "../../../variables/permission";
 import usePermission from "../../../hooks/usePermission";
 import ColorStatusTag from "../../../component/ColorStatusTag/ColorStatusTag";
 import PriceTag from "../../../component/PriceTag/PriceTag";
+import ItemsForm from "./ServiceForm/ItemsForm";
 
 const ServiceTable = ({
   data,
@@ -17,13 +18,15 @@ const ServiceTable = ({
   total,
   changePage,
   changePerPage,
-  loading
+  loading,
 }) => {
   const { hasPermission } = usePermission();
 
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [itemDrawerOpen, setItemDrawerOpen] = useState(false);
   const [mode, setMode] = useState(null);
   const [selectedData, setSelectedData] = useState({});
+  const [selectedItem, setSelectedItem] = useState(null);
 
   const columns = [
     {
@@ -40,7 +43,7 @@ const ServiceTable = ({
       title: "Price (MMK)",
       dataIndex: "basePrice",
       key: "basePrice",
-      render: (text) => <PriceTag value={text} />
+      render: (text) => <PriceTag value={text} />,
     },
     {
       title: "Property",
@@ -117,12 +120,99 @@ const ServiceTable = ({
     },
   ];
 
+  const expandColumns = [
+    { title: "ID", dataIndex: "id", key: "id" },
+    {
+      title: "Item Name",
+      dataIndex: ["serviceInventoryItem", "name"],
+      key: "name",
+    },
+    {
+      title: "Quantity",
+      dataIndex: "quantityPerService",
+      key: "quantityPerService",
+    },
+    { title: "Unit", dataIndex: ["unit", "name"], key: "unit" },
+    {
+      title: "Action",
+      render: (_, record) => {
+        const smallStyle = { fontSize: "12px" };
+
+        const actions = [
+          {
+            key: "edit",
+            label: "Edit",
+            icon: <EditOutlined style={{ fontSize: "12px" }} />,
+            // permission: PERMISSIONS.SERVICE_EDIT,
+            onClick: () => {
+              setItemDrawerOpen(true);
+              setMode("item-edit");
+              setSelectedItem(record);
+            },
+          },
+        ];
+
+        // Filter actions by permission
+        const items = actions
+          .filter(
+            (action) => !action.permission || hasPermission(action.permission),
+          )
+          .map((action) => ({
+            key: action.key,
+            label: (
+              <Space size={4} style={smallStyle} onClick={action.onClick}>
+                {action.icon}
+                <span style={{ fontSize: "14px" }}>{action.label}</span>
+              </Space>
+            ),
+          }));
+
+        return (
+          <Dropdown menu={{ items }} trigger={["click"]}>
+            <MoreOutlined style={{ fontSize: "16px" }} />
+          </Dropdown>
+        );
+      },
+    },
+  ];
+
+  const expandedRowRender = (record) => {
+    return (
+      <>
+        <div className="flex justify-between items-center mb-3">
+          <Button
+            className="py-4! rounded-[5px]!"
+            type="primary"
+            size="small"
+            icon={<PlusOutlined />}
+            onClick={() => {
+              setSelectedItem({ serviceUuid: record?.uuid });
+              setMode("item-add");
+              setItemDrawerOpen(true);
+            }}
+          >
+            Inventory Item
+          </Button>
+        </div>
+
+        <Table
+          columns={expandColumns}
+          dataSource={record.serviceInventoryMappings || []}
+          rowKey="uuid"
+          pagination={false}
+          size="small"
+        />
+      </>
+    );
+  };
+
   return (
     <div id="scrollId" className="w-full h-[63vh] ">
       <Table
         tableLayout="fixed"
         scroll={{ x: 1000 }}
         columns={columns}
+        expandable={{ expandedRowRender, defaultExpandedRowKeys: ["0"] }}
         dataSource={data}
         loading={loading}
         rowKey="uuid"
@@ -147,7 +237,15 @@ const ServiceTable = ({
         setDrawerOpen={setDrawerOpen}
         selectedData={selectedData}
         setSelectedData={setSelectedData}
-        width={500}
+      />
+
+      <ItemsForm
+        mode={mode}
+        setMode={setMode}
+        setSelectedItem={setSelectedItem}
+        selectedItem={selectedItem}
+        drawerOpen={itemDrawerOpen}
+        setDrawerOpen={setItemDrawerOpen}
       />
     </div>
   );

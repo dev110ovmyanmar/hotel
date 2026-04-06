@@ -1,5 +1,5 @@
 import { Tag, Dropdown, Button, Space } from "antd";
-import { EditOutlined, EyeOutlined, MoreOutlined } from "@ant-design/icons";
+import { EditOutlined, EyeOutlined, FileOutlined, MoreOutlined } from "@ant-design/icons";
 import usePermission from "../../../hooks/usePermission";
 import { PERMISSIONS } from "../../../variables/permission";
 import BooleanTag from "../../../component/BooleanTag/BooleanTag";
