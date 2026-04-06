@@ -56,7 +56,7 @@ const SeasonalRateForm = ({
   });
 
   const { data, isLoading } = useApiQuery({
-    fetchQueryName: "SeasonlRate",
+    fetchQueryName: "SeasonlRate-details",
     fetchQueryFunction: seasonlRateDetails,
     params: { uuid: selectedData?.uuid },
     options: {

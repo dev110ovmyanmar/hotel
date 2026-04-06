@@ -18,6 +18,7 @@ const ExtraBedRateTable = ({ data, page, setPage }) => {
       title: "ID",
       render: (_, record) => <div>{record?.id}</div>,
       width: 70,
+      align: "center",
     },
     {
       title: "Start Date",
@@ -45,39 +46,6 @@ const ExtraBedRateTable = ({ data, page, setPage }) => {
       key: "price",
       render: (price) => price?.toLocaleString(),
     },
-  ];
-
-  const expandedRowRender = (record) => (
-    <Table
-      columns={nestedColumns}
-      dataSource={record.rates || []}
-      pagination={false}
-      rowKey="id"
-      size="small"
-      bordered
-    />
-  );
-
-  const columns = [
-    {
-      title: "ID",
-      dataIndex: ["roomType", "id"],
-      key: "id",
-      width: 150,
-    },
-    {
-      title: "Room Type",
-      dataIndex: ["roomType", "name"],
-      key: "roomType",
-    },
-    {
-      title: "Base Price (MMK)",
-      dataIndex: ["roomType", "basePrice"],
-      key: "basePrice",
-      render: (price) => price?.toLocaleString(),
-      width: 200,
-      align: "end",
-    },
     {
       title: "Action",
       render: (_, record) => {
@@ -90,10 +58,7 @@ const ExtraBedRateTable = ({ data, page, setPage }) => {
             onClick: () => {
               setDrawerOpen(true);
               setMode("view");
-              setSelectedData({
-                ...record,
-                uuid: record?.rates?.[0]?.uuid,
-              });
+              setSelectedData(record);
             },
           },
           {
@@ -104,10 +69,7 @@ const ExtraBedRateTable = ({ data, page, setPage }) => {
             onClick: () => {
               setDrawerOpen(true);
               setMode("edit");
-              setSelectedData({
-                ...record,
-                uuid: record?.rates?.[0]?.uuid,
-              });
+              setSelectedData(record);
             },
           },
         ];
@@ -132,6 +94,37 @@ const ExtraBedRateTable = ({ data, page, setPage }) => {
           </Dropdown>
         );
       },
+    },
+  ];
+
+  const expandedRowRender = (record) => (
+    <Table
+      className="custom-table-style"
+      columns={nestedColumns}
+      dataSource={record.rates || []}
+      pagination={false}
+      rowKey="id"
+      size="small"
+    />
+  );
+
+  const columns = [
+    {
+      title: "ID",
+      dataIndex: ["roomType", "id"],
+      key: "id",
+    },
+    {
+      title: "Room Type",
+      dataIndex: ["roomType", "name"],
+      key: "roomType",
+    },
+    {
+      title: "Base Price (MMK)",
+      dataIndex: ["roomType", "basePrice"],
+      key: "basePrice",
+      render: (price) => price?.toLocaleString(),
+      align: "end",
     },
   ];
 
