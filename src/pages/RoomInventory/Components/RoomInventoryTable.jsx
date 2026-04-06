@@ -24,7 +24,6 @@ const RoomInventoryTable = ({
   total,
   changePage,
   changePerPage,
-  
 }) => {
   const { hasPermission } = usePermission();
 
@@ -66,23 +65,19 @@ const RoomInventoryTable = ({
       title: "Name",
       dataIndex: "name",
       key: "name",
-      width: 200
+      width: 200,
     },
     {
       title: "Total Rooms",
       dataIndex: "totalRooms",
       key: "totalRooms",
     },
+
     {
-      title: "Available Rooms",
-      dataIndex: "availableRooms",
-      key: "availableRooms",
-    },
-    {
-      title: "Base Price",
+      title: "Base Price (MMK)",
       dataIndex: "basePrice",
       key: "basePrice",
-      render:(text) => <PriceTag value={text} />
+      render: (text) => <PriceTag value={text} />,
     },
     {
       title: "Extra Bed",
@@ -180,23 +175,57 @@ const RoomInventoryTable = ({
   ];
 
   const expandColumns = [
-    { title: 'ID', dataIndex: 'id', key: 'id' },
-    { title: 'Date', dataIndex: 'date', key: 'date' },
-    { title: 'Available Rooms', dataIndex: 'availableRooms', key: 'availableRooms' },
-    { title: 'soldRooms', dataIndex: 'Sold Rooms', key: 'soldRooms' ,render:(text)=><div>{text? text : "-"}</div>},
-    { title: 'totaAvailableRooms', dataIndex: 'totaAvailableRooms', key: 'totaAvailableRooms' },
-    { title: 'stopSell', dataIndex: 'stopSell', key: 'stopSell',render:(text)=> <BooleanTag/> },
+    { title: "ID", dataIndex: "id", key: "id" },
+    { title: "Date", dataIndex: "date", key: "date", align: "center" },
+    {
+      title: "Stop Sell",
+      dataIndex: "stopSell",
+      key: "stopSell",
+      render: (_, record) => {
+        const isPastOrToday = dayjs(record.date).isSameOrBefore(dayjs(), "day");
+
+        const switchComponent = (
+          <Switch
+            checked={record.stopSell === true}
+            loading={updatingId === record.id}
+            disabled={isPastOrToday || updatingId === record.id}
+            onChange={(checked) => {
+              setSelectedRecord(record);
+              setSwitchValue(checked);
+              setConfirmOpen(true);
+            }}
+          />
+        );
+
+        if (isPastOrToday) {
+          return (
+            <Tooltip title="Cannot modify past or today dates">
+              {switchComponent}
+            </Tooltip>
+          );
+        }
+
+        return switchComponent;
+      },
+    },
+    {
+      title: "Sold Rooms",
+      dataIndex: "SoldRooms",
+      key: "soldRooms",
+      render: (text) => <div>{text ? text : "-"}</div>,
+    },
   ];
 
   const expandedRowRender = (record) => {
+    console.log(record,"record")
     return (
       <Table
         columns={expandColumns}
-        dataSource={record.rates || []}
+        dataSource={record?.calendars}
         rowKey="uuid"
         pagination={false}
       />
-    )
+    );
   };
 
   return (
@@ -208,7 +237,7 @@ const RoomInventoryTable = ({
         pagination={false}
         dataSource={data}
         rowKey="uuid"
-        expandable={{ expandedRowRender, defaultExpandedRowKeys: ['0'] }}
+        expandable={{ expandedRowRender, defaultExpandedRowKeys: ["0"] }}
       />
 
       <RoomInventoryForm
@@ -229,7 +258,9 @@ const RoomInventoryTable = ({
         cancelText="Cancel"
         confirmLoading={updateStopSelling.isLoading}
         onOk={handleConfirmStopSell}
-        onCancel={() => { setConfirmOpen(false) }}
+        onCancel={() => {
+          setConfirmOpen(false);
+        }}
       >
         <p>
           Are you sure you want to stop selling{" "}
