@@ -12,11 +12,6 @@ export const fetchRoom = async (params) => {
   return data.response;
 };
 
-// export const upsertRoom = async (params) => {
-//   const { data } = await apiClient.post("room/upsert", params);
-//   return data.response;
-// };
-
 export const createRoom = async (params) => {
   const { data } = await apiClient.post("/room/upsert", params);
   return data.response;
