@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from "react";
-import { Form, Input, Drawer, DatePicker, Select, Button, Space } from "antd";
+import { Form, Input, Drawer, DatePicker, Select, Button, Space, Typography } from "antd";
 import dayjs from "dayjs";
 import { useQueryClient } from "@tanstack/react-query";
 import Loader from "../../../component/Loader/Loader";
@@ -214,11 +214,29 @@ const GuestForm = ({
               </Form.Item>
             </div>
             <div className="col-span-12">
-              <Form.Item label="Phone" name="phone">
+              <Form.Item
+                label="Phone Number"
+                name="phoneNumber"
+                rules={[
+                  {
+                    validator: (_, value) => {
+                      // Check if contains only digits
+                      if (!/^\d+$/.test(value)) {
+                        return Promise.reject(new Error("Phone number must contain only digits"));
+                      }
+                      // Optional: Check for minimum length
+                      if (value.length < 9) {
+                        return Promise.reject(new Error("Phone number is too short"));
+                      }
+                      return Promise.resolve();
+                    },
+                  },
+                ]}
+              >
                 <Input
                   readOnly={isView}
-                  style={{ cursor: isView ? "default" : "text" }}
                   placeholder="Enter Phone Number"
+                  onInput={(e) => (e.target.value = e.target.value.replace(/\D/g, ""))}
                 />
               </Form.Item>
             </div>
@@ -235,12 +253,14 @@ const GuestForm = ({
               <Form.Item label="Date of Birth" name="dob">
                 <DatePicker
                   className="w-full"
-                  // 1. Prevents the calendar from popping up
                   open={isView ? false : undefined}
-                  // 2. Prevents the "X" delete button from appearing
-                  allowClear={isView ? false : true}
-                  // 3. Prevents manual typing in the input box
+                  allowClear={!isView}
                   inputReadOnly={isView}
+                  disabledDate={(current) => {
+                    return current && current > dayjs().endOf('day');
+                  }}
+                  showToday={false}
+                  placeholder="Select Date of Birth"
                 />
               </Form.Item>
             </div>
@@ -249,6 +269,10 @@ const GuestForm = ({
           <div className="mt-4 border-t border-gray-200 pt-4">
             {/* NRC, Passport */}
             <div className="grid grid-cols-12 gap-x-2">
+              <div className="col-span-12">
+                <Typography.Text>NRC No</Typography.Text>
+              </div>
+
               <div className="col-span-2">
                 <Form.Item label="Region" name="srcNo" className="flex-2">
                   {isView ? (
@@ -306,23 +330,48 @@ const GuestForm = ({
               </div>
 
               <div className="col-span-3">
-                <Form.Item label="Number" name="number">
+                <Form.Item
+                  label="NRC Number"
+                  name="number"
+                  rules={[
+                    {
+                      validator: (_, value) => {
+                        if (!/^\d+$/.test(value)) {
+                          return Promise.reject(new Error("Only numbers are allowed"));
+                        }
+                        if (value.length !== 6) {
+                          return Promise.reject(new Error("Must be exactly 6 digits"));
+                        }
+                        return Promise.resolve();
+                      },
+                    },
+                  ]}
+                >
                   <Input
+                    maxLength={6}
                     readOnly={isView}
-                    style={{ cursor: isView ? "default" : "text" }}
-                    placeholder="Enter NRC Number"
+                    placeholder="Enter 6-digit NRC Number"
+                    onInput={(e) => (e.target.value = e.target.value.replace(/\D/g, ""))}
                   />
                 </Form.Item>
               </div>
             </div>
 
-            <Form.Item label="Passport Number" name="passport">
-              <Input
-                readOnly={isView}
-                style={{ cursor: isView ? "default" : "text" }}
-                placeholder="Enter Passport Number"
-              />
-            </Form.Item>
+            <div className="col-span-12 mb-1">
+              <Typography.Text>Passport No</Typography.Text>
+            </div>
+
+            <div className="col-span-12">
+              <Form.Item
+                // label="Passport Number" 
+                name="passport">
+                <Input
+                  readOnly={isView}
+                  style={{ cursor: isView ? "default" : "text" }}
+                  placeholder="Enter Passport Number"
+                />
+              </Form.Item>
+            </div>
           </div>
 
           {/* Nationality, Gender, Country, City, Address, Status */}

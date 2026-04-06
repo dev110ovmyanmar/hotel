@@ -1,11 +1,13 @@
 import React, { useEffect, useMemo } from "react";
 import { Form, Input, Drawer, Button, Select } from "antd";
+import { useLocation } from "react-router-dom";
 import Loader from "../../../../component/Loader/Loader";
 import FormButtons from "../../../../component/FormButtons/FormButtons";
 import Toast from "../../../../component/Toast/Toast";
 import useApiQuery from "../../../../hooks/useApiQuery";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
 import { getGuestNoteDetail, upsertGuestNote } from "../../../../api/guestNoteApi";
+
 
 const { TextArea } = Input;
 
@@ -18,7 +20,7 @@ const GuestNoteForm = ({
     setSelectedRow,
     setPage,
     page,
-    guestUuid,
+    // guestUuid,
     // guestName,
 }) => {
     const [form] = Form.useForm();
@@ -27,11 +29,16 @@ const GuestNoteForm = ({
     const isEdit = mode === "edit";
     const isAdd = mode === "add";
 
+    const { state } = useLocation();
+
     // 1. Fetch Detail API - Ensure we handle data.response based on your JSON structure
     const { data, isLoading } = useApiQuery({
         fetchQueryName: "guestNotes-detail",
         fetchQueryFunction: getGuestNoteDetail,
-        params: { uuid: selectedRow?.uuid },
+        params: {
+            uuid: selectedRow?.uuid,
+            partnerType: "Guest"
+        },
         options: { enabled: !!selectedRow?.uuid && drawerOpen },
     });
 
@@ -40,7 +47,8 @@ const GuestNoteForm = ({
             form.resetFields();
         } else if (data) {
             form.setFieldsValue({
-                guest: data.guest?.name || guestUuid,
+                // guest: data.guest?.name,
+                guest: data.guest.uuid,
                 note: data.note,
             });
         }
@@ -63,7 +71,7 @@ const GuestNoteForm = ({
             uuid: isEdit ? selectedRow?.uuid : null,
             note: values.note,
             guest: {
-                uuid: isAdd ? guestUuid : (selectedRow?.guest?.uuid || guestUuid)
+                uuid: isAdd ? state?.guestRecord?.uuid : selectedRow?.guest?.uuid
             },
         };
 
