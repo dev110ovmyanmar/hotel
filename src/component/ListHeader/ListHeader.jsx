@@ -14,6 +14,8 @@ const ListHeader = ({
   setCreateDrawerOpen,
   permission,
   showCreateButton = true,
+  extra,
+  radioButtonsForTableAndGrid,
 }) => {
   const { hasPermission } = usePermission(); // permission checker
   const canCreate = hasPermission(permission);
@@ -63,19 +65,24 @@ const ListHeader = ({
         )}
       </div>
       <div className="w-full flex justify-end">
-        {canCreate && showCreateButton && (
-          <Button
-            type="primary"
-            onClick={
-              !setCreateDrawerOpen && !setCityMode ? onAdd : cityFunction
-            }
-            className={
-              !setCreateDrawerOpen && !setCityMode ? "bg-blue-600" : "w-auto"
-            }
-          >
-            {addButtonText}
-          </Button>
-        )}
+        <div className="w-full flex justify-end pr-2">
+          {radioButtonsForTableAndGrid}
+        </div>
+        <div>
+          {canCreate && showCreateButton && (
+            <Button
+              type="primary"
+              onClick={
+                !setCreateDrawerOpen && !setCityMode ? onAdd : cityFunction
+              }
+              className={
+                !setCreateDrawerOpen && !setCityMode ? "bg-blue-600" : "w-auto"
+              }
+            >
+              {addButtonText}
+            </Button>
+          )}
+        </div>
       </div>
     </div>
   );
