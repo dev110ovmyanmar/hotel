@@ -1,6 +1,6 @@
 import { Dropdown, Space, Table } from "antd";
 import { useState } from "react";
-import { MoreOutlined, EyeOutlined, EditOutlined } from "@ant-design/icons";
+import { MoreOutlined, EyeOutlined, EditOutlined, FileAddOutlined } from "@ant-design/icons";
 import usePermission from "../../../hooks/usePermission";
 import { PERMISSIONS } from "../../../variables/permission";
 import RoomTypeForm from "./RoomTypeForm/RoomTypeForm";
@@ -19,6 +19,8 @@ const RoomTypeTable = ({
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mode, setMode] = useState(null);
   const [selectedData, setSelectedData] = useState(null);
+  const [imageDrawerOpen, setImageDrawerOpen] = useState(false);
+
 
   const columns = [
     {
@@ -94,6 +96,17 @@ const RoomTypeTable = ({
               setSelectedData(record);
             },
           },
+          {
+            key: "managefiles",
+            label: "Manage Files",
+            icon: <FileAddOutlined style={{ fontSize: "12px" }} />,
+            // permission: PERMISSIONS.ROOM_TYPE_EDIT,
+            onClick: () => {
+              setImageDrawerOpen(true);
+              setSelectedData(record);
+            },
+          },
+
         ];
 
         const items = actions
@@ -146,6 +159,8 @@ const RoomTypeTable = ({
         setMode={setMode}
         drawerOpen={drawerOpen}
         setDrawerOpen={setDrawerOpen}
+        imageDrawerOpen={imageDrawerOpen}
+        setImageDrawerOpen={setImageDrawerOpen}
         selectedData={selectedData}
         setSelectedData={setSelectedData}
       />

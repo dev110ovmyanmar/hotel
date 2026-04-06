@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { DeleteOutlined, EyeOutlined, PlusOutlined } from '@ant-design/icons';
-import { Image, Upload } from 'antd';
+import { DeleteOutlined, EyeOutlined, LoadingOutlined, PlusOutlined } from '@ant-design/icons';
+import { Drawer, Upload } from 'antd';
 import Toast from '../Toast/Toast';
 
 const getBase64 = file =>
@@ -13,13 +13,17 @@ const getBase64 = file =>
 
 const ImageUpload = ({
     partneruuid,
+    agencyContractuuid,
+    companyContractuuid,
     agencyFileList,
-    handleUploadMutation
-
+    handleUploadMutation,
+    imageDrawerOpen,
+    setImageDrawerOpen,
 }) => {
     const [previewOpen, setPreviewOpen] = useState(false);
     const [previewImage, setPreviewImage] = useState('');
     const [fileList, setFileList] = useState([]);
+    const [loading, setLoading] = useState(false);
 
     const handlePreview = async file => {
         if (!file) {
@@ -28,7 +32,6 @@ const ImageUpload = ({
         setPreviewImage(file);
         setPreviewOpen(true);
     };
-
 
     const handleChange = ({ fileList: agencyFileList }) => {
         setFileList(agencyFileList);
@@ -45,116 +48,150 @@ const ImageUpload = ({
                 cursor: "pointer",
             }}
         >
-            <PlusOutlined />
-            <div style={{ marginTop: 8 }}>Upload</div>
+            {
+                loading ? <LoadingOutlined /> : <PlusOutlined />
+            }
+            <div style={{ marginTop: 8 }}>
+                {loading ? "Uploading...." : "Upload"}
+            </div>
         </div>
     );
 
     const handleUpload = (values) => {
+        setLoading(true);
         const modifileUploadValue = {
-            uuid: partneruuid,
             file: values.file,
+            ...(partneruuid && { uuid: partneruuid }),
+            ...((agencyContractuuid || companyContractuuid) && {
+                [agencyContractuuid ? "agencyContract" : "companyContract"]: {
+                    uuid: agencyContractuuid || companyContractuuid
+                }
+            }),
         }
         handleUploadMutation.mutate(modifileUploadValue, {
+
             onSuccess: () => {
                 Toast.success("Image uploaded successfully");
+                setLoading(false)
+            },
+            onError: () => {
+                setLoading(false)
             }
         })
     };
 
     return (
         <>
-            {previewImage && (
-                <Image
-                    styles={{ root: { display: 'none' } }}
-                    preview={{
-                        open: previewOpen,
-                        onOpenChange: visible => setPreviewOpen(visible),
-                        afterOpenChange: visible => !visible && setPreviewImage(''),
-                    }}
-                    src={previewImage}
-                />
-            )}
+            <Drawer
+                size={550}
+                title={
+                    <div className="flex justify-between gap-4">
+                        <span>Image Upload</span>
+                    </div>
+                }
+                open={imageDrawerOpen}
+                onClose={() => setImageDrawerOpen(false)}
 
-            <div
-                id='partner-upload'
-                style={{
-                    display: "flex",
-                    gap: "20px",
-                    flexWrap: "wrap",
-                }}
             >
-                {/* Upload Button */}
-                <Upload
-                    listType="picture-card"
-                    fileList={fileList}
-                    customRequest={handleUpload}
-                    onPreview={handlePreview}
-                    onChange={handleChange}
-                    showUploadList={false}
-                >
-                    {uploadButton}
-                </Upload>
-
-                {/* Images */}
-                {[...(agencyFileList || [])]?.map(file => {
-                    return <div
-                        key={file.uid}
-                        style={{
-                            width: "150px",
-                            height: "150px",
-                            border: "1px dotted gray",
-                            borderRadius: "8px",
-                            overflow: "hidden",
-                            position: "relative",
+                {previewImage && (
+                    <Image
+                        styles={{ root: { display: 'none' } }}
+                        preview={{
+                            open: previewOpen,
+                            onOpenChange: visible => setPreviewOpen(visible),
+                            afterOpenChange: visible => !visible && setPreviewImage(''),
                         }}
-                    >
-                        <img
-                            src={file?.file || URL.createObjectURL(file?.file)}
-                            alt=""
-                            style={{
-                                width: "100%",
-                                height: "100%",
-                                objectFit: "cover",
-                                cursor: "pointer",
-                            }}
-                        />
+                        src={previewImage}
+                    />
+                )}
 
-                        <div
+
+                <div
+                    id='partner-upload'
+                    style={{
+                        display: "flex",
+                        gap: "20px",
+                        flexWrap: "wrap",
+                    }}
+                >
+                    {/* Upload Button */}
+                    <Upload
+                        listType="picture-card"
+                        fileList={fileList}
+                        customRequest={handleUpload}
+                        onPreview={handlePreview}
+                        onChange={handleChange}
+                        showUploadList={false}
+                    >
+
+                        {uploadButton}
+                    </Upload>
+
+                    {/* Images */}
+
+
+                    {[...(agencyFileList || [])]?.map(file => {
+                        return <div
+                            key={file.uuid}
                             style={{
-                                position: "absolute",
-                                bottom: 0,
-                                width: "100%",
-                                background: "rgba(0,0,0,0.7)",
-                                display: "flex",
-                                justifyContent: "space-around",
-                                padding: "2px 0",
+                                width: "150px",
+                                height: "150px",
+                                border: "1px dotted gray",
+                                borderRadius: "8px",
+                                overflow: "hidden",
+                                position: "relative",
                             }}
                         >
-                            <span
-                                style={{ color: "#fff", cursor: "pointer" }}
-                                onClick={() => handlePreview(file?.file)}
-                            >
-                                <EyeOutlined />
-                            </span>
-
-                            <span
-                                style={{ color: "red", cursor: "pointer" }}
-                                onClick={() => {
-                                    setFileList(prev => {
-                                        return prev.filter(item => item.uid !== file.uid)
-                                    }
-                                    );
+                            <img
+                                src={file?.file}
+                                alt="image"
+                                style={{
+                                    width: "100%",
+                                    height: "100%",
+                                    objectFit: "cover",
+                                    cursor: "pointer",
                                 }}
+                            />
 
+                            <div
+                                style={{
+                                    position: "absolute",
+                                    bottom: 0,
+                                    width: "100%",
+                                    background: "rgba(0,0,0,0.7)",
+                                    display: "flex",
+                                    justifyContent: "space-around",
+                                    padding: "2px 0",
+                                }}
                             >
-                                <DeleteOutlined />
-                            </span>
-                        </div>
-                    </div>
-                })}
+                                <span
+                                    style={{ color: "#fff", cursor: "pointer" }}
+                                    onClick={() => handlePreview(file?.file)}
+                                >
+                                    <EyeOutlined />
+                                </span>
 
-            </div>
+                                <span
+                                    style={{ color: "red", cursor: "pointer" }}
+                                    onClick={() => {
+                                        setFileList(prev => {
+                                            return prev.filter(item => item.uid !== file.uid)
+                                        }
+                                        );
+                                    }}
+
+                                >
+                                    <DeleteOutlined />
+                                </span>
+                            </div>
+                        </div>
+                    })}
+
+                </div>
+
+
+            </Drawer>
+
         </>
     );
 };

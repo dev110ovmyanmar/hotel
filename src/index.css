@@ -71,7 +71,7 @@
   --ant-border-radius: 5px;
 }
 
-.ant-form-item-label>label {
+.ant-form-item-label > label {
   --ant-form-label-font-size: 12px;
   font-weight: 500;
   --ant-form-label-color: #474141;
@@ -155,7 +155,7 @@
   --ant-color-text-disabled: rgba(0, 0, 0, 1);
 }
 
-.ant-checkbox-disabled+span {
+.ant-checkbox-disabled + span {
   --ant-color-text-disabled: rgba(0, 0, 0, 1);
 }
 
@@ -194,7 +194,7 @@
   height: 200px;
 }
 
-#smallSizes{
+#smallSizes {
   width: 150px;
   height: 150px;
 }
@@ -203,7 +203,6 @@
   width: 150px;
   height: 150px;
 }
-
 
 /* .ant-upload-select img:hover {
   background: black !important;
@@ -239,3 +238,18 @@ span .ant-upload {
 
   transition: all 0.3s ease;
 } */
+
+.custom-table-style .ant-table-thead > tr > th {
+  background-color: #f0f5ff;
+  border-bottom: 1px solid #adc6ff;
+}
+
+.custom-table-style .ant-table-tbody > tr > td {
+  background-color: #ffffff;
+  border-bottom: 1px solid #adc6ff;
+}
+
+.custom-table-style .ant-table {
+  border: 1px solid #adc6ff;
+  border-radius: 4px;
+}

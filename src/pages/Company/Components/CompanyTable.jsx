@@ -1,8 +1,8 @@
-import { AiOutlineDropbox } from "react-icons/ai"; 
+import { AiOutlineDropbox } from "react-icons/ai";
 import { Dropdown, Space, Table, Tag, Button } from "antd";
 import { useState } from "react";
-import {useNavigate} from "react-router-dom";
-import { EditOutlined, EyeOutlined, MoreOutlined } from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
+import { EditOutlined, EyeOutlined, FolderAddOutlined, MoreOutlined } from "@ant-design/icons";
 import CompanyForm from './CompanyForm/CompanyForm';
 import ColorStatusTag from './../../../component/ColorStatusTag/ColorStatusTag';
 import { PERMISSIONS } from './../../../variables/permission';
@@ -20,8 +20,9 @@ const CompanyTable = ({
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mode, setMode] = useState(null);
   const [selectedData, setSelectedData] = useState({});
+  const [imageDrawerOpen, setImageDrawerOpen] = useState(false);
 
-  const navigate = useNavigate();      
+  const navigate = useNavigate();
 
   const { hasPermission } = usePermission();
 
@@ -112,6 +113,15 @@ const CompanyTable = ({
             },
           },
           {
+            key: "managefiles",
+            label: "Manage Files",
+            icon: <FolderAddOutlined style={{ fontSize: "12px" }} />,
+            onClick: () => {
+              setImageDrawerOpen(true);
+              setSelectedData(record);
+            },
+          },
+          {
             key: "companyContract",
             label: "Contract",
             icon: <AiOutlineDropbox style={{ fontSize: "12px" }} />,
@@ -119,8 +129,9 @@ const CompanyTable = ({
             onClick: () => {
               navigate(
                 `/partners/company/${record?.id}/company-contract`,
-                { state :
-                  {companyRecord : record}
+                {
+                  state:
+                    { companyRecord: record }
                 }
 
               )
@@ -152,6 +163,7 @@ const CompanyTable = ({
     },
   ];
 
+
   return (
     <div id="scrollId" className="w-full h-[63vh] ">
       <Table
@@ -177,10 +189,13 @@ const CompanyTable = ({
         setMode={setMode}
         drawerOpen={drawerOpen}
         setDrawerOpen={setDrawerOpen}
+        imageDrawerOpen={imageDrawerOpen}
+        setImageDrawerOpen={setImageDrawerOpen}
         selectedData={selectedData}
         setSelectedData={setSelectedData}
         page={page}
       />
+
     </div>
   );
 };
