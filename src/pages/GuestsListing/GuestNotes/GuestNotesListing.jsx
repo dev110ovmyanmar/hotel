@@ -6,6 +6,7 @@ import GuestNotesTable from "./components/GuestNotesTable";
 import GuestNoteForm from "./components/GuestNoteForm";
 import { LIMITS } from "../../../variables/constants";
 import { useParams } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const GuestNotesListing = () => {
   const [selectedRow, setSelectedRow] = useState(null);
@@ -14,20 +15,43 @@ const GuestNotesListing = () => {
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(LIMITS.PAGE_SIZE);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [status, setStatus] = useState("all");
 
-  const { guestId: guestUuid } = useParams();
+
+  // const { guestId: guestUuid } = useParams();
+
+  const { state } = useLocation();
+  const navigate = useNavigate();
+
+  const normalStatus = status === "all" ? null : status;
+
+  const guestUuid = state?.guestRecord?.uuid;
+  console.log("guestUUID", guestUuid);
+
+  // PROTECTION: If someone refreshes or types the URL manually, 
+  // the state is lost. Redirect them back to the list.
+  useEffect(() => {
+    if (!guestUuid) {
+      // Optional: Show a message or just redirect
+      navigate("/guest-list/guests");
+    }
+  }, [guestUuid, navigate]);
 
   // Fetch List Data
-const { data, isLoading } = useApiQuery({
+  const { data, isLoading } = useApiQuery({
     fetchQueryName: "guestNotes",
     fetchQueryFunction: getGuestNotes,
-    params: { 
+    params: {
       pagination: {
         page: page,
         perPage: perPage
       },
-      keyword, 
-      guest: { uuid: guestUuid } },
+      keyword,
+      // status: normalStatus,
+      partnerType: "Guest",
+      guest: { uuid: guestUuid }
+    },
+    options: { enabled: !!guestUuid }
   });
 
   const guestNotes = data?.data || [];
@@ -74,8 +98,8 @@ const { data, isLoading } = useApiQuery({
         onView={handleView}
         onEdit={handleEdit}
         loading={isLoading}
-        page={data?.pagination?.currentPage || page}
-        perPage={data?.pagination?.perPage || perPage}
+        page={page}
+        perPage={perPage}
         total={data?.pagination?.total}
         changePage={(page) => setPage(page)}
         changePerPage={(perPage) => setPerPage(perPage)}
@@ -90,9 +114,9 @@ const { data, isLoading } = useApiQuery({
         setSelectedRow={setSelectedRow}
         setPage={setPage}
         page={page}
-        // page={data?.pagination?.currentPage}
-        guestUuid={guestUuid}
-        // guestName={guestName}
+      // page={data?.pagination?.currentPage}
+      // guestUuid={guestUuid}
+      // guestName={guestName}
       />
     </div>
   );

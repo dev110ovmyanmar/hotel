@@ -15,7 +15,7 @@ const ColorStatusTag = ({ status }) => {
     confirmed: "#389E0D",
     confirmed_bg: "#F6FFED",
     confirmed_border: "#B7EB8F",
-   
+
     available: "#389E0D",
     available_bg: "#F6FFED",
     available_border: "#B7EB8F",
@@ -27,9 +27,9 @@ const ColorStatusTag = ({ status }) => {
     maintenance: "#CF1322",
     maintenance_bg: "#FFF1F0",
     maintenance_border: "#FFA39E",
-            
+
     occupied: "#0958D9",
-    occupied_bg: "#E6F4FF", 
+    occupied_bg: "#E6F4FF",
     occupied_border: "#91CAFF",
 
     cleaning: "#D46B08",
@@ -40,31 +40,31 @@ const ColorStatusTag = ({ status }) => {
     checked_out_bg: "#FFF7E6",
     checked_out_border: "#FFD591",
 
-    checked_in:"#08979C",
+    checked_in: "#08979C",
     checked_in_bg: "#E6FFFB",
     checked_in_border: "#87E8DE",
 
-    no_show:"#333333",
+    no_show: "#333333",
     no_show_bg: "#F5F5F5",
     no_show_border: "#D9D9D9",
 
-    cancelled:"#CF1322",
+    cancelled: "#CF1322",
     cancelled_bg: "#FFF1F0",
     cancelled_border: "#FFA39E",
 
     active: "#389E0D",
     active_bg: "#F6FFED",
     active_border: "#B7EB8F",
-    
+
     inactive: "#333333",
     inactive_bg: "#F5F5F5",
     inactive_border: "#D9D9D9",
 
-    block:"#CF1322",
+    block: "#CF1322",
     block_bg: "#FFF1F0",
     block_border: "#FFA39E",
 
-    vip:"#531DAB",
+    vip: "#531DAB",
     vip_bg: "#F9F0FF",
     vip_border: "#D3ADF7",
 
@@ -76,7 +76,7 @@ const ColorStatusTag = ({ status }) => {
     completed_bg: "#E6F4FF",
     completed_border: "#91CAFF",
 
-    new:"#08979C",
+    new: "#08979C",
     new_bg: "#E6FFFB",
     new_border: "#87E8DE",
 
@@ -88,7 +88,7 @@ const ColorStatusTag = ({ status }) => {
     success_bg: "#F6FFED",
     success_border: "#B7EB8F",
 
-    failed:"#CF1322",
+    failed: "#CF1322",
     failed_bg: "#FFF1F0",
     failed_border: "#FFA39E",
 
@@ -108,7 +108,7 @@ const ColorStatusTag = ({ status }) => {
     partially_paid_bg: "#FFF7E6",
     partially_paid_border: "#FFD591",
 
-    void:"#CF1322",
+    void: "#CF1322",
     void_bg: "#FFF1F0",
     void_border: "#FFA39E",
 
@@ -116,7 +116,7 @@ const ColorStatusTag = ({ status }) => {
     open_bg: "#E6F4FF",
     open_border: "#91CAFF",
 
-    closed:"#CF1322",
+    closed: "#CF1322",
     closed_bg: "#FFF1F0",
     closed_border: "#FFA39E",
 
@@ -140,13 +140,37 @@ const ColorStatusTag = ({ status }) => {
     reserved_bg: "#E6F4FF",
     reserved_border: "#91CAFF",
 
-    in_house:"#08979C",
+    in_house: "#08979C",
     in_house_bg: "#E6FFFB",
     in_house_border: "#87E8DE",
 
     departed: "#D46B08",
     departed_bg: "#FFF7E6",
     departed_border: "#FFD591",
+
+    hk_clean: "#389E0D",
+    hk_clean_bg: "#F6FFED",
+    hk_clean_border: "#B7EB8F",
+
+    hk_dirty: "#CF1322",
+    hk_dirty_bg: "#FFF1F0",
+    hk_dirty_border: "#FFA39E",
+
+    hk_in_progress: "#0958D9",
+    hk_in_progress_bg: "#E6F4FF",
+    hk_in_progress_border: "#91CAFF",
+
+    hk_inspected: "#08979C",
+    hk_inspected_bg: "#E6FFFB",
+    hk_inspected_border: "#87E8DE",
+
+    hk_out_of_order: "#595959",
+    hk_out_of_order_bg: "#F5F5F5",
+    hk_out_of_order_border: "#D9D9D9",
+
+    hk_out_of_service: "#722ED1",
+    hk_out_of_service_bg: "#F9F0FF",
+    hk_out_of_service_border: "#D3ADF7",
 
   };
 
@@ -156,15 +180,15 @@ const ColorStatusTag = ({ status }) => {
   const borderColor = statusColorMap[`${code}_border`];
 
   return (
-    <Tag 
+    <Tag
       color={color}
-      style= {{
-        color:`${color}`,
+      style={{
+        color: `${color}`,
         backgroundColor: `${backgroundColor}`,
         borderColor: `${borderColor}`,
         borderRadius: "5px"
       }}
-      >{capitalizeFirstLetter(status?.name) || "UNKNOWN"}</Tag>
+    >{capitalizeFirstLetter(status?.name) || "UNKNOWN"}</Tag>
   )
 };
 

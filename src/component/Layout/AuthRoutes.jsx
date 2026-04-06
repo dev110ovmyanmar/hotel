@@ -43,6 +43,8 @@ import {
   CoffeeOutlined,
   FormOutlined,
   TrophyOutlined,
+  HolderOutlined,
+  HomeOutlined,
 } from "@ant-design/icons";
 import { lazy } from "react";
 import { FiMap } from "react-icons/fi";
@@ -182,6 +184,16 @@ const ExtraBedRateList = lazy(
 // const GuestFileUpload = lazy(
 //   () => import("../../pages/GuestsListing/Components/NewGuestUploadForm"),
 // );
+
+const HouseKeepingStatusesListing = lazy(
+  () => import("../../pages/HouseKeeping/HouseKeepingStatusesListing"),
+);
+
+const HouseKeepingTaskListing = lazy(
+  () => import("../../pages/HouseKeepingTask/HouseKeepingTaskListing"),
+);
+
+
 
 export const authRoutes = [
   {
@@ -849,7 +861,7 @@ export const authRoutes = [
   },
   {
     key: 25,
-    path: `/guest-list/guest-notes/:guestId`,
+    path: `/guest-list/guests/:guestId/notes`,
     component: <GuestNotesListing />,
     permission: PERMISSIONS.GUEST_NOTE_LIST,
   },
@@ -879,6 +891,27 @@ export const authRoutes = [
     icon: <FormOutlined style={{ fontSize: "20px" }} />,
     isPrivate: false,
     permission: PERMISSIONS.AVAILABILITY_CALENDAR_LIST,
+  },
+  {
+    key: 27,
+    label: "House Keeping",
+    icon: <HolderOutlined style={{ fontSize: "20px" }} />,
+    nested: [
+      {
+        key: 27.1,
+        label: "Room Status Board",
+        path: "/house-keeping/room-status-board",
+        icon: <HomeOutlined style={{ fontSize: "20px" }} />,
+        component: <HouseKeepingStatusesListing />,
+      },
+      {
+        key: 27.2,
+        label: "Cleaning Schedule",
+        path: "/house-keeping/cleaning-schedule",
+        icon: <ApartmentOutlined style={{ fontSize: "20px" }} />,
+        component: <HouseKeepingTaskListing />,
+      },
+    ],
   },
 ];
 
