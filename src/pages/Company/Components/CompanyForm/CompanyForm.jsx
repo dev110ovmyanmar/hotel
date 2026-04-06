@@ -14,11 +14,13 @@ import { useApiMutation } from "../../../../hooks/useApiMutation";
 import useApiQuery from "../../../../hooks/useApiQuery";
 import {
   upsertPartner,
-  partnerDetails
+  partnerDetails,
+  fetchCompanyUpload
 } from "../../../../api/partnerApi";
 import FormButtons from "../../../../component/FormButtons/FormButtons";
 import { queryClient } from './../../../../app/queryClient';
 import Status from './../../../../component/Status/Status';
+import ImageUpload from "../../../../component/ImageUpload/ImageUpload";
 
 const { TextArea } = Input;
 
@@ -29,6 +31,8 @@ const CompanyForm = ({
   setSelectedData,
   drawerOpen,
   setDrawerOpen,
+  imageDrawerOpen,
+  setImageDrawerOpen,
   page,
   setPage,
 }) => {
@@ -108,6 +112,11 @@ const CompanyForm = ({
       });
     }
   };
+
+  const companyUpload = useApiMutation({
+    mutationFn: fetchCompanyUpload,
+    invalidateKeys: [["company-details", { uuid: selectedData?.uuid }]],
+  });
 
   return (
     <div className="flex justify-center">
@@ -273,6 +282,14 @@ const CompanyForm = ({
           <Status isView={isView} />
         </Form>
       </Drawer>
+
+      <ImageUpload
+        partneruuid={selectedData?.uuid}
+        agencyFileList={data?.companyFiles}
+        handleUploadMutation={companyUpload}
+        imageDrawerOpen={imageDrawerOpen}
+        setImageDrawerOpen={setImageDrawerOpen}
+      />
     </div>
   );
 };

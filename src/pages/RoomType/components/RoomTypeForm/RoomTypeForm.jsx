@@ -19,11 +19,15 @@ import {
   createRoomType,
   editRoomType,
   roomTypeDetails,
+  fetchRoomTypeUpload,
+
 } from "../../../../api/roomApi";
 import TextArea from "antd/es/input/TextArea";
 import RoomTypeAmenityForm from "./RoomTypeAmenityForm";
 import { EditOutlined, PlusOutlined } from "@ant-design/icons";
 import Loader from "../../../../component/Loader/Loader";
+import ImageUpload from "../../../../component/ImageUpload/ImageUpload";
+
 
 const onChange = (value) => {
   console.log("changed", value);
@@ -36,6 +40,8 @@ const RoomTypeForm = ({
   setSelectedData,
   drawerOpen,
   setDrawerOpen,
+  imageDrawerOpen,
+  setImageDrawerOpen,
   setPage,
   page,
 }) => {
@@ -165,6 +171,11 @@ const RoomTypeForm = ({
       ),
     },
   ];
+
+  const fetchRoomTypeUploads = useApiMutation({
+    mutationFn: fetchRoomTypeUpload,
+    invalidateKeys: [["roomTypeData", { uuid: selectedData?.uuid }]],
+  });
 
   return (
     <div>
@@ -429,6 +440,7 @@ const RoomTypeForm = ({
           </Form>
         )}
       </Drawer>
+
       <RoomTypeAmenityForm
         mode={amenityMode}
         open={roomTypeAmenityOpen}
@@ -436,7 +448,16 @@ const RoomTypeForm = ({
         roomTypeUuid={selectedData?.uuid}
         selectedAmenity={selectedAmenity}
       />
-    </div>
+
+      <ImageUpload
+        partneruuid={selectedData?.uuid}
+        agencyFileList={data?.roomTypeFiles}
+        handleUploadMutation={fetchRoomTypeUploads}
+        imageDrawerOpen={imageDrawerOpen}
+        setImageDrawerOpen={setImageDrawerOpen}
+      />
+
+    </div >
   );
 };
 
