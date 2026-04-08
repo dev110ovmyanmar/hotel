@@ -193,6 +193,9 @@ const HouseKeepingTaskListing = lazy(
   () => import("../../pages/HouseKeepingTask/HouseKeepingTaskListing"),
 );
 
+const MaintenanceRequestListing = lazy(
+  () => import("../../pages/MaintenanceRequest/MaintenanceRequestListing"),
+);
 
 
 export const authRoutes = [
@@ -852,7 +855,7 @@ export const authRoutes = [
   },
   {
     key: 20,
-    path: "/guest-list/",
+    path: "/guest-list/guests/",
     label: "Guests",
     component: <GuestListing />,
     icon: <UsergroupAddOutlined style={{ fontSize: "20px" }} />,
@@ -899,20 +902,27 @@ export const authRoutes = [
     nested: [
       {
         key: 27.1,
-        label: "Room Status Board",
-        path: "/house-keeping/room-status-board",
+        label: "Room Status",
+        path: "/house-keeping/room-status",
         icon: <HomeOutlined style={{ fontSize: "20px" }} />,
         component: <HouseKeepingStatusesListing />,
       },
       {
         key: 27.2,
-        label: "Cleaning Schedule",
-        path: "/house-keeping/cleaning-schedule",
+        label: "Housekeeping Task",
+        path: "/house-keeping/housekeeping-task",
         icon: <ApartmentOutlined style={{ fontSize: "20px" }} />,
         component: <HouseKeepingTaskListing />,
       },
     ],
   },
+  {
+    key: 28,
+    label: "Maintenance Requests",
+    path: "/maintenance-request",
+    component: <MaintenanceRequestListing />,
+    icon: <DiffOutlined style={{ fontSize: "20px" }} />,
+  }
 ];
 
 const AuthRoutes = () => {

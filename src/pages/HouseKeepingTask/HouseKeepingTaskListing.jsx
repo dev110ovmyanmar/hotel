@@ -49,6 +49,9 @@ const HouseKeepingTaskListing = () => {
             .map(s => ({ value: s.uuid, label: s.name, id: s.id })),
         [adminMetaData]);
 
+    const roomOptions = useMemo(() =>
+        adminMetaData?.rooms?.map(r => ({ value: r.uuid, label: `Room ${r.roomNo}` })), [adminMetaData]);
+
     // Reset to page 1 when searching or changing page size
     useEffect(() => {
         setPage(1);
@@ -156,16 +159,13 @@ const HouseKeepingTaskListing = () => {
                 setPage={setPage}
                 page={page}
                 staffOptions={staffOptionsforTask}
-            />
+                onViewTaskAssign={handleViewTaskAssign}
+                roomOptions={roomOptions}
 
-            <HouseKeepingTaskAssignForm
-                drawerOpen={taskAssignDrawerOpen}
-                setDrawerOpen={setTaskAssignDrawerOpen}
-                selectedRow={selectedRow}
-                setSelectedRow={setSelectedRow}
-                mode={currentMode}
-                staffOptions={staffOptionsforAssignment}
-                setPage={setPage}
+                //for task assign
+                taskAssignDrawerOpen={taskAssignDrawerOpen}
+                setTaskAssignDrawerOpen={setTaskAssignDrawerOpen}
+                staffOptionsforAssignment={staffOptionsforAssignment}
             />
         </div>
     );

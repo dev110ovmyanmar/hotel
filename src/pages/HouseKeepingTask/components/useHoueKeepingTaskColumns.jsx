@@ -84,12 +84,12 @@ const useHouseKeepingTaskColumns = (onEdit, onView, onAssign) => {
                         onClick: ({ key }) => {
                             if (key === "1") onView(record);
                             if (key === "2") onEdit(record);
-                            if (key === "3") onAssign(record);
+                            // if (key === "3") onAssign(record);
                         },
                         items: [
                             { key: "1", label: "View", icon: <EyeOutlined /> },
                             { key: "2", label: "Edit", icon: <EditOutlined /> },
-                            { key: "3", label: "View Task Assign", icon: <EyeOutlined /> },
+                            // { key: "3", label: "View Task Assign", icon: <EyeOutlined /> },
                         ],
                     }}
                     trigger={["click"]}
