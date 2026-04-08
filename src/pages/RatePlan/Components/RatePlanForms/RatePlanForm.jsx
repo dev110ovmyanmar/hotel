@@ -71,7 +71,8 @@ const RatePlanForm = ({
 
   const policy = ratePlanMetaData?.policies?.cancellation?.map((policy) => ({
     value: policy.uuid,
-    label: policy.name,
+    // label: policy.name,
+    label: `${policy.name} (${policy?.policyType.name} Policy)`,
   }));
 
   const channelOptions = ratePlanMetaData?.channel_visibility_options?.map(
@@ -206,191 +207,192 @@ const RatePlanForm = ({
           </div>
         }
       >
-        {
-          ratePlanDetailsLoading ?
-            <div className="flex items-center justify-center h-full min-h-[300px]">
-              <Loader />
-            </div>
-            :
-            <Form
-              form={form}
-              layout="vertical"
-              style={{ width: "100%" }}
-              onFinish={onFinish}
+        {ratePlanDetailsLoading ? (
+          <div className="flex items-center justify-center h-full min-h-[300px]">
+            <Loader />
+          </div>
+        ) : (
+          <Form
+            form={form}
+            layout="vertical"
+            style={{ width: "100%" }}
+            onFinish={onFinish}
             // disabled={isView}
+          >
+            <Row gutter={24}>
+              <Col span={16}>
+                <Form.Item
+                  label="Name"
+                  name="name"
+                  rules={[
+                    { required: true, message: "Please enter rate plan name" },
+                  ]}
+                >
+                  <Input readOnly={isView} placeholder="Enter Rate Plan Name" />
+                </Form.Item>
+              </Col>
+              <Col span={8}>
+                <Form.Item
+                  label="Code"
+                  name="code"
+                  rules={[
+                    { required: true, message: "Please enter rate plan code" },
+                  ]}
+                >
+                  <Input readOnly={isView} placeholder="Enter Rate Plan Code" />
+                </Form.Item>
+              </Col>
+            </Row>
+
+            <Form.Item
+              label="Meal Plan"
+              name="mealUuid"
+              rules={[{ required: true, message: "Meal Plan is Required" }]}
+              getValueProps={(value) => ({
+                value: isView
+                  ? mealPlans.find((item) => item.value === value)?.label
+                  : value,
+              })}
             >
-              <Row gutter={24}>
-                <Col span={16}>
-                  <Form.Item
-                    label="Name"
-                    name="name"
-                    rules={[
-                      { required: true, message: "Please enter rate plan name" },
-                    ]}
-                  >
-                    <Input readOnly={isView} placeholder="Enter Rate Plan Name" />
-                  </Form.Item>
-                </Col>
-                <Col span={8}>
-                  <Form.Item
-                    label="Code"
-                    name="code"
-                    rules={[{ required: true, message: "Please enter rate plan code" }]}
-                  >
-                    <Input readOnly={isView} placeholder="Enter Rate Plan Code" />
-                  </Form.Item>
-                </Col>
-              </Row>
+              {isView ? (
+                <Input readOnly={isView} />
+              ) : (
+                <Select
+                  showSearch={{
+                    filterOption: (input, option) =>
+                      (option?.label ?? "")
+                        .toLowerCase()
+                        .includes(input.toLowerCase()),
+                  }}
+                  options={mealPlans}
+                  placeholder="Select Meal Plan"
+                />
+              )}
+            </Form.Item>
 
-              <Form.Item
-                label="Meal Plan"
-                name="mealUuid"
-                rules={[{ required: true, message: "Meal Plan is Required" }]}
-                getValueProps={(value) => ({
-                  value: isView
-                    ? mealPlans.find((item) => item.value === value)?.label
-                    : value,
-                })}
-              >
-                {isView ? (
-                  <Input readOnly={isView} />
-                ) : (
-                  <Select
-                    showSearch={{
-                      filterOption: (input, option) =>
-                        (option?.label ?? "")
-                          .toLowerCase()
-                          .includes(input.toLowerCase()),
-                    }}
-                    options={mealPlans}
-                    placeholder="Select Meal Plan"
-                  />
-                )}
-              </Form.Item>
+            <Form.Item
+              label="Policy"
+              name="policyUuid"
+              rules={[{ required: true, message: "Policy is Required" }]}
+              getValueProps={(value) => ({
+                value: isView
+                  ? policy.find((item) => item.value === value)?.label
+                  : value,
+              })}
+            >
+              {isView ? (
+                <Input readOnly={isView} />
+              ) : (
+                <Select
+                  showSearch={{
+                    filterOption: (input, option) =>
+                      (option?.label ?? "")
+                        .toLowerCase()
+                        .includes(input.toLowerCase()),
+                  }}
+                  options={policy}
+                  placeholder="Select Policy"
+                />
+              )}
+            </Form.Item>
 
-              <Form.Item
-                label="Policy"
-                name="policyUuid"
-                rules={[{ required: true, message: "Policy is Required" }]}
-                getValueProps={(value) => ({
-                  value: isView
-                    ? policy.find((item) => item.value === value)?.label
-                    : value,
-                })}
-              >
-                {isView ? (
-                  <Input readOnly={isView} />
-                ) : (
-                  <Select
-                    showSearch={{
-                      filterOption: (input, option) =>
-                        (option?.label ?? "")
-                          .toLowerCase()
-                          .includes(input.toLowerCase()),
-                    }}
-                    options={policy}
-                    placeholder="Select Policy"
-                  />
-                )}
-              </Form.Item>
+            <Form.Item
+              label="Currency"
+              name="currency"
+              rules={[{ required: true, message: "Currency is Required" }]}
+              getValueProps={(value) => ({
+                value: isView
+                  ? currencies.find((item) => item.value === value)?.label
+                  : value,
+              })}
+            >
+              {isView ? (
+                <Input readOnly={isView} />
+              ) : (
+                <Select
+                  showSearch={{
+                    filterOption: (input, option) =>
+                      (option?.label ?? "")
+                        .toLowerCase()
+                        .includes(input.toLowerCase()),
+                  }}
+                  options={currencies}
+                  placeholder="Select Currency"
+                />
+              )}
+            </Form.Item>
 
-              <Form.Item
-                label="Currency"
-                name="currency"
-                rules={[{ required: true, message: "Currency is Required" }]}
-                getValueProps={(value) => ({
-                  value: isView
-                    ? currencies.find((item) => item.value === value)?.label
-                    : value,
-                })}
-              >
-                {isView ? (
-                  <Input readOnly={isView} />
-                ) : (
-                  <Select
-                    showSearch={{
-                      filterOption: (input, option) =>
-                        (option?.label ?? "")
-                          .toLowerCase()
-                          .includes(input.toLowerCase()),
-                    }}
-                    options={currencies}
-                    placeholder="Select Currency"
-                  />
-                )}
-              </Form.Item>
+            <Form.Item
+              label="Pricing Type"
+              name="pricing_type"
+              rules={[{ required: true, message: "Pricing Type is Required" }]}
+              getValueProps={(value) => ({
+                value: isView
+                  ? pricingType.find((item) => item.value === value)?.label
+                  : value,
+              })}
+            >
+              {isView ? (
+                <Input readOnly={isView} />
+              ) : (
+                <Select
+                  showSearch={{
+                    filterOption: (input, option) =>
+                      (option?.label ?? "")
+                        .toLowerCase()
+                        .includes(input.toLowerCase()),
+                  }}
+                  options={pricingType}
+                  placeholder="Select Pricing Type"
+                />
+              )}
+            </Form.Item>
 
-              <Form.Item
-                label="Pricing Type"
-                name="pricing_type"
-                rules={[{ required: true, message: "Pricing Type is Required" }]}
-                getValueProps={(value) => ({
-                  value: isView
-                    ? pricingType.find((item) => item.value === value)?.label
-                    : value,
-                })}
-              >
-                {isView ? (
-                  <Input readOnly={isView} />
-                ) : (
-                  <Select
-                    showSearch={{
-                      filterOption: (input, option) =>
-                        (option?.label ?? "")
-                          .toLowerCase()
-                          .includes(input.toLowerCase()),
-                    }}
-                    options={pricingType}
-                    placeholder="Select Pricing Type"
-                  />
-                )}
-              </Form.Item>
+            <Form.Item
+              label="Channels"
+              name="channels"
+              rules={[
+                {
+                  required: true,
+                  message: "Please select at least one channel",
+                },
+              ]}
+              className={isView ? "custom-disabled-checkbox" : ""}
+            >
+              <Checkbox.Group options={channelOptions} disabled={isView} />
+            </Form.Item>
 
-              <Form.Item
-                label="Channels"
-                name="channels"
-                rules={[
-                  { required: true, message: "Please select at least one channel" },
-                ]}
-                className={isView ? "custom-disabled-checkbox" : ""}
-              >
-                <Checkbox.Group options={channelOptions} disabled={isView} />
-              </Form.Item>
+            <Form.Item
+              label="Status"
+              name="status"
+              rules={[{ required: true, message: "Status is required" }]}
+              getValueProps={(value) => ({
+                value: isView
+                  ? statuses.find((item) => item.value === value)?.label
+                  : value,
+              })}
+            >
+              {isView ? (
+                <Input readOnly={isView} />
+              ) : (
+                <Select
+                  showSearch={{
+                    filterOption: (input, option) =>
+                      (option?.label ?? "")
+                        .toLowerCase()
+                        .includes(input.toLowerCase()),
+                  }}
+                  options={statuses}
+                  placeholder="Select Status"
+                />
+              )}
+            </Form.Item>
 
-              <Form.Item
-                label="Status"
-                name="status"
-                rules={[{ required: true, message: "Status is required" }]}
-                getValueProps={(value) => ({
-                  value: isView
-                    ? statuses.find((item) => item.value === value)?.label
-                    : value,
-                })}
-              >
-                {isView ? (
-                  <Input readOnly={isView} />
-                ) : (
-                  <Select
-                    showSearch={{
-                      filterOption: (input, option) =>
-                        (option?.label ?? "")
-                          .toLowerCase()
-                          .includes(input.toLowerCase()),
-                    }}
-                    options={statuses}
-                    placeholder="Select Status"
-                  />
-                )}
-              </Form.Item>
-
-              <Form.Item
-                label="Description"
-                name="description"
-              >
-                <TextArea readOnly={isView} placeholder="Enter Description" />
-              </Form.Item>
-            </Form>
-        }
+            <Form.Item label="Description" name="description">
+              <TextArea readOnly={isView} placeholder="Enter Description" />
+            </Form.Item>
+          </Form>
+        )}
       </Drawer>
     </div>
   );

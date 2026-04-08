@@ -6,11 +6,8 @@ import { PERMISSIONS } from "../../variables/permission";
 import ExtraBedRateForm from "./Components/ExtraBedRateForms/ExtraBedRateForm";
 import ExtraBedRateTable from "./Components/ExtraBedRateTable";
 import { fetchExtraBedRate } from "../../api/exteraBedRateApi";
-import { DatePicker } from "antd";
-import dayjs from "dayjs";
 
 const ExtraBedRateList = () => {
-  const { RangePicker } = DatePicker;
   const [keyword, setKeyword] = useState("");
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(LIMITS.PAGE_SIZE);
@@ -48,26 +45,16 @@ const ExtraBedRateList = () => {
   return (
     <div className="w-full px-6 py-2">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
-        <div className="w-full md:w-auto">
-          <RangePicker
-            style={{ width: "100%" }}
-            onChange={(dates) => {
-              if (dates) {
-                setStartDate(dayjs(dates[0]).format("YYYY-MM-DD"));
-                setEndDate(dayjs(dates[1]).format("YYYY-MM-DD"));
-              } else {
-                setStartDate(null);
-                setEndDate(null);
-              }
-            }}
-          />
-        </div>
         <ListHeader
           searchPlaceholder="Search Extra Bed Rate ..."
           keyword={keyword}
           setKeyword={setKeyword}
           addButtonText="Add New Extra Bed Rate"
           onAdd={handleAdd}
+          startDate={startDate}
+          endDate={endDate}
+          setStartDate={setStartDate}
+          setEndDate={setEndDate}
           permission={PERMISSIONS.EXTRA_BED_RATE_CREATE}
         />
       </div>
