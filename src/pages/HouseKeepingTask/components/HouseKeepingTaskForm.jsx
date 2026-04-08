@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo } from "react";
 import { Form, Input, Drawer, DatePicker, Select, Button, Divider, TimePicker } from "antd";
-import { ClockCircleOutlined } from "@ant-design/icons";
+import { ClockCircleOutlined, ArrowRightOutlined, TeamOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import { useQueryClient } from "@tanstack/react-query";
 import Loader from "../../../component/Loader/Loader";
@@ -11,10 +11,10 @@ import { useApiMutation } from "../../../hooks/useApiMutation";
 import {
     upsertHouseKeepingTask,
     getHouseKeepingTaskDetail,
-    roomMeta,
-    adminMeta,
     updateHouseKeepingTask
 } from "../../../api/houseKeepingTaskApi";
+import { useNavigate } from "react-router-dom";
+import HouseKeepingTaskAssignForm from "./HousKeepingTaskAssignForm";
 
 const { TextArea } = Input;
 
@@ -26,7 +26,12 @@ const HouseKeepingTaskForm = ({
     selectedRow,
     setSelectedRow,
     setPage,
-    staffOptions
+    staffOptions,
+    roomOptions,
+    onViewTaskAssign,
+    taskAssignDrawerOpen,
+    setTaskAssignDrawerOpen,
+    staffOptionsforAssignment
 }) => {
     const [form] = Form.useForm();
     const queryClient = useQueryClient();
@@ -44,17 +49,6 @@ const HouseKeepingTaskForm = ({
     const priorityOptions = useMemo(() => mapOptions(initData?.statuses?.priority_level), [initData]);
     const taskTypeOptions = useMemo(() => mapOptions(initData?.statuses?.task_type), [initData]);
     const hkStatusOptions = useMemo(() => mapOptions(initData?.statuses?.housekeeping_status), [initData]);
-
-    const { data: roomData } = useApiQuery({
-        fetchQueryName: "room-meta",
-        fetchQueryFunction: roomMeta,
-        options: { enabled: drawerOpen }
-    });
-
-    const roomOptions = roomData?.rooms?.map((r) => ({
-        value: r.uuid,
-        label: `Room ${r.roomNo} - ${r.roomType?.name}`,
-    }));
 
     // ===== Fetch Detail =====
     const { data: detail, isLoading } = useApiQuery({
@@ -82,6 +76,10 @@ const HouseKeepingTaskForm = ({
         }
         if (isCreate && drawerOpen) {
             form.resetFields();
+            const houseKeepingStatus = initData?.statuses?.housekeeping_status?.find(s => s.code === "pending");
+            form.setFieldsValue({
+                housekeepingStatus: houseKeepingStatus.uuid,
+            })
         }
     }, [detail, form, drawerOpen, isCreate]);
 
@@ -111,7 +109,7 @@ const HouseKeepingTaskForm = ({
         return dateSource
             .hour(timeSource.hour())
             .minute(timeSource.minute())
-            .format("YYYY-MM-DD HH:mm");
+            .format("YYYY-MM-DD HH:mm:ss");
     };
 
     const onFinish = (values) => {
@@ -137,7 +135,7 @@ const HouseKeepingTaskForm = ({
             updateMutation.mutate(payload, {
                 onSuccess: () => {
                     handleClose();
-                    Toast.success("Cleaning schedule updated successfully");
+                    Toast.success("House Keeping Task updated successfully");
                 },
             });
         } else {
@@ -145,17 +143,30 @@ const HouseKeepingTaskForm = ({
                 onSuccess: () => {
                     handleClose();
                     setPage(1);
-                    Toast.success("Cleaning schedule created successfully");
+                    Toast.success("House Keeping Task created successfully");
                 },
             });
+        }
+    };
+
+
+    const navigate = useNavigate();
+
+    const handleNext = async () => {
+        try {
+            queryClient.setQueryData(["housekeeping-task-detail"], detail);
+            setDrawerOpen(false);
+            navigate("/maintenance-request?triggerOpen=true");
+        } catch (error) {
+            console.log("Failed:", error);
         }
     };
 
     return (
         <>
             <Drawer
-                title={isView ? "Cleaning Schedule Details" : isEdit ? "Edit Cleaning Schedule" : "Create Cleaning Schedule"}
-                size={550}
+                title={isView ? "Housekeeping Task Details" : isEdit ? "Edit Housekeeping Task" : "Create Housekeeping Task"}
+                size={600}
                 onClose={handleClose}
                 open={drawerOpen}
                 extra={
@@ -173,80 +184,140 @@ const HouseKeepingTaskForm = ({
                 {isLoading && !isCreate ?
                     <div className="flex h-64 items-center justify-center"><Loader /></div>
                     : (
-                        <Form form={form} layout="vertical" onFinish={onFinish}>
-                            <div className="grid grid-cols-2 gap-4">
-                                <Form.Item name="roomUuid" label="Room No" rules={[{ required: true }]}>
-                                    <Select options={roomOptions} disabled={isView} placeholder="Select Room" />
-                                </Form.Item>
-                                <Form.Item name="taskType" label="Task Type" rules={[{ required: true }]}>
-                                    <Select options={taskTypeOptions} disabled={isView} />
-                                </Form.Item>
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-4">
-                                <Form.Item name="priorityLevel" label="Priority" rules={[{ required: true }]}>
-                                    <Select options={priorityOptions} disabled={isView} />
-                                </Form.Item>
-                                <Form.Item name="housekeepingStatus" label="Status" rules={[{ required: true }]}>
-                                    <Select options={hkStatusOptions} disabled={isView} />
-                                </Form.Item>
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-4">
-                                {/* Date Field */}
-                                <Form.Item
-                                    name="plannedStartDate"
-                                    label="Planned Date"
-                                    rules={[{ required: true }]}
-                                    className="flex-1"
-                                >
-                                    <DatePicker className="w-full" disabled={isView} />
-                                </Form.Item>
-
+                        <div>
+                            <Form form={form} layout="vertical" onFinish={onFinish}>
                                 <div className="grid grid-cols-2 gap-4">
-                                    <Form.Item
-                                        name="plannedStartTime"
-                                        label="Plan Start Time"
-                                        rules={[{ required: true }]}
-                                        className="flex-1"
-                                    >
-                                        <TimePicker className="w-full" format="HH:mm" disabled={isView} />
+                                    <Form.Item name="roomUuid" label="Room No" rules={[{ required: true }]}>
+                                        <Select options={roomOptions} disabled={isView} placeholder="Select Room" />
                                     </Form.Item>
-
-                                    <Form.Item
-                                        name="plannedEndTime"
-                                        label="Plan End Time"
-                                        rules={[{ required: true }]}
-                                        className="flex-1"
-                                    >
-                                        <TimePicker className="w-full" format="HH:mm" disabled={isView} />
+                                    <Form.Item name="taskType" label="Task Type" rules={[{ required: true }]}>
+                                        <Select options={taskTypeOptions} disabled={isView} />
                                     </Form.Item>
                                 </div>
 
-                            </div>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <Form.Item name="priorityLevel" label="Priority" rules={[{ required: true }]}>
+                                        <Select options={priorityOptions} disabled={isView} />
+                                    </Form.Item>
+                                    {/* <Form.Item name="housekeepingStatus" label="Status" rules={[{ required: true }]}>
+                                        <Select options={hkStatusOptions} disabled={isView} />
+                                    </Form.Item> */}
+                                    {isCreate ? (
+                                        <Form.Item
+                                            name="housekeepingStatus"
+                                            label="Housekeeping Status"
+                                            rules={[{ required: true, message: "Please select status" }]}
+                                        >
+                                            <Select
+                                                options={hkStatusOptions}
+                                                disabled={true}
+                                            />
+                                        </Form.Item>
+                                    ) : (
+                                        <Form.Item name="housekeepingStatus" label="Housekeeping Status" rules={[{ required: true }]}>
+                                            <Select
+                                                options={hkStatusOptions}
+                                                disabled={isView}
+                                                placeholder="Select Housekeeping Status" />
+                                        </Form.Item>
+                                    )}
+                                </div>
 
-                            <Form.Item
-                                name="staff"  // Changed from staffUuid to staffIds
-                                label="Assign Staff"
-                                rules={[{ required: true }]}
-                            >
-                                <Select
-                                    mode="multiple"
-                                    options={staffOptions}
-                                    disabled={isView}
-                                    placeholder="Select Housekeepers"
-                                    optionFilterProp="label"
-                                    allowClear
-                                />
-                            </Form.Item>
+                                <div className="grid grid-cols-2 gap-4">
+                                    {/* Date Field */}
+                                    <Form.Item
+                                        name="plannedStartDate"
+                                        label="Plan Date"
+                                        rules={[{ required: true }]}
+                                        className="flex-1"
+                                    >
+                                        <DatePicker className="w-full" disabled={isView} />
+                                    </Form.Item>
 
-                            <Form.Item name="remark" label="Remarks">
-                                <TextArea rows={3} readOnly={isView} />
-                            </Form.Item>
-                        </Form>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <Form.Item
+                                            name="plannedStartTime"
+                                            label="Start Time"
+                                            rules={[{ required: true }]}
+                                            className="flex-1"
+                                        >
+                                            <TimePicker className="w-full" format="HH:mm" disabled={isView} />
+                                        </Form.Item>
+
+                                        <Form.Item
+                                            name="plannedEndTime"
+                                            label="End Time"
+                                            rules={[{ required: true }]}
+                                            className="flex-1"
+                                        >
+                                            <TimePicker className="w-full" format="HH:mm" disabled={isView} />
+                                        </Form.Item>
+                                    </div>
+
+                                </div>
+
+                                {
+                                    isCreate && (
+                                        <Form.Item
+                                            name="staff"  // Changed from staffUuid to staffIds
+                                            label="Assign Staff"
+                                        // rules={[{ required: true }]}
+                                        >
+                                            <Select
+                                                mode="multiple"
+                                                options={staffOptions}
+                                                disabled={isView}
+                                                placeholder="Select Housekeepers"
+                                                optionFilterProp="label"
+                                                allowClear
+                                            />
+                                        </Form.Item>
+                                    )
+                                }
+
+                                <Form.Item name="remark" label="Remarks">
+                                    <TextArea rows={3} readOnly={isView} />
+                                </Form.Item>
+                            </Form>
+
+                            {
+                                (isEdit || isView) ? (
+                                    <div>
+                                        <div className="flex justify-end mt-4">
+                                            <button
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    onViewTaskAssign(detail);
+                                                }}
+                                                className="flex items-center gap-1.5 px-2 py-1 bg-gray-50 hover:bg-blue-50 hover:text-blue-600 rounded text-[12px] border border-gray-100 hover:border-blue-200 transition-all"
+                                            >
+                                                <TeamOutlined /> Staff Assigns
+                                            </button>
+                                        </div>
+
+                                        <div className="flex justify-end gap-3 mt-6">
+                                            <button onClick={handleNext} className="flex items-center gap-1.5 px-2 py-1 bg-gray-50 hover:bg-blue-50 hover:text-blue-600 rounded text-[12px] border border-gray-100 hover:border-blue-200 transition-all">
+                                                Transfer to Maintenance Request <ArrowRightOutlined /></button>
+                                        </div>
+                                    </div>
+                                ) : null
+                            }
+                        </div>
                     )
                 }
             </Drawer >
+
+            {/* Second Drawer */}
+            <HouseKeepingTaskAssignForm
+                drawerOpen={taskAssignDrawerOpen}
+                setDrawerOpen={setTaskAssignDrawerOpen}
+                // selectedRow={selectedRow}
+                // setSelectedRow={setSelectedRow}
+                houseKeepingTaskDetail={detail}
+                // mode={currentMode}
+                staffOptions={staffOptionsforAssignment}
+                setPage={setPage}
+            />
         </>
 
     );
