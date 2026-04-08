@@ -5,18 +5,13 @@ import { TeamOutlined, CalendarOutlined, ClockCircleOutlined, ExclamationCircleO
 import Loader from "../../../component/Loader/Loader";
 import useApiQuery from "../../../hooks/useApiQuery";
 import { useApiMutation } from "../../../hooks/useApiMutation";
-// import { getHouseKeepingTaskDetail } from "../../../api/houseKeepingTaskApi";
-import {
-    getHouseKeepingTaskAssignDetail,
-    createHouseKeepingTaskAssign,
-    updateHouseKeepingTaskAssign
-} from "../../../api/houseKeepingTaskAssignApi";
+import { getMaintenanceTaskAssignmentDetail, createMaintenanceTaskAssignment, updateMaintenanceTaskAssignment } from "../../../api/maintenanceTaskAssignmentApi";
 import Toast from "../../../component/Toast/Toast";
 
-const HouseKeepingTaskAssignForm = ({
+const MaintenanceTaskAssignForm = ({
     drawerOpen,
     setDrawerOpen,
-    houseKeepingTaskDetail,
+    maintenanceTaskDetail,
     staffOptions,
 }) => {
     const [form] = Form.useForm();
@@ -24,7 +19,8 @@ const HouseKeepingTaskAssignForm = ({
     const [selectedAssignment, setSelectedAssignment] = useState(null);
     const [isEdit, setIsEdit] = useState(false);
 
-    const detail = houseKeepingTaskDetail;
+    const { TextArea } = Input;
+    const detail = maintenanceTaskDetail;
 
     //--- Staff Options for Create Dropdown ---
     const staffIds = detail?.staff?.ids || [];
@@ -32,7 +28,7 @@ const HouseKeepingTaskAssignForm = ({
     const isStaffListEmpty = notAssignedStaffs.length === 0;
 
     // --- Staff Options for Edit Dropdown ---
-    const usedStaffIds = detail?.housekeepingTaskAssignments?.map(a => a.staff?.id) || [];
+    const usedStaffIds = detail?.maintenanceTaskAssignments?.map(a => a.staff?.id) || [];
     const currentStaffId = isEdit ? selectedAssignment?.staff?.id : null;
 
     const staffOptionsForEdit = (staffOptions || []).filter(staff => {
@@ -42,8 +38,8 @@ const HouseKeepingTaskAssignForm = ({
 
     // 2. Fetch Specific Assignment Detail for Edit
     const { data: assignDetailRaw, isLoading: isAssignDetailLoading } = useApiQuery({
-        fetchQueryName: "housekeeping-task-assign-detail",
-        fetchQueryFunction: getHouseKeepingTaskAssignDetail,
+        fetchQueryName: "maintenance-task-assign-detail",
+        fetchQueryFunction: getMaintenanceTaskAssignmentDetail,
         params: { uuid: selectedAssignment?.uuid },
         options: { enabled: !!selectedAssignment?.uuid && createDrawerOpen && isEdit },
     });
@@ -56,17 +52,17 @@ const HouseKeepingTaskAssignForm = ({
             if (isEdit && assignDetail) {
                 form.setFieldsValue({
                     staff: assignDetail?.staff?.uuid,
-                    housekeepingTask: detail?.uuid,
-                    assignedDate: dayjs(assignDetail.assignedAt),
-                    assignedTime: dayjs(assignDetail.assignedAt),
+                    maintenanceRequest: detail?.uuid,
                     startedDate: assignDetail.startedAt ? dayjs(assignDetail.startedAt) : null,
                     startedTime: assignDetail.startedAt ? dayjs(assignDetail.startedAt) : null,
+                    completedDate: assignDetail.completedAt ? dayjs(assignDetail.completedAt) : null,
                     completedTime: assignDetail.completedAt ? dayjs(assignDetail.completedAt) : null,
+                    remark: assignDetail.remark,
                 });
             } else if (!isEdit) {
                 form.resetFields();
                 form.setFieldsValue({
-                    housekeepingTask: detail?.uuid,
+                    maintenanceRequest: detail?.uuid,
                 });
             }
         }
@@ -74,13 +70,13 @@ const HouseKeepingTaskAssignForm = ({
 
     // 5. Mutations
     const createMutation = useApiMutation({
-        mutationFn: createHouseKeepingTaskAssign,
-        invalidateKeys: [["housekeeping-task-detail"]],
+        mutationFn: createMaintenanceTaskAssignment,
+        invalidateKeys: [["maintenance-request-detail"]],
     });
 
     const updateMutation = useApiMutation({
-        mutationFn: updateHouseKeepingTaskAssign,
-        invalidateKeys: [["housekeeping-task-detail"], ["houseKeeping-tasks"]],
+        mutationFn: updateMaintenanceTaskAssignment,
+        invalidateKeys: [["maintenance-request-detail"]],
     });
 
     const formatDateTime = (dateSource, timeSource) => {
@@ -93,29 +89,31 @@ const HouseKeepingTaskAssignForm = ({
     };
 
     const onFinish = (values) => {
-        const { assignedDate, assignedTime, startedDate, startedTime, completedTime } = values;
+        const { startedDate, startedTime, completedDate, completedTime } = values;
 
         const combinedDateTimeforStarted = formatDateTime(startedDate, startedTime);
-        const combinedDateTimeforCompleted = formatDateTime(startedDate, completedTime);
+        const combinedDateTimeforCompleted = formatDateTime(completedDate, completedTime);
 
         const editPayload = {
             uuid: isEdit ? selectedAssignment?.uuid : null,
-            housekeepingTask: { uuid: values.housekeepingTask },
+            maintenanceRequest: { uuid: values?.maintenanceRequest },
             staff: isStaffListEmpty ? { uuid: assignDetail?.staff?.uuid } : { uuid: values.staff },
             startedAt: combinedDateTimeforStarted,
             completedAt: combinedDateTimeforCompleted,
+            remark: values?.remark,
         };
 
         const createPayload = {
-            housekeepingTask: { uuid: detail?.uuid },
+            maintenanceRequest: { uuid: detail?.uuid },
             staff: { uuid: values.staff },
+            remark: values?.remark,
         }
 
         if (isEdit) {
             updateMutation.mutate(editPayload,
                 {
                     onSuccess: () => {
-                        Toast.success("Cleaning assign updated");
+                        Toast.success("Maintenance assign updated");
                         setCreateDrawerOpen(false);
                     },
                 }
@@ -123,7 +121,7 @@ const HouseKeepingTaskAssignForm = ({
         } else {
             createMutation.mutate(createPayload, {
                 onSuccess: () => {
-                    Toast.success("Cleaning assign created");
+                    Toast.success("Maintenance assign created");
                     setCreateDrawerOpen(false);
                 }
             });
@@ -150,23 +148,23 @@ const HouseKeepingTaskAssignForm = ({
         >
             {isAssignDetailLoading ? (
                 <div className="flex h-64 items-center justify-center"><Loader /></div>
-            ) : !detail?.housekeepingTaskAssignments?.length ? (
+            ) : !detail?.maintenanceTaskAssignments?.length ? (
                 <div className="flex flex-col items-center justify-center h-64 border-2 border-dashed border-gray-100 rounded-xl bg-gray-50/50">
                     <TeamOutlined className="text-gray-300 text-3xl mb-2" />
                     <p className="text-gray-400 font-bold uppercase text-[10px]">No assigns found</p>
                 </div>
             ) : (
                 <Row gutter={[8, 8]}>
-                    {detail.housekeepingTaskAssignments.map((item, index) => (
+                    {detail.maintenanceTaskAssignments.map((item, index) => (
                         <Col span={12} key={item.uuid || index}>
                             <div
                                 onClick={() => { setIsEdit(true); setSelectedAssignment(item); setCreateDrawerOpen(true); }}
                                 className="bg-white border border-gray-200 rounded p-2 shadow-sm relative pt-5 cursor-pointer hover:border-blue-400 transition-all group h-full"
                             >
                                 <div className="absolute top-0 left-0 px-2 py-0.5 bg-blue-500 rounded-br text-[12px] text-white font-bold">{item?.staff?.name}</div>
-                                <TightRow label="Assigned" value={item.assignedAt ? dayjs(item.assignedAt).format("YYYY-MM-DD HH:mm:ss") : "-"} isDate />
                                 <TightRow label="Started" value={item.startedAt ? dayjs(item.startedAt).format("YYYY-MM-DD HH:mm:ss") : "-"} isDate />
                                 <TightRow label="Completed" value={item.completedAt ? dayjs(item.completedAt).format("YYYY-MM-DD HH:mm:ss") : "-"} isDate />
+                                <TightRow label="Remark" value={item.remark ? item.remark : "-"} />
                             </div>
                         </Col>
                     ))}
@@ -182,7 +180,7 @@ const HouseKeepingTaskAssignForm = ({
                 destroyOnClose
             >
                 <Form form={form} layout="vertical" onFinish={onFinish}>
-                    <Form.Item name="housekeepingTask" hidden><Input /></Form.Item>
+                    <Form.Item name="maintenanceRequest" hidden><Input /></Form.Item>
 
                     <div className="space-y-4">
                         {isEdit ? (
@@ -238,20 +236,27 @@ const HouseKeepingTaskAssignForm = ({
                     {isEdit && (
                         <>
                             <div className="grid grid-cols-2 gap-4">
-                                <Form.Item name="startedDate" label="Date">
+                                <Form.Item name="startedDate" label="Started Date">
                                     <DatePicker className="w-full" />
                                 </Form.Item>
-                                <div className="grid grid-cols-2 gap-4">
-                                    <Form.Item name="startedTime" label="Started Time">
-                                        <TimePicker className="w-full" format="HH:mm:ss" />
-                                    </Form.Item>
-                                    <Form.Item name="completedTime" label="Completed Time">
-                                        <TimePicker className="w-full" format="HH:mm:ss" />
-                                    </Form.Item>
-                                </div>
+                                <Form.Item name="startedTime" label="Started Time">
+                                    <TimePicker className="w-full" format="HH:mm:ss" />
+                                </Form.Item>
+                            </div>
+                            <div className="grid grid-cols-2 gap-4">
+                                <Form.Item name="completedDate" label="Completed Date">
+                                    <DatePicker className="w-full" />
+                                </Form.Item>
+                                <Form.Item name="completedTime" label="Completed Time">
+                                    <TimePicker className="w-full" format="HH:mm:ss" />
+                                </Form.Item>
                             </div>
                         </>
                     )}
+
+                    <Form.Item name="remark" label="Remark">
+                        <TextArea rows={3} placeholder="Enter Remark" />
+                    </Form.Item>
 
                     {(!isStaffListEmpty || isEdit) && (
                         <Button
@@ -269,4 +274,4 @@ const HouseKeepingTaskAssignForm = ({
     );
 };
 
-export default HouseKeepingTaskAssignForm;
+export default MaintenanceTaskAssignForm;
