@@ -58,7 +58,6 @@ const ExtraBedRateForm = ({
 
   const roomType = ratePlanMetaData?.room_types?.map((type) => ({
     value: type.uuid,
-    // label: `${type.name} (${type.createdRooms}/${type.totalRooms})`,
     label: type.name,
   }));
 

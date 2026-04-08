@@ -5,12 +5,9 @@ import ListHeader from "../../component/ListHeader/ListHeader";
 import RoomInventoryForm from "./Components/RoomInventoryForm/RoomInventoryForm";
 import RoomInventoryTable from "./Components/RoomInventoryTable";
 import { getAvailabilityCalendar } from "../../api/availabilityCalendarApi";
-import { DatePicker } from "antd";
-import dayjs from "dayjs";
 import { PERMISSIONS } from "../../variables/permission";
 
 const RoomInventoryList = () => {
-  const { RangePicker } = DatePicker;
   const [keyword, setKeyword] = useState("");
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(LIMITS.PAGE_SIZE);
@@ -53,27 +50,16 @@ const RoomInventoryList = () => {
   return (
     <div className="w-full px-6 py-2">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
-        <div className="w-full md:w-80">
-          <RangePicker
-            style={{ width: "100%" }}
-            onChange={(dates) => {
-              if (dates) {
-                setStartDate(dayjs(dates[0]).format("YYYY-MM-DD"));
-                setEndDate(dayjs(dates[1]).format("YYYY-MM-DD"));
-              } else {
-                setStartDate(null);
-                setEndDate(null);
-              }
-            }}
-          />
-        </div>
-
         <ListHeader
           searchPlaceholder="Search availabiliy calendar..."
           keyword={keyword}
           setKeyword={setKeyword}
           addButtonText="Add New Room Inventory"
           onAdd={handleAdd}
+          startDate={startDate}
+          endDate={endDate}
+          setStartDate={setStartDate}
+          setEndDate={setEndDate}
           permission={PERMISSIONS.AVAILABILITY_CALENDAR_CREATE}
         />
       </div>

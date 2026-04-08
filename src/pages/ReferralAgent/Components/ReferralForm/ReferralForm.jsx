@@ -288,7 +288,7 @@ const ReferralForm = ({
         handleUploadMutation={fetchReferralFormUploads}
         imageDrawerOpen={imageDrawerOpen}
         setImageDrawerOpen={setImageDrawerOpen}
-
+        title={selectedData?.name} 
       />
     </div>
   );
