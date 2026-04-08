@@ -241,7 +241,7 @@ const MaintenanceRequestForm = ({
                                 </>
                             )}
 
-                            <Form.Item name="name" label="Maintenance Request" rules={[{ required: true }]}>
+                            <Form.Item name="name" label="Name" rules={[{ required: true }]}>
                                 <Input disabled={isView} placeholder="Enter Maintenance Request" />
                             </Form.Item>
 

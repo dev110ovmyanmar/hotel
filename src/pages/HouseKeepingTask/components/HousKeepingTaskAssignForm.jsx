@@ -83,8 +83,25 @@ const HouseKeepingTaskAssignForm = ({
         invalidateKeys: [["housekeeping-task-detail"], ["houseKeeping-tasks"]],
     });
 
+    // const formatDateTime = (dateSource, timeSource) => {
+    //     if (!dateSource || !timeSource) return null;
+    //     return dateSource
+    //         .hour(timeSource.hour())
+    //         .minute(timeSource.minute())
+    //         .second(timeSource.second())
+    //         .format("YYYY-MM-DD HH:mm:ss");
+    // };
+
     const formatDateTime = (dateSource, timeSource) => {
-        if (!dateSource || !timeSource) return null;
+        // 1. If there is no date, we can't format anything
+        if (!dateSource) return null;
+
+        // 2. If there is a date but no time, return just the date
+        if (!timeSource) {
+            return dateSource.format("YYYY-MM-DD");
+        }
+
+        // 3. If both exist, merge them and return the full string
         return dateSource
             .hour(timeSource.hour())
             .minute(timeSource.minute())
@@ -95,8 +112,9 @@ const HouseKeepingTaskAssignForm = ({
     const onFinish = (values) => {
         const { assignedDate, assignedTime, startedDate, startedTime, completedTime } = values;
 
-        const combinedDateTimeforStarted = formatDateTime(startedDate, startedTime);
-        const combinedDateTimeforCompleted = formatDateTime(startedDate, completedTime);
+        let combinedDateTimeforStarted = formatDateTime(startedDate, startedTime);
+        let combinedDateTimeforCompleted = startedTime ? formatDateTime(startedTime ? null : startedDate, completedTime) : null;
+        combinedDateTimeforCompleted = completedTime ? formatDateTime(startedDate, completedTime) : null;
 
         const editPayload = {
             uuid: isEdit ? selectedAssignment?.uuid : null,
@@ -242,7 +260,26 @@ const HouseKeepingTaskAssignForm = ({
                                     <DatePicker className="w-full" />
                                 </Form.Item>
                                 <div className="grid grid-cols-2 gap-4">
-                                    <Form.Item name="startedTime" label="Started Time">
+                                    {/* <Form.Item name="startedTime" label="Started Time">
+                                        <TimePicker className="w-full" format="HH:mm:ss" />
+                                    </Form.Item> */}
+                                    <Form.Item
+                                        name="startedTime"
+                                        label="Started Time"
+                                        dependencies={['startedDate']} // Re-checks logic when startedDate changes
+                                        rules={[
+                                            {
+                                                validator: (_, value) => {
+                                                    const date = form.getFieldValue('startedDate');
+                                                    // If a date exists but time is missing, throw an error
+                                                    if (date && !value) {
+                                                        return Promise.reject(new Error('Please select a time for this date!'));
+                                                    }
+                                                    return Promise.resolve();
+                                                },
+                                            },
+                                        ]}
+                                    >
                                         <TimePicker className="w-full" format="HH:mm:ss" />
                                     </Form.Item>
                                     <Form.Item name="completedTime" label="Completed Time">
