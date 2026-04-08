@@ -139,6 +139,7 @@ const SeasonalRateTable = ({
         dataSource={record?.rates}
         pagination={false}
         size="small"
+        style={{ marginTop: '16px' , marginBottom: '16px'}}
       />
     );
   };

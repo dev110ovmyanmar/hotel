@@ -14,7 +14,7 @@ const useMaintenanceRequestColumns = (onEdit, onView) => {
             width: 60,
         },
         {
-            title: "Maintenance Request",
+            title: "Name",
             key: "name",
             render: (_, record) => record?.name || "-",
         },
@@ -30,7 +30,7 @@ const useMaintenanceRequestColumns = (onEdit, onView) => {
             render: (_, record) => record?.room?.floor?.floorNo || "-",
         },
         {
-            title: "Reported Bu",
+            title: "Reported By",
             key: "reportedFrom",
             render: (_, record) => record?.reportedFrom?.name || "-",
         },

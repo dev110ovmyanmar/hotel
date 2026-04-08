@@ -138,7 +138,7 @@ const MeanPlanForm = ({
             onFinish={onFinish}
           >
             <Form.Item
-              label="Meal Plan Name"
+              label="Name"
               name="name"
               rules={[{ required: true, message: "Meal Plan Name is Required" }]}
             >
