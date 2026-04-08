@@ -123,13 +123,37 @@ const RoomInventoryTable = ({
   ];
 
   const expandColumns = [
-    { title: "ID", dataIndex: "id", key: "id" ,align:"center"},
-    { title: "Date", dataIndex: "date", key: "date", align: "center" },
+    { title: "ID", dataIndex: "id", key: "id", align: "center",width:70 },
+    {
+      title: "Date",
+      dataIndex: "date",
+      key: "date",
+      align: "center",
+      width: 150,
+    },
+
+    {
+      title: "Available Rooms",
+      dataIndex: "availableRooms",
+      key: "availableRooms",
+      width: 150,
+      align: "center",
+      render: (text) => <div>{text ? text : "-"}</div>,
+    },
+    {
+      title: "Sold Rooms",
+      dataIndex: "SoldRooms",
+      key: "soldRooms",
+      width: 150,
+      align: "center",
+      render: (text) => <div>{text ? text : "-"}</div>,
+    },
     {
       title: "Stop Sell",
       dataIndex: "stopSell",
       key: "stopSell",
       width: 150,
+      align: "center",
       render: (_, record) => {
         const isPastOrToday = dayjs(record.date).isSameOrBefore(dayjs(), "day");
 
@@ -158,19 +182,9 @@ const RoomInventoryTable = ({
       },
     },
     {
-      title: "Available Rooms",
-      dataIndex: "availableRooms",
-      key: "availableRooms",
-      render: (text) => <div>{text ? text : "-"}</div>,
-    },
-    {
-      title: "Sold Rooms",
-      dataIndex: "SoldRooms",
-      key: "soldRooms",
-      render: (text) => <div>{text ? text : "-"}</div>,
-    },
-    {
       title: "Action",
+      width: 150,
+      align: "center",
       render: (_, record) => {
         const smallStyle = { fontSize: "12px" };
 
@@ -233,6 +247,7 @@ const RoomInventoryTable = ({
         rowKey="uuid"
         pagination={false}
         size="small"
+        style={{ marginTop: "16px", marginBottom: "16px" }}
       />
     );
   };

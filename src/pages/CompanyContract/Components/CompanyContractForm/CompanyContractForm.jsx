@@ -1,19 +1,32 @@
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import { Form, Input, Button, Drawer, Row, Col, Select, Space, DatePicker, InputNumber } from "antd";
+import {
+  Form,
+  Input,
+  Button,
+  Drawer,
+  Row,
+  Col,
+  Select,
+  Space,
+  DatePicker,
+  InputNumber,
+} from "antd";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
 import useApiQuery from "../../../../hooks/useApiQuery";
 import FormButton from "../../../../component/FormButtons/FormButtons";
-import Toast from './../../../../component/Toast/Toast';
-import usePermission from './../../../../hooks/usePermission';
-import { upsertPartnerContract, partnerContractDetails } from "../../../../api/partnerContractApi";
-import { queryClient } from '../../../../app/queryClient';
+import Toast from "./../../../../component/Toast/Toast";
+import usePermission from "./../../../../hooks/usePermission";
+import {
+  upsertPartnerContract,
+  partnerContractDetails,
+} from "../../../../api/partnerContractApi";
+import { queryClient } from "../../../../app/queryClient";
 import { getFormattedDate } from "../../../../utils";
 import dayjs from "dayjs";
 import { capitalizeFirstLetter } from "../../../../utils/Utils";
 import ImageUpload from "../../../../component/ImageUpload/ImageUpload";
 import { fetchCompanyUpload } from "../../../../api/partnerApi";
-
 
 const CompanyContractForm = ({
   mode,
@@ -50,8 +63,7 @@ const CompanyContractForm = ({
     options: {
       partnerType: "Company",
     },
-    shouldInvalidate: isEdit ? true : page === 1
-
+    shouldInvalidate: isEdit ? true : page === 1,
   });
 
   const { data: partnerContractDetailData } = useApiQuery({
@@ -66,7 +78,6 @@ const CompanyContractForm = ({
     },
   });
 
-
   useEffect(() => {
     if (!isAdd && partnerContractDetailData) {
       form.setFieldsValue({
@@ -79,14 +90,14 @@ const CompanyContractForm = ({
   }, [partnerContractDetailData]);
 
   const onFinish = (values) => {
-    console.log(values, "valuesonFinish")
+    console.log(values, "valuesonFinish");
     const createValues = {
       ...values,
       property: {
         uuid: propertyName?.uuid,
       },
       partner: {
-        uuid: state?.companyRecord?.uuid
+        uuid: state?.companyRecord?.uuid,
       },
       partnerType: "Company",
       contractStart: getFormattedDate(values?.contractStart),
@@ -109,7 +120,7 @@ const CompanyContractForm = ({
           uuid: propertyName?.uuid,
         },
         partner: {
-          uuid: state?.companyRecord?.uuid
+          uuid: state?.companyRecord?.uuid,
         },
         partnerType: "Company",
         contractStart: getFormattedDate(values?.contractStart),
@@ -128,11 +139,13 @@ const CompanyContractForm = ({
 
   const companyUpload = useApiMutation({
     mutationFn: fetchCompanyUpload,
-    invalidateKeys: [["partner-contract-details", { uuid: partnerContractDetailData?.uuid }]],
+    invalidateKeys: [
+      ["partner-contract-details", { uuid: partnerContractDetailData?.uuid }],
+    ],
   });
 
-  if(partnerContractDetailData){
-    console.log(partnerContractDetailData,"partnerContractDetailData")
+  if (partnerContractDetailData) {
+    console.log(partnerContractDetailData, "partnerContractDetailData");
   }
 
   return (
@@ -143,9 +156,7 @@ const CompanyContractForm = ({
         size={550}
         title={
           <div className="flex justify-between items-center">
-            <span>
-              {capitalizeFirstLetter(state?.companyRecord?.name)}
-            </span>
+            <span>{capitalizeFirstLetter(state?.companyRecord?.name)}</span>
             {isView ? (
               <Button
                 type="primary"
@@ -175,11 +186,10 @@ const CompanyContractForm = ({
               name: propertyName?.name,
             },
             company: {
-              name: state?.companyRecord?.name
-            }
+              name: state?.companyRecord?.name,
+            },
           }}
         >
-
           <Row gutter={16}>
             <Col span={12}>
               <Form.Item
@@ -192,22 +202,17 @@ const CompanyContractForm = ({
                     : value,
                 })}
               >
-                {
-                  isView ?
-                    <Input readOnly={isView} /> :
-                    <Select
-                      options={
-                        chargeType?.map(item => (
-                          {
-                            label: item.name,
-                            value: item.uuid
-                          }
-                        ))
-                      }
-                      placeholder="Select Charge Type"
-
-                    ></Select>
-                }
+                {isView ? (
+                  <Input readOnly={isView} />
+                ) : (
+                  <Select
+                    options={chargeType?.map((item) => ({
+                      label: item.name,
+                      value: item.uuid,
+                    }))}
+                    placeholder="Select Charge Type"
+                  ></Select>
+                )}
               </Form.Item>
             </Col>
 
@@ -219,10 +224,9 @@ const CompanyContractForm = ({
                   { required: true, message: "Charge Value is Required" },
                   {
                     validator: (_, value) => {
-                      const selectedType =
-                        chargeType?.find(
-                          (item) => item.uuid === chargeTypeValue,
-                        );
+                      const selectedType = chargeType?.find(
+                        (item) => item.uuid === chargeTypeValue,
+                      );
 
                       if (selectedType?.code === "percentage") {
                         const numValue = Number(value);
@@ -247,7 +251,8 @@ const CompanyContractForm = ({
                     return selected?.code === "percentage" ? "%" : "MMK";
                   })()}
                   readOnly={isView}
-                  placeholder="Enter Charge Value" />
+                  placeholder="Enter Charge Value"
+                />
               </Form.Item>
             </Col>
           </Row>
@@ -257,8 +262,12 @@ const CompanyContractForm = ({
               <Form.Item
                 label="Start Contract Date"
                 name="contractStart"
-                rules={[{ required: true, message: "Start Contract Date is Required" }]}
-
+                rules={[
+                  {
+                    required: true,
+                    message: "Start Contract Date is Required",
+                  },
+                ]}
               >
                 <DatePicker style={{ width: "100%" }} disabled={isView} />
               </Form.Item>
@@ -268,7 +277,9 @@ const CompanyContractForm = ({
               <Form.Item
                 label="End Contract Date"
                 name="contractEnd"
-                rules={[{ required: true, message: "End Contract Date is Required" }]}
+                rules={[
+                  { required: true, message: "End Contract Date is Required" },
+                ]}
               >
                 <DatePicker style={{ width: "100%" }} disabled={isView} />
               </Form.Item>
@@ -283,7 +294,7 @@ const CompanyContractForm = ({
         handleUploadMutation={companyUpload}
         imageDrawerOpen={imageDrawerOpen}
         setImageDrawerOpen={setImageDrawerOpen}
-
+        title={`${selectedData?.contractStart} to ${selectedData?.contractEnd}`}
       />
     </div>
   );

@@ -1,41 +1,49 @@
-import { Dropdown, Space, Table, Tag, Button } from 'antd';
+import { Dropdown, Space, Table, Tag, Button } from "antd";
 import { useState } from "react";
-import { MoreOutlined } from '@ant-design/icons';
-import MeanPlanForm from './MealPlanForm/MealPlanForm';
-import { EditOutlined } from '@ant-design/icons';
-import { EyeOutlined } from '@ant-design/icons';
-import Status from './../../../component/Status/Status';
-import ColorStatusTag from './../../../component/ColorStatusTag/ColorStatusTag';
+import { MoreOutlined } from "@ant-design/icons";
+import MeanPlanForm from "./MealPlanForm/MealPlanForm";
+import { EditOutlined } from "@ant-design/icons";
+import { EyeOutlined } from "@ant-design/icons";
+import Status from "./../../../component/Status/Status";
+import ColorStatusTag from "./../../../component/ColorStatusTag/ColorStatusTag";
 
-const MeanPlanTable = ({ data, page, perPage, total, changePage, changePerPage, loading }) => {
+const MeanPlanTable = ({
+  data,
+  page,
+  perPage,
+  total,
+  changePage,
+  changePerPage,
+  loading,
+}) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mode, setMode] = useState("");
   const [selectedData, setSelectedData] = useState({});
 
   const columns = [
     {
-      title: 'ID',
+      title: "ID",
       render: (_, record) => <div>{record?.id}</div>,
       width: 70,
     },
     {
-      title: 'Meal Plan Name',
-      dataIndex: 'name',
-      key: 'name',
-      render: text => <div>{text}</div>,
+      title: "Name",
+      dataIndex: "name",
+      key: "name",
+      render: (text) => <div>{text}</div>,
     },
     {
-      title: 'Description',
-      dataIndex: 'description',
-      key: 'description',
-      render: text => <div>{text}</div>,
-      width: 500
+      title: "Description",
+      dataIndex: "description",
+      key: "description",
+      render: (text) => <div>{text}</div>,
+      width: 500,
     },
     {
-      title: 'Status',
+      title: "Status",
       dataIndex: ["status", "name"],
-      key: 'status',
-      render: (_, record) => <ColorStatusTag status={record?.status} />
+      key: "status",
+      render: (_, record) => <ColorStatusTag status={record?.status} />,
     },
     {
       title: "Action",
@@ -89,7 +97,7 @@ const MeanPlanTable = ({ data, page, perPage, total, changePage, changePerPage, 
   ];
 
   return (
-    <div id="scrollId" className="w-full h-[63vh] " >
+    <div id="scrollId" className="w-full h-[63vh] ">
       <Table
         tableLayout="fixed"
         scroll={{ x: 1000 }}
@@ -103,9 +111,9 @@ const MeanPlanTable = ({ data, page, perPage, total, changePage, changePerPage, 
           total: total,
           onChange: (page, perPage) => {
             changePage(page);
-            changePerPage(perPage)
+            changePerPage(perPage);
           },
-          showSizeChanger: true
+          showSizeChanger: true,
         }}
       />
 
@@ -119,8 +127,7 @@ const MeanPlanTable = ({ data, page, perPage, total, changePage, changePerPage, 
         page={page}
       />
     </div>
-  )
+  );
 };
-
 
 export default MeanPlanTable;

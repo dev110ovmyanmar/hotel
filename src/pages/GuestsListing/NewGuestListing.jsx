@@ -55,7 +55,11 @@ const GuestList = () => {
   };
 
   const handleViewNotes = (record) => {
-    navigate(`/guest-list/guest-notes/${record.uuid}`);
+    navigate(`/guest-list/guests/${record?.id}/notes`,
+      {
+        state: { guestRecord: record }
+      }
+    );
   }
 
   return (
@@ -76,8 +80,8 @@ const GuestList = () => {
         onView={handleView}
         onEdit={handleEdit}
         loading={isLoading}
-        page={data?.pagination?.currentPage || page}
-        perPage={data?.pagination?.perPage || perPage}
+        page={page}
+        perPage={perPage}
         total={data?.pagination?.total}
         changePage={(page) => setPage(page)}
         changePerPage={(perPage) => setPerPage(perPage)}
