@@ -71,7 +71,6 @@ const handlenetworkFailed = (error) => {
 export const setupRequestInterceptor = (client) => {
   client.interceptors.request.use(
     (config) => {
-      console.log(config, "config")
       config.params = appendCommonParams(config.method, config.params);
       config.data = appendCommonData(config.method, config.data);
 

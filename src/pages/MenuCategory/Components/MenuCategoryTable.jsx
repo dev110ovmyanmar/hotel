@@ -6,6 +6,7 @@ import { EditOutlined } from "@ant-design/icons";
 import { PERMISSIONS } from "../../../variables/permission";
 import usePermission from "../../../hooks/usePermission";
 import MenuCategoryForm from "./MenuCategoryForms/MenuCategoryForm";
+import ColorStatusTag from "../../../component/ColorStatusTag/ColorStatusTag";
 
 const MenuCategoryTable = ({
   data,
@@ -43,14 +44,10 @@ const MenuCategoryTable = ({
 
     {
       title: "Status",
-      dataIndex: ["status", "name"],
+      dataIndex: "status",
       key: "status",
       align: "center",
-      render: (_, record) => (
-        <Tag color={record?.status?.name === "Active" ? "green" : "red"}>
-          {record?.status?.name.toUpperCase()}
-        </Tag>
-      ),
+      render: (status) => <ColorStatusTag status={status} />,
     },
     {
       title: "Action",

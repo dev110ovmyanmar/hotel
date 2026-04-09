@@ -8,6 +8,7 @@ import { PERMISSIONS } from "../../../variables/permission";
 import usePermission from "../../../hooks/usePermission";
 import ItemsForm from "./MenuItemForms/ItemsForm";
 import PriceTag from "../../../component/PriceTag/PriceTag";
+import ColorStatusTag from "../../../component/ColorStatusTag/ColorStatusTag";
 
 const MenuItemTable = ({
   data,
@@ -42,7 +43,7 @@ const MenuItemTable = ({
       title: "Price (MMK)",
       dataIndex: "price",
       key: "price",
-      render: (price) => <PriceTag value={price}/>
+      render: (price) => <PriceTag value={price} />
     },
     {
       title: "Cost (MMK)",
@@ -67,14 +68,10 @@ const MenuItemTable = ({
     },
     {
       title: "Status",
-      dataIndex: ["status", "name"],
+      dataIndex: "status",
       key: "status",
       align: "center",
-      render: (_, record) => (
-        <Tag color={record?.status?.name === "Active" ? "green" : "red"}>
-          {record?.status?.name.toUpperCase()}
-        </Tag>
-      ),
+      render: (status) => <ColorStatusTag status={status} />,
     },
     {
       title: "Action",
