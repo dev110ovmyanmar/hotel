@@ -27,6 +27,7 @@ import RoomTypeAmenityForm from "./RoomTypeAmenityForm";
 import { EditOutlined, PlusOutlined } from "@ant-design/icons";
 import Loader from "../../../../component/Loader/Loader";
 import ImageUpload from "../../../../component/ImageUpload/ImageUpload";
+import PriceTag from "../../../../component/PriceTag/PriceTag";
 
 
 const onChange = (value) => {
@@ -141,17 +142,14 @@ const RoomTypeForm = ({
       title: "Extra Price (MMK)",
       dataIndex: "extraPrice",
       key: "extraPrice",
-      render: (price) => price?.toLocaleString(),
+      render: (price) => <PriceTag value={price} />,
     },
     {
       title: "Is Free",
       dataIndex: "isFree",
       key: "isFree",
-      render: (_, record) => (
-        <Tag color={record.isFree ? "green" : "red"}>
-          {record.isFree ? "TRUE" : "FALSE"}
-        </Tag>
-      ),
+      render: text => <div className={text === true ? "text-[#389E0D]" : "text-[#CF1322]"}>{text === true ? "True" : "False"}</div>,
+
     },
     {
       title: "Action",
