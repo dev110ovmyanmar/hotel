@@ -7,6 +7,8 @@ import { useApiMutation } from "../../../hooks/useApiMutation";
 import useApiQuery from "../../../hooks/useApiQuery";
 import { queryClient } from "../../../app/queryClient";
 import { upsertCategory, getCategoryDetail } from "../../../api/categoryApi";
+import usePermission from "../../../hooks/usePermission";
+import { PERMISSIONS } from "../../../variables/permission";
 
 const CategoryForm = ({
   mode,
@@ -19,6 +21,8 @@ const CategoryForm = ({
   setDrawerOpen,
 }) => {
   const [form] = Form.useForm();
+  const { hasPermission } = usePermission();
+  const canEdit = hasPermission(PERMISSIONS.CATEGORY_EDIT);
 
   const isView = mode === "view";
   const isEdit = mode === "edit";
@@ -126,11 +130,15 @@ const CategoryForm = ({
       title={
         <div className="flex items-center justify-between w-full">
           {DrawerTitle}
-          {isView ? (
-            <Button type="primary" onClick={switchToEdit}>Edit</Button>
-          ) : (
-            <FormButtons onClick={() => form.submit()} mode={mode} />
-          )}
+          {
+            isView ? (
+              canEdit && (
+                <Button type="primary" onClick={switchToEdit}>Edit</Button>
+              )
+            ) : (
+              <FormButtons onClick={() => form.submit()} mode={mode} />
+            )
+          }
         </div>
       }
       size={550} // size={500} is not a valid AntD prop, use width
