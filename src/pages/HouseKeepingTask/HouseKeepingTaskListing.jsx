@@ -9,6 +9,7 @@ import HouseKeepingTaskForm from "./components/HouseKeepingTaskForm";
 import HouseKeepingTaskCard from "./components/HouseKeepingTaskCard";
 import { LIMITS } from "../../variables/constants";
 import HouseKeepingTaskAssignForm from "./components/HousKeepingTaskAssignForm";
+import ColorStatusTag from "../../component/ColorStatusTag/ColorStatusTag";
 
 const HouseKeepingTaskListing = () => {
     const [selectedRow, setSelectedRow] = useState(null);
@@ -50,7 +51,21 @@ const HouseKeepingTaskListing = () => {
         [adminMetaData]);
 
     const roomOptions = useMemo(() =>
-        adminMetaData?.rooms?.map(r => ({ value: r.uuid, label: `Room ${r.roomNo}` })), [adminMetaData]);
+        adminMetaData?.rooms?.map(r => ({
+            value: r.uuid,
+            label: (
+                <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+                    <span>{r.roomNo}</span>
+                    <ColorStatusTag
+                        status={{
+                            code: r.housekeepingStatus?.cleanStatus?.code,
+                            name: r.housekeepingStatus?.cleanStatus?.name
+                        }}
+                    />
+                </div>
+            ),
+        })),
+        [adminMetaData]);
 
     // Reset to page 1 when searching or changing page size
     useEffect(() => {

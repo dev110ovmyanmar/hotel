@@ -6,12 +6,10 @@ const { Text } = Typography;
 
 const useHouseKeepingTaskColumns = (onEdit, onView, onAssign) => {
     const hkStatusMap = {
-        clean: "hk_clean",
-        dirty: "hk_dirty",
-        in_progress: "hk_in_progress",
-        inspected: "hk_inspected",
-        out_of_order: "hk_out_of_order",
-        out_of_service: "hk_out_of_service",
+        completed: "completed",
+        pending: "pending",
+        in_progress: "in_progress",
+        cancelled: "cancelled",
     };
     return [
         {
