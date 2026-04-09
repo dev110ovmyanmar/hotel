@@ -16,12 +16,12 @@ import ColorStatusTag from "../../../component/ColorStatusTag/ColorStatusTag";
 const HouseKeepingTaskCard = ({ data, onEdit, onView, onViewTaskAssign }) => {
     // --- Business Logic & Mapping ---
     const hkStatusMap = {
-        clean: "hk_clean",
-        dirty: "hk_dirty",
-        in_progress: "hk_in_progress",
-        inspected: "hk_inspected",
-        out_of_order: "hk_out_of_order",
-        out_of_service: "hk_out_of_service",
+        clean: "clean",
+        dirty: "dirty",
+        in_progress: "in_progress",
+        inspected: "inspected",
+        out_of_order: "out_of_order",
+        out_of_service: "out_of_service",
     };
 
     const firstItem = Array.isArray(data?.housekeepingStatus) ? data?.housekeepingStatus[0] : data?.housekeepingStatus;
