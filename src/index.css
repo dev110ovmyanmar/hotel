@@ -24,6 +24,14 @@
   --foreground: #ffffff;
 }
 
+.app-bg-color{
+  --red: #e62c4b;
+  --black: #0f172a;
+  --white: #ffffff;
+  --yellow: #e5eb39;
+  
+}
+
 @custom-variant dark (&:where(.dark, .dark *));
 
 * {
@@ -42,6 +50,10 @@
 
 .text-foreground {
   color: var(--foreground);
+}
+
+.header-bg-color{
+  /* background-color: var(--red) !important; */
 }
 
 /* Breadcrumb */
@@ -252,4 +264,30 @@ span .ant-upload {
 .custom-table-style .ant-table {
   border: 1px solid #adc6ff;
   border-radius: 4px;
+}
+
+/* Nested Table */
+.nested-table-container{
+  padding:5px 15px;
+}
+
+.nested-table {
+  background-color: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 5px;
+  padding: 8px 25px;
+}
+
+.ant-table-tbody > tr.ant-table-expanded-row {
+  background-color: #f3f4f6;
+} 
+
+:where(.css-dev-only-do-not-override-1t2537o).ant-table-wrapper .ant-table-tbody >tr >th >.ant-table-wrapper:only-child .ant-table, :where(.css-dev-only-do-not-override-1t2537o).ant-table-wrapper .ant-table-tbody >tr >td >.ant-table-wrapper:only-child .ant-table, :where(.css-dev-only-do-not-override-1t2537o).ant-table-wrapper .ant-table-tbody >tr >th >.ant-table-expanded-row-fixed>.ant-table-wrapper:only-child .ant-table, :where(.css-dev-only-do-not-override-1t2537o).ant-table-wrapper .ant-table-tbody >tr >td >.ant-table-expanded-row-fixed>.ant-table-wrapper:only-child .ant-table{
+  margin-block: 0 !important;
+  margin-inline: 0 !important;
+  padding: 0 !important;
+}
+
+body.something{
+  background-color: red;
 }
