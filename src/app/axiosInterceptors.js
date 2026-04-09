@@ -14,7 +14,7 @@ import {
 
 import { deviceId, deviceName, getAuthorization, getContentMD5, loadState } from "../utils";
 import { getDate } from "../utils/dateUtils";
-import { sessionExpired } from "../services/appSlice";
+import { sessionExpired, networkFailedModal } from "../services/appSlice";
 
 // Set up axios response interceptor
 export const setupResponseInterceptor = (client) => {
@@ -25,7 +25,11 @@ export const setupResponseInterceptor = (client) => {
     },
     (error) => {
       Logger.describeErrorResponse(error);
+
+      handlenetworkFailed(error);
+
       handleSessionExpiration(error, store);
+
       return Promise.reject(error); // Reject with parsed error
     },
   );
@@ -41,16 +45,38 @@ const handleSessionExpiration = (error) => {
   }
 };
 
+const handlenetworkFailed = (error) => {
+
+  // No internet
+  if (!navigator.onLine) {
+    console.log("No Internet Connection");
+    store.dispatch(networkFailedModal(true));
+    return;
+  }
+
+  if (error.code === "ERR_NETWORK") {
+    console.log("Request Timeout");
+    store.dispatch(networkFailedModal(true));
+    return;
+  }
+
+  if (error.response === undefined ) {
+    console.log(" Server unreachable");
+    store.dispatch(networkFailedModal(true));
+    return;
+  }
+};
+
 // Set up axios request interceptor
 export const setupRequestInterceptor = (client) => {
   client.interceptors.request.use(
     (config) => {
-      console.log(config,"config")
+      console.log(config, "config")
       config.params = appendCommonParams(config.method, config.params);
       config.data = appendCommonData(config.method, config.data);
 
       const requestData = config.method === "get" ? config.params : config.data;
-      
+
       config.headers = generateHeaders(
         config.method,
         requestData,
@@ -149,7 +175,7 @@ const generateJsonHeaders = (method, data) => {
     ),
     ...(sessionId && { "X-Session-Token": sessionId }),
 
-    "X-Device-Id":deviceId(),
+    "X-Device-Id": deviceId(),
     "X-Device-Name": getDeviceName(),
   };
 };
