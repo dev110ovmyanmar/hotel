@@ -7,6 +7,7 @@ import FacilityPackageForm from "./FacilityPackageForm/FacilityPackageForm";
 import { PERMISSIONS } from "../../../variables/permission";
 import usePermission from "../../../hooks/usePermission";
 import PriceTag from "../../../component/PriceTag/PriceTag";
+import { TableColumns } from "../../../component/TableColumns/TableColumns";
 
 const FacilityPackageTable = ({
   data,
@@ -24,7 +25,7 @@ const FacilityPackageTable = ({
   const [mode, setMode] = useState(null);
   const [selectedData, setSelectedData] = useState({});
 
-  const columns = [
+  const baseColumns = [
     {
       title: "ID",
       render: (_, record) => <div>{record?.id}</div>,
@@ -34,11 +35,13 @@ const FacilityPackageTable = ({
       title: "Name",
       dataIndex: "name",
       key: "name",
+      align:"left"
     },
     {
       title: "Facility",
       dataIndex: ["facility", "name"],
       key: "facility",
+      align:"left"
     },
     {
       title: "Price Type",
@@ -126,6 +129,8 @@ const FacilityPackageTable = ({
       },
     },
   ];
+
+  const columns = TableColumns(baseColumns);
 
   return (
     <div id="scrollId" className="w-full h-[63vh] ">
