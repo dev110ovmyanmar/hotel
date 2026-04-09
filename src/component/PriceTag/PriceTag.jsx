@@ -1,7 +1,7 @@
 
 const PriceTag = ({value}) =>{
     return (
-        <div>{value?.toLocaleString()}</div>
+        <div className="text-end">{value?.toLocaleString()}</div>
     )
 }
 

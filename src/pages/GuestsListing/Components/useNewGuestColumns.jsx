@@ -1,10 +1,21 @@
 import { Button, Dropdown, Typography } from "antd";
-import { EditOutlined, EyeOutlined, FileTextOutlined, MoreOutlined } from "@ant-design/icons";
+import {
+  EditOutlined,
+  EyeOutlined,
+  FileTextOutlined,
+  MoreOutlined,
+  UploadOutlined,
+} from "@ant-design/icons";
 import ColorStatusTag from "../../../component/ColorStatusTag/ColorStatusTag";
 
 const { Text } = Typography;
 
-export default function useGuestColumns(onEdit, onView, onViewNotes) {
+export default function useGuestColumns(
+  onEdit,
+  onView,
+  onViewNotes,
+  onFileUpload,
+) {
   return [
     {
       title: "ID",
@@ -31,8 +42,7 @@ export default function useGuestColumns(onEdit, onView, onViewNotes) {
       title: "Passport",
       dataIndex: "passport",
       key: "passport",
-    }
-    ,
+    },
     {
       title: "Nationality",
       dataIndex: "nationality",
@@ -48,7 +58,7 @@ export default function useGuestColumns(onEdit, onView, onViewNotes) {
       title: "Actions",
       key: "actions",
       width: 100,
-      fixed: 'right',
+      fixed: "right",
       render: (_, record) => (
         <Dropdown
           menu={{
@@ -56,11 +66,13 @@ export default function useGuestColumns(onEdit, onView, onViewNotes) {
               if (key === "1") onView(record);
               if (key === "2") onEdit(record);
               if (key === "3") onViewNotes(record);
+              if (key === "4") onFileUpload(record);
             },
             items: [
               { key: "1", label: "View", icon: <EyeOutlined /> },
               { key: "2", label: "Edit", icon: <EditOutlined /> },
               { key: "3", label: "Guest Notes", icon: <FileTextOutlined /> },
+              { key: "4", label: "Manage Files", icon: <UploadOutlined /> },
             ],
           }}
           trigger={["click"]}

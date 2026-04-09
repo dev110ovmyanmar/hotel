@@ -77,6 +77,7 @@ const CompanyTable = ({
           return <div>{chargeValue} %</div>
         }
       },
+      align:"right"
     },
     {
       title: "Status",

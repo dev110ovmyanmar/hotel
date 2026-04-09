@@ -79,8 +79,25 @@ const MaintenanceTaskAssignForm = ({
         invalidateKeys: [["maintenance-request-detail"]],
     });
 
+    // const formatDateTime = (dateSource, timeSource) => {
+    //     if (!dateSource || !timeSource) return null;
+    //     return dateSource
+    //         .hour(timeSource.hour())
+    //         .minute(timeSource.minute())
+    //         .second(timeSource.second())
+    //         .format("YYYY-MM-DD HH:mm:ss");
+    // };
+
     const formatDateTime = (dateSource, timeSource) => {
-        if (!dateSource || !timeSource) return null;
+        // 1. If there is no date, we can't format anything
+        if (!dateSource) return null;
+
+        // 2. If there is a date but no time, return just the date
+        if (!timeSource) {
+            return dateSource.format("YYYY-MM-DD");
+        }
+
+        // 3. If both exist, merge them and return the full string
         return dateSource
             .hour(timeSource.hour())
             .minute(timeSource.minute())
@@ -239,7 +256,26 @@ const MaintenanceTaskAssignForm = ({
                                 <Form.Item name="startedDate" label="Started Date">
                                     <DatePicker className="w-full" />
                                 </Form.Item>
-                                <Form.Item name="startedTime" label="Started Time">
+                                {/* <Form.Item name="startedTime" label="Started Time">
+                                    <TimePicker className="w-full" format="HH:mm:ss" />
+                                </Form.Item> */}
+                                <Form.Item
+                                    name="startedTime"
+                                    label="Started Time"
+                                    dependencies={['startedDate']} // Re-checks logic when startedDate changes
+                                    rules={[
+                                        {
+                                            validator: (_, value) => {
+                                                const date = form.getFieldValue('startedDate');
+                                                // If a date exists but time is missing, throw an error
+                                                if (date && !value) {
+                                                    return Promise.reject(new Error('Please select a time for this date!'));
+                                                }
+                                                return Promise.resolve();
+                                            },
+                                        },
+                                    ]}
+                                >
                                     <TimePicker className="w-full" format="HH:mm:ss" />
                                 </Form.Item>
                             </div>
@@ -247,7 +283,26 @@ const MaintenanceTaskAssignForm = ({
                                 <Form.Item name="completedDate" label="Completed Date">
                                     <DatePicker className="w-full" />
                                 </Form.Item>
-                                <Form.Item name="completedTime" label="Completed Time">
+                                {/* <Form.Item name="completedTime" label="Completed Time">
+                                    <TimePicker className="w-full" format="HH:mm:ss" />
+                                </Form.Item> */}
+                                <Form.Item
+                                    name="completedTime"
+                                    label="Completed Time"
+                                    dependencies={['completedDate']} // Re-checks logic when startedDate changes
+                                    rules={[
+                                        {
+                                            validator: (_, value) => {
+                                                const date = form.getFieldValue('completedDate');
+                                                // If a date exists but time is missing, throw an error
+                                                if (date && !value) {
+                                                    return Promise.reject(new Error('Please select a time for this date!'));
+                                                }
+                                                return Promise.resolve();
+                                            },
+                                        },
+                                    ]}
+                                >
                                     <TimePicker className="w-full" format="HH:mm:ss" />
                                 </Form.Item>
                             </div>

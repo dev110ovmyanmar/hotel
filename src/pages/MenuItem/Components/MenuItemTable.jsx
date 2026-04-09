@@ -7,6 +7,7 @@ import MenuItemForm from "./MenuItemForms/MenuItemForm";
 import { PERMISSIONS } from "../../../variables/permission";
 import usePermission from "../../../hooks/usePermission";
 import ItemsForm from "./MenuItemForms/ItemsForm";
+import PriceTag from "../../../component/PriceTag/PriceTag";
 
 const MenuItemTable = ({
   data,
@@ -41,13 +42,13 @@ const MenuItemTable = ({
       title: "Price (MMK)",
       dataIndex: "price",
       key: "price",
-      render: (price) => price?.toLocaleString(),
+      render: (price) => <PriceTag value={price}/>
     },
     {
       title: "Cost (MMK)",
       dataIndex: "cost",
       key: "cost",
-      render: (price) => price?.toLocaleString(),
+      render: (price) => <PriceTag value={price} />
     },
     {
       title: "Is Taxable",
@@ -128,11 +129,11 @@ const MenuItemTable = ({
     },
   ];
 
-   const expandColumns = [
+  const expandColumns = [
     { title: "ID", dataIndex: "id", key: "id" },
-    { title: "F&B Inventory Name", dataIndex: ["fnbInventoryItem","name"], key: "name" },
+    { title: "F&B Inventory Name", dataIndex: ["fnbInventoryItem", "name"], key: "name" },
     { title: "Quantity", dataIndex: "quantityPerItem", key: "quantityPerItem" },
-    { title: "Unit", dataIndex: ["unit","name"], key: "unit" },
+    { title: "Unit", dataIndex: ["unit", "name"], key: "unit" },
     {
       title: "Action",
       render: (_, record) => {
@@ -178,7 +179,7 @@ const MenuItemTable = ({
 
   const expandedRowRender = (record) => {
     return (
-      <>
+      <div className="nested-table-container">
         <div className="flex justify-between items-center mb-3">
           <Button
             className="py-4! rounded-[5px]!"
@@ -186,23 +187,29 @@ const MenuItemTable = ({
             size="small"
             icon={<PlusOutlined />}
             onClick={() => {
-              setSelectedItem({menuUuid: record?.uuid});
+              setSelectedItem({ menuUuid: record?.uuid });
               setMode("item-add");
               setItemDrawerOpen(true);
             }}
           >
-          F&B Inventory Item
+            F&B Inventory Item
           </Button>
         </div>
 
-        <Table
-          columns={expandColumns}
-          dataSource={record.menuInventoryMappings || []}
-          rowKey="uuid"
-          pagination={false}
-          size="small"
-        />
-      </>
+
+        {
+          record?.menuInventoryMappings?.length <= 0 ? null :
+            <Table
+              className="nested-table"
+              columns={expandColumns}
+              dataSource={record.menuInventoryMappings || []}
+              rowKey="uuid"
+              pagination={false}
+              size="small"
+            />
+        }
+
+      </div>
     );
   };
 
@@ -238,7 +245,7 @@ const MenuItemTable = ({
         setSelectedData={setSelectedData}
       />
 
-       <ItemsForm
+      <ItemsForm
         mode={mode}
         setMode={setMode}
         setSelectedItem={setSelectedItem}
