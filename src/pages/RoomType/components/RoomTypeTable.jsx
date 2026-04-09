@@ -5,6 +5,7 @@ import usePermission from "../../../hooks/usePermission";
 import { PERMISSIONS } from "../../../variables/permission";
 import RoomTypeForm from "./RoomTypeForm/RoomTypeForm";
 import PriceTag from "../../../component/PriceTag/PriceTag";
+import { TableColumns } from "../../../component/TableColumns/TableColumns";
 
 const RoomTypeTable = ({
   data,
@@ -22,7 +23,7 @@ const RoomTypeTable = ({
   const [imageDrawerOpen, setImageDrawerOpen] = useState(false);
 
 
-  const columns = [
+  const baseColumns = [
     {
       title: "ID",
       dataIndex: "id",
@@ -33,6 +34,7 @@ const RoomTypeTable = ({
       title: "Name",
       dataIndex: "name",
       key: "name",
+      align:"left"
     },
     {
       title: "Code",
@@ -131,6 +133,8 @@ const RoomTypeTable = ({
       },
     },
   ];
+
+  const columns = TableColumns(baseColumns);
 
   return (
     <div id="scrollId">

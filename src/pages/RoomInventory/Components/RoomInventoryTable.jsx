@@ -13,6 +13,7 @@ import dayjs from "dayjs";
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
 import BooleanTag from "../../../component/BooleanTag/BooleanTag";
 import PriceTag from "../../../component/PriceTag/PriceTag";
+import { TableColumns } from "../../../component/TableColumns/TableColumns";
 
 dayjs.extend(isSameOrBefore);
 
@@ -55,7 +56,7 @@ const RoomInventoryTable = ({
     });
   };
 
-  const columns = [
+  const baseColumns = [
     {
       title: "ID",
       render: (_, record) => <div>{record?.id}</div>,
@@ -66,18 +67,12 @@ const RoomInventoryTable = ({
       dataIndex: "name",
       key: "name",
       width: 200,
+      align:"left"
     },
     {
       title: "Total Rooms",
       dataIndex: "totalRooms",
       key: "totalRooms",
-    },
-
-    {
-      title: "Base Price (MMK)",
-      dataIndex: "basePrice",
-      key: "basePrice",
-      render: (text) => <PriceTag value={text} />,
     },
     {
       title: "Extra Bed",
@@ -88,6 +83,12 @@ const RoomInventoryTable = ({
       title: "Max Occupancy",
       dataIndex: "maxOccupancy",
       key: "maxOccupancy",
+    },
+    {
+      title: "Base Price (MMK)",
+      dataIndex: "basePrice",
+      key: "basePrice",
+      render: (text) => <PriceTag value={text} />,
     },
     // {
     //   title: "Stop Sell",
@@ -122,8 +123,10 @@ const RoomInventoryTable = ({
     // },
   ];
 
+  const columns = TableColumns(baseColumns);
+
   const expandColumns = [
-    { title: "ID", dataIndex: "id", key: "id", align: "center",width:70 },
+    { title: "ID", dataIndex: "id", key: "id", align: "center", width: 70 },
     {
       title: "Date",
       dataIndex: "date",
