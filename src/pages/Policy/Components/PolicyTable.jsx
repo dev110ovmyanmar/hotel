@@ -50,7 +50,7 @@ const PolicyTable = ({ data, page, setPage, perPage, total, changePage, changePe
       title: 'Is Active',
       dataIndex: 'isActive',
       key: 'isActive',
-      render: text => <div>{text === true ? "True" : "False"}</div>,
+      render: text => <div className={text === true ? "text-[#389E0D]" : "text-[#CF1322]"}>{text === true ? "True" : "False"}</div>,
     },
     {
       title: 'Policy Type',

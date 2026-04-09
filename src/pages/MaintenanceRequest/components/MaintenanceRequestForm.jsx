@@ -40,8 +40,6 @@ const MaintenanceRequestForm = ({
     const isEdit = mode === "edit";
     const isCreate = mode === "add";
 
-    const hkDraft = queryClient.getQueryData(["housekeeping-task-detail"]);
-
     const initData = queryClient.getQueryData(["initData", "authenticated"]);
     const mapOptions = (data) => data?.map((item) => ({ value: item.uuid, label: item.name })) || [];
 
@@ -80,6 +78,8 @@ const MaintenanceRequestForm = ({
         params: { uuid: selectedRow?.uuid },
         options: { enabled: !!selectedRow?.uuid && drawerOpen },
     });
+
+    const hkDraft = queryClient.getQueryData(["housekeeping-task-detail"]);
 
     useEffect(() => {
         if (hkDraft) {
@@ -120,13 +120,14 @@ const MaintenanceRequestForm = ({
                     roomUuid: hkDraft.room?.uuid,
                     priorityLevel: hkDraft.priorityLevel?.uuid,
                 });
-                queryClient.setQueryData(["housekeeping-task-detail"], null);
-            } else if (!selectedRow) {
+            } else if (!selectedRow && !hkDraft) {
                 form.resetFields();
                 if (isCreate && assignedStatus) {
                     form.setFieldsValue({ maintenanceStatus: assignedStatus.uuid });
                 }
-            }
+            };
+            queryClient.setQueryData(["housekeeping-task-detail"], null);
+
         }
     }, [detail, drawerOpen, isCreate, isView, isEdit, hkDraft, form, queryClient, initData, selectedRow]);
 

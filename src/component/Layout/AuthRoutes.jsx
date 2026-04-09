@@ -63,6 +63,7 @@ import { FaPeopleGroup } from "react-icons/fa6";
 import { GrUserSettings } from "react-icons/gr";
 import { RiServiceBellLine } from "react-icons/ri";
 import { BsBuildingFillGear, BsBuildings } from "react-icons/bs";
+import NetworkErrorPage from "../NetworkErrorPage/NetworkErrorPage";
 
 const Dashboard = lazy(() => import("../../pages/Dashboard/Dashboard"));
 const Calendar = lazy(() => import("../../pages/Calendar/Calendar"));
@@ -563,7 +564,7 @@ export const authRoutes = [
         key: 12.1,
         label: "Facilities",
         path: "/facility-management/facilities",
-        icon: <RiServiceBellLine  style={{ fontSize: "20px" }} />,
+        icon: <RiServiceBellLine style={{ fontSize: "20px" }} />,
         component: <FacilityList />,
         permission: PERMISSIONS.FACILITY_LIST,
       },
@@ -937,28 +938,31 @@ const AuthRoutes = () => {
   }, []);
 
   return (
-    <Suspense
-      fallback={
-        <div className="w-full h-full flex justify-center items-center text-center">
-          <Loader />
-        </div>
-      }
-    >
-      <Routes>
-        {routesOptions.map((option) => (
-          <Route
-            key={option.key}
-            path={option.path}
-            element={
-              <PermissionRoute permission={option.permission}>
-                {option.component}
-              </PermissionRoute>
-            }
-          />
-        ))}
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </Suspense>
+    <>
+      <NetworkErrorPage/>
+      <Suspense
+        fallback={
+          <div className="w-full h-full flex justify-center items-center text-center">
+            <Loader />
+          </div>
+        }
+      >
+        <Routes>
+          {routesOptions.map((option) => (
+            <Route
+              key={option.key}
+              path={option.path}
+              element={
+                <PermissionRoute permission={option.permission}>
+                  {option.component}
+                </PermissionRoute>
+              }
+            />
+          ))}
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </Suspense>
+    </>
   );
 };
 

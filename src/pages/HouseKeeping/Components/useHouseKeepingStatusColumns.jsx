@@ -7,12 +7,12 @@ const { Text } = Typography;
 const useHouseKeepingStatusColumns = (onEdit, onView) => {
 
     const hkStatusMap = {
-        clean: "hk_clean",
-        dirty: "hk_dirty",
-        in_progress: "hk_in_progress",
-        inspected: "hk_inspected",
-        out_of_order: "hk_out_of_order",
-        out_of_service: "hk_out_of_service",
+        clean: "clean",
+        dirty: "dirty",
+        in_progress: "in_progress",
+        inspected: "inspected",
+        out_of_order: "out_of_order",
+        out_of_service: "out_of_service",
     };
 
     return [

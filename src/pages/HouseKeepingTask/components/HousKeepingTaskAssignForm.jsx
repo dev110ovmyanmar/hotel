@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { Drawer, Row, Col, Form, Input, Select, DatePicker, TimePicker, Button } from "antd";
+import { Drawer, Row, Col, Form, Input, Select, DatePicker, TimePicker, Button, Tag } from "antd";
 import dayjs from "dayjs";
-import { TeamOutlined, CalendarOutlined, ClockCircleOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
+import { TeamOutlined, CalendarOutlined, ClockCircleOutlined, ExclamationCircleOutlined, EditOutlined } from "@ant-design/icons";
 import Loader from "../../../component/Loader/Loader";
 import useApiQuery from "../../../hooks/useApiQuery";
 import { useApiMutation } from "../../../hooks/useApiMutation";
-// import { getHouseKeepingTaskDetail } from "../../../api/houseKeepingTaskApi";
+
 import {
     getHouseKeepingTaskAssignDetail,
     createHouseKeepingTaskAssign,
     updateHouseKeepingTaskAssign
 } from "../../../api/houseKeepingTaskAssignApi";
 import Toast from "../../../component/Toast/Toast";
+import ColorStatusTag from "../../../component/ColorStatusTag/ColorStatusTag";
 
 const HouseKeepingTaskAssignForm = ({
     drawerOpen,
@@ -75,22 +76,13 @@ const HouseKeepingTaskAssignForm = ({
     // 5. Mutations
     const createMutation = useApiMutation({
         mutationFn: createHouseKeepingTaskAssign,
-        invalidateKeys: [["housekeeping-task-detail"]],
+        invalidateKeys: [["housekeeping-task-detail"], ["houseKeeping-tasks"]],
     });
 
     const updateMutation = useApiMutation({
         mutationFn: updateHouseKeepingTaskAssign,
-        invalidateKeys: [["housekeeping-task-detail"], ["houseKeeping-tasks"]],
+        invalidateKeys: [["housekeeping-task-detail"], ["houseKeeping-tasks"], ["admin-meta"]],
     });
-
-    // const formatDateTime = (dateSource, timeSource) => {
-    //     if (!dateSource || !timeSource) return null;
-    //     return dateSource
-    //         .hour(timeSource.hour())
-    //         .minute(timeSource.minute())
-    //         .second(timeSource.second())
-    //         .format("YYYY-MM-DD HH:mm:ss");
-    // };
 
     const formatDateTime = (dateSource, timeSource) => {
         // 1. If there is no date, we can't format anything
@@ -158,38 +150,113 @@ const HouseKeepingTaskAssignForm = ({
         </div>
     );
 
+    // --- Business Logic & Mapping ---
+    const hkTaskStatusMap = {
+        completed: "completed",
+        pending: "pending",
+        in_progress: "in_progress",
+        cancelled: "cancelled",
+    };
+
+    const firstItem = detail?.housekeepingStatus;
+    const statusCode = detail?.housekeepingStatus?.code;
+    const isDisableEdit = statusCode === "completed" || statusCode === "cancelled";
+    const mappedCode = hkTaskStatusMap[statusCode];
+
+    const statusForTag = {
+        code: mappedCode,
+        name: firstItem?.name
+    };
+
     return (
         <Drawer
-            title="Assigns"
+            title={
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span>Assigns</span>
+                    <ColorStatusTag status={statusForTag} />
+                </div>
+            }
             width={550}
             onClose={() => setDrawerOpen(false)}
             open={drawerOpen}
-            extra={<Button type="primary" onClick={() => { setIsEdit(false); setSelectedAssignment(null); setCreateDrawerOpen(true); }}>Add New Assign</Button>}
+            extra={
+                (statusCode !== "completed" && statusCode !== "cancelled") ? (
+                    <Button type="primary" onClick={() => {
+                        setIsEdit(false);
+                        setSelectedAssignment(null);
+                        setCreateDrawerOpen(true);
+                    }}>
+                        Add New Assign
+                    </Button>
+                ) : null
+            }
         >
-            {isAssignDetailLoading ? (
-                <div className="flex h-64 items-center justify-center"><Loader /></div>
-            ) : !detail?.housekeepingTaskAssignments?.length ? (
-                <div className="flex flex-col items-center justify-center h-64 border-2 border-dashed border-gray-100 rounded-xl bg-gray-50/50">
-                    <TeamOutlined className="text-gray-300 text-3xl mb-2" />
-                    <p className="text-gray-400 font-bold uppercase text-[10px]">No assigns found</p>
-                </div>
-            ) : (
-                <Row gutter={[8, 8]}>
-                    {detail.housekeepingTaskAssignments.map((item, index) => (
-                        <Col span={12} key={item.uuid || index}>
-                            <div
-                                onClick={() => { setIsEdit(true); setSelectedAssignment(item); setCreateDrawerOpen(true); }}
-                                className="bg-white border border-gray-200 rounded p-2 shadow-sm relative pt-5 cursor-pointer hover:border-blue-400 transition-all group h-full"
-                            >
-                                <div className="absolute top-0 left-0 px-2 py-0.5 bg-blue-500 rounded-br text-[12px] text-white font-bold">{item?.staff?.name}</div>
-                                <TightRow label="Assigned" value={item.assignedAt ? dayjs(item.assignedAt).format("YYYY-MM-DD HH:mm:ss") : "-"} isDate />
-                                <TightRow label="Started" value={item.startedAt ? dayjs(item.startedAt).format("YYYY-MM-DD HH:mm:ss") : "-"} isDate />
-                                <TightRow label="Completed" value={item.completedAt ? dayjs(item.completedAt).format("YYYY-MM-DD HH:mm:ss") : "-"} isDate />
-                            </div>
-                        </Col>
-                    ))}
-                </Row>
-            )}
+            {
+                isAssignDetailLoading ? (
+                    <div className="flex h-64 items-center justify-center" > <Loader /></div>
+                ) : !detail?.housekeepingTaskAssignments?.length ? (
+                    <div className="flex flex-col items-center justify-center h-64 border-2 border-dashed border-gray-100 rounded-xl bg-gray-50/50">
+                        <TeamOutlined className="text-gray-300 text-3xl mb-2" />
+                        <p className="text-gray-400 font-bold uppercase text-[10px]">No assigns found</p>
+                    </div>
+                ) : (
+                    <Row gutter={[8, 8]}>
+                        {detail.housekeepingTaskAssignments.map((item, index) => (
+                            <Col span={12} key={item.uuid || index}>
+                                <div
+                                    onClick={() => {
+                                        // 1. Guard clause: Stop the function if disabled
+                                        if (isDisableEdit) return;
+
+                                        setIsEdit(true);
+                                        setSelectedAssignment(item);
+                                        setCreateDrawerOpen(true);
+                                    }}
+
+                                    className={`bg-white border border-gray-200 rounded-lg p-3 shadow-sm relative pt-7 transition-all group h-full flex flex-col justify-between
+                                       cursor-pointer hover:border-blue-400 hover:shadow-md `
+                                    }
+                                >
+                                    {/* Staff Badge - Top Left */}
+                                    <div className={`absolute top-0 left-0 px-3 py-1 rounded-br-lg rounded-tl-lg text-[11px] text-white font-semibold uppercase tracking-wider
+                                        ${isDisableEdit ? "bg-gray-400" : "bg-blue-600"}`}
+                                    >
+                                        {item?.staff?.name || "Unassigned"}
+                                    </div>
+
+                                    {/* Hover Indicator - Only show if NOT disabled */}
+                                    {!isDisableEdit && (
+                                        <div className={`absolute top-1 right-0 px-3 py-1 rounded-br-lg rounded-tl-lg text-[11px] tracking-wider`}>
+                                            <span className="text-xs font-bold flex items-center justify-end gap-1">
+                                                <EditOutlined className="text-[14px]" />
+                                            </span>
+                                        </div>
+                                    )}
+
+                                    {/* Content Area */}
+                                    <div className="space-y-1">
+                                        <TightRow
+                                            label="Assigned"
+                                            value={item.assignedAt ? dayjs(item.assignedAt).format("YYYY-MM-DD HH:mm") : "-"}
+                                            isDate
+                                        />
+                                        <TightRow
+                                            label="Started"
+                                            value={item.startedAt ? dayjs(item.startedAt).format("YYYY-MM-DD HH:mm") : "-"}
+                                            isDate
+                                        />
+                                        <TightRow
+                                            label="Completed"
+                                            value={item.completedAt ? dayjs(item.completedAt).format("YYYY-MM-DD HH:mm") : "-"}
+                                            isDate
+                                        />
+                                    </div>
+                                </div>
+                            </Col>
+                        ))}
+                    </Row>
+                )
+            }
 
             {/* Inner Drawer for Create/Edit */}
             <Drawer
@@ -197,6 +264,18 @@ const HouseKeepingTaskAssignForm = ({
                 width={550}
                 onClose={() => setCreateDrawerOpen(false)}
                 open={createDrawerOpen}
+                extra={(!isStaffListEmpty || isEdit) && (
+                    <Button
+                        type="primary"
+                        htmlType="submit"
+                        onClick={form.submit}
+                        block
+                        loading={createMutation.isPending || updateMutation.isPending}
+                    >
+                        {isEdit ? "Update" : "Create"}
+                    </Button>
+                )}
+
                 destroyOnClose
             >
                 <Form form={form} layout="vertical" onFinish={onFinish}>
@@ -260,9 +339,6 @@ const HouseKeepingTaskAssignForm = ({
                                     <DatePicker className="w-full" />
                                 </Form.Item>
                                 <div className="grid grid-cols-2 gap-4">
-                                    {/* <Form.Item name="startedTime" label="Started Time">
-                                        <TimePicker className="w-full" format="HH:mm:ss" />
-                                    </Form.Item> */}
                                     <Form.Item
                                         name="startedTime"
                                         label="Started Time"
@@ -289,20 +365,9 @@ const HouseKeepingTaskAssignForm = ({
                             </div>
                         </>
                     )}
-
-                    {(!isStaffListEmpty || isEdit) && (
-                        <Button
-                            type="primary"
-                            htmlType="submit"
-                            block
-                            loading={createMutation.isPending || updateMutation.isPending}
-                        >
-                            {isEdit ? "Update Task Assignment" : "Confirm Task Assignment"}
-                        </Button>
-                    )}
                 </Form>
             </Drawer>
-        </Drawer>
+        </Drawer >
     );
 };
 
