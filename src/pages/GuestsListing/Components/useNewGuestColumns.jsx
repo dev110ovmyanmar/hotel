@@ -18,12 +18,12 @@ export default function useGuestColumns(onEdit, onView, onViewNotes) {
       key: "name",
     },
     {
-      title: "Phone",
+      title: "Phone No",
       dataIndex: "phone",
       key: "phone",
     },
     {
-      title: "NRC No.",
+      title: "NRC No",
       dataIndex: "nrcNo",
       key: "nrcNo",
     },

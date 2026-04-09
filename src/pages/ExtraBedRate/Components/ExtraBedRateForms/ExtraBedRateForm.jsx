@@ -58,7 +58,6 @@ const ExtraBedRateForm = ({
 
   const roomType = ratePlanMetaData?.room_types?.map((type) => ({
     value: type.uuid,
-    // label: `${type.name} (${type.createdRooms}/${type.totalRooms})`,
     label: type.name,
   }));
 
@@ -88,7 +87,6 @@ const ExtraBedRateForm = ({
         roomTypeUuid: data?.roomType?.uuid,
         ratePlanUuid: data?.ratePlan?.uuid,
         age_type: data?.ageType?.uuid,
-
         startDate: data?.startDate ? dayjs(data.startDate) : null,
         endDate: data?.endDate ? dayjs(data.endDate) : null,
       });
@@ -120,12 +118,12 @@ const ExtraBedRateForm = ({
     if (isEdit) {
       const editValues = {
         ...values,
-        ageType: { uuid: values.age_type },
+        ageType: { uuid: values?.age_type },
         roomType: { uuid: values.roomTypeUuid },
         ratePlan: { uuid: values.ratePlanUuid },
         startDate: getFormattedDate(values.startDate, false),
         endDate: getFormattedDate(values.endDate, false),
-        uuid: data?.rates?.uuid,
+        uuid: data?.uuid,
       };
 
       editExtraBedRates.mutate(editValues, {

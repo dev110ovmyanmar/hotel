@@ -70,6 +70,7 @@ const RoomInventoryForm = ({
       const editValues = {
         ...values,
         uuid: data?.uuid,
+        availableRooms: values.availableRooms,
       };
 
       updateRoomInventory.mutate(editValues, {
@@ -99,7 +100,9 @@ const RoomInventoryForm = ({
             <span>
               {mode === "view"
                 ? "Room Inventory Details"
-                : "Edit Room Inventory"}
+                : mode === "edit"
+                  ? "Edit Room Inventory"
+                  : "Create Room Inventory"}
             </span>
             {isView ? (
               <Button
@@ -127,7 +130,7 @@ const RoomInventoryForm = ({
           onFinish={onFinish}
         >
           <Form.Item label="Name" name="name">
-            <Input readOnly={true} />
+            <Input disabled={!isAdd} />
           </Form.Item>
 
           <div className="grid grid-cols-2 gap-6">
@@ -138,7 +141,11 @@ const RoomInventoryForm = ({
                 { required: true, message: "Available Rooms is Required" },
               ]}
             >
-              <InputNumber {...sharedProps} placeholder="Outlined" disabled={isView} />
+              <InputNumber
+                {...sharedProps}
+                placeholder="Outlined"
+                disabled={isView}
+              />
             </Form.Item>
 
             <Form.Item

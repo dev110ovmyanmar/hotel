@@ -43,6 +43,8 @@ import {
   CoffeeOutlined,
   FormOutlined,
   TrophyOutlined,
+  HolderOutlined,
+  HomeOutlined,
 } from "@ant-design/icons";
 import { lazy } from "react";
 import { FiMap } from "react-icons/fi";
@@ -182,6 +184,19 @@ const ExtraBedRateList = lazy(
 // const GuestFileUpload = lazy(
 //   () => import("../../pages/GuestsListing/Components/NewGuestUploadForm"),
 // );
+
+const HouseKeepingStatusesListing = lazy(
+  () => import("../../pages/HouseKeeping/HouseKeepingStatusesListing"),
+);
+
+const HouseKeepingTaskListing = lazy(
+  () => import("../../pages/HouseKeepingTask/HouseKeepingTaskListing"),
+);
+
+const MaintenanceRequestListing = lazy(
+  () => import("../../pages/MaintenanceRequest/MaintenanceRequestListing"),
+);
+
 
 export const authRoutes = [
   {
@@ -840,7 +855,7 @@ export const authRoutes = [
   },
   {
     key: 20,
-    path: "/guest-list/",
+    path: "/guest-list/guests/",
     label: "Guests",
     component: <GuestListing />,
     icon: <UsergroupAddOutlined style={{ fontSize: "20px" }} />,
@@ -849,7 +864,7 @@ export const authRoutes = [
   },
   {
     key: 25,
-    path: `/guest-list/guest-notes/:guestId`,
+    path: `/guest-list/guests/:guestId/notes`,
     component: <GuestNotesListing />,
     permission: PERMISSIONS.GUEST_NOTE_LIST,
   },
@@ -880,6 +895,34 @@ export const authRoutes = [
     isPrivate: false,
     permission: PERMISSIONS.AVAILABILITY_CALENDAR_LIST,
   },
+  {
+    key: 27,
+    label: "House Keeping",
+    icon: <HolderOutlined style={{ fontSize: "20px" }} />,
+    nested: [
+      {
+        key: 27.1,
+        label: "Room Status",
+        path: "/house-keeping/room-status",
+        icon: <HomeOutlined style={{ fontSize: "20px" }} />,
+        component: <HouseKeepingStatusesListing />,
+      },
+      {
+        key: 27.2,
+        label: "Housekeeping Task",
+        path: "/house-keeping/housekeeping-task",
+        icon: <ApartmentOutlined style={{ fontSize: "20px" }} />,
+        component: <HouseKeepingTaskListing />,
+      },
+    ],
+  },
+  {
+    key: 28,
+    label: "Maintenance Requests",
+    path: "/maintenance-request",
+    component: <MaintenanceRequestListing />,
+    icon: <DiffOutlined style={{ fontSize: "20px" }} />,
+  }
 ];
 
 const AuthRoutes = () => {

@@ -289,6 +289,7 @@ const CompanyForm = ({
         handleUploadMutation={companyUpload}
         imageDrawerOpen={imageDrawerOpen}
         setImageDrawerOpen={setImageDrawerOpen}
+        title={selectedData?.name} 
       />
     </div>
   );

@@ -18,6 +18,7 @@ const ExtraBedRateTable = ({ data, page, setPage }) => {
       title: "ID",
       render: (_, record) => <div>{record?.id}</div>,
       width: 70,
+      align: "center",
     },
     {
       title: "Start Date",
@@ -38,45 +39,15 @@ const ExtraBedRateTable = ({ data, page, setPage }) => {
       title: "Rate Plan",
       dataIndex: ["ratePlan", "name"],
       key: "ratePlan",
+      width:150
     },
     {
       title: "Price (MMK)",
       dataIndex: "price",
       key: "price",
+      align: "right",
+      width:100,
       render: (price) => price?.toLocaleString(),
-    },
-  ];
-
-  const expandedRowRender = (record) => (
-    <Table
-      columns={nestedColumns}
-      dataSource={record.rates || []}
-      pagination={false}
-      rowKey="id"
-      size="small"
-      bordered
-    />
-  );
-
-  const columns = [
-    {
-      title: "ID",
-      dataIndex: ["roomType", "id"],
-      key: "id",
-      width: 150,
-    },
-    {
-      title: "Room Type",
-      dataIndex: ["roomType", "name"],
-      key: "roomType",
-    },
-    {
-      title: "Base Price (MMK)",
-      dataIndex: ["roomType", "basePrice"],
-      key: "basePrice",
-      render: (price) => price?.toLocaleString(),
-      width: 200,
-      align: "end",
     },
     {
       title: "Action",
@@ -90,10 +61,7 @@ const ExtraBedRateTable = ({ data, page, setPage }) => {
             onClick: () => {
               setDrawerOpen(true);
               setMode("view");
-              setSelectedData({
-                ...record,
-                uuid: record?.rates?.[0]?.uuid,
-              });
+              setSelectedData(record);
             },
           },
           {
@@ -104,10 +72,7 @@ const ExtraBedRateTable = ({ data, page, setPage }) => {
             onClick: () => {
               setDrawerOpen(true);
               setMode("edit");
-              setSelectedData({
-                ...record,
-                uuid: record?.rates?.[0]?.uuid,
-              });
+              setSelectedData(record);
             },
           },
         ];
@@ -135,6 +100,38 @@ const ExtraBedRateTable = ({ data, page, setPage }) => {
     },
   ];
 
+  const expandedRowRender = (record) => (
+    <Table
+      className="custom-table-style"
+      columns={nestedColumns}
+      dataSource={record.rates || []}
+      pagination={false}
+      rowKey="id"
+      size="small"
+      style={{ marginTop: "16px", marginBottom: "16px" }}
+    />
+  );
+
+  const columns = [
+    {
+      title: "ID",
+      dataIndex: ["roomType", "id"],
+      key: "id",
+    },
+    {
+      title: "Room Type",
+      dataIndex: ["roomType", "name"],
+      key: "roomType",
+    },
+    {
+      title: "Base Price (MMK)",
+      dataIndex: ["roomType", "basePrice"],
+      key: "basePrice",
+      render: (price) => price?.toLocaleString(),
+      align: "end",
+    },
+  ];
+
   return (
     <div id="scrollId" className="w-full h-[63vh]">
       <Table
@@ -146,10 +143,6 @@ const ExtraBedRateTable = ({ data, page, setPage }) => {
         expandable={{
           expandedRowKeys,
 
-          // onExpand: (expanded, record) => { //only one row open
-          //   const key = record.roomType?.id;
-          //   setExpandedRowKeys(expanded ? [key] : []);
-          // },
 
           onExpand: (expanded, record) => {
             const key = record.roomType?.id;

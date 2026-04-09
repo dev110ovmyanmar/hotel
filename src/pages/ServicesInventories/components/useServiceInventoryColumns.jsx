@@ -3,6 +3,7 @@ import { EditOutlined, EyeOutlined, FileOutlined, MoreOutlined } from "@ant-desi
 import usePermission from "../../../hooks/usePermission";
 import { PERMISSIONS } from "../../../variables/permission";
 import BooleanTag from "../../../component/BooleanTag/BooleanTag";
+import PriceTag from "../../../component/PriceTag/PriceTag";
 
 export default function useServiceInventoryColumns(onEdit, onView) {
   const { hasPermission } = usePermission();
@@ -33,7 +34,7 @@ export default function useServiceInventoryColumns(onEdit, onView) {
       dataIndex: "unitCost",
       key: "unitCost",
       width: 120,
-      render: (cost) => <span className="font-medium">{cost}</span>,
+      render: (cost) => <PriceTag value={cost}/>
     },
     {
       title: "Selling Price (MMK)",
@@ -42,9 +43,7 @@ export default function useServiceInventoryColumns(onEdit, onView) {
       // align: "right",
       width: 110,
       render: (price) => (
-        <span className="font-medium">
-          {price}
-        </span>
+        <PriceTag value={price} />
       ),
     },
     {
