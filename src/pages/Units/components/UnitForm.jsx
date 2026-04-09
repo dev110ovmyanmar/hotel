@@ -6,6 +6,8 @@ import Toast from "../../../component/Toast/Toast";
 import { useApiMutation } from "../../../hooks/useApiMutation";
 import useApiQuery from "../../../hooks/useApiQuery";
 import { upsertUnit, getUnitDetail } from "../../../api/unitApi";
+import usePermission from "../../../hooks/usePermission";
+import { PERMISSIONS } from "../../../variables/permission";
 
 const UnitForm = ({
   mode,
@@ -21,6 +23,9 @@ const UnitForm = ({
   statusOptions
 }) => {
   const [form] = Form.useForm();
+
+  const { hasPermission } = usePermission();
+  const canEdit = hasPermission(PERMISSIONS.UNIT_EDIT);
 
   const isView = mode === "view";
   const isEdit = mode === "edit";
@@ -131,13 +136,17 @@ const UnitForm = ({
           <span>
             {DrawerTitle}
           </span>
-          {isView ? (
-            <Button type="primary" onClick={switchToEdit}>
-              Edit
-            </Button>
-          ) : (
-            <FormButtons onClick={() => form.submit()} mode={mode} />
-          )}
+          {
+            isView ? (
+              canEdit && (
+                <Button type="primary" onClick={switchToEdit}>
+                  Edit
+                </Button>
+              )
+            ) : (
+              <FormButtons onClick={() => form.submit()} mode={mode} />
+            )
+          }
         </div>
       }
       size={550}
