@@ -4,6 +4,7 @@ import { MoreOutlined, EyeOutlined, EditOutlined } from "@ant-design/icons";
 import usePermission from "../../../hooks/usePermission";
 import { PERMISSIONS } from "../../../variables/permission";
 import DepartmentsForm from "./DepartmentsForms/DepartmentsForm";
+import ColorStatusTag from "../../../component/ColorStatusTag/ColorStatusTag";
 
 const DepartmentsTable = ({
   data,
@@ -28,11 +29,7 @@ const DepartmentsTable = ({
       title: "Status",
       dataIndex: "status",
       key: "status",
-      render: (_, record) => (
-        <Tag color={record?.status?.name === "Active" ? "green" : "red"}>
-          {record?.status?.name.toUpperCase()}
-        </Tag>
-      ),
+      render: (status) => <ColorStatusTag status={status} />,
       width: 150,
     },
     {
