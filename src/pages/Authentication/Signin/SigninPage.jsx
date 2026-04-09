@@ -12,6 +12,8 @@ import { queryClient } from "../../../app/queryClient";
 import { fetchInitData } from "../../../api/initDataApi";
 import { setUserData } from "../../../services/authSlice";
 import { useDispatch } from "react-redux";
+import Toast from "../../../component/Toast/Toast";
+import NetworkErrorPage from "../../../component/NetworkErrorPage/NetworkErrorPage";
 
 export default function SignIn() {
   const [ipAddress, setIpAddress] = useState("");
@@ -83,67 +85,70 @@ export default function SignIn() {
   };
 
   return (
-    <div
-      className="min-h-screen flex items-center justify-center bg-cover bg-center"
-      style={{ backgroundImage: `url(${signIn})` }}
-    >
+    <>
+      <NetworkErrorPage/>
       <div
-        className="w-full max-w-md mx-auto backdrop-blur-xl rounded-xl shadow-2xl px-8 py-10 border"
-        style={{ borderColor: "#fff" }}
+        className="min-h-screen flex items-center justify-center bg-cover bg-center"
+        style={{ backgroundImage: `url(${signIn})` }}
       >
-        <div className="text-center mb-6">
-          <div className="flex justify-center">
-            <img src={whiteLogo} alt="logo" className="max-w-[200px]" />
+        <div
+          className="w-full max-w-md mx-auto backdrop-blur-xl rounded-xl shadow-2xl px-8 py-10 border"
+          style={{ borderColor: "#fff" }}
+        >
+          <div className="text-center mb-6">
+            <div className="flex justify-center">
+              <img src={whiteLogo} alt="logo" className="max-w-[200px]" />
+            </div>
+            <p className="text-amber-50/100 font-medium tracking-widest text-base mt-6">
+              Property Management System
+            </p>
           </div>
-          <p className="text-amber-50/100 font-medium tracking-widest text-base mt-6">
-            Property Management System
+          <h2 className="text-center text-amber-50/90 text-xl tracking-wide font-medium mb-6">
+            Login
+          </h2>
+
+          <Form layout="vertical" onFinish={handleLogin}>
+            <Form.Item
+              label={<span style={{ color: "#ffffff" }}>Email</span>}
+              name="email"
+              rules={[{ required: true, message: "Email is required" }]}
+              className="text-amber-50"
+            >
+              <Input
+                size="large"
+                placeholder="example123@gmail.com"
+                className="!bg-white/10 !text-amber-50 !rounded-md placeholder:!text-gray-300"
+              />
+            </Form.Item>
+
+            <Form.Item
+              label={<span style={{ color: "#ffffff" }}>Password</span>}
+              name="password"
+              rules={[{ required: true, message: "Password is required" }]}
+            >
+              <Input.Password
+                size="large"
+                placeholder="Password"
+                className="!bg-white/10 !text-amber-50 !rounded-md"
+              />
+            </Form.Item>
+
+            <Button
+              type="primary"
+              htmlType="submit"
+              block
+              loading={isPending}
+              size="large"
+              className="!rounded-md mt-5"
+            >
+              Login
+            </Button>
+          </Form>
+          <p className="text-center text-gray-300 text-sm mt-8">
+            © Oriental Vigour 2026. All rights reserved.
           </p>
         </div>
-        <h2 className="text-center text-amber-50/90 text-xl tracking-wide font-medium mb-6">
-          Login
-        </h2>
-
-        <Form layout="vertical" onFinish={handleLogin}>
-          <Form.Item
-            label={<span style={{ color: "#ffffff" }}>Email</span>}
-            name="email"
-            rules={[{ required: true, message: "Email is required" }]}
-            className="text-amber-50"
-          >
-            <Input
-              size="large"
-              placeholder="example123@gmail.com"
-              className="!bg-white/10 !text-amber-50 !rounded-md placeholder:!text-gray-300"
-            />
-          </Form.Item>
-
-          <Form.Item
-            label={<span style={{ color: "#ffffff" }}>Password</span>}
-            name="password"
-            rules={[{ required: true, message: "Password is required" }]}
-          >
-            <Input.Password
-              size="large"
-              placeholder="Password"
-              className="!bg-white/10 !text-amber-50 !rounded-md"
-            />
-          </Form.Item>
-
-          <Button
-            type="primary"
-            htmlType="submit"
-            block
-            loading={isPending}
-            size="large"
-            className="!rounded-md mt-5"
-          >
-            Login
-          </Button>
-        </Form>
-        <p className="text-center text-gray-300 text-sm mt-8">
-          © Oriental Vigour 2026. All rights reserved.
-        </p>
       </div>
-    </div>
+    </>
   );
 }
