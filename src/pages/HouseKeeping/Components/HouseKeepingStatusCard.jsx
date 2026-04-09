@@ -39,7 +39,7 @@ const HouseKeepingStatusCard = ({ data, onEdit, onView }) => {
                 <span className="text-[11px] font-bold">{label}</span>
             </div>
             <span className="text-[11px] font-bold">:</span>
-            <div className="flex items-center pl-2 border-l border-gray-100 ml-1">
+            <div className="flex items-center pl-2 border-l border-gray-100 ml-1 min-w-0">
                 {/* <span className={`text-[11px] truncate leading-none font-bold ${isPriority && data?.priorityLevel?.name === 'High' ||
                     isPriority && data?.priorityLevel?.name === 'Urgent' ? 'text-red-500' : 'text-gray-800'
                     }`}>

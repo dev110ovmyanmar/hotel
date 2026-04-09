@@ -109,10 +109,10 @@ export const PERMISSIONS = {
   SERVICE_EDIT: "service.edit",
 
   // Inventory
-  INVENTORY_LIST: "inventory.list",
-  INVENTORY_VIEW: "inventory.view",
-  INVENTORY_CREATE: "inventory.create",
-  INVENTORY_EDIT: "inventory.edit",
+  SERVICE_INVENTORY_LIST: "service-inventory.list",
+  SERVICE_INVENTORY_VIEW: "service-inventory.view",
+  SERVICE_INVENTORY_CREATE: "service-inventory.create",
+  SERVICE_INVENTORY_EDIT: "service-inventory.edit",
 
   // Payment
   PAYMENT_LIST: "payment.list",
