@@ -22,6 +22,8 @@ import {
 } from "../../../../api/exteraBedRateApi";
 import dayjs from "dayjs";
 import { getFormattedDate } from "../../../../utils";
+import { PERMISSIONS } from "../../../../variables/permission";
+import usePermission from "../../../../hooks/usePermission";
 
 const ExtraBedRateForm = ({
   mode,
@@ -39,6 +41,8 @@ const ExtraBedRateForm = ({
   const isEdit = mode === "edit";
   const isAdd = mode === "add";
 
+  const { hasPermission } = usePermission();
+  const canEdit = hasPermission(PERMISSIONS.EXTRA_BED_RATE_EDIT);
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
 
   const ageList = initData?.statuses?.age_type?.map((ageType) => ({
@@ -151,14 +155,16 @@ const ExtraBedRateForm = ({
                   : "Create Extra Bed Rate"}
             </span>
             {isView ? (
-              <Button
-                type="primary"
-                onClick={() => {
-                  setMode("edit");
-                }}
-              >
-                Edit
-              </Button>
+              canEdit && (
+                <Button
+                  type="primary"
+                  onClick={() => {
+                    setMode("edit");
+                  }}
+                >
+                  Edit
+                </Button>
+              )
             ) : (
               <FormButtons
                 onClick={() => form.submit()}
