@@ -11,6 +11,8 @@ import {
 } from "../../../../api/mealPlanApi";
 import Status from './../../../../component/Status/Status';
 import Loader from "../../../../component/Loader/Loader";
+import { PERMISSIONS } from "../../../../variables/permission";
+import usePermission from "../../../../hooks/usePermission";
 
 const { TextArea } = Input;
 
@@ -29,6 +31,9 @@ const MeanPlanForm = ({
   const isView = mode === "view";
   const isEdit = mode === "edit";
   const isAdd = mode === "add";
+
+  const { hasPermission } = usePermission();
+  const canEdit = hasPermission(PERMISSIONS.MEAL_PLAN_EDIT);
 
   // const initData = queryClient.getQueryData(["initData", "authenticated"])?.statuses?.status;
 
@@ -108,14 +113,16 @@ const MeanPlanForm = ({
                   : "Add Meal Plan"}
             </span>
             {isView ? (
-              <Button
-                type="primary"
-                onClick={() => {
-                  setMode("edit");
-                }}
-              >
-                Edit
-              </Button>
+              canEdit && (
+                <Button
+                  type="primary"
+                  onClick={() => {
+                    setMode("edit");
+                  }}
+                >
+                  Edit
+                </Button>
+              )
             ) : (
               <FormButtons
                 onClick={() => form.submit()}
