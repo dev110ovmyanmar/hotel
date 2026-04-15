@@ -62,6 +62,7 @@ const SeasonalRateList = () => {
           endDate={endDate}
           setStartDate={setStartDate}
           setEndDate={setEndDate}
+          permission={PERMISSIONS.SEASONAL_RATE_CREATE}
         />
       </div>
 

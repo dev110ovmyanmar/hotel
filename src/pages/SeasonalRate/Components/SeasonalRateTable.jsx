@@ -31,7 +31,7 @@ const SeasonalRateTable = ({
       title: "Room Name",
       dataIndex: "name",
       key: "roomTypeName",
-      align:"left"
+      align: "left"
     },
     {
       title: "Total Rooms",
@@ -124,6 +124,8 @@ const SeasonalRateTable = ({
               </Space>
             ),
           }));
+
+        if (items.length === 0) return null;
 
         return (
           <Dropdown menu={{ items }} trigger={["click"]}>
