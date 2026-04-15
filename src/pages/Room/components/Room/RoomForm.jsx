@@ -37,6 +37,9 @@ const RoomForm = ({
   const isEdit = mode === "edit";
   const isAdd = mode === "add";
 
+  const canEdit = hasPermission(PERMISSIONS.ROOM_EDIT);
+  const canCreateAttribute = hasPermission(PERMISSIONS.ROOM_ATTRIBUTE_VALUE_CREATE);
+
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
 
   const statuses = initData?.statuses?.room_status?.map((status) => ({
@@ -176,9 +179,11 @@ const RoomForm = ({
             </span>
 
             {isView ? (
-              <Button type="primary" onClick={() => setMode("edit")}>
-                Edit
-              </Button>
+              canEdit && (
+                <Button type="primary" onClick={() => setMode("edit")}>
+                  Edit
+                </Button>
+              )
             ) : (
               <FormButton
                 onClick={() => form.submit()}
@@ -286,7 +291,7 @@ const RoomForm = ({
                 <div className="flex justify-between text-base items-center font-semibold mb-2">
                   <span>Room Attribute Value</span>
 
-                  {!isView && (
+                  {!isView && canCreateAttribute && (
                     <Button
                       type="primary"
                       icon={<PlusOutlined />}
