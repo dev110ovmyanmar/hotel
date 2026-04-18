@@ -5,6 +5,8 @@ import { FiEdit } from "react-icons/fi";
 import { EditOutlined, EyeOutlined, MoreOutlined } from "@ant-design/icons";
 import AmenitiesForm from "./AmenitiesForm/AmenitiesForm";
 import BooleanTag from "../../../component/BooleanTag/BooleanTag";
+import { PERMISSIONS } from "../../../variables/permission";
+import usePermission from "../../../hooks/usePermission";
 
 const AmenitiesTable = ({
   data,
@@ -18,6 +20,7 @@ const AmenitiesTable = ({
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mode, setMode] = useState(null);
   const [selectedData, setSelectedData] = useState({});
+  const { hasPermission } = usePermission();
 
   const columns = [
     {
@@ -68,43 +71,48 @@ const AmenitiesTable = ({
       title: "Action",
       render: (_, record) => {
         const smallStyle = { fontSize: "12px" };
-
-        const items = [
+        const actions = [
           {
-            key: "1",
-            label: (
-              <Space
-                size={4}
-                style={smallStyle}
-                onClick={() => {
-                  setDrawerOpen(true);
-                  setMode("view");
-                  setSelectedData(record);
-                }}
-              >
-                <EyeOutlined style={{ fontSize: "12px" }} />
-                <span style={{ fontSize: "14px" }}>View</span>
-              </Space>
-            ),
+            key: "view",
+            label: "View",
+            icon: <EyeOutlined style={{ fontSize: "12px" }} />,
+            permission: PERMISSIONS.AMENITY_VIEW,
+            onClick: () => {
+              setDrawerOpen(true);
+              setMode("view");
+              setSelectedData(record);
+            },
           },
           {
-            key: "2",
-            label: (
-              <Space
-                size={4}
-                style={smallStyle}
-                onClick={() => {
-                  setDrawerOpen(true);
-                  setMode("edit");
-                  setSelectedData(record);
-                }}
-              >
-                <EditOutlined style={{ fontSize: "12px" }} />
-                <span style={{ fontSize: "14px" }}>Edit</span>
-              </Space>
-            ),
+            key: "edit",
+            label: "Edit",
+            icon: <EditOutlined style={{ fontSize: "12px" }} />,
+            permission: PERMISSIONS.AMENITY_EDIT,
+            onClick: () => {
+              setDrawerOpen(true);
+              setMode("edit");
+              setSelectedData(record);
+            },
           },
         ];
+
+        const items = actions
+          .filter(
+            (action) => !action.permission || hasPermission(action.permission),
+          )
+          .map((action) => ({
+            key: action.key,
+            label: (
+              <Space size={4} style={smallStyle} onClick={action.onClick}>
+                {action.icon}
+                <span style={{ fontSize: "14px" }}>{action.label}</span>
+              </Space>
+            ),
+          }));
+
+        if (items.length === 0) {
+          return null;
+        }
 
         return (
           <Dropdown menu={{ items }} trigger={["click"]}>
