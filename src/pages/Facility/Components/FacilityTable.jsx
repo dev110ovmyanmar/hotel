@@ -85,7 +85,7 @@ const FacilityTable = ({
             key: "facility-packages",
             label: "Facility Packages",
             icon: <DatabaseOutlined style={{ fontSize: "12px" }} />,
-            // permission: PERMISSIONS.FACILITY_PACKAGE_LIST,
+            permission: PERMISSIONS.FACILITY_PACKAGE_LIST,
             onClick: () => {
               navigate(
                 `/facility-management/facilities/${record?.id}/packages`,
@@ -114,6 +114,10 @@ const FacilityTable = ({
               </Space>
             ),
           }));
+
+        if (items.length === 0) {
+          return null;
+        }
 
         return (
           <Dropdown menu={{ items }} trigger={["click"]}>
