@@ -19,6 +19,8 @@ import dayjs from "dayjs";
 import { getFormattedDate } from "../../../../utils";
 import Status from "../../../../component/Status/Status";
 import Loader from "../../../../component/Loader/Loader";
+import { PERMISSIONS } from "../../../../variables/permission";
+import usePermission from "../../../../hooks/usePermission";
 
 const StaffsForm = ({
   mode,
@@ -35,6 +37,8 @@ const StaffsForm = ({
   const isView = mode === "view";
   const isEdit = mode === "edit";
   const isAdd = mode === "add";
+  const { hasPermission } = usePermission();
+  const canEdit = hasPermission(PERMISSIONS.STAFF_EDIT);
 
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
   const [selectedRegion, setSelectedRegion] = useState(null);
@@ -186,17 +190,19 @@ const StaffsForm = ({
                   : "Create Staff"}
             </span>
 
-            {isView ? (
-              <Button type="primary" onClick={() => setMode("edit")}>
-                Edit
-              </Button>
-            ) : (
-              <FormButton
-                onClick={() => form.submit()}
-                isPending={createStaffs.isPending || editStaffs.isPending}
-                mode={mode}
-              />
-            )}
+            {isView ?
+              (canEdit && (
+                <Button type="primary" onClick={() => setMode("edit")}>
+                  Edit
+                </Button>
+              ))
+              : (
+                <FormButton
+                  onClick={() => form.submit()}
+                  isPending={createStaffs.isPending || editStaffs.isPending}
+                  mode={mode}
+                />
+              )}
           </div>
         }
       >
