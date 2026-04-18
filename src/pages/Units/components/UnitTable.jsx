@@ -17,25 +17,25 @@ const UnitTable = ({
   const columns = useUnitColumns(onEdit, onView);
 
   return (
-    <div className="mx-5">
-      <Table
-        loading={loading}
-        columns={columns}
-        dataSource={dataSource}
-        rowKey="id"
-        pagination={{ 
-          current: page,
-          pageSize: perPage,
-          total: total,
-          onChange: (page, perPage) => {
-            changePage(page);
-            changePerPage(perPage);
-          },
-          showSizeChanger: true,
-       }}
-        // size="middle"
-      />
-    </div>
+    <Table
+      loading={loading}
+      tableLayout="fixed"
+      scroll={{ x: 1000 }}
+      columns={columns}
+      dataSource={dataSource}
+      rowKey="id"
+      pagination={{
+        current: page,
+        pageSize: perPage,
+        total: total,
+        onChange: (page, perPage) => {
+          changePage(page);
+          changePerPage(perPage);
+        },
+        showSizeChanger: true,
+      }}
+    // size="middle"
+    />
   );
 };
 

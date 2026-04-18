@@ -34,7 +34,6 @@ export default function useCategoryColumns(onEdit, onView) {
     {
       title: "Actions",
       key: "actions",
-      width: 80,
       fixed: "right", // Added fixed right for consistency with your other table
       render: (_, record) => {
         // 1. Define all possible actions with their required permissions
