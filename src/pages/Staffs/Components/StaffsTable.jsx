@@ -85,6 +85,10 @@ const StaffsTable = ({
             ),
           }));
 
+        if (items.length === 0) {
+          return null;
+        }
+
         return (
           <Dropdown menu={{ items }} trigger={["click"]}>
             <MoreOutlined style={{ fontSize: "16px" }} />
