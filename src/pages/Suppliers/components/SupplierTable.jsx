@@ -16,26 +16,25 @@ const SupplierTable = ({
     const columns = useSupplierColumns(onEdit, onView);
 
     return (
-        <div id="scrollId" className="w-full h-[63vh]">
-            <Table
-                scroll={{ x: 1000 }}
-                loading={loading}
-                columns={columns}
-                dataSource={dataSource}
-                rowKey="uuid"
-                className="mx-5"
-                pagination={{
-                    current: page,
-                    pageSize: perPage,
-                    total: total,
-                    onChange: (page, perPage) => {
-                        changePage(page);
-                        changePerPage(perPage);
-                    },
-                    showSizeChanger: true,
-                }}
-            />
-        </div>
+        <Table
+            tableLayout="fixed"
+            scroll={{ x: 1000 }}
+            loading={loading}
+            columns={columns}
+            dataSource={dataSource}
+            rowKey="uuid"
+            className="mx-5"
+            pagination={{
+                current: page,
+                pageSize: perPage,
+                total: total,
+                onChange: (page, perPage) => {
+                    changePage(page);
+                    changePerPage(perPage);
+                },
+                showSizeChanger: true,
+            }}
+        />
     );
 };
 
