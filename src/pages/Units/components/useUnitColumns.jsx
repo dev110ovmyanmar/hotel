@@ -33,7 +33,6 @@ export default function useUnitColumns(onEdit, onView) {
     {
       title: "Actions",
       key: "actions",
-      width: 80,
       fixed: "right",
       render: (_, record) => {
         // 1. Define available actions with permission keys

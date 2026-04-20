@@ -4,7 +4,9 @@ import ColorStatusTag from "../../../component/ColorStatusTag/ColorStatusTag";
 
 const { Text } = Typography;
 
-const useHouseKeepingTaskColumns = (onEdit, onView, onAssign) => {
+const useHouseKeepingTaskColumns = (onEdit, onView,
+    // onAssign
+) => {
     const hkStatusMap = {
         completed: "completed",
         pending: "pending",
@@ -69,8 +71,24 @@ const useHouseKeepingTaskColumns = (onEdit, onView, onAssign) => {
             title: "Priority",
             dataIndex: "priorityLevel",
             key: "priorityLevel",
-            render: (priority) => priority?.name || "-",
-        },
+            render: (priorityLevel) => {
+                // Return null or a placeholder if data is missing
+                if (!priorityLevel?.name) return "-";
+
+                const isUrgent = priorityLevel.code === 'high' || priorityLevel.code === 'urgent';
+
+                return isUrgent ? (
+                    <div className="px-1.5 py-0.5 bg-red-50 text-red-600 border rounded-sm border-red-100 w-fit">
+                        {priorityLevel.name}
+                    </div>
+                ) : (
+                    <div className="px-1.5 py-0.5 border rounded-sm border-green-100 w-fit text-green-600">
+                        {priorityLevel.name}
+                    </div>
+                );
+            }
+        }
+        ,
         {
             title: "Actions",
             key: "actions",

@@ -5,6 +5,7 @@ import MeanPlanTable from './Components/MeanPlanTable';
 import MeanPlanForm from './Components/MealPlanForm/MealPlanForm';
 import ListHeader from './../../component/ListHeader/ListHeader';
 import { fetchMealPlan } from './../../api/mealPlanApi';
+import { PERMISSIONS } from "../../variables/permission";
 
 const MeanPlanList = () => {
   const [keyword, setKeyword] = useState("");
@@ -50,6 +51,7 @@ const MeanPlanList = () => {
           setKeyword={setKeyword}
           addButtonText="Add New Meal Plan"
           onAdd={handleAdd}
+          permission={PERMISSIONS.MEAL_PLAN_CREATE}
         />
       </div>
 

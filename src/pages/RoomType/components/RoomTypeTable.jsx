@@ -34,7 +34,7 @@ const RoomTypeTable = ({
       title: "Name",
       dataIndex: "name",
       key: "name",
-      align:"left"
+      align: "left"
     },
     {
       title: "Code",
@@ -102,7 +102,7 @@ const RoomTypeTable = ({
             key: "managefiles",
             label: "Manage Files",
             icon: <FileAddOutlined style={{ fontSize: "12px" }} />,
-            // permission: PERMISSIONS.ROOM_TYPE_EDIT,
+            permission: PERMISSIONS.ROOM_TYPE_UPLOAD,
             onClick: () => {
               setImageDrawerOpen(true);
               setSelectedData(record);
@@ -124,6 +124,8 @@ const RoomTypeTable = ({
               </Space>
             ),
           }));
+
+        if (items.length === 0) return null;
 
         return (
           <Dropdown menu={{ items }} trigger={["click"]}>

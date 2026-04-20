@@ -9,11 +9,14 @@ import {
     EditOutlined,
     InfoCircleOutlined,
     TeamOutlined,
-    ClockCircleOutlined
+    ClockCircleOutlined,
+    EyeOutlined
 } from "@ant-design/icons";
 import ColorStatusTag from "../../../component/ColorStatusTag/ColorStatusTag";
 
-const HouseKeepingTaskCard = ({ data, onEdit, onView, onViewTaskAssign }) => {
+const HouseKeepingTaskCard = ({ data, onEdit, onView,
+    // onViewTaskAssign
+}) => {
     // --- Business Logic & Mapping ---
     const hkStatusMap = {
         clean: "clean",
@@ -41,8 +44,8 @@ const HouseKeepingTaskCard = ({ data, onEdit, onView, onViewTaskAssign }) => {
                 <span className="text-[11px] font-bold">{label}</span>
             </div>
             <span className="text-[11px] font-bold">:</span>
-            <div className="flex items-center pl-2 border-l border-gray-100 ml-1">
-                <span className={`text-[11px] truncate ${isDate ? 'font-mono text-gray-500' : 'font-bold'}`}>
+            <div className="flex items-center pl-2 border-l border-gray-100 ml-1 min-w-0">
+                <span className={`text-[11px] truncate ${isDate ? 'font-mono' : 'font-bold'}`}>
                     {value || "---"}
                 </span>
             </div>
@@ -67,13 +70,19 @@ const HouseKeepingTaskCard = ({ data, onEdit, onView, onViewTaskAssign }) => {
                 <div className="flex flex-col items-end gap-1.5">
                     <ColorStatusTag status={statusForTag} />
                     {data?.priorityLevel?.code === 'high' && (
-                        <div className="px-1.5 py-0.5 rounded-sm bg-red-50 text-red-600 text-[8px] font-black uppercase border border-red-100">
+                        <div className="px-1.5 py-0.5 rounded-sm bg-red-50 text-red-600 text-[8px] font-black border border-red-100">
                             High Priority
                         </div>
                     )}
                     {data?.priorityLevel?.code === 'urgent' && (
-                        <div className="px-1.5 py-0.5 rounded-sm bg-red-50 text-red-600 text-[8px] font-black uppercase border border-red-100">
+                        <div className="px-1.5 py-0.5 rounded-sm bg-red-50 text-red-600 text-[8px] font-black border border-red-100">
                             Urgent Priority
+                        </div>
+                    )}
+
+                    {(data?.priorityLevel?.code === 'low' || data?.priorityLevel?.code === 'normal') && (
+                        <div className="px-1.5 py-0.5 rounded-sm bg-green-50 text-green-600 text-[8px] font-black border border-green-100">
+                            {data?.priorityLevel?.code === 'low' ? 'Low Priority' : 'Normal Priority'}
                         </div>
                     )}
                 </div>
@@ -81,9 +90,9 @@ const HouseKeepingTaskCard = ({ data, onEdit, onView, onViewTaskAssign }) => {
 
             {/* 2. Core Information (With Icons) */}
             <div className="flex-grow space-y-0.5">
-                <TightRow icon={ToolOutlined} label="Task" value={data?.taskType?.name} />
                 <TightRow icon={HomeOutlined} label="Room Type" value={data?.room?.roomType?.name} />
                 <TightRow icon={AppstoreOutlined} label="Floor" value={`Level ${data?.room?.floor?.floorNo || "---"}`} />
+                <TightRow icon={ToolOutlined} label="Task" value={data?.taskType?.name} />
                 <TightRow icon={ClockCircleOutlined} label="Plan Start" value={formatTime(data?.plannedStartAt)} isDate />
                 <TightRow icon={ClockCircleOutlined} label="Plan End" value={formatTime(data?.plannedEndAt)} isDate />
                 <TightRow icon={ClockCircleOutlined} label="Started" value={data?.startedAt ? formatTime(data?.startedAt) : null} isDate />
@@ -91,33 +100,33 @@ const HouseKeepingTaskCard = ({ data, onEdit, onView, onViewTaskAssign }) => {
             </div>
 
             {/* 3. Action Footer */}
-            <div className="mt-3 pt-2 border-t border-gray-100 flex items-center justify-between">
+            <div className="mt-3 pt-2 border-t border-gray-100 flex items-center justify-end">
                 <div className="flex gap-4">
                     <button
+                        onClick={(e) => { e.stopPropagation(); onView(); }}
+                        className="flex items-center gap-1 text-[10px] font-bold hover:text-blue-600 uppercase tracking-wider"
+                    >
+                        <EyeOutlined className="text-[11px]" /> View
+                    </button>
+                    <button
                         onClick={(e) => { e.stopPropagation(); onEdit(); }}
-                        className="flex items-center gap-1 text-[10px] font-bold text-gray-400 hover:text-blue-600 uppercase tracking-wider"
+                        className="flex items-center gap-1 text-[10px] font-bold hover:text-blue-600 uppercase tracking-wider"
                     >
                         <EditOutlined className="text-[11px]" /> Edit
                     </button>
-                    <button
-                        onClick={(e) => { e.stopPropagation(); onView(); }}
-                        className="flex items-center gap-1 text-[10px] font-bold text-gray-400 hover:text-blue-600 uppercase tracking-wider"
-                    >
-                        <InfoCircleOutlined className="text-[11px]" /> Details
-                    </button>
                 </div>
 
-                <button
+                {/* <button
                     onClick={(e) => { e.stopPropagation(); onViewTaskAssign(); }}
                     className="flex items-center gap-1.5 px-2 py-1 bg-gray-50 hover:bg-blue-50 text-blue-600 rounded text-[9px] font-bold uppercase border border-gray-100 hover:border-blue-200 transition-all"
                 >
                     <TeamOutlined /> Assignments
-                </button>
+                </button> */}
             </div>
 
             {/* Accent Side-Bar */}
             <div
-                className={`absolute top-0 left-0 w-1 h-full transition-colors ${data?.priorityLevel?.name === 'High' ? 'bg-red-500' : 'bg-blue-500'
+                className={`absolute top-0 left-0 w-1 h-full transition-colors ${data?.priorityLevel?.code === 'high' || data?.priorityLevel?.code === 'urgent' ? 'bg-red-500' : 'bg-blue-500'
                     }`}
             />
         </div>

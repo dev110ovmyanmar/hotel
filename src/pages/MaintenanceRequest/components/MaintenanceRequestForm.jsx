@@ -79,17 +79,7 @@ const MaintenanceRequestForm = ({
         options: { enabled: !!selectedRow?.uuid && drawerOpen },
     });
 
-    const hkDraft = queryClient.getQueryData(["housekeeping-task-detail"]);
-
-    useEffect(() => {
-        if (hkDraft) {
-            setMode("add");
-            setSelectedRow(null);
-            setDrawerOpen(true);
-        }
-    }, [hkDraft, setMode, setSelectedRow, setDrawerOpen]);
-
-    const assignedStatus = initData?.statuses?.maintenance_status?.find(s => s.code === "assigned");
+    const reportedStatus = initData?.statuses?.maintenance_status?.find(s => s.code === "reported");
 
     useEffect(() => {
         if (!drawerOpen) return;
@@ -112,24 +102,10 @@ const MaintenanceRequestForm = ({
         }
 
         if (isCreate) {
-            if (hkDraft) {
-                form.setFieldsValue({
-                    maintenanceStatus: assignedStatus.uuid,
-                    housekeepingTaskName: hkDraft.id,
-                    housekeepingTask: hkDraft.uuid,
-                    roomUuid: hkDraft.room?.uuid,
-                    priorityLevel: hkDraft.priorityLevel?.uuid,
-                });
-            } else if (!selectedRow && !hkDraft) {
-                form.resetFields();
-                if (isCreate && assignedStatus) {
-                    form.setFieldsValue({ maintenanceStatus: assignedStatus.uuid });
-                }
-            };
-            queryClient.setQueryData(["housekeeping-task-detail"], null);
-
+            form.resetFields();
+            form.setFieldsValue({ maintenanceStatus: reportedStatus.uuid });
         }
-    }, [detail, drawerOpen, isCreate, isView, isEdit, hkDraft, form, queryClient, initData, selectedRow]);
+    }, [detail, drawerOpen, isCreate, isView, isEdit, form, queryClient, initData, selectedRow]);
 
     // 6. Form Submission Logic
     const createMutation = useApiMutation({
@@ -163,8 +139,6 @@ const MaintenanceRequestForm = ({
             maintenanceStatus: { uuid: values.maintenanceStatus },
             reportedFrom: { uuid: values.reportedFrom },
             staff: { ids: values.staff || [] },
-            // Include the Housekeeping Reference if it exists
-            housekeepingTask: hkDraft ? { uuid: hkDraft?.uuid } : null,
             plannedStartAt: formatDateTime(values.plannedStartDate, values.plannedStartTime),
             plannedEndAt: formatDateTime(values.plannedEndDate, values.plannedEndTime),
         };
@@ -178,8 +152,7 @@ const MaintenanceRequestForm = ({
             priorityLevel: { uuid: values.priorityLevel },
             maintenanceStatus: { uuid: values.maintenanceStatus },
             reportedFrom: { uuid: values.reportedFrom },
-            // Include the Housekeeping Reference if it exists
-            housekeepingTask: hkDraft ? { uuid: hkDraft?.uuid } : null,
+            housekeepingTask: detail?.housekeepingTask?.uuid ? { uuid: detail?.housekeepingTask?.uuid } : null,
             plannedStartAt: formatDateTime(values.plannedStartDate, values.plannedStartTime),
             plannedEndAt: formatDateTime(values.plannedEndDate, values.plannedEndTime),
         }
@@ -220,24 +193,14 @@ const MaintenanceRequestForm = ({
 
                             {
                                 isView && detail?.housekeepingTask && (
-                                    // <Form.Item label="Source Housekeeping Task Id">
-                                    //     <Input disabled value={detail?.housekeepingTask?.id} readOnly={true} className="bg-blue-50 font-medium text-blue-700" />
-                                    // </Form.Item>
                                     <div className="mb-4">
                                         <span className="text-blue-500 font-medium">Source HouseKeeping Task Id: #{detail?.housekeepingTask?.id}</span>
                                     </div>
                                 )
                             }
 
-                            {/* --- Housekeeping Reference (Only visible during creation from draft) --- */}
-                            {isCreate && hkDraft && (
+                            {isCreate && (
                                 <>
-                                    {/* <Form.Item name="housekeepingTaskName" label="Source Housekeeping Task Id">
-                                <Input disabled value={hkDraft?.id} readOnly={true} className="bg-blue-50 font-medium text-blue-700" />
-                            </Form.Item> */}
-                                    <div className="mb-4">
-                                        <span className="text-blue-500 font-medium">Source HouseKeeping Task Id: #{hkDraft?.id}</span>
-                                    </div>
                                     <Form.Item name="housekeepingTask" noStyle><Input hidden /></Form.Item>
                                 </>
                             )}
@@ -248,17 +211,9 @@ const MaintenanceRequestForm = ({
 
                             <Row gutter={16}>
                                 <Col span={12}>
-                                    {
-                                        hkDraft ? (
-                                            <Form.Item name="roomUuid" label="Room" rules={[{ required: true }]}>
-                                                <Select options={roomOptions} disabled={true} placeholder="Select Room" />
-                                            </Form.Item>
-                                        ) : (
-                                            <Form.Item name="roomUuid" label="Room" rules={[{ required: true }]}>
-                                                <Select options={roomOptions} disabled={isView} placeholder="Select Room" />
-                                            </Form.Item>
-                                        )
-                                    }
+                                    <Form.Item name="roomUuid" label="Room" rules={[{ required: true }]}>
+                                        <Select options={roomOptions} disabled={isView} placeholder="Select Room" />
+                                    </Form.Item>
                                 </Col>
                                 <Col span={12}>
                                     <Form.Item name="issueType" label="Issue Type" rules={[{ required: true }]}>
@@ -334,9 +289,9 @@ const MaintenanceRequestForm = ({
                                 {
                                     isCreate && (
                                         <Col span={12}>
-                                            <Form.Item name="staff" label="M&E Engineer">
+                                            <Form.Item name="staff" label="Staff">
                                                 <Select options={staffOptions} disabled={isView}
-                                                    mode="multiple" placeholder="Select M&E Engineer" />
+                                                    mode="multiple" placeholder="Select Staff" />
                                             </Form.Item>
                                         </Col>
                                     )
