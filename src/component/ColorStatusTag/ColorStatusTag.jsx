@@ -16,10 +16,6 @@ const ColorStatusTag = ({ status }) => {
     available_bg: "#F6FFED",
     available_border: "#B7EB8F",
 
-    dirty: "#D48806",
-    dirty_bg: "#FFFBE6",
-    dirty_border: "#FFE58F",
-
     maintenance: "#CF1322",
     maintenance_bg: "#FFF1F0",
     maintenance_border: "#FFA39E",
@@ -192,6 +188,9 @@ const ColorStatusTag = ({ status }) => {
     out_of_service_bg: "#F5F5F5",
     out_of_service_border: "#D9D9D9",
 
+    reported: "#CF1322",
+    reported_bg: "#FFF1F0",
+    reported_border: "#FFA39E",
   };
 
   const code = status?.code;

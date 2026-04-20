@@ -85,15 +85,12 @@ const HouseKeepingTaskAssignForm = ({
     });
 
     const formatDateTime = (dateSource, timeSource) => {
-        // 1. If there is no date, we can't format anything
         if (!dateSource) return null;
 
-        // 2. If there is a date but no time, return just the date
         if (!timeSource) {
             return dateSource.format("YYYY-MM-DD");
         }
 
-        // 3. If both exist, merge them and return the full string
         return dateSource
             .hour(timeSource.hour())
             .minute(timeSource.minute())
@@ -160,7 +157,9 @@ const HouseKeepingTaskAssignForm = ({
 
     const firstItem = detail?.housekeepingStatus;
     const statusCode = detail?.housekeepingStatus?.code;
+    console.log("StatusCode", statusCode);
     const isDisableEdit = statusCode === "completed" || statusCode === "cancelled";
+    console.log("isDisableEdit", isDisableEdit);
     const mappedCode = hkTaskStatusMap[statusCode];
 
     const statusForTag = {
@@ -180,7 +179,7 @@ const HouseKeepingTaskAssignForm = ({
             onClose={() => setDrawerOpen(false)}
             open={drawerOpen}
             extra={
-                (statusCode !== "completed" && statusCode !== "cancelled") ? (
+                (!isDisableEdit) ? (
                     <Button type="primary" onClick={() => {
                         setIsEdit(false);
                         setSelectedAssignment(null);
@@ -200,61 +199,58 @@ const HouseKeepingTaskAssignForm = ({
                         <p className="text-gray-400 font-bold uppercase text-[10px]">No assigns found</p>
                     </div>
                 ) : (
-                    <Row gutter={[8, 8]}>
-                        {detail.housekeepingTaskAssignments.map((item, index) => (
-                            <Col span={12} key={item.uuid || index}>
-                                <div
-                                    onClick={() => {
-                                        // 1. Guard clause: Stop the function if disabled
-                                        if (isDisableEdit) return;
+                    <div>
+                        <Row gutter={[8, 8]}>
+                            {detail.housekeepingTaskAssignments.map((item, index) => (
+                                <Col span={12} key={item.uuid || index}>
+                                    <div
+                                        onClick={() => {
+                                            setIsEdit(true);
+                                            setSelectedAssignment(item);
+                                            setCreateDrawerOpen(true);
+                                        }}
 
-                                        setIsEdit(true);
-                                        setSelectedAssignment(item);
-                                        setCreateDrawerOpen(true);
-                                    }}
-
-                                    className={`bg-white border border-gray-200 rounded-lg p-3 shadow-sm relative pt-7 transition-all group h-full flex flex-col justify-between
+                                        className={`bg-white border border-gray-200 rounded-lg p-3 shadow-sm relative pt-7 transition-all group h-full flex flex-col justify-between
                                        cursor-pointer hover:border-blue-400 hover:shadow-md `
-                                    }
-                                >
-                                    {/* Staff Badge - Top Left */}
-                                    <div className={`absolute top-0 left-0 px-3 py-1 rounded-br-lg rounded-tl-lg text-[11px] text-white font-semibold uppercase tracking-wider
-                                        ${isDisableEdit ? "bg-gray-400" : "bg-blue-600"}`}
+                                        }
                                     >
-                                        {item?.staff?.name || "Unassigned"}
-                                    </div>
+                                        {/* Staff Badge - Top Left */}
+                                        <div className={`absolute top-0 left-0 px-3 py-1 rounded-br-lg rounded-tl-lg text-[11px] text-white font-semibold uppercase tracking-wider bg-blue-600`}
+                                        >
+                                            {item?.staff?.name || "Unassigned"}
+                                        </div>
 
-                                    {/* Hover Indicator - Only show if NOT disabled */}
-                                    {!isDisableEdit && (
+                                        {/* Hover Indicator - Only show if NOT disabled */}
                                         <div className={`absolute top-1 right-0 px-3 py-1 rounded-br-lg rounded-tl-lg text-[11px] tracking-wider`}>
                                             <span className="text-xs font-bold flex items-center justify-end gap-1">
                                                 <EditOutlined className="text-[14px]" />
                                             </span>
                                         </div>
-                                    )}
 
-                                    {/* Content Area */}
-                                    <div className="space-y-1">
-                                        <TightRow
-                                            label="Assigned"
-                                            value={item.assignedAt ? dayjs(item.assignedAt).format("YYYY-MM-DD HH:mm") : "-"}
-                                            isDate
-                                        />
-                                        <TightRow
-                                            label="Started"
-                                            value={item.startedAt ? dayjs(item.startedAt).format("YYYY-MM-DD HH:mm") : "-"}
-                                            isDate
-                                        />
-                                        <TightRow
-                                            label="Completed"
-                                            value={item.completedAt ? dayjs(item.completedAt).format("YYYY-MM-DD HH:mm") : "-"}
-                                            isDate
-                                        />
+                                        {/* Content Area */}
+                                        <div className="space-y-1">
+                                            <TightRow
+                                                label="Assigned"
+                                                value={item.assignedAt ? dayjs(item.assignedAt).format("YYYY-MM-DD HH:mm") : "-"}
+                                                isDate
+                                            />
+                                            <TightRow
+                                                label="Started"
+                                                value={item.startedAt ? dayjs(item.startedAt).format("YYYY-MM-DD HH:mm") : "-"}
+                                                isDate
+                                            />
+                                            <TightRow
+                                                label="Completed"
+                                                value={item.completedAt ? dayjs(item.completedAt).format("YYYY-MM-DD HH:mm") : "-"}
+                                                isDate
+                                            />
+                                        </div>
                                     </div>
-                                </div>
-                            </Col>
-                        ))}
-                    </Row>
+                                </Col>
+                            ))}
+                        </Row>
+                    </div>
+
                 )
             }
 
@@ -288,7 +284,12 @@ const HouseKeepingTaskAssignForm = ({
                                 label="Assigned Staff"
                                 rules={[{ required: true, message: 'Please select a staff member' }]}
                                 extra={
-                                    notAssignedStaffs.length === 0 ? (
+                                    isDisableEdit ? (
+                                        <div className="flex items-center gap-1 text-red-500 text-[11px] mt-1 italic">
+                                            <ExclamationCircleOutlined />
+                                            <span>Assigned is completed or cancelled already.</span>
+                                        </div>
+                                    ) : notAssignedStaffs.length === 0 ? (
                                         <div className="flex items-center gap-1 text-red-500 text-[11px] mt-1 italic">
                                             <ExclamationCircleOutlined />
                                             <span>There are no more staff members available to assign.</span>
@@ -301,7 +302,7 @@ const HouseKeepingTaskAssignForm = ({
                                     options={staffOptionsForEdit}
                                     showSearch
                                     optionFilterProp="label"
-                                    disabled={notAssignedStaffs.length === 0}
+                                    disabled={notAssignedStaffs.length === 0 || isDisableEdit}
                                     allowClear={isEdit}
                                 />
                             </Form.Item>
