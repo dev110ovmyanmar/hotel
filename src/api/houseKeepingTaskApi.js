@@ -38,4 +38,9 @@ export const updateHouseKeepingTask = async (params) => {
 export const adminMeta = async (params) => {
     const { data } = await apiClient.get("/admin/meta", { params });
     return data.response;
-}
+};
+
+export const createMaintenanceRequestFromHK = async (params) => {
+    const { data } = await apiClient.post("/hk-task/maintenance-request/create", params);
+    return data.response;
+};
