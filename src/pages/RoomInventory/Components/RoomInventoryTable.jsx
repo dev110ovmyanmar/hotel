@@ -63,11 +63,11 @@ const RoomInventoryTable = ({
       width: 50,
     },
     {
-      title: "Name",
+      title: "Room Type",
       dataIndex: "name",
       key: "name",
       width: 200,
-      align:"left"
+      align: "left",
     },
     {
       title: "Total Rooms",
@@ -88,6 +88,7 @@ const RoomInventoryTable = ({
       title: "Base Price (MMK)",
       dataIndex: "basePrice",
       key: "basePrice",
+      align: "end",
       render: (text) => <PriceTag value={text} />,
     },
     // {
