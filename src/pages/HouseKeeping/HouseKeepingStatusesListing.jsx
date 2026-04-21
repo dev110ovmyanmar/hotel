@@ -72,15 +72,38 @@ const HouseKeepingStatusListing = () => {
     const showCreateButton = houseKeepingStatuses ? false : true;
 
     const radioButtonsForTableAndGrid = (
-        <Radio.Group
-            value={viewMode}
-            onChange={e => setViewMode(e.target.value)}
-            buttonStyle="solid"
-            className="shadow-sm"
-        >
-            <Radio.Button value="table"><TableOutlined /> Table</Radio.Button>
-            <Radio.Button value="card"><AppstoreOutlined /> Grid</Radio.Button>
-        </Radio.Group>);
+        <div className="inline-block">
+            <Radio.Group
+                value={viewMode}
+                onChange={(e) => setViewMode(e.target.value)}
+                buttonStyle="solid"
+                /* flex-nowrap ensures the buttons stay side-by-side */
+                className="flex flex-nowrap"
+            >
+                <Radio.Button
+                    value="table"
+                    /* whitespace-nowrap prevents the icon/text from splitting */
+                    className="sticky top-0 z-10 whitespace-nowrap"
+                >
+                    <span className="inline-flex items-center gap-2">
+                        <TableOutlined />
+                        <span>Table</span>
+                    </span>
+                </Radio.Button>
+
+                <Radio.Button
+                    value="card"
+                    className="sticky top-0 z-10 whitespace-nowrap"
+                >
+                    <span className="inline-flex items-center gap-2">
+                        <AppstoreOutlined />
+                        <span>Grid</span>
+                    </span>
+                </Radio.Button>
+            </Radio.Group>
+        </div>
+
+    );
 
     return (
         <div>

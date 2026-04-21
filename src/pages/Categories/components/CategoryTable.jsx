@@ -16,25 +16,25 @@ const CategoryTable = ({
   const columns = useCategoryColumns(onEdit, onView);
 
   return (
-    <div className="mx-5">
-      <Table
-        loading={loading}
-        columns={columns}
-        dataSource={dataSource}
-        rowKey="id"
-        pagination={{ 
-          current: page,
-          pageSize: perPage,
-          total: total,
-          onChange: (page, perPage) => {
-            changePage(page);
-            changePerPage(perPage);
-          },
-          showSizeChanger: true,
-       }}
-        // size="middle"
-      />
-    </div>
+    <Table
+      loading={loading}
+      columns={columns}
+      tableLayout="fixed"
+      scroll={{ x: 1000 }}
+      dataSource={dataSource}
+      rowKey="id"
+      pagination={{
+        current: page,
+        pageSize: perPage,
+        total: total,
+        onChange: (page, perPage) => {
+          changePage(page);
+          changePerPage(perPage);
+        },
+        showSizeChanger: true,
+      }}
+    // size="middle"
+    />
   );
 };
 

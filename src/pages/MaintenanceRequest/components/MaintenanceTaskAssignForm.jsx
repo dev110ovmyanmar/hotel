@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Drawer, Row, Col, Form, Input, Select, DatePicker, TimePicker, Button } from "antd";
 import dayjs from "dayjs";
-import { TeamOutlined, CalendarOutlined, ClockCircleOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
+import { TeamOutlined, CalendarOutlined, ClockCircleOutlined, ExclamationCircleOutlined, EditOutlined } from "@ant-design/icons";
 import Loader from "../../../component/Loader/Loader";
 import useApiQuery from "../../../hooks/useApiQuery";
 import { useApiMutation } from "../../../hooks/useApiMutation";
 import { getMaintenanceTaskAssignmentDetail, createMaintenanceTaskAssignment, updateMaintenanceTaskAssignment } from "../../../api/maintenanceTaskAssignmentApi";
 import Toast from "../../../component/Toast/Toast";
+import ColorStatusTag from "../../../component/ColorStatusTag/ColorStatusTag";
 
 const MaintenanceTaskAssignForm = ({
     drawerOpen,
@@ -76,17 +77,10 @@ const MaintenanceTaskAssignForm = ({
 
     const updateMutation = useApiMutation({
         mutationFn: updateMaintenanceTaskAssignment,
-        invalidateKeys: [["maintenance-request-detail"]],
+        invalidateKeys: [["maintenance-request-detail"], ["maintenance-requests"]],
     });
 
-    // const formatDateTime = (dateSource, timeSource) => {
-    //     if (!dateSource || !timeSource) return null;
-    //     return dateSource
-    //         .hour(timeSource.hour())
-    //         .minute(timeSource.minute())
-    //         .second(timeSource.second())
-    //         .format("YYYY-MM-DD HH:mm:ss");
-    // };
+    const isDisableEdit = detail?.maintenanceStatus?.code === "resolved" || detail?.maintenanceStatus?.code === "verified";
 
     const formatDateTime = (dateSource, timeSource) => {
         // 1. If there is no date, we can't format anything
@@ -155,13 +149,42 @@ const MaintenanceTaskAssignForm = ({
         </div>
     );
 
+    // --- Business Logic & Mapping ---
+    const maintenanceRequestStatusMap = {
+        resolved: "resolved",
+        verified: "verified",
+        reported: "reported",
+        assigned: "assigned",
+        in_progress: "in_progress",
+    };
+
+    const firstItem = detail?.maintenanceStatus;
+    const statusCode = detail?.maintenanceStatus?.code;
+    const mappedCode = maintenanceRequestStatusMap[statusCode];
+
+    const statusForTag = {
+        code: mappedCode,
+        name: firstItem?.name
+    };
+
     return (
         <Drawer
-            title="Assigns"
-            width={550}
+            title={
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span>Assigns</span>
+                    <ColorStatusTag status={statusForTag} />
+                </div>
+            }
+            size={550}
             onClose={() => setDrawerOpen(false)}
             open={drawerOpen}
-            extra={<Button type="primary" onClick={() => { setIsEdit(false); setSelectedAssignment(null); setCreateDrawerOpen(true); }}>Add New Assign</Button>}
+            extra={isDisableEdit ? null :
+                <Button type="primary"
+                    onClick={() => {
+                        setIsEdit(false);
+                        setSelectedAssignment(null);
+                        setCreateDrawerOpen(true);
+                    }}>Add New Assign</Button>}
         >
             {isAssignDetailLoading ? (
                 <div className="flex h-64 items-center justify-center"><Loader /></div>
@@ -179,6 +202,13 @@ const MaintenanceTaskAssignForm = ({
                                 className="bg-white border border-gray-200 rounded p-2 shadow-sm relative pt-5 cursor-pointer hover:border-blue-400 transition-all group h-full"
                             >
                                 <div className="absolute top-0 left-0 px-2 py-0.5 bg-blue-500 rounded-br text-[12px] text-white font-bold">{item?.staff?.name}</div>
+
+                                <div className="absolute top-1 right-0 px-3 pb-3 pt-1 rounded-br-lg rounded-tl-lg text-[11px] tracking-wider">
+                                    <span className="text-xs font-bold flex items-center justify-end gap-1">
+                                        <EditOutlined className="text-[14px]" />
+                                    </span>
+                                </div>
+
                                 <TightRow label="Started" value={item.startedAt ? dayjs(item.startedAt).format("YYYY-MM-DD HH:mm:ss") : "-"} isDate />
                                 <TightRow label="Completed" value={item.completedAt ? dayjs(item.completedAt).format("YYYY-MM-DD HH:mm:ss") : "-"} isDate />
                                 <TightRow label="Remark" value={item.remark ? item.remark : "-"} />
@@ -191,10 +221,21 @@ const MaintenanceTaskAssignForm = ({
             {/* Inner Drawer for Create/Edit */}
             <Drawer
                 title={isEdit ? "Edit Assign" : "New Assign"}
-                width={550}
+                size={550}
                 onClose={() => setCreateDrawerOpen(false)}
                 open={createDrawerOpen}
                 destroyOnClose
+                extra={
+                    <Button
+                        type="primary"
+                        htmlType="submit"
+                        onClick={form.submit}
+                        block
+                        loading={createMutation.isPending || updateMutation.isPending}
+                    >
+                        {isEdit ? "Update" : "Create"}
+                    </Button>
+                }
             >
                 <Form form={form} layout="vertical" onFinish={onFinish}>
                     <Form.Item name="maintenanceRequest" hidden><Input /></Form.Item>
@@ -206,7 +247,12 @@ const MaintenanceTaskAssignForm = ({
                                 label="Assigned Staff"
                                 rules={[{ required: true, message: 'Please select a staff member' }]}
                                 extra={
-                                    notAssignedStaffs.length === 0 ? (
+                                    isDisableEdit ? (
+                                        <div className="flex items-center gap-1 text-red-500 text-[11px] mt-1 italic">
+                                            <ExclamationCircleOutlined />
+                                            <span>Issue is already resolved or verified.</span>
+                                        </div>
+                                    ) : notAssignedStaffs.length === 0 ? (
                                         <div className="flex items-center gap-1 text-red-500 text-[11px] mt-1 italic">
                                             <ExclamationCircleOutlined />
                                             <span>There are no more staff members available to assign.</span>
@@ -219,7 +265,7 @@ const MaintenanceTaskAssignForm = ({
                                     options={staffOptionsForEdit}
                                     showSearch
                                     optionFilterProp="label"
-                                    disabled={notAssignedStaffs.length === 0}
+                                    disabled={notAssignedStaffs.length === 0 || isDisableEdit}
                                     allowClear={isEdit}
                                 />
                             </Form.Item>
@@ -313,16 +359,6 @@ const MaintenanceTaskAssignForm = ({
                         <TextArea rows={3} placeholder="Enter Remark" />
                     </Form.Item>
 
-                    {(!isStaffListEmpty || isEdit) && (
-                        <Button
-                            type="primary"
-                            htmlType="submit"
-                            block
-                            loading={createMutation.isPending || updateMutation.isPending}
-                        >
-                            {isEdit ? "Update Task Assignment" : "Confirm Task Assignment"}
-                        </Button>
-                    )}
                 </Form>
             </Drawer>
         </Drawer>

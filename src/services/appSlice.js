@@ -17,7 +17,9 @@ const initialState = {
   height: !isServer && window.innerHeight,
   openDrawer: false,
   sessionExpired: false,
-  theme: (!isServer && localStorage.getItem('theme')) || 'light'
+  theme: (!isServer && localStorage.getItem('theme')) || 'light',
+  networkFailed: false,
+
 };
 
 const appSlice = createSlice({
@@ -53,6 +55,11 @@ const appSlice = createSlice({
     sessionExpired: (state, action) => {
       state.sessionExpired = action.payload;
     },
+    networkFailedModal:(state,action)=>{
+      console.log(action,"ActionInAppSlice")
+      state.networkFailed = action.payload;
+    },
+
     // Added Theme Toggle Reducer
     toggleTheme: (state) => {
       const newTheme = state.theme === 'light' ? 'dark' : 'light';
@@ -94,6 +101,6 @@ export const {
 
 export const appSelector = (state) => state?.app;
 
-export const { sessionExpired } = appSlice.actions;
+export const { sessionExpired  , networkFailedModal} = appSlice.actions;
 
 export default appReducer;

@@ -40,11 +40,7 @@ const TaxTable = ({
       title: "Inclusive",
       dataIndex: "isInclusive",
       key: "isInclusive",
-      render: (_, record) => (
-        <Tag color={record.isInclusive ? "green" : "red"}>
-          {record.isInclusive ? "TRUE" : "FALSE"}
-        </Tag>
-      ),
+      render: (text) => <div className={text === true ? "text-[#389E0D]" : "text-[#CF1322]"}>{text === true ? "True" : "False"}</div>,
     },
 
     {

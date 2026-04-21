@@ -102,7 +102,7 @@ const RoomInventoryForm = ({
                 ? "Room Inventory Details"
                 : mode === "edit"
                   ? "Edit Room Inventory"
-                  : "Create Room Inventory"}
+                  : ""}
             </span>
             {isView ? (
               <Button
@@ -129,7 +129,7 @@ const RoomInventoryForm = ({
           style={{ width: "100%" }}
           onFinish={onFinish}
         >
-          <Form.Item label="Name" name="name">
+          <Form.Item label="Room Type" name="name">
             <Input disabled={!isAdd} />
           </Form.Item>
 
@@ -173,19 +173,6 @@ const RoomInventoryForm = ({
               <InputNumber {...sharedProps} disabled={true} />
             </Form.Item>
           </div>
-
-          <Form.Item
-            label="Stop Sell"
-            name="stopSell"
-            valuePropName="checked"
-            normalize={(value) => (value ? 1 : 0)}
-          >
-            <Switch
-              checkedChildren="True"
-              unCheckedChildren="False"
-              disabled={true}
-            />
-          </Form.Item>
         </Form>
       </Drawer>
     </div>

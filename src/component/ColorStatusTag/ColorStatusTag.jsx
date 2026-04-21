@@ -4,10 +4,6 @@ import { capitalizeFirstLetter } from '../../utils/Utils';
 
 const ColorStatusTag = ({ status }) => {
   const statusColorMap = {
-    pending: "#D48806",
-    pending_bg: "#FFFBE6",
-    pending_border: "#FFE58F",
-
     booked: "#0958D9",
     booked_bg: "#E6F4FF",
     booked_border: "#91CAFF",
@@ -19,10 +15,6 @@ const ColorStatusTag = ({ status }) => {
     available: "#389E0D",
     available_bg: "#F6FFED",
     available_border: "#B7EB8F",
-
-    dirty: "#D48806",
-    dirty_bg: "#FFFBE6",
-    dirty_border: "#FFE58F",
 
     maintenance: "#CF1322",
     maintenance_bg: "#FFF1F0",
@@ -124,6 +116,10 @@ const ColorStatusTag = ({ status }) => {
     in_progress_bg: "#FFF7E6",
     in_progress_border: "#FFD591",
 
+    pending: "#D4A106",
+    pending_bg: "#FDFFE0",
+    pending_border: "#F4E34F",
+
     assigned: "#D48806",
     assigned_bg: "#FFFBE6",
     assigned_border: "#FFE58F",
@@ -172,6 +168,29 @@ const ColorStatusTag = ({ status }) => {
     hk_out_of_service_bg: "#F9F0FF",
     hk_out_of_service_border: "#D3ADF7",
 
+    dirty: "#D4A106",
+    dirty_bg: "#FDFFE0",
+    dirty_border: "#F4E34F",
+
+    clean: "#389E0D",
+    clean_bg: "#F6FFED",
+    clean_border: "#B7EB8F",
+
+    inspected: "#0958D9",
+    inspected_bg: "#E6F4FF",
+    inspected_border: "#91CAFF",
+
+    out_of_order: "#CF1322",
+    out_of_order_bg: "#FFF1F0",
+    out_of_order_border: "#FFA39E",
+
+    out_of_service: "#333333",
+    out_of_service_bg: "#F5F5F5",
+    out_of_service_border: "#D9D9D9",
+
+    reported: "#CF1322",
+    reported_bg: "#FFF1F0",
+    reported_border: "#FFA39E",
   };
 
   const code = status?.code;

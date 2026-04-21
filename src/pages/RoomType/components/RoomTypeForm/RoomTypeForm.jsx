@@ -27,6 +27,10 @@ import RoomTypeAmenityForm from "./RoomTypeAmenityForm";
 import { EditOutlined, PlusOutlined } from "@ant-design/icons";
 import Loader from "../../../../component/Loader/Loader";
 import ImageUpload from "../../../../component/ImageUpload/ImageUpload";
+import PriceTag from "../../../../component/PriceTag/PriceTag";
+import { PERMISSIONS } from "../../../../variables/permission";
+import usePermission from "../../../../hooks/usePermission";
+import { hasIn } from "lodash";
 
 
 const onChange = (value) => {
@@ -53,6 +57,11 @@ const RoomTypeForm = ({
   const isView = mode === "view";
   const isEdit = mode === "edit";
   const isAdd = mode === "add";
+
+  const { hasPermission } = usePermission();
+
+  const canEdit = hasPermission(PERMISSIONS.ROOM_TYPE_EDIT);
+  const canEditOrCreateRoomTypeAmenity = hasPermission(PERMISSIONS.ROOM_TYPE_AMENITY)
 
   const sharedProps = {
     mode: "spinner",
@@ -141,17 +150,14 @@ const RoomTypeForm = ({
       title: "Extra Price (MMK)",
       dataIndex: "extraPrice",
       key: "extraPrice",
-      render: (price) => price?.toLocaleString(),
+      render: (price) => <PriceTag value={price} />,
     },
     {
       title: "Is Free",
       dataIndex: "isFree",
       key: "isFree",
-      render: (_, record) => (
-        <Tag color={record.isFree ? "green" : "red"}>
-          {record.isFree ? "TRUE" : "FALSE"}
-        </Tag>
-      ),
+      render: text => <div className={text === true ? "text-[#389E0D]" : "text-[#CF1322]"}>{text === true ? "True" : "False"}</div>,
+
     },
     {
       title: "Action",
@@ -193,21 +199,24 @@ const RoomTypeForm = ({
                   : "Create Room Type"}
             </span>
             {isView ? (
-              <Button
-                type="primary"
-                onClick={() => {
-                  setMode("edit");
-                }}
-              >
-                Edit
-              </Button>
-            ) : (
-              <FormButton
-                onClick={() => form.submit()}
-                isPending={createRoomTypes.isPending || editRoomTypes.isPending}
-                mode={mode}
-              />
-            )}
+              canEdit && (
+                <Button
+                  type="primary"
+                  onClick={() => {
+                    setMode("edit");
+                  }}
+                >
+                  Edit
+                </Button>
+              )
+            )
+              : (
+                <FormButton
+                  onClick={() => form.submit()}
+                  isPending={createRoomTypes.isPending || editRoomTypes.isPending}
+                  mode={mode}
+                />
+              )}
           </div>
         }
       >
@@ -406,7 +415,7 @@ const RoomTypeForm = ({
                 <div className="flex justify-between items-center text-base font-semibold mb-5">
                   <span>Room Type Amenity </span>
 
-                  {!isView && (
+                  {(!isView && canEditOrCreateRoomTypeAmenity) && (
                     <Button
                       type="primary"
                       icon={<PlusOutlined />}
