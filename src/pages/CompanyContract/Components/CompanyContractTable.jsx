@@ -51,7 +51,8 @@ const CompanyContractTable = ({
         } else {
           return <div>{chargeValue} %</div>
         }
-      }
+      },
+      align:"center"
     },
     {
       title: "Contract Start Date",
