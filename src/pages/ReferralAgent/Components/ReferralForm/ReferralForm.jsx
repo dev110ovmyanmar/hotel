@@ -21,6 +21,7 @@ import FormButtons from "../../../../component/FormButtons/FormButtons";
 import { queryClient } from './../../../../app/queryClient';
 import Status from './../../../../component/Status/Status';
 import ImageUpload from "../../../../component/ImageUpload/ImageUpload";
+import { deleteImageUpload } from "../../../../api/deleteImageApi";
 
 const { TextArea } = Input;
 
@@ -117,6 +118,11 @@ const ReferralForm = ({
     mutationFn : fetchReferralFormUpload,
     invalidateKeys : [["referral-agents-details",{uuid: selectedData?.uuid}]],
   });
+
+  const deleteReferralAgentUpload = useApiMutation({
+      mutationFn: deleteImageUpload,
+      invalidateKeys: [["referral-agents-details", { uuid: selectedData?.uuid }]],
+    });
 
   return (
     <div className="flex justify-center">
@@ -288,7 +294,10 @@ const ReferralForm = ({
         handleUploadMutation={fetchReferralFormUploads}
         imageDrawerOpen={imageDrawerOpen}
         setImageDrawerOpen={setImageDrawerOpen}
-        title={selectedData?.name} 
+        title={selectedData?.name}
+        fileCategoryName="referral_agent"
+        deleteMutation={deleteReferralAgentUpload}
+
       />
     </div>
   );
