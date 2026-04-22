@@ -9,6 +9,8 @@ import UnsettledFolios from "./UnsettledFolios";
 import NightAuditPosting from "./NightAuditPosting";
 import CreateNewDay from "./CreateNewDay";
 import ConfirmModal from "./ConfirmModal";
+import CountDownTag from "../../component/CountDown/CountDownTag";
+import ReactTimer from "../../component/ReactTimer/ReactTimer";
 
 const NightAudit = () => {
     const [forceLogout, setForceLogout] = useState(false);
@@ -16,6 +18,7 @@ const NightAudit = () => {
     const [colorChange, setColorChange] = useState("");
     const [step, setStep] = useState("startNightAudit");
     const [currentValue, setCurrentValue] = useState(0);
+    const [finishCountDown, setFinishCountDown] = useState(false);
 
     return (
         <div className="w-full px-6 py-2">
@@ -45,16 +48,25 @@ const NightAudit = () => {
                                             <p className="!font-bold !text-[#CF1322] ms-3">All admins are being informed that the Night Audit is going to start. They will be logged out forcefully in 3 minutes.</p>
                                         </div>
 
-                                        <div className="text-center">
-                                            <span className="w-full h-full bg-gray-500 p-3 rounded-sm">01 Min : 00 Sec</span>
-                                        </div>
+                                        {/* 01 Min : 00 Sec */}
+                                        {/* <div className="text-center">
+                                            <CountDownTag onFinish={() => setFinishCountDown(true)} />
+                                        </div> */}
 
-                                        <div className="flex justify-center my-6">
-                                            <Button type="primary" onClick={() => {
-                                                setCurrentValue(0);
-                                                setStep("checkBooking");
-                                            }}>Start Night Audit</Button>
-                                        </div>
+                                        {
+                                            !finishCountDown &&
+                                                <ReactTimer onFinish={() => setFinishCountDown(true)} />
+                                        }
+
+                                        {
+                                            finishCountDown &&
+                                            <div className="flex justify-center my-6 ">
+                                                <Button type="primary" onClick={() => {
+                                                    setCurrentValue(0);
+                                                    setStep("checkBooking");
+                                                }}>Start Night Audit</Button>
+                                            </div>
+                                        }
                                     </div>
                                     :
                                     <div>
