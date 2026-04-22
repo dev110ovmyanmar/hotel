@@ -18,20 +18,20 @@ import {
   FilePdfOutlined,
   PlusOutlined,
 } from "@ant-design/icons";
-import { getGuestDetail, guestUpload } from "../../../api/guestApi";
-import { useApiMutation } from "../../../hooks/useApiMutation";
-import useApiQuery from "../../../hooks/useApiQuery";
-import Toast from "../../../component/Toast/Toast";
-import FormButtons from "../../../component/FormButtons/FormButtons";
-import GuestPreview from "../../../component/GuestPreview/GuestPreview";
-import UploadBox from "../../../component/UploadBox/UploadBox";
-import { deleteImageUpload } from "../../../api/uploadDeleteApi";
+import { staffDetails, staffUpload } from "../../../../api/staffApi";
+import useApiQuery from "../../../../hooks/useApiQuery";
+import { useApiMutation } from "../../../../hooks/useApiMutation";
+import FormButtons from "../../../../component/FormButtons/FormButtons";
+import UploadBox from "../../../../component/UploadBox/UploadBox";
+import GuestPreview from "../../../../component/GuestPreview/GuestPreview";
+import Toast from "../../../../component/Toast/Toast";
+import { deleteImageUpload } from "../../../../api/uploadDeleteApi";
 
 const { Title } = Typography;
 
-const NewGuestUploadForm = ({ open, onClose, selectedRow }) => {
+const StaffUploadForm = ({ open, onClose, selectedRow }) => {
   const [form] = Form.useForm();
-  const [guestPhoto, setGuestPhoto] = useState(null);
+  const [staffPhoto, setStaffPhoto] = useState(null);
   const [nrcFront, setNrcFront] = useState(null);
   const [nrcBack, setNrcBack] = useState(null);
   const [passport1, setPassport1] = useState(null);
@@ -41,24 +41,23 @@ const NewGuestUploadForm = ({ open, onClose, selectedRow }) => {
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState(null);
   const uploadRefs = useRef({});
-
-  const isFileObject = guestPhoto instanceof File;
+  const isFileObject = staffPhoto instanceof File;
 
   const { data } = useApiQuery({
-    fetchQueryName: "guest-detail",
-    fetchQueryFunction: getGuestDetail,
+    fetchQueryName: "staffData-detail",
+    fetchQueryFunction: staffDetails,
     params: { uuid: selectedRow?.uuid },
     options: { enabled: !!selectedRow?.uuid && open },
   });
 
-  const guestsUpload = useApiMutation({
-    mutationFn: guestUpload,
-    invalidateKeys: [["guest-detail", selectedRow?.uuid]],
+  const staffsUpload = useApiMutation({
+    mutationFn: staffUpload,
+    invalidateKeys: [["staffData-detail", selectedRow?.uuid]],
   });
 
   const deleteFileMutation = useApiMutation({
     mutationFn: deleteImageUpload,
-    invalidateKeys: [["guest-detail", selectedRow?.uuid]],
+    invalidateKeys: [["staffData-detail", selectedRow?.uuid]],
   });
 
   const addDocument = () => {
@@ -70,20 +69,6 @@ const NewGuestUploadForm = ({ open, onClose, selectedRow }) => {
 
   const removeDocument = (id) => {
     setOtherDocs((prev) => prev.filter((doc) => doc.id !== id));
-  };
-
-  const updateDocument = (id, updates) => {
-    setOtherDocs((prev) =>
-      prev.map((doc) => (doc.id === id ? { ...doc, ...updates } : doc)),
-    );
-  };
-
-  const handleFileChange = (file, id) => {
-    updateDocument(id, { file });
-  };
-
-  const handleNameChange = (e, id) => {
-    updateDocument(id, { name: e.target.value });
   };
 
   const handleDeleteConfirm = (doc) => {
@@ -99,7 +84,7 @@ const NewGuestUploadForm = ({ open, onClose, selectedRow }) => {
           deleteFileMutation.mutate(
             {
               uuid: doc.uuid,
-              fileCategory: "guest_file",
+              fileCategory: "staff_file",
             },
             {
               onSuccess: () => {
@@ -120,17 +105,30 @@ const NewGuestUploadForm = ({ open, onClose, selectedRow }) => {
       },
     });
   };
+  const updateDocument = (id, updates) => {
+    setOtherDocs((prev) =>
+      prev.map((doc) => (doc.id === id ? { ...doc, ...updates } : doc)),
+    );
+  };
+
+  const handleFileChange = (file, id) => {
+    updateDocument(id, { file });
+  };
+
+  const handleNameChange = (e, id) => {
+    updateDocument(id, { name: e.target.value });
+  };
 
   useEffect(() => {
     if (!data) return;
-    setGuestPhoto(data?.guestFiles?.profile || null);
-    setNrcFront(data?.guestFiles?.nrc?.frontFile || null);
-    setNrcBack(data?.guestFiles?.nrc?.backFile || null);
-    setPassport1(data?.guestFiles?.passport?.frontFile || null);
-    setPassport2(data?.guestFiles?.passport?.backFile || null);
+    setStaffPhoto(data?.staffFiles?.profile || null);
+    setNrcFront(data?.staffFiles?.nrc?.frontFile || null);
+    setNrcBack(data?.staffFiles?.nrc?.backFile || null);
+    setPassport1(data?.staffFiles?.passport?.frontFile || null);
+    setPassport2(data?.staffFiles?.passport?.backFile || null);
 
-    if (data?.guestFiles?.files) {
-      const formatted = data.guestFiles.files.map((f) => ({
+    if (data?.staffFiles?.files) {
+      const formatted = data.staffFiles.files.map((f) => ({
         id: f.uuid,
         uuid: f.uuid,
         name: f.name,
@@ -176,7 +174,7 @@ const NewGuestUploadForm = ({ open, onClose, selectedRow }) => {
 
     const payload = {
       uuid: selectedRow.uuid,
-      profile: guestPhoto?.name ? guestPhoto : undefined,
+      profile: staffPhoto?.name ? staffPhoto : undefined,
       nrc: {
         frontFile: nrcFront?.name ? nrcFront : undefined,
         backFile: nrcBack?.name ? nrcBack : undefined,
@@ -188,11 +186,11 @@ const NewGuestUploadForm = ({ open, onClose, selectedRow }) => {
       files: filesPayload,
     };
 
-    guestsUpload.mutate(payload, {
+    staffsUpload.mutate(payload, {
       onSuccess: () => {
         form.resetFields();
         onClose();
-        Toast.success("Updated Successfully!");
+        Toast.success("Upload Successfully!");
       },
     });
   };
@@ -216,7 +214,7 @@ const NewGuestUploadForm = ({ open, onClose, selectedRow }) => {
 
   const handlePreview = (e) => {
     e.stopPropagation();
-    const src = isFileObject ? URL.createObjectURL(guestPhoto) : guestPhoto;
+    const src = isFileObject ? URL.createObjectURL(staffPhoto) : staffPhoto;
     setPreviewImage(src);
     setPreviewOpen(true);
   };
@@ -232,7 +230,7 @@ const NewGuestUploadForm = ({ open, onClose, selectedRow }) => {
         <FormButtons
           type="primary"
           onClick={() => form.submit()}
-          isPending={guestsUpload.isPending}
+          isPending={staffsUpload.isPending}
         >
           Upload
         </FormButtons>
@@ -244,10 +242,10 @@ const NewGuestUploadForm = ({ open, onClose, selectedRow }) => {
         </Title>
 
         <Upload
-          className="guest-upload"
+          className="staff-upload"
           showUploadList={false}
           beforeUpload={(file) => {
-            setGuestPhoto(file);
+            setStaffPhoto(file);
             return false;
           }}
         >
@@ -267,13 +265,13 @@ const NewGuestUploadForm = ({ open, onClose, selectedRow }) => {
               borderRadius: 5,
             }}
           >
-            {guestPhoto ? (
+            {staffPhoto ? (
               <>
                 <img
                   src={
-                    isFileObject ? URL.createObjectURL(guestPhoto) : guestPhoto
+                    isFileObject ? URL.createObjectURL(staffPhoto) : staffPhoto
                   }
-                  alt="guest"
+                  alt="staff"
                   style={{
                     width: "100%",
                     height: "100%",
@@ -294,7 +292,7 @@ const NewGuestUploadForm = ({ open, onClose, selectedRow }) => {
           </div>
         </Upload>
 
-        {guestPhoto && (
+        {staffPhoto && (
           <Image
             style={{ display: "none" }}
             src={previewImage}
@@ -503,4 +501,4 @@ const NewGuestUploadForm = ({ open, onClose, selectedRow }) => {
   );
 };
 
-export default NewGuestUploadForm;
+export default StaffUploadForm;

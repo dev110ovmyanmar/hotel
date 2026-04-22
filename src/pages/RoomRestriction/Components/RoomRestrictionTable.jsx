@@ -1,89 +1,84 @@
 import { Dropdown, Space, Table, Tag } from "antd";
 import { useState } from "react";
-import { MoreOutlined, EyeOutlined, EditOutlined } from "@ant-design/icons";
+import {
+  MoreOutlined,
+  EyeOutlined,
+  EditOutlined,
+  FileAddOutlined,
+} from "@ant-design/icons";
+// import { PERMISSIONS } from "../../../variables/permission";
 import usePermission from "../../../hooks/usePermission";
-import SeasonalRateForm from "./SeasonalRateForms/SeasonalRateForm";
-import { PERMISSIONS } from "../../../variables/permission";
+import RoomRestrictionForm from "./RoomRestrictionForms/RoomRestrictionForm";
 import PriceTag from "../../../component/PriceTag/PriceTag";
-import { TableColumns } from "../../../component/TableColumns/TableColumns";
 
-const SeasonalRateTable = ({
-  data,
-  page,
-  perPage,
-  total,
-  changePage,
-  changePerPage,
-  loading,
-}) => {
-  const { hasPermission } = usePermission();
+const RoomRestrictionTable = ({ data, page, setPage }) => {
+  //   const { hasPermission } = usePermission();
+
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mode, setMode] = useState(null);
-  const [selectedData, setSelectedData] = useState(null);
+  const [selectedData, setSelectedData] = useState({});
+  const [expandedRowKeys, setExpandedRowKeys] = useState([]);
 
-  const baseColumns = [
+  const columns = [
     {
       title: "ID",
-      render: (_, record) => <div>{record?.id}</div>,
+      dataIndex: ["roomType", "id"],
+      key: "id",
       width: 70,
     },
     {
       title: "Room Type",
-      dataIndex: "name",
-      key: "roomTypeName",
-      align: "left",
+      dataIndex: ["roomType", "name"],
+      key: "roomType",
     },
-    {
-      title: "Total Rooms",
-      dataIndex: "totalRooms",
-      key: "totalRooms",
-      width: "80",
-    },
-    {
-      title: "Extra Bed",
-      dataIndex: "extraBed",
-      key: "extraBed",
-    },
-    {
-      title: "Max Occupancy",
-      dataIndex: "maxOccupancy",
-      key: "maxOccupancy",
-    },
+
     {
       title: "Price (MMK)",
-      dataIndex: "basePrice",
+      dataIndex: ["roomType", "basePrice"],
       key: "basePrice",
       render: (text) => <PriceTag value={text} />,
-      width: "80",
-      align:"right",
+      align: "right",
     },
-  ];
 
-  const columns = TableColumns(baseColumns);
+    // {
+    //   title: "Closed To Arrival ",
+    //   dataIndex: "closedToArrival",
+    //   key: "closedToArrival",
+    //   render: (_, record) => (
+    //     <Tag color={record.closedToArrival ? "green" : "red"}>
+    //       {record.closedToArrival ? "TRUE" : "FALSE"}
+    //     </Tag>
+    //   ),
+    // },
+    // {
+    //   title: "Closed To Departure ",
+    //   dataIndex: "closedToDeparture",
+    //   key: "closedToDeparture",
+    //   render: (_, record) => (
+    //     <Tag color={record.closedToDeparture ? "green" : "red"}>
+    //       {record.closedToDeparture ? "TRUE" : "FALSE"}
+    //
+  ];
 
   const expandColumns = [
     { title: "ID", dataIndex: "id", key: "id" },
     { title: "Rate Plan", dataIndex: ["ratePlan", "name"], key: "ratePlan" },
     {
-      title: "Start Date",
-      dataIndex: "startDate",
-      key: "startDate",
+      title: "Date",
+      dataIndex: "date",
+      key: "date",
       render: (text) => <div>{String(text)}</div>,
-      align :"center",
+      align: "center",
     },
     {
-      title: "End Date",
-      dataIndex: "endDate",
-      key: "endDate",
-      render: (text) => <div>{String(text)}</div>,
-      align :"center",
+      title: "Min Stay",
+      dataIndex: "minStay",
+      key: "minStay",
     },
     {
-      title: "Price (MMK)",
-      dataIndex: "price",
-      key: "price",
-      render: (text) => <PriceTag value={text} />,
-      align:"right",
+      title: "Max Stay",
+      dataIndex: "maxStay",
+      key: "maxStay",
     },
     {
       title: "Action",
@@ -95,7 +90,7 @@ const SeasonalRateTable = ({
             key: "view",
             label: "View",
             icon: <EyeOutlined style={{ fontSize: "12px" }} />,
-            permission: PERMISSIONS.SEASONAL_RATE_VIEW,
+            // permission: PERMISSIONS.ROOM_RESTRICTION_VIEW,
             onClick: () => {
               setDrawerOpen(true);
               setMode("view");
@@ -106,7 +101,7 @@ const SeasonalRateTable = ({
             key: "edit",
             label: "Edit",
             icon: <EditOutlined style={{ fontSize: "12px" }} />,
-            permission: PERMISSIONS.SEASONAL_RATE_EDIT,
+            // permission: PERMISSIONS.ROOM_RESTRICTION_EDIT,
             onClick: () => {
               setDrawerOpen(true);
               setMode("edit");
@@ -146,7 +141,7 @@ const SeasonalRateTable = ({
       <Table
         className="custom-table-style"
         columns={expandColumns}
-        dataSource={record?.rates}
+        dataSource={record?.calendars}
         pagination={false}
         size="small"
         style={{ marginTop: "16px", marginBottom: "16px" }}
@@ -155,20 +150,20 @@ const SeasonalRateTable = ({
   };
 
   return (
-    <div id="scrollId">
+    <div id="scrollId" className="w-full h-[63vh]">
       <Table
         tableLayout="fixed"
         scroll={{ x: 1000 }}
         columns={columns}
         dataSource={data}
-        rowKey="uuid"
-        expandable={{ expandedRowRender, defaultExpandedRowKeys: ["0"] }}
-        loading={loading}
+        rowKey={(record) => record.roomType?.id}
         pagination={false}
+        expandable={{ expandedRowRender, defaultExpandedRowKeys: ["0"] }}
       />
 
-      <SeasonalRateForm
+      <RoomRestrictionForm
         page={page}
+        setPage={setPage}
         mode={mode}
         setMode={setMode}
         drawerOpen={drawerOpen}
@@ -180,4 +175,4 @@ const SeasonalRateTable = ({
   );
 };
 
-export default SeasonalRateTable;
+export default RoomRestrictionTable;
