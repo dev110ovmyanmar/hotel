@@ -52,7 +52,8 @@ const AgencyContractTable = ({
         } else {
           return <div>{chargeValue} %</div>
         }
-      }
+      },
+      align:"center"
     },
     {
       title: "Contract Start Date",

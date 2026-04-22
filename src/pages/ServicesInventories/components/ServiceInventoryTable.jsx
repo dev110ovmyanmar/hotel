@@ -27,7 +27,7 @@ const ServiceInventoryTable = ({
     return (
       <>
         <Table
-          className="nested-table"
+          className="custom-table-style"
           columns={expandColumns}
           dataSource={record.serviceInventoryMappings || []}
           rowKey="uuid"

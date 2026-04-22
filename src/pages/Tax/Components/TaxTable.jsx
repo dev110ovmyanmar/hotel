@@ -65,7 +65,7 @@ const TaxTable = ({
 
         return value;
       },
-      align: "end",
+      align: "center",
     },
     {
       title: "Action",
