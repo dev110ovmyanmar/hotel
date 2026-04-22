@@ -50,7 +50,7 @@ const HouseKeepingStatusCard = ({ data, onEdit, onView }) => {
     return (
         <div
             onClick={onView}
-            className="group relative bg-white border border-gray-200 rounded p-3 shadow-sm hover:shadow-md hover:border-blue-400 transition-all cursor-pointer flex flex-col h-full"
+            className="group relative bg-white border border-gray-200 rounded p-3 shadow-sm hover:shadow-md hover:border-blue-400 transition-all cursor-pointer flex flex-col h-fit"
         >
             {/* Header: Room & Mapped Status Tag */}
             <div className="flex justify-between items-start mb-3">
@@ -118,13 +118,13 @@ const HouseKeepingStatusCard = ({ data, onEdit, onView }) => {
             <div className="mt-3 pt-2 border-t border-gray-100 flex items-center justify-end gap-4">
                 <button
                     onClick={(e) => { e.stopPropagation(); onView(); }}
-                    className="flex items-center gap-1 text-[10px] font-bold hover:text-blue-600 uppercase tracking-wider transition-colors"
+                    className="flex items-center gap-1 text-[10px] font-bold hover:text-blue-600 uppercase tracking-wider transition-colors cursor-pointer"
                 >
                     <EyeOutlined className="text-[11px]" /> View
                 </button>
                 <button
                     onClick={(e) => { e.stopPropagation(); onEdit(); }}
-                    className="flex items-center gap-1 text-[10px] font-bold hover:text-blue-600 uppercase tracking-wider transition-colors"
+                    className="flex items-center gap-1 text-[10px] font-bold hover:text-blue-600 uppercase tracking-wider transition-colors cursor-pointer"
                 >
                     <EditOutlined className="text-[11px]" /> Edit
                 </button>

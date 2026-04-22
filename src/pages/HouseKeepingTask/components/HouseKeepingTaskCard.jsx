@@ -57,7 +57,7 @@ const HouseKeepingTaskCard = ({ data, onEdit, onView,
     return (
         <div
             onClick={onView}
-            className="group relative bg-white border border-gray-200 rounded p-3 shadow-sm hover:shadow-md hover:border-blue-400 transition-all cursor-pointer flex flex-col h-full"
+            className="group relative bg-white border border-gray-200 rounded p-3 shadow-sm hover:shadow-md hover:border-blue-400 transition-all cursor-pointer flex flex-col h-fit"
         >
             {/* 1. Header: Room ID & Main Status */}
             <div className="flex justify-between items-start mb-3">
@@ -104,16 +104,19 @@ const HouseKeepingTaskCard = ({ data, onEdit, onView,
                 <div className="flex gap-4">
                     <button
                         onClick={(e) => { e.stopPropagation(); onView(); }}
-                        className="flex items-center gap-1 text-[10px] font-bold hover:text-blue-600 uppercase tracking-wider"
+                        className="flex items-center gap-1 text-[10px] font-bold hover:text-blue-600 uppercase tracking-wider cursor-pointer"
                     >
                         <EyeOutlined className="text-[11px]" /> View
                     </button>
-                    <button
-                        onClick={(e) => { e.stopPropagation(); onEdit(); }}
-                        className="flex items-center gap-1 text-[10px] font-bold hover:text-blue-600 uppercase tracking-wider"
-                    >
-                        <EditOutlined className="text-[11px]" /> Edit
-                    </button>
+                    {
+                        data?.housekeepingStatus?.code === 'completed' || data?.housekeepingStatus?.code === 'cancelled' ? null :
+                            <button
+                                onClick={(e) => { e.stopPropagation(); onEdit(); }}
+                                className="flex items-center gap-1 text-[10px] font-bold hover:text-blue-600 uppercase tracking-wider cursor-pointer"
+                            >
+                                <EditOutlined className="text-[11px]" /> Edit
+                            </button>
+                    }
                 </div>
 
                 {/* <button

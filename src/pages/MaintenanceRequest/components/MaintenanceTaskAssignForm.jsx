@@ -1,11 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { Drawer, Row, Col, Form, Input, Select, DatePicker, TimePicker, Button } from "antd";
 import dayjs from "dayjs";
-import { TeamOutlined, CalendarOutlined, ClockCircleOutlined, ExclamationCircleOutlined, EditOutlined } from "@ant-design/icons";
+import { TeamOutlined, CalendarOutlined, ClockCircleOutlined, ExclamationCircleOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import Loader from "../../../component/Loader/Loader";
 import useApiQuery from "../../../hooks/useApiQuery";
 import { useApiMutation } from "../../../hooks/useApiMutation";
-import { getMaintenanceTaskAssignmentDetail, createMaintenanceTaskAssignment, updateMaintenanceTaskAssignment } from "../../../api/maintenanceTaskAssignmentApi";
+import {
+    getMaintenanceTaskAssignmentDetail,
+    createMaintenanceTaskAssignment,
+    updateMaintenanceTaskAssignment,
+    deleteMaintenanceTaskAssignment,
+} from "../../../api/maintenanceTaskAssignmentApi";
 import Toast from "../../../component/Toast/Toast";
 import ColorStatusTag from "../../../component/ColorStatusTag/ColorStatusTag";
 
@@ -80,7 +85,12 @@ const MaintenanceTaskAssignForm = ({
         invalidateKeys: [["maintenance-request-detail"], ["maintenance-requests"]],
     });
 
-    const isDisableEdit = detail?.maintenanceStatus?.code === "resolved" || detail?.maintenanceStatus?.code === "verified";
+    const deleteMutation = useApiMutation({
+        mutationFn: deleteMaintenanceTaskAssignment,
+        invalidateKeys: [["maintenance-request-detail"], ["maintenance-requests"]],
+    })
+
+    const isDisableEdit = detail?.maintenanceStatus?.code === "verified";
 
     const formatDateTime = (dateSource, timeSource) => {
         // 1. If there is no date, we can't format anything
@@ -137,6 +147,18 @@ const MaintenanceTaskAssignForm = ({
                 }
             });
         }
+    };
+
+    const handleDelete = (e, item) => {
+        const deletePayload = {
+            uuid: item?.uuid,
+        }
+        e.stopPropagation();
+        deleteMutation.mutate({ params: deletePayload }, {
+            onSuccess: (response) => {
+                Toast.success(response);
+            }
+        });
     };
 
     // UI Helpers (Tight Row Style)
@@ -196,17 +218,48 @@ const MaintenanceTaskAssignForm = ({
             ) : (
                 <Row gutter={[8, 8]}>
                     {detail.maintenanceTaskAssignments.map((item, index) => (
-                        <Col span={12} key={item.uuid || index}>
-                            <div
-                                onClick={() => { setIsEdit(true); setSelectedAssignment(item); setCreateDrawerOpen(true); }}
-                                className="bg-white border border-gray-200 rounded p-2 shadow-sm relative pt-5 cursor-pointer hover:border-blue-400 transition-all group h-full"
+                        <Col span={12}>
+                            <div key={item.uuid || index}
+                                onClick={isDisableEdit ? null : () => { setIsEdit(true); setSelectedAssignment(item); setCreateDrawerOpen(true); }}
+                                className={`bg-white border border-gray-200 rounded-lg p-3 shadow-sm relative pt-7 transition-all group h-full flex flex-col justify-between 
+                                                ${isDisableEdit
+                                        ? 'cursor-default opacity-100'
+                                        : 'cursor-pointer hover:border-blue-400 hover:shadow-md'
+                                    }`}
                             >
-                                <div className="absolute top-0 left-0 px-2 py-0.5 bg-blue-500 rounded-br text-[12px] text-white font-bold">{item?.staff?.name}</div>
+                                <div className={`absolute top-0 left-0 px-3 py-1 rounded-br-lg rounded-tl-lg text-[11px] text-[#FFFFFF] tracking-wider bg-[#1677FF]`}
+                                >
+                                    {item?.staff?.name || "Unassigned"}
+                                </div>
 
-                                <div className="absolute top-1 right-0 px-3 pb-3 pt-1 rounded-br-lg rounded-tl-lg text-[11px] tracking-wider">
-                                    <span className="text-xs font-bold flex items-center justify-end gap-1">
-                                        <EditOutlined className="text-[14px]" />
-                                    </span>
+                                <div className="absolute top-1 right-1 flex items-center gap-2">
+                                    {!isDisableEdit && (
+                                        <button
+                                            className="p-1 hover:bg-gray-100 rounded-full transition-colors"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                setIsEdit(true);
+                                                setSelectedAssignment(item);
+                                                setCreateDrawerOpen(true);
+                                            }}
+                                        >
+                                            <EditOutlined className="text-[14px] text-blue-600" />
+                                        </button>
+                                    )}
+
+                                    {
+                                        item?.startedAt ? null :
+                                            (
+                                                <button
+                                                    className="p-1 rounded-full text-red-500 transition-colors enabled:hover:bg-red-50"
+                                                    onClick={(e) => handleDelete(e, item)}
+
+                                                >
+                                                    <DeleteOutlined className="text-[14px]" />
+                                                </button>
+                                            )
+                                    }
+
                                 </div>
 
                                 <TightRow label="Started" value={item.startedAt ? dayjs(item.startedAt).format("YYYY-MM-DD HH:mm:ss") : "-"} isDate />
@@ -216,152 +269,158 @@ const MaintenanceTaskAssignForm = ({
                         </Col>
                     ))}
                 </Row>
-            )}
+            )
+            }
 
             {/* Inner Drawer for Create/Edit */}
-            <Drawer
-                title={isEdit ? "Edit Assign" : "New Assign"}
-                size={550}
-                onClose={() => setCreateDrawerOpen(false)}
-                open={createDrawerOpen}
-                destroyOnClose
-                extra={
-                    <Button
-                        type="primary"
-                        htmlType="submit"
-                        onClick={form.submit}
-                        block
-                        loading={createMutation.isPending || updateMutation.isPending}
-                    >
-                        {isEdit ? "Update" : "Create"}
-                    </Button>
-                }
-            >
-                <Form form={form} layout="vertical" onFinish={onFinish}>
-                    <Form.Item name="maintenanceRequest" hidden><Input /></Form.Item>
-
-                    <div className="space-y-4">
-                        {isEdit ? (
-                            <Form.Item
-                                name="staff"
-                                label="Assigned Staff"
-                                rules={[{ required: true, message: 'Please select a staff member' }]}
-                                extra={
-                                    isDisableEdit ? (
-                                        <div className="flex items-center gap-1 text-red-500 text-[11px] mt-1 italic">
-                                            <ExclamationCircleOutlined />
-                                            <span>Issue is already resolved or verified.</span>
-                                        </div>
-                                    ) : notAssignedStaffs.length === 0 ? (
-                                        <div className="flex items-center gap-1 text-red-500 text-[11px] mt-1 italic">
-                                            <ExclamationCircleOutlined />
-                                            <span>There are no more staff members available to assign.</span>
-                                        </div>
-                                    ) : null
-                                }
+            {
+                isDisableEdit ? null : (
+                    <Drawer
+                        title={isEdit ? "Edit Assign" : "New Assign"}
+                        size={550}
+                        onClose={() => setCreateDrawerOpen(false)}
+                        open={createDrawerOpen}
+                        destroyOnClose
+                        extra={
+                            <Button
+                                type="primary"
+                                htmlType="submit"
+                                onClick={form.submit}
+                                block
+                                loading={createMutation.isPending || updateMutation.isPending}
                             >
-                                <Select
-                                    placeholder={isEdit ? "Select new staff to change..." : "Select staff"}
-                                    options={staffOptionsForEdit}
-                                    showSearch
-                                    optionFilterProp="label"
-                                    disabled={notAssignedStaffs.length === 0 || isDisableEdit}
-                                    allowClear={isEdit}
-                                />
-                            </Form.Item>
-                        ) :
-                            (
-                                <Form.Item
-                                    name="staff"
-                                    label="Assigned Staff"
-                                    rules={[{ required: true, message: 'Please select a staff member' }]}
-                                    extra={
-                                        notAssignedStaffs.length === 0 ? (
-                                            <div className="flex items-center gap-1 text-red-500 text-[11px] mt-1 italic">
-                                                <ExclamationCircleOutlined />
-                                                <span>There are no more staff members available to assign.</span>
-                                            </div>
-                                        ) : null
-                                    }
-                                >
-                                    <Select
-                                        placeholder={isEdit ? "Select new staff to change..." : "Select staff"}
-                                        options={notAssignedStaffs}
-                                        showSearch
-                                        optionFilterProp="label"
-                                        disabled={notAssignedStaffs.length === 0}
-                                        allowClear={isEdit}
-                                    />
-                                </Form.Item>
+                                {isEdit ? "Update" : "Create"}
+                            </Button>
+                        }
+                    >
+                        <Form form={form} layout="vertical" onFinish={onFinish}>
+                            <Form.Item name="maintenanceRequest" hidden><Input /></Form.Item>
+
+                            <div className="space-y-4">
+                                {isEdit ? (
+                                    <Form.Item
+                                        name="staff"
+                                        label="Assigned Staff"
+                                        rules={[{ required: true, message: 'Please select a staff member' }]}
+                                        extra={
+                                            assignDetail?.startedAt ? (
+                                                <div className="flex items-center gap-1 text-red-500 text-[11px] mt-1 italic">
+                                                    <ExclamationCircleOutlined />
+                                                    <span>Maintenance task is already started.</span>
+                                                </div>
+                                            ) : notAssignedStaffs.length === 0 ? (
+                                                <div className="flex items-center gap-1 text-red-500 text-[11px] mt-1 italic">
+                                                    <ExclamationCircleOutlined />
+                                                    <span>There are no more staff members available to assign.</span>
+                                                </div>
+                                            ) : null
+                                        }
+                                    >
+                                        <Select
+                                            placeholder={isEdit ? "Select new staff to change..." : "Select staff"}
+                                            options={staffOptionsForEdit}
+                                            showSearch
+                                            optionFilterProp="label"
+                                            disabled={notAssignedStaffs.length === 0 || assignDetail?.startedAt}
+                                            allowClear={isEdit}
+                                        />
+                                    </Form.Item>
+                                ) :
+                                    (
+                                        <Form.Item
+                                            name="staff"
+                                            label="Assigned Staff"
+                                            rules={[{ required: true, message: 'Please select a staff member' }]}
+                                            extra={
+                                                notAssignedStaffs.length === 0 ? (
+                                                    <div className="flex items-center gap-1 text-red-500 text-[11px] mt-1 italic">
+                                                        <ExclamationCircleOutlined />
+                                                        <span>There are no more staff members available to assign.</span>
+                                                    </div>
+                                                ) : null
+                                            }
+                                        >
+                                            <Select
+                                                placeholder={isEdit ? "Select new staff to change..." : "Select staff"}
+                                                options={notAssignedStaffs}
+                                                showSearch
+                                                optionFilterProp="label"
+                                                disabled={notAssignedStaffs.length === 0}
+                                                allowClear={isEdit}
+                                            />
+                                        </Form.Item>
+                                    )}
+                            </div>
+
+                            {isEdit && (
+                                <>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <Form.Item name="startedDate" label="Started Date">
+                                            <DatePicker className="w-full" />
+                                        </Form.Item>
+                                        {/* <Form.Item name="startedTime" label="Started Time">
+                                    <TimePicker className="w-full" format="HH:mm:ss" />
+                                </Form.Item> */}
+                                        <Form.Item
+                                            name="startedTime"
+                                            label="Started Time"
+                                            dependencies={['startedDate']} // Re-checks logic when startedDate changes
+                                            rules={[
+                                                {
+                                                    validator: (_, value) => {
+                                                        const date = form.getFieldValue('startedDate');
+                                                        // If a date exists but time is missing, throw an error
+                                                        if (date && !value) {
+                                                            return Promise.reject(new Error('Please select a time for this date!'));
+                                                        }
+                                                        return Promise.resolve();
+                                                    },
+                                                },
+                                            ]}
+                                        >
+                                            <TimePicker className="w-full" format="HH:mm" />
+                                        </Form.Item>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <Form.Item name="completedDate" label="Completed Date">
+                                            <DatePicker className="w-full" />
+                                        </Form.Item>
+                                        {/* <Form.Item name="completedTime" label="Completed Time">
+                                    <TimePicker className="w-full" format="HH:mm:ss" />
+                                </Form.Item> */}
+                                        <Form.Item
+                                            name="completedTime"
+                                            label="Completed Time"
+                                            dependencies={['completedDate']} // Re-checks logic when startedDate changes
+                                            rules={[
+                                                {
+                                                    validator: (_, value) => {
+                                                        const date = form.getFieldValue('completedDate');
+                                                        // If a date exists but time is missing, throw an error
+                                                        if (date && !value) {
+                                                            return Promise.reject(new Error('Please select a time for this date!'));
+                                                        }
+                                                        return Promise.resolve();
+                                                    },
+                                                },
+                                            ]}
+                                        >
+                                            <TimePicker className="w-full" format="HH:mm" />
+                                        </Form.Item>
+                                    </div>
+                                </>
                             )}
-                    </div>
 
-                    {isEdit && (
-                        <>
-                            <div className="grid grid-cols-2 gap-4">
-                                <Form.Item name="startedDate" label="Started Date">
-                                    <DatePicker className="w-full" />
-                                </Form.Item>
-                                {/* <Form.Item name="startedTime" label="Started Time">
-                                    <TimePicker className="w-full" format="HH:mm:ss" />
-                                </Form.Item> */}
-                                <Form.Item
-                                    name="startedTime"
-                                    label="Started Time"
-                                    dependencies={['startedDate']} // Re-checks logic when startedDate changes
-                                    rules={[
-                                        {
-                                            validator: (_, value) => {
-                                                const date = form.getFieldValue('startedDate');
-                                                // If a date exists but time is missing, throw an error
-                                                if (date && !value) {
-                                                    return Promise.reject(new Error('Please select a time for this date!'));
-                                                }
-                                                return Promise.resolve();
-                                            },
-                                        },
-                                    ]}
-                                >
-                                    <TimePicker className="w-full" format="HH:mm:ss" />
-                                </Form.Item>
-                            </div>
-                            <div className="grid grid-cols-2 gap-4">
-                                <Form.Item name="completedDate" label="Completed Date">
-                                    <DatePicker className="w-full" />
-                                </Form.Item>
-                                {/* <Form.Item name="completedTime" label="Completed Time">
-                                    <TimePicker className="w-full" format="HH:mm:ss" />
-                                </Form.Item> */}
-                                <Form.Item
-                                    name="completedTime"
-                                    label="Completed Time"
-                                    dependencies={['completedDate']} // Re-checks logic when startedDate changes
-                                    rules={[
-                                        {
-                                            validator: (_, value) => {
-                                                const date = form.getFieldValue('completedDate');
-                                                // If a date exists but time is missing, throw an error
-                                                if (date && !value) {
-                                                    return Promise.reject(new Error('Please select a time for this date!'));
-                                                }
-                                                return Promise.resolve();
-                                            },
-                                        },
-                                    ]}
-                                >
-                                    <TimePicker className="w-full" format="HH:mm:ss" />
-                                </Form.Item>
-                            </div>
-                        </>
-                    )}
+                            <Form.Item name="remark" label="Remark">
+                                <TextArea rows={3} placeholder="Enter Remark" />
+                            </Form.Item>
 
-                    <Form.Item name="remark" label="Remark">
-                        <TextArea rows={3} placeholder="Enter Remark" />
-                    </Form.Item>
+                        </Form>
+                    </Drawer>
+                )
+            }
 
-                </Form>
-            </Drawer>
-        </Drawer>
+        </Drawer >
     );
 };
 

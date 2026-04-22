@@ -1,12 +1,10 @@
-import { Button, Dropdown, Typography } from "antd";
+import { Button, Dropdown, Typography, Tag } from "antd";
 import { EditOutlined, EyeOutlined, MoreOutlined } from "@ant-design/icons";
 import ColorStatusTag from "../../../component/ColorStatusTag/ColorStatusTag";
 
 const { Text } = Typography;
 
-const useHouseKeepingTaskColumns = (onEdit, onView,
-    // onAssign
-) => {
+const useHouseKeepingTaskColumns = (onEdit, onView) => {
     const hkStatusMap = {
         completed: "completed",
         pending: "pending",
@@ -90,29 +88,45 @@ const useHouseKeepingTaskColumns = (onEdit, onView,
         }
         ,
         {
+            title: "Request Status",
+            dataIndex: "maintenanceRequestStatus",
+            key: "maintenanceRequestStatus",
+            render: (maintenanceRequestStatus) =>
+                <Tag color={maintenanceRequestStatus == false ? "red" : "green"}>
+                    {maintenanceRequestStatus == false ? "FALSE" : "TRUE"}
+                </Tag>
+        }
+        ,
+        {
             title: "Actions",
             key: "actions",
             width: 100,
             fixed: 'right',
-            render: (_, record) => (
-                <Dropdown
-                    menu={{
-                        onClick: ({ key }) => {
-                            if (key === "1") onView(record);
-                            if (key === "2") onEdit(record);
-                            // if (key === "3") onAssign(record);
-                        },
-                        items: [
-                            { key: "1", label: "View", icon: <EyeOutlined /> },
-                            { key: "2", label: "Edit", icon: <EditOutlined /> },
-                            // { key: "3", label: "View Task Assign", icon: <EyeOutlined /> },
-                        ],
-                    }}
-                    trigger={["click"]}
-                >
-                    <Button icon={<MoreOutlined />} size="small" type="text" />
-                </Dropdown>
-            ),
+            render: (_, record) => {
+                const isEditDisabled = ["cancelled", "completed"].includes(record.housekeepingStatus?.code);
+
+                const items = [
+                    { key: "1", label: "View", icon: <EyeOutlined /> },
+                    ...(isEditDisabled ? [] : [
+                        { key: "2", label: "Edit", icon: <EditOutlined /> }
+                    ]),
+                ];
+
+                return (
+                    <Dropdown
+                        menu={{
+                            onClick: ({ key }) => {
+                                if (key === "1") onView(record);
+                                if (key === "2") onEdit(record);
+                            },
+                            items: items,
+                        }}
+                        trigger={["click"]}
+                    >
+                        <Button icon={<MoreOutlined />} size="small" type="text" />
+                    </Dropdown>
+                );
+            },
         },
     ];
 }

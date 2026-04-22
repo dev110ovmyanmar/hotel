@@ -57,7 +57,7 @@ const ServiceInventoryForm = ({
 
   useEffect(() => {
     if (isAdd) {
-      // form.resetFields();
+      form.resetFields();
       // Set default values for NEW items here
       form.setFieldsValue({
         laundryStatus: false, // Default to Standard
@@ -191,19 +191,21 @@ const ServiceInventoryForm = ({
 
             <div className="grid grid-cols-2 gap-x-5 gap-y-0">
 
-              <Form.Item
-                label={<span className="text-xs">Purchase Price</span>}
-                name="unitCost"
-                rules={[{ required: true }]}
-              >
-                <InputNumber
-                  className="!w-full"
-                  min={0}
-                  readOnly={isView}
-                  placeholder="Enter Purchase Price"
-                  suffix="MMK"
-                />
-              </Form.Item>
+              {
+                <Form.Item
+                  label="Purchase Price"
+                  name="unitCost"
+                  rules={[{ required: true }]}
+                >
+                  <InputNumber
+                    className="!w-full"
+                    min={0}
+                    readOnly={isView}
+                    placeholder="Enter Purchase Price"
+                    suffix="MMK"
+                  />
+                </Form.Item>
+              }
 
               <Form.Item
                 label={<span className="text-xs">Selling Price</span>}
@@ -264,118 +266,101 @@ const ServiceInventoryForm = ({
                 label="Category"
                 name="categoryUuid"
                 rules={[{ required: true }]}
+                getValueProps={(value) => ({
+                  value: isView
+                    ? categoryOptions.find((item) => item.value === value)?.label
+                    : value,
+                })}
               >
-                <Select
-                  options={categoryOptions}
-                  placeholder="Select Category"
-                  disabled={isView}
-                  className="!w-full"
-                />
+                {
+                  isView ?
+                    <Input readOnly={isView} />
+                    :
+                    <Select
+                      options={categoryOptions}
+                      placeholder="Select Category"
+                      disabled={isView}
+                      className="!w-full"
+                    />
+                }
               </Form.Item>
 
               <Form.Item
                 label="Unit"
                 name="unitUuid"
                 rules={[{ required: true }]}
+                getValueProps={(value) => ({
+                  value: isView
+                    ? unitOptions.find((item) => item.value === value)?.label
+                    : value,
+                })}
               >
-                <Select
-                  options={unitOptions}
-                  placeholder="Select Unit"
-                  disabled={isView}
-                  className="!w-full"
-                />
+                {
+                  isView ?
+                    <Input readOnly={isView} />
+                    :
+                    <Select
+                      options={unitOptions}
+                      placeholder="Select Unit"
+                      disabled={isView}
+                      className="!w-full"
+                    />
+                }
               </Form.Item>
 
               <Form.Item
                 label="Supplier"
                 name="supplierUuid"
                 rules={[{ required: true }]}
+                getValueProps={(value) => ({
+                  value: isView
+                    ? supplierOptions.find((item) => item.value === value)?.label
+                    : value,
+                })}
               >
-                <Select
-                  options={supplierOptions}
-                  placeholder="Select Supplier"
-                  disabled={isView}
-                  className="!w-full"
-                />
+                {
+                  isView ?
+                    <Input readOnly={isView} /> :
+                    <Select
+                      options={supplierOptions}
+                      placeholder="Select Supplier"
+                      disabled={isView}
+                      className="!w-full"
+                    />
+                }
+
               </Form.Item>
             </div>
 
-            <Divider />
-
-            {/* <div className="grid grid-cols-2 gap-3"> */}
             <div className="grid grid-cols-2 gap-3">
-              {/* Laundry Status Section as Select */}
               <Form.Item
                 label="Laundry Requirement"
                 name="laundryStatus"
                 rules={[{ required: true, message: "Please select laundry status!" }]}
               >
-                <Select
+                <Switch
                   disabled={isView}
-                  placeholder="Select Status"
-                  className="w-full"
-                  options={[
-                    {
-                      value: false,
-                      label: (
-                        // <span className="flex items-center gap-2">
-                        //   <StopOutlined className="!text-red-500" /> Standard / No Laundry
-                        // </span>
-                        <span className="font-medium">
-                          {/* Standard / No Laundry */}
-                          N/A
-                        </span>
-                      )
-                    },
-                    {
-                      value: true,
-                      label: (
-                        // <span className="flex items-center gap-2">
-                        //   <ShopOutlined className="!text-blue-500" /> Laundry Required
-                        // </span>
-                        <span className="font-medium">
-                          Washable
-                        </span>
-                      )
-                    },
-                  ]}
+                  checkedChildren="True"
+                  unCheckedChildren="False"
                 />
               </Form.Item>
 
-              {/* Is Free Section as Select */}
               <Form.Item
                 label="Is this item free?"
                 name="isFree"
                 rules={[{ required: true, message: "Please select billing type!" }]}
               >
-                <Select
+                <Switch
                   disabled={isView}
-                  placeholder="Select Billing Type"
-                  className="w-full"
-                  options={[
-                    // { value: false, label: <span className="text-blue-600 font-medium">Paid Item</span> },
-                    // { value: true, label: <span className="text-green-600 font-medium">Free Item</span> },
-                    {
-                      value: false, label: <span className="font-medium">
-                        {/* Paid Item */}
-                        Sale
-                      </span>
-                    },
-                    {
-                      value: true, label: <span className="font-medium">
-                        {/* Free Item */}
-                        Gift
-                      </span>
-                    },
-                  ]}
+                  checkedChildren="True"
+                  unCheckedChildren="False"
                 />
               </Form.Item>
             </div>
-            {/* </div> */}
-
           </>
-        )}
-      </Form>
+        )
+        }
+      </Form >
     </Drawer >
   );
 };

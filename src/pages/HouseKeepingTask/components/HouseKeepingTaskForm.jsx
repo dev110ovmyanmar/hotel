@@ -15,6 +15,7 @@ import {
 } from "../../../api/houseKeepingTaskApi";
 import HouseKeepingTaskAssignForm from "./HousKeepingTaskAssignForm";
 import MaintenanceRequestFromHK from "./MaintenanceRequestfromHK";
+import ColorStatusTag from "../../../component/ColorStatusTag/ColorStatusTag";
 
 const { TextArea } = Input;
 
@@ -61,6 +62,10 @@ const HouseKeepingTaskForm = ({
         options: { enabled: !!selectedRow?.uuid && drawerOpen },
     });
 
+    const statusCode = detail?.housekeepingStatus?.code;
+    // console.log("StatusCode", statusCode);
+    const isDisableEdit = statusCode === "completed" || statusCode === "cancelled";
+
     // ===== Fill Form =====
     useEffect(() => {
         if (detail && drawerOpen) {
@@ -94,7 +99,7 @@ const HouseKeepingTaskForm = ({
 
     const updateMutation = useApiMutation({
         mutationFn: updateHouseKeepingTask,
-        invalidateKeys: [["houseKeeping-tasks"]],
+        invalidateKeys: [["houseKeeping-tasks"], ["admin-meta"]],
     });
 
     // Determine loading state for FormButtons
@@ -165,14 +170,16 @@ const HouseKeepingTaskForm = ({
                 onClose={handleClose}
                 open={drawerOpen}
                 extra={
-                    isView ? (
-                        <Button onClick={() => setMode("edit")} type="primary">Edit</Button>
-                    ) : (
-                        <FormButtons
-                            onClick={() => form.submit()}
-                            mode={mode}
-                            isPending={isPending}
-                        />
+                    isDisableEdit ? null : ( // If disabled, show nothing
+                        isView ? (
+                            <Button onClick={() => setMode("edit")} type="primary">Edit</Button>
+                        ) : (
+                            <FormButtons
+                                onClick={() => form.submit()}
+                                mode={mode}
+                                isPending={isPending}
+                            />
+                        )
                     )
                 }
             >
@@ -182,48 +189,120 @@ const HouseKeepingTaskForm = ({
                         <div>
                             <Form form={form} layout="vertical" onFinish={onFinish}>
                                 <div className="grid grid-cols-2 gap-4">
-                                    <Form.Item name="roomUuid" label="Room No" rules={[{ required: true }]}>
-                                        <Select options={roomOptions} disabled={isView} placeholder="Select Room" />
+
+                                    <Form.Item
+                                        name="roomUuid"
+                                        label="Room No"
+                                        rules={[{ required: true }]}
+                                        getValueProps={(value) => {
+                                            const room = adminMetaData?.rooms?.find((r) => r.uuid === value);
+                                            if (isView) {
+                                                return {
+                                                    value: room?.roomNo,
+                                                    suffix: (
+                                                        <ColorStatusTag
+                                                            status={{
+                                                                code: room?.housekeepingStatus?.cleanStatus?.code,
+                                                                name: room?.housekeepingStatus?.cleanStatus?.name
+                                                            }}
+                                                        />
+                                                    )
+                                                };
+                                            }
+                                            return { value };
+                                        }}
+                                    >
+                                        {isView ? <Input readOnly /> :
+                                            <Select options={roomOptions} disabled={isView} placeholder="Select Room" />}
                                     </Form.Item>
-                                    <Form.Item name="taskType" label="Task Type" rules={[{ required: true }]}>
-                                        <Select options={taskTypeOptions} disabled={isView} />
+
+                                    <Form.Item name="taskType" label="Task Type" rules={[{ required: true }]}
+                                        getValueProps={(value) => ({
+                                            value: isView
+                                                ? taskTypeOptions.find((item) => item.value === value)?.label
+                                                : value,
+                                        })}>
+                                        {
+                                            isView ? <Input readOnly={isView} /> :
+                                                <Select options={taskTypeOptions} disabled={isView} placeholder="Select Task Type" />
+                                        }
                                     </Form.Item>
+
                                 </div>
 
                                 <div className="grid grid-cols-2 gap-4">
-                                    <Form.Item name="priorityLevel" label="Priority" rules={[{ required: true }]}>
-                                        <Select options={priorityOptions} disabled={isView} />
+
+                                    <Form.Item name="priorityLevel"
+                                        label="Priority" rules={[{ required: true }]}
+                                        getValueProps={(value) => ({
+                                            value: isView
+                                                ? priorityOptions.find((item) => item.value === value)?.label
+                                                : value,
+                                        })}
+                                    >
+                                        {
+                                            isView ?
+                                                <Input readOnly={isView} /> :
+                                                <Select
+                                                    options={priorityOptions}
+                                                    disabled={isView}
+                                                    placeholder="Select Priority" />
+                                        }
                                     </Form.Item>
-                                    {isCreate ? (
-                                        <Form.Item
-                                            name="housekeepingStatus"
-                                            label="Housekeeping Status"
-                                            rules={[{ required: true, message: "Please select status" }]}
-                                        >
-                                            <Select
-                                                options={hkStatusOptions}
-                                                disabled={true}
-                                            />
-                                        </Form.Item>
-                                    ) : (
-                                        <Form.Item name="housekeepingStatus" label="Housekeeping Status" rules={[{ required: true }]}>
-                                            <Select
-                                                options={hkStatusOptions}
-                                                disabled={isView}
-                                                placeholder="Select Housekeeping Status" />
-                                        </Form.Item>
-                                    )}
+
+                                    {
+                                        isCreate ? (
+                                            <Form.Item
+                                                name="housekeepingStatus"
+                                                label="Housekeeping Status"
+                                                rules={[{ required: true, message: "Please select status" }]}
+
+                                            >
+                                                <Select
+                                                    options={hkStatusOptions}
+                                                    disabled={true}
+                                                />
+                                            </Form.Item>
+                                        ) : (
+                                            <Form.Item name="housekeepingStatus"
+                                                label="Housekeeping Status"
+                                                rules={[{ required: true }]}
+                                                getValueProps={(value) => ({
+                                                    value: isView
+                                                        ? hkStatusOptions.find((item) => item.value === value)?.label
+                                                        : value,
+                                                })}
+                                            >
+                                                {
+                                                    isView ?
+                                                        <Input readOnly={isView} /> :
+                                                        <Select
+                                                            options={hkStatusOptions}
+                                                            disabled={isView}
+                                                            placeholder="Select Housekeeping Status" />
+                                                }
+                                            </Form.Item>
+                                        )
+                                    }
                                 </div>
 
                                 <div className="grid grid-cols-2 gap-4">
-                                    {/* Date Field */}
                                     <Form.Item
                                         name="plannedStartDate"
                                         label="Plan Date"
                                         rules={[{ required: true }]}
                                         className="flex-1"
+                                        getValueProps={(value) => ({
+                                            value: isView && value
+                                                ? dayjs(value).format("YYYY-MM-DD")
+                                                : value,
+                                        })}
                                     >
-                                        <DatePicker className="w-full" disabled={isView} />
+                                        {isView ? (
+                                            <Input disabled={isView} />
+                                        ) : (
+                                            <DatePicker className="w-full" placeholder="Select Date" />
+                                        )}
                                     </Form.Item>
 
                                     <div className="grid grid-cols-2 gap-4">
@@ -232,8 +311,16 @@ const HouseKeepingTaskForm = ({
                                             label="Start Time"
                                             rules={[{ required: true }]}
                                             className="flex-1"
+                                            getValueProps={(value) => ({
+                                                value: isView && value
+                                                    ? dayjs(value).format("HH:mm")
+                                                    : value,
+                                            })}
                                         >
-                                            <TimePicker className="w-full" format="HH:mm" disabled={isView} />
+                                            {
+                                                isView ? <Input disabled={isView} /> :
+                                                    <TimePicker className="w-full" format="HH:mm" disabled={isView} />
+                                            }
                                         </Form.Item>
 
                                         <Form.Item
@@ -241,9 +328,18 @@ const HouseKeepingTaskForm = ({
                                             label="End Time"
                                             rules={[{ required: true }]}
                                             className="flex-1"
+                                            getValueProps={(value) => ({
+                                                value: isView && value
+                                                    ? dayjs(value).format("HH:mm")
+                                                    : value,
+                                            })}
                                         >
-                                            <TimePicker className="w-full" format="HH:mm" disabled={isView} />
+                                            {
+                                                isView ? <Input disabled={isView} /> :
+                                                    <TimePicker className="w-full" format="HH:mm" disabled={isView} />
+                                            }
                                         </Form.Item>
+
                                     </div>
 
                                 </div>
@@ -253,13 +349,12 @@ const HouseKeepingTaskForm = ({
                                         <Form.Item
                                             name="staff"  // Changed from staffUuid to staffIds
                                             label="Assign Staff"
-                                        // rules={[{ required: true }]}
                                         >
                                             <Select
                                                 mode="multiple"
                                                 options={staffOptions}
                                                 disabled={isView}
-                                                placeholder="Select Housekeepers"
+                                                placeholder="Select Staffs"
                                                 optionFilterProp="label"
                                                 allowClear
                                             />
@@ -268,7 +363,7 @@ const HouseKeepingTaskForm = ({
                                 }
 
                                 <Form.Item name="remark" label="Remarks">
-                                    <TextArea rows={3} readOnly={isView} />
+                                    <TextArea rows={3} readOnly={isView} placeholder="Enter Remarks" />
                                 </Form.Item>
                             </Form>
 
@@ -287,10 +382,14 @@ const HouseKeepingTaskForm = ({
                                             </button>
                                         </div>
 
-                                        <div className="flex justify-end gap-3 mt-6">
-                                            <button onClick={handleNext} className="flex items-center gap-1.5 px-2 py-1 bg-gray-50 hover:bg-blue-50 hover:text-blue-600 rounded text-[12px] border border-gray-100 hover:border-blue-200 transition-all">
-                                                Transfer Maintenance Request <ArrowRightOutlined /></button>
-                                        </div>
+                                        {
+                                            isDisableEdit ? null :
+                                                <div className="flex justify-end gap-3 mt-6">
+                                                    <button onClick={handleNext} className="flex items-center gap-1.5 px-2 py-1 bg-gray-50 hover:bg-blue-50 hover:text-blue-600 rounded text-[12px] border border-gray-100 hover:border-blue-200 transition-all">
+                                                        Transfer Maintenance Request <ArrowRightOutlined /></button>
+                                                </div>
+                                        }
+
                                     </div>
                                 ) : null
                             }
@@ -303,10 +402,7 @@ const HouseKeepingTaskForm = ({
             <HouseKeepingTaskAssignForm
                 drawerOpen={taskAssignDrawerOpen}
                 setDrawerOpen={setTaskAssignDrawerOpen}
-                // selectedRow={selectedRow}
-                // setSelectedRow={setSelectedRow}
                 houseKeepingTaskDetail={detail}
-                // mode={currentMode}
                 staffOptions={staffOptionsforAssignment}
                 setPage={setPage}
             />

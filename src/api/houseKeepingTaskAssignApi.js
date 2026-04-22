@@ -34,3 +34,11 @@ export const updateHouseKeepingTaskAssign = async (params) => {
         );
     return data.response;
 };
+
+export const deleteHouseKeepingTaskAssign = async (params) => {
+    const { data } = await apiClient.delete(
+        "/hk-task-assignment/delete",
+        params
+    );
+    return data.response;
+};

@@ -66,6 +66,8 @@ const HouseKeepingTaskListing = () => {
         })),
         [adminMetaData]);
 
+
+
     // Reset to page 1 when searching or changing page size
     useEffect(() => {
         setPage(1);
