@@ -63,6 +63,8 @@ import { FaPeopleGroup } from "react-icons/fa6";
 import { GrUserSettings } from "react-icons/gr";
 import { RiCalendarScheduleLine, RiServiceBellLine } from "react-icons/ri";
 import { BsBuildingFillGear, BsBuildings } from "react-icons/bs";
+import { AiOutlineSolution } from "react-icons/ai";
+
 import NetworkErrorPage from "../NetworkErrorPage/NetworkErrorPage";
 
 const Dashboard = lazy(() => import("../../pages/Dashboard/Dashboard"));
@@ -219,17 +221,22 @@ const RoomRestrictionList = lazy(
 //   () => import("../../pages/FolioOperations/FolioOperationsList"),
 // );
 
-const ReservationListMenu = lazy(
-  () => import("../../pages/ReservationLists/ReservationListMenu"),
+// const ReservationListMenu = lazy(
+//   () => import("../../pages/ReservationLists/ReservationListMenu"),
+// );
+
+// const Booking = lazy(
+//   () => import("../../pages/ReservationLists/Menu/Booking/BookingList"),
+// );
+
+// const Inquiry = lazy(
+//   () => import("../../pages/ReservationLists/Menu/Inquiry/InquiryList"),
+// );
+
+const NightAudit = lazy(
+  () => import("../../pages/NightAudit/NightAudit"),
 );
 
-const Booking = lazy(
-  () => import("../../pages/ReservationLists/Menu/Booking/BookingList"),
-);
-
-const Inquiry = lazy(
-  () => import("../../pages/ReservationLists/Menu/Inquiry/InquiryList"),
-);
 
 export const authRoutes = [
   {
@@ -999,6 +1006,14 @@ export const authRoutes = [
     component: <MaintenanceRequestListing />,
     icon: <IoConstructOutline style={{ fontSize: "20px" }} />,
   },
+    {
+    key: 29,
+    label: "Night Audit",
+    path: "/night-audit",
+    component: <NightAudit />,
+    icon: <AiOutlineSolution style={{ fontSize: "20px" }} />,
+  },
+
 ];
 
 const AuthRoutes = () => {
