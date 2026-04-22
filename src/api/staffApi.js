@@ -19,3 +19,10 @@ export const staffDetails = async (params) => {
   const { data } = await apiClient.get("/staff", { params });
   return data.response;
 };
+
+export const staffUpload = async (params) => {
+  const { data } = await apiClient.post("/staff/upload", params, {
+    isMultipart: true,
+  });
+  return data.response;
+};

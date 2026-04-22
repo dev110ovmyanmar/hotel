@@ -39,7 +39,7 @@ const ExtraBedRateTable = ({ data, page, setPage }) => {
       title: "Rate Plan",
       dataIndex: ["ratePlan", "name"],
       key: "ratePlan",
-      width: 150
+      width: 150,
     },
     {
       title: "Price (MMK)",
@@ -141,10 +141,10 @@ const ExtraBedRateTable = ({ data, page, setPage }) => {
         scroll={{ x: 1000 }}
         columns={columns}
         dataSource={data}
+        pagination={false}
         rowKey={(record) => record.roomType?.id}
         expandable={{
           expandedRowKeys,
-
 
           onExpand: (expanded, record) => {
             const key = record.roomType?.id;
