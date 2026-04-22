@@ -27,6 +27,7 @@ import dayjs from "dayjs";
 import { capitalizeFirstLetter } from "../../../../utils/Utils";
 import ImageUpload from "../../../../component/ImageUpload/ImageUpload";
 import { fetchCompanyUpload } from "../../../../api/partnerApi";
+import { deleteImageUpload } from "../../../../api/deleteImageApi";
 
 const CompanyContractForm = ({
   mode,
@@ -144,10 +145,11 @@ const CompanyContractForm = ({
     ],
   });
 
-  if (partnerContractDetailData) {
-    console.log(partnerContractDetailData, "partnerContractDetailData");
-  }
-
+  const deleteCompanyContractUpload = useApiMutation({
+    mutationFn: deleteImageUpload,
+    invalidateKeys: [["partner-contract-details", { uuid: selectedData?.uuid }]],
+  });
+  
   return (
     <div>
       <Drawer
@@ -295,6 +297,8 @@ const CompanyContractForm = ({
         imageDrawerOpen={imageDrawerOpen}
         setImageDrawerOpen={setImageDrawerOpen}
         title={`${selectedData?.contractStart} to ${selectedData?.contractEnd}`}
+        fileCategoryName="company_contract"
+        deleteMutation={deleteCompanyContractUpload}
       />
     </div>
   );

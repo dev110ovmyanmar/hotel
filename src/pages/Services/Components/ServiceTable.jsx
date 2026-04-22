@@ -199,7 +199,7 @@ const ServiceTable = ({
         {
           record?.serviceInventoryMappings <= 0 ? null :
             <Table
-              className="nested-table"
+              className="custom-table-style"
               columns={expandColumns}
               dataSource={record.serviceInventoryMappings || []}
               rowKey="uuid"

@@ -21,6 +21,7 @@ import FormButtons from "../../../../component/FormButtons/FormButtons";
 import { queryClient } from "./../../../../app/queryClient";
 import Status from "./../../../../component/Status/Status";
 import ImageUpload from "../../../../component/ImageUpload/ImageUpload";
+import { deleteImageUpload } from "../../../../api/deleteImageApi";
 
 const { TextArea } = Input;
 
@@ -67,6 +68,7 @@ const AgencyForm = ({
       enabled: !!selectedData?.uuid,
     },
   });
+
 
   useEffect(() => {
     if (!isAdd && data) {
@@ -118,6 +120,15 @@ const AgencyForm = ({
     mutationFn: fetchAgencyUpload,
     invalidateKeys: [["agency-details", { uuid: selectedData?.uuid }]],
   });
+
+  const deleteAgencyUpload = useApiMutation({
+    mutationFn: deleteImageUpload,
+    invalidateKeys : [["agency-details", { uuid: selectedData?.uuid }]],
+  });
+
+  if(data){
+    console.log(data?.agencyFiles.map(i=>i),"DataForAgencyFiles")
+  }
 
   return (
     <div className="flex justify-center">
@@ -282,7 +293,9 @@ const AgencyForm = ({
         handleUploadMutation={agencyUpload}
         imageDrawerOpen={imageDrawerOpen}
         setImageDrawerOpen={setImageDrawerOpen}
-        title={selectedData?.name} 
+        title={selectedData?.name}
+        fileCategoryName="agency"
+        deleteMutation={deleteAgencyUpload} 
       />
     </div>
   );

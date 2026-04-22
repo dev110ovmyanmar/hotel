@@ -138,7 +138,7 @@ const FAndBInventoryTable = ({
     return (
       <>
         <Table
-          className="nested-table"
+          className="custom-table-style"
           columns={expandColumns}
           dataSource={record.menuInventoryMappings || []}
           rowKey="uuid"
