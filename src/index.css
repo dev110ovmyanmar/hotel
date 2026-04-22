@@ -24,12 +24,11 @@
   --foreground: #ffffff;
 }
 
-.app-bg-color{
+.app-bg-color {
   --red: #e62c4b;
   --black: #0f172a;
   --white: #ffffff;
   --yellow: #e5eb39;
-  
 }
 
 @custom-variant dark (&:where(.dark, .dark *));
@@ -52,7 +51,7 @@
   color: var(--foreground);
 }
 
-.header-bg-color{
+.header-bg-color {
   /* background-color: var(--red) !important; */
 }
 
@@ -227,7 +226,7 @@
 .ant-image .ant-image-cover {
   background: none !important;
 }
-
+  
 
 span .ant-upload {
   border: none !important;
@@ -267,8 +266,8 @@ span .ant-upload {
 }
 
 /* Nested Table */
-.nested-table-container{
-  padding:5px 15px;
+.nested-table-container {
+  padding: 5px 15px;
 }
 
 .nested-table {
@@ -280,14 +279,57 @@ span .ant-upload {
 
 .ant-table-tbody > tr.ant-table-expanded-row {
   background-color: #f3f4f6;
-} 
+}
 
-:where(.css-dev-only-do-not-override-1t2537o).ant-table-wrapper .ant-table-tbody >tr >th >.ant-table-wrapper:only-child .ant-table, :where(.css-dev-only-do-not-override-1t2537o).ant-table-wrapper .ant-table-tbody >tr >td >.ant-table-wrapper:only-child .ant-table, :where(.css-dev-only-do-not-override-1t2537o).ant-table-wrapper .ant-table-tbody >tr >th >.ant-table-expanded-row-fixed>.ant-table-wrapper:only-child .ant-table, :where(.css-dev-only-do-not-override-1t2537o).ant-table-wrapper .ant-table-tbody >tr >td >.ant-table-expanded-row-fixed>.ant-table-wrapper:only-child .ant-table{
+:where(.css-dev-only-do-not-override-1t2537o).ant-table-wrapper
+  .ant-table-tbody
+  > tr
+  > th
+  > .ant-table-wrapper:only-child
+  .ant-table,
+:where(.css-dev-only-do-not-override-1t2537o).ant-table-wrapper
+  .ant-table-tbody
+  > tr
+  > td
+  > .ant-table-wrapper:only-child
+  .ant-table,
+:where(.css-dev-only-do-not-override-1t2537o).ant-table-wrapper
+  .ant-table-tbody
+  > tr
+  > th
+  > .ant-table-expanded-row-fixed
+  > .ant-table-wrapper:only-child
+  .ant-table,
+:where(.css-dev-only-do-not-override-1t2537o).ant-table-wrapper
+  .ant-table-tbody
+  > tr
+  > td
+  > .ant-table-expanded-row-fixed
+  > .ant-table-wrapper:only-child
+  .ant-table {
   margin-block: 0 !important;
   margin-inline: 0 !important;
   padding: 0 !important;
 }
 
-body.something{
+body.something {
   background-color: red;
+}
+
+.no-radius-input {
+  border-radius: 0 !important;
+}
+
+.custom-blue-btn {
+  border: 1px solid #1677ff;
+  color: #1677ff;
+}
+
+.custom-blue-btn:hover {
+  border-color: #4096ff;
+  color: #4096ff;
+}
+.ant-badge .ant-badge-count {
+  border-radius: 0px;
+  background-color: #a3a19d;
 }

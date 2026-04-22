@@ -193,6 +193,12 @@ const PolicyForm = ({
         }
       },
     },
+    {
+      title: "Sort Order",
+      dataIndex: "priority",
+      key: "priority",
+      render: (text) => <div>{text}</div>,
+    },
     // {
     //   title: cancelCode || noShow ? "Days Range" : "Hours Range",
     //   // dataIndex: ,
@@ -233,22 +239,6 @@ const PolicyForm = ({
         );
       },
     },
-    // {
-    //   title: "Action",
-    //   render: (_, record) => {
-    //     return (
-    //       <EditOutlined
-    //         style={{ fontSize: "12px" }}
-    //         onClick={() => {
-    //           setPolicyRuleMode("editRule");
-    //           setAddPolicyRuleDrawer(true);
-    //           setSelectedPolicyRule(record);
-
-    //         }}
-    //       />
-    //     );
-    //   },
-    // },
     !isView
       ? {
         title: "Action",
@@ -445,30 +435,29 @@ const PolicyForm = ({
       if (hour === 0 && !currentUnlimited) {
         policyForm.setFieldsValue({
           isUnlimited: true,
-          // toOffset: undefined
         });
       }
 
       // If not 12 AM → uncheck
       if (hour !== 0 && currentUnlimited) {
         policyForm.setFieldsValue({
-          isUnlimited: false,
+          isUnlimited: true,
         });
       }
     }
 
     // NUMBER MODE
     if (!earlyCheckin && !lateCheckout) {
-      if (fromOffsetValue >= 30) {
+      if (fromOffsetValue >= 1) {
         policyForm.setFieldsValue({
           isUnlimited: true,
-          // toOffset: 9999
         });
-      } else {
-        policyForm.setFieldsValue({
-          isUnlimited: false,
-        });
-      }
+      } 
+      // else {
+      //   policyForm.setFieldsValue({
+      //     isUnlimited: false,
+      //   });
+      // }
     }
 
   }, [fromOffsetValue, earlyCheckin, lateCheckout]);
@@ -576,335 +565,9 @@ const PolicyForm = ({
               <TextArea readOnly={isView} rows={4}></TextArea>
             </Form.Item>
 
+
+
             {(isEdit || isView) && (
-              <Card className="mt-5 shadow-sm  border border-gray-100 bg-gray-100!">
-                {/* <Divider /> */}
-                <Space className="!flex !justify-between">
-                  <div className="font-bold">
-                    {cancelCode
-                      ? "Cancellation Policy (Days Before Arrival)"
-                      : noShow
-                        ? "No Show Policy (Days Before Arrival)"
-                        : earlyCheckin
-                          ? "Early CheckIn Policy"
-                          : "Late CheckOut Policy"}
-                  </div>
-
-                  <Button
-                    type="primary"
-                    onClick={() => {
-                      (openPolicyRule(), setPolicyRuleMode("addRule"));
-                    }}
-                    hidden={isView}
-                  >
-                    Add New Policy Rule
-                  </Button>
-                </Space>
-
-                <Table
-                  rowKey="id"
-                  dataSource={data?.policyRules}
-                  // dataSource={selectedData?.policyRules }
-                  // dataSource={policyRuleData}
-                  columns={columns}
-                  pagination={false}
-                  className="my-3"
-                ></Table>
-
-                <Drawer
-                  title={
-                    <div className="flex justify-between">
-                      {addPolicyRule ? (
-                        <span>Add New Policy Rule</span>
-                      ) : (
-                        <span>Edit Policy Rule</span>
-                      )}
-                      <Button
-                        type="primary"
-                        htmlType="submit"
-                        onClick={() => policyForm.submit()}
-                      >
-                        {addPolicyRule ? "Create" : "Update"}
-                      </Button>
-                    </div>
-                  }
-                  open={addPolicyRuleDrawer}
-                  onClose={() => {
-                    (setAddPolicyRuleDrawer(false), setSelectedPolicyRule({}));
-                  }}
-                  size={550}
-                >
-                  <Form
-                    layout="vertical"
-                    form={policyForm}
-                    validateTrigger="onSubmit"
-                    onFinish={savePolicyRule}
-                  >
-                    <Form.Item
-                      label="Charge Base Type"
-                      name={["chargeBaseType", "uuid"]}
-                      rules={[
-                        {
-                          required: true,
-                          message: "Charge Based On is Required",
-                        },
-                      ]}
-                    >
-                      <Select
-                        options={chargeBaseType?.map((item) => ({
-                          label: item.name,
-                          value: item.uuid,
-                        }))}
-                      ></Select>
-                    </Form.Item>
-
-                    <Row gutter={16}>
-                      <Col span={12}>
-                        <Form.Item
-                          label="Charge Type"
-                          name={["chargeType", "uuid"]}
-                          rules={[
-                            {
-                              required: true,
-                              message: "Charge Type is Required",
-                            },
-                          ]}
-                          getValueProps={(value) => ({
-                            value: isView
-                              ? chargeType.find((item) => item.value === value)
-                                ?.label
-                              : value,
-                          })}
-                        >
-                          {isView ? (
-                            <Input readOnly={isView} />
-                          ) : (
-                            <Select
-                              options={chargeType?.map((item) => ({
-                                label: item.name,
-                                value: item.uuid,
-                              }))}
-                              placeholder="Select Charge Type"
-                            ></Select>
-                          )}
-                        </Form.Item>
-                      </Col>
-
-                      <Col span={12}>
-                        <Form.Item
-                          label="Charge Value "
-                          name="chargeValue"
-                          min={0}
-                          rules={[
-                            {
-                              required: true,
-                              message: "Charge Value is Required",
-                            },
-                            {
-                              validator: (_, value) => {
-                                const selectedType = chargeType?.find(
-                                  (item) => item.uuid === chargeTypeValue,
-                                );
-
-                                if (selectedType?.code === "percentage") {
-                                  const numValue = Number(value);
-                                  if (
-                                    isNaN(numValue) ||
-                                    numValue < 1 ||
-                                    numValue > 100
-                                  ) {
-                                    return Promise.reject(
-                                      new Error(
-                                        "Percentage must be between 1 and 100",
-                                      ),
-                                    );
-                                  }
-                                }
-                                return Promise.resolve();
-                              },
-                            },
-                          ]}
-                        >
-                          <Input
-                            type="number"
-                            min={0}
-                            addonAfter={(() => {
-                              const selected = chargeType?.find(
-                                (item) => item.uuid === chargeTypeValue,
-                              );
-                              return selected?.code === "percentage"
-                                ? "%"
-                                : "MMK";
-                            })()}
-                            readOnly={isView}
-                          />
-                        </Form.Item>
-                      </Col>
-                    </Row>
-
-
-                    <Form.Item
-                      label={
-                        <>
-                          <span>
-                            {cancelCode ? "Cancel Between" : "No Show"}{" "}
-                          </span>
-                          <span
-                            style={{ fontWeight: "bold", marginLeft: "5px" }}
-                          >
-                            {" "}
-                            (Days Before Arrival)
-                          </span>
-                        </>
-                      }
-                      name={cancelCode ? "cancelBetween" : "noShow"}
-                    >
-                      <Row gutter={[16, 16]}>
-                        <Col xs={24} sm={12}>
-                          <Form.Item
-                            name="fromOffset"
-                            rules={[
-                              { required: true, message: "From is Required" },
-                            ]}
-                            style={{ marginBottom: 0 }}
-                          >
-                            <InputNumber
-                              readOnly={isView}
-                              style={{ width: "100%" }}
-                              addonAfter={
-                                earlyCheckin || lateCheckout ? "Hrs" : "Day"
-                              }
-                              min={0}
-                              placeholder="From"
-                            />
-                          </Form.Item>
-                        </Col>
-
-                        <Col xs={24} sm={12}>
-                          <Form.Item
-                            shouldUpdate={(prev, curr) =>
-                              prev?.toOffsetNoLimit !== curr?.toOffsetNoLimit
-                            }
-                            style={{ marginBottom: 0 }}
-                          >
-                            {({ getFieldValue, setFieldValue }) => {
-                              const isNoLimit =
-                                getFieldValue("toOffsetNoLimit");
-
-                              return (
-                                <div
-                                  style={{
-                                    display: "flex",
-                                    flexDirection: "column",
-                                    gap: "8px",
-                                  }}
-                                >
-                                  <div
-                                    style={{
-                                      display: "flex",
-                                      gap: "8px",
-                                      alignItems: "center",
-                                    }}
-                                  >
-                                    <div style={{ flex: 1 }}>
-                                      <InputNumber
-                                        readOnly={isView || isNoLimit}
-                                        style={{ width: "100%" }}
-                                        addonAfter={
-                                          earlyCheckin || lateCheckout
-                                            ? "Hrs"
-                                            : "Days"
-                                        }
-                                        min={0}
-                                        value={
-                                          isNoLimit
-                                            ? 9999
-                                            : getFieldValue("toOffset")
-                                        }
-                                        disabled={isNoLimit}
-                                        onChange={(value) => {
-                                          setFieldValue("toOffset", value);
-                                          if (value !== 9999) {
-                                            setFieldValue(
-                                              "toOffsetNoLimit",
-                                              false,
-                                            );
-                                          }
-                                        }}
-                                        placeholder="To"
-                                      />
-                                    </div>
-
-                                    {!isView && (
-                                      <Checkbox
-                                        checked={isNoLimit}
-                                        onChange={(e) => {
-                                          const checked = e.target.checked;
-                                          setFieldValue(
-                                            "toOffsetNoLimit",
-                                            checked,
-                                          );
-                                          if (checked) {
-                                            setFieldValue("toOffset", 9999);
-                                          } else {
-                                            setFieldValue(
-                                              "toOffset",
-                                              undefined,
-                                            );
-                                          }
-                                        }}
-                                      >
-                                        No Limit
-                                      </Checkbox>
-                                    )}
-
-                                    {isView &&
-                                      getFieldValue("toOffset") === 9999 && (
-                                        <Tag color="blue">No Limit</Tag>
-                                      )}
-                                  </div>
-
-                                  {/* Validation message */}
-                                  {!isNoLimit &&
-                                    !getFieldValue("toOffset") &&
-                                    !isView && (
-                                      <div
-                                        style={{
-                                          color: "#ff4d4f",
-                                          fontSize: "12px",
-                                        }}
-                                      >
-                                        To is Required
-                                      </div>
-                                    )}
-                                </div>
-                              );
-                            }}
-                          </Form.Item>
-                        </Col>
-                      </Row>
-                    </Form.Item>
-
-                    <Form.Item
-                      label="Sort Order"
-                      name="priority"
-                      rules={[
-                        { required: true, message: "Priority is Required" },
-                      ]}
-                    >
-                      <InputNumber
-                        readOnly={isView}
-                        style={{ width: "100%" }}
-                        min={0}
-                      />
-                    </Form.Item>
-                  </Form>
-                </Drawer>
-
-              </Card>
-            )}
-
-            {/* {(isEdit || isView) && (
               <>
                 <Divider />
 
@@ -1054,7 +717,7 @@ const PolicyForm = ({
                           <Input
                             type="number"
                             min={0}
-                            addonAfter={(() => {
+                            suffix={(() => {
                               const selected = chargeType?.find(
                                 (item) => item.uuid === chargeTypeValue,
                               );
@@ -1084,7 +747,7 @@ const PolicyForm = ({
                       required
                     >
                       <Row gutter={[16, 16]}>
-                        <Col span={11}>
+                        <Col span={9}>
                           {
                             (earlyCheckin || lateCheckout) ?
                               <Form.Item
@@ -1133,21 +796,9 @@ const PolicyForm = ({
 
                         </Col>
 
-                        <Col span={1}>
-                          <Form.Item
-                            name="isUnlimited"
-                            valuePropName="checked"
-                          >
-                            <Checkbox
-                              rules={[
-                                { required: true, message: "To is Required" }]}
-                            />
-                          </Form.Item>
-                        </Col>
-
                         {
                           !isUnlimited &&
-                          <Col span={11}>
+                          <Col span={9}>
                             {
                               (earlyCheckin || lateCheckout) ?
                                 <Form.Item
@@ -1179,7 +830,7 @@ const PolicyForm = ({
                                     readOnly={isView}
                                     style={{ width: "100%" }}
                                     suffix={
-                                      earlyCheckin || lateCheckout ? "Hrs" : "Days"
+                                      earlyCheckin || lateCheckout ? "Hr" : "Day"
                                     }
                                     placeholder="To"
                                   />
@@ -1188,6 +839,22 @@ const PolicyForm = ({
 
                           </Col>
                         }
+
+                        <Col span={6}>
+                          <Form.Item
+                            name="isUnlimited"
+                            valuePropName="checked"
+                          >
+                            <Checkbox
+                              rules={[
+                                { required: true, message: "To is Required" }]}
+                              
+                            >
+                              <span>No Limit</span>
+                            </Checkbox>
+                            
+                          </Form.Item>
+                        </Col>
 
                       </Row>
                     </Form.Item>
@@ -1208,7 +875,7 @@ const PolicyForm = ({
                   </Form>
                 </Drawer>
               </>
-            )} */}
+            )}
           </Form>
         )}
       </Drawer>

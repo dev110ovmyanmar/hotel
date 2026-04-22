@@ -11,6 +11,7 @@ import {
   Card,
   Divider,
   Image,
+  Modal,
 } from "antd";
 import {
   CloseOutlined,
@@ -24,6 +25,7 @@ import Toast from "../../../component/Toast/Toast";
 import FormButtons from "../../../component/FormButtons/FormButtons";
 import GuestPreview from "../../../component/GuestPreview/GuestPreview";
 import UploadBox from "../../../component/UploadBox/UploadBox";
+import { deleteImageUpload } from "../../../api/uploadDeleteApi";
 
 const { Title } = Typography;
 
@@ -54,6 +56,11 @@ const NewGuestUploadForm = ({ open, onClose, selectedRow }) => {
     invalidateKeys: [["guest-detail", selectedRow?.uuid]],
   });
 
+  const deleteFileMutation = useApiMutation({
+    mutationFn: deleteImageUpload,
+    invalidateKeys: [["guest-detail", selectedRow?.uuid]],
+  });
+
   const addDocument = () => {
     setOtherDocs((prev) => [
       ...prev,
@@ -77,6 +84,41 @@ const NewGuestUploadForm = ({ open, onClose, selectedRow }) => {
 
   const handleNameChange = (e, id) => {
     updateDocument(id, { name: e.target.value });
+  };
+
+  const handleDeleteConfirm = (doc) => {
+    Modal.confirm({
+      title: "Are you sure?",
+      content: "This document will be permanently deleted.",
+      okText: "Delete",
+      okType: "danger",
+      cancelText: "Cancel",
+
+      onOk: () => {
+        if (doc.uuid) {
+          deleteFileMutation.mutate(
+            {
+              uuid: doc.uuid,
+              fileCategory: "guest_file",
+            },
+            {
+              onSuccess: () => {
+                removeDocument(doc.id);
+                Toast.success("Deleted successfully!");
+                setOtherDocs((prev) =>
+                  prev.filter((item) => item.id !== doc.id),
+                );
+              },
+              onError: () => {
+                Toast.error("Delete failed!");
+              },
+            },
+          );
+        } else {
+          setOtherDocs((prev) => prev.filter((item) => item.id !== doc.id));
+        }
+      },
+    });
   };
 
   useEffect(() => {
@@ -222,6 +264,7 @@ const NewGuestUploadForm = ({ open, onClose, selectedRow }) => {
               overflow: "hidden",
               position: "relative",
               background: "#f5f5f5",
+              borderRadius: 5,
             }}
           >
             {guestPhoto ? (
@@ -340,7 +383,7 @@ const NewGuestUploadForm = ({ open, onClose, selectedRow }) => {
               <Row gutter={12} align="middle">
                 <Col span={10} style={{ position: "relative" }}>
                   <CloseOutlined
-                    onClick={() => removeDocument(doc.id)}
+                    onClick={() => handleDeleteConfirm(doc)}
                     style={{
                       cursor: "pointer",
                       position: "absolute",

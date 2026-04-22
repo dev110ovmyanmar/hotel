@@ -143,7 +143,7 @@ const ImageUploadCard = ({
                 style={{ color: "#fff", cursor: "pointer" }}
                 onClick={() => handlePreview(imageUrl)}
               >
-                {smallSizes? <EyeOutlined /> : "Preview"}
+                <EyeOutlined /> 
               </span>
 
               <span
@@ -151,7 +151,7 @@ const ImageUploadCard = ({
                 onClick={inputRefClick}
 
               >
-                {smallSizes? <EditOutlined /> : "Edit"}
+                <EditOutlined />
               </span>
             </div>
 

@@ -31,6 +31,8 @@ import PriceTag from "../../../../component/PriceTag/PriceTag";
 import { PERMISSIONS } from "../../../../variables/permission";
 import usePermission from "../../../../hooks/usePermission";
 import { hasIn } from "lodash";
+import { deleteImageUpload } from "../../../../api/deleteImageApi";
+
 
 
 const onChange = (value) => {
@@ -182,6 +184,12 @@ const RoomTypeForm = ({
     mutationFn: fetchRoomTypeUpload,
     invalidateKeys: [["roomTypeData", { uuid: selectedData?.uuid }]],
   });
+
+  const deleteRoomTypeUpload = useApiMutation({
+    mutationFn: deleteImageUpload,
+    invalidateKeys: [["roomTypeData", { uuid: selectedData?.uuid }]],
+  });
+
 
   return (
     <div>
@@ -464,6 +472,10 @@ const RoomTypeForm = ({
         handleUploadMutation={fetchRoomTypeUploads}
         imageDrawerOpen={imageDrawerOpen}
         setImageDrawerOpen={setImageDrawerOpen}
+        fileCategoryName="room_type"
+        deleteMutation={deleteRoomTypeUpload}
+
+
       />
 
     </div >

@@ -7,7 +7,7 @@ const { Text } = Typography;
 
 const UploadBox = ({ label, file, setFile }) => {
   const [previewOpen, setPreviewOpen] = useState(false);
-  const [previewImage, setPreviewImage] = useState("");
+  const [previewImage, setPreviewImage] = useState(null);
   const isFileObject = file instanceof File;
 
   const handlePreview = (e) => {
