@@ -4,8 +4,9 @@ import useApiQuery from "../../hooks/useApiQuery";
 import ListHeader from "../../component/ListHeader/ListHeader";
 import StaffsForm from "./Components/StaffsForms/StaffsForm";
 import StaffsTable from "./Components/StaffsTable";
-import { fetchStaff } from "../../api/staffApi";
+import { fetchStaff} from "../../api/staffApi";
 import { PERMISSIONS } from "../../variables/permission";
+import StaffUploadForm from "./Components/StaffsForms/StaffUploadForm";
 
 const StaffsList = () => {
   const [keyword, setKeyword] = useState("");
@@ -15,6 +16,7 @@ const StaffsList = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mode, setMode] = useState("add");
   const [selectedData, setSelectedData] = useState(null);
+  const [uploadDrawer, setUploadDrawer] = useState(false);
 
   const normalStatus = status === "all" ? null : status;
 
@@ -74,6 +76,13 @@ const StaffsList = () => {
         setDrawerOpen={setDrawerOpen}
         selectedData={selectedData}
         setSelectedData={setSelectedData}
+      />
+      <StaffUploadForm
+        page={page}
+        uploadDrawer={uploadDrawer}
+        setUploadDrawer={setUploadDrawer}
+        selectedData={selectedData}
+        setSelectedData={setSelectedData}      
       />
     </div>
   );

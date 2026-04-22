@@ -14,12 +14,12 @@ import ColorStatusTag from "../../../component/ColorStatusTag/ColorStatusTag";
 const HouseKeepingStatusCard = ({ data, onEdit, onView }) => {
     // --- 1. Business Logic & Mapping ---
     const hkStatusMap = {
-        clean: "hk_clean",
-        dirty: "hk_dirty",
-        in_progress: "hk_in_progress",
-        inspected: "hk_inspected",
-        out_of_order: "hk_out_of_order",
-        out_of_service: "hk_out_of_service",
+        clean: "clean",
+        dirty: "dirty",
+        in_progress: "in_progress",
+        inspected: "inspected",
+        out_of_order: "out_of_order",
+        out_of_service: "out_of_service",
     };
 
     const firstItem = Array.isArray(data?.cleanStatus) ? data?.cleanStatus[0] : data?.cleanStatus;
@@ -40,15 +40,7 @@ const HouseKeepingStatusCard = ({ data, onEdit, onView }) => {
             </div>
             <span className="text-[11px] font-bold">:</span>
             <div className="flex items-center pl-2 border-l border-gray-100 ml-1 min-w-0">
-                {/* <span className={`text-[11px] truncate leading-none font-bold ${isPriority && data?.priorityLevel?.name === 'High' ||
-                    isPriority && data?.priorityLevel?.name === 'Urgent' ? 'text-red-500' : 'text-gray-800'
-                    }`}>
-                    {value || "-"}
-                </span> */}
-                {/* <span className={`text-[11px] truncate leading-none font-bold`}>
-                    {value || "-"}
-                </span> */}
-                <span className={`text-[11px] truncate ${isDate ? 'font-mono text-gray-500' : 'font-bold'}`}>
+                <span className={`text-[11px] truncate ${isDate ? 'font-mono' : 'font-bold'}`}>
                     {value || "---"}
                 </span>
             </div>
@@ -69,7 +61,25 @@ const HouseKeepingStatusCard = ({ data, onEdit, onView }) => {
                     </h3>
                 </div>
                 {/* Using the mapped statusForTag object here */}
-                <ColorStatusTag status={statusForTag} />
+                <div className="flex flex-col items-end gap-1.5">
+                    <ColorStatusTag status={statusForTag} />
+                    {data?.priorityLevel?.code === 'high' && (
+                        <div className="px-1.5 py-0.5 rounded-sm bg-red-50 text-red-600 text-[8px] font-black border border-red-100">
+                            High Priority
+                        </div>
+                    )}
+                    {data?.priorityLevel?.code === 'urgent' && (
+                        <div className="px-1.5 py-0.5 rounded-sm bg-red-50 text-red-600 text-[8px] font-black border border-red-100">
+                            Urgent Priority
+                        </div>
+                    )}
+
+                    {(data?.priorityLevel?.code === 'low' || data?.priorityLevel?.code === 'normal') && (
+                        <div className="px-1.5 py-0.5 rounded-sm bg-green-50 text-green-600 text-[8px] font-black border border-green-100">
+                            {data?.priorityLevel?.code === 'low' ? 'Low Priority' : 'Normal Priority'}
+                        </div>
+                    )}
+                </div>
             </div>
 
             {/* Core Details Grid */}
@@ -84,12 +94,12 @@ const HouseKeepingStatusCard = ({ data, onEdit, onView }) => {
                     label="Room Type"
                     value={data?.room?.roomType?.name}
                 />
-                <TightRow
+                {/* <TightRow
                     icon={AlertOutlined}
                     label="Priority"
                     value={data?.priorityLevel?.name || "---"}
                     isPriority
-                />
+                /> */}
                 <TightRow
                     icon={ClockCircleOutlined}
                     label="Started"
@@ -108,13 +118,13 @@ const HouseKeepingStatusCard = ({ data, onEdit, onView }) => {
             <div className="mt-3 pt-2 border-t border-gray-100 flex items-center justify-end gap-4">
                 <button
                     onClick={(e) => { e.stopPropagation(); onView(); }}
-                    className="flex items-center gap-1 text-[10px] font-bold text-gray-400 hover:text-blue-600 uppercase tracking-wider transition-colors"
+                    className="flex items-center gap-1 text-[10px] font-bold hover:text-blue-600 uppercase tracking-wider transition-colors"
                 >
                     <EyeOutlined className="text-[11px]" /> View
                 </button>
                 <button
                     onClick={(e) => { e.stopPropagation(); onEdit(); }}
-                    className="flex items-center gap-1 text-[10px] font-bold text-gray-400 hover:text-blue-600 uppercase tracking-wider transition-colors"
+                    className="flex items-center gap-1 text-[10px] font-bold hover:text-blue-600 uppercase tracking-wider transition-colors"
                 >
                     <EditOutlined className="text-[11px]" /> Edit
                 </button>
@@ -122,9 +132,7 @@ const HouseKeepingStatusCard = ({ data, onEdit, onView }) => {
 
             {/* Sidebar Accent Bar */}
             <div
-                className={`absolute top-0 left-0 w-1 h-full transition-all duration-300 ${data?.priorityLevel?.code === 'high' || data?.priorityLevel?.code === 'urgent'
-                    ? 'bg-red-500 opacity-100'
-                    : 'bg-blue-500 opacity-0 group-hover:opacity-100'
+                className={`absolute top-0 left-0 w-1 h-full transition-colors ${data?.priorityLevel?.code === 'high' || data?.priorityLevel?.code === 'urgent' ? 'bg-red-500' : 'bg-blue-500'
                     }`}
             />
         </div>

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Form, Input, Drawer, DatePicker, Select, Button, Divider, TimePicker } from "antd";
 import { ClockCircleOutlined, ArrowRightOutlined, TeamOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
@@ -13,8 +13,8 @@ import {
     getHouseKeepingTaskDetail,
     updateHouseKeepingTask
 } from "../../../api/houseKeepingTaskApi";
-import { useNavigate } from "react-router-dom";
 import HouseKeepingTaskAssignForm from "./HousKeepingTaskAssignForm";
+import MaintenanceRequestFromHK from "./MaintenanceRequestfromHK";
 
 const { TextArea } = Input;
 
@@ -28,6 +28,7 @@ const HouseKeepingTaskForm = ({
     setPage,
     staffOptions,
     roomOptions,
+    adminMetaData,
     onViewTaskAssign,
     taskAssignDrawerOpen,
     setTaskAssignDrawerOpen,
@@ -35,6 +36,8 @@ const HouseKeepingTaskForm = ({
 }) => {
     const [form] = Form.useForm();
     const queryClient = useQueryClient();
+
+    const [maintenanceRequestDrawerOpen, setMaintenanceRequestDrawerOpen] = useState(false);
 
     const isView = mode === "view";
     const isEdit = mode === "edit";
@@ -149,18 +152,10 @@ const HouseKeepingTaskForm = ({
         }
     };
 
+    const handleNext = () => {
+        setMaintenanceRequestDrawerOpen(true);
+    }
 
-    const navigate = useNavigate();
-
-    const handleNext = async () => {
-        try {
-            queryClient.setQueryData(["housekeeping-task-detail"], detail);
-            setDrawerOpen(false);
-            navigate("/maintenance-request?triggerOpen=true");
-        } catch (error) {
-            console.log("Failed:", error);
-        }
-    };
 
     return (
         <>
@@ -199,9 +194,6 @@ const HouseKeepingTaskForm = ({
                                     <Form.Item name="priorityLevel" label="Priority" rules={[{ required: true }]}>
                                         <Select options={priorityOptions} disabled={isView} />
                                     </Form.Item>
-                                    {/* <Form.Item name="housekeepingStatus" label="Status" rules={[{ required: true }]}>
-                                        <Select options={hkStatusOptions} disabled={isView} />
-                                    </Form.Item> */}
                                     {isCreate ? (
                                         <Form.Item
                                             name="housekeepingStatus"
@@ -297,7 +289,7 @@ const HouseKeepingTaskForm = ({
 
                                         <div className="flex justify-end gap-3 mt-6">
                                             <button onClick={handleNext} className="flex items-center gap-1.5 px-2 py-1 bg-gray-50 hover:bg-blue-50 hover:text-blue-600 rounded text-[12px] border border-gray-100 hover:border-blue-200 transition-all">
-                                                Transfer to Maintenance Request <ArrowRightOutlined /></button>
+                                                Transfer Maintenance Request <ArrowRightOutlined /></button>
                                         </div>
                                     </div>
                                 ) : null
@@ -317,6 +309,14 @@ const HouseKeepingTaskForm = ({
                 // mode={currentMode}
                 staffOptions={staffOptionsforAssignment}
                 setPage={setPage}
+            />
+
+            <MaintenanceRequestFromHK
+                drawerOpen={maintenanceRequestDrawerOpen}
+                setDrawerOpen={setMaintenanceRequestDrawerOpen}
+                houseKeepingTaskDetail={detail}
+                initData={initData}
+                adminMetaData={adminMetaData}
             />
         </>
 

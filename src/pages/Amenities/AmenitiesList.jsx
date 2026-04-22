@@ -7,6 +7,7 @@ import { fetchAmenities } from "../../api/amenitiesApi";
 import AmenitiesTable from "./Components/AmenitiesTable";
 import AmenitiesForm from "./Components/AmenitiesForm/AmenitiesForm";
 import ListHeader from "../../component/ListHeader/ListHeader";
+import { PERMISSIONS } from "../../variables/permission";
 
 const AmenitiesList = () => {
   const [keyword, setKeyword] = useState("");
@@ -51,6 +52,7 @@ const AmenitiesList = () => {
           setKeyword={setKeyword}
           addButtonText="Add New Amenitities"
           onAdd={handleAdd}
+          permission={PERMISSIONS.AMENITY_CREATE}
         />
       </div>
 

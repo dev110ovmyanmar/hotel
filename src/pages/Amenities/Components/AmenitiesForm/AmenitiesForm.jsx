@@ -17,6 +17,8 @@ import {
 } from "../../../../api/amenitiesApi";
 import FormButtons from "../../../../component/FormButtons/FormButtons";
 import Loader from "../../../../component/Loader/Loader"
+import { PERMISSIONS } from "../../../../variables/permission";
+import usePermission from "../../../../hooks/usePermission";
 
 const AmenitiesForm = ({
   mode,
@@ -33,6 +35,9 @@ const AmenitiesForm = ({
   const isView = mode === "view";
   const isEdit = mode === "edit";
   const isAdd = mode === "add";
+
+  const { hasPermission } = usePermission();
+  const canEdit = hasPermission(PERMISSIONS.AMENITY_EDIT);
 
   const upsertAmenities = useApiMutation({
     mutationFn: upsertAmenity,
@@ -107,14 +112,16 @@ const AmenitiesForm = ({
                   : "Add New Amenitities"}
             </span>
             {isView ? (
-              <Button
-                type="primary"
-                onClick={() => {
-                  setMode("edit");
-                }}
-              >
-                Edit
-              </Button>
+              canEdit && (
+                <Button
+                  type="primary"
+                  onClick={() => {
+                    setMode("edit");
+                  }}
+                >
+                  Edit
+                </Button>
+              )
             ) : (
               <FormButtons
                 onClick={() => form.submit()}

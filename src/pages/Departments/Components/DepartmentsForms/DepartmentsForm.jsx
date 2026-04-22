@@ -12,6 +12,8 @@ import {
   editDepartment,
 } from "../../../../api/departmentApi";
 import Loader from "../../../../component/Loader/Loader"
+import { PERMISSIONS } from "../../../../variables/permission";
+import usePermission from "../../../../hooks/usePermission";
 
 const DepartmentsForm = ({
   mode,
@@ -28,6 +30,9 @@ const DepartmentsForm = ({
   const isView = mode === "view";
   const isEdit = mode === "edit";
   const isAdd = mode === "add";
+
+  const { hasPermission } = usePermission();
+  const canEdit = hasPermission(PERMISSIONS.DEPARTMENT_EDIT);
 
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
 
@@ -115,24 +120,28 @@ const DepartmentsForm = ({
                   ? "Edit Department"
                   : "Create Department"}
             </span>
-            {isView ? (
-              <Button
-                type="primary"
-                onClick={() => {
-                  setMode("edit");
-                }}
-              >
-                Edit
-              </Button>
-            ) : (
-              <FormButton
-                onClick={() => form.submit()}
-                isPending={
-                  createDepartments.isPending || editDepartments.isPending
-                }
-                mode={mode}
-              />
-            )}
+            {isView ?
+              (
+                canEdit && (
+                  <Button
+                    type="primary"
+                    onClick={() => {
+                      setMode("edit");
+                    }}
+                  >
+                    Edit
+                  </Button>
+                )
+              )
+              : (
+                <FormButton
+                  onClick={() => form.submit()}
+                  isPending={
+                    createDepartments.isPending || editDepartments.isPending
+                  }
+                  mode={mode}
+                />
+              )}
           </div>
         }
       >

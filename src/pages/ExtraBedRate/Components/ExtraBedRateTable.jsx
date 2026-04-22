@@ -39,14 +39,14 @@ const ExtraBedRateTable = ({ data, page, setPage }) => {
       title: "Rate Plan",
       dataIndex: ["ratePlan", "name"],
       key: "ratePlan",
-      width:150
+      width: 150,
     },
     {
       title: "Price (MMK)",
       dataIndex: "price",
       key: "price",
       align: "right",
-      width:100,
+      width: 100,
       render: (price) => price?.toLocaleString(),
     },
     {
@@ -90,6 +90,8 @@ const ExtraBedRateTable = ({ data, page, setPage }) => {
               </Space>
             ),
           }));
+
+        if (items.length === 0) return null;
 
         return (
           <Dropdown menu={{ items }} trigger={["click"]}>
@@ -139,10 +141,10 @@ const ExtraBedRateTable = ({ data, page, setPage }) => {
         scroll={{ x: 1000 }}
         columns={columns}
         dataSource={data}
+        pagination={false}
         rowKey={(record) => record.roomType?.id}
         expandable={{
           expandedRowKeys,
-
 
           onExpand: (expanded, record) => {
             const key = record.roomType?.id;

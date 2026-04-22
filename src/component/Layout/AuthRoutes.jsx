@@ -61,8 +61,10 @@ import { LuPackageSearch, LuSalad } from "react-icons/lu";
 import { LiaHotelSolid } from "react-icons/lia";
 import { FaPeopleGroup } from "react-icons/fa6";
 import { GrUserSettings } from "react-icons/gr";
-import { RiServiceBellLine } from "react-icons/ri";
+import { RiCalendarScheduleLine, RiServiceBellLine } from "react-icons/ri";
 import { BsBuildingFillGear, BsBuildings } from "react-icons/bs";
+import { AiOutlineSolution } from "react-icons/ai";
+
 import NetworkErrorPage from "../NetworkErrorPage/NetworkErrorPage";
 
 const Dashboard = lazy(() => import("../../pages/Dashboard/Dashboard"));
@@ -73,8 +75,8 @@ const Reservation = lazy(
 const ReservationForm = lazy(
   () => import("../../pages/ReservationForm/ReservationForm"),
 );
-const Guest = lazy(() => import("../../pages/Guest/GuestList"));
-const Booking = lazy(() => import("../../pages/Booking/Booking"));
+const GuestDetails = lazy(() => import("../../pages/Guest/GuestList"));
+// const Booking = lazy(() => import("../../pages/Booking/Booking"));
 const Department = lazy(
   () => import("../../pages/Departments/DepartmentsList"),
 );
@@ -203,6 +205,39 @@ const MaintenanceRequestListing = lazy(
   () => import("../../pages/MaintenanceRequest/MaintenanceRequestListing"),
 );
 
+const RoomRestrictionList = lazy(
+  () => import("../../pages/RoomRestriction/RoomRestrictionList"),
+);
+
+// const RoomInformation = lazy(
+//   () => import("../../pages/RoomInformation/RoomInformationList"),
+// );
+
+// const BookingDetail = lazy(
+//   () => import("../../pages/BookingDetail/BookingDetailList"),
+// );
+
+// const FolioOperations = lazy(
+//   () => import("../../pages/FolioOperations/FolioOperationsList"),
+// );
+
+// const ReservationListMenu = lazy(
+//   () => import("../../pages/ReservationLists/ReservationListMenu"),
+// );
+
+// const Booking = lazy(
+//   () => import("../../pages/ReservationLists/Menu/Booking/BookingList"),
+// );
+
+// const Inquiry = lazy(
+//   () => import("../../pages/ReservationLists/Menu/Inquiry/InquiryList"),
+// );
+
+const NightAudit = lazy(
+  () => import("../../pages/NightAudit/NightAudit"),
+);
+
+
 export const authRoutes = [
   {
     key: 1,
@@ -229,11 +264,45 @@ export const authRoutes = [
     component: <Reservation />,
     isPrivate: false,
   },
+  // {
+  //   key: 3.1,
+  //   path: "/reservation/booking-detail/",
+  //   component: <BookingDetail />,
+  // },
   {
-    key: 3.1,
+    key: 3.2,
     path: "/reservation/guest-details/",
-    component: <Guest />,
+    component: <GuestDetails />,
   },
+  // {
+  //   key: 3.3,
+  //   path: "/reservation/room-information/",
+  //   component: <RoomInformation />,
+  // },
+  // {
+  //   key: 3.4,
+  //   path: "/reservation/folio-operations/",
+  //   component: <FolioOperations />,
+  // },
+
+  // {
+  //   key: 30,
+  //   path: "/reservation/inquiry/",
+  //   label: "Reservation",
+  //   icon: <ScheduleOutlined style={{ fontSize: "20px" }} />,
+  //   component: <Inquiry />,
+  //   isPrivate: false,
+  // },
+  // {
+  //   key: 30.1,
+  //   path: "/reservation/inquiry/",
+  //   component: <Inquiry />,
+  // },
+  // {
+  //   key: 30.2,
+  //   path: "/reservation/booking/",
+  //   component: <Booking />,
+  // },
   {
     key: 4,
     label: "Rates & Availability",
@@ -276,13 +345,22 @@ export const authRoutes = [
         permission: PERMISSIONS.SEASONAL_RATE_LIST,
       },
       {
-        key: 27,
+        key: 4.6,
         path: "/rates-availability/exta-bed-rate/",
         label: "Extra Bed Rate",
         component: <ExtraBedRateList />,
         icon: <IoBedOutline tlined style={{ fontSize: "20px" }} />,
         isPrivate: true,
         permission: PERMISSIONS.EXTRA_BED_RATE_LIST,
+      },
+      {
+        key: 4.7,
+        path: "/rates-availability/room-restriction/",
+        label: "Room Restriction",
+        component: <RoomRestrictionList />,
+        icon: <RiCalendarScheduleLine tlined style={{ fontSize: "20px" }} />,
+        // isPrivate: true,
+        // permission: PERMISSIONS.ROOM_RESTRICTION_LIST,
       },
     ],
   },
@@ -928,6 +1006,14 @@ export const authRoutes = [
     component: <MaintenanceRequestListing />,
     icon: <IoConstructOutline style={{ fontSize: "20px" }} />,
   },
+    {
+    key: 29,
+    label: "Night Audit",
+    path: "/night-audit",
+    component: <NightAudit />,
+    icon: <AiOutlineSolution style={{ fontSize: "20px" }} />,
+  },
+
 ];
 
 const AuthRoutes = () => {
@@ -939,7 +1025,7 @@ const AuthRoutes = () => {
 
   return (
     <>
-      <NetworkErrorPage/>
+      <NetworkErrorPage />
       <Suspense
         fallback={
           <div className="w-full h-full flex justify-center items-center text-center">

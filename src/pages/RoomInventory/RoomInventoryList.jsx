@@ -6,6 +6,7 @@ import RoomInventoryForm from "./Components/RoomInventoryForm/RoomInventoryForm"
 import RoomInventoryTable from "./Components/RoomInventoryTable";
 import { getAvailabilityCalendar } from "../../api/availabilityCalendarApi";
 import { PERMISSIONS } from "../../variables/permission";
+import RoomInventoryCreateForm from "./Components/RoomInventoryForm/RoomInventoryCreateForm";
 
 const RoomInventoryList = () => {
   const [keyword, setKeyword] = useState("");
@@ -66,15 +67,27 @@ const RoomInventoryList = () => {
 
       <RoomInventoryTable data={roomTypeData || []} />
 
-      <RoomInventoryForm
-        drawerOpen={drawerOpen}
-        setDrawerOpen={setDrawerOpen}
-        page={page}
-        setPage={setPage}
-        mode={mode}
-        selectedData={selectedData}
-        setSelectedData={setSelectedData}
-      />
+      {mode === "add" ? (
+        <RoomInventoryCreateForm
+          drawerOpen={drawerOpen}
+          setDrawerOpen={setDrawerOpen}
+          page={page}
+          setPage={setPage}
+          mode={mode}
+          selectedData={selectedData}
+          setSelectedData={setSelectedData}
+        />
+      ) : (
+        <RoomInventoryForm
+          drawerOpen={drawerOpen}
+          setDrawerOpen={setDrawerOpen}
+          page={page}
+          setPage={setPage}
+          mode={mode}
+          selectedData={selectedData}
+          setSelectedData={setSelectedData}
+        />
+      )}
     </div>
   );
 };

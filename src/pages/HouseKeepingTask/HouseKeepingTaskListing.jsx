@@ -8,7 +8,7 @@ import HouseKeepingTaskTable from "./components/HouseKeepingTaskTable";
 import HouseKeepingTaskForm from "./components/HouseKeepingTaskForm";
 import HouseKeepingTaskCard from "./components/HouseKeepingTaskCard";
 import { LIMITS } from "../../variables/constants";
-import HouseKeepingTaskAssignForm from "./components/HousKeepingTaskAssignForm";
+import ColorStatusTag from "../../component/ColorStatusTag/ColorStatusTag";
 
 const HouseKeepingTaskListing = () => {
     const [selectedRow, setSelectedRow] = useState(null);
@@ -50,7 +50,21 @@ const HouseKeepingTaskListing = () => {
         [adminMetaData]);
 
     const roomOptions = useMemo(() =>
-        adminMetaData?.rooms?.map(r => ({ value: r.uuid, label: `Room ${r.roomNo}` })), [adminMetaData]);
+        adminMetaData?.rooms?.map(r => ({
+            value: r.uuid,
+            label: (
+                <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+                    <span>{r.roomNo}</span>
+                    <ColorStatusTag
+                        status={{
+                            code: r.housekeepingStatus?.cleanStatus?.code,
+                            name: r.housekeepingStatus?.cleanStatus?.name
+                        }}
+                    />
+                </div>
+            ),
+        })),
+        [adminMetaData]);
 
     // Reset to page 1 when searching or changing page size
     useEffect(() => {
@@ -76,15 +90,37 @@ const HouseKeepingTaskListing = () => {
     };
 
     const radioButtonsForTableAndGrid = (
-        <Radio.Group
-            value={viewMode}
-            onChange={e => setViewMode(e.target.value)}
-            buttonStyle="solid"
-            className="shadow-sm"
-        >
-            <Radio.Button value="table"><TableOutlined /> Table</Radio.Button>
-            <Radio.Button value="card"><AppstoreOutlined /> Grid</Radio.Button>
-        </Radio.Group>);
+        <div className="inline-block">
+            <Radio.Group
+                value={viewMode}
+                onChange={(e) => setViewMode(e.target.value)}
+                buttonStyle="solid"
+                /* flex-nowrap ensures the buttons stay side-by-side */
+                className="flex flex-nowrap"
+            >
+                <Radio.Button
+                    value="table"
+                    /* whitespace-nowrap prevents the icon/text from splitting */
+                    className="sticky top-0 z-10 whitespace-nowrap"
+                >
+                    <span className="inline-flex items-center gap-2">
+                        <TableOutlined />
+                        <span>Table</span>
+                    </span>
+                </Radio.Button>
+
+                <Radio.Button
+                    value="card"
+                    className="sticky top-0 z-10 whitespace-nowrap"
+                >
+                    <span className="inline-flex items-center gap-2">
+                        <AppstoreOutlined />
+                        <span>Grid</span>
+                    </span>
+                </Radio.Button>
+            </Radio.Group>
+        </div>
+    );
 
     return (
         <div>
@@ -112,7 +148,7 @@ const HouseKeepingTaskListing = () => {
                         changePerPage={setPerPage}
                         onView={(rec) => handleAction(rec, "view")}
                         onEdit={(rec) => handleAction(rec, "edit")}
-                        onViewTaskAssign={(rec) => handleViewTaskAssign(rec)}
+                    // onViewTaskAssign={(rec) => handleViewTaskAssign(rec)}
                     />
                 </div>
             ) : (
@@ -166,6 +202,7 @@ const HouseKeepingTaskListing = () => {
                 taskAssignDrawerOpen={taskAssignDrawerOpen}
                 setTaskAssignDrawerOpen={setTaskAssignDrawerOpen}
                 staffOptionsforAssignment={staffOptionsforAssignment}
+                adminMetaData={adminMetaData}
             />
         </div>
     );

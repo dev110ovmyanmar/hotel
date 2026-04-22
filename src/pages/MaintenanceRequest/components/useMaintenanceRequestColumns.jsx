@@ -6,6 +6,14 @@ const { Text } = Typography;
 
 const useMaintenanceRequestColumns = (onEdit, onView) => {
 
+    const maintenanceRequestStatusMap = {
+        resolved: "resolved",
+        verified: "verified",
+        reported: "reported",
+        assigned: "assigned",
+        in_progress: "in_progress",
+    };
+
     return [
         {
             title: "ID",
@@ -34,10 +42,31 @@ const useMaintenanceRequestColumns = (onEdit, onView) => {
             key: "reportedFrom",
             render: (_, record) => record?.reportedFrom?.name || "-",
         },
+        // {
+        //     title: "Priority",
+        //     key: "priorityLevel",
+        //     render: (_, record) => record?.priorityLevel?.name || "-",
+        // },
         {
             title: "Priority",
+            dataIndex: "priorityLevel",
             key: "priorityLevel",
-            render: (_, record) => record?.priorityLevel?.name || "-",
+            render: (priorityLevel) => {
+                // Return null or a placeholder if data is missing
+                if (!priorityLevel?.name) return "-";
+
+                const isUrgent = priorityLevel.code === 'high' || priorityLevel.code === 'urgent';
+
+                return isUrgent ? (
+                    <div className="px-1.5 py-0.5 bg-red-50 text-red-600 border rounded-sm border-red-100 w-fit">
+                        {priorityLevel.name}
+                    </div>
+                ) : (
+                    <div className="px-1.5 py-0.5 border rounded-sm border-green-100 w-fit text-green-600">
+                        {priorityLevel.name}
+                    </div>
+                );
+            }
         },
         {
             title: "Issue Type",
@@ -46,8 +75,26 @@ const useMaintenanceRequestColumns = (onEdit, onView) => {
         },
         {
             title: "Status",
-            key: "maintenance_status",
-            render: (_, record) => record?.maintenanceStatus?.name || "-",
+            key: "maintenanceStatus",
+            dataIndex: "maintenanceStatus",
+            render: (maintenanceStatus) => {
+                // 1. Get the first item from the array
+                const firstItem = Array.isArray(maintenanceStatus) ? maintenanceStatus[0] : maintenanceStatus;
+
+                // 2. Extract the code string (e.g., "dirty")
+                const statusCode = firstItem?.code || firstItem;
+
+                // 3. Map it to the "hk_" version
+                const mappedCode = maintenanceRequestStatusMap[statusCode] || statusCode;
+
+                // 4. Create an object that ColorStatusTag expects: { code: "hk_dirty", name: "Dirty" }
+                const statusForTag = {
+                    code: mappedCode,
+                    name: firstItem?.name || statusCode
+                };
+
+                return <ColorStatusTag status={statusForTag} />;
+            },
         },
         {
             title: "Actions",

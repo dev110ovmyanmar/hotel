@@ -28,6 +28,9 @@ import { EditOutlined, PlusOutlined } from "@ant-design/icons";
 import Loader from "../../../../component/Loader/Loader";
 import ImageUpload from "../../../../component/ImageUpload/ImageUpload";
 import PriceTag from "../../../../component/PriceTag/PriceTag";
+import { PERMISSIONS } from "../../../../variables/permission";
+import usePermission from "../../../../hooks/usePermission";
+import { hasIn } from "lodash";
 
 
 const onChange = (value) => {
@@ -54,6 +57,11 @@ const RoomTypeForm = ({
   const isView = mode === "view";
   const isEdit = mode === "edit";
   const isAdd = mode === "add";
+
+  const { hasPermission } = usePermission();
+
+  const canEdit = hasPermission(PERMISSIONS.ROOM_TYPE_EDIT);
+  const canEditOrCreateRoomTypeAmenity = hasPermission(PERMISSIONS.ROOM_TYPE_AMENITY)
 
   const sharedProps = {
     mode: "spinner",
@@ -191,21 +199,24 @@ const RoomTypeForm = ({
                   : "Create Room Type"}
             </span>
             {isView ? (
-              <Button
-                type="primary"
-                onClick={() => {
-                  setMode("edit");
-                }}
-              >
-                Edit
-              </Button>
-            ) : (
-              <FormButton
-                onClick={() => form.submit()}
-                isPending={createRoomTypes.isPending || editRoomTypes.isPending}
-                mode={mode}
-              />
-            )}
+              canEdit && (
+                <Button
+                  type="primary"
+                  onClick={() => {
+                    setMode("edit");
+                  }}
+                >
+                  Edit
+                </Button>
+              )
+            )
+              : (
+                <FormButton
+                  onClick={() => form.submit()}
+                  isPending={createRoomTypes.isPending || editRoomTypes.isPending}
+                  mode={mode}
+                />
+              )}
           </div>
         }
       >
@@ -274,72 +285,6 @@ const RoomTypeForm = ({
               </Form.Item>
             </div>
 
-            {/* <Row gutter={24}>
-              <Col span={8}>
-                <Form.Item
-                  label="Max Adults"
-                  name="maxAdults"
-                  rules={[
-                    { required: true },
-                    // {
-                    //   type: "number",
-                    //   min: 1,
-                    // },
-                  ]}
-                >
-                  <InputNumber
-                    // {...sharedProps}
-                    {...{
-                      mode: "spinner",
-                      min: 1,
-                      max: 10,
-                      defaultValue: 1,
-                      onChange,
-                      style: { width: 150 },
-                    }}
-                    placeholder="Outlined"
-                    readOnly={isView}
-                    width={20}
-                  />
-                </Form.Item>
-              </Col>
-              <Col span={8}>
-                <Form.Item label="Max Children" name="maxChildren">
-                  <InputNumber
-                    {...{
-                      mode: "spinner",
-                      min: 0,
-                      max: 10,
-                      defaultValue: 0,
-                      onChange,
-                      style: { width: 150 },
-                    }}
-                    placeholder="Outlined"
-                    readOnly={isView}
-                  />
-                </Form.Item>
-              </Col>
-              <Col span={8}>
-                <Form.Item
-                  label="Max Occupancy"
-                  name="maxOccupancy"
-                  rules={[{ required: true }]}
-                >
-                  <InputNumber
-                    {...{
-                      mode: "spinner",
-                      min: 1,
-                      max: 10,
-                      defaultValue: 1,
-                      onChange,
-                      style: { width: 150 },
-                    }}
-                    placeholder="Outlined"
-                    readOnly={isView}
-                  />
-                </Form.Item>
-              </Col>
-            </Row> */}
             <div className="grid grid-cols-2 gap-6">
               <Form.Item
                 label="Max Adults"
@@ -404,7 +349,7 @@ const RoomTypeForm = ({
                 <div className="flex justify-between items-center text-base font-semibold mb-5">
                   <span>Room Type Amenity </span>
 
-                  {!isView && (
+                  {(!isView && canEditOrCreateRoomTypeAmenity) && (
                     <Button
                       type="primary"
                       icon={<PlusOutlined />}

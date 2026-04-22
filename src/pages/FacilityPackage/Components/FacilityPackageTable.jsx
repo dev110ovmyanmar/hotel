@@ -35,13 +35,13 @@ const FacilityPackageTable = ({
       title: "Name",
       dataIndex: "name",
       key: "name",
-      align:"left"
+      align: "left"
     },
     {
       title: "Facility",
       dataIndex: ["facility", "name"],
       key: "facility",
-      align:"left"
+      align: "left"
     },
     {
       title: "Price Type",
@@ -120,6 +120,10 @@ const FacilityPackageTable = ({
               </Space>
             ),
           }));
+
+        if (items.length === 0) {
+          return null;
+        }
 
         return (
           <Dropdown menu={{ items }} trigger={["click"]}>

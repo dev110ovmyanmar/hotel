@@ -1,6 +1,11 @@
 import { Dropdown, Space, Table } from "antd";
 import { useState } from "react";
-import { MoreOutlined, EyeOutlined, EditOutlined, FileAddOutlined } from "@ant-design/icons";
+import {
+  MoreOutlined,
+  EyeOutlined,
+  EditOutlined,
+  FileAddOutlined,
+} from "@ant-design/icons";
 import usePermission from "../../../hooks/usePermission";
 import { PERMISSIONS } from "../../../variables/permission";
 import RoomTypeForm from "./RoomTypeForm/RoomTypeForm";
@@ -14,14 +19,13 @@ const RoomTypeTable = ({
   total,
   changePage,
   changePerPage,
-  loading
+  loading,
 }) => {
   const { hasPermission } = usePermission();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mode, setMode] = useState(null);
   const [selectedData, setSelectedData] = useState(null);
   const [imageDrawerOpen, setImageDrawerOpen] = useState(false);
-
 
   const baseColumns = [
     {
@@ -34,7 +38,7 @@ const RoomTypeTable = ({
       title: "Name",
       dataIndex: "name",
       key: "name",
-      align:"left"
+      align: "left",
     },
     {
       title: "Code",
@@ -68,7 +72,8 @@ const RoomTypeTable = ({
       title: "Price (MMK)",
       dataIndex: "basePrice",
       key: "basePrice",
-      render: (text) => <PriceTag value={text} />
+      render: (text) => <PriceTag value={text} />,
+      align: "end",
     },
     {
       title: "Action",
@@ -102,13 +107,12 @@ const RoomTypeTable = ({
             key: "managefiles",
             label: "Manage Files",
             icon: <FileAddOutlined style={{ fontSize: "12px" }} />,
-            // permission: PERMISSIONS.ROOM_TYPE_EDIT,
+            permission: PERMISSIONS.ROOM_TYPE_UPLOAD,
             onClick: () => {
               setImageDrawerOpen(true);
               setSelectedData(record);
             },
           },
-
         ];
 
         const items = actions
@@ -124,6 +128,8 @@ const RoomTypeTable = ({
               </Space>
             ),
           }));
+
+        if (items.length === 0) return null;
 
         return (
           <Dropdown menu={{ items }} trigger={["click"]}>

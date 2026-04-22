@@ -221,4 +221,10 @@ export const PERMISSIONS = {
   EXTRA_BED_RATE_VIEW: "extra-bed-rate.view",
   EXTRA_BED_RATE_CREATE: "extra-bed-rate.create",
   EXTRA_BED_RATE_EDIT: "extra-bed-rate.edit",
+
+  //Room restriction
+ ROOM_RESTRICTION_LIST: "room-restriction.list",
+ ROOM_RESTRICTION_VIEW: "room-restriction.view",
+ ROOM_RESTRICTION_CREATE: "room-restriction.create",
+ ROOM_RESTRICTION_EDIT: "room-restriction.edit",
 };

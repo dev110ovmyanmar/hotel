@@ -10,6 +10,8 @@ import {
   roomAttributeDetails,
 } from "../../../../api/roomApi";
 import Loader from "../../../../component/Loader/Loader"
+import { PERMISSIONS } from "../../../../variables/permission";
+import usePermission from "../../../../hooks/usePermission";
 
 const RoomAttributeForm = ({
   mode,
@@ -26,6 +28,9 @@ const RoomAttributeForm = ({
   const isView = mode === "view";
   const isEdit = mode === "edit";
   const isAdd = mode === "add";
+
+  const { hasPermission } = usePermission();
+  const canEdit = hasPermission(PERMISSIONS.ROOM_ATTRIBUTE_EDIT);
 
   const createRoomAttributes = useApiMutation({
     mutationFn: createRoomAttribute,
@@ -101,7 +106,7 @@ const RoomAttributeForm = ({
                   ? "Edit Room Attribute"
                   : "Create Room Attribute"}
             </span>
-            {isView ? (
+            {isView ? (canEdit && (
               <Button
                 type="primary"
                 onClick={() => {
@@ -110,7 +115,7 @@ const RoomAttributeForm = ({
               >
                 Edit
               </Button>
-            ) : (
+            )) : (
               <FormButton
                 onClick={() => form.submit()}
                 isPending={

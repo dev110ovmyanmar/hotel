@@ -10,6 +10,8 @@ import {
   upsertFacility,
 } from "../../../../api/facilityApi";
 import Loader from "../../../../component/Loader/Loader";
+import usePermission from "../../../../hooks/usePermission";
+import { PERMISSIONS } from "../../../../variables/permission";
 
 const FacilityForm = ({
   mode,
@@ -26,6 +28,9 @@ const FacilityForm = ({
   const isView = mode === "view";
   const isEdit = mode === "edit";
   const isAdd = mode === "add";
+
+  const { hasPermission } = usePermission();
+  const canEdit = hasPermission(PERMISSIONS.FACILITY_EDIT);
 
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
   const status = initData?.statuses?.status;
@@ -124,22 +129,25 @@ const FacilityForm = ({
                   ? "Edit Facility"
                   : "Create Facility"}
             </span>
-            {isView ? (
-              <Button
-                type="primary"
-                onClick={() => {
-                  setMode("edit");
-                }}
-              >
-                Edit
-              </Button>
-            ) : (
-              <FormButtons
-                onClick={() => form.submit()}
-                isPending={createFacility.isPending || editFacility.isPending}
-                mode={mode}
-              />
-            )}
+            {isView ?
+              (canEdit &&
+                (
+                  <Button
+                    type="primary"
+                    onClick={() => {
+                      setMode("edit");
+                    }}
+                  >
+                    Edit
+                  </Button>
+                )
+              ) : (
+                <FormButtons
+                  onClick={() => form.submit()}
+                  isPending={createFacility.isPending || editFacility.isPending}
+                  mode={mode}
+                />
+              )}
           </div>
         }
       >

@@ -1,9 +1,15 @@
 import { Dropdown, Space, Table } from "antd";
 import { useState } from "react";
 import StaffsForm from "./StaffsForms/StaffsForm";
-import { MoreOutlined, EyeOutlined, EditOutlined } from "@ant-design/icons";
+import {
+  MoreOutlined,
+  EyeOutlined,
+  EditOutlined,
+  UploadOutlined,
+} from "@ant-design/icons";
 import usePermission from "../../../hooks/usePermission";
 import { PERMISSIONS } from "../../../variables/permission";
+import StaffUploadForm from "./StaffsForms/StaffUploadForm";
 
 const StaffsTable = ({
   data,
@@ -12,12 +18,14 @@ const StaffsTable = ({
   total,
   changePage,
   changePerPage,
-  loading
+  loading,
 }) => {
   const { hasPermission } = usePermission();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mode, setMode] = useState(null);
   const [selectedData, setSelectedData] = useState(null);
+  const [uploadDrawer, setUploadDrawer] = useState(false);
+  const [selectedRow, setSelectedRow] = useState(null);
 
   const columns = [
     {
@@ -69,6 +77,16 @@ const StaffsTable = ({
               setSelectedData(record);
             },
           },
+          {
+            key: "upload",
+            label: "Image Upload",
+            icon: <UploadOutlined style={{ fontSize: "12px" }} />,
+            onClick: () => {
+              if (!record.uuid) return;
+              setSelectedRow(record);
+              setUploadDrawer(true);
+            },
+          },
         ];
 
         const items = actions
@@ -84,6 +102,10 @@ const StaffsTable = ({
               </Space>
             ),
           }));
+
+        if (items.length === 0) {
+          return null;
+        }
 
         return (
           <Dropdown menu={{ items }} trigger={["click"]}>
@@ -123,6 +145,13 @@ const StaffsTable = ({
         setDrawerOpen={setDrawerOpen}
         selectedData={selectedData}
         setSelectedData={setSelectedData}
+      />
+
+      <StaffUploadForm
+        open={uploadDrawer}
+        onClose={() => setUploadDrawer(false)}
+        selectedRow={selectedRow}
+        setSelectedRow={setSelectedRow}
       />
     </div>
   );
