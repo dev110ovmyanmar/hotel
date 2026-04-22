@@ -28,10 +28,10 @@ const SeasonalRateTable = ({
       width: 70,
     },
     {
-      title: "Room Name",
+      title: "Room Type",
       dataIndex: "name",
       key: "roomTypeName",
-      align: "left"
+      align: "left",
     },
     {
       title: "Total Rooms",
@@ -55,6 +55,7 @@ const SeasonalRateTable = ({
       key: "basePrice",
       render: (text) => <PriceTag value={text} />,
       width: "80",
+      align:"right",
     },
   ];
 
@@ -68,18 +69,21 @@ const SeasonalRateTable = ({
       dataIndex: "startDate",
       key: "startDate",
       render: (text) => <div>{String(text)}</div>,
+      align :"center",
     },
     {
       title: "End Date",
       dataIndex: "endDate",
       key: "endDate",
       render: (text) => <div>{String(text)}</div>,
+      align :"center",
     },
     {
       title: "Price (MMK)",
       dataIndex: "price",
       key: "price",
       render: (text) => <PriceTag value={text} />,
+      align:"right",
     },
     {
       title: "Action",
@@ -145,7 +149,7 @@ const SeasonalRateTable = ({
         dataSource={record?.rates}
         pagination={false}
         size="small"
-        style={{ marginTop: '16px', marginBottom: '16px' }}
+        style={{ marginTop: "16px", marginBottom: "16px" }}
       />
     );
   };
@@ -160,6 +164,7 @@ const SeasonalRateTable = ({
         rowKey="uuid"
         expandable={{ expandedRowRender, defaultExpandedRowKeys: ["0"] }}
         loading={loading}
+        pagination={false}
       />
 
       <SeasonalRateForm
