@@ -31,6 +31,8 @@ import PriceTag from "../../../../component/PriceTag/PriceTag";
 import { PERMISSIONS } from "../../../../variables/permission";
 import usePermission from "../../../../hooks/usePermission";
 import { hasIn } from "lodash";
+import { deleteImageUpload } from "../../../../api/deleteImageApi";
+
 
 
 const onChange = (value) => {
@@ -183,6 +185,12 @@ const RoomTypeForm = ({
     invalidateKeys: [["roomTypeData", { uuid: selectedData?.uuid }]],
   });
 
+  const deleteRoomTypeUpload = useApiMutation({
+    mutationFn: deleteImageUpload,
+    invalidateKeys: [["roomTypeData", { uuid: selectedData?.uuid }]],
+  });
+
+
   return (
     <div>
       <Drawer
@@ -285,6 +293,72 @@ const RoomTypeForm = ({
               </Form.Item>
             </div>
 
+            {/* <Row gutter={24}>
+              <Col span={8}>
+                <Form.Item
+                  label="Max Adults"
+                  name="maxAdults"
+                  rules={[
+                    { required: true },
+                    // {
+                    //   type: "number",
+                    //   min: 1,
+                    // },
+                  ]}
+                >
+                  <InputNumber
+                    // {...sharedProps}
+                    {...{
+                      mode: "spinner",
+                      min: 1,
+                      max: 10,
+                      defaultValue: 1,
+                      onChange,
+                      style: { width: 150 },
+                    }}
+                    placeholder="Outlined"
+                    readOnly={isView}
+                    width={20}
+                  />
+                </Form.Item>
+              </Col>
+              <Col span={8}>
+                <Form.Item label="Max Children" name="maxChildren">
+                  <InputNumber
+                    {...{
+                      mode: "spinner",
+                      min: 0,
+                      max: 10,
+                      defaultValue: 0,
+                      onChange,
+                      style: { width: 150 },
+                    }}
+                    placeholder="Outlined"
+                    readOnly={isView}
+                  />
+                </Form.Item>
+              </Col>
+              <Col span={8}>
+                <Form.Item
+                  label="Max Occupancy"
+                  name="maxOccupancy"
+                  rules={[{ required: true }]}
+                >
+                  <InputNumber
+                    {...{
+                      mode: "spinner",
+                      min: 1,
+                      max: 10,
+                      defaultValue: 1,
+                      onChange,
+                      style: { width: 150 },
+                    }}
+                    placeholder="Outlined"
+                    readOnly={isView}
+                  />
+                </Form.Item>
+              </Col>
+            </Row> */}
             <div className="grid grid-cols-2 gap-6">
               <Form.Item
                 label="Max Adults"
@@ -398,6 +472,10 @@ const RoomTypeForm = ({
         handleUploadMutation={fetchRoomTypeUploads}
         imageDrawerOpen={imageDrawerOpen}
         setImageDrawerOpen={setImageDrawerOpen}
+        fileCategoryName="room_type"
+        deleteMutation={deleteRoomTypeUpload}
+
+
       />
 
     </div >
