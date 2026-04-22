@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Drawer, Row, Col, Form, Input, Select, DatePicker, TimePicker, Button, Tag } from "antd";
 import dayjs from "dayjs";
-import { TeamOutlined, CalendarOutlined, ClockCircleOutlined, ExclamationCircleOutlined, EditOutlined } from "@ant-design/icons";
+import { TeamOutlined, CalendarOutlined, ClockCircleOutlined, ExclamationCircleOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import Loader from "../../../component/Loader/Loader";
 import useApiQuery from "../../../hooks/useApiQuery";
 import { useApiMutation } from "../../../hooks/useApiMutation";
@@ -9,7 +9,8 @@ import { useApiMutation } from "../../../hooks/useApiMutation";
 import {
     getHouseKeepingTaskAssignDetail,
     createHouseKeepingTaskAssign,
-    updateHouseKeepingTaskAssign
+    updateHouseKeepingTaskAssign,
+    deleteHouseKeepingTaskAssign
 } from "../../../api/houseKeepingTaskAssignApi";
 import Toast from "../../../component/Toast/Toast";
 import ColorStatusTag from "../../../component/ColorStatusTag/ColorStatusTag";
@@ -84,6 +85,11 @@ const HouseKeepingTaskAssignForm = ({
         invalidateKeys: [["housekeeping-task-detail"], ["houseKeeping-tasks"], ["admin-meta"]],
     });
 
+    const deleteMutation = useApiMutation({
+        mutationFn: deleteHouseKeepingTaskAssign,
+        invalidateKeys: [["housekeeping-task-detail"], ["houseKeeping-tasks"]],
+    })
+
     const formatDateTime = (dateSource, timeSource) => {
         if (!dateSource) return null;
 
@@ -137,6 +143,24 @@ const HouseKeepingTaskAssignForm = ({
         }
     };
 
+    const handleDelete = (e, item) => {
+        const deletePayload = {
+            uuid: item?.uuid,
+        };
+
+        e.stopPropagation();
+
+        deleteMutation.mutate({ params: deletePayload }, {
+            onSuccess: (response) => {
+                if (response) {
+                    Toast.success(response);
+                } else {
+                    Toast.success("Deleted successfully");
+                }
+            },
+        });
+    };
+
     // UI Helpers (Tight Row Style)
     const TightRow = ({ label, value, isDate = false }) => (
         <div className="grid grid-cols-[75px_1fr] items-center py-1 border-b border-gray-50 last:border-0">
@@ -157,9 +181,7 @@ const HouseKeepingTaskAssignForm = ({
 
     const firstItem = detail?.housekeepingStatus;
     const statusCode = detail?.housekeepingStatus?.code;
-    console.log("StatusCode", statusCode);
     const isDisableEdit = statusCode === "completed" || statusCode === "cancelled";
-    console.log("isDisableEdit", isDisableEdit);
     const mappedCode = hkTaskStatusMap[statusCode];
 
     const statusForTag = {
@@ -202,29 +224,56 @@ const HouseKeepingTaskAssignForm = ({
                     <div>
                         <Row gutter={[8, 8]}>
                             {detail.housekeepingTaskAssignments.map((item, index) => (
-                                <Col span={12} key={item.uuid || index}>
+                                <Col span={12}>
                                     <div
-                                        onClick={() => {
-                                            setIsEdit(true);
-                                            setSelectedAssignment(item);
-                                            setCreateDrawerOpen(true);
-                                        }}
-
-                                        className={`bg-white border border-gray-200 rounded-lg p-3 shadow-sm relative pt-7 transition-all group h-full flex flex-col justify-between
-                                       cursor-pointer hover:border-blue-400 hover:shadow-md `
+                                        onClick={
+                                            isDisableEdit ? null :
+                                                () => {
+                                                    setIsEdit(true);
+                                                    setSelectedAssignment(item);
+                                                    setCreateDrawerOpen(true);
+                                                }
                                         }
+                                        key={item?.uuid}
+
+                                        className={`bg-white border border-gray-200 rounded-lg p-3 shadow-sm relative pt-7 transition-all group h-full flex flex-col justify-between 
+                                                ${isDisableEdit
+                                                ? 'cursor-default opacity-100'
+                                                : 'cursor-pointer hover:border-blue-400 hover:shadow-md'
+                                            }`}
                                     >
                                         {/* Staff Badge - Top Left */}
-                                        <div className={`absolute top-0 left-0 px-3 py-1 rounded-br-lg rounded-tl-lg text-[11px] text-white font-semibold uppercase tracking-wider bg-blue-600`}
+                                        <div className={`absolute top-0 left-0 px-3 py-1 rounded-br-lg rounded-tl-lg text-[11px] text-[#FFFFFF] tracking-wider bg-[#1677FF]`}
                                         >
                                             {item?.staff?.name || "Unassigned"}
                                         </div>
 
-                                        {/* Hover Indicator - Only show if NOT disabled */}
-                                        <div className={`absolute top-1 right-0 px-3 py-1 rounded-br-lg rounded-tl-lg text-[11px] tracking-wider`}>
-                                            <span className="text-xs font-bold flex items-center justify-end gap-1">
-                                                <EditOutlined className="text-[14px]" />
-                                            </span>
+                                        <div className="absolute top-1 right-1 flex items-center gap-2">
+                                            {!isDisableEdit && (
+                                                <button
+                                                    className="p-1 hover:bg-gray-100 rounded-full transition-colors"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        setIsEdit(true);
+                                                        setSelectedAssignment(item);
+                                                        setCreateDrawerOpen(true);
+                                                    }}
+                                                >
+                                                    <EditOutlined className="text-[14px] text-blue-600" />
+                                                </button>
+                                            )}
+
+                                            {
+                                                item.startedAt ? null :
+                                                    (
+                                                        <button
+                                                            className="p-1 rounded-full text-red-500 transition-colors enabled:hover:bg-red-50"
+                                                            onClick={(e) => handleDelete(e, item)}
+                                                        >
+                                                            <DeleteOutlined className="text-[14px]" />
+                                                        </button>
+                                                    )
+                                            }
                                         </div>
 
                                         {/* Content Area */}
@@ -255,121 +304,127 @@ const HouseKeepingTaskAssignForm = ({
             }
 
             {/* Inner Drawer for Create/Edit */}
-            <Drawer
-                title={isEdit ? "Edit Assign" : "New Assign"}
-                width={550}
-                onClose={() => setCreateDrawerOpen(false)}
-                open={createDrawerOpen}
-                extra={(!isStaffListEmpty || isEdit) && (
-                    <Button
-                        type="primary"
-                        htmlType="submit"
-                        onClick={form.submit}
-                        block
-                        loading={createMutation.isPending || updateMutation.isPending}
-                    >
-                        {isEdit ? "Update" : "Create"}
-                    </Button>
-                )}
-
-                destroyOnClose
-            >
-                <Form form={form} layout="vertical" onFinish={onFinish}>
-                    <Form.Item name="housekeepingTask" hidden><Input /></Form.Item>
-
-                    <div className="space-y-4">
-                        {isEdit ? (
-                            <Form.Item
-                                name="staff"
-                                label="Assigned Staff"
-                                rules={[{ required: true, message: 'Please select a staff member' }]}
-                                extra={
-                                    isDisableEdit ? (
-                                        <div className="flex items-center gap-1 text-red-500 text-[11px] mt-1 italic">
-                                            <ExclamationCircleOutlined />
-                                            <span>Assigned is completed or cancelled already.</span>
-                                        </div>
-                                    ) : notAssignedStaffs.length === 0 ? (
-                                        <div className="flex items-center gap-1 text-red-500 text-[11px] mt-1 italic">
-                                            <ExclamationCircleOutlined />
-                                            <span>There are no more staff members available to assign.</span>
-                                        </div>
-                                    ) : null
-                                }
+            {
+                !isDisableEdit &&
+                (
+                    <Drawer
+                        title={isEdit ? "Edit Assign" : "New Assign"}
+                        width={550}
+                        onClose={() => setCreateDrawerOpen(false)}
+                        open={createDrawerOpen}
+                        extra={(!isStaffListEmpty || isEdit) && (
+                            <Button
+                                type="primary"
+                                htmlType="submit"
+                                onClick={form.submit}
+                                block
+                                loading={createMutation.isPending || updateMutation.isPending}
                             >
-                                <Select
-                                    placeholder={isEdit ? "Select new staff to change..." : "Select staff"}
-                                    options={staffOptionsForEdit}
-                                    showSearch
-                                    optionFilterProp="label"
-                                    disabled={notAssignedStaffs.length === 0 || isDisableEdit}
-                                    allowClear={isEdit}
-                                />
-                            </Form.Item>
-                        ) :
-                            (
-                                <Form.Item
-                                    name="staff"
-                                    label="Assigned Staff"
-                                    rules={[{ required: true, message: 'Please select a staff member' }]}
-                                    extra={
-                                        notAssignedStaffs.length === 0 ? (
-                                            <div className="flex items-center gap-1 text-red-500 text-[11px] mt-1 italic">
-                                                <ExclamationCircleOutlined />
-                                                <span>There are no more staff members available to assign.</span>
-                                            </div>
-                                        ) : null
-                                    }
-                                >
-                                    <Select
-                                        placeholder={isEdit ? "Select new staff to change..." : "Select staff"}
-                                        options={notAssignedStaffs}
-                                        showSearch
-                                        optionFilterProp="label"
-                                        disabled={notAssignedStaffs.length === 0}
-                                        allowClear={isEdit}
-                                    />
-                                </Form.Item>
-                            )}
-                    </div>
+                                {isEdit ? "Update" : "Create"}
+                            </Button>
+                        )}
 
-                    {isEdit && (
-                        <>
-                            <div className="grid grid-cols-2 gap-4">
-                                <Form.Item name="startedDate" label="Date">
-                                    <DatePicker className="w-full" />
-                                </Form.Item>
-                                <div className="grid grid-cols-2 gap-4">
+                        destroyOnClose
+                    >
+                        <Form form={form} layout="vertical" onFinish={onFinish}>
+                            <Form.Item name="housekeepingTask" hidden><Input /></Form.Item>
+
+                            <div className="space-y-4">
+                                {isEdit ? (
                                     <Form.Item
-                                        name="startedTime"
-                                        label="Started Time"
-                                        dependencies={['startedDate']} // Re-checks logic when startedDate changes
-                                        rules={[
-                                            {
-                                                validator: (_, value) => {
-                                                    const date = form.getFieldValue('startedDate');
-                                                    // If a date exists but time is missing, throw an error
-                                                    if (date && !value) {
-                                                        return Promise.reject(new Error('Please select a time for this date!'));
-                                                    }
-                                                    return Promise.resolve();
-                                                },
-                                            },
-                                        ]}
+                                        name="staff"
+                                        label="Assigned Staff"
+                                        rules={[{ required: true, message: 'Please select a staff member' }]}
+                                        extra={
+                                            assignDetail?.startedAt ? (
+                                                <div className="flex items-center gap-1 text-red-500 text-[11px] mt-1 italic">
+                                                    <ExclamationCircleOutlined />
+                                                    <span>Assigned is already started.</span>
+                                                </div>
+                                            ) : notAssignedStaffs.length === 0 ? (
+                                                <div className="flex items-center gap-1 text-red-500 text-[11px] mt-1 italic">
+                                                    <ExclamationCircleOutlined />
+                                                    <span>There are no more staff members available to assign.</span>
+                                                </div>
+                                            ) : null
+                                        }
                                     >
-                                        <TimePicker className="w-full" format="HH:mm:ss" />
+                                        <Select
+                                            placeholder={isEdit ? "Select new staff to change..." : "Select staff"}
+                                            options={staffOptionsForEdit}
+                                            showSearch
+                                            optionFilterProp="label"
+                                            disabled={notAssignedStaffs.length === 0 || assignDetail?.startedAt}
+                                            allowClear={isEdit}
+                                        />
                                     </Form.Item>
-                                    <Form.Item name="completedTime" label="Completed Time">
-                                        <TimePicker className="w-full" format="HH:mm:ss" />
-                                    </Form.Item>
-                                </div>
+                                ) :
+                                    (
+                                        <Form.Item
+                                            name="staff"
+                                            label="Assigned Staff"
+                                            rules={[{ required: true, message: 'Please select a staff member' }]}
+                                            extra={
+                                                notAssignedStaffs.length === 0 ? (
+                                                    <div className="flex items-center gap-1 text-red-500 text-[11px] mt-1 italic">
+                                                        <ExclamationCircleOutlined />
+                                                        <span>There are no more staff members available to assign.</span>
+                                                    </div>
+                                                ) : null
+                                            }
+                                        >
+                                            <Select
+                                                placeholder={isEdit ? "Select new staff to change..." : "Select staff"}
+                                                options={notAssignedStaffs}
+                                                showSearch
+                                                optionFilterProp="label"
+                                                disabled={notAssignedStaffs.length === 0}
+                                                allowClear={isEdit}
+                                            />
+                                        </Form.Item>
+                                    )}
                             </div>
-                        </>
-                    )}
-                </Form>
-            </Drawer>
+
+                            {isEdit && (
+                                <>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <Form.Item name="startedDate" label="Date">
+                                            <DatePicker className="w-full" />
+                                        </Form.Item>
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <Form.Item
+                                                name="startedTime"
+                                                label="Started Time"
+                                                dependencies={['startedDate']} // Re-checks logic when startedDate changes
+                                                rules={[
+                                                    {
+                                                        validator: (_, value) => {
+                                                            const date = form.getFieldValue('startedDate');
+                                                            // If a date exists but time is missing, throw an error
+                                                            if (date && !value) {
+                                                                return Promise.reject(new Error('Please select a time for this date!'));
+                                                            }
+                                                            return Promise.resolve();
+                                                        },
+                                                    },
+                                                ]}
+                                            >
+                                                <TimePicker className="w-full" format="HH:mm" />
+                                            </Form.Item>
+                                            <Form.Item name="completedTime" label="Completed Time">
+                                                <TimePicker className="w-full" format="HH:mm" />
+                                            </Form.Item>
+                                        </div>
+                                    </div>
+                                </>
+                            )}
+                        </Form>
+                    </Drawer>
+                )
+            }
         </Drawer >
     );
 };
 
 export default HouseKeepingTaskAssignForm;
+
