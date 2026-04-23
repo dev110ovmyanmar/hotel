@@ -201,12 +201,12 @@ const ReservationList = () => {
         </Button>
       </div>
 
-      <ReservationForm onSearch={() => setSearchReservation(true)} />
+      <ReservationForm onSearch={() => {setSearchReservation(true)}} afterRoomConfirm={roomConfirm}/>
 
       {
         refreshReservation &&
         (
-          <ReservationForm onSearch={() => setSearchReservation(true)} />
+          <ReservationForm onSearch={() => setSearchReservation(true)} afterRoomConfirm={roomConfirm}/>
         )
       }
 
