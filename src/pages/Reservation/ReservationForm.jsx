@@ -2,7 +2,8 @@ import { Button, Card, DatePicker, Select, TimePicker } from "antd";
 
 
 const ReservationForm = ({
-    onSearch
+    onSearch,
+    afterRoomConfirm
 }) => {
 
     return (
@@ -91,9 +92,14 @@ const ReservationForm = ({
 
             </div>
 
-            <div className="flex justify-end">
-                <Button type="primary" onClick={onSearch}>Search</Button>
-            </div>
+            {
+                afterRoomConfirm ?
+                null 
+                :
+                <div className="flex justify-end">
+                    <Button type="primary" onClick={onSearch}>Search</Button>
+                </div>
+            }
 
         </Card>
     )

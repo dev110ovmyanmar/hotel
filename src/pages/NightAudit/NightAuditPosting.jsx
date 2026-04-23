@@ -1,10 +1,13 @@
 import { Button, Card, Col, Form, Input, Row } from "antd";
-import { AiOutlineRight } from "react-icons/ai";
-
+import { AiOutlineCreditCard, AiOutlineDollarCircle, AiOutlineRight } from "react-icons/ai";
+import { LuBedDouble } from "react-icons/lu";
+import { SlCup } from "react-icons/sl";
 
 const NightAuditPosting = ({
     nightAuditPostingClick
 }) => {
+
+    const cardTitle = "inline mr-2 !text-xl";
 
     return (
         <>
@@ -12,7 +15,12 @@ const NightAuditPosting = ({
                 {/* Room and Stay Charges  */}
                 <Col span={12}>
                     <Card
-                        title="Room & Stay Charges"
+                        title={
+                            <div>
+                                <LuBedDouble className={cardTitle} />
+                                <span>Room & Stay Charges</span>
+                            </div>
+                        }
                     >
                         <Form
                             layout="vertical"
@@ -63,7 +71,12 @@ const NightAuditPosting = ({
                 {/* Food and Beverage */}
                 <Col span={12}>
                     <Card
-                        title="Food & Beverage"
+                        title={
+                            <div>
+                                <SlCup  className={cardTitle} />
+                                <span>Food & Beverage</span>
+                            </div>
+                        }
                     >
                         <Form
                             layout="vertical"
@@ -107,7 +120,12 @@ const NightAuditPosting = ({
                 {/* Service Charges  */}
                 <Col span={12}>
                     <Card
-                        title="Service Charges"
+                        title={
+                            <div>
+                                <AiOutlineDollarCircle className={cardTitle} />
+                                <span>Service Charges</span>
+                            </div>
+                        }
                     >
                         <Form
                             layout="vertical"
@@ -149,7 +167,12 @@ const NightAuditPosting = ({
                 {/* Payments */}
                 <Col span={12}>
                     <Card
-                        title="Payments"
+                        title={
+                            <div>
+                                <AiOutlineCreditCard className={cardTitle} />
+                                <span>Payments</span>
+                            </div>
+                        }
                     >
                         <Form
                             layout="vertical"
