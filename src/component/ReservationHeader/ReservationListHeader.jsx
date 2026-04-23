@@ -4,19 +4,18 @@ import { PlusOutlined } from "@ant-design/icons";
 
 const ReservationListHeader = ({
   reservationId,
-  onAddGuest,
+  onAddreservation,
   addButtonText,
   onAdd,
 }) => {
   return (
     <div className="flex flex-row justify-between items-center w-full gap-2">
-      <span className="ml-5">Reservation id: {reservationId}</span>
-      <div className="mr-5">
+      <span>Reservation id: {reservationId}</span>
+      <div>
         <div className="w-full flex justify-end">
           <Button
             type="primary"
-            // icon={<PlusOutlined />}
-            onClick={onAddGuest}
+            onClick={onAddreservation}
             className="bg-blue-600"
           >
             {addButtonText}
