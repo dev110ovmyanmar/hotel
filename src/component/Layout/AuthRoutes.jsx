@@ -237,6 +237,10 @@ const NightAudit = lazy(
   () => import("../../pages/NightAudit/NightAudit"),
 );
 
+const RateAndInventoryCalendar = lazy(
+  () => import("../../pages/RateAndInventoryCalendar/RateAndInventoryCalendar")
+);
+
 
 export const authRoutes = [
   {
@@ -1006,14 +1010,20 @@ export const authRoutes = [
     component: <MaintenanceRequestListing />,
     icon: <IoConstructOutline style={{ fontSize: "20px" }} />,
   },
-    {
+  {
     key: 29,
     label: "Night Audit",
     path: "/night-audit",
     component: <NightAudit />,
     icon: <AiOutlineSolution style={{ fontSize: "20px" }} />,
   },
-
+  {
+    key: 30,
+    label: "Rate and Inventory Calendar",
+    path: "/rate-and-inventory-calendar",
+    component: <RateAndInventoryCalendar />,
+    icon: <CalendarOutlined style={{ fontSize: "20px" }} />
+  }
 ];
 
 const AuthRoutes = () => {
