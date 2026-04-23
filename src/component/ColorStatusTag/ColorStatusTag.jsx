@@ -24,13 +24,13 @@ const ColorStatusTag = ({ status }) => {
     occupied_bg: "#E6F4FF",
     occupied_border: "#91CAFF",
 
-    cleaning: "#D46B08",
-    cleaning_bg: "#FFF7E6",
-    cleaning_border: "#FFD591",
+    cleaning: "#FF8D28",
+    cleaning_bg: "#FFF4F1",
+    cleaning_border: "#FFBD9F",
 
-    checked_out: "#D46B08",
-    checked_out_bg: "#FFF7E6",
-    checked_out_border: "#FFD591",
+    checked_out: "#FF8D28",
+    checked_out_bg: "#FFF4F1",
+    checked_out_border: "#FFBD9F",
 
     checked_in: "#08979C",
     checked_in_bg: "#E6FFFB",
@@ -72,9 +72,9 @@ const ColorStatusTag = ({ status }) => {
     new_bg: "#E6FFFB",
     new_border: "#87E8DE",
 
-    preparing: "#D48806",
-    preparing_bg: "#FFFBE6",
-    preparing_border: "#FFE58F",
+    preparing: "#FF8D28",
+    preparing_bg: "#FFF4F1",
+    preparing_border: "#FFBD9F",
 
     success: "#389E0D",
     success_bg: "#F6FFED",
@@ -84,9 +84,9 @@ const ColorStatusTag = ({ status }) => {
     failed_bg: "#FFF1F0",
     failed_border: "#FFA39E",
 
-    refunded: "#D46B08",
-    refunded_bg: "#FFF7E6",
-    refunded_border: "#FFD591",
+    refunded: "#FF8D28",
+    refunded_bg: "#FFF4F1",
+    refunded_border: "#FFBD9F",
 
     issued: "#D48806",
     issued_bg: "#FFFBE6",
@@ -96,9 +96,9 @@ const ColorStatusTag = ({ status }) => {
     paid_bg: "#F6FFED",
     paid_border: "#B7EB8F",
 
-    partially_paid: "#D46B08",
-    partially_paid_bg: "#FFF7E6",
-    partially_paid_border: "#FFD591",
+    partially_paid: "#FF8D28",
+    partially_paid_bg: "#FFF4F1",
+    partially_paid_border: "#FFBD9F",
 
     void: "#CF1322",
     void_bg: "#FFF1F0",
@@ -112,9 +112,9 @@ const ColorStatusTag = ({ status }) => {
     closed_bg: "#FFF1F0",
     closed_border: "#FFA39E",
 
-    in_progress: "#D46B08",
-    in_progress_bg: "#FFF7E6",
-    in_progress_border: "#FFD591",
+    in_progress: "#FF8D28",
+    in_progress_bg: "#FFF4F1",
+    in_progress_border: "#FFBD9F",
 
     pending: "#D4A106",
     pending_bg: "#FDFFE0",
@@ -140,33 +140,9 @@ const ColorStatusTag = ({ status }) => {
     in_house_bg: "#E6FFFB",
     in_house_border: "#87E8DE",
 
-    departed: "#D46B08",
-    departed_bg: "#FFF7E6",
-    departed_border: "#FFD591",
-
-    hk_clean: "#389E0D",
-    hk_clean_bg: "#F6FFED",
-    hk_clean_border: "#B7EB8F",
-
-    hk_dirty: "#CF1322",
-    hk_dirty_bg: "#FFF1F0",
-    hk_dirty_border: "#FFA39E",
-
-    hk_in_progress: "#0958D9",
-    hk_in_progress_bg: "#E6F4FF",
-    hk_in_progress_border: "#91CAFF",
-
-    hk_inspected: "#08979C",
-    hk_inspected_bg: "#E6FFFB",
-    hk_inspected_border: "#87E8DE",
-
-    hk_out_of_order: "#595959",
-    hk_out_of_order_bg: "#F5F5F5",
-    hk_out_of_order_border: "#D9D9D9",
-
-    hk_out_of_service: "#722ED1",
-    hk_out_of_service_bg: "#F9F0FF",
-    hk_out_of_service_border: "#D3ADF7",
+    departed: "#FF8D28",
+    departed_bg: "#FFBD9F",
+    departed_border: "#FFF4F1",
 
     dirty: "#D4A106",
     dirty_bg: "#FDFFE0",
