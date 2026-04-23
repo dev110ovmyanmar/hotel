@@ -4,11 +4,13 @@ import {
   MoreOutlined,
   EyeOutlined,
   EditOutlined,
+  FolderAddOutlined,
 } from "@ant-design/icons";
 import usePermission from "../../../hooks/usePermission"; // <-- Permission hook
 import { PERMISSIONS } from "../../../variables/permission";
 import AgencyContractForm from "../Components/AgencyContractForm/AgencyContractForm";
 import dayjs from "dayjs";
+import ImageUpload from "../../../component/ImageUpload/ImageUpload";
 
 const AgencyContractTable = ({
   data,
@@ -21,6 +23,7 @@ const AgencyContractTable = ({
   const { hasPermission } = usePermission();
 
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [imageDrawerOpen, setImageDrawerOpen] = useState(false);
   const [mode, setMode] = useState(null);
   const [selectedData, setSelectedData] = useState(null);
 
@@ -49,7 +52,8 @@ const AgencyContractTable = ({
         } else {
           return <div>{chargeValue} %</div>
         }
-      }
+      },
+      align:"center"
     },
     {
       title: "Contract Start Date",
@@ -91,6 +95,16 @@ const AgencyContractTable = ({
               setSelectedData(record);
             },
           },
+          {
+            key: "managefiles",
+            label: "Manage Files",
+            icon: <FolderAddOutlined style={{ fontSize: "12px" }} />,
+            // permission: PERMISSIONS.ROOM_RATE_EDIT,
+            onClick: () => {
+              setImageDrawerOpen(true);
+              setSelectedData(record);
+            },
+          }
         ];
 
         const items = actions
@@ -143,10 +157,13 @@ const AgencyContractTable = ({
         setMode={setMode}
         drawerOpen={drawerOpen}
         setDrawerOpen={setDrawerOpen}
+        imageDrawerOpen={imageDrawerOpen}
+        setImageDrawerOpen={setImageDrawerOpen}
         selectedData={selectedData}
         setSelectedData={setSelectedData}
 
       />
+
     </div>
   );
 };

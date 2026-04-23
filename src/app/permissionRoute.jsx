@@ -11,7 +11,7 @@ const PermissionRoute = ({ children, permission }) => {
     return children;
   }
 
-  if (permissions.includes(permission)) {
+  if (permissions?.includes(permission)) {
     return children;
   }
 

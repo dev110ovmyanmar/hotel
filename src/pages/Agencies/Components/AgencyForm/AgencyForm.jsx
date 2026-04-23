@@ -7,18 +7,21 @@ import {
   Select,
   InputNumber,
   Row,
-  Col
+  Col,
 } from "antd";
 import Toast from "../../../../component/Toast/Toast";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
 import useApiQuery from "../../../../hooks/useApiQuery";
 import {
   upsertPartner,
-  partnerDetails
+  partnerDetails,
+  fetchAgencyUpload,
 } from "../../../../api/partnerApi";
 import FormButtons from "../../../../component/FormButtons/FormButtons";
-import { queryClient } from './../../../../app/queryClient';
-import Status from './../../../../component/Status/Status';
+import { queryClient } from "./../../../../app/queryClient";
+import Status from "./../../../../component/Status/Status";
+import ImageUpload from "../../../../component/ImageUpload/ImageUpload";
+import { deleteImageUpload } from "../../../../api/deleteImageApi";
 
 const { TextArea } = Input;
 
@@ -29,6 +32,8 @@ const AgencyForm = ({
   setSelectedData,
   drawerOpen,
   setDrawerOpen,
+  imageDrawerOpen,
+  setImageDrawerOpen,
   page,
   setPage,
 }) => {
@@ -38,7 +43,10 @@ const AgencyForm = ({
   const isEdit = mode === "edit";
   const isAdd = mode === "add";
 
-  const initData = queryClient.getQueryData(["initData", "authenticated"])?.statuses;
+  const initData = queryClient.getQueryData([
+    "initData",
+    "authenticated",
+  ])?.statuses;
   const chargeType = initData?.charge_type;
 
   const chargeTypeValue = Form.useWatch(["chargeType", "uuid"], form);
@@ -46,8 +54,7 @@ const AgencyForm = ({
   const upsertPartners = useApiMutation({
     mutationFn: upsertPartner,
     invalidateKeys: [["agencies"]],
-    shouldInvalidate: isEdit ? true : page === 1
-
+    shouldInvalidate: isEdit ? true : page === 1,
   });
 
   const { data, isPending, error } = useApiQuery({
@@ -55,18 +62,18 @@ const AgencyForm = ({
     fetchQueryFunction: partnerDetails,
     params: {
       uuid: selectedData?.uuid,
-      partnerType: "Agency"
+      partnerType: "Agency",
     },
     options: {
       enabled: !!selectedData?.uuid,
     },
-
   });
+
 
   useEffect(() => {
     if (!isAdd && data) {
       form.setFieldsValue({
-        ...data
+        ...data,
       });
     }
   }, [data, isEdit]);
@@ -80,8 +87,8 @@ const AgencyForm = ({
   const onFinish = (values) => {
     const modifiedValues = {
       ...values,
-      partnerType: "Agency"
-    }
+      partnerType: "Agency",
+    };
     if (isAdd) {
       upsertPartners.mutate(modifiedValues, {
         onSuccess: () => {
@@ -108,6 +115,20 @@ const AgencyForm = ({
       });
     }
   };
+
+  const agencyUpload = useApiMutation({
+    mutationFn: fetchAgencyUpload,
+    invalidateKeys: [["agency-details", { uuid: selectedData?.uuid }]],
+  });
+
+  const deleteAgencyUpload = useApiMutation({
+    mutationFn: deleteImageUpload,
+    invalidateKeys : [["agency-details", { uuid: selectedData?.uuid }]],
+  });
+
+  if(data){
+    console.log(data?.agencyFiles.map(i=>i),"DataForAgencyFiles")
+  }
 
   return (
     <div className="flex justify-center">
@@ -148,9 +169,7 @@ const AgencyForm = ({
           layout="vertical"
           validateTrigger="onSubmit"
           onFinish={onFinish}
-
         >
-
           <Form.Item
             label="Name"
             name="name"
@@ -162,7 +181,9 @@ const AgencyForm = ({
           <Form.Item
             label="Contact Person Name"
             name="contactPerson"
-            rules={[{ required: true, message: "Contact Person's Name is Required" }]}
+            rules={[
+              { required: true, message: "Contact Person's Name is Required" },
+            ]}
           >
             <Input readOnly={isView} placeholder="Enter Contact Person Name" />
           </Form.Item>
@@ -174,7 +195,6 @@ const AgencyForm = ({
           >
             <Input readOnly={isView} placeholder="Enter Email Address" />
           </Form.Item>
-
 
           <Form.Item
             label="Phone"
@@ -196,22 +216,17 @@ const AgencyForm = ({
                     : value,
                 })}
               >
-                {
-                  isView ?
-                    <Input readOnly={isView} /> :
-                    <Select
-                      options={
-                        chargeType?.map(item => (
-                          {
-                            label: item.name,
-                            value: item.uuid
-                          }
-                        ))
-                      }
-                      placeholder="Select Charge Type"
-
-                    ></Select>
-                }
+                {isView ? (
+                  <Input readOnly={isView} />
+                ) : (
+                  <Select
+                    options={chargeType?.map((item) => ({
+                      label: item.name,
+                      value: item.uuid,
+                    }))}
+                    placeholder="Select Charge Type"
+                  ></Select>
+                )}
               </Form.Item>
             </Col>
 
@@ -223,10 +238,9 @@ const AgencyForm = ({
                   { required: true, message: "Charge Value is Required" },
                   {
                     validator: (_, value) => {
-                      const selectedType =
-                        chargeType?.find(
-                          (item) => item.uuid === chargeTypeValue,
-                        );
+                      const selectedType = chargeType?.find(
+                        (item) => item.uuid === chargeTypeValue,
+                      );
 
                       if (selectedType?.code === "percentage") {
                         const numValue = Number(value);
@@ -265,16 +279,24 @@ const AgencyForm = ({
             <TextArea readOnly={isView} placeholder="Enter Address" />
           </Form.Item>
 
-          <Form.Item
-            label="Remark"
-            name="remark"
-          >
+          <Form.Item label="Remark" name="remark">
             <TextArea readOnly={isView} placeholder="Enter Remark" />
           </Form.Item>
 
           <Status isView={isView} />
         </Form>
       </Drawer>
+
+      <ImageUpload
+        partneruuid={selectedData?.uuid}
+        agencyFileList={data?.agencyFiles}
+        handleUploadMutation={agencyUpload}
+        imageDrawerOpen={imageDrawerOpen}
+        setImageDrawerOpen={setImageDrawerOpen}
+        title={selectedData?.name}
+        fileCategoryName="agency"
+        deleteMutation={deleteAgencyUpload} 
+      />
     </div>
   );
 };

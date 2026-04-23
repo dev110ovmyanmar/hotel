@@ -1,6 +1,6 @@
 import { Dropdown, Space, Table, Tag, Button } from "antd";
 import { useState } from "react";
-import { EditOutlined, EyeOutlined, MoreOutlined } from "@ant-design/icons";
+import { EditOutlined, EyeOutlined, FolderAddOutlined, MoreOutlined } from "@ant-design/icons";
 import ReferralForm from './ReferralForm/ReferralForm';
 import ColorStatusTag from './../../../component/ColorStatusTag/ColorStatusTag';
 import { PERMISSIONS } from './../../../variables/permission';
@@ -18,6 +18,7 @@ const ReferralTable = ({
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mode, setMode] = useState(null);
   const [selectedData, setSelectedData] = useState({});
+  const [imageDrawerOpen,setImageDrawerOpen] = useState(false);
 
   const {hasPermission} = usePermission();
 
@@ -59,7 +60,8 @@ const ReferralTable = ({
         } else {
           return <div>{chargeValue} %</div>
         }
-      }
+      },
+      align:"center"
     },
     {
       title: "Status",
@@ -92,6 +94,16 @@ const ReferralTable = ({
             onClick: () => {
               setDrawerOpen(true);
               setMode("edit");
+              setSelectedData(record);
+            },
+          },
+          {
+            key: "manageFiles",
+            label: "Manage Files",
+            icon: <FolderAddOutlined style={{ fontSize: "12px" }} />,
+            permission: PERMISSIONS.PARTNER_EDIT,
+            onClick: () => {
+              setImageDrawerOpen(true);
               setSelectedData(record);
             },
           }
@@ -146,6 +158,8 @@ const ReferralTable = ({
         setMode={setMode}
         drawerOpen={drawerOpen}
         setDrawerOpen={setDrawerOpen}
+        imageDrawerOpen={imageDrawerOpen}
+        setImageDrawerOpen={setImageDrawerOpen}
         selectedData={selectedData}
         setSelectedData={setSelectedData}
         page={page}

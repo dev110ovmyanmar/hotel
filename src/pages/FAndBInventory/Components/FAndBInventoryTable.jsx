@@ -138,6 +138,7 @@ const FAndBInventoryTable = ({
     return (
       <>
         <Table
+          className="custom-table-style"
           columns={expandColumns}
           dataSource={record.menuInventoryMappings || []}
           rowKey="uuid"
@@ -154,7 +155,10 @@ const FAndBInventoryTable = ({
         tableLayout="fixed"
         scroll={{ x: 1000 }}
         columns={columns}
-        expandable={{ expandedRowRender, defaultExpandedRowKeys: ["0"] }}
+        expandable={{ 
+          expandedRowRender,
+          rowExpandable:(record)=> record?.menuInventoryMappings.length > 0
+        }}
         dataSource={data}
         loading={loading}
         rowKey="uuid"

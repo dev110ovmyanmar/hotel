@@ -6,6 +6,8 @@ import useApiQuery from "../../../../hooks/useApiQuery";
 import { createFloor, editFloor, floorDetail } from "../../../../api/floorApi";
 import FormButtons from "./../../../../component/FormButtons/FormButtons";
 import Loader from "../../../../component/Loader/Loader";
+import usePermission from "../../../../hooks/usePermission";
+import { PERMISSIONS } from "../../../../variables/permission";
 
 const { TextArea } = Input;
 
@@ -23,6 +25,9 @@ const FloorForm = ({
   const isView = mode === "view";
   const isEdit = mode === "edit";
   const isAdd = mode === "add";
+
+  const { hasPermission } = usePermission();
+  const canEdit = hasPermission(PERMISSIONS.FLOOR_EDIT);
 
   const createFloors = useApiMutation({
     mutationFn: createFloor,
@@ -101,24 +106,25 @@ const FloorForm = ({
                   ? "Edit Floor"
                   : "Add Floor"}
             </span>
-            {isView ? (
-              <Button
-                type="primary"
-                onClick={() => {
-                  setMode("edit");
-                }}
-              >
-                Edit
-              </Button>
-            ) : (
-              <FormButtons
-                onClick={() => form.submit()}
-                isPending={
-                  isAdd ? createFloors.isPending : editFloors.isPending
-                }
-                mode={mode}
-              />
-            )}
+            {isView ?
+              (canEdit && (
+                <Button
+                  type="primary"
+                  onClick={() => {
+                    setMode("edit");
+                  }}
+                >
+                  Edit
+                </Button>
+              )) : (
+                <FormButtons
+                  onClick={() => form.submit()}
+                  isPending={
+                    isAdd ? createFloors.isPending : editFloors.isPending
+                  }
+                  mode={mode}
+                />
+              )}
           </div>
         }
       >

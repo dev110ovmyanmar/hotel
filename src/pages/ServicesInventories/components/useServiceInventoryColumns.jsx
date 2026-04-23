@@ -3,6 +3,7 @@ import { EditOutlined, EyeOutlined, FileOutlined, MoreOutlined } from "@ant-desi
 import usePermission from "../../../hooks/usePermission";
 import { PERMISSIONS } from "../../../variables/permission";
 import BooleanTag from "../../../component/BooleanTag/BooleanTag";
+import PriceTag from "../../../component/PriceTag/PriceTag";
 
 export default function useServiceInventoryColumns(onEdit, onView) {
   const { hasPermission } = usePermission();
@@ -33,7 +34,7 @@ export default function useServiceInventoryColumns(onEdit, onView) {
       dataIndex: "unitCost",
       key: "unitCost",
       width: 120,
-      render: (cost) => <span className="font-medium">{cost}</span>,
+      render: (cost) => <PriceTag value={cost} />
     },
     {
       title: "Selling Price (MMK)",
@@ -42,9 +43,7 @@ export default function useServiceInventoryColumns(onEdit, onView) {
       // align: "right",
       width: 110,
       render: (price) => (
-        <span className="font-medium">
-          {price}
-        </span>
+        <PriceTag value={price} />
       ),
     },
     {
@@ -60,7 +59,7 @@ export default function useServiceInventoryColumns(onEdit, onView) {
       key: "unit",
       width: 80,
       align: "center",
-      render: (text) => <span className="text-gray-500">{text || "-"}</span>,
+      render: (text) => text || "-",
     },
     {
       title: "Laundry",
@@ -68,13 +67,10 @@ export default function useServiceInventoryColumns(onEdit, onView) {
       key: "laundryStatus",
       align: "center",
       width: 90,
-      render: (status) => (
-        <BooleanTag
-          value={status}
-          trueText="Washable"
-          falseText="N/A"
-        />
-      ),
+      render: (status) =>
+        <Tag color={status == false ? "red" : "green"}>
+          {status == false ? "FALSE" : "TRUE"}
+        </Tag>
     },
     {
       title: "Free",
@@ -83,11 +79,9 @@ export default function useServiceInventoryColumns(onEdit, onView) {
       align: "center",
       width: 80,
       render: (free) => (
-        <BooleanTag
-          value={free}
-          trueText="Gift"
-          falseText="Sale"
-        />
+        <Tag color={free == false ? "red" : "green"}>
+          {free == false ? "FALSE" : "TRUE"}
+        </Tag>
       ),
     },
     {

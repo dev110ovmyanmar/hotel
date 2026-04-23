@@ -1,17 +1,33 @@
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import { Form, Input, Button, Drawer, Row, Col, Select, Space, DatePicker, InputNumber } from "antd";
+import {
+  Form,
+  Input,
+  Button,
+  Drawer,
+  Row,
+  Col,
+  Select,
+  Space,
+  DatePicker,
+  InputNumber,
+} from "antd";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
 import useApiQuery from "../../../../hooks/useApiQuery";
 import FormButton from "../../../../component/FormButtons/FormButtons";
-import Toast from './../../../../component/Toast/Toast';
-import usePermission from './../../../../hooks/usePermission';
-import { upsertPartnerContract, partnerContractDetails } from "../../../../api/partnerContractApi";
-import { queryClient } from '../../../../app/queryClient';
+import Toast from "./../../../../component/Toast/Toast";
+import usePermission from "./../../../../hooks/usePermission";
+import {
+  upsertPartnerContract,
+  partnerContractDetails,
+} from "../../../../api/partnerContractApi";
+import { queryClient } from "../../../../app/queryClient";
 import { getFormattedDate } from "../../../../utils";
 import dayjs from "dayjs";
 import { capitalizeFirstLetter } from "../../../../utils/Utils";
-
+import ImageUpload from "../../../../component/ImageUpload/ImageUpload";
+import { fetchAgencyUpload } from "../../../../api/partnerApi";
+import { deleteImageUpload } from "../../../../api/deleteImageApi";
 
 const AgencyContractForm = ({
   mode,
@@ -20,6 +36,8 @@ const AgencyContractForm = ({
   setSelectedData,
   drawerOpen,
   setDrawerOpen,
+  imageDrawerOpen,
+  setImageDrawerOpen,
   page,
   setPage,
 }) => {
@@ -46,8 +64,7 @@ const AgencyContractForm = ({
     options: {
       partnerType: "Agency",
     },
-    shouldInvalidate: isEdit ? true : page === 1
-
+    shouldInvalidate: isEdit ? true : page === 1,
   });
 
   const { data: partnerContractDetailData } = useApiQuery({
@@ -73,10 +90,6 @@ const AgencyContractForm = ({
     }
   }, [partnerContractDetailData]);
 
-  if (partnerContractDetailData) {
-    console.log(partnerContractDetailData, "partnerContractDetailData")
-  }
-
   const onFinish = (values) => {
     const createValues = {
       ...values,
@@ -84,7 +97,7 @@ const AgencyContractForm = ({
         uuid: propertyName?.uuid,
       },
       partner: {
-        uuid: state?.agencyRecord?.uuid
+        uuid: state?.agencyRecord?.uuid,
       },
       partnerType: "Agency",
       contractStart: getFormattedDate(values?.contractStart),
@@ -107,7 +120,7 @@ const AgencyContractForm = ({
           uuid: propertyName?.uuid,
         },
         partner: {
-          uuid: state?.agencyRecord?.uuid
+          uuid: state?.agencyRecord?.uuid,
         },
         partnerType: "Agency",
         contractStart: getFormattedDate(values?.contractStart),
@@ -124,6 +137,18 @@ const AgencyContractForm = ({
     }
   };
 
+  const partnerUpload = useApiMutation({
+    mutationFn: fetchAgencyUpload,
+    invalidateKeys: [
+      ["partner-contract-details", { uuid: partnerContractDetailData?.uuid }],
+    ],
+  });
+
+  const deleteAgencyContractUpload = useApiMutation({
+    mutationFn: deleteImageUpload,
+    invalidateKeys: [["partner-contract-details", { uuid: selectedData?.uuid }]],
+  });
+
   return (
     <div>
       <Drawer
@@ -132,14 +157,7 @@ const AgencyContractForm = ({
         size={550}
         title={
           <div className="flex justify-between items-center">
-            <span>
-              {/* {mode === "view"
-                ? `${capitalizeFirstLetter(partnerContractDetailData?.agency?.name)}`
-                : mode === "edit"
-                  ? "Edit Agency Contract"
-                  : "Create Agency Contract"} */}
-              {capitalizeFirstLetter(state?.agencyRecord?.name)}
-            </span>
+            <span>{capitalizeFirstLetter(state?.agencyRecord?.name)}</span>
             {isView ? (
               <Button
                 type="primary"
@@ -169,27 +187,10 @@ const AgencyContractForm = ({
               name: propertyName?.name,
             },
             agency: {
-              name: state?.agencyRecord?.name
-            }
+              name: state?.agencyRecord?.name,
+            },
           }}
         >
-
-          {/* <Form.Item
-            label="Property Name"
-            name={["property", "name"]}
-            rules={[{ required: true, message: "Property Name is Required" }]}
-          >
-            <Input readOnly/>
-          </Form.Item>
-
-          <Form.Item
-            label="Agency Name"
-            name={["agency", "name"]}
-            rules={[{ required: true, message: "Agency Name is Required" }]}
-          >
-            <Input readOnly/>
-          </Form.Item> */}
-
           <Row gutter={16}>
             <Col span={12}>
               <Form.Item
@@ -202,22 +203,17 @@ const AgencyContractForm = ({
                     : value,
                 })}
               >
-                {
-                  isView ?
-                    <Input readOnly={isView} /> :
-                    <Select
-                      options={
-                        chargeType?.map(item => (
-                          {
-                            label: item.name,
-                            value: item.uuid
-                          }
-                        ))
-                      }
-                      placeholder="Select Charge Type"
-
-                    ></Select>
-                }
+                {isView ? (
+                  <Input readOnly={isView} />
+                ) : (
+                  <Select
+                    options={chargeType?.map((item) => ({
+                      label: item.name,
+                      value: item.uuid,
+                    }))}
+                    placeholder="Select Charge Type"
+                  ></Select>
+                )}
               </Form.Item>
             </Col>
 
@@ -229,10 +225,9 @@ const AgencyContractForm = ({
                   { required: true, message: "Charge Value is Required" },
                   {
                     validator: (_, value) => {
-                      const selectedType =
-                        chargeType?.find(
-                          (item) => item.uuid === chargeTypeValue,
-                        );
+                      const selectedType = chargeType?.find(
+                        (item) => item.uuid === chargeTypeValue,
+                      );
 
                       if (selectedType?.code === "percentage") {
                         const numValue = Number(value);
@@ -257,7 +252,8 @@ const AgencyContractForm = ({
                     return selected?.code === "percentage" ? "%" : "MMK";
                   })()}
                   readOnly={isView}
-                  placeholder="Enter Charge Value" />
+                  placeholder="Enter Charge Value"
+                />
               </Form.Item>
             </Col>
           </Row>
@@ -267,8 +263,12 @@ const AgencyContractForm = ({
               <Form.Item
                 label=" Start Contract Date"
                 name="contractStart"
-                rules={[{ required: true, message: "Start Contract Date is Required" }]}
-
+                rules={[
+                  {
+                    required: true,
+                    message: "Start Contract Date is Required",
+                  },
+                ]}
               >
                 <DatePicker style={{ width: "100%" }} disabled={isView} />
               </Form.Item>
@@ -278,15 +278,27 @@ const AgencyContractForm = ({
               <Form.Item
                 label="End Contract Date"
                 name="contractEnd"
-                rules={[{ required: true, message: "End Contract Date is Required" }]}
+                rules={[
+                  { required: true, message: "End Contract Date is Required" },
+                ]}
               >
                 <DatePicker style={{ width: "100%" }} disabled={isView} />
               </Form.Item>
             </Col>
           </Row>
-
         </Form>
       </Drawer>
+
+      <ImageUpload
+        agencyContractuuid={partnerContractDetailData?.uuid}
+        agencyFileList={partnerContractDetailData?.agencyContractFiles}
+        handleUploadMutation={partnerUpload}
+        imageDrawerOpen={imageDrawerOpen}
+        setImageDrawerOpen={setImageDrawerOpen}
+        title={`${selectedData?.contractStart} to ${selectedData?.contractEnd}`}
+        fileCategoryName="agency_contract"
+        deleteMutation={deleteAgencyContractUpload}
+      />
     </div>
   );
 };

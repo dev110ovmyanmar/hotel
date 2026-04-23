@@ -1,10 +1,16 @@
 import { Dropdown, Space, Table } from "antd";
 import { useState } from "react";
-import { MoreOutlined, EyeOutlined, EditOutlined } from "@ant-design/icons";
+import {
+  MoreOutlined,
+  EyeOutlined,
+  EditOutlined,
+  FileAddOutlined,
+} from "@ant-design/icons";
 import usePermission from "../../../hooks/usePermission";
 import { PERMISSIONS } from "../../../variables/permission";
 import RoomTypeForm from "./RoomTypeForm/RoomTypeForm";
 import PriceTag from "../../../component/PriceTag/PriceTag";
+import { TableColumns } from "../../../component/TableColumns/TableColumns";
 
 const RoomTypeTable = ({
   data,
@@ -13,14 +19,15 @@ const RoomTypeTable = ({
   total,
   changePage,
   changePerPage,
-  loading
+  loading,
 }) => {
   const { hasPermission } = usePermission();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mode, setMode] = useState(null);
   const [selectedData, setSelectedData] = useState(null);
+  const [imageDrawerOpen, setImageDrawerOpen] = useState(false);
 
-  const columns = [
+  const baseColumns = [
     {
       title: "ID",
       dataIndex: "id",
@@ -31,6 +38,7 @@ const RoomTypeTable = ({
       title: "Name",
       dataIndex: "name",
       key: "name",
+      align: "left",
     },
     {
       title: "Code",
@@ -55,8 +63,8 @@ const RoomTypeTable = ({
     },
     {
       title: "Extra Bed",
-      dataIndex: "extraBeds",
-      key: "extraBeds",
+      dataIndex: "extraBed",
+      key: "extraBed",
       width: 110,
       align: "center",
     },
@@ -64,7 +72,8 @@ const RoomTypeTable = ({
       title: "Price (MMK)",
       dataIndex: "basePrice",
       key: "basePrice",
-      render: (text) => <PriceTag value={text} />
+      render: (text) => <PriceTag value={text} />,
+      align: "end",
     },
     {
       title: "Action",
@@ -94,6 +103,16 @@ const RoomTypeTable = ({
               setSelectedData(record);
             },
           },
+          {
+            key: "managefiles",
+            label: "Manage Files",
+            icon: <FileAddOutlined style={{ fontSize: "12px" }} />,
+            permission: PERMISSIONS.ROOM_TYPE_UPLOAD,
+            onClick: () => {
+              setImageDrawerOpen(true);
+              setSelectedData(record);
+            },
+          },
         ];
 
         const items = actions
@@ -110,6 +129,8 @@ const RoomTypeTable = ({
             ),
           }));
 
+        if (items.length === 0) return null;
+
         return (
           <Dropdown menu={{ items }} trigger={["click"]}>
             <MoreOutlined style={{ fontSize: "16px" }} />
@@ -118,6 +139,8 @@ const RoomTypeTable = ({
       },
     },
   ];
+
+  const columns = TableColumns(baseColumns);
 
   return (
     <div id="scrollId">
@@ -146,6 +169,8 @@ const RoomTypeTable = ({
         setMode={setMode}
         drawerOpen={drawerOpen}
         setDrawerOpen={setDrawerOpen}
+        imageDrawerOpen={imageDrawerOpen}
+        setImageDrawerOpen={setImageDrawerOpen}
         selectedData={selectedData}
         setSelectedData={setSelectedData}
       />

@@ -14,11 +14,14 @@ import { useApiMutation } from "../../../../hooks/useApiMutation";
 import useApiQuery from "../../../../hooks/useApiQuery";
 import {
   upsertPartner,
-  partnerDetails
+  partnerDetails,
+  fetchReferralFormUpload
 } from "../../../../api/partnerApi";
 import FormButtons from "../../../../component/FormButtons/FormButtons";
 import { queryClient } from './../../../../app/queryClient';
 import Status from './../../../../component/Status/Status';
+import ImageUpload from "../../../../component/ImageUpload/ImageUpload";
+import { deleteImageUpload } from "../../../../api/deleteImageApi";
 
 const { TextArea } = Input;
 
@@ -29,6 +32,8 @@ const ReferralForm = ({
   setSelectedData,
   drawerOpen,
   setDrawerOpen,
+  imageDrawerOpen,
+  setImageDrawerOpen,
   page,
   setPage,
 }) => {
@@ -108,6 +113,16 @@ const ReferralForm = ({
       });
     }
   };
+""
+  const fetchReferralFormUploads = useApiMutation({
+    mutationFn : fetchReferralFormUpload,
+    invalidateKeys : [["referral-agents-details",{uuid: selectedData?.uuid}]],
+  });
+
+  const deleteReferralAgentUpload = useApiMutation({
+      mutationFn: deleteImageUpload,
+      invalidateKeys: [["referral-agents-details", { uuid: selectedData?.uuid }]],
+    });
 
   return (
     <div className="flex justify-center">
@@ -272,6 +287,18 @@ const ReferralForm = ({
           <Status isView={isView} />
         </Form>
       </Drawer>
+
+      <ImageUpload
+        partneruuid={selectedData?.uuid}
+        agencyFileList={data?.referralAgentFiles}
+        handleUploadMutation={fetchReferralFormUploads}
+        imageDrawerOpen={imageDrawerOpen}
+        setImageDrawerOpen={setImageDrawerOpen}
+        title={selectedData?.name}
+        fileCategoryName="referral_agent"
+        deleteMutation={deleteReferralAgentUpload}
+
+      />
     </div>
   );
 };

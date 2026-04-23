@@ -12,7 +12,7 @@ const TaxTable = ({
   total,
   changePage,
   changePerPage,
-  loading
+  loading,
 }) => {
   const { hasPermission } = usePermission();
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -40,11 +40,12 @@ const TaxTable = ({
       title: "Inclusive",
       dataIndex: "isInclusive",
       key: "isInclusive",
-      render: (_, record) => (
-        <Tag color={record.isInclusive ? "green" : "red"}>
-          {record.isInclusive ? "TRUE" : "FALSE"}
-        </Tag>
+      render: (text) => (
+        <div className={text === true ? "text-[#389E0D]" : "text-[#CF1322]"}>
+          {text === true ? "True" : "False"}
+        </div>
       ),
+      align: "center",
     },
 
     {
@@ -64,9 +65,11 @@ const TaxTable = ({
 
         return value;
       },
+      align: "center",
     },
     {
       title: "Action",
+      align: "center",
       render: (_, record) => {
         const smallStyle = { fontSize: "12px" };
 

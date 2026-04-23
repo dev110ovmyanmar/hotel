@@ -70,6 +70,7 @@ const RoomInventoryForm = ({
       const editValues = {
         ...values,
         uuid: data?.uuid,
+        availableRooms: values.availableRooms,
       };
 
       updateRoomInventory.mutate(editValues, {
@@ -99,7 +100,9 @@ const RoomInventoryForm = ({
             <span>
               {mode === "view"
                 ? "Room Inventory Details"
-                : "Edit Room Inventory"}
+                : mode === "edit"
+                  ? "Edit Room Inventory"
+                  : ""}
             </span>
             {isView ? (
               <Button
@@ -126,8 +129,8 @@ const RoomInventoryForm = ({
           style={{ width: "100%" }}
           onFinish={onFinish}
         >
-          <Form.Item label="Name" name="name">
-            <Input readOnly={true} />
+          <Form.Item label="Room Type" name="name">
+            <Input disabled={!isAdd} />
           </Form.Item>
 
           <div className="grid grid-cols-2 gap-6">
@@ -138,7 +141,11 @@ const RoomInventoryForm = ({
                 { required: true, message: "Available Rooms is Required" },
               ]}
             >
-              <InputNumber {...sharedProps} placeholder="Outlined" disabled={isView} />
+              <InputNumber
+                {...sharedProps}
+                placeholder="Outlined"
+                disabled={isView}
+              />
             </Form.Item>
 
             <Form.Item
@@ -166,19 +173,6 @@ const RoomInventoryForm = ({
               <InputNumber {...sharedProps} disabled={true} />
             </Form.Item>
           </div>
-
-          <Form.Item
-            label="Stop Sell"
-            name="stopSell"
-            valuePropName="checked"
-            normalize={(value) => (value ? 1 : 0)}
-          >
-            <Switch
-              checkedChildren="True"
-              unCheckedChildren="False"
-              disabled={true}
-            />
-          </Form.Item>
         </Form>
       </Drawer>
     </div>

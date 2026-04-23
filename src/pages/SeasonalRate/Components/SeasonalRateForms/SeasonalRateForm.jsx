@@ -13,6 +13,8 @@ import {
 import dayjs from "dayjs";
 import { getFormattedDate } from "../../../../utils";
 import Loader from "../../../../component/Loader/Loader";
+import usePermission from "../../../../hooks/usePermission";
+import { PERMISSIONS } from "../../../../variables/permission";
 
 const SeasonalRateForm = ({
   mode,
@@ -28,6 +30,9 @@ const SeasonalRateForm = ({
   const isView = mode === "view";
   const isEdit = mode === "edit";
   const isAdd = mode === "add";
+
+  const { hasPermission } = usePermission();
+  const canEdit = hasPermission(PERMISSIONS.SEASONAL_RATE_EDIT);
 
   const { data: ratePlanMetaData } = useApiQuery({
     fetchQueryName: "ratePlanMetaData",
@@ -56,7 +61,7 @@ const SeasonalRateForm = ({
   });
 
   const { data, isLoading } = useApiQuery({
-    fetchQueryName: "SeasonlRate",
+    fetchQueryName: "SeasonlRate-details",
     fetchQueryFunction: seasonlRateDetails,
     params: { uuid: selectedData?.uuid },
     options: {
@@ -133,14 +138,16 @@ const SeasonalRateForm = ({
                   : "Create Seasonal Rate"}
             </span>
             {isView ? (
-              <Button
-                type="primary"
-                onClick={() => {
-                  setMode("edit");
-                }}
-              >
-                Edit
-              </Button>
+              canEdit && (
+                <Button
+                  type="primary"
+                  onClick={() => {
+                    setMode("edit");
+                  }}
+                >
+                  Edit
+                </Button>
+              )
             ) : (
               <FormButton
                 onClick={() => form.submit()}

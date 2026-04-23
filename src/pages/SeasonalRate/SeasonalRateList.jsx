@@ -15,21 +15,28 @@ const SeasonalRateList = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mode, setMode] = useState("add");
   const [selectedData, setSelectedData] = useState(null);
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
 
   const normalStatus = status === "all" ? null : status;
-
+  const filter = {};
+  if (startDate && endDate) {
+    filter.startDate = startDate;
+    filter.endDate = endDate;
+  }
   const { data, isLoading } = useApiQuery({
     fetchQueryName: "SeasonlRate",
     fetchQueryFunction: fetchSeasonlRate,
     params: {
+      filter,
       keyword,
       status: normalStatus,
     },
   });
 
-  const seasonalRoomTypeData = data?.data?.map(item => ({
+  const seasonalRoomTypeData = data?.data?.map((item) => ({
     ...item.roomType,
-    rates: item.rates
+    rates: item.rates,
   }));
 
   useEffect(() => {
@@ -51,7 +58,11 @@ const SeasonalRateList = () => {
           setKeyword={setKeyword}
           addButtonText="Add New Seasonal Rate"
           onAdd={handleAdd}
-        // permission={PERMISSIONS.SEASONAL_RATE_CREATE}
+          startDate={startDate}
+          endDate={endDate}
+          setStartDate={setStartDate}
+          setEndDate={setEndDate}
+          permission={PERMISSIONS.SEASONAL_RATE_CREATE}
         />
       </div>
 

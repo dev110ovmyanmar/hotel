@@ -5,11 +5,10 @@ import ListHeader from "../../component/ListHeader/ListHeader";
 import RoomInventoryForm from "./Components/RoomInventoryForm/RoomInventoryForm";
 import RoomInventoryTable from "./Components/RoomInventoryTable";
 import { getAvailabilityCalendar } from "../../api/availabilityCalendarApi";
-import { DatePicker } from "antd";
-import dayjs from "dayjs";
+import { PERMISSIONS } from "../../variables/permission";
+import RoomInventoryCreateForm from "./Components/RoomInventoryForm/RoomInventoryCreateForm";
 
 const RoomInventoryList = () => {
-  const { RangePicker } = DatePicker;
   const [keyword, setKeyword] = useState("");
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(LIMITS.PAGE_SIZE);
@@ -34,10 +33,16 @@ const RoomInventoryList = () => {
     },
   });
 
-  const roomTypeData = data?.data.map(item => ({
+  const roomTypeData = data?.data.map((item) => ({
     ...item.roomType,
-    rates: item.rates   
+    calendars: item.calendars,
   }));
+
+  const handleAdd = () => {
+    setSelectedData(null);
+    setMode("add");
+    setDrawerOpen(true);
+  };
 
   useEffect(() => {
     setPage(1);
@@ -50,38 +55,39 @@ const RoomInventoryList = () => {
           searchPlaceholder="Search availabiliy calendar..."
           keyword={keyword}
           setKeyword={setKeyword}
-          showCreateButton={false}
+          addButtonText="Add New Room Inventory"
+          onAdd={handleAdd}
+          startDate={startDate}
+          endDate={endDate}
+          setStartDate={setStartDate}
+          setEndDate={setEndDate}
+          permission={PERMISSIONS.AVAILABILITY_CALENDAR_CREATE}
         />
-
-        <div className="w-full md:w-80">
-          <RangePicker
-            style={{ width: "100%" }}
-            onChange={(dates) => {
-              if (dates) {
-                setStartDate(dayjs(dates[0]).format("YYYY-MM-DD"));
-                setEndDate(dayjs(dates[1]).format("YYYY-MM-DD"));
-              } else {
-                setStartDate(null);
-                setEndDate(null);
-              }
-            }}
-          />
-        </div>
       </div>
 
-      <RoomInventoryTable
-        data={roomTypeData || []}
-      />
+      <RoomInventoryTable data={roomTypeData || []} />
 
-      <RoomInventoryForm
-        drawerOpen={drawerOpen}
-        setDrawerOpen={setDrawerOpen}
-        page={page}
-        setPage={setPage}
-        mode={mode}
-        selectedData={selectedData}
-        setSelectedData={setSelectedData}
-      />
+      {mode === "add" ? (
+        <RoomInventoryCreateForm
+          drawerOpen={drawerOpen}
+          setDrawerOpen={setDrawerOpen}
+          page={page}
+          setPage={setPage}
+          mode={mode}
+          selectedData={selectedData}
+          setSelectedData={setSelectedData}
+        />
+      ) : (
+        <RoomInventoryForm
+          drawerOpen={drawerOpen}
+          setDrawerOpen={setDrawerOpen}
+          page={page}
+          setPage={setPage}
+          mode={mode}
+          selectedData={selectedData}
+          setSelectedData={setSelectedData}
+        />
+      )}
     </div>
   );
 };

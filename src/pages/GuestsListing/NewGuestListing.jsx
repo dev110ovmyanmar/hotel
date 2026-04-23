@@ -6,6 +6,7 @@ import GuestTable from "./Components/NewGuestTable";
 import GuestForm from "./Components/NewGuestForm";
 import { LIMITS } from "../../variables/constants";
 import { useNavigate } from "react-router-dom";
+import NewGuestUploadForm from "./Components/NewGuestUploadForm";
 
 const GuestList = () => {
   const [selectedRow, setSelectedRow] = useState(null);
@@ -14,8 +15,8 @@ const GuestList = () => {
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(LIMITS.PAGE_SIZE);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [uploadDrawerOpen, setUploadDrawerOpen] = useState(false);
   const navigate = useNavigate();
-
 
   // Fetch List Data
   const { data, isLoading } = useApiQuery({
@@ -55,12 +56,23 @@ const GuestList = () => {
   };
 
   const handleViewNotes = (record) => {
-    navigate(`/guest-list/guest-notes/${record.uuid}`);
-  }
+    navigate(`/guest-list/guests/${record?.id}/notes`, {
+      state: { guestRecord: record },
+    });
+  };
+
+  const handleFileUpload = (record) => {
+    setSelectedRow(record);
+    setUploadDrawerOpen(true);
+  };
+
+  const handleNameClick = (record) => {
+    navigate(`/guest-list/guests/${record?.id}/profile`);
+};
 
   return (
-    <div className="w-full">
-      <div className="px-6 py-4">
+    <div className="w-full px-5">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
         <ListHeader
           title="Guest List"
           searchPlaceholder="Search Guest..."
@@ -76,12 +88,14 @@ const GuestList = () => {
         onView={handleView}
         onEdit={handleEdit}
         loading={isLoading}
-        page={data?.pagination?.currentPage || page}
-        perPage={data?.pagination?.perPage || perPage}
+        page={page}
+        perPage={perPage}
         total={data?.pagination?.total}
         changePage={(page) => setPage(page)}
         changePerPage={(perPage) => setPerPage(perPage)}
         onViewNotes={handleViewNotes}
+        onFileUpload={handleFileUpload}
+        handleNameClick={handleNameClick}
       />
 
       <GuestForm
@@ -93,6 +107,13 @@ const GuestList = () => {
         setSelectedRow={setSelectedRow}
         setPage={setPage}
         page={data?.pagination?.currentPage}
+      />
+
+      <NewGuestUploadForm
+        open={uploadDrawerOpen}
+        onClose={() => setUploadDrawerOpen(false)}
+        selectedRow={selectedRow}
+        setSelectedRow={setSelectedRow}
       />
     </div>
   );

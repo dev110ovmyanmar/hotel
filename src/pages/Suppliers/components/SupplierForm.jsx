@@ -8,6 +8,8 @@ import useApiQuery from "../../../hooks/useApiQuery";
 import { useApiMutation } from "../../../hooks/useApiMutation";
 import { upsertSupplier, getSupplierDetail } from "../../../api/supplierApi";
 import Status from "../../../component/Status/Status";
+import { PERMISSIONS } from "../../../variables/permission";
+import usePermission from "../../../hooks/usePermission";
 
 const { TextArea } = Input;
 
@@ -27,6 +29,9 @@ const SupplierForm = ({
     const isView = mode === "view";
     const isEdit = mode === "edit";
     const isAdd = mode === "add";
+
+    const { hasPermission } = usePermission();
+    const canEdit = hasPermission(PERMISSIONS.SUPPLIER_EDIT);
 
     // 1. Get Global Options from Cache
     const initData = queryClient.getQueryData(["initData", "authenticated"]);
@@ -88,11 +93,12 @@ const SupplierForm = ({
             size={550}
             onClose={handleClose}
             open={drawerOpen}
-            extra={isView ? (
-                <Button type="primary" onClick={() => setMode("edit")}>Edit</Button>
-            ) : (
-                <FormButtons onClick={() => form.submit()} mode={mode} isPending={upsertMutation.isPending} />
-            )}
+            extra={isView ?
+                canEdit && (
+                    <Button type="primary" onClick={() => setMode("edit")}>Edit</Button>
+                ) : (
+                    <FormButtons onClick={() => form.submit()} mode={mode} isPending={upsertMutation.isPending} />
+                )}
         >
             {isLoading ? (
                 <div className="flex items-center justify-center h-full min-h-[300px]">

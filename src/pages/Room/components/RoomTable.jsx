@@ -40,10 +40,10 @@ const RoomTable = ({
       key: "roomTypeName",
     },
     {
-      title: "Floor Name",
-      dataIndex: ["floor", "name"],
+      title: "Floor",
+      dataIndex: "floor",
       key: "floorName",
-      width: 160,
+      render: (floor) => `${floor.name} (${floor.floorNo})`,
     },
 
     {
@@ -95,6 +95,8 @@ const RoomTable = ({
               </Space>
             ),
           }));
+
+        if (items.length === 0) return null;
 
         return (
           <Dropdown menu={{ items }} trigger={["click"]}>

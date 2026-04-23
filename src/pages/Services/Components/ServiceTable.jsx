@@ -176,9 +176,10 @@ const ServiceTable = ({
     },
   ];
 
+
   const expandedRowRender = (record) => {
     return (
-      <>
+      <div className="nested-table-container">
         <div className="flex justify-between items-center mb-3">
           <Button
             className="py-4! rounded-[5px]!"
@@ -195,14 +196,19 @@ const ServiceTable = ({
           </Button>
         </div>
 
-        <Table
-          columns={expandColumns}
-          dataSource={record.serviceInventoryMappings || []}
-          rowKey="uuid"
-          pagination={false}
-          size="small"
-        />
-      </>
+        {
+          record?.serviceInventoryMappings <= 0 ? null :
+            <Table
+              className="custom-table-style"
+              columns={expandColumns}
+              dataSource={record.serviceInventoryMappings || []}
+              rowKey="uuid"
+              pagination={false}
+              size="small"
+            />
+        }
+
+      </div>
     );
   };
 

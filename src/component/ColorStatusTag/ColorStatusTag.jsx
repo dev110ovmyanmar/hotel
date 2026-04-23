@@ -4,10 +4,6 @@ import { capitalizeFirstLetter } from '../../utils/Utils';
 
 const ColorStatusTag = ({ status }) => {
   const statusColorMap = {
-    pending: "#D48806",
-    pending_bg: "#FFFBE6",
-    pending_border: "#FFE58F",
-
     booked: "#0958D9",
     booked_bg: "#E6F4FF",
     booked_border: "#91CAFF",
@@ -15,56 +11,52 @@ const ColorStatusTag = ({ status }) => {
     confirmed: "#389E0D",
     confirmed_bg: "#F6FFED",
     confirmed_border: "#B7EB8F",
-   
+
     available: "#389E0D",
     available_bg: "#F6FFED",
     available_border: "#B7EB8F",
 
-    dirty: "#D48806",
-    dirty_bg: "#FFFBE6",
-    dirty_border: "#FFE58F",
-
     maintenance: "#CF1322",
     maintenance_bg: "#FFF1F0",
     maintenance_border: "#FFA39E",
-            
+
     occupied: "#0958D9",
-    occupied_bg: "#E6F4FF", 
+    occupied_bg: "#E6F4FF",
     occupied_border: "#91CAFF",
 
-    cleaning: "#D46B08",
-    cleaning_bg: "#FFF7E6",
-    cleaning_border: "#FFD591",
+    cleaning: "#FF8D28",
+    cleaning_bg: "#FFF4F1",
+    cleaning_border: "#FFBD9F",
 
-    checked_out: "#D46B08",
-    checked_out_bg: "#FFF7E6",
-    checked_out_border: "#FFD591",
+    checked_out: "#FF8D28",
+    checked_out_bg: "#FFF4F1",
+    checked_out_border: "#FFBD9F",
 
-    checked_in:"#08979C",
+    checked_in: "#08979C",
     checked_in_bg: "#E6FFFB",
     checked_in_border: "#87E8DE",
 
-    no_show:"#333333",
+    no_show: "#333333",
     no_show_bg: "#F5F5F5",
     no_show_border: "#D9D9D9",
 
-    cancelled:"#CF1322",
+    cancelled: "#CF1322",
     cancelled_bg: "#FFF1F0",
     cancelled_border: "#FFA39E",
 
     active: "#389E0D",
     active_bg: "#F6FFED",
     active_border: "#B7EB8F",
-    
+
     inactive: "#333333",
     inactive_bg: "#F5F5F5",
     inactive_border: "#D9D9D9",
 
-    block:"#CF1322",
+    block: "#CF1322",
     block_bg: "#FFF1F0",
     block_border: "#FFA39E",
 
-    vip:"#531DAB",
+    vip: "#531DAB",
     vip_bg: "#F9F0FF",
     vip_border: "#D3ADF7",
 
@@ -76,25 +68,25 @@ const ColorStatusTag = ({ status }) => {
     completed_bg: "#E6F4FF",
     completed_border: "#91CAFF",
 
-    new:"#08979C",
+    new: "#08979C",
     new_bg: "#E6FFFB",
     new_border: "#87E8DE",
 
-    preparing: "#D48806",
-    preparing_bg: "#FFFBE6",
-    preparing_border: "#FFE58F",
+    preparing: "#FF8D28",
+    preparing_bg: "#FFF4F1",
+    preparing_border: "#FFBD9F",
 
     success: "#389E0D",
     success_bg: "#F6FFED",
     success_border: "#B7EB8F",
 
-    failed:"#CF1322",
+    failed: "#CF1322",
     failed_bg: "#FFF1F0",
     failed_border: "#FFA39E",
 
-    refunded: "#D46B08",
-    refunded_bg: "#FFF7E6",
-    refunded_border: "#FFD591",
+    refunded: "#FF8D28",
+    refunded_bg: "#FFF4F1",
+    refunded_border: "#FFBD9F",
 
     issued: "#D48806",
     issued_bg: "#FFFBE6",
@@ -104,11 +96,11 @@ const ColorStatusTag = ({ status }) => {
     paid_bg: "#F6FFED",
     paid_border: "#B7EB8F",
 
-    partially_paid: "#D46B08",
-    partially_paid_bg: "#FFF7E6",
-    partially_paid_border: "#FFD591",
+    partially_paid: "#FF8D28",
+    partially_paid_bg: "#FFF4F1",
+    partially_paid_border: "#FFBD9F",
 
-    void:"#CF1322",
+    void: "#CF1322",
     void_bg: "#FFF1F0",
     void_border: "#FFA39E",
 
@@ -116,13 +108,17 @@ const ColorStatusTag = ({ status }) => {
     open_bg: "#E6F4FF",
     open_border: "#91CAFF",
 
-    closed:"#CF1322",
+    closed: "#CF1322",
     closed_bg: "#FFF1F0",
     closed_border: "#FFA39E",
 
-    in_progress: "#D46B08",
-    in_progress_bg: "#FFF7E6",
-    in_progress_border: "#FFD591",
+    in_progress: "#FF8D28",
+    in_progress_bg: "#FFF4F1",
+    in_progress_border: "#FFBD9F",
+
+    pending: "#D4A106",
+    pending_bg: "#FDFFE0",
+    pending_border: "#F4E34F",
 
     assigned: "#D48806",
     assigned_bg: "#FFFBE6",
@@ -140,14 +136,37 @@ const ColorStatusTag = ({ status }) => {
     reserved_bg: "#E6F4FF",
     reserved_border: "#91CAFF",
 
-    in_house:"#08979C",
+    in_house: "#08979C",
     in_house_bg: "#E6FFFB",
     in_house_border: "#87E8DE",
 
-    departed: "#D46B08",
-    departed_bg: "#FFF7E6",
-    departed_border: "#FFD591",
+    departed: "#FF8D28",
+    departed_bg: "#FFBD9F",
+    departed_border: "#FFF4F1",
 
+    dirty: "#D4A106",
+    dirty_bg: "#FDFFE0",
+    dirty_border: "#F4E34F",
+
+    clean: "#389E0D",
+    clean_bg: "#F6FFED",
+    clean_border: "#B7EB8F",
+
+    inspected: "#0958D9",
+    inspected_bg: "#E6F4FF",
+    inspected_border: "#91CAFF",
+
+    out_of_order: "#CF1322",
+    out_of_order_bg: "#FFF1F0",
+    out_of_order_border: "#FFA39E",
+
+    out_of_service: "#333333",
+    out_of_service_bg: "#F5F5F5",
+    out_of_service_border: "#D9D9D9",
+
+    reported: "#CF1322",
+    reported_bg: "#FFF1F0",
+    reported_border: "#FFA39E",
   };
 
   const code = status?.code;
@@ -156,15 +175,15 @@ const ColorStatusTag = ({ status }) => {
   const borderColor = statusColorMap[`${code}_border`];
 
   return (
-    <Tag 
+    <Tag
       color={color}
-      style= {{
-        color:`${color}`,
+      style={{
+        color: `${color}`,
         backgroundColor: `${backgroundColor}`,
         borderColor: `${borderColor}`,
         borderRadius: "5px"
       }}
-      >{capitalizeFirstLetter(status?.name) || "UNKNOWN"}</Tag>
+    >{capitalizeFirstLetter(status?.name) || "UNKNOWN"}</Tag>
   )
 };
 

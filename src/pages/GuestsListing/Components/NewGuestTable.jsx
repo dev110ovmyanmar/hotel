@@ -13,18 +13,20 @@ const GuestTable = ({
   changePage,
   changePerPage,
   total,
+  onFileUpload,
+  handleNameClick,
 }) => {
-  const columns = useGuestColumns(onEdit, onView, onViewNotes);
+  const columns = useGuestColumns(onEdit, onView, onViewNotes, onFileUpload,handleNameClick);
 
   return (
-    <div id="scrollId" className="w-full h-[63vh]">
+    <div id="scrollId">
       <Table
+        tableLayout="fixed"
         scroll={{ x: 1000 }}
         loading={loading}
         columns={columns}
         dataSource={dataSource}
         rowKey="uuid"
-        className="mx-5"
         pagination={{
           current: page,
           pageSize: perPage,

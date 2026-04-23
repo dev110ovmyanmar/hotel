@@ -23,6 +23,8 @@ import {
   ratePlanMeta,
 } from "../../../../api/ratePlanApi";
 import Loader from "../../../../component/Loader/Loader";
+import { PERMISSIONS } from "../../../../variables/permission";
+import usePermission from "../../../../hooks/usePermission";
 
 const RatePlanForm = ({
   mode,
@@ -35,6 +37,8 @@ const RatePlanForm = ({
   page,
 }) => {
   const [form] = Form.useForm();
+  const { hasPermission } = usePermission();
+  const canEdit = hasPermission(PERMISSIONS.RATE_PLAN_EDIT);
 
   const isView = mode === "view";
   const isEdit = mode === "edit";
@@ -71,7 +75,8 @@ const RatePlanForm = ({
 
   const policy = ratePlanMetaData?.policies?.cancellation?.map((policy) => ({
     value: policy.uuid,
-    label: policy.name,
+    // label: policy.name,
+    label: `${policy.name} (${policy?.policyType.name} Policy)`,
   }));
 
   const channelOptions = ratePlanMetaData?.channel_visibility_options?.map(
@@ -187,31 +192,35 @@ const RatePlanForm = ({
                   ? "Edit Rate Plan"
                   : "Create Rate Plan"}
             </span>
-            {isView ? (
-              <Button
-                type="primary"
-                onClick={() => {
-                  setMode("edit");
-                }}
-              >
-                Edit
-              </Button>
-            ) : (
-              <FormButton
-                onClick={() => form.submit()}
-                isPending={createRatePlans.isPending || editRatePlans.isPending}
-                mode={mode}
-              />
-            )}
+            {
+              isView ? (
+                canEdit && (
+                  < Button
+                    type="primary"
+                    onClick={() => {
+                      setMode("edit");
+                    }}
+                  >
+                    Edit
+                  </Button>
+                )
+              ) : (
+                <FormButton
+                  onClick={() => form.submit()}
+                  isPending={createRatePlans.isPending || editRatePlans.isPending}
+                  mode={mode}
+                />
+              )
+            }
           </div>
         }
       >
         {
-          ratePlanDetailsLoading ?
-            <div className="flex items-center justify-center h-full min-h-[300px]">
+          ratePlanDetailsLoading ? (
+            <div className="flex items-center justify-center h-full min-h-[300px]" >
               <Loader />
             </div>
-            :
+          ) : (
             <Form
               form={form}
               layout="vertical"
@@ -235,7 +244,9 @@ const RatePlanForm = ({
                   <Form.Item
                     label="Code"
                     name="code"
-                    rules={[{ required: true, message: "Please enter rate plan code" }]}
+                    rules={[
+                      { required: true, message: "Please enter rate plan code" },
+                    ]}
                   >
                     <Input readOnly={isView} placeholder="Enter Rate Plan Code" />
                   </Form.Item>
@@ -350,7 +361,10 @@ const RatePlanForm = ({
                 label="Channels"
                 name="channels"
                 rules={[
-                  { required: true, message: "Please select at least one channel" },
+                  {
+                    required: true,
+                    message: "Please select at least one channel",
+                  },
                 ]}
                 className={isView ? "custom-disabled-checkbox" : ""}
               >
@@ -383,16 +397,13 @@ const RatePlanForm = ({
                 )}
               </Form.Item>
 
-              <Form.Item
-                label="Description"
-                name="description"
-              >
+              <Form.Item label="Description" name="description">
                 <TextArea readOnly={isView} placeholder="Enter Description" />
               </Form.Item>
             </Form>
-        }
-      </Drawer>
-    </div>
+          )}
+      </Drawer >
+    </div >
   );
 };
 

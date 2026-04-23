@@ -24,6 +24,13 @@
   --foreground: #ffffff;
 }
 
+.app-bg-color {
+  --red: #e62c4b;
+  --black: #0f172a;
+  --white: #ffffff;
+  --yellow: #e5eb39;
+}
+
 @custom-variant dark (&:where(.dark, .dark *));
 
 * {
@@ -44,6 +51,10 @@
   color: var(--foreground);
 }
 
+.header-bg-color {
+  /* background-color: var(--red) !important; */
+}
+
 /* Breadcrumb */
 .breadcrumbs {
   max-width: 1200px;
@@ -58,12 +69,15 @@
 .ant-input {
   --ant-border-radius: 5px;
 }
+
 .ant-select {
   --ant-border-radius: 5px;
 }
+
 .ant-picker {
   --ant-border-radius: 0px;
 }
+
 .ant-btn {
   --ant-border-radius: 5px;
 }
@@ -139,6 +153,7 @@
 .css-var-_r_0_.ant-menu-css-var {
   --ant-menu-item-bg: #f5f5f5;
 }
+
 .dark .css-var-_r_0_.ant-menu-css-var {
   --ant-menu-item-bg: #000000;
 }
@@ -150,35 +165,218 @@
 .ant-checkbox-disabled {
   --ant-color-text-disabled: rgba(0, 0, 0, 1);
 }
+
 .ant-checkbox-disabled + span {
   --ant-color-text-disabled: rgba(0, 0, 0, 1);
 }
+
 .ant-input-group .ant-input-group-addon:last-child {
   border-start-end-radius: 5px;
   border-end-end-radius: 5px;
 }
+
 .ant-picker {
   --ant-border-radius: 5px;
 }
+
 .ant-input-affix-wrapper .anticon.ant-input-password-icon {
   --ant-color-icon: #ffffff;
 }
+
 .css-var-_r_0_ .ant-input-affix-wrapper {
   --ant-border-radius: 5px;
 }
+
 .ant-input-password input::placeholder {
   color: #d1d5dc !important;
 }
+
 .css-var-_r_0_ {
   --ant-color-bg-container-disabled: rgba(0, 0, 0, 0);
   --ant-color-text-disabled: #000000;
 }
+
 .ant-input-number-outlined {
   --ant-border-radius: 5px;
 }
 
 #upload .ant-upload-select {
- width: 200px;
- height: 200px;
+  width: 200px;
+  height: 200px;
 }
 
+#smallSizes {
+  width: 150px;
+  height: 150px;
+}
+
+#partner-upload .ant-upload-select {
+  width: 150px;
+  height: 150px;
+}
+
+/* .ant-upload-select img:hover {
+  background: black !important;
+  opacity: 0.1;
+
+  transition: all 0.5s ease;
+
+}
+
+.ant-image .ant-image-cover {
+  background: none !important;
+}
+  
+
+span .ant-upload {
+  border: none !important;
+} */
+
+/* For Profile */
+/* .edit-preview-hovers {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+  display: none;
+  transition: display 1s ease;
+}
+
+
+.upload-containers:hover .edit-preview-hovers {
+  display: flex;
+
+  transition: all 0.3s ease;
+} */
+
+.custom-table-style .ant-table-thead > tr > th {
+  background-color: #f0f5ff;
+  border-bottom: 1px solid #adc6ff;
+}
+
+.custom-table-style .ant-table-tbody > tr > td {
+  background-color: #ffffff;
+  border-bottom: 1px solid #adc6ff;
+}
+
+.custom-table-style .ant-table {
+  border: 1px solid #adc6ff;
+  border-radius: 4px;
+}
+
+/* Nested Table */
+.nested-table-container {
+  padding: 5px 15px;
+}
+
+.nested-table {
+  background-color: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 5px;
+  padding: 8px 25px;
+}
+
+.ant-table-tbody > tr.ant-table-expanded-row {
+  background-color: #f3f4f6;
+}
+
+:where(.css-dev-only-do-not-override-1t2537o).ant-table-wrapper
+  .ant-table-tbody
+  > tr
+  > th
+  > .ant-table-wrapper:only-child
+  .ant-table,
+:where(.css-dev-only-do-not-override-1t2537o).ant-table-wrapper
+  .ant-table-tbody
+  > tr
+  > td
+  > .ant-table-wrapper:only-child
+  .ant-table,
+:where(.css-dev-only-do-not-override-1t2537o).ant-table-wrapper
+  .ant-table-tbody
+  > tr
+  > th
+  > .ant-table-expanded-row-fixed
+  > .ant-table-wrapper:only-child
+  .ant-table,
+:where(.css-dev-only-do-not-override-1t2537o).ant-table-wrapper
+  .ant-table-tbody
+  > tr
+  > td
+  > .ant-table-expanded-row-fixed
+  > .ant-table-wrapper:only-child
+  .ant-table {
+  margin-block: 0 !important;
+  margin-inline: 0 !important;
+  padding: 0 !important;
+}
+
+body.something {
+  background-color: red;
+}
+
+.no-radius-input {
+  border-radius: 0 !important;
+}
+
+.custom-blue-btn {
+  border: 1px solid #1677ff;
+  color: #1677ff;
+}
+
+.custom-blue-btn:hover {
+  border-color: #4096ff;
+  color: #4096ff;
+}
+.ant-badge .ant-badge-count {
+  border-radius: 0px;
+  background-color: #a3a19d;
+}
+
+/* Ensure the tab container has no default bottom margin */
+.guest-profile-tabs .ant-tabs-nav {
+  margin-bottom: 0 !important;
+}
+
+/* Force the tab list to take 100% width and use flexbox */
+.guest-profile-tabs .ant-tabs-nav-list {
+  width: 100%;
+  display: flex;
+}
+
+/* Style individual tabs to fill the space (25% each) */
+.guest-profile-tabs .ant-tabs-tab {
+  flex: 1; 
+  justify-content: center;
+  padding: 20px 0 !important;
+  margin: 0 !important;
+  transition: background-color 0.2s;
+}
+
+.guest-profile-tabs .ant-tabs-tab:hover {
+  background-color: #f8fafc; /* Subtle hover color */
+}
+
+/* Text styling */
+.guest-profile-tabs .ant-tabs-tab-btn {
+  font-size: 15px;
+  font-weight: 700 !important;
+  color: #64748b !important; /* slate-500 */
+}
+
+/* Active tab text color */
+.guest-profile-tabs .ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: #1e293b !important; /* slate-800 */
+}
+
+/* The Blue Bottom Border Line */
+.guest-profile-tabs .ant-tabs-ink-bar {
+  background: #2563eb !important; /* blue-600 */
+  height: 3px !important;
+}
+
+/* Remove Ant Design's default bottom grey line */
+.guest-profile-tabs .ant-tabs-nav::before {
+  border-bottom: none !important;
+}
