@@ -9,7 +9,6 @@ import UnsettledFolios from "./UnsettledFolios";
 import NightAuditPosting from "./NightAuditPosting";
 import CreateNewDay from "./CreateNewDay";
 import ConfirmModal from "./ConfirmModal";
-import CountDownTag from "../../component/CountDown/CountDownTag";
 import ReactTimer from "../../component/ReactTimer/ReactTimer";
 
 const NightAudit = () => {
@@ -47,11 +46,6 @@ const NightAudit = () => {
                                             <MdWarningAmber className="!font-bold !text-[#CF1322] text-xl" />
                                             <p className="!font-bold !text-[#CF1322] ms-3">All admins are being informed that the Night Audit is going to start. They will be logged out forcefully in 3 minutes.</p>
                                         </div>
-
-                                        {/* 01 Min : 00 Sec */}
-                                        {/* <div className="text-center">
-                                            <CountDownTag onFinish={() => setFinishCountDown(true)} />
-                                        </div> */}
 
                                         {
                                             !finishCountDown &&
