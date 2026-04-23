@@ -146,6 +146,7 @@ const GuestListing = lazy(
 const GuestNotesListing = lazy(
   () => import("../../pages/GuestsListing/GuestNotes/GuestNotesListing"),
 );
+const GuestProfile = lazy(()=> import("../../pages/GuestsListing/GuestProfile/GuestProfile"));
 
 const RoomRateList = lazy(() => import("../../pages/RoomRate/RoomRateList"));
 
@@ -956,6 +957,12 @@ export const authRoutes = [
     permission: PERMISSIONS.GUEST_NOTE_LIST,
   },
   {
+    key: 26,
+    path: `/guest-list/guests/:guestId/profile`,
+    component: <GuestProfile />,
+    // permission: PERMISSIONS.GUEST_PROFILE_VIEW,
+  },
+  {
     key: 22,
     path: "/change-password/",
     component: <ChangePassword />,
@@ -1010,7 +1017,7 @@ export const authRoutes = [
     component: <MaintenanceRequestListing />,
     icon: <IoConstructOutline style={{ fontSize: "20px" }} />,
   },
-  {
+    {
     key: 29,
     label: "Night Audit",
     path: "/night-audit",
