@@ -63,6 +63,8 @@ import { FaPeopleGroup } from "react-icons/fa6";
 import { GrUserSettings } from "react-icons/gr";
 import { RiCalendarScheduleLine, RiServiceBellLine } from "react-icons/ri";
 import { BsBuildingFillGear, BsBuildings } from "react-icons/bs";
+import { AiOutlineSolution } from "react-icons/ai";
+
 import NetworkErrorPage from "../NetworkErrorPage/NetworkErrorPage";
 
 const Dashboard = lazy(() => import("../../pages/Dashboard/Dashboard"));
@@ -73,7 +75,9 @@ const Reservation = lazy(
 const ReservationForm = lazy(
   () => import("../../pages/ReservationForm/ReservationForm"),
 );
-const GuestDetails = lazy(() => import("../../pages/Guest/GuestList"));
+const GuestDetails = lazy(
+  () => import("../../pages/EditReservation/Menu/GuestDetails/GuestList"),
+);
 // const Booking = lazy(() => import("../../pages/Booking/Booking"));
 const Department = lazy(
   () => import("../../pages/Departments/DepartmentsList"),
@@ -85,7 +89,7 @@ const RoomAttribute = lazy(
 );
 const Floor = lazy(() => import("../../pages/Floor/FloorList"));
 const AdminList = lazy(() => import("../../pages/Admins/AdminList"));
-const LocationList = lazy(() => import("../../pages/Location/LocationList"));
+// const LocationList = lazy(() => import("../../pages/Location/LocationList"));
 const AmenitiesList = lazy(() => import("../../pages/Amenities/AmenitiesList"));
 const PolicyList = lazy(() => import("../../pages/Policy/PolicyList"));
 const ChangePassword = lazy(
@@ -143,6 +147,9 @@ const GuestListing = lazy(
 
 const GuestNotesListing = lazy(
   () => import("../../pages/GuestsListing/GuestNotes/GuestNotesListing"),
+);
+const GuestProfile = lazy(
+  () => import("../../pages/GuestsListing/GuestProfile/GuestProfile"),
 );
 
 const RoomRateList = lazy(() => import("../../pages/RoomRate/RoomRateList"));
@@ -207,28 +214,62 @@ const RoomRestrictionList = lazy(
   () => import("../../pages/RoomRestriction/RoomRestrictionList"),
 );
 
-// const RoomInformation = lazy(
-//   () => import("../../pages/RoomInformation/RoomInformationList"),
-// );
-
-// const BookingDetail = lazy(
-//   () => import("../../pages/BookingDetail/BookingDetailList"),
-// );
-
-// const FolioOperations = lazy(
-//   () => import("../../pages/FolioOperations/FolioOperationsList"),
-// );
-
-const ReservationListMenu = lazy(
-  () => import("../../pages/ReservationLists/ReservationListMenu"),
+const RoomInformation = lazy(
+  () =>
+    import("../../pages/EditReservation/Menu/RoomInformation/RoomInformationList"),
 );
 
-const Booking = lazy(
+const BookingDetail = lazy(
+  () => import("../../pages/BookingDetail/BookingDetailList"),
+);
+
+const FolioOperations = lazy(
+  () =>
+    import("../../pages/EditReservation/Menu/FolioOperations/FolioOperationsList"),
+);
+
+const ReservationListMenu = lazy(
+  () => import("../../pages/ReservationLists/Components/ReservationListMenu"),
+);
+
+const BookingList = lazy(
   () => import("../../pages/ReservationLists/Menu/Booking/BookingList"),
 );
 
-const Inquiry = lazy(
+const InquiryList = lazy(
   () => import("../../pages/ReservationLists/Menu/Inquiry/InquiryList"),
+);
+
+const ArrivalsList = lazy(
+  () => import("../../pages/ReservationLists/Menu/Arrivals/ArrivalsList"),
+);
+
+const DeparturesList = lazy(
+  () => import("../../pages/ReservationLists/Menu/Departures/DeparturesList"),
+);
+
+const InHouseList = lazy(
+  () => import("../../pages/ReservationLists/Menu/InHouse/InHouseList"),
+);
+
+const CancelledList = lazy(
+  () => import("../../pages/ReservationLists/Menu/Cancelled/CancelledList"),
+);
+
+const AllList = lazy(
+  () => import("../../pages/ReservationLists/Menu/All/AllList"),
+);
+
+const NightAudit = lazy(() => import("../../pages/NightAudit/NightAudit"));
+
+const EventFacilityOrderList = lazy(
+  () =>
+    import("../../pages/EditReservation/Menu/EventFacilityOrder/EventFacilityOrderList"),
+);
+
+const AddOnServiceList = lazy(
+  () =>
+    import("../../pages/EditReservation/Menu/ServiceAddOn/ServiceAddOnList"),
 );
 
 export const authRoutes = [
@@ -257,45 +298,80 @@ export const authRoutes = [
     component: <Reservation />,
     isPrivate: false,
   },
-  // {
-  //   key: 3.1,
-  //   path: "/reservation/booking-detail/",
-  //   component: <BookingDetail />,
-  // },
+  {
+    key: 3.1,
+    path: "/reservation/booking-detail/",
+    component: <BookingDetail />,
+  },
   {
     key: 3.2,
     path: "/reservation/guest-details/",
     component: <GuestDetails />,
   },
-  // {
-  //   key: 3.3,
-  //   path: "/reservation/room-information/",
-  //   component: <RoomInformation />,
-  // },
-  // {
-  //   key: 3.4,
-  //   path: "/reservation/folio-operations/",
-  //   component: <FolioOperations />,
-  // },
+  {
+    key: 3.3,
+    path: "/reservation/room-information/",
+    component: <RoomInformation />,
+  },
+  {
+    key: 3.4,
+    path: "/reservation/event-facility-order/",
+    component: <EventFacilityOrderList />,
+  },
+  {
+    key: 3.5,
+    path: "/reservation/folio-operations/",
+    component: <FolioOperations />,
+  },
+  {
+    key: 3.6,
+    path: "/reservation/service-add-on/",
+    component: <AddOnServiceList />,
+  },
 
-  // {
-  //   key: 30,
-  //   path: "/reservation/inquiry/",
-  //   label: "Reservation",
-  //   icon: <ScheduleOutlined style={{ fontSize: "20px" }} />,
-  //   component: <Inquiry />,
-  //   isPrivate: false,
-  // },
-  // {
-  //   key: 30.1,
-  //   path: "/reservation/inquiry/",
-  //   component: <Inquiry />,
-  // },
-  // {
-  //   key: 30.2,
-  //   path: "/reservation/booking/",
-  //   component: <Booking />,
-  // },
+  {
+    key: 30,
+    path: "/reservation/inquiry/",
+    label: "Reservation",
+    icon: <ScheduleOutlined style={{ fontSize: "20px" }} />,
+    component: <InquiryList />,
+    isPrivate: false,
+  },
+  {
+    key: 30.1,
+    path: "/reservation/inquiry/",
+    component: <InquiryList />,
+  },
+  {
+    key: 30.2,
+    path: "/reservation/booking/",
+    component: <BookingList />,
+  },
+  {
+    key: 30.3,
+    path: "/reservation/arrivals/",
+    component: <ArrivalsList />,
+  },
+  {
+    key: 30.4,
+    path: "/reservation/departures/",
+    component: <DeparturesList />,
+  },
+  {
+    key: 30.5,
+    path: "/reservation/in-house/",
+    component: <InHouseList />,
+  },
+  {
+    key: 30.6,
+    path: "/reservation/cancelled/",
+    component: <CancelledList />,
+  },
+  {
+    key: 30.6,
+    path: "/reservation/all/",
+    component: <AllList />,
+  },
   {
     key: 4,
     label: "Rates & Availability",
@@ -850,8 +926,8 @@ export const authRoutes = [
         label: "Country & City",
         path: "/settings/country-city",
         icon: <GiModernCity style={{ fontSize: "20px" }} />,
-        component: <LocationList />,
-        permission: PERMISSIONS.LOCATION_LIST,
+        // component: <LocationList />,
+        // permission: PERMISSIONS.LOCATION_LIST,
       },
       {
         key: 15.6,
@@ -945,6 +1021,12 @@ export const authRoutes = [
     permission: PERMISSIONS.GUEST_NOTE_LIST,
   },
   {
+    key: 26,
+    path: `/guest-list/guests/:guestId/profile`,
+    component: <GuestProfile />,
+    // permission: PERMISSIONS.GUEST_PROFILE_VIEW,
+  },
+  {
     key: 22,
     path: "/change-password/",
     component: <ChangePassword />,
@@ -998,6 +1080,20 @@ export const authRoutes = [
     path: "/maintenance-request",
     component: <MaintenanceRequestListing />,
     icon: <IoConstructOutline style={{ fontSize: "20px" }} />,
+  },
+  {
+    key: 29,
+    label: "Night Audit",
+    path: "/night-audit",
+    component: <NightAudit />,
+    icon: <AiOutlineSolution style={{ fontSize: "20px" }} />,
+  },
+  {
+    key: 30,
+    label: "Rate and Inventory Calendar",
+    path: "/rate-and-inventory-calendar",
+    // component: <RateAndInventoryCalendar />,
+    // icon: <CalendarOutlined style={{ fontSize: "20px" }} />,
   },
 ];
 

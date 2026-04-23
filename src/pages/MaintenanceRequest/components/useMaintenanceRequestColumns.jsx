@@ -37,11 +37,6 @@ const useMaintenanceRequestColumns = (onEdit, onView) => {
             // Path: record.room.floor.floorNo (or .name depending on preference)
             render: (_, record) => record?.room?.floor?.floorNo || "-",
         },
-        {
-            title: "Reported By",
-            key: "reportedFrom",
-            render: (_, record) => record?.reportedFrom?.name || "-",
-        },
         // {
         //     title: "Priority",
         //     key: "priorityLevel",
@@ -97,27 +92,69 @@ const useMaintenanceRequestColumns = (onEdit, onView) => {
             },
         },
         {
+            title: "Reported By",
+            key: "reportedFrom",
+            width: 150,
+            render: (_, record) => {
+                const housekeepingTask = record?.housekeepingTask;
+                const reportedFromName = record?.reportedFrom?.name;
+
+                if (housekeepingTask) {
+                    return (
+                        <div className="flex flex-col leading-tight">
+                            {/* Primary Info: Task ID */}
+                            {reportedFromName ? (
+                                <span>
+                                    {reportedFromName}
+                                </span>
+                            ) : "-"}
+
+                            {/* Secondary Info: Who reported it */}
+                            <span className="text-blue-500 ">
+                                {`(Request Task #${housekeepingTask.id})`}
+                            </span>
+                        </div>
+                    );
+                }
+
+                // Fallback: plain maintenance request (no linked HK task)
+                return (
+                    <span>
+                        {reportedFromName || "-"}
+                    </span>
+                );
+            }
+        },
+        {
             title: "Actions",
             key: "actions",
             width: 100,
             fixed: 'right',
-            render: (_, record) => (
-                <Dropdown
-                    menu={{
-                        onClick: ({ key }) => {
-                            if (key === "1") onView(record);
-                            if (key === "2") onEdit(record);
-                        },
-                        items: [
-                            { key: "1", label: "View", icon: <EyeOutlined /> },
-                            { key: "2", label: "Edit", icon: <EditOutlined /> },
-                        ],
-                    }}
-                    trigger={["click"]}
-                >
-                    <Button icon={<MoreOutlined />} size="small" type="text" />
-                </Dropdown>
-            ),
+            render: (_, record) => {
+                const isEditDisabled = ["verified"].includes(record.maintenanceStatus?.code);
+
+                const items = [
+                    { key: "1", label: "View", icon: <EyeOutlined /> },
+                    ...(isEditDisabled ? [] : [
+                        { key: "2", label: "Edit", icon: <EditOutlined /> }
+                    ]),
+                ];
+
+                return (
+                    <Dropdown
+                        menu={{
+                            onClick: ({ key }) => {
+                                if (key === "1") onView(record);
+                                if (key === "2") onEdit(record);
+                            },
+                            items: items,
+                        }}
+                        trigger={["click"]}
+                    >
+                        <Button icon={<MoreOutlined />} size="small" type="text" />
+                    </Dropdown>
+                );
+            },
         },
     ];
 }

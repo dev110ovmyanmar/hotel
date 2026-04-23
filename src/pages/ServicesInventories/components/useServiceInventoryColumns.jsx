@@ -34,7 +34,7 @@ export default function useServiceInventoryColumns(onEdit, onView) {
       dataIndex: "unitCost",
       key: "unitCost",
       width: 120,
-      render: (cost) => <PriceTag value={cost}/>
+      render: (cost) => <PriceTag value={cost} />
     },
     {
       title: "Selling Price (MMK)",
@@ -59,7 +59,7 @@ export default function useServiceInventoryColumns(onEdit, onView) {
       key: "unit",
       width: 80,
       align: "center",
-      render: (text) => <span className="text-gray-500">{text || "-"}</span>,
+      render: (text) => text || "-",
     },
     {
       title: "Laundry",
@@ -67,13 +67,10 @@ export default function useServiceInventoryColumns(onEdit, onView) {
       key: "laundryStatus",
       align: "center",
       width: 90,
-      render: (status) => (
-        <BooleanTag
-          value={status}
-          trueText="Washable"
-          falseText="N/A"
-        />
-      ),
+      render: (status) =>
+        <Tag color={status == false ? "red" : "green"}>
+          {status == false ? "FALSE" : "TRUE"}
+        </Tag>
     },
     {
       title: "Free",
@@ -82,11 +79,9 @@ export default function useServiceInventoryColumns(onEdit, onView) {
       align: "center",
       width: 80,
       render: (free) => (
-        <BooleanTag
-          value={free}
-          trueText="Gift"
-          falseText="Sale"
-        />
+        <Tag color={free == false ? "red" : "green"}>
+          {free == false ? "FALSE" : "TRUE"}
+        </Tag>
       ),
     },
     {

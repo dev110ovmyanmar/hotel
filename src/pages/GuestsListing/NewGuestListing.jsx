@@ -7,7 +7,6 @@ import GuestForm from "./Components/NewGuestForm";
 import { LIMITS } from "../../variables/constants";
 import { useNavigate } from "react-router-dom";
 import NewGuestUploadForm from "./Components/NewGuestUploadForm";
-// import NewGuestUploadForm from "./Components/NewGuestUploadForm";
 
 const GuestList = () => {
   const [selectedRow, setSelectedRow] = useState(null);
@@ -67,6 +66,10 @@ const GuestList = () => {
     setUploadDrawerOpen(true);
   };
 
+  const handleNameClick = (record) => {
+    navigate(`/guest-list/guests/${record?.id}/profile`);
+};
+
   return (
     <div className="w-full px-5">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
@@ -92,6 +95,7 @@ const GuestList = () => {
         changePerPage={(perPage) => setPerPage(perPage)}
         onViewNotes={handleViewNotes}
         onFileUpload={handleFileUpload}
+        handleNameClick={handleNameClick}
       />
 
       <GuestForm

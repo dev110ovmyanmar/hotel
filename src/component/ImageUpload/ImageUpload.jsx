@@ -1,11 +1,14 @@
 import React, { useState } from "react";
 import {
     DeleteOutlined,
+    DownloadOutlined,
+    DownOutlined,
     EyeOutlined,
+    FilePdfOutlined,
     LoadingOutlined,
     PlusOutlined,
 } from "@ant-design/icons";
-import { Drawer, Upload } from "antd";
+import { Drawer, Image, Modal, Upload } from "antd";
 import Toast from "../Toast/Toast";
 
 const getBase64 = (file) =>
@@ -20,6 +23,9 @@ const ImageUpload = ({
     partneruuid,
     agencyContractuuid,
     companyContractuuid,
+    // fileuuid,
+    fileCategoryName,
+    deleteMutation,
     agencyFileList,
     handleUploadMutation,
     imageDrawerOpen,
@@ -30,28 +36,23 @@ const ImageUpload = ({
     const [previewImage, setPreviewImage] = useState("");
     const [fileList, setFileList] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [previewType, setPreviewType] = useState('image');
+    const [deleteModal, setDeleteModal] = useState(false);
+    const [deleteLoading,setDeleteLoading] = useState(false);
 
     const isPDFfile = (fileUrl) => {
         return fileUrl?.toLowerCase().endsWith(".pdf");
     };
 
 
-    const handlePreview = async file => {
-        if (!file) {
-            file = await getBase64(file);
+    const handlePreview = async (fileUrl) => {
+        if (!fileUrl) return;
+
+        if (isPDFfile(fileUrl)) {
+            window.open(fileUrl, "_blank");
+            return;
         }
 
-        if (isPDFfile(file)) {
-            setPreviewType('pdf');
-            window.open(file, "_blank");
-
-            return
-        } else {
-            setPreviewType('image')
-        }
-
-        setPreviewImage(file);
+        setPreviewImage(fileUrl);
         setPreviewOpen(true);
     };
 
@@ -97,6 +98,24 @@ const ImageUpload = ({
         });
     };
 
+    const handelDelete = (file) => {
+        setDeleteLoading(true);
+        const deleteValue = {
+            uuid: file.uuid,
+            fileCategory: fileCategoryName,
+        };
+
+        deleteMutation.mutate(deleteValue, {
+            onSuccess: () => {
+                Toast.success("File deleted successfully");
+                setDeleteModal(false);
+                setDeleteLoading(false)
+            }
+        });
+
+    }
+
+
     return (
         <>
             <Drawer
@@ -109,7 +128,7 @@ const ImageUpload = ({
                 open={imageDrawerOpen}
                 onClose={() => setImageDrawerOpen(false)}
             >
-                {previewType === "image" &&  previewImage && (
+                {previewImage && (
                     <Image
                         styles={{ root: { display: "none" } }}
                         preview={{
@@ -134,7 +153,7 @@ const ImageUpload = ({
                         listType="picture-card"
                         fileList={fileList}
                         customRequest={handleUpload}
-                        onPreview={handlePreview}
+                        // onPreview={handlePreview}
                         onChange={handleChange}
                         showUploadList={false}
                     >
@@ -170,7 +189,10 @@ const ImageUpload = ({
                                         }}
                                         onClick={() => handlePreview(file?.file)}
                                     >
-                                        PDF
+                                        <div style={{ textAlign: "center" }}>
+                                            <FilePdfOutlined style={{ fontSize: "30px", color: "red" }} />
+                                            <div >PDF File</div>
+                                        </div>
                                     </div>
                                 ) : (
                                     <img
@@ -184,16 +206,7 @@ const ImageUpload = ({
                                         }}
                                     />
                                 )}
-                                {/* <img
-                                    src={file?.file}
-                                    alt="image"
-                                    style={{
-                                        width: "100%",
-                                        height: "100%",
-                                        objectFit: "cover",
-                                        cursor: "pointer",
-                                    }}
-                                /> */}
+
 
                                 <div
                                     style={{
@@ -210,25 +223,32 @@ const ImageUpload = ({
                                         style={{ color: "#fff", cursor: "pointer" }}
                                         onClick={() => handlePreview(file?.file)}
                                     >
-                                        <EyeOutlined />
+                                        {/* <EyeOutlined /> */}
+                                        {isPDFfile(file?.file) ? <DownloadOutlined /> : <EyeOutlined />}
                                     </span>
 
                                     <span
                                         style={{ color: "red", cursor: "pointer" }}
-                                        onClick={() => {
-                                            setFileList((prev) => {
-                                                return prev.filter((item) => item.uid !== file.uid);
-                                            });
-                                        }}
+                                        onClick={() => setDeleteModal(true)}
                                     >
                                         <DeleteOutlined />
                                     </span>
                                 </div>
+                                <Modal
+                                    title="Are you sure you want to delete permanently?"
+                                    open={deleteModal}
+                                    onCancel={() => setDeleteModal(false)}
+                                    onOk={() => handelDelete(file)}
+                                    confirmLoading={deleteLoading}
+                                />
                             </div>
+
                         );
                     })}
                 </div>
             </Drawer>
+
+
         </>
     );
 };

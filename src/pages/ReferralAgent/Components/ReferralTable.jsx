@@ -61,7 +61,7 @@ const ReferralTable = ({
           return <div>{chargeValue} %</div>
         }
       },
-      align:"right"
+      align:"center"
     },
     {
       title: "Status",
