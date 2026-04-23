@@ -14,9 +14,7 @@ const HouseKeepingTaskTable = ({
     changePerPage,
     total,
 }) => {
-    const columns = useHouseKeepingTaskColumns(onEdit, onView,
-        //  onViewTaskAssign
-    );
+    const columns = useHouseKeepingTaskColumns(onEdit, onView);
 
 
     return (

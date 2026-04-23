@@ -81,6 +81,8 @@ const MaintenanceRequestForm = ({
 
     const reportedStatus = initData?.statuses?.maintenance_status?.find(s => s.code === "reported");
 
+    const isDisableEdit = detail?.maintenanceStatus?.code === "verified";
+
     useEffect(() => {
         if (!drawerOpen) return;
 
@@ -184,15 +186,17 @@ const MaintenanceRequestForm = ({
                 size={550}
                 onClose={handleClose}
                 open={drawerOpen}
-                extra={isView ? <Button onClick={() => setMode("edit")} type="primary">Edit</Button> :
-                    <FormButtons onClick={() => form.submit()} mode={mode} isPending={createMutation.isPending || updateMutation.isPending} />}
+                extra={
+                    isDisableEdit ? null :
+                        isView ? <Button onClick={() => setMode("edit")} type="primary">Edit</Button> :
+                            <FormButtons onClick={() => form.submit()} mode={mode} isPending={createMutation.isPending || updateMutation.isPending} />}
             >
                 {isLoading && !isCreate ? <div className="flex h-64 items-center justify-center"><Loader /></div> : (
                     <div>
                         <Form form={form} layout="vertical" onFinish={onFinish}>
 
                             {
-                                isView && detail?.housekeepingTask && (
+                                detail?.housekeepingTask && (
                                     <div className="mb-4">
                                         <span className="text-blue-500 font-medium">Source HouseKeeping Task Id: #{detail?.housekeepingTask?.id}</span>
                                     </div>
@@ -211,21 +215,62 @@ const MaintenanceRequestForm = ({
 
                             <Row gutter={16}>
                                 <Col span={12}>
-                                    <Form.Item name="roomUuid" label="Room" rules={[{ required: true }]}>
-                                        <Select options={roomOptions} disabled={isView} placeholder="Select Room" />
+                                    <Form.Item
+                                        name="roomUuid"
+                                        label="Room"
+                                        rules={[{ required: true }]}
+                                        getValueProps={(value) => ({
+                                            value: isView
+                                                ? roomOptions.find((item) => item.value === value)?.label
+                                                : value,
+                                        })}
+                                    >
+                                        {
+                                            isView ?
+                                                <Input disabled={isView} readOnly={isView} />
+                                                :
+                                                <Select options={roomOptions} disabled={isView || detail?.housekeepingTask} placeholder="Select Room" />
+                                        }
                                     </Form.Item>
+
                                 </Col>
                                 <Col span={12}>
-                                    <Form.Item name="issueType" label="Issue Type" rules={[{ required: true }]}>
-                                        <Select options={issueTypeOptions} disabled={isView} placeholder="Select Issue Type" />
+                                    <Form.Item
+                                        name="issueType"
+                                        label="Issue Type"
+                                        rules={[{ required: true }]}
+                                        getValueProps={(value) => ({
+                                            value: isView
+                                                ? issueTypeOptions.find((item) => item.value === value)?.label
+                                                : value,
+                                        })}
+                                    >
+                                        {
+                                            isView ?
+                                                <Input disabled={isView} readOnly={isView} /> :
+                                                <Select options={issueTypeOptions} disabled={isView} placeholder="Select Issue Type" />
+                                        }
                                     </Form.Item>
                                 </Col>
                             </Row>
 
                             <Row gutter={16}>
                                 <Col span={12}>
-                                    <Form.Item name="priorityLevel" label="Priority" rules={[{ required: true }]}>
-                                        <Select options={priorityOptions} disabled={isView} placeholder="Select Priority" />
+                                    <Form.Item
+                                        name="priorityLevel"
+                                        label="Priority"
+                                        rules={[{ required: true }]}
+                                        getValueProps={(value) => ({
+                                            value: isView
+                                                ? priorityOptions.find((item) => item.value === value)?.label
+                                                : value,
+                                        })}
+                                    >
+                                        {
+                                            isView ?
+                                                <Input disabled={isView} readOnly={isView} /> :
+                                                <Select options={priorityOptions} disabled={isView} placeholder="Select Priority" />
+                                        }
                                     </Form.Item>
                                 </Col>
                                 <Col span={12}>
@@ -241,13 +286,26 @@ const MaintenanceRequestForm = ({
                                             />
                                         </Form.Item>
                                     ) : (
-                                        <Form.Item name="maintenanceStatus" label="Maintenance Status" rules={[{ required: true }]}>
-                                            <Select
-                                                options={maintenanceStatusOptions}
-                                                disabled={isView}
-                                                placeholder="Select Maintenance Status" />
+                                        <Form.Item
+                                            name="maintenanceStatus"
+                                            label="Maintenance Status"
+                                            rules={[{ required: true }]}
+                                            getValueProps={(value) => ({
+                                                value: isView
+                                                    ? maintenanceStatusOptions.find((item) => item.value === value)?.label
+                                                    : value,
+                                            })}
+                                        >
+                                            {
+                                                isView ? <Input disabled={isView} readOnly={isView} /> :
+                                                    <Select
+                                                        options={maintenanceStatusOptions}
+                                                        disabled={isView}
+                                                        placeholder="Select Maintenance Status" />
+                                            }
                                         </Form.Item>
-                                    )}
+                                    )
+                                    }
                                 </Col>
                             </Row>
 
@@ -255,15 +313,35 @@ const MaintenanceRequestForm = ({
                                 <Col span={12}>
                                     <Form.Item name="plannedStartDate" label="Start Date"
                                         rules={[{ required: true }]}
+                                        getValueProps={(value) => ({
+                                            value: isView && value
+                                                ? dayjs(value).format("YYYY-MM-DD")
+                                                : value,
+                                        })}
                                     >
-                                        <DatePicker className="w-full" disabled={isView} />
+                                        {
+                                            isView ?
+                                                <Input disabled={isView} readOnly={isView} />
+                                                :
+                                                <DatePicker className="w-full" disabled={isView} />
+
+                                        }
                                     </Form.Item>
                                 </Col>
                                 <Col span={12}>
                                     <Form.Item name="plannedStartTime" label="Start Time"
                                         rules={[{ required: true }]}
+                                        getValueProps={(value) => ({
+                                            value: isView && value
+                                                ? dayjs(value).format("HH:mm")
+                                                : value,
+                                        })}
                                     >
-                                        <TimePicker className="w-full" format="HH:mm" disabled={isView} />
+                                        {
+                                            isView ?
+                                                <Input disabled={isView} readOnly={isView} /> :
+                                                <TimePicker className="w-full" format="HH:mm" disabled={isView} />
+                                        }
                                     </Form.Item>
                                 </Col>
                             </Row>
@@ -272,15 +350,33 @@ const MaintenanceRequestForm = ({
                                 <Col span={12}>
                                     <Form.Item name="plannedEndDate" label="End Date"
                                         rules={[{ required: true }]}
+                                        getValueProps={(value) => ({
+                                            value: isView && value
+                                                ? dayjs(value).format("YYYY-MM-DD")
+                                                : value,
+                                        })}
                                     >
-                                        <DatePicker className="w-full" disabled={isView} />
+                                        {
+                                            isView ?
+                                                <Input disabled={isView} readOnly={isView} /> :
+                                                <DatePicker className="w-full" disabled={isView} />
+                                        }
                                     </Form.Item>
                                 </Col>
                                 <Col span={12}>
                                     <Form.Item name="plannedEndTime" label="End Time"
                                         rules={[{ required: true }]}
+                                        getValueProps={(value) => ({
+                                            value: isView && value
+                                                ? dayjs(value).format("HH:mm")
+                                                : value,
+                                        })}
                                     >
-                                        <TimePicker className="w-full" format="HH:mm" disabled={isView} />
+                                        {
+                                            isView ?
+                                                <Input disabled={isView} readOnly={isView} /> :
+                                                <TimePicker className="w-full" format="HH:mm" disabled={isView} />
+                                        }
                                     </Form.Item>
                                 </Col>
                             </Row>
@@ -299,8 +395,17 @@ const MaintenanceRequestForm = ({
                                 <Col span={12}>
                                     <Form.Item name="reportedFrom" label="Reporting Department"
                                         rules={[{ required: true }]}
+                                        getValueProps={(value) => ({
+                                            value: isView
+                                                ? departmentOptions.find((item) => item.value === value)?.label
+                                                : value,
+                                        })}
                                     >
-                                        <Select options={departmentOptions} disabled={isView} placeholder="Select Dept" />
+                                        {
+                                            isView ?
+                                                <Input readOnly={isView} disabled={isView} /> :
+                                                <Select options={departmentOptions} disabled={isView || detail?.housekeepingTask} placeholder="Select Dept" />
+                                        }
                                     </Form.Item>
                                 </Col>
                             </Row>
@@ -327,11 +432,10 @@ const MaintenanceRequestForm = ({
                     </div>
                 )}
 
-            </Drawer>
-
+            </Drawer >
 
             {/* Second Drawer */}
-            <MaintenanceTaskAssignForm
+            < MaintenanceTaskAssignForm
                 drawerOpen={taskAssignDrawerOpen}
                 setDrawerOpen={setTaskAssignDrawerOpen}
                 maintenanceTaskDetail={detail}
