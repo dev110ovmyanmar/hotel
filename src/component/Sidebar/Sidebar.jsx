@@ -14,20 +14,15 @@ import useApiQuery from '../../hooks/useApiQuery';
 
 const { Sider } = Layout;
 
-export default function Sidebar() {
+export default function Sidebar({
+  sideBarColor
+}) {
 
   const dispatch = useDispatch();
 
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
-  
-  const { data : propertyDetails } = useApiQuery({
-    fetchQueryName: "properties_details",
-    fetchQueryFunction: getPropertyDetails,
-    params: { uuid: initData?.property.uuid },
-    options: {
-      enabled: !!initData?.property.uuid,
-    },
-  });
+  const propretyImage = initData?.property?.file;
+
 
   const { view, collapsed, openDrawer, height } = useSelector(appSelector);
   const isCollapsed = collapsed && !openDrawer;
@@ -48,17 +43,24 @@ export default function Sidebar() {
       collapsed={isCollapsed}
       width={240}
       className='bg-white! shrink-0 w-60 md:w-70 z-1000'
+      style={{
+        backgroundColor: "black"
+      }}
     >
-      <div className='w-[100%] h-[70px] bg-secondary bg-opacity-30 flex items-center justify-center overflow-hidden'>
-        <img alt='Logo' className='w-[100%] h-[70%] object-cover object-center' src={propertyDetails?.file} />
+      <div className='w-[100%] h-[63px] bg-secondary bg-opacity-30 flex items-center justify-center overflow-hidden'>
+        <img alt='Logo' className='w-[100%] h-[60%] object-cover object-center' src={propretyImage} />
       </div>
       <Scrollbars style={{ height: height - 70 }}>
         <Menu
           // theme='dark'
           className='py-8 px-6'
           mode={mode}
+
         >
-          <SidebarMenu onClick={handleClick} />
+          <SidebarMenu 
+            onClick={handleClick}
+            sideBarMenuColor={sideBarColor}
+          />
         </Menu>
       </Scrollbars>
     </Sider>
