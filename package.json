@@ -34,6 +34,7 @@
     "react-toastify": "^11.0.5",
     "redux-logger": "^3.0.6",
     "tailwindcss": "^4.1.18",
+    "use-timer": "^2.0.1",
     "uuid": "^13.0.0"
   },
   "devDependencies": {
