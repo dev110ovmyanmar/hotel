@@ -63,6 +63,7 @@ const PaymentList = () => {
         total={data?.pagination?.total}
         changePage={(page) => setPage(page)}
         changePerPage={(perPage) => setPerPage(perPage)}
+        loading={isLoading}
       />
 
       <PaymentForm
@@ -74,7 +75,7 @@ const PaymentList = () => {
         setMode={setMode}
         selectedData={selectedData}
         setSelectedData={setSelectedData}
-        
+
       />
     </div>
   )
