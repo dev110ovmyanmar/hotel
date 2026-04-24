@@ -333,3 +333,50 @@ body.something {
   border-radius: 0px;
   background-color: #a3a19d;
 }
+
+/* Ensure the tab container has no default bottom margin */
+.guest-profile-tabs .ant-tabs-nav {
+  margin-bottom: 0 !important;
+}
+
+/* Force the tab list to take 100% width and use flexbox */
+.guest-profile-tabs .ant-tabs-nav-list {
+  width: 100%;
+  display: flex;
+}
+
+/* Style individual tabs to fill the space (25% each) */
+.guest-profile-tabs .ant-tabs-tab {
+  flex: 1; 
+  justify-content: center;
+  padding: 20px 0 !important;
+  margin: 0 !important;
+  transition: background-color 0.2s;
+}
+
+.guest-profile-tabs .ant-tabs-tab:hover {
+  background-color: #f8fafc; /* Subtle hover color */
+}
+
+/* Text styling */
+.guest-profile-tabs .ant-tabs-tab-btn {
+  font-size: 15px;
+  font-weight: 700 !important;
+  color: #64748b !important; /* slate-500 */
+}
+
+/* Active tab text color */
+.guest-profile-tabs .ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: #1e293b !important; /* slate-800 */
+}
+
+/* The Blue Bottom Border Line */
+.guest-profile-tabs .ant-tabs-ink-bar {
+  background: #2563eb !important; /* blue-600 */
+  height: 3px !important;
+}
+
+/* Remove Ant Design's default bottom grey line */
+.guest-profile-tabs .ant-tabs-nav::before {
+  border-bottom: none !important;
+}

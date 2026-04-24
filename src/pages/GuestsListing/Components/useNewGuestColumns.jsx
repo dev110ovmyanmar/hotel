@@ -7,6 +7,7 @@ import {
   UploadOutlined,
 } from "@ant-design/icons";
 import ColorStatusTag from "../../../component/ColorStatusTag/ColorStatusTag";
+import { Link } from "react-router-dom";
 
 const { Text } = Typography;
 
@@ -15,6 +16,7 @@ export default function useGuestColumns(
   onView,
   onViewNotes,
   onFileUpload,
+  handleNameClick,
 ) {
   return [
     {
@@ -23,10 +25,26 @@ export default function useGuestColumns(
       key: "id",
       width: 60,
     },
+    // {
+    //   title: "Name",
+    //   dataIndex: "name",
+    //   key: "name",
+    // },
     {
       title: "Name",
       dataIndex: "name",
       key: "name",
+      render: (name, record) => (
+        <Typography.Link 
+          onClick={(e) => {
+            e.preventDefault(); // Prevent default anchor behavior
+            handleNameClick(record);
+          }} 
+          style={{ fontWeight: 500 }}
+        >
+          {name}
+        </Typography.Link>
+      ),
     },
     {
       title: "Phone No",

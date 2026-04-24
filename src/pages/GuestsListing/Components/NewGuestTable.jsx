@@ -14,8 +14,9 @@ const GuestTable = ({
   changePerPage,
   total,
   onFileUpload,
+  handleNameClick,
 }) => {
-  const columns = useGuestColumns(onEdit, onView, onViewNotes, onFileUpload);
+  const columns = useGuestColumns(onEdit, onView, onViewNotes, onFileUpload,handleNameClick);
 
   return (
     <div id="scrollId">
