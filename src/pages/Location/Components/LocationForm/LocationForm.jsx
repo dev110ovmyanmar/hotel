@@ -198,13 +198,21 @@ const LocationForm = ({
           onClose={() => setDrawerOpen(false)}
           title={
             <>
-              <span style={{ fontWeight: "normal" }}>Country: </span>
-              <span>{data?.name}</span>
+              <div className="flex justify-between gap-4">
+                <div>
+                  <span style={{ fontWeight: "normal" }}>Country: </span>
+                  <span>{data?.name}</span>
+                </div>
+                <Button type="primary" onClick={()=>{setCreateDrawerOpen(true);setCityMode("cityAdd")}}>
+                    Add New City
+                </Button>
+              </div>
             </>
           }
         >
           <ListHeader
-            addButtonText="Add New City"
+            // addButtonText="Add New City"
+            showCreateButton={false}
             page={page}
             setPage={setPage}
             setCreateDrawerOpen={setCreateDrawerOpen}
