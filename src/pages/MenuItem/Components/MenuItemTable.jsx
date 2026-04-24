@@ -56,9 +56,9 @@ const MenuItemTable = ({
       dataIndex: "isTaxable",
       key: "isTaxable",
       render: (_, record) => (
-        <Tag color={record.isTaxable ? "green" : "red"}>
-          {record.isTaxable ? "TRUE" : "FALSE"}
-        </Tag>
+        <div className={record.isTaxable === true ? "text-[#389E0D]" : "text-[#CF1322]"}>
+          {record.isTaxable === true ? "True" : "False"}
+        </div>
       ),
     },
     {
