@@ -19,7 +19,7 @@ const AgencyList = () => {
 
   const { data, isLoading, error } = useApiQuery({
     fetchQueryName: "agencies",
-    fetchQueryFunction: fetchPartner ,
+    fetchQueryFunction: fetchPartner,
     params: {
       pagination: {
         page: page,
@@ -27,7 +27,7 @@ const AgencyList = () => {
       },
       keyword,
       status: normalStatus,
-      partnerType : "Agency" 
+      partnerType: "Agency"
     },
   });
 
@@ -59,6 +59,7 @@ const AgencyList = () => {
         total={data?.pagination?.total}
         changePage={(page) => setPage(page)}
         changePerPage={(perPage) => setPerPage(perPage)}
+        loading={isLoading}
       />
 
       <AgencyForm
