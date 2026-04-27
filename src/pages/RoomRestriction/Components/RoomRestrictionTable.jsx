@@ -31,33 +31,6 @@ const RoomRestrictionTable = ({ data, page, setPage }) => {
       dataIndex: ["roomType", "name"],
       key: "roomType",
     },
-
-    {
-      title: "Price (MMK)",
-      dataIndex: ["roomType", "basePrice"],
-      key: "basePrice",
-      render: (text) => <PriceTag value={text} />,
-      align: "right",
-    },
-
-    // {
-    //   title: "Closed To Arrival ",
-    //   dataIndex: "closedToArrival",
-    //   key: "closedToArrival",
-    //   render: (_, record) => (
-    //     <Tag color={record.closedToArrival ? "green" : "red"}>
-    //       {record.closedToArrival ? "TRUE" : "FALSE"}
-    //     </Tag>
-    //   ),
-    // },
-    // {
-    //   title: "Closed To Departure ",
-    //   dataIndex: "closedToDeparture",
-    //   key: "closedToDeparture",
-    //   render: (_, record) => (
-    //     <Tag color={record.closedToDeparture ? "green" : "red"}>
-    //       {record.closedToDeparture ? "TRUE" : "FALSE"}
-    //
   ];
 
   const expandColumns = [
