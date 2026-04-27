@@ -6,40 +6,13 @@ const SettingForm = ({ onFinish, initialValues }) => {
   const [form] = Form.useForm();
   const selectedType = Form.useWatch("type", form);
 
-  // useEffect(() => {
-  //   if (initialValues) {
-  //     let initialType = "string";
-  //     let val = initialValues.value;
-
-  //     // Handle incoming string "true"/"false" from backend
-  //     if (val === "true" || val === "false" || typeof val === "boolean") {
-  //       initialType = "boolean";
-  //       val = val === "true" || val === true; // Convert to actual boolean for Switch
-  //     } else if (!isNaN(val) && val !== "" && typeof val !== "object") {
-  //       initialType = "int";
-  //       val = Number(val);
-  //     } else if (typeof val === "object" && val !== null) {
-  //       initialType = "json";
-  //       val = JSON.stringify(val, null, 2);
-  //     }
-
-  //     form.setFieldsValue({
-  //       key: initialValues.key,
-  //       type: initialType,
-  //       value: val
-  //     });
-  //   }
-  // }, [initialValues, form]);
-
   const handleSubmit = (values) => {
     let finalValue = values.value;
 
     try {
       if (values.type === "boolean") {
-        // CONVERT TO STRING "true" or "false" FOR BACKEND
         finalValue = values.value ? "true" : "false";
       } else if (values.type === "json") {
-        // Ensure JSON is valid before sending
         JSON.parse(values.value);
         finalValue = values.value;
       } else {

@@ -219,7 +219,7 @@ const HouseKeepingTaskForm = ({
                                     <Form.Item name="taskType" label="Task Type" rules={[{ required: true }]}
                                         getValueProps={(value) => ({
                                             value: isView
-                                                ? taskTypeOptions.find((item) => item.value === value)?.label
+                                                ? taskTypeOptions?.find((item) => item.value === value)?.label
                                                 : value,
                                         })}>
                                         {
@@ -236,7 +236,7 @@ const HouseKeepingTaskForm = ({
                                         label="Priority" rules={[{ required: true }]}
                                         getValueProps={(value) => ({
                                             value: isView
-                                                ? priorityOptions.find((item) => item.value === value)?.label
+                                                ? priorityOptions?.find((item) => item.value === value)?.label
                                                 : value,
                                         })}
                                     >
@@ -269,7 +269,7 @@ const HouseKeepingTaskForm = ({
                                                 rules={[{ required: true }]}
                                                 getValueProps={(value) => ({
                                                     value: isView
-                                                        ? hkStatusOptions.find((item) => item.value === value)?.label
+                                                        ? hkStatusOptions?.find((item) => item.value === value)?.label
                                                         : value,
                                                 })}
                                             >

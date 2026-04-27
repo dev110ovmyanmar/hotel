@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Drawer, Row, Col, Form, Input, Select, DatePicker, TimePicker, Button } from "antd";
+import { Drawer, Row, Col, Form, Input, Select, DatePicker, TimePicker, Button, Modal } from "antd";
 import dayjs from "dayjs";
 import { TeamOutlined, CalendarOutlined, ClockCircleOutlined, ExclamationCircleOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import Loader from "../../../component/Loader/Loader";
@@ -24,6 +24,9 @@ const MaintenanceTaskAssignForm = ({
     const [createDrawerOpen, setCreateDrawerOpen] = useState(false);
     const [selectedAssignment, setSelectedAssignment] = useState(null);
     const [isEdit, setIsEdit] = useState(false);
+
+    const [deleteModal, setDeleteModal] = useState(false);
+    const [itemToDelete, setItemToDelete] = useState(null);
 
     const { TextArea } = Input;
     const detail = maintenanceTaskDetail;
@@ -149,16 +152,26 @@ const MaintenanceTaskAssignForm = ({
         }
     };
 
-    const handleDelete = (e, item) => {
-        const deletePayload = {
-            uuid: item?.uuid,
-        }
+    const openDeleteModal = (e, item) => {
         e.stopPropagation();
-        deleteMutation.mutate({ params: deletePayload }, {
-            onSuccess: (response) => {
-                Toast.success(response);
-            }
-        });
+        setItemToDelete(item);
+        setDeleteModal(true);
+    };
+
+    const handleConfirmDelete = async () => {
+        if (!itemToDelete?.uuid) return;
+
+        try {
+            const response = await deleteMutation.mutateAsync({
+                params: { uuid: itemToDelete.uuid }
+            });
+
+            Toast.success(response);
+            setDeleteModal(false);
+            setItemToDelete(null);
+        } catch (error) {
+            console.error("Delete failed", error);
+        }
     };
 
     // UI Helpers (Tight Row Style)
@@ -252,7 +265,7 @@ const MaintenanceTaskAssignForm = ({
                                             (
                                                 <button
                                                     className="p-1 rounded-full text-red-500 transition-colors enabled:hover:bg-red-50"
-                                                    onClick={(e) => handleDelete(e, item)}
+                                                    onClick={(e) => openDeleteModal(e, item)}
 
                                                 >
                                                     <DeleteOutlined className="text-[14px]" />
@@ -268,6 +281,23 @@ const MaintenanceTaskAssignForm = ({
                             </div>
                         </Col>
                     ))}
+
+                    <Modal
+                        title={
+                            <span>
+                                Are you sure you want to delete the assignment for <b>{itemToDelete?.staff?.name}</b>?
+                            </span>
+                        }
+                        open={deleteModal}
+                        onCancel={() => {
+                            setDeleteModal(false);
+                            setItemToDelete(null);
+                        }}
+                        onOk={handleConfirmDelete}
+                        confirmLoading={deleteMutation.isPending}
+                        okText="OK"
+                        mask={false}
+                    />
                 </Row>
             )
             }
