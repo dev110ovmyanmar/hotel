@@ -148,6 +148,15 @@ const RoomRestrictionForm = ({
     style: { width: 150 },
   };
 
+    const childSharedProps = {
+    mode: "spinner",
+    min: 0,
+    max: 10,
+    defaultValue: 0,
+    onChange,
+    style: { width: 150 },
+  };
+
   return (
     <div>
       <Drawer
@@ -190,6 +199,12 @@ const RoomRestrictionForm = ({
           layout="vertical"
           style={{ width: "100%" }}
           onFinish={onFinish}
+           initialValues={{
+            closedToArrival: false,
+            closedToDeparture: false,
+            minStay:0,
+            maxStay:1,
+          }}
         >
           <Form.Item
             label="Room Type"
@@ -264,7 +279,7 @@ const RoomRestrictionForm = ({
               rules={[{ required: true }]}
             >
               <InputNumber
-                {...sharedProps}
+                {...childSharedProps}
                 placeholder="Outlined"
                 readOnly={isView}
                 style={{ width: "100%" }}
