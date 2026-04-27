@@ -68,9 +68,9 @@ export default function useServiceInventoryColumns(onEdit, onView) {
       align: "center",
       width: 90,
       render: (status) =>
-        <Tag color={status == false ? "red" : "green"}>
-          {status == false ? "FALSE" : "TRUE"}
-        </Tag>
+        <div className={status === true ? "text-[#389E0D]" : "text-[#CF1322]"}>
+          {status === true ? "True" : "False"}
+        </div>
     },
     {
       title: "Free",
@@ -79,9 +79,9 @@ export default function useServiceInventoryColumns(onEdit, onView) {
       align: "center",
       width: 80,
       render: (free) => (
-        <Tag color={free == false ? "red" : "green"}>
-          {free == false ? "FALSE" : "TRUE"}
-        </Tag>
+        <div className={free === true ? "text-[#389E0D]" : "text-[#CF1322]"}>
+          {free === true ? "True" : "False"}
+        </div>
       ),
     },
     {

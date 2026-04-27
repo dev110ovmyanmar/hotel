@@ -171,7 +171,7 @@ const ImageUpload = ({
                                     height: "150px",
                                     border: "1px dotted gray",
                                     borderRadius: "8px",
-                                    overflow: "hidden",
+                                    // overflow: "hidden",
                                     position: "relative",
                                 }}
                             >
@@ -240,6 +240,8 @@ const ImageUpload = ({
                                     onCancel={() => setDeleteModal(false)}
                                     onOk={() => handelDelete(file)}
                                     confirmLoading={deleteLoading}
+                                    mask={false}
+
                                 />
                             </div>
 
