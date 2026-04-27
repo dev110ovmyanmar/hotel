@@ -28,16 +28,20 @@ const ConfirmModal = ({
         },
     };
 
+    const tailwindcss = {
+        footer: "dark:!bg-[#1F1F1F] dark:!border-[#e5e5e5]"
+    }
+
 
     return (
         <Modal
-
             title="Confirm Force Logout"
             open={open}
             onCancel={onCancel}
             onOk={onOk}
             okText="Confirm"
             styles={stylesFn}
+            classNames={tailwindcss}
         >
             The action will forcefully logout all other users after alerting them. Do you wish to continue?
 

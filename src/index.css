@@ -82,7 +82,7 @@
   --ant-border-radius: 5px;
 }
 
-.ant-form-item-label > label {
+.ant-form-item-label>label {
   --ant-form-label-font-size: 12px;
   font-weight: 500;
   --ant-form-label-color: #474141;
@@ -166,7 +166,7 @@
   --ant-color-text-disabled: rgba(0, 0, 0, 1);
 }
 
-.ant-checkbox-disabled + span {
+.ant-checkbox-disabled+span {
   --ant-color-text-disabled: rgba(0, 0, 0, 1);
 }
 
@@ -250,12 +250,12 @@ span .ant-upload {
   transition: all 0.3s ease;
 } */
 
-.custom-table-style .ant-table-thead > tr > th {
+.custom-table-style .ant-table-thead>tr>th {
   background-color: #f0f5ff;
   border-bottom: 1px solid #adc6ff;
 }
 
-.custom-table-style .ant-table-tbody > tr > td {
+.custom-table-style .ant-table-tbody>tr>td {
   background-color: #ffffff;
   border-bottom: 1px solid #adc6ff;
 }
@@ -277,43 +277,17 @@ span .ant-upload {
   padding: 8px 25px;
 }
 
-.ant-table-tbody > tr.ant-table-expanded-row {
+.ant-table-tbody>tr.ant-table-expanded-row {
   background-color: #f3f4f6;
 }
 
-:where(.css-dev-only-do-not-override-1t2537o).ant-table-wrapper
-  .ant-table-tbody
-  > tr
-  > th
-  > .ant-table-wrapper:only-child
-  .ant-table,
-:where(.css-dev-only-do-not-override-1t2537o).ant-table-wrapper
-  .ant-table-tbody
-  > tr
-  > td
-  > .ant-table-wrapper:only-child
-  .ant-table,
-:where(.css-dev-only-do-not-override-1t2537o).ant-table-wrapper
-  .ant-table-tbody
-  > tr
-  > th
-  > .ant-table-expanded-row-fixed
-  > .ant-table-wrapper:only-child
-  .ant-table,
-:where(.css-dev-only-do-not-override-1t2537o).ant-table-wrapper
-  .ant-table-tbody
-  > tr
-  > td
-  > .ant-table-expanded-row-fixed
-  > .ant-table-wrapper:only-child
-  .ant-table {
+:where(.css-dev-only-do-not-override-1t2537o).ant-table-wrapper .ant-table-tbody>tr>th>.ant-table-wrapper:only-child .ant-table,
+:where(.css-dev-only-do-not-override-1t2537o).ant-table-wrapper .ant-table-tbody>tr>td>.ant-table-wrapper:only-child .ant-table,
+:where(.css-dev-only-do-not-override-1t2537o).ant-table-wrapper .ant-table-tbody>tr>th>.ant-table-expanded-row-fixed>.ant-table-wrapper:only-child .ant-table,
+:where(.css-dev-only-do-not-override-1t2537o).ant-table-wrapper .ant-table-tbody>tr>td>.ant-table-expanded-row-fixed>.ant-table-wrapper:only-child .ant-table {
   margin-block: 0 !important;
   margin-inline: 0 !important;
   padding: 0 !important;
-}
-
-body.something {
-  background-color: red;
 }
 
 .no-radius-input {
@@ -329,6 +303,7 @@ body.something {
   border-color: #4096ff;
   color: #4096ff;
 }
+
 .ant-badge .ant-badge-count {
   border-radius: 0px;
   background-color: #a3a19d;
@@ -347,7 +322,7 @@ body.something {
 
 /* Style individual tabs to fill the space (25% each) */
 .guest-profile-tabs .ant-tabs-tab {
-  flex: 1; 
+  flex: 1;
   justify-content: center;
   padding: 20px 0 !important;
   margin: 0 !important;
@@ -355,28 +330,63 @@ body.something {
 }
 
 .guest-profile-tabs .ant-tabs-tab:hover {
-  background-color: #f8fafc; /* Subtle hover color */
+  background-color: #f8fafc;
+  /* Subtle hover color */
 }
 
 /* Text styling */
 .guest-profile-tabs .ant-tabs-tab-btn {
   font-size: 15px;
   font-weight: 700 !important;
-  color: #64748b !important; /* slate-500 */
+  color: #64748b !important;
+  /* slate-500 */
 }
 
 /* Active tab text color */
 .guest-profile-tabs .ant-tabs-tab-active .ant-tabs-tab-btn {
-  color: #1e293b !important; /* slate-800 */
+  color: #1e293b !important;
+  /* slate-800 */
 }
 
 /* The Blue Bottom Border Line */
 .guest-profile-tabs .ant-tabs-ink-bar {
-  background: #2563eb !important; /* blue-600 */
+  background: #2563eb !important;
+  /* blue-600 */
   height: 3px !important;
 }
 
 /* Remove Ant Design's default bottom grey line */
 .guest-profile-tabs .ant-tabs-nav::before {
   border-bottom: none !important;
+}
+
+
+/* Dark Mode For Nested Table */
+.dark .custom-table-style .ant-table-thead>tr>th {
+  background-color: #0f172a;
+  border-bottom: 1px solid #9ca8c5;
+}
+
+.dark .custom-table-style .ant-table-tbody>tr>td {
+  background-color: #0f172a;
+  border-bottom: 1px solid #adc6ff;
+}
+
+.dark .custom-table-style .ant-table {
+  border: 1px solid #0f265a;
+  border-radius: 4px;
+}
+
+.dark .ant-table-tbody>tr.ant-table-expanded-row {
+  background-color: #0f172a;
+}
+
+/* Global Icon */
+.dark .custom-global {
+  color: #000000 !important;
+  z-index: 999;
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 50%;
+  background-color: #ffffff !important;
 }

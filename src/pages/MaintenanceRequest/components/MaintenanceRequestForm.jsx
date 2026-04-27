@@ -221,7 +221,7 @@ const MaintenanceRequestForm = ({
                                         rules={[{ required: true }]}
                                         getValueProps={(value) => ({
                                             value: isView
-                                                ? roomOptions.find((item) => item.value === value)?.label
+                                                ? roomOptions?.find((item) => item.value === value)?.label
                                                 : value,
                                         })}
                                     >
@@ -241,7 +241,7 @@ const MaintenanceRequestForm = ({
                                         rules={[{ required: true }]}
                                         getValueProps={(value) => ({
                                             value: isView
-                                                ? issueTypeOptions.find((item) => item.value === value)?.label
+                                                ? issueTypeOptions?.find((item) => item.value === value)?.label
                                                 : value,
                                         })}
                                     >
@@ -262,7 +262,7 @@ const MaintenanceRequestForm = ({
                                         rules={[{ required: true }]}
                                         getValueProps={(value) => ({
                                             value: isView
-                                                ? priorityOptions.find((item) => item.value === value)?.label
+                                                ? priorityOptions?.find((item) => item.value === value)?.label
                                                 : value,
                                         })}
                                     >
@@ -292,7 +292,7 @@ const MaintenanceRequestForm = ({
                                             rules={[{ required: true }]}
                                             getValueProps={(value) => ({
                                                 value: isView
-                                                    ? maintenanceStatusOptions.find((item) => item.value === value)?.label
+                                                    ? maintenanceStatusOptions?.find((item) => item.value === value)?.label
                                                     : value,
                                             })}
                                         >
@@ -397,7 +397,7 @@ const MaintenanceRequestForm = ({
                                         rules={[{ required: true }]}
                                         getValueProps={(value) => ({
                                             value: isView
-                                                ? departmentOptions.find((item) => item.value === value)?.label
+                                                ? departmentOptions?.find((item) => item.value === value)?.label
                                                 : value,
                                         })}
                                     >

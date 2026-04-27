@@ -18,14 +18,14 @@ const PropertyTable = ({
     const columns = usePropertiesColumns(onEdit, onView, onUpload);
 
     return (
-        <div id="scrollId" className="w-full h-[63vh]">
+        <div id="scrollId" className="w-full">
             <Table
+                tableLayout="fixed"
                 scroll={{ x: 1000 }}
                 loading={loading}
                 columns={columns}
                 dataSource={dataSource}
                 rowKey="uuid"
-                className="mx-5"
                 pagination={{
                     current: page,
                     pageSize: perPage,
