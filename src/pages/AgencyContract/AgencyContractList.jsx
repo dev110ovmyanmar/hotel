@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import {useLocation} from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { LIMITS } from "../../variables/constants";
 import useApiQuery from "../../hooks/useApiQuery";
 import ListHeader from "../../component/ListHeader/ListHeader";
 import { PERMISSIONS } from "../../variables/permission";
-import {fetchPartnerContract} from "../../api/partnerContractApi";
+import { fetchPartnerContract } from "../../api/partnerContractApi";
 import AgencyContractTable from "./Components/AgencyContractTable";
 import AgencyContractForm from "./Components/AgencyContractForm/AgencyContractForm";
 import { capitalizeFirstLetter } from '../../utils/Utils';
@@ -19,7 +19,7 @@ const AgencyContractList = () => {
   const [mode, setMode] = useState("add");
   const [selectedData, setSelectedData] = useState(null);
 
-  const {state} = useLocation();
+  const { state } = useLocation();
 
   const normalStatus = status === "all" ? null : status;
 
@@ -33,7 +33,7 @@ const AgencyContractList = () => {
       },
       keyword,
       status: normalStatus,
-      partnerType : "Agency",
+      partnerType: "Agency",
       uuid: state?.agencyRecord?.uuid
     },
   });
@@ -51,7 +51,7 @@ const AgencyContractList = () => {
   return (
     <div className="w-full px-6 py-2">
       <div className="text-lg mb-3">{capitalizeFirstLetter(state?.agencyRecord?.name)}</div>
-      
+
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
         <ListHeader
           searchPlaceholder="Search  ..."
@@ -59,7 +59,7 @@ const AgencyContractList = () => {
           setKeyword={setKeyword}
           addButtonText="Add Contract "
           onAdd={handleAdd}
-          // permission={PERMISSIONS.ROOM_RATE_CREATE}
+        // permission={PERMISSIONS.ROOM_RATE_CREATE}
         />
       </div>
 
@@ -70,6 +70,7 @@ const AgencyContractList = () => {
         total={data?.pagination?.total}
         changePage={(page) => setPage(page)}
         changePerPage={(perPage) => setPerPage(perPage)}
+        loading={isLoading}
       />
 
       <AgencyContractForm

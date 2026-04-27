@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Drawer, Row, Col, Form, Input, Select, DatePicker, TimePicker, Button, Tag } from "antd";
+import { Drawer, Row, Col, Form, Input, Select, DatePicker, TimePicker, Button, Tag, Modal } from "antd";
 import dayjs from "dayjs";
 import { TeamOutlined, CalendarOutlined, ClockCircleOutlined, ExclamationCircleOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import Loader from "../../../component/Loader/Loader";
@@ -25,6 +25,10 @@ const HouseKeepingTaskAssignForm = ({
     const [createDrawerOpen, setCreateDrawerOpen] = useState(false);
     const [selectedAssignment, setSelectedAssignment] = useState(null);
     const [isEdit, setIsEdit] = useState(false);
+
+    const [deleteModal, setDeleteModal] = useState(false);
+    const [itemToDelete, setItemToDelete] = useState(null);
+
 
     const detail = houseKeepingTaskDetail;
 
@@ -143,25 +147,28 @@ const HouseKeepingTaskAssignForm = ({
         }
     };
 
-    const handleDelete = (e, item) => {
-        const deletePayload = {
-            uuid: item?.uuid,
-        };
-
+    const openDeleteModal = (e, item) => {
         e.stopPropagation();
-
-        deleteMutation.mutate({ params: deletePayload }, {
-            onSuccess: (response) => {
-                if (response) {
-                    Toast.success(response);
-                } else {
-                    Toast.success("Deleted successfully");
-                }
-            },
-        });
+        setItemToDelete(item);
+        setDeleteModal(true);
     };
 
-    // UI Helpers (Tight Row Style)
+    const handleConfirmDelete = async () => {
+        if (!itemToDelete?.uuid) return;
+
+        try {
+            const response = await deleteMutation.mutateAsync({
+                params: { uuid: itemToDelete.uuid }
+            });
+
+            Toast.success(response);
+            setDeleteModal(false);
+            setItemToDelete(null);
+        } catch (error) {
+            console.error("Delete failed", error);
+        }
+    };
+
     const TightRow = ({ label, value, isDate = false }) => (
         <div className="grid grid-cols-[75px_1fr] items-center py-1 border-b border-gray-50 last:border-0">
             <span>{label}</span>
@@ -171,7 +178,6 @@ const HouseKeepingTaskAssignForm = ({
         </div>
     );
 
-    // --- Business Logic & Mapping ---
     const hkTaskStatusMap = {
         completed: "completed",
         pending: "pending",
@@ -268,7 +274,8 @@ const HouseKeepingTaskAssignForm = ({
                                                     (
                                                         <button
                                                             className="p-1 rounded-full text-red-500 transition-colors enabled:hover:bg-red-50"
-                                                            onClick={(e) => handleDelete(e, item)}
+                                                            // onClick={(e) => handleDelete(e, item)}
+                                                            onClick={(e) => openDeleteModal(e, item)}
                                                         >
                                                             <DeleteOutlined className="text-[14px]" />
                                                         </button>
@@ -298,6 +305,22 @@ const HouseKeepingTaskAssignForm = ({
                                 </Col>
                             ))}
                         </Row>
+                        <Modal
+                            title={
+                                <span>
+                                    Are you sure you want to delete the assignment for <b>{itemToDelete?.staff?.name}</b>?
+                                </span>
+                            }
+                            open={deleteModal}
+                            onCancel={() => {
+                                setDeleteModal(false);
+                                setItemToDelete(null);
+                            }}
+                            onOk={handleConfirmDelete}
+                            confirmLoading={deleteMutation.isPending}
+                            okText="OK"
+                            mask={false}
+                        />
                     </div>
 
                 )
@@ -420,6 +443,8 @@ const HouseKeepingTaskAssignForm = ({
                             )}
                         </Form>
                     </Drawer>
+
+
                 )
             }
         </Drawer >
@@ -427,4 +452,3 @@ const HouseKeepingTaskAssignForm = ({
 };
 
 export default HouseKeepingTaskAssignForm;
-

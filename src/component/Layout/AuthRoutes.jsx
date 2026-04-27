@@ -89,7 +89,7 @@ const RoomAttribute = lazy(
 );
 const Floor = lazy(() => import("../../pages/Floor/FloorList"));
 const AdminList = lazy(() => import("../../pages/Admins/AdminList"));
-// const LocationList = lazy(() => import("../../pages/Location/LocationList"));
+const LocationList = lazy(() => import("../../pages/Location/LocationList"));
 const AmenitiesList = lazy(() => import("../../pages/Amenities/AmenitiesList"));
 const PolicyList = lazy(() => import("../../pages/Policy/PolicyList"));
 const ChangePassword = lazy(
@@ -271,6 +271,8 @@ const AddOnServiceList = lazy(
   () =>
     import("../../pages/EditReservation/Menu/ServiceAddOn/ServiceAddOnList"),
 );
+
+const RateAndInventoryCalendar = lazy(() => import("../../pages/RateAndInventoryCalendar/RateAndInventoryCalendar"));
 
 export const authRoutes = [
   {
@@ -926,8 +928,8 @@ export const authRoutes = [
         label: "Country & City",
         path: "/settings/country-city",
         icon: <GiModernCity style={{ fontSize: "20px" }} />,
-        // component: <LocationList />,
-        // permission: PERMISSIONS.LOCATION_LIST,
+        component: <LocationList />,
+        permission: PERMISSIONS.LOCATION_LIST,
       },
       {
         key: 15.6,
@@ -1092,8 +1094,8 @@ export const authRoutes = [
     key: 30,
     label: "Rate and Inventory Calendar",
     path: "/rate-and-inventory-calendar",
-    // component: <RateAndInventoryCalendar />,
-    // icon: <CalendarOutlined style={{ fontSize: "20px" }} />,
+    component: <RateAndInventoryCalendar />,
+    icon: <CalendarOutlined style={{ fontSize: "20px" }} />,
   },
 ];
 

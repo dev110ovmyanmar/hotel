@@ -40,24 +40,18 @@ const AmenitiesTable = ({
       dataIndex: "isFree",
       key: "isFree",
       render: (text) =>
-        // <div>{text === true ? "True" : "False"}</div>
-        <BooleanTag
-          value={text}
-          trueText="Yes"
-          falseText="No"
-        />,
+        <div className={text === true ? "text-[#389E0D]" : "text-[#CF1322]"}>
+          {text === true ? "Yes" : "No"}
+        </div>
     },
     {
       title: "Visibility",
       dataIndex: "visibility",
       key: "visibility",
       render: (text) =>
-        // <div>{text === true ? "True" : "False"}</div>
-        <BooleanTag
-          value={text}
-          trueText="Yes"
-          falseText="No"
-        />,
+        <div className={text === true ? "text-[#389E0D]" : "text-[#CF1322]"}>
+          {text === true ? "Yes" : "No"}
+        </div>
     },
     {
       title: "Code",

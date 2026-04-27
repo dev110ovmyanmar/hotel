@@ -452,7 +452,7 @@ const PolicyForm = ({
         policyForm.setFieldsValue({
           isUnlimited: true,
         });
-      } 
+      }
       // else {
       //   policyForm.setFieldsValue({
       //     isUnlimited: false,
@@ -520,41 +520,81 @@ const PolicyForm = ({
               label="Link To"
               name="linkTo"
               rules={[{ required: true, message: "Link To is Required" }]}
+              getValueProps={(value) => {
+                return {
+                  value: isView ?
+                    linkTo?.find(item => item.uuid === value)?.name
+                    : value
+                }
+              }}
             >
-              <Select
-                options={linkTo?.map((item) => ({
-                  label: item?.name,
-                  value: item?.uuid,
-                }))}
-              ></Select>
+              {
+                isView ?
+                  <Input readOnly={isView} />
+                  :
+                  <Select
+                    options={linkTo?.map((item) => ({
+                      label: item?.name,
+                      value: item?.uuid,
+                    }))}
+                  ></Select>
+              }
             </Form.Item>
 
             <Form.Item
               label="Type"
               name={["policyType", "uuid"]}
               rules={[{ required: true, message: "Policy Name is Required" }]}
+              getValueProps={(value) => {
+                return {
+                  value: isView ?
+                    policyType?.find(item => item.uuid === value)?.name
+                    : value
+                }
+              }}
             >
-              <Select
-                options={policyType?.map((item) => ({
-                  label: item.name,
-                  value: item.uuid,
-                }))}
-                open={isView ? false : undefined}
-              ></Select>
+              {
+                isView ?
+                  <Input readOnly={isView} />
+                  :
+                  <Select
+                    options={policyType?.map((item) => ({
+                      label: item.name,
+                      value: item.uuid,
+                    }))}
+                    open={isView ? false : undefined}
+                  ></Select>
+              }
             </Form.Item>
 
             <Form.Item
               label="Is Active"
               name="isActive"
               rules={[{ required: true, message: "Is Active is Required" }]}
+              getValueProps={(value) => {
+                return {
+                  value: isView
+                    ? value === true
+                      ? "True"
+                      : value === false
+                        ? "False"
+                        : ""
+                    : value,
+                };
+              }}
             >
-              <Select
-                options={[
-                  { label: "True", value: true },
-                  { label: "False", value: false },
-                ]}
-                open={isView ? false : undefined}
-              ></Select>
+              {
+                isView ?
+                  <Input readOnly={isView}/>
+                  :
+                  <Select
+                    options={[
+                      { label: "True", value: true },
+                      { label: "False", value: false },
+                    ]}
+                    open={isView ? false : undefined}
+                  ></Select>
+              }
             </Form.Item>
 
             <Form.Item
@@ -848,11 +888,11 @@ const PolicyForm = ({
                             <Checkbox
                               rules={[
                                 { required: true, message: "To is Required" }]}
-                              
+
                             >
                               <span>No Limit</span>
                             </Checkbox>
-                            
+
                           </Form.Item>
                         </Col>
 

@@ -92,9 +92,9 @@ const useHouseKeepingTaskColumns = (onEdit, onView) => {
             dataIndex: "maintenanceRequestStatus",
             key: "maintenanceRequestStatus",
             render: (maintenanceRequestStatus) =>
-                <Tag color={maintenanceRequestStatus == false ? "red" : "green"}>
-                    {maintenanceRequestStatus == false ? "FALSE" : "TRUE"}
-                </Tag>
+                <div className={maintenanceRequestStatus === true ? "text-[#389E0D]" : "text-[#CF1322]"}>
+                    {maintenanceRequestStatus === true ? "True" : "False"}
+                </div>
         }
         ,
         {
