@@ -4,7 +4,7 @@ import ReservationHeader from "./ReservationHeader";
 import ReservationMenu from "./ReservationMenu";
 import { PlusOutlined, ReloadOutlined } from "@ant-design/icons";
 import RoomBookedDrawer from "./RoomBookedDrawer";
-import CreateGuestForm from "./CreateGuestForm";
+import CreateContactPerson from "./CreateContactPerson";
 import { MdOutlineEscalatorWarning, MdPeopleOutline } from "react-icons/md";
 import GuestInformationTable from "./GuestInformationTable";
 import ReservationForm from "./ReservationForm";
@@ -17,8 +17,9 @@ const ReservationList = () => {
   const [searchReservation, setSearchReservation] = useState(false);
   const [refreshReservation, setRefreshReservation] = useState(false);
   const [selectedData, setSelectedData] = useState([]);
+  const [clickCreateContact, setClickCreateContact] = useState(false);
 
-  console.log(selectedData,"SelectedData")
+  console.log(selectedData, "SelectedData")
 
   const options = [
     { value: "1", label: "1" },
@@ -201,12 +202,12 @@ const ReservationList = () => {
         </Button>
       </div>
 
-      <ReservationForm onSearch={() => {setSearchReservation(true)}} afterRoomConfirm={roomConfirm}/>
+      <ReservationForm onSearch={() => { setSearchReservation(true) }} afterRoomConfirm={roomConfirm} />
 
       {
         refreshReservation &&
         (
-          <ReservationForm onSearch={() => setSearchReservation(true)} afterRoomConfirm={roomConfirm}/>
+          <ReservationForm onSearch={() => setSearchReservation(true)} afterRoomConfirm={roomConfirm} />
         )
       }
 
@@ -249,7 +250,7 @@ const ReservationList = () => {
             ))}
 
             <Card>
-              <h1 className="text-lg font-bold my-2">Guest Information</h1>
+              <h1 className="text-lg font-bold my-2">Contact Person</h1>
 
               {
                 guestInfoTable ?
@@ -261,14 +262,19 @@ const ReservationList = () => {
               }
 
 
-              <Button type="primary" onClick={() => setGuestDrawerOpen(true)} className="my-4">
-                Add Guest
-                <PlusOutlined />
-              </Button>
+              {
+                clickCreateContact ? null :
+                  <Button type="primary" onClick={() => setGuestDrawerOpen(true)} className="my-4">
+                    Add Contact Person
+                    <PlusOutlined />
+                  </Button>
+              }
 
             </Card>
 
-            <Button className="float-end my-5 !px-10" type="primary">Submit</Button>
+            <div className="flex justify-end">
+              <Button className="!my-5 !px-10" type="primary">Submit</Button>
+            </div>
           </>
 
           :
@@ -299,11 +305,13 @@ const ReservationList = () => {
       }
 
 
-      <CreateGuestForm
+      <CreateContactPerson
         guestDrawerOpen={guestDrawerOpen}
         setGuestDrawerOpen={setGuestDrawerOpen}
         guestInfoTable={guestInfoTable}
         setGuestInfoTable={setGuestInfoTable}
+        clickCreateContact={clickCreateContact}
+        setClickCreateContact={setClickCreateContact}
       />
 
       <RoomBookedDrawer
