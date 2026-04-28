@@ -33,9 +33,43 @@ const RoomRestrictionTable = ({ data, page, setPage }) => {
     },
   ];
 
+  // Process data to calculate rowSpan for rate plans
+  const processData = (data) => {
+    const newData = [...data];
+
+    let i = 0;
+    while (i < newData.length) {
+      let current = newData[i];
+      let count = 1;
+
+      for (let j = i + 1; j < newData.length; j++) {
+        if (newData[j]?.ratePlan?.name === current?.ratePlan?.name) {
+          count++;
+        } else {
+          break;
+        }
+      }
+
+      newData[i].rowSpan = count;
+
+      for (let k = i + 1; k < i + count; k++) {
+        newData[k].rowSpan = 0;
+      }
+
+      i += count;
+    }
+
+    return newData;
+  };
+
   const expandColumns = [
-    { title: "ID", dataIndex: "id", key: "id" },
-    { title: "Rate Plan", dataIndex: ["ratePlan", "name"], key: "ratePlan" },
+    { title: "ID", dataIndex: "id", key: "id",align: "center" },
+    { title: "Rate Plan", dataIndex: ["ratePlan", "name"], key: "ratePlan",align: "center",
+       onCell: (record) => ({
+        rowSpan: record.rowSpan,
+        style: { verticalAlign: "middle" },
+      }),
+     },
     {
       title: "Date",
       dataIndex: "date",
@@ -47,14 +81,17 @@ const RoomRestrictionTable = ({ data, page, setPage }) => {
       title: "Min Stay",
       dataIndex: "minStay",
       key: "minStay",
+      align: "center"
     },
     {
       title: "Max Stay",
       dataIndex: "maxStay",
       key: "maxStay",
+      align: "center"
     },
     {
       title: "Action",
+      align: "center",
       render: (_, record) => {
         const smallStyle = { fontSize: "12px" };
 
@@ -109,15 +146,17 @@ const RoomRestrictionTable = ({ data, page, setPage }) => {
   ];
 
   const expandedRowRender = (record) => {
-    console.log(record, "record");
+   const processedRates = processData(record?.calendars || []);
     return (
       <Table
         className="custom-table-style"
         columns={expandColumns}
-        dataSource={record?.calendars}
+        // dataSource={record?.calendars}
+        dataSource={processedRates}
         pagination={false}
         size="small"
         style={{ marginTop: "16px", marginBottom: "16px" }}
+        bordered
       />
     );
   };
