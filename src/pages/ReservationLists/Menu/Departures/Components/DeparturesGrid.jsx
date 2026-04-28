@@ -9,6 +9,8 @@ import {
   EditOutlined,
   PrinterOutlined,
 } from "@ant-design/icons";
+import { FaChild } from "react-icons/fa";
+import { IoPeopleSharp } from "react-icons/io5";
 
 const bookingData = [
   {
@@ -96,9 +98,9 @@ const DeparturesGrid = () => {
   const pageSize = 6;
   const navigate = useNavigate();
 
- const filteredData = bookingData.filter(
-  (item) => item.status === "Check-in" || item.status === "Check-out"
-);
+  const filteredData = bookingData.filter(
+    (item) => item.status === "Check-in" || item.status === "Check-out",
+  );
 
   const paginatedData = filteredData.slice(
     (currentPage - 1) * pageSize,
@@ -112,11 +114,11 @@ const DeparturesGrid = () => {
   };
 
   const statusColors = {
-  "Check-in": "cyan",
-  "Check-out": "#8B4513",
-  "Booked": "blue",
-  "Pending": "gold",
-};
+    "Check-in": "cyan",
+    "Check-out": "#8B4513",
+    Booked: "blue",
+    Pending: "gold",
+  };
 
   return (
     <div>
@@ -147,14 +149,34 @@ const DeparturesGrid = () => {
               {/* Info Row */}
               <div style={{ marginBottom: 12 }}>
                 <Space size="middle" style={{ color: "#555" }}>
-                  <span>
+                  <span
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "6px",
+                    }}
+                  >
                     <PhoneOutlined /> {item.phone}
                   </span>
-                  <span>
-                    <UserOutlined /> {item.adults}
+
+                  <span
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "6px",
+                    }}
+                  >
+                    <IoPeopleSharp /> {item.adults}
                   </span>
-                  <span>
-                    <TeamOutlined /> {item.kids}
+
+                  <span
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "6px",
+                    }}
+                  >
+                    <FaChild /> {item.kids}
                   </span>
                 </Space>
               </div>

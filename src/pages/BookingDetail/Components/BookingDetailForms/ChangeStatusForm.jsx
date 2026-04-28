@@ -15,7 +15,7 @@ import FormButtons from "../../../../component/FormButtons/FormButtons";
 const ChangeStatusForm = ({ open, onClose, reservationId }) => {
   const [form] = Form.useForm();
 
-  const handleSubmit = (values) => {
+  const onFinish = (values) => {
     console.log("Change Status Data:", {
       reservationId,
       ...values,
@@ -38,7 +38,7 @@ const ChangeStatusForm = ({ open, onClose, reservationId }) => {
         </div>
       }
     >
-      <Form layout="vertical" form={form} onFinish={handleSubmit}>
+      <Form layout="vertical" form={form} onFinish={onFinish}>
         <Form.Item
           label={
             <span className="font-bold text-md">Current Booking Status</span>

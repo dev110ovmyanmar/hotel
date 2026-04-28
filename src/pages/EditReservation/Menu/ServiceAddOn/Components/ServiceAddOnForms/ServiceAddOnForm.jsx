@@ -16,6 +16,10 @@ import dayjs from "dayjs";
 import FormItem from "antd/es/form/FormItem";
 import FormButtons from "../../../../../../component/FormButtons/FormButtons";
 import { truncate } from "lodash";
+import {
+  getFormattedDate,
+  getFormattedDateTime,
+} from "../../../../../../utils";
 
 const onChange = (value) => {
   console.log("changed", value);
@@ -41,21 +45,12 @@ const ServiceAddOnForm = ({
     if (drawerOpen && selectedData) {
       form.setFieldsValue({
         ...selectedData,
-        // Convert all string dates from localStorage back to Dayjs objects
-        eventOrderDate: selectedData.eventOrderDate
-          ? dayjs(selectedData.eventOrderDate)
+        serviceOrderDate: selectedData.serviceOrderDate
+          ? dayjs(selectedData.serviceOrderDate)
           : null,
-        eventOrderTime: selectedData.eventOrderTime
-          ? dayjs(selectedData.eventOrderTime)
+        serviceOrderTime: selectedData.serviceOrderTime
+          ? dayjs(selectedData.serviceOrderTime)
           : null,
-        startDate: selectedData.startDate
-          ? dayjs(selectedData.startDate)
-          : null,
-        startTime: selectedData.startTime
-          ? dayjs(selectedData.startTime)
-          : null,
-        endDate: selectedData.endDate ? dayjs(selectedData.endDate) : null,
-        endTime: selectedData.endTime ? dayjs(selectedData.endTime) : null,
       });
     } else if (drawerOpen && mode === "add") {
       form.resetFields();
@@ -63,40 +58,34 @@ const ServiceAddOnForm = ({
   }, [selectedData, drawerOpen, form, mode]);
 
   const onFinish = (values) => {
-    const existingData = JSON.parse(localStorage.getItem("services")) || [];
-
-    // Transform values: Convert Dayjs objects to strings for storage
     const formattedValues = {
       ...values,
-      eventOrderDate: values.eventOrderDate?.toISOString(),
-      eventOrderTime: values.eventOrderTime?.toISOString(),
-      startDate: values.startDate?.toISOString(),
-      startTime: values.startTime?.toISOString(),
-      endDate: values.endDate?.toISOString(),
-      endTime: values.endTime?.toISOString(),
+      serviceOrderDate: getFormattedDate(values.serviceOrderDate, false),
+      serviceOrderTime: getFormattedDateTime(values.serviceOrderTime, false),
     };
 
+    console.log("Submitted Values:", formattedValues);
+
+    const existingData = JSON.parse(localStorage.getItem("services")) || [];
     if (mode === "add") {
-      const newData = {
-        ...formattedValues,
-        id: Date.now(),
-      };
       localStorage.setItem(
         "services",
-        JSON.stringify([...existingData, newData]),
+        JSON.stringify([
+          ...existingData,
+          { ...formattedValues, id: Date.now() },
+        ]),
       );
-    } else if (mode === "edit") {
-      const updatedData = existingData.map((item) =>
+    } else {
+      const updated = existingData.map((item) =>
         item.id === selectedData.id
           ? { ...formattedValues, id: item.id }
           : item,
       );
-      localStorage.setItem("services", JSON.stringify(updatedData));
+      localStorage.setItem("services", JSON.stringify(updated));
     }
 
     setDrawerOpen(false);
     onSuccess();
-    form.resetFields();
   };
 
   const sharedProps = {
@@ -139,6 +128,9 @@ const ServiceAddOnForm = ({
           layout="vertical"
           onFinish={onFinish}
           disabled={isView}
+          initialValues={{
+            quantity: 1,
+          }}
         >
           <div className="grid grid-cols-2 gap-4">
             <Form.Item label="Service Order Date" name="serviceOrderDate">
