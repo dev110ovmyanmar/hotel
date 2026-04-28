@@ -21,25 +21,37 @@ const ExtraBedRateTable = ({ data, page, setPage }) => {
       align: "center",
     },
     {
+      title: "Rate Plan",
+      dataIndex: ["ratePlan", "name"],
+      key: "ratePlan",
+      align: "center",
+      width: 150,
+      onCell: (record) => ({
+        rowSpan: record.ratePlanRowSpan,
+        style: { verticalAlign: "middle" },
+      }),
+    },
+    {
       title: "Start Date",
       dataIndex: "startDate",
       key: "startDate",
+      align: "center"
     },
     {
       title: "End Date",
       dataIndex: "endDate",
       key: "endDate",
+      align: "center"
     },
     {
       title: "Age Type",
       dataIndex: ["ageType", "name"],
+      align: "center",
       key: "ageType",
-    },
-    {
-      title: "Rate Plan",
-      dataIndex: ["ratePlan", "name"],
-      key: "ratePlan",
-      width: 150,
+      onCell: (record) => ({
+        rowSpan: record.ageTypeRowSpan, // New rowSpan logic
+        style: { verticalAlign: "middle" },
+      }),
     },
     {
       title: "Price (MMK)",
@@ -51,6 +63,7 @@ const ExtraBedRateTable = ({ data, page, setPage }) => {
     },
     {
       title: "Action",
+      align: "center",
       render: (_, record) => {
         const actions = [
           {
@@ -102,17 +115,59 @@ const ExtraBedRateTable = ({ data, page, setPage }) => {
     },
   ];
 
-  const expandedRowRender = (record) => (
-    <Table
+  // Process data to calculate rowSpan for rate plans
+ const processData = (data) => {
+    if (!data) return [];
+    const newData = data.map(item => ({ ...item })); // Shallow clone to avoid mutating props
+
+    const calculateSpan = (keyPath) => {
+      let i = 0;
+      while (i < newData.length) {
+        // Access nested properties like ['ratePlan', 'name']
+        const getValue = (obj) => keyPath.reduce((acc, key) => acc?.[key], obj);
+        
+        let currentVal = getValue(newData[i]);
+        let count = 1;
+
+        for (let j = i + 1; j < newData.length; j++) {
+          if (getValue(newData[j]) === currentVal) {
+            count++;
+          } else {
+            break;
+          }
+        }
+
+        // Dynamically set the span key, e.g., ratePlanRowSpan or ageTypeRowSpan
+        const spanKey = `${keyPath[0]}RowSpan`;
+        newData[i][spanKey] = count;
+
+        for (let k = i + 1; k < i + count; k++) {
+          newData[k][spanKey] = 0;
+        }
+        i += count;
+      }
+    };
+
+    calculateSpan(["ratePlan", "name"]);
+    calculateSpan(["ageType", "name"]);
+
+    return newData;
+  };
+
+  const expandedRowRender = (record) => {
+     const processedRates = processData(record?.rates || []);
+   return (<Table
       className="custom-table-style"
       columns={nestedColumns}
-      dataSource={record.rates || []}
+      // dataSource={record.rates || []}
+       dataSource={processedRates}
+       bordered
       pagination={false}
       rowKey="id"
       size="small"
       style={{ marginTop: "16px", marginBottom: "16px" }}
-    />
-  );
+    />)
+   };
 
   const columns = [
     {
@@ -125,13 +180,13 @@ const ExtraBedRateTable = ({ data, page, setPage }) => {
       dataIndex: ["roomType", "name"],
       key: "roomType",
     },
-    {
-      title: "Base Price (MMK)",
-      dataIndex: ["roomType", "basePrice"],
-      key: "basePrice",
-      render: (price) => price?.toLocaleString(),
-      align: "end",
-    },
+    // {
+    //   title: "Base Price (MMK)",
+    //   dataIndex: ["roomType", "basePrice"],
+    //   key: "basePrice",
+    //   render: (price) => price?.toLocaleString(),
+    //   align: "end",
+    // },
   ];
 
   return (

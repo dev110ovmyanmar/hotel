@@ -90,7 +90,7 @@ const ExtraBedRateForm = ({
         ...data,
         roomTypeUuid: data?.roomType?.uuid,
         ratePlanUuid: data?.ratePlan?.uuid,
-        age_type: data?.ageType?.uuid,
+        ageType: data?.ageType?.uuid,
         startDate: data?.startDate ? dayjs(data.startDate) : null,
         endDate: data?.endDate ? dayjs(data.endDate) : null,
       });
@@ -103,7 +103,7 @@ const ExtraBedRateForm = ({
     if (isAdd) {
       const createValues = {
         ...values,
-        ageType: { uuid: values.age_type },
+        ageType: { uuid: values.ageType },
         roomType: { uuid: values.roomTypeUuid },
         ratePlan: { uuid: values.ratePlanUuid },
         startDate: getFormattedDate(values.startDate, false),
@@ -122,7 +122,7 @@ const ExtraBedRateForm = ({
     if (isEdit) {
       const editValues = {
         ...values,
-        ageType: { uuid: values?.age_type },
+        ageType: { uuid: values?.ageType },
         roomType: { uuid: values.roomTypeUuid },
         ratePlan: { uuid: values.ratePlanUuid },
         startDate: getFormattedDate(values.startDate, false),
@@ -237,7 +237,7 @@ const ExtraBedRateForm = ({
 
           <Form.Item
             label="Age Type"
-            name="age_type"
+            name="ageType"
             rules={[{ required: true }]}
             getValueProps={(value) => ({
               value: isView
