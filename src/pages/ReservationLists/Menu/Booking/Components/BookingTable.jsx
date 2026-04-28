@@ -9,6 +9,8 @@ import {
   EditOutlined,
   PrinterOutlined,
 } from "@ant-design/icons";
+import { FaChild } from "react-icons/fa";
+import { IoPeopleSharp } from "react-icons/io5";
 
 const dataSource = [
   {
@@ -64,18 +66,19 @@ const BookingTable = () => {
       title: "Contact & Guests",
       key: "contact",
       render: (_, record) => (
-        <div style={{ fontSize: "12px" }}>
-          <div>
+        <div className="flex flex-col gap-1" style={{ fontSize: "12px" }}>
+          <div className="flex items-center gap-1">
             <PhoneOutlined /> {record.contact.phone}
           </div>
-          <Space size="middle">
-            <span>
-              <UserOutlined /> {record.contact.adults}
+
+          <div className="flex items-center gap-3 text-gray-500">
+            <span className="flex items-center gap-1">
+              <IoPeopleSharp /> {record.contact.adults}
             </span>
-            <span>
-              <TeamOutlined /> {record.contact.kids}
+            <span className="flex items-center gap-1">
+              <FaChild /> {record.contact.kids}
             </span>
-          </Space>
+          </div>
         </div>
       ),
     },

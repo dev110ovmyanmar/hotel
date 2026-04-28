@@ -9,6 +9,8 @@ import {
   EditOutlined,
   PrinterOutlined,
 } from "@ant-design/icons";
+import { IoPeopleSharp } from "react-icons/io5";
+import { FaChild } from "react-icons/fa";
 
 const bookingData = [
   {
@@ -142,14 +144,34 @@ const InquiryGrid = () => {
               {/* Header Info */}
               <div style={{ marginBottom: 12 }}>
                 <Space size="middle" style={{ color: "#555" }}>
-                  <span>
+                  <span
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "6px",
+                    }}
+                  >
                     <PhoneOutlined /> {item.phone}
                   </span>
-                  <span>
-                    <UserOutlined /> {item.adults}
+
+                  <span
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "6px",
+                    }}
+                  >
+                    <IoPeopleSharp /> {item.adults}
                   </span>
-                  <span>
-                    <TeamOutlined /> {item.kids}
+
+                  <span
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "6px",
+                    }}
+                  >
+                    <FaChild /> {item.kids}
                   </span>
                 </Space>
               </div>
@@ -213,7 +235,7 @@ const InquiryGrid = () => {
                   }}
                 >
                   <span style={{ color: "#8c8c8c" }}>Order Status</span>
-                                  <Tag color={item.status === "Booked" ? "blue" : "gold"}>
+                  <Tag color={item.status === "Booked" ? "blue" : "gold"}>
                     {item.status}
                   </Tag>
                 </div>

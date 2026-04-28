@@ -32,13 +32,7 @@ const FolioOperationsList = () => {
 
       <FolioOperationsButtons />
 
-      <FolioOperationsTable />
-
-      <FolioOperationsForm
-        drawerOpen={drawerOpen}
-        setDrawerOpen={setDrawerOpen}
-        mode={mode}
-      />
+      {/* <FolioOperationsTable /> */}
     </div>
   );
 };

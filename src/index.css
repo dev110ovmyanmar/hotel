@@ -390,3 +390,6 @@ span .ant-upload {
   border-radius: 50%;
   background-color: #ffffff !important;
 }
+.custom-table-font .ant-table-cell {
+  font-size: 12px;
+}
