@@ -25,7 +25,7 @@ const { Text } = Typography;
 const OvertimeChargeCreateForm = ({ open, onClose, reservationId }) => {
   const [form] = Form.useForm();
 
-  const handleSubmit = (values) => {
+  const onFinish = (values) => {
     console.log("Overtime Create Data:", {
       reservationId,
       ...values,
@@ -44,7 +44,7 @@ const OvertimeChargeCreateForm = ({ open, onClose, reservationId }) => {
       destroyOnClose
       extra={<Button type="primary">Create</Button>}
     >
-      <Form layout="vertical" form={form} onFinish={handleSubmit}>
+      <Form layout="vertical" form={form} onFinish={onFinish}>
         <Form.Item>
           <Radio.Group>
             <div className="mb-2">
@@ -61,7 +61,12 @@ const OvertimeChargeCreateForm = ({ open, onClose, reservationId }) => {
         </FormItem>
 
         <FormItem label="Amount" name="amount">
-          <InputNumber min={0} suffix="MMK" className="no-radius-input"  style={{ width: "100%" }}/>
+          <InputNumber
+            min={0}
+            suffix="MMK"
+            className="no-radius-input"
+            style={{ width: "100%" }}
+          />
         </FormItem>
 
         <FormItem label="Description" name="description">

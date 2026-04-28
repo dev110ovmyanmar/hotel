@@ -24,8 +24,8 @@ const OvertimeChargeForm = ({ open, onClose, reservationId }) => {
   const [form] = Form.useForm();
   const [createOpen, setCreateOpen] = useState(false);
 
-  const handleSubmit = (values) => {
-    console.log("Amend Booking Data:", {
+  const onFinish = (values) => {
+    console.log("Over Time Charges:", {
       reservationId,
       ...values,
     });
@@ -40,12 +40,12 @@ const OvertimeChargeForm = ({ open, onClose, reservationId }) => {
         title="Overtime Charge"
         open={open}
         onClose={onClose}
-        size={550}
+        size={650}
         destroyOnClose
       >
-        <Form layout="vertical" form={form} onFinish={handleSubmit}>
-         <Space direction="vertical" size="middle" style={{ display: 'flex' }}>
-            <Card title="Room 1">
+        <Form layout="vertical" form={form} onFinish={onFinish}>
+          <Space direction="vertical" size="middle" style={{ display: "flex" }}>
+            <Card size="small" className="mb-10 shadow rounded border-none`" title="Room 1">
               <Row gutter={16} className="mb-2">
                 <Col span={8}>
                   <Text>Room Type</Text>
@@ -78,7 +78,7 @@ const OvertimeChargeForm = ({ open, onClose, reservationId }) => {
                 </Col>
               </Row>
 
-              <div className="flex justify-end mt-3">
+              <div className="flex justify-end mt-5">
                 <Button
                   onClick={() => setCreateOpen(true)}
                   className="custom-blue-btn"
@@ -88,7 +88,7 @@ const OvertimeChargeForm = ({ open, onClose, reservationId }) => {
               </div>
             </Card>
 
-            <Card title="Room 2">
+            <Card size="small" className="mb-10 shadow rounded border-none`" title="Room 2">
               <Row gutter={16} className="mb-2">
                 <Col span={8}>
                   <Text>Room Type</Text>
@@ -119,7 +119,7 @@ const OvertimeChargeForm = ({ open, onClose, reservationId }) => {
                   />
                 </Col>
               </Row>
-              <div className="flex justify-end mt-3">
+              <div className="flex justify-end mt-5">
                 <Button
                   onClick={() => setCreateOpen(true)}
                   className="custom-blue-btn"
