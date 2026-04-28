@@ -33,30 +33,30 @@ const SeasonalRateTable = ({
       key: "roomTypeName",
       align: "left",
     },
-    {
-      title: "Total Rooms",
-      dataIndex: "totalRooms",
-      key: "totalRooms",
-      width: "80",
-    },
-    {
-      title: "Extra Bed",
-      dataIndex: "extraBed",
-      key: "extraBed",
-    },
-    {
-      title: "Max Occupancy",
-      dataIndex: "maxOccupancy",
-      key: "maxOccupancy",
-    },
-    {
-      title: "Price (MMK)",
-      dataIndex: "basePrice",
-      key: "basePrice",
-      render: (text) => <PriceTag value={text} />,
-      width: "80",
-      align:"right",
-    },
+    // {
+    //   title: "Total Rooms",
+    //   dataIndex: "totalRooms",
+    //   key: "totalRooms",
+    //   width: "80",
+    // },
+    // {
+    //   title: "Extra Bed",
+    //   dataIndex: "extraBed",
+    //   key: "extraBed",
+    // },
+    // {
+    //   title: "Max Occupancy",
+    //   dataIndex: "maxOccupancy",
+    //   key: "maxOccupancy",
+    // },
+    // {
+    //   title: "Price (MMK)",
+    //   dataIndex: "basePrice",
+    //   key: "basePrice",
+    //   render: (text) => <PriceTag value={text} />,
+    //   width: "80",
+    //   align:"right",
+    // },
   ];
 
   const columns = TableColumns(baseColumns);
@@ -69,21 +69,21 @@ const SeasonalRateTable = ({
       dataIndex: "startDate",
       key: "startDate",
       render: (text) => <div>{String(text)}</div>,
-      align :"center",
+      align: "center",
     },
     {
       title: "End Date",
       dataIndex: "endDate",
       key: "endDate",
       render: (text) => <div>{String(text)}</div>,
-      align :"center",
+      align: "center",
     },
     {
       title: "Price (MMK)",
       dataIndex: "price",
       key: "price",
       render: (text) => <PriceTag value={text} />,
-      align:"right",
+      align: "right",
     },
     {
       title: "Action",
