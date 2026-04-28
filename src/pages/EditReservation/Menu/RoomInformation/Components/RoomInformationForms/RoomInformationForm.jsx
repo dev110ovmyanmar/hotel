@@ -11,8 +11,9 @@ import {
   InputNumber,
 } from "antd";
 import TextArea from "antd/es/input/TextArea";
-// import dayjs from "dayjs";
+import dayjs from "dayjs";
 import FormButtons from "../../../../../../component/FormButtons/FormButtons";
+import { getFormattedDate } from "../../../../../../utils";
 
 const RoomInformationForm = ({
   mode,
@@ -29,8 +30,12 @@ const RoomInformationForm = ({
     if (drawerOpen && selectedData) {
       form.setFieldsValue({
         ...selectedData,
-        date_of_birth: selectedData.date_of_birth
-          ? dayjs(selectedData.date_of_birth)
+
+        arrivalDate: selectedData.arrivalDate
+          ? dayjs(selectedData.arrivalDate)
+          : null,
+        departureDate: selectedData.departureDate
+          ? dayjs(selectedData.departureDate)
           : null,
       });
     } else if (drawerOpen && mode === "add") {
@@ -39,34 +44,38 @@ const RoomInformationForm = ({
   }, [selectedData, drawerOpen, form, mode]);
 
   const onFinish = (values) => {
-    const existingData = JSON.parse(localStorage.getItem("roomInfo")) || [];
+    const formattedValues = {
+      ...values,
+      arrivalDate: getFormattedDate(values.arrivalDate, false),
+      departureDate: getFormattedDate(values.departureDate, false),
+    };
 
+    //  API
+    console.log("Submitted Values:", formattedValues);
+
+    // LocalStorage
+    const existingData = JSON.parse(localStorage.getItem("roomInfo")) || [];
     if (mode === "add") {
-      const newData = {
-        ...values,
-        id: Date.now(),
-        date_of_birth: values.date_of_birth
-          ? values.date_of_birth.toISOString()
-          : null,
-      };
       localStorage.setItem(
         "roomInfo",
-        JSON.stringify([...existingData, newData]),
+        JSON.stringify([
+          ...existingData,
+          { ...formattedValues, id: Date.now() },
+        ]),
       );
-    } else if (mode === "edit") {
-      const updatedData = existingData.map((item) =>
+    } else {
+      const updated = existingData.map((item) =>
         item.id === selectedData.id
-          ? { ...item, ...values, id: item.id }
+          ? { ...formattedValues, id: item.id }
           : item,
       );
-      localStorage.setItem("roomInfo", JSON.stringify(updatedData));
+      localStorage.setItem("roomInfo", JSON.stringify(updated));
     }
 
     setDrawerOpen(false);
     onSuccess();
     form.resetFields();
   };
-
   return (
     <Drawer
       open={drawerOpen}
@@ -94,6 +103,16 @@ const RoomInformationForm = ({
     >
       <Form form={form} layout="vertical" onFinish={onFinish} disabled={isView}>
         <div className="grid grid-cols-2 gap-6">
+          <Form.Item label="Arrival Date" name="arrivalDate">
+            <DatePicker className="w-full" disabled={isView} />
+          </Form.Item>
+
+          <Form.Item label="Departure Date" name="departureDate">
+            <DatePicker className="w-full" disabled={isView} />
+          </Form.Item>
+        </div>
+
+        <div className="grid grid-cols-2 gap-6">
           <Form.Item label="Old Room Id" name="oldRoomId">
             <Input readOnly={isView} placeholder="Enter Old Room Id" />
           </Form.Item>
@@ -112,10 +131,11 @@ const RoomInformationForm = ({
               placeholder="Selected Room Type"
               options={[
                 {
-                  value: "deluxeBangalowDouble",
+                  value: "Deluxe Bangalow Double",
                   label: "Deluxe Bangalow Double",
                 },
-                { value: "deluxeBangalow", label: "Deluxe Bangalow" },
+                { value: "Deluxe Bangalow", label: "Deluxe Bangalow" },
+                { value: "Assign Room", label: "Assign Room" },
               ]}
             />
           </Form.Item>
@@ -133,27 +153,6 @@ const RoomInformationForm = ({
             />
           </Form.Item>
         </div>
-
-        {/* <div className="grid grid-cols-2 gap-6">
-          <Form.Item label="Arrival Date" name="arrivalDate">
-            <DatePicker
-              className="w-full"
-              disabled={isView}
-              //   disabledDate={(current) => {
-              //     return current && current < dayjs().startOf("day");
-              //   }}
-            />
-          </Form.Item>
-          <Form.Item label="Departure Date" name="departureDate">
-            <DatePicker
-              className="w-full"
-              disabled={isView}
-              //   disabledDate={(current) => {
-              //     return current && current < dayjs().startOf("day");
-              //   }}
-            />
-          </Form.Item>
-        </div> */}
 
         <div className="grid grid-cols-2 gap-6">
           <Form.Item label="Status" name="status">

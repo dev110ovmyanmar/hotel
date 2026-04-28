@@ -1,69 +1,44 @@
-import { Dropdown, Space, Table } from "antd";
-import { useState } from "react";
-import {
-  MoreOutlined,
-  EyeOutlined,
-  EditOutlined,
-  UploadOutlined,
-  InboxOutlined,
-} from "@ant-design/icons";
-import FolioOperationsForm from "./FolioOperationsForms/FolioOperationsForm";
+import React from "react";
+import { Table, Button, Dropdown, Space } from "antd";
+import { EditOutlined, EyeOutlined, MoreOutlined, UploadOutlined } from "@ant-design/icons";
 
-const FolioOperationsTable = ({
-  data,
-  page,
-  perPage,
-  total,
-  changePage,
-  changePerPage,
-}) => {
-  const [drawerOpen, setDrawerOpen] = useState(false);
-  const [mode, setMode] = useState(null);
-  const [selectedData, setSelectedData] = useState(null);
-  const [confirmModal, setConfirmModal] = useState(false);
-
+const FolioOperationsTable = () => {
   const columns = [
     {
-      title: "ID",
-      dataIndex: "id",
-      key: "id",
-      width: 70,
+      title: "Folio No",
+      dataIndex: "folioNo",
+      key: "folioNo",
     },
     {
-      title: "Room",
-      dataIndex: "room",
-      key: "room",
+      title: "Folio Id",
+      dataIndex: "folioId",
+      key: "folioId",
     },
     {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
+      title: "Date",
+      dataIndex: "date",
+      key: "date",
     },
     {
-      title: "Arrival",
-      dataIndex: "arrival",
-      key: "arrival",
+      title: "Particulars",
+      dataIndex: "particulars",
+      key: "particulars",
     },
     {
-      title: "Departure",
-      dataIndex: "departure",
-      key: "eeparture",
-    },
-
-    {
-      title: "Room Status",
-      dataIndex: "roomStatus",
-      key: "roomStatus",
+      title: "Type",
+      dataIndex: "type",
+      key: "type",
     },
     {
-      title: "Rate Plan",
-      dataIndex: "ratePlan",
-      key: "ratePlan",
+      title: "Ref.Id",
+      dataIndex: "refId",
+      key: "refId",
     },
     {
       title: "Amount",
       dataIndex: "amount",
       key: "amount",
+      render: (text) => (text ? `${text.toLocaleString()} MMK` : "-"),
     },
     {
       title: "Action",
@@ -97,7 +72,7 @@ const FolioOperationsTable = ({
                 onClick={() => {
                   setDrawerOpen(true);
                   setMode("edit");
-                  setSelectedData(record);
+                  // setSelectedData(record);
                 }}
               >
                 <EditOutlined style={{ fontSize: "12px" }} />
@@ -112,28 +87,12 @@ const FolioOperationsTable = ({
                 size={4}
                 style={smallStyle}
                 onClick={() => {
-                  setConfirmModal(true);
                   setSelectedData(record);
+                  setUploadOpen(true);
                 }}
               >
                 <UploadOutlined style={{ fontSize: "12px" }} />
                 <span style={{ fontSize: "14px" }}>Upload File</span>
-              </Space>
-            ),
-          },
-          {
-            key: "4",
-            label: (
-              <Space
-                size={4}
-                style={smallStyle}
-                onClick={() => {
-                  setConfirmModal(true);
-                  setSelectedData(record);
-                }}
-              >
-                <InboxOutlined style={{ fontSize: "12px" }} />
-                <span style={{ fontSize: "14px" }}>Guest Note</span>
               </Space>
             ),
           },
@@ -148,35 +107,84 @@ const FolioOperationsTable = ({
     },
   ];
 
-  return (
-    <div id="scrollId">
-      <Table
-        tableLayout="fixed"
-        scroll={{ x: 1000 }}
-        columns={columns}
-        dataSource={data}
-        rowKey="adminIdentifier"
-        pagination={{
-          current: page,
-          pageSize: perPage,
-          total: total,
-          onChange: (page, perPage) => {
-            changePage(page);
-            changePerPage(perPage);
-          },
-          showSizeChanger: true,
-        }}
-      />
+  const data = [
+    {
+      key: 1,
+      folioNo: "FOL - 1001",
+      folioId: "1001",
+      date: "11/11/2026",
+      particulars: "DBD Room",
+      type: "Room",
+      refId: "-",
+      amount: 150000,
+      children: [
+        {
+          key: 11,
+          folioNo: "-",
+          folioId: "1002",
+          date: "11/11/2026",
+          particulars: "DBD Room",
+          type: "Room",
+          refId: "-",
+          amount: 100000,
+        },
+        {
+          key: 12,
+          folioNo: "-",
+          folioId: "1003",
+          date: "11/11/2026",
+          particulars: "DBD Room",
+          type: "Room",
+          refId: "-",
+          amount: 100000,
+        },
+      ],
+    },
+    {
+      key: 2,
+      folioNo: "FOL - 1002",
+      folioId: "-",
+      date: "-",
+      particulars: "-",
+      type: "-",
+      refId: "-",
+      amount: null,
+    },
+    {
+      key: 3,
+      folioNo: "FOL - 1003",
+      folioId: "1001",
+      date: "11/11/2026",
+      particulars: "DBD Room",
+      type: "Room",
+      refId: "-",
+      amount: 150000,
+      children: [
+        {
+          key: 33,
+          folioNo: "-",
+          folioId: "1002",
+          date: "11/11/2026",
+          particulars: "DBD Room",
+          type: "Room",
+          refId: "-",
+          amount: 100000,
+        },
+      ],
+    },
+  ];
 
-      <FolioOperationsForm
-        mode={mode}
-        drawerOpen={drawerOpen}
-        setDrawerOpen={setDrawerOpen}
-        selectedData={selectedData}
-        setSelectedData={setSelectedData}
-        width={500}
-      />
-    </div>
+  return (
+    <Table
+      columns={columns}
+      dataSource={data}
+      pagination={false}
+      // expandable={{
+      //   defaultExpandAllRows: true,
+      // }}
+      bordered={false}
+      className="custom-folio-table"
+    />
   );
 };
 
