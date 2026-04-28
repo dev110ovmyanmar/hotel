@@ -9,12 +9,12 @@ import { PERMISSIONS } from './../../../variables/permission';
 import usePermission from './../../../hooks/usePermission';
 
 // PaymentTable
-const PaymentTable = ({ data, page, perPage, total, changePage, changePerPage }) => {
+const PaymentTable = ({ data, page, perPage, total, changePage, changePerPage, loading }) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mode, setMode] = useState("");
   const [selectedData, setSelectedData] = useState({});
 
-  const {hasPermission} = usePermission();
+  const { hasPermission } = usePermission();
 
   const columns = [
     {
@@ -44,7 +44,11 @@ const PaymentTable = ({ data, page, perPage, total, changePage, changePerPage })
       title: 'isOnline',
       dataIndex: 'isOnline',
       key: 'isOnline',
-      render: isOnline => <div>{isOnline === true ? "Yes" : "No"}</div>,
+      render: (isOnline) =>
+        <div className={isOnline === true ? "text-[#389E0D]" : "text-[#CF1322]"}>
+          {isOnline === true ? "True" : "False"}
+        </div>
+      ,
     },
     {
       title: 'Status',
@@ -113,6 +117,7 @@ const PaymentTable = ({ data, page, perPage, total, changePage, changePerPage })
         scroll={{ x: 1000 }}
         columns={columns}
         dataSource={data}
+        loading={loading}
         rowKey="uuid"
         pagination={{
           current: page,

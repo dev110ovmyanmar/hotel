@@ -9,7 +9,7 @@ const GuestInformationTable = ({
 }) => {
     const columns = [
         {
-            title: "Guest Name",
+            title: "Name",
             dataIndex: "guestName",
             key: "guestName",
             render: (text) => <div>{text}</div>

@@ -37,7 +37,7 @@ const ImageUpload = ({
     const [fileList, setFileList] = useState([]);
     const [loading, setLoading] = useState(false);
     const [deleteModal, setDeleteModal] = useState(false);
-    const [deleteLoading,setDeleteLoading] = useState(false);
+    const [deleteLoading, setDeleteLoading] = useState(false);
 
     const isPDFfile = (fileUrl) => {
         return fileUrl?.toLowerCase().endsWith(".pdf");
@@ -240,6 +240,7 @@ const ImageUpload = ({
                                     onCancel={() => setDeleteModal(false)}
                                     onOk={() => handelDelete(file)}
                                     confirmLoading={deleteLoading}
+                                    mask={false}
                                 />
                             </div>
 

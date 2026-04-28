@@ -55,7 +55,6 @@ export default function usePropertiesColumns(onEdit, onView, onUpload) {
     {
       title: "Actions",
       key: "actions",
-      width: 80,
       render: (_, record) => {
         return (
           <Dropdown

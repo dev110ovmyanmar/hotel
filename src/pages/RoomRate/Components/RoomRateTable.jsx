@@ -40,15 +40,15 @@ const RoomRateTable = ({
       title: "Price (MMK)",
       dataIndex: "price",
       key: "price",
-      render:(text) => <PriceTag value={text} />
+      render: (text) => <PriceTag value={text} />
     },
     {
       title: "Duration Hours",
       dataIndex: "durationHours",
       key: "durationHours",
+      align: "center",
       render: (text) => <div>{text ? text : "-"}</div>,
     },
-
     {
       title: "Action",
       render: (_, record) => {
