@@ -9,12 +9,16 @@ import {
   UploadOutlined,
 } from "@ant-design/icons";
 import GuestForm from "./GuestForms/GuestForm";
+import NewGuestUploadForm from "./../../../../GuestsListing/Components/NewGuestUploadForm";
+import GuestNoteDrawer from "./GuestForms/GuestNoteDrawer";
 
 const GuestTable = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mode, setMode] = useState("add");
   const [selectedData, setSelectedData] = useState(null);
   const [dataSource, setDataSource] = useState([]);
+  const [uploadOpen, setUploadOpen] = useState(false);
+  const [noteOpen, setNoteOpen] = useState(false);
 
   useEffect(() => {
     const savedGuests = JSON.parse(localStorage.getItem("guests")) || [];
@@ -96,6 +100,7 @@ const GuestTable = () => {
                 style={smallStyle}
                 onClick={() => {
                   setSelectedData(record);
+                  setUploadOpen(true);
                 }}
               >
                 <UploadOutlined style={{ fontSize: "12px" }} />
@@ -103,22 +108,23 @@ const GuestTable = () => {
               </Space>
             ),
           },
-          {
-            key: "4",
-            label: (
-              <Space
-                size={4}
-                style={smallStyle}
-                onClick={() => {
-                  setConfirmModal(true);
-                  setSelectedData(record);
-                }}
-              >
-                <InboxOutlined style={{ fontSize: "12px" }} />
-                <span style={{ fontSize: "14px" }}>Guest Note</span>
-              </Space>
-            ),
-          },
+          // {
+          //   key: "4",
+          //   label: (
+          //     <Space
+          //       size={4}
+          //       style={smallStyle}
+          //       onClick={() => {
+          //         // setConfirmModal(true);
+          //         setNoteOpen(true);
+          //         setSelectedData(record);
+          //       }}
+          //     >
+          //       <InboxOutlined style={{ fontSize: "12px" }} />
+          //       <span style={{ fontSize: "14px" }}>Guest Note</span>
+          //     </Space>
+          //   ),
+          // },
         ];
 
         return (
@@ -141,6 +147,18 @@ const GuestTable = () => {
         setDrawerOpen={setDrawerOpen}
         selectedData={selectedData}
         onSuccess={refreshData}
+      />
+
+      <NewGuestUploadForm
+        open={uploadOpen}
+        onClose={() => setUploadOpen(false)}
+        reservationId={selectedData?.id}
+      />
+
+      <GuestNoteDrawer
+        open={noteOpen}
+        onClose={() => setNoteOpen(false)}
+        reservationId={selectedData?.id}
       />
     </div>
   );

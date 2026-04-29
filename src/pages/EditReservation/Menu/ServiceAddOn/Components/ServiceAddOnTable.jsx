@@ -10,6 +10,7 @@ import {
 } from "@ant-design/icons";
 import ServiceAddOnForm from "./ServiceAddOnForms/ServiceAddOnForm";
 import PriceTag from "../../../../../component/PriceTag/PriceTag";
+import dayjs from "dayjs";
 
 const ServiceAddOnTable = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -35,12 +36,31 @@ const ServiceAddOnTable = () => {
 
   const columns = [
     { title: "ID", dataIndex: "id", key: "id", width: 70 },
-    { title: "Service Name", dataIndex: "selectService", key: "nselectServiceame" },
+    {
+      title: "Service Name",
+      dataIndex: "selectService",
+      key: "nselectServiceame",
+    },
+
     {
       title: "Start Date Time",
-      dataIndex:"serviceOrderDate",
-      key: "serviceOrderDate",
+      key: "startDateTime",
+      render: (_, record) => {
+        const date = record.serviceOrderDate
+          ? dayjs(record.serviceOrderDate).format("DD-MM-YYYY")
+          : "-";
+        const time = record.serviceOrderTime
+          ? dayjs(record.serviceOrderTime).format("h:mm A")
+          : "";
+        return (
+          <div>
+            <div className="font-medium">{date}</div>
+            <div className="text-xs text-gray-500">{time}</div>
+          </div>
+        );
+      },
     },
+
     {
       title: "Room No",
       dataIndex: "roomNo",

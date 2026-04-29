@@ -9,6 +9,7 @@ import {
   UploadOutlined,
 } from "@ant-design/icons";
 import EventFacilityOrderForm from "./EventFacilityOrderForms/EventFacilityOrderForm";
+import dayjs from "dayjs";
 
 const EventFacilityOrderTable = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -32,12 +33,38 @@ const EventFacilityOrderTable = () => {
     {
       title: "Start Date Time",
       key: "startDateTime",
-      // dataIndex:
+      render: (_, record) => {
+        const date = record.startDate
+          ? dayjs(record.startDate).format("DD/MM/YYYY")
+          : "-";
+        const time = record.startTime
+          ? dayjs(record.startTime).format("h:mm A")
+          : "";
+        return (
+          <div>
+            <div className="font-medium">{date}</div>
+            <div className="text-xs text-gray-500">{time}</div>
+          </div>
+        );
+      },
     },
     {
       title: "End Date Time",
       key: "endDateTime",
-      // dataIndex:
+      render: (_, record) => {
+        const date = record.endDate
+          ? dayjs(record.endDate).format("DD/MM/YYYY")
+          : "-";
+        const time = record.endTime
+          ? dayjs(record.endTime).format("h:mm A")
+          : "";
+        return (
+          <div>
+            <div className="font-medium">{date}</div>
+            <div className="text-xs text-gray-500">{time}</div>
+          </div>
+        );
+      },
     },
     {
       title: "Status",

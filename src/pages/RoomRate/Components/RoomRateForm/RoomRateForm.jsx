@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useLocation } from "react-router-dom";
-import { Form, Input, Button, Select, Drawer, Row, Col, InputNumber } from "antd";
+import { Form, Input, Button, Select, Drawer, Row, Col, InputNumber, Checkbox } from "antd";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
 import useApiQuery from "../../../../hooks/useApiQuery";
 import FormButton from "../../../../component/FormButtons/FormButtons";
@@ -20,14 +20,13 @@ const RoomRateForm = ({
   setPage,
 }) => {
   const [form] = Form.useForm();
+  const formValues = Form.useWatch([], form);
 
   const { hasPermission } = usePermission();
 
   const isView = mode === "view";
   const isEdit = mode === "edit";
   const isAdd = mode === "add";
-
-  const { ratePlanId } = useParams();
 
   const { state } = useLocation();
   const pricingType = state?.ratePlan?.pricingType?.code;
@@ -42,6 +41,16 @@ const RoomRateForm = ({
     value: item.uuid
   }))
 
+  const days = [
+    { key: 'mon', label: 'Monday' },
+    { key: 'tue', label: 'Tuesday' },
+    { key: 'wed', label: 'Wednesday' },
+    { key: 'thu', label: 'Thursday' },
+    { key: 'fri', label: 'Friday' },
+    { key: 'sat', label: 'Saturday' },
+    { key: 'sun', label: 'Sunday' },
+  ];
+
   const upsertRoomRates = useApiMutation({
     mutationFn: upsertRoomRate,
     invalidateKeys: [["room-rates"]],
@@ -53,34 +62,56 @@ const RoomRateForm = ({
     fetchQueryFunction: roomRateDetails,
     params: { uuid: selectedData?.uuid },
     options: {
-      enabled: !!selectedData?.uuid,
+      enabled: !!selectedData?.uuid && !isAdd && drawerOpen,
     },
   });
 
   useEffect(() => {
     if (!isAdd && roomRateDetailData) {
       form.setFieldsValue({
-        ...roomRateDetailData,
-      });
-      setSelectedData(roomRateDetailData);
-    }
-  }, [roomRateDetailData]);
-
-  if (roomRateDetailData) {
-    console.log(roomRateDetailData, "roomRateDetailData")
-  }
-  const onFinish = (values) => {
-    console.log(values, "ValuesInOnFinish")
-    if (isAdd) {
-      const createValues = {
-        ...values,
-        ratePlan: {
-          uuid: state?.ratePlan?.uuid
+        uuid: roomRateDetailData?.uuid,
+        roomType: {
+          uuid: roomRateDetailData?.roomType?.uuid
         },
-        roomType: values?.roomType
-      };
+        price: roomRateDetailData?.price,
+        durationHours: roomRateDetailData?.durationHours,
+        ...roomRateDetailData?.weekdays,
+        ...Object.keys(roomRateDetailData?.weekdays).reduce((acc, day) => {
+          acc[`enable_${day}`] = roomRateDetailData?.weekdays[day] !== null;
+          return acc;
+        }, {}),
+      });
 
-      upsertRoomRates.mutate(createValues, {
+      setSelectedData(roomRateDetailData);
+    } else if (isAdd) {
+      form.resetFields();
+    }
+  }, [roomRateDetailData, isAdd, form]);
+
+  const onFinish = (values) => {
+    const payload = {
+      ...values,
+      uuid: isEdit ? roomRateDetailData?.uuid : null,
+      ratePlan: { uuid: state?.ratePlan?.uuid },
+      roomType: values?.roomType,
+      weekdays: {
+        mon: values?.mon ? values?.mon : null,
+        tue: values?.tue ? values?.tue : null,
+        wed: values?.wed ? values?.wed : null,
+        thu: values?.thu ? values?.thu : null,
+        fri: values?.fri ? values?.fri : null,
+        sat: values?.sat ? values?.sat : null,
+        sun: values?.sun ? values?.sun : null,
+      }
+    };
+
+    days.forEach(day => {
+      delete payload[day];
+      delete payload[`enable_${day}`];
+    });
+
+    if (isAdd) {
+      upsertRoomRates.mutate(payload, {
         onSuccess: () => {
           form.resetFields();
           setDrawerOpen(false);
@@ -90,16 +121,7 @@ const RoomRateForm = ({
       });
     }
     if (isEdit) {
-      const editValues = {
-        ...values,
-        ratePlan: {
-          uuid: state?.ratePlan?.uuid
-        },
-        roomType: values?.roomType,
-        uuid: roomRateDetailData?.uuid,
-      };
-
-      upsertRoomRates.mutate(editValues, {
+      upsertRoomRates.mutate(payload, {
         onSuccess: () => {
           setDrawerOpen(false);
           Toast.success("Room Rate Updated Successfully!");
@@ -112,7 +134,9 @@ const RoomRateForm = ({
     <div>
       <Drawer
         open={drawerOpen}
-        onClose={() => setDrawerOpen(false)}
+        onClose={() => {
+          setDrawerOpen(false);
+        }}
         size={550}
         title={
           <div className="flex justify-between items-center">
@@ -151,108 +175,111 @@ const RoomRateForm = ({
             durationHours: 0
           }}
         >
+          <Row gutter={16}>
+            <Col span={12}>
+              <Form.Item
+                label="Room Type"
+                name={["roomType", "uuid"]}
+                rules={[{ required: true, message: "Room Type is Required" }]}
+                getValueProps={(value) => {
+                  return ({
+                    value: isView
+                      ? ratePlanMetas?.room_types?.find((item) => item.uuid === value)?.name
+                      : value,
+                  })
+                }}
+              >
+                {
+                  isView ?
+                    <Input readOnly={isView} /> :
+                    <Select options={roomTypeOptions} />
+                }
+              </Form.Item>
+            </Col>
 
-          <Form.Item
-            label="Room Type"
-            name={["roomType", "uuid"]}
-            rules={[{ required: true, message: "Room Type is Required" }]}
-            getValueProps={(value) => {
-              return ({
-                value: isView
-                  ? ratePlanMetas?.room_types?.find((item) => item.uuid === value)?.name
-                  : value,
-              })
-            }}
-          >
-            {
-              isView ?
-                <Input readOnly={isView} /> :
-                <Select options={roomTypeOptions} />
-            }
-          </Form.Item>
+            <Col span={12}>
+              <Form.Item
+                label="Price"
+                name="price"
+                rules={[{ required: true, message: "Price is Required" }]}
+              >
+                <InputNumber
+                  readOnly={isView}
+                  suffix="MMK"
+                  style={{ width: "100%" }}
+                />
+              </Form.Item>
+            </Col>
 
-          <Form.Item
-            label="Price"
-            name="price"
-            rules={[{ required: true, message: "Price is Required" }]}
-          >
-            <InputNumber
-              readOnly={isView}
-              suffix="MMK"
-              style={{width:"100%"}}
-            />
-          </Form.Item>
+            <Col span={12}>
+              {
+                pricingType !== "daily" &&
+                <Form.Item
+                  label="Duration Hours"
+                  name="durationHours"
+                  rules={[{ required: true, message: "Duration Hours is Required" }]}
+                >
+                  <Input
+                    readOnly={isView}
+                    suffix="hrs"
+                  />
+                </Form.Item>
+              }
+            </Col>
+          </Row>
 
-          {
-            pricingType !== "daily" &&
-            <Form.Item
-              label="Duration Hours"
-              name="durationHours"
-              rules={[{ required: true, message: "Duration Hours is Required" }]}
-            >
-              <Input
-                readOnly={isView}
-                suffix="hrs"
-              />
-            </Form.Item>
-          }
+          <Row gutter={16}>
+            <Col span={12}>
+              <Form.Item label="Days of Week" className="mb-4">
+                <div className="flex flex-wrap gap-x-3 gap-y-2 p-0.5">
+                  {days.map((day) => (
+                    <div key={`group-${day.key}`} className="flex flex-col items-center">
+                      <span className="text-[10px] uppercase mb-1">
+                        {day.key}
+                      </span>
+                      <Form.Item
+                        name={`enable_${day.key}`}
+                        valuePropName="checked"
+                        noStyle
+                      >
+                        <Checkbox
+                          className="ant-checkbox-small"
+                          style={{ margin: 0 }}
+                          disabled={isView}
+                        />
+                      </Form.Item>
+                    </div>
+                  ))}
+                </div>
+              </Form.Item>
+            </Col>
+          </Row>
 
-          <Form.Item label="Daily Room Prices" name="weekdays">
-            <div style={{ display: "flex", flexDirection: "column" }}>
-
-              <Row gutter={16}>
-                <Col span={12}>
-                  <Form.Item label="Mon" name={["weekdays", "mon"]} style={{ marginBottom: 1 }}>
-                    <InputNumber readOnly={isView} style={{width:"100%"}} suffix="MMK" />
+          <Row gutter={16}>
+            {days.map((day) => {
+              const isEnabled = formValues?.[`enable_${day.key}`];
+              return (
+                <Col span={8} key={`input-${day.key}`}>
+                  <Form.Item
+                    name={day.key}
+                    label={`${day.label}`}
+                    rules={[{ required: isEnabled, message: 'Price is required' }]}
+                  >
+                    <InputNumber
+                      placeholder="Enter Price"
+                      style={{ width: "100%" }}
+                      min={0}
+                      disabled={!isEnabled || isView}
+                      suffix="MMK"
+                    />
                   </Form.Item>
                 </Col>
-                <Col span={12}>
-                  <Form.Item label="Tue" name={["weekdays", "tue"]} style={{ marginBottom: 1 }}>
-                    <InputNumber readOnly={isView} style={{width:"100%"}} suffix="MMK"/>
-                  </Form.Item>
-                </Col>
-              </Row>
-
-              <Row gutter={16}>
-                <Col span={12}>
-                  <Form.Item label="Wed" name={["weekdays", "wed"]} style={{ marginBottom: 1 }}>
-                    <InputNumber readOnly={isView} style={{width:"100%"}} suffix="MMK"/>
-                  </Form.Item>
-                </Col>
-                <Col span={12}>
-                  <Form.Item label="Thur" name={["weekdays", "thu"]} style={{ marginBottom: 1 }}>
-                    <InputNumber readOnly={isView} style={{width:"100%"}} suffix="MMK"/>
-                  </Form.Item>
-                </Col>
-              </Row>
-
-              <Row gutter={16}>
-                <Col span={12}>
-                  <Form.Item label="Fri" name={["weekdays", "fri"]} style={{ marginBottom: 1 }}>
-                    <InputNumber readOnly={isView} style={{width:"100%"}} suffix="MMK"/>
-                  </Form.Item>
-                </Col>
-                <Col span={12}>
-                  <Form.Item label="Sat" name={["weekdays", "sat"]} style={{ marginBottom: 1 }}>
-                    <InputNumber readOnly={isView} style={{width:"100%"}} suffix="MMK"/>
-                  </Form.Item>
-                </Col>
-              </Row>
-
-              <Row gutter={16}>
-                <Col span={12}>
-                  <Form.Item label="Sun" name={["weekdays", "sun"]} style={{ marginBottom: 1 }}>
-                    <InputNumber readOnly={isView} style={{width:"100%"}} suffix="MMK"/>
-                  </Form.Item>
-                </Col>
-              </Row>
-
-            </div>
-          </Form.Item>
-
+              );
+            })}
+          </Row>
         </Form>
       </Drawer>
-    </div>
+    </div >
   );
 };
 

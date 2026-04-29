@@ -27,8 +27,8 @@ const BookingDetailButton = ({ reservationId }) => {
 
   return (
     <div>
-      <div className="text-sm mb-2 mt-1.5">
-        Reservation id: {reservationId}
+      <div className="text-sm mb-6 mt-1.5">
+        Reservation id: <strong>{reservationId}</strong>
       </div>
 
       <div className="flex flex-row gap-2 items-center w-full">
@@ -43,12 +43,17 @@ const BookingDetailButton = ({ reservationId }) => {
         <Button
           onClick={() => setAddPaymentOpen(true)}
           className="custom-blue-btn"
+          icon={<PlusOutlined style={{ fontSize: "12px" }} />}
         >
-          Add Payment <PlusOutlined />
+          Add Payment
         </Button>
 
-        <Button onClick={() => setRefundOpen(true)} className="custom-blue-btn">
-          Add Refund <PlusOutlined />
+        <Button
+          onClick={() => setRefundOpen(true)}
+          className="custom-blue-btn"
+          icon={<PlusOutlined style={{ fontSize: "12px" }} />}
+        >
+          Add Refund
         </Button>
 
         <Button

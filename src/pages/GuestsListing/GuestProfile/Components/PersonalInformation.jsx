@@ -18,35 +18,38 @@ export const DataRow = ({ label, value, color = "text-slate-700" }) => (
   </div>
 );
 
-const PersonalInformation = () => {
+const PersonalInformation = ({
+  personalInfo
+}) => {
+  
   return (
     <div className="grid grid-cols-2 gap-8 items-stretch animate-in fade-in slide-in-from-bottom-2 duration-500">
     <InfoSection title="Basic Information" icon={<User size={18} />}>
-      <DataRow label="Full Name" value="Liam John Smith" />
-      <DataRow label="Name Other Language" value="John Smith" />
-      <DataRow label="Phone No 1" value="+95 9 123 456 789" />
+      <DataRow label="Full Name" value={personalInfo?.name} />
+      <DataRow label="Name Other Language" value={personalInfo?.otherName} />
+      <DataRow label="Phone No 1" value={personalInfo?.phone} />
       <DataRow label="Phone No 2" value="+1 (555) 123-4567" />
-      <DataRow label="Email" value="liamjohn123@gmail.com" />
-      <DataRow label="Gender" value="Male" />
-      <DataRow label="Date of Birth" value="Jan 12, 2000" />
-      <DataRow label="Nationality" value="Myanmar" />
+      <DataRow label="Email" value={personalInfo?.email} />
+      <DataRow label="Gender" value={personalInfo?.gender?.name} />
+      <DataRow label="Date of Birth" value={personalInfo?.dob} />
+      <DataRow label="Nationality" value={personalInfo?.nationality} />
       <DataRow label="Father Name" value="U Tin Lin" />
     </InfoSection>
 
     <InfoSection title="Identification" icon={<CreditCard size={18} />}>
       <DataRow label="ID Type" value="NRC" />
-      <DataRow label="ID Number" value="12/TAMANA(N)123000" />
-      <DataRow label="Passport Number" value="A12345678" />
+      <DataRow label="ID Number" value={personalInfo?.nrcNo}/>
+      <DataRow label="Passport Number" value={personalInfo?.passport} />
       <DataRow label="Issued Date" value="Oct 12, 2025" />
       <DataRow label="Passport Expire Date" value="Oct 11, 2030" color="text-red-400" />
     </InfoSection>
 
     <InfoSection title="Address" icon={<MapPin size={18} />}>
-      <DataRow label="Address" value="No. 221, Pyay Road, Hlaing Township" />
-      <DataRow label="City" value="Yangon" />
+      <DataRow label="Address" value={personalInfo?.address} />
+      <DataRow label="City" value={personalInfo?.city?.name} />
       <DataRow label="State" value="MM" />
       <DataRow label="ZIP Code" value="10022" />
-      <DataRow label="Country" value="Myanmar" />
+      <DataRow label="Country" value={personalInfo?.country?.name} />
     </InfoSection>
 
     <InfoSection title="Emergency Contact" icon={<Asterisk size={18} />}>

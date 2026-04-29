@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Form, Input, Button, Drawer, Select, DatePicker, InputNumber } from "antd";
+import { Form, Input, Button, Drawer, Select, DatePicker, InputNumber, Row, Col, Checkbox } from "antd";
 import Toast from "../../../../component/Toast/Toast";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
 import useApiQuery from "../../../../hooks/useApiQuery";
@@ -15,6 +15,7 @@ import { getFormattedDate } from "../../../../utils";
 import Loader from "../../../../component/Loader/Loader";
 import usePermission from "../../../../hooks/usePermission";
 import { PERMISSIONS } from "../../../../variables/permission";
+import { queryClient } from "../../../../app/queryClient";
 
 const SeasonalRateForm = ({
   mode,
@@ -26,10 +27,17 @@ const SeasonalRateForm = ({
   page,
 }) => {
   const [form] = Form.useForm();
+  const formValues = Form.useWatch([], form);
 
   const isView = mode === "view";
   const isEdit = mode === "edit";
   const isAdd = mode === "add";
+
+  const { RangePicker } = DatePicker;
+
+  const disabledDate = current => {
+    return current && current < dayjs().startOf('day');
+  };
 
   const { hasPermission } = usePermission();
   const canEdit = hasPermission(PERMISSIONS.SEASONAL_RATE_EDIT);
@@ -49,6 +57,10 @@ const SeasonalRateForm = ({
     label: rate.name,
   }));
 
+  const initData = queryClient.getQueryData(["initData", "authenticated"]);
+  const mapOptions = (data) => data?.map((item) => ({ value: item.uuid, label: item.name })) || [];
+  const rateCategoryOptions = mapOptions(initData?.statuses?.rate_category);
+
   const createSeasonlRates = useApiMutation({
     mutationFn: createSeasonlRate,
     invalidateKeys: [["SeasonlRate"]],
@@ -65,7 +77,7 @@ const SeasonalRateForm = ({
     fetchQueryFunction: seasonlRateDetails,
     params: { uuid: selectedData?.uuid },
     options: {
-      enabled: !!selectedData?.uuid,
+      enabled: drawerOpen && !isAdd && !!selectedData?.uuid,
     },
   });
 
@@ -73,24 +85,65 @@ const SeasonalRateForm = ({
     if (!isAdd && data && ratePlanMetaData) {
       form.setFieldsValue({
         ...data,
-        startDate: data?.startDate ? dayjs(data.startDate) : null,
-        endDate: data?.endDate ? dayjs(data.endDate) : null,
+        ...data.weekdays,
+        ...Object.keys(data.weekdays).reduce((acc, day) => {
+          acc[`enable_${day}`] = data.weekdays[day] !== null;
+          return acc;
+        }, {}),
+        dateRange: [
+          data.startDate ? dayjs(data.startDate) : null,
+          data.endDate ? dayjs(data.endDate) : null
+        ],
         ratePlanUuid: data?.ratePlan?.uuid,
+        rateCategory: data?.rateCategory?.uuid,
         roomTypeUuid: data?.roomType?.uuid,
       });
     }
   }, [data, ratePlanMetaData]);
 
+  const days = [
+    { key: 'mon', label: 'Monday' },
+    { key: 'tue', label: 'Tuesday' },
+    { key: 'wed', label: 'Wednesday' },
+    { key: 'thu', label: 'Thursday' },
+    { key: 'fri', label: 'Friday' },
+    { key: 'sat', label: 'Saturday' },
+    { key: 'sun', label: 'Sunday' },
+  ];
+
   const onFinish = (values) => {
+    const [start, end] = values.dateRange || [];
+
     const formattedValues = {
-      ...values,
-      startDate: getFormattedDate(values.startDate, false),
-      endDate: getFormattedDate(values.endDate, false),
+      uuid: values.uuid || "",
+      rateCategory: {
+        uuid: values?.rateCategory
+      },
+      ratePlan: {
+        uuid: values?.ratePlanUuid
+      },
+      roomType: {
+        uuid: values?.roomTypeUuid
+      },
+      startDate: start ? getFormattedDate(start, false) : null,
+      endDate: end ? getFormattedDate(end, false) : null,
+      price: Number(values.price),
+      weekdays: {
+        mon: values?.mon ? values?.mon : null,
+        tue: values?.tue ? values?.tue : null,
+        wed: values?.wed ? values?.wed : null,
+        thu: values?.thu ? values?.thu : null,
+        fri: values?.fri ? values?.fri : null,
+        sat: values?.sat ? values?.sat : null,
+        sun: values?.sun ? values?.sun : null,
+      }
     };
 
     if (isAdd) {
+      form.resetFields();
       const createValues = {
         ...formattedValues,
+        rateCategory: { uuid: values.rateCategory },
         ratePlan: { uuid: values.ratePlanUuid },
         roomType: { uuid: values.roomTypeUuid },
       };
@@ -100,7 +153,7 @@ const SeasonalRateForm = ({
           form.resetFields();
           setDrawerOpen(false);
           setPage(1);
-          Toast.success("Seasonal Rate Created Successfully!");
+          Toast.success("Base Rate Created Successfully!");
         },
       });
     }
@@ -108,6 +161,7 @@ const SeasonalRateForm = ({
     if (isEdit) {
       const editValues = {
         ...formattedValues,
+        rateCategory: { uuid: values.rateCategory },
         ratePlan: { uuid: values.ratePlanUuid },
         roomType: { uuid: values.roomTypeUuid },
         uuid: data?.uuid,
@@ -116,7 +170,7 @@ const SeasonalRateForm = ({
       editSeasonlRates.mutate(editValues, {
         onSuccess: () => {
           setDrawerOpen(false);
-          Toast.success("Seasonal Rate Updated Successfully!");
+          Toast.success("Base Rate Updated Successfully!");
         },
       });
     }
@@ -126,16 +180,16 @@ const SeasonalRateForm = ({
     <div>
       <Drawer
         open={drawerOpen}
-        onClose={() => setDrawerOpen(false)}
-        size={600}
+        onClose={() => { setDrawerOpen(false); form.resetFields(); }}
+        size={550}
         title={
           <div className="flex justify-between items-center">
             <span>
               {mode === "view"
-                ? "Seasonal Rate Details"
+                ? "Base Rate Details"
                 : mode === "edit"
-                  ? "Edit Seasonal Rate"
-                  : "Create Seasonal Rate"}
+                  ? "Edit Base Rate"
+                  : "Create Base Rate"}
             </span>
             {isView ? (
               canEdit && (
@@ -171,98 +225,182 @@ const SeasonalRateForm = ({
               layout="vertical"
               style={{ width: "100%" }}
               onFinish={onFinish}
+
+              onValuesChange={(changedValues) => {
+                const changedField = Object.keys(changedValues)[0];
+                // Check if the changed field is one of our "enable" checkboxes
+                if (changedField?.startsWith("enable_")) {
+                  const isEnabled = changedValues[changedField];
+                  // If the checkbox is unchecked, set the corresponding input to null
+                  if (!isEnabled) {
+                    const dayKey = changedField.replace("enable_", "");
+                    form.setFieldsValue({ [dayKey]: null });
+                  }
+                }
+              }}
             >
-              <Form.Item
-                label="Room Type"
-                name="roomTypeUuid"
-                rules={[{ required: true }]}
-                getValueProps={(value) => ({
-                  value: isView
-                    ? roomTypes.find((item) => item.value === value)?.label
-                    : value,
+              <Row gutter={16}>
+                <Col span={12}>
+                  <Form.Item
+                    label="Room Type"
+                    name="roomTypeUuid"
+                    rules={[{ required: true }]}
+                    getValueProps={(value) => ({
+                      value: isView
+                        ? roomTypes?.find((item) => item.value === value)?.label
+                        : value,
+                    })}
+                  >
+                    {isView ? (
+                      <Input readOnly={isView} />
+                    ) : (
+                      <Select
+                        showSearch={{
+                          filterOption: (input, option) =>
+                            (option?.label ?? "")
+                              .toLowerCase()
+                              .includes(input.toLowerCase()),
+                        }}
+                        options={roomTypes}
+                        placeholder="Select Base Rate"
+                      />
+                    )}
+                  </Form.Item>
+                </Col>
+
+                <Col span={12}>
+                  <Form.Item
+                    label="Rate Plan"
+                    name="ratePlanUuid"
+                    rules={[{ required: true }]}
+                    getValueProps={(value) => ({
+                      value: isView
+                        ? ratePlans?.find((item) => item.value === value)?.label
+                        : value,
+                    })}
+                  >
+                    {isView ? (
+                      <Input readOnly={isView} />
+                    ) : (
+                      <Select
+                        showSearch={{
+                          filterOption: (input, option) =>
+                            (option?.label ?? "")
+                              .toLowerCase()
+                              .includes(input.toLowerCase()),
+                        }}
+                        options={ratePlans}
+                        placeholder="Select Rate Plan"
+                      />
+                    )}
+                  </Form.Item>
+                </Col>
+
+                <Col span={12}>
+                  <Form.Item
+                    label="Rate Category"
+                    name="rateCategory"
+                    rules={[{ required: true }]}
+                    getValueProps={(value) => ({
+                      value: isView
+                        ? rateCategoryOptions?.find((item) => item.value == value)?.label
+                        : value,
+                    })}
+                  >
+                    {isView ? (
+                      <Input readOnly={isView} />
+                    ) : (
+                      <Select
+                        showSearch={{
+                          filterOption: (input, option) =>
+                            (option?.label ?? "")
+                              .toLowerCase()
+                              .includes(input.toLowerCase()),
+                        }}
+                        options={rateCategoryOptions}
+                        placeholder="Select Rate Category"
+                      />
+                    )}
+                  </Form.Item>
+                </Col>
+
+                <Col span={12}>
+                  <Form.Item
+                    label="Base Price"
+                    name="price"
+                    rules={[{ required: true }]}
+                  >
+                    <InputNumber
+                      className="!w-full"
+                      min={0}
+                      readOnly={isView}
+                      placeholder="Price"
+                      suffix="MMK"
+                    />
+                  </Form.Item>
+                </Col>
+              </Row>
+
+              <Row gutter={24} align="bottom">
+                <Col span={12}>
+                  <Form.Item
+                    name="dateRange"
+                    label="Date Range"
+                    rules={[{ required: true, message: "Please select Date Range" }]}>
+                    <RangePicker disabledDate={disabledDate} disabled={isView} suffixIcon={isView ? null : undefined} />
+                  </Form.Item>
+                </Col>
+
+                <Col span={12}>
+                  <Form.Item label="Week Days" className="mb-4">
+                    <div className="flex flex-wrap gap-x-3 gap-y-2 p-0.5">
+                      {days.map((day) => (
+                        <div key={`group-${day.key}`} className="flex flex-col items-center">
+                          <span className="text-[10px] uppercase mb-1">
+                            {day.key}
+                          </span>
+
+                          <Form.Item
+                            name={`enable_${day.key}`}
+                            valuePropName="checked"
+                            noStyle
+                          >
+                            <Checkbox
+                              className="ant-checkbox-small"
+                              style={{ margin: 0 }}
+                              disabled={isView}
+                            />
+                          </Form.Item>
+                        </div>
+                      ))}
+                    </div>
+                  </Form.Item>
+                </Col>
+              </Row>
+
+              <Row gutter={16}>
+                {days.map((day) => {
+                  const isEnabled = formValues?.[`enable_${day.key}`];
+
+                  return (
+                    <Col span={8} key={`input-${day.key}`}>
+                      <Form.Item
+                        name={day.key}
+                        label={`${day.label}`}
+                        rules={[{ required: isEnabled, message: 'Price is required' }]}
+                      >
+                        <InputNumber
+                          placeholder="Enter Price"
+                          style={{ width: "100%" }}
+                          min={0}
+                          disabled={!isEnabled || isView}
+                          suffix="MMK"
+                        />
+                      </Form.Item>
+                    </Col>
+                  );
                 })}
-              >
-                {isView ? (
-                  <Input readOnly={isView} />
-                ) : (
-                  <Select
-                    showSearch={{
-                      filterOption: (input, option) =>
-                        (option?.label ?? "")
-                          .toLowerCase()
-                          .includes(input.toLowerCase()),
-                    }}
-                    options={roomTypes}
-                    placeholder="Select Seasonal Rate"
-                  />
-                )}
-              </Form.Item>
-
-              <Form.Item
-                label="Rate Plan"
-                name="ratePlanUuid"
-                rules={[{ required: true }]}
-                getValueProps={(value) => ({
-                  value: isView
-                    ? ratePlans.find((item) => item.value === value)?.label
-                    : value,
-                })}
-              >
-                {isView ? (
-                  <Input readOnly={isView} />
-                ) : (
-                  <Select
-                    showSearch={{
-                      filterOption: (input, option) =>
-                        (option?.label ?? "")
-                          .toLowerCase()
-                          .includes(input.toLowerCase()),
-                    }}
-                    options={ratePlans}
-                    placeholder="Select Rate Plan"
-                  />
-                )}
-              </Form.Item>
-
-              <Form.Item label="Price" name="price" rules={[{ required: true }]}>
-                <InputNumber
-                  className="!w-full"
-                  min={0}
-                  readOnly={isView}
-                  placeholder="Enter Price"
-                  suffix="MMK"
-                />
-              </Form.Item>
-
-              <Form.Item
-                label="Start Date"
-                name="startDate"
-                rules={[{ required: true, message: "Please select Start Date" }]}
-              >
-                <DatePicker
-                  className="w-full"
-                  disabled={isView}
-                  disabledDate={(current) => {
-                    return current && current < dayjs().startOf("day");
-                  }}
-                />
-              </Form.Item>
-
-              <Form.Item
-                label="End date"
-                name="endDate"
-                rules={[{ required: true, message: "Please select End Date" }]}
-              >
-                <DatePicker
-                  className="w-full"
-                  disabled={isView}
-                  disabledDate={(current) => {
-                    return (
-                      current && current < dayjs().add(1, "day").startOf("day")
-                    );
-                  }}
-                />
-              </Form.Item>
+              </Row>
             </Form>
           )
         }
@@ -272,3 +410,4 @@ const SeasonalRateForm = ({
 };
 
 export default SeasonalRateForm;
+

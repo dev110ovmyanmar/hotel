@@ -33,57 +33,115 @@ const SeasonalRateTable = ({
       key: "roomTypeName",
       align: "left",
     },
-    {
-      title: "Total Rooms",
-      dataIndex: "totalRooms",
-      key: "totalRooms",
-      width: "80",
-    },
-    {
-      title: "Extra Bed",
-      dataIndex: "extraBed",
-      key: "extraBed",
-    },
-    {
-      title: "Max Occupancy",
-      dataIndex: "maxOccupancy",
-      key: "maxOccupancy",
-    },
-    {
-      title: "Price (MMK)",
-      dataIndex: "basePrice",
-      key: "basePrice",
-      render: (text) => <PriceTag value={text} />,
-      width: "80",
-      align:"right",
-    },
+    // {
+    //   title: "Total Rooms",
+    //   dataIndex: "totalRooms",
+    //   key: "totalRooms",
+    //   width: "80",
+    // },
+    // {
+    //   title: "Extra Bed",
+    //   dataIndex: "extraBed",
+    //   key: "extraBed",
+    // },
+    // {
+    //   title: "Max Occupancy",
+    //   dataIndex: "maxOccupancy",
+    //   key: "maxOccupancy",
+    // },
+    // {
+    //   title: "Price (MMK)",
+    //   dataIndex: "basePrice",
+    //   key: "basePrice",
+    //   render: (text) => <PriceTag value={text} />,
+    //   width: "80",
+    //   align:"right",
+    // },
   ];
 
   const columns = TableColumns(baseColumns);
 
+    // Process data to calculate rowSpan for rate plans and rate category
+   const processData = (data) => {
+    if (!data) return [];
+    const newData = data.map(item => ({ ...item })); // Shallow clone to avoid mutating props
+
+    const calculateSpan = (keyPath) => {
+      let i = 0;
+      while (i < newData.length) {
+        // Access nested properties like ['ratePlan', 'name']
+        const getValue = (obj) => keyPath.reduce((acc, key) => acc?.[key], obj);
+        
+        let currentVal = getValue(newData[i]);
+        let count = 1;
+
+        for (let j = i + 1; j < newData.length; j++) {
+          if (getValue(newData[j]) === currentVal) {
+            count++;
+          } else {
+            break;
+          }
+        }
+
+        // Dynamically set the span key, e.g., ratePlanRowSpan or rateCategoryRowSpan
+        const spanKey = `${keyPath[0]}RowSpan`;
+        newData[i][spanKey] = count;
+
+        for (let k = i + 1; k < i + count; k++) {
+          newData[k][spanKey] = 0;
+        }
+        i += count;
+      }
+    };
+
+    calculateSpan(["ratePlan", "name"]);
+    calculateSpan(["rateCategory", "name"]);
+
+    return newData;
+  };
+
   const expandColumns = [
-    { title: "ID", dataIndex: "id", key: "id" },
-    { title: "Rate Plan", dataIndex: ["ratePlan", "name"], key: "ratePlan" },
+       { title: "ID", dataIndex: "id", key: "id",align: "center" },
+    {
+      title: "Rate Plan",
+      align: "center",
+      dataIndex: ["ratePlan", "name"],
+      key: "ratePlan",
+      onCell: (record) => ({
+        rowSpan: record.ratePlanRowSpan,
+        style: { verticalAlign: "middle" },
+      }),
+    },
+    {
+      title: "Season Name",
+      dataIndex: ["rateCategory", "name"],
+      key: "rateCategory",
+      align: "center",
+      onCell: (record) => ({
+        rowSpan: record.rateCategoryRowSpan,
+        style: { verticalAlign: "middle" },
+      }),
+    },
     {
       title: "Start Date",
       dataIndex: "startDate",
       key: "startDate",
       render: (text) => <div>{String(text)}</div>,
-      align :"center",
+      align: "center",
     },
     {
       title: "End Date",
       dataIndex: "endDate",
       key: "endDate",
       render: (text) => <div>{String(text)}</div>,
-      align :"center",
+      align: "center",
     },
     {
       title: "Price (MMK)",
       dataIndex: "price",
       key: "price",
       render: (text) => <PriceTag value={text} />,
-      align:"right",
+      align: "right",
     },
     {
       title: "Action",
@@ -141,15 +199,18 @@ const SeasonalRateTable = ({
   ];
 
   const expandedRowRender = (record) => {
-    console.log(record, "record");
+      const processedRates = processData(record?.rates || []);
     return (
       <Table
         className="custom-table-style"
         columns={expandColumns}
-        dataSource={record?.rates}
+        // dataSource={record?.rates}
+        dataSource={processedRates}
         pagination={false}
         size="small"
         style={{ marginTop: "16px", marginBottom: "16px" }}
+        bordered
+        className="[&_.ant-table-cell]:!border [&_.ant-table-cell]:!border-blue-300"
       />
     );
   };

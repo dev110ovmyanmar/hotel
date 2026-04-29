@@ -4,17 +4,21 @@ import {
   Input,
   Select,
   Drawer,
-  Row,
-  Col,
   DatePicker,
   Button,
   TimePicker,
+  InputNumber,
+  Row,
+  Col,
 } from "antd";
 import TextArea from "antd/es/input/TextArea";
 import dayjs from "dayjs";
-import FormItem from "antd/es/form/FormItem";
 import SearchEventFacilityOrderForm from "./SearchEventFacilityOrderForm";
 import FormButtons from "../../../../../../component/FormButtons/FormButtons";
+import {
+  getFormattedDate,
+  getFormattedDateTime,
+} from "../../../../../../utils";
 
 const EventFacilityOrderForm = ({
   mode,
@@ -23,14 +27,11 @@ const EventFacilityOrderForm = ({
   setDrawerOpen,
   selectedData,
   onSuccess,
-  open,
-  onClose,
   reservationId,
 }) => {
   const [form] = Form.useForm();
-  const isView = mode === "view";
-
   const [searchOpen, setSearchOpen] = useState(false);
+  const isView = mode === "view";
 
   useEffect(() => {
     if (drawerOpen && selectedData) {
@@ -57,39 +58,40 @@ const EventFacilityOrderForm = ({
   }, [selectedData, drawerOpen, form, mode]);
 
   const onFinish = (values) => {
-    const existingData = JSON.parse(localStorage.getItem("events")) || [];
-
     const formattedValues = {
       ...values,
-      eventOrderDate: values.eventOrderDate?.toISOString(),
-      eventOrderTime: values.eventOrderTime?.toISOString(),
-      startDate: values.startDate?.toISOString(),
-      startTime: values.startTime?.toISOString(),
-      endDate: values.endDate?.toISOString(),
-      endTime: values.endTime?.toISOString(),
+      eventOrderDate: getFormattedDate(values.eventOrderDate, false),
+      eventOrderTime: getFormattedDateTime(values.eventOrderTime, false),
+      startDate: getFormattedDate(values.startDate, false),
+      startTime: getFormattedDateTime(values.startTime, false),
+      endDate: getFormattedDate(values.endDate, false),
+      endTime: getFormattedDateTime(values.endTime, false),
     };
 
+    //  API
+    console.log("Submitted Values:", formattedValues);
+
+    // LocalStorage
+    const existingData = JSON.parse(localStorage.getItem("events")) || [];
     if (mode === "add") {
-      const newData = {
-        ...formattedValues,
-        id: Date.now(),
-      };
       localStorage.setItem(
         "events",
-        JSON.stringify([...existingData, newData]),
+        JSON.stringify([
+          ...existingData,
+          { ...formattedValues, id: Date.now() },
+        ]),
       );
-    } else if (mode === "edit") {
-      const updatedData = existingData.map((item) =>
+    } else {
+      const updated = existingData.map((item) =>
         item.id === selectedData.id
           ? { ...formattedValues, id: item.id }
           : item,
       );
-      localStorage.setItem("events", JSON.stringify(updatedData));
+      localStorage.setItem("events", JSON.stringify(updated));
     }
 
     setDrawerOpen(false);
     onSuccess();
-    form.resetFields();
   };
 
   return (
@@ -101,13 +103,12 @@ const EventFacilityOrderForm = ({
         title={
           <div className="flex justify-between items-center">
             <span>
-              {mode === "view"
+              {isView
                 ? "Event Facility Order Details"
                 : mode === "edit"
-                  ? "Edit Event Facility Order"
-                  : "Create Event Facility Order"}
+                  ? "Edit Order"
+                  : "Create Order"}
             </span>
-
             {isView ? (
               <Button type="primary" onClick={() => setMode("edit")}>
                 Edit
@@ -123,8 +124,9 @@ const EventFacilityOrderForm = ({
           layout="vertical"
           onFinish={onFinish}
           disabled={isView}
+          initialValues={{ status: "Active" }}
         >
-          <div className="flex justify-end mb-3">
+          <div className="flex justify-end mb-4">
             <Button
               onClick={() => setSearchOpen(true)}
               className="custom-blue-btn"
@@ -133,87 +135,101 @@ const EventFacilityOrderForm = ({
             </Button>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <Form.Item label="Event Order Date" name="eventOrderDate">
-              <DatePicker className="w-full" />
-            </Form.Item>
+          <Row gutter={16}>
+            <Col span={12}>
+              <Form.Item label="Event Order Date" name="eventOrderDate">
+                <DatePicker className="w-full" disabled={isView} />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item label="Event Order Time" name="eventOrderTime">
+                <TimePicker
+                  className="w-full"
+                  format="h:mm A"
+                  disabled={isView}
+                />
+              </Form.Item>
+            </Col>
+          </Row>
 
-            <Form.Item
-              label="Event Order Time"
-              name="eventOrderTime"
-              className="flex-1"
-            >
-              <TimePicker className="w-full" format="h:mm A" />
-            </Form.Item>
-          </div>
+          <Form.Item label="Order Event Name" name="name">
+            <Input placeholder="Enter Name" readOnly={isView} />
+          </Form.Item>
 
-          <FormItem label="Order Event Name" name="name">
-            <Input />
-          </FormItem>
+          <Row gutter={16}>
+            <Col span={12}>
+              <Form.Item label="Start Date" name="startDate">
+                <DatePicker className="w-full" disabled={isView} />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item label="Time" name="startTime">
+                <TimePicker
+                  className="w-full"
+                  format="h:mm A"
+                  disabled={isView}
+                />
+              </Form.Item>
+            </Col>
+          </Row>
 
-          <FormItem label="Facility Name" name="facilityName">
-            <Input />
-          </FormItem>
-
-          <FormItem label="Package Name" name="packageName">
-            <Input />
-          </FormItem>
-
-          <div className="grid grid-cols-2 gap-4">
-            <Form.Item label="Start Date" name="startDate">
-              <DatePicker className="w-full" />
-            </Form.Item>
-
-            <Form.Item label="Start Time" name="startTime" className="flex-1">
-              <TimePicker className="w-full" format="h:mm A" />
-            </Form.Item>
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <Form.Item label="End Date" name="endDate">
-              <DatePicker className="w-full" />
-            </Form.Item>
-
-            <Form.Item label="End Time" name="endTime" className="flex-1">
-              <TimePicker className="w-full" format="h:mm A" />
-            </Form.Item>
-          </div>
+          <Row gutter={16}>
+            <Col span={12}>
+              <Form.Item label="End Date" name="endDate">
+                <DatePicker className="w-full" disabled={isView} />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item label="Time" name="endTime">
+                <TimePicker
+                  className="w-full"
+                  format="h:mm A"
+                  disabled={isView}
+                />
+              </Form.Item>
+            </Col>
+          </Row>
 
           <Form.Item label="Facility Name" name="facilityName">
             <Select
-              placeholder="Select Facility Name"
-              style={{ width: "100%" }}
+              placeholder="Select Facility"
+              disabled={isView}
               options={[
-                { value: "aa", label: "aa" },
-                { value: "bb", label: "bb" },
+                { value: "aa", label: "Facility AA" },
+                { value: "bb", label: "Facility BB" },
               ]}
             />
           </Form.Item>
 
-          <Form.Item label="Booking Type" name="bookingType">
-            <Select
-              placeholder="Select Booking Type"
-              style={{ width: "100%" }}
-              options={[
-                { value: "aa", label: "aa" },
-                { value: "bb", label: "bb" },
-              ]}
+          <Form.Item
+            label="Estimated Pax"
+            name="estimatedPax"
+            rules={[{ required: true }]}
+          >
+            <InputNumber
+              className="!w-full"
+              min={0}
+              suffix="Pax"
+              placeholder="Enter Estimated Pax"
             />
           </Form.Item>
 
-          <div className="grid grid-cols-2 gap-4">
-            <Form.Item label="Guest Name" name="guestName">
-              <Input />
-            </Form.Item>
-
-            <Form.Item label="Guest Phone" name="guestPhone">
-              <Input />
-            </Form.Item>
-          </div>
+          <Row gutter={16}>
+            <Col span={12}>
+              <Form.Item label="Guest Name" name="guestName">
+                <Input readOnly={isView} placeholder="Enter Guest Name" />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item label="Guest Phone" name="guestPhone">
+                <Input readOnly={isView} placeholder="Enter Guest Phone" />
+              </Form.Item>
+            </Col>
+          </Row>
 
           <Form.Item label="Status" name="status">
             <Select
-              placeholder="Select Status"
-              style={{ width: "100%" }}
+              disabled={isView}
               options={[
                 { value: "Active", label: "Active" },
                 { value: "Inactive", label: "Inactive" },
@@ -222,7 +238,7 @@ const EventFacilityOrderForm = ({
           </Form.Item>
 
           <Form.Item label="Remarks" name="remarks">
-            <TextArea />
+            <TextArea rows={3} placeholder="Enter Remarks..." />
           </Form.Item>
         </Form>
       </Drawer>
