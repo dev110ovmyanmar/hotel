@@ -44,7 +44,7 @@ const SummaryForm = ({ open, onClose, reservationId }) => {
       <Drawer
         open={open}
         onClose={onClose}
-        width={500}
+        size={500}
         destroyOnClose
         title={
           <div className="flex justify-between items-center">
