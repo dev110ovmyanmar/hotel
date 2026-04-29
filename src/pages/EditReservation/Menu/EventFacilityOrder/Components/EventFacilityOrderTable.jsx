@@ -35,7 +35,7 @@ const EventFacilityOrderTable = () => {
       key: "startDateTime",
       render: (_, record) => {
         const date = record.startDate
-          ? dayjs(record.startDate).format("DD-MM-YYYY")
+          ? dayjs(record.startDate).format("DD/MM/YYYY")
           : "-";
         const time = record.startTime
           ? dayjs(record.startTime).format("h:mm A")
@@ -53,7 +53,7 @@ const EventFacilityOrderTable = () => {
       key: "endDateTime",
       render: (_, record) => {
         const date = record.endDate
-          ? dayjs(record.endDate).format("DD.MM.YYYY")
+          ? dayjs(record.endDate).format("DD/MM/YYYY")
           : "-";
         const time = record.endTime
           ? dayjs(record.endTime).format("h:mm A")
