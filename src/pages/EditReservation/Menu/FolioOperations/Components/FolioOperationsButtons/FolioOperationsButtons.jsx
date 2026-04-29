@@ -3,20 +3,32 @@ import { IoPrintOutline } from "react-icons/io5";
 import React, { useState } from "react";
 import { Button, Drawer, Dropdown, Form, Select } from "antd";
 import FoodBeverageOrder from "../FolioOperationsForms/FoodBeverageOrder.JSX";
-import ServiceAddOnForm from "../../../ServiceAddOn/Components/ServiceAddOnForms/ServiceAddOnForm";
+import AddNewServiceOrderForm from "../FolioOperationsForms/AddNewServiceOrderForm";
+import AddNewFacilityOrderForm from "../FolioOperationsForms/AddNewFacilityOrderForm";
+import AddPaymentForm from "../../../../../BookingDetail/Components/BookingDetailForms/AddPaymentForm";
+import FolioOperationsTable from "../FolioOperationsTable";
 
-const FolioOperationsButtons = ({ reservationId, onFolioOperationClick }) => {
+const FolioOperationsButtons = ({ reservationId }) => {
   const [form] = Form.useForm();
   const [open, setOpen] = useState(false);
+  const [serviceOpen, setServiceOpen] = useState(false);
+  const [facilityOpen, setFacilityOpen] = useState(false);
+  const [paymentOpen, setPaymentOpen] = useState(false);
+  const [folioOpen, setFolioOpen] = useState(false);
 
   const addOrder = [
     {
       key: "service",
       label: "Add New Service Order",
+      onClick: () => {
+        console.log("Service order button clicked!");
+        setServiceOpen(true);
+      },
     },
     {
       key: "facility",
       label: "Add New Facility Order",
+      onClick: () => setFacilityOpen(true),
     },
   ];
   const food = [
@@ -30,7 +42,7 @@ const FolioOperationsButtons = ({ reservationId, onFolioOperationClick }) => {
   return (
     <div>
       <div className="flex flex-row gap-2 items-center w-full mb-4">
-        <Button onClick={onFolioOperationClick} className="custom-blue-btn">
+        <Button onClick={() => setFolioOpen(true)} type="primary">
           Folio Operation
         </Button>
 
@@ -44,7 +56,10 @@ const FolioOperationsButtons = ({ reservationId, onFolioOperationClick }) => {
           </Button>
         </Dropdown>
 
-        <Button className="custom-blue-btn">
+        <Button
+          className="custom-blue-btn"
+          onClick={() => setPaymentOpen(true)}
+        >
           Add Payment <PlusOutlined />
         </Button>
 
@@ -66,6 +81,26 @@ const FolioOperationsButtons = ({ reservationId, onFolioOperationClick }) => {
       <FoodBeverageOrder
         open={open}
         onClose={() => setOpen(false)}
+        reservationId={reservationId}
+      />
+      <AddNewServiceOrderForm
+        open={serviceOpen}
+        onClose={() => setServiceOpen(false)}
+        reservationId={reservationId}
+      />
+      <AddNewFacilityOrderForm
+        open={facilityOpen}
+        onClose={() => setFacilityOpen(false)}
+        reservationId={reservationId}
+      />
+      <AddPaymentForm
+        open={paymentOpen}
+        onClose={() => setPaymentOpen(false)}
+        reservationId={reservationId}
+      />
+      <FolioOperationsTable
+        open={folioOpen}
+        onClose={() => setFolioOpen(false)}
         reservationId={reservationId}
       />
     </div>

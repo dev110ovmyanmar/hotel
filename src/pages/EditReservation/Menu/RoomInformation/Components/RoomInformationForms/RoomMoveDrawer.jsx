@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Drawer,
   Form,
@@ -13,24 +13,47 @@ import {
   Select,
   Card,
 } from "antd";
-import FormButtons from "../../../../component/FormButtons/FormButtons";
-import NewRoomForm from "./NewRoomForm";
+import FormButtons from "../../../../../../component/FormButtons/FormButtons";
+import TextArea from "antd/es/input/TextArea";
+import UpdateRoomMoveDrawer from "./UpdateRoomMoveDrawer";
+import dayjs from "dayjs";
+import { getFormattedDate } from "../../../../../../utils";
 
 const onChange = (value) => {
   console.log("changed", value);
 };
 
-const RoomMoveForm = ({ open, onClose, reservationId }) => {
+const RoomMoveDrawer = ({ open, onClose, reservationId, selectedData }) => {
   const [form] = Form.useForm();
-  const [roomOpen, setRoomOpen] = useState(false);
+  const [updateOpen, setUpdateOpen] = useState(false);
+
+  useEffect(() => {
+    if (open && selectedData) {
+      form.setFieldsValue({
+        ...selectedData,
+
+        arrivalDate: selectedData.arrivalDate
+          ? dayjs(selectedData.arrivalDate)
+          : null,
+        departureDate: selectedData.departureDate
+          ? dayjs(selectedData.departureDate)
+          : null,
+      });
+    } else if (open) {
+      form.resetFields();
+    }
+  }, [selectedData, form, open]);
 
   const onFinish = (values) => {
-    console.log("Room Move:", {
+    const formattedValues = {
       reservationId,
       ...values,
-    });
+      arrivalDate: getFormattedDate(values.arrivalDate, false),
+      departureDate: getFormattedDate(values.departureDate, false),
+    };
 
-    onClose();
+    setDrawerOpen(false);
+    onSuccess();
     form.resetFields();
   };
 
@@ -44,11 +67,13 @@ const RoomMoveForm = ({ open, onClose, reservationId }) => {
         title={
           <div className="flex justify-between items-center">
             <span>Room Move</span>
-            <FormButtons onClick={() => setRoomOpen(true)} />
+            <Button type="primary" onClick={() => setUpdateOpen(true)}>
+              Room Move
+            </Button>
           </div>
         }
       >
-        <Card size="small" className="mb-10 shadow rounded border-none`">
+        <Card className="rounded">
           <Form layout="vertical" form={form} onFinish={onFinish}>
             <div className="grid grid-cols-2 gap-4">
               <Form.Item label="Arrival Date" name="arrivalDate">
@@ -119,7 +144,7 @@ const RoomMoveForm = ({ open, onClose, reservationId }) => {
 
               <Form.Item
                 label="Room Status"
-                name="roomStatus"
+                name="status"
                 rules={[{ required: true }]}
               >
                 <Select
@@ -134,17 +159,23 @@ const RoomMoveForm = ({ open, onClose, reservationId }) => {
                 />
               </Form.Item>
             </div>
+
+            <Form.Item
+              label="Reason"
+              name="reason"
+              rules={[{ required: true }]}
+            >
+              <TextArea />
+            </Form.Item>
           </Form>
         </Card>
       </Drawer>
-
-      <NewRoomForm
-        open={roomOpen}
-        onClose={() => setRoomOpen(false)}
-        reservationId={reservationId}
+      <UpdateRoomMoveDrawer
+        open={updateOpen}
+        onClose={() => setUpdateOpen(false)}
       />
     </>
   );
 };
 
-export default RoomMoveForm;
+export default RoomMoveDrawer;

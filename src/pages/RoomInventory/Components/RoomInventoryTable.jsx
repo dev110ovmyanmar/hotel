@@ -84,13 +84,13 @@ const RoomInventoryTable = ({
       dataIndex: "maxOccupancy",
       key: "maxOccupancy",
     },
-    {
-      title: "Base Price (MMK)",
-      dataIndex: "basePrice",
-      key: "basePrice",
-      align: "end",
-      render: (text) => <PriceTag value={text} />,
-    },
+    // {
+    //   title: "Base Price (MMK)",
+    //   dataIndex: "basePrice",
+    //   key: "basePrice",
+    //   align: "end",
+    //   render: (text) => <PriceTag value={text} />,
+    // },
     // {
     //   title: "Stop Sell",
     //   dataIndex: "stopSell",

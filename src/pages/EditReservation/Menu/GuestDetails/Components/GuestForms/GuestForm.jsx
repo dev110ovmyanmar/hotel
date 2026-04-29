@@ -8,10 +8,15 @@ import {
   Col,
   DatePicker,
   Button,
+  Space,
+  Divider,
 } from "antd";
 import TextArea from "antd/es/input/TextArea";
 import dayjs from "dayjs";
 import FormButtons from "../../../../../../component/FormButtons/FormButtons";
+import { getFormattedDate } from "../../../../../../utils";
+
+const { Option } = Select;
 
 const GuestForm = ({
   mode,
@@ -38,31 +43,33 @@ const GuestForm = ({
   }, [selectedData, drawerOpen, form, mode]);
 
   const onFinish = (values) => {
-    const existingData = JSON.parse(localStorage.getItem("guests")) || [];
+    const formattedValues = {
+      ...values,
+      date_of_birth: getFormattedDate(values.date_of_birth, false),
+    };
 
+    console.log("Submitted Values:", formattedValues);
+
+    const existingData = JSON.parse(localStorage.getItem("guests")) || [];
     if (mode === "add") {
-      const newData = {
-        ...values,
-        id: Date.now(),
-        date_of_birth: values.date_of_birth
-          ? values.date_of_birth.toISOString()
-          : null,
-      };
       localStorage.setItem(
         "guests",
-        JSON.stringify([...existingData, newData]),
+        JSON.stringify([
+          ...existingData,
+          { ...formattedValues, id: Date.now() },
+        ]),
       );
-    } else if (mode === "edit") {
-      const updatedData = existingData.map((item) =>
+    } else {
+      const updated = existingData.map((item) =>
         item.id === selectedData.id
-          ? { ...item, ...values, id: item.id }
+          ? { ...formattedValues, id: item.id }
           : item,
       );
-      localStorage.setItem("guests", JSON.stringify(updatedData));
+      localStorage.setItem("guests", JSON.stringify(updated));
     }
 
     setDrawerOpen(false);
-    onSuccess(); //table refresh
+    onSuccess();
     form.resetFields();
   };
 
@@ -161,6 +168,8 @@ const GuestForm = ({
         <Form.Item label="Address" name="address">
           <Input />
         </Form.Item>
+
+        <Divider />
         <Row gutter={16}>
           <Col span={12}>
             <Form.Item label="Country" name="country">
@@ -186,11 +195,111 @@ const GuestForm = ({
           </Col>
         </Row>
 
-        <Form.Item
+        {/* <Form.Item
           label="NRC No"
-          name="nrc_no"
-          rules={[{ required: true, message: "NRC is Required" }]}
+          name="nrcNo"
+          rules={[{ required: true}]}
         >
+          <Row gutter={5}>
+            <Col span={4}>
+              <Form.Item
+                name="nrcSrNo"
+                rules={[{ required: true }]}
+                getValueProps={(value) => ({
+                  value: isView
+                    ? region.find((item) => item.value === value)?.label
+                    : value,
+                })}
+              >
+                {isView ? (
+                  <Input readOnly={isView} />
+                ) : (
+                  <Select
+                    showSearch={{
+                      filterOption: (input, option) =>
+                        (option?.label ?? "")
+                          .toLowerCase()
+                          .includes(input.toLowerCase()),
+                    }}
+                    // options={region}
+                    placeholder="Select Region"
+                    onChange={(value) => {
+                      setSelectedRegion(value);
+                      form.setFieldsValue({ nrcTownship: null });
+                    }}
+                  />
+                )}
+              </Form.Item>
+            </Col>
+
+            <Col span={1} className="text-center font-bold">
+              /
+            </Col>
+
+            <Col span={7}>
+              <Form.Item
+                name="nrcTownship"
+                rules={[{ required: true }]}
+                // getValueProps={(value) => ({
+                //   value: isView
+                //     ? township?.find((item) => item.value === value)?.label
+                //     : value,
+                // })}
+              >
+                {isView ? (
+                  <Input readOnly={isView} />
+                ) : (
+                  <Select
+                    showSearch={{
+                      filterOption: (input, option) =>
+                        (option?.label ?? "")
+                          .toLowerCase()
+                          .includes(input.toLowerCase()),
+                    }}
+                    // options={township}
+                    placeholder="Select Township"
+                    // disabled={!selectedRegion}
+                  />
+                )}
+              </Form.Item>
+            </Col>
+
+            <Col span={4}>
+              <Form.Item
+                name="nrcType"
+                rules={[{ required: true }]}
+                // getValueProps={(value) => ({
+                //   value: isView
+                //     ? citizenship.find((item) => item.value === value)?.label
+                //     : value,
+                // })}
+              >
+                {isView ? (
+                  <Input/>
+                ) : (
+                  <Select
+                    showSearch={{
+                      filterOption: (input, option) =>
+                        (option?.label ?? "")
+                          .toLowerCase()
+                          .includes(input.toLowerCase()),
+                    }}
+                    // options={citizenship}
+                    placeholder="Select Type"
+                  />
+                )}
+              </Form.Item>
+            </Col>
+
+            <Col span={8}>
+              <Form.Item name="nrcNumber" rules={[{ required: true }]}>
+                <Input placeholder="Number" />
+              </Form.Item>
+            </Col>
+          </Row>
+        </Form.Item> */}
+
+        <Form.Item label="NRC" name="nrc" rules={[{ required: true }]}>
           <Input />
         </Form.Item>
 
