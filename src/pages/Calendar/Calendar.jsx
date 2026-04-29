@@ -14,6 +14,7 @@ import Dollar from "../../assets/images/Dollar.png";
 import Team from "../../assets/images/Team.png";
 import Loader from '../../component/Loader/Loader';
 
+
 const STATUS_COLORS = {
   pending: { bg: '#EEC01B', text: '#fff' },
   booked: { bg: '#0958D9', text: '#fff' },
@@ -23,6 +24,7 @@ const STATUS_COLORS = {
   inhouse: { bg: '#08979C', text: '#fff' },
   checkout: { bg: '#FF8D28', text: '#fff' },
 };
+
 
 const Calendar = () => {
   const [currentDate, setCurrentDate] = useState(dayjs());
@@ -36,21 +38,25 @@ const Calendar = () => {
   const gridRef = useRef(null);
   const statsScrollRef = useRef(null);
 
+
   const handleScroll = (e) => {
     if (statsScrollRef.current) {
       statsScrollRef.current.scrollLeft = e.target.scrollLeft;
     }
   };
 
+
   const handleBookingClick = (booking, room) => {
     setSelectedBooking({ ...booking, roomId: room.id, roomFloor: room.floor });
     setIsModalOpen(true);
   };
 
+
   const handleModalClose = () => {
     setIsModalOpen(false);
     setSelectedBooking(null);
   };
+
 
   // --- MOCK API CALL ---
   useEffect(() => {
@@ -71,6 +77,7 @@ const Calendar = () => {
     getData();
   }, []);
 
+
   // --- FILTERING LOGIC ---
   const filteredData = useMemo(() => {
     return allData
@@ -84,6 +91,7 @@ const Calendar = () => {
           return floorMatch && searchMatch && statusMatch;
         });
 
+
         if (typeMatch && filteredRooms.length > 0) {
           return { ...group, rooms: filteredRooms };
         }
@@ -92,14 +100,23 @@ const Calendar = () => {
       .filter(Boolean);
   }, [allData, filters, searchQuery]);
 
+
   const days = useMemo(() => {
     const start = currentDate.startOf('month');
     return Array.from({ length: start.daysInMonth() }, (_, i) => start.add(i, 'day'));
   }, [currentDate]);
 
+
+
+
+  const todayStr = dayjs().format('YYYY-MM-DD');
+  const checkIsToday = (day) => day.format('YYYY-MM-DD') === todayStr;
+
+
   const dailyStats = useMemo(() => {
     const totalRoomsCount = allData.reduce((acc, g) => acc + g.rooms.length, 0);
     if (totalRoomsCount === 0) return [];
+
 
     return days.map(day => {
       let occupiedCount = 0;
@@ -115,6 +132,7 @@ const Calendar = () => {
         });
       });
 
+
       return {
         available: totalRoomsCount - occupiedCount,
         occupancy: Math.round((occupiedCount / totalRoomsCount) * 100)
@@ -122,12 +140,14 @@ const Calendar = () => {
     });
   }, [allData, days]);
 
+
   const toggleGroup = (type) => {
     const newSet = new Set(expandedGroups);
     if (newSet.has(type)) newSet.delete(type);
     else newSet.add(type);
     setExpandedGroups(newSet);
   };
+
 
   // --- FILTER UI ---
   const filterContent = (
@@ -170,8 +190,10 @@ const Calendar = () => {
     </div>
   );
 
+
   const CELL_WIDTH = 85;
   const SIDEBAR_WIDTH = 240;
+
 
   // --- AUTO SCROLL TO TODAY ---
   useEffect(() => {
@@ -193,6 +215,7 @@ const Calendar = () => {
     }
   }, [loading, currentDate]);
 
+
   // --- LOADING OVERLAY ---
   if (loading) {
     return (
@@ -203,6 +226,7 @@ const Calendar = () => {
       </div>
     );
   }
+
 
   return (
     <div className="flex flex-col h-[calc(100vh-180px)] bg-white overflow-hidden text-[#333]">
@@ -229,11 +253,13 @@ const Calendar = () => {
           </Space>
         </div>
 
+
         <div className="flex items-center gap-4">
           <div className="text-lg font-medium w-full text-center">
             {currentDate ? currentDate.format('DD MMMM YYYY') : ''}
           </div>
         </div>
+
 
         <div className="flex items-center gap-3">
           <Input
@@ -252,6 +278,7 @@ const Calendar = () => {
         </div>
       </div>
 
+
       {/* GRID CONTAINER (Parent for floating logic) */}
       <div className="flex-1 relative overflow-hidden flex flex-col">
         {/* SCROLLABLE GRID */}
@@ -263,9 +290,10 @@ const Calendar = () => {
                   Room Type
                 </th>
                 {days.map((day, i) => {
-                  const isToday = day.isSame(dayjs(), 'day');
+                  // const isToday = day.isSame(dayjs(), 'day');
+                  const isToday = checkIsToday(day);
                   return (
-                    <th key={i} className={`sticky top-0 z-[50] border-b border-[#dee2e6] text-center p-2 
+                    <th key={i} className={`sticky top-0 z-[50] border-b border-[#dee2e6] text-center p-2
                       ${isToday
                         ? 'bg-[#E6F4FF] border-r-2 border-r-[#91CAFF] border-l-2 border-l-[#91CAFF]'
                         : 'bg-[#fcfcfc] border-r'
@@ -290,7 +318,7 @@ const Calendar = () => {
                       </div>
                     </td>
                     {days.map((day, i) => {
-                      const isToday = day.isSame(dayjs(), 'day');
+                      const isToday = checkIsToday(day);
                       return (
                         <td key={i}
                           className={`border-b border-[#dee2e6] text-center p-1
@@ -317,7 +345,7 @@ const Calendar = () => {
                         <div className="text-[9px] text-gray-400 uppercase">{room.floor}</div>
                       </td>
                       {days.map((day, dayIdx) => {
-                        const isToday = day.isSame(dayjs(), 'day');
+                        const isToday = checkIsToday(day);
                         return (
                           <td key={dayIdx}
                             className={`border-b border-[#dee2e6] p-0 relative transition-colors
@@ -362,11 +390,13 @@ const Calendar = () => {
                                         {booking.name}
                                       </span>
 
+
                                       {span >= 3 && (
                                         <span className="text-[12px] opacity-80 whitespace-nowrap">
                                           {checkInFmt} → {checkOutFmt}
                                         </span>
                                       )}
+
 
                                       {/* ICON GROUP CONTAINER */}
                                       <div className="absolute -top-3 -right-2 flex gap-1 z-20">
@@ -375,10 +405,12 @@ const Calendar = () => {
                                           <img src={bookingIcon} alt="booking" className="w-3.5 h-3.5" />
                                         </span>
 
+
                                         {/* Dollar Icon */}
                                         <span className="bg-gray-100 rounded-full p-0.5 shadow-sm border border-white flex items-center justify-center">
                                           <img src={Dollar} alt="Dollar" className="w-3.5 h-3.5" />
                                         </span>
+
 
                                         {/* Team Icon */}
                                         <span className="bg-gray-100 rounded-full p-0.5 shadow-sm border border-white flex items-center justify-center">
@@ -395,67 +427,73 @@ const Calendar = () => {
                         )
                       })}
                     </tr>
+
+
+
                   ))}
+
+
+
+
                 </React.Fragment>
               ))}
+
+
+              <tr className="bg-transparent">
+                <td className="sticky left-0 z-40 bg-gray-50/50 border-b border-r border-[#dee2e6] p-3 font-bold" style={{ width: SIDEBAR_WIDTH, minWidth: SIDEBAR_WIDTH, maxWidth: SIDEBAR_WIDTH }}>
+                  <span className="text-[11px] uppercase text-gray-500">Rooms Available</span>
+                </td>
+                {dailyStats.map((stat, i) => {
+                  const isZero = stat.available === 0;
+                  // const isToday = days[i].isSame(dayjs(), 'day');
+                  const isToday = checkIsToday(days[i]);
+                  return (
+                    <td key={i} className={`border-b border-[#dee2e6] text-center p-2 font-bold
+                        ${isToday
+                        ? 'bg-[#E6F4FF] border-r-2 border-r-[#91CAFF] border-l-2 border-l-[#91CAFF]'
+                        : 'bg-[#fcfcfc] border-r'
+                      }`} style={{ width: CELL_WIDTH, minWidth: CELL_WIDTH, maxWidth: CELL_WIDTH }}>
+                      <div className={`text-sm ${isZero ? 'text-red-500' : 'text-green-600'}`}>
+                        {stat.available}
+                      </div>
+                    </td>
+                  );
+                })}
+              </tr>
+              <tr className="bg-transparent">
+                <td className="sticky left-0 z-40 bg-gray-50/50 border-b border-r border-[#dee2e6] p-3 font-bold" style={{ width: SIDEBAR_WIDTH, minWidth: SIDEBAR_WIDTH, maxWidth: SIDEBAR_WIDTH }}>
+                  <span className="text-[11px] uppercase text-gray-500">Occupancy %</span>
+                </td>
+                {dailyStats.map((stat, i) => {
+                  const isToday = checkIsToday(days[i]);
+                  return (
+                    <td key={i} className={`border-b border-[#dee2e6] text-center p-2
+                        ${isToday
+                        ? 'bg-[#E6F4FF] border-r-2 border-r-[#91CAFF] border-l-2 border-l-[#91CAFF]'
+                        : 'bg-[#fcfcfc] border-r'
+                      }`} style={{ width: CELL_WIDTH, minWidth: CELL_WIDTH, maxWidth: CELL_WIDTH }}>
+                      <div className="flex flex-col items-center">
+                        <div className="text-[11px] font-bold text-gray-700">{stat.occupancy}%</div>
+                        <div className="w-full bg-gray-200 h-1 mt-1 rounded-full overflow-hidden">
+                          <div
+                            className={`h-full ${stat.occupancy > 80 ? 'bg-amber-500' : 'bg-blue-500'}`}
+                            style={{ width: `${stat.occupancy}%` }}
+                          />
+                        </div>
+                      </div>
+                    </td>
+                  );
+                })}
+              </tr>
             </tbody>
           </table>
         </div>
 
+
         {/* FLOATING FOOTER CONTAINER */}
         <div className="absolute bottom-0 left-0 right-0 z-[100] flex flex-col bg-white/80 backdrop-blur-md border-t border-gray-200 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
           {/* STATS FOOTER (Horizontal Scroll synced) */}
-          <div className="overflow-hidden border-b border-gray-100" ref={statsScrollRef}>
-            <table className="border-separate border-spacing-0 table-fixed">
-              <tbody>
-                <tr className="bg-transparent">
-                  <td className="sticky left-0 z-40 bg-gray-50/50 border-b border-r border-[#dee2e6] p-3 font-bold" style={{ width: SIDEBAR_WIDTH, minWidth: SIDEBAR_WIDTH, maxWidth: SIDEBAR_WIDTH }}>
-                    <span className="text-[11px] uppercase text-gray-500">Rooms Available</span>
-                  </td>
-                  {dailyStats.map((stat, i) => {
-                    const isZero = stat.available === 0;
-                    const isToday = days[i].isSame(dayjs(), 'day');
-                    return (
-                      <td key={i} className={`border-b border-[#dee2e6] text-center p-2 font-bold
-                        ${isToday
-                          ? 'bg-[#E6F4FF] border-r-2 border-r-[#91CAFF] border-l-2 border-l-[#91CAFF]'
-                          : 'bg-[#fcfcfc] border-r'
-                        }`} style={{ width: CELL_WIDTH, minWidth: CELL_WIDTH, maxWidth: CELL_WIDTH }}>
-                        <div className={`text-sm ${isZero ? 'text-red-500' : 'text-green-600'}`}>
-                          {stat.available}
-                        </div>
-                      </td>
-                    );
-                  })}
-                </tr>
-                <tr className="bg-transparent">
-                  <td className="sticky left-0 z-40 bg-gray-50/50 border-b border-r border-[#dee2e6] p-3 font-bold" style={{ width: SIDEBAR_WIDTH, minWidth: SIDEBAR_WIDTH, maxWidth: SIDEBAR_WIDTH }}>
-                    <span className="text-[11px] uppercase text-gray-500">Occupancy %</span>
-                  </td>
-                  {dailyStats.map((stat, i) => {
-                    const isToday = days[i].isSame(dayjs(), 'day');
-                    return (
-                      <td key={i} className={`border-b border-[#dee2e6] text-center p-2
-                        ${isToday
-                          ? 'bg-[#E6F4FF] border-r-2 border-r-[#91CAFF] border-l-2 border-l-[#91CAFF]'
-                          : 'bg-[#fcfcfc] border-r'
-                        }`} style={{ width: CELL_WIDTH, minWidth: CELL_WIDTH, maxWidth: CELL_WIDTH }}>
-                        <div className="flex flex-col items-center">
-                          <div className="text-[11px] font-bold text-gray-700">{stat.occupancy}%</div>
-                          <div className="w-full bg-gray-200 h-1 mt-1 rounded-full overflow-hidden">
-                            <div
-                              className={`h-full ${stat.occupancy > 80 ? 'bg-amber-500' : 'bg-blue-500'}`}
-                              style={{ width: `${stat.occupancy}%` }}
-                            />
-                          </div>
-                        </div>
-                      </td>
-                    );
-                  })}
-                </tr>
-              </tbody>
-            </table>
-          </div>
+
 
           {/* LEGEND FOOTER */}
           <div className="px-6 py-3">
@@ -476,6 +514,7 @@ const Calendar = () => {
           </div>
         </div>
       </div>
+
 
       <Modal
         title="Booking Details"
@@ -521,4 +560,6 @@ const Calendar = () => {
   );
 };
 
+
 export default Calendar;
+
