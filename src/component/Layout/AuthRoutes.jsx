@@ -272,7 +272,9 @@ const AddOnServiceList = lazy(
     import("../../pages/EditReservation/Menu/ServiceAddOn/ServiceAddOnList"),
 );
 
-const RateAndInventoryCalendar = lazy(() => import("../../pages/RateAndInventoryCalendar/RateAndInventoryCalendar"));
+const RateAndInventoryCalendar = lazy(
+  () => import("../../pages/RateAndInventoryCalendar/RateAndInventoryCalendar"),
+);
 
 export const authRoutes = [
   {
@@ -294,8 +296,8 @@ export const authRoutes = [
   },
   {
     key: 3,
-    path: "/reservations/",
-    label: "Reservations",
+    path: "/reservation/create-new-reservation",
+    label: "Reservation",
     icon: <ScheduleOutlined style={{ fontSize: "20px" }} />,
     component: <Reservation />,
     isPrivate: false,
@@ -334,7 +336,6 @@ export const authRoutes = [
   {
     key: 30,
     path: "/reservation/inquiry/",
-    label: "Reservation",
     icon: <ScheduleOutlined style={{ fontSize: "20px" }} />,
     component: <InquiryList />,
     isPrivate: false,
