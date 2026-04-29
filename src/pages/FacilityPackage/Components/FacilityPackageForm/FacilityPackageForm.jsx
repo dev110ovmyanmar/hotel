@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Form, Input, Button, Select, Image, Drawer, AutoComplete, InputNumber } from "antd";
+import { Form, Input, Button, Select, Image, Drawer, AutoComplete, InputNumber, TimePicker } from "antd";
 import Toast from "../../../../component/Toast/Toast";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
 import useApiQuery from "../../../../hooks/useApiQuery";
@@ -13,6 +13,7 @@ import {
 import Loader from "../../../../component/Loader/Loader";
 import usePermission from "../../../../hooks/usePermission";
 import { PERMISSIONS } from "../../../../variables/permission";
+import dayjs from "dayjs";
 
 const FacilityPackageForm = ({
   mode,
@@ -86,6 +87,9 @@ const FacilityPackageForm = ({
         ...data,
         facility: data?.facility.uuid,
         pricingType: data?.pricingType?.uuid,
+        includedHours: data.includedHours
+          ? dayjs(data.includedHours, "HH:mm:ss")
+          : null,
       });
       setSelectedData(data);
     }
@@ -113,6 +117,9 @@ const FacilityPackageForm = ({
         ...values,
         facility: { uuid: values.facility },
         pricingType: { uuid: values.pricingType },
+        includedHours: values.includedHours
+          ? values.includedHours.format("HH:mm:ss")
+          : null,
         uuid: data?.uuid,
       };
 
@@ -254,7 +261,7 @@ const FacilityPackageForm = ({
                 </Form.Item>
 
                 <div className="grid grid-cols-2 gap-4">
-                  <Form.Item
+                  {/* <Form.Item
                     label="Included Hours"
                     name="includedHours"
                     rules={[
@@ -271,6 +278,20 @@ const FacilityPackageForm = ({
                         min: 0,
                         max: 24,
                         style: { width: "100%" },
+                      }}
+                    />
+                  </Form.Item> */}
+
+                  <Form.Item
+                    label="Included Hours"
+                    name="includedHours"
+                    rules={[
+                      { required: true, message: "Included Hours is Required" },
+                    ]}
+                  >
+                    <TimePicker
+                      style={{
+                        width: "100%"
                       }}
                     />
                   </Form.Item>

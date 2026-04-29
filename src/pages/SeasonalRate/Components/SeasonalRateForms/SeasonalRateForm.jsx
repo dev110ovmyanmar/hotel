@@ -153,7 +153,7 @@ const SeasonalRateForm = ({
           form.resetFields();
           setDrawerOpen(false);
           setPage(1);
-          Toast.success("Seasonal Rate Created Successfully!");
+          Toast.success("Base Rate Created Successfully!");
         },
       });
     }
@@ -170,7 +170,7 @@ const SeasonalRateForm = ({
       editSeasonlRates.mutate(editValues, {
         onSuccess: () => {
           setDrawerOpen(false);
-          Toast.success("Seasonal Rate Updated Successfully!");
+          Toast.success("Base Rate Updated Successfully!");
         },
       });
     }
@@ -186,10 +186,10 @@ const SeasonalRateForm = ({
           <div className="flex justify-between items-center">
             <span>
               {mode === "view"
-                ? "Seasonal Rate Details"
+                ? "Base Rate Details"
                 : mode === "edit"
-                  ? "Edit Seasonal Rate"
-                  : "Create Seasonal Rate"}
+                  ? "Edit Base Rate"
+                  : "Create Base Rate"}
             </span>
             {isView ? (
               canEdit && (
@@ -262,7 +262,7 @@ const SeasonalRateForm = ({
                               .includes(input.toLowerCase()),
                         }}
                         options={roomTypes}
-                        placeholder="Select Seasonal Rate"
+                        placeholder="Select Base Rate"
                       />
                     )}
                   </Form.Item>

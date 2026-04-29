@@ -142,6 +142,9 @@ const GuestForm = ({
         setDrawerOpen(false);
         if (isAdd) setPage(1);
         Toast.success(`Guest ${isEdit ? "Updated" : "Created"} successfully.`);
+        queryClient.invalidateQueries({
+          queryKey: ["guest-detail"]
+        });
       },
     });
   };
@@ -247,6 +250,7 @@ const GuestForm = ({
                   style={{ cursor: isView ? "default" : "text" }}
                   placeholder="Enter Email Address"
                 />
+
               </Form.Item>
             </div>
             <div className="col-span-12">
