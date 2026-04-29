@@ -1,5 +1,14 @@
 import React, { useState } from "react";
-import { Button, Card, DatePicker, Divider, Select, Table, Tag, TimePicker } from "antd";
+import {
+  Button,
+  Card,
+  DatePicker,
+  Divider,
+  Select,
+  Table,
+  Tag,
+  TimePicker,
+} from "antd";
 import ReservationHeader from "./ReservationHeader";
 import ReservationMenu from "./ReservationMenu";
 import { PlusOutlined, ReloadOutlined } from "@ant-design/icons";
@@ -8,8 +17,10 @@ import CreateContactPerson from "./CreateContactPerson";
 import { MdOutlineEscalatorWarning, MdPeopleOutline } from "react-icons/md";
 import GuestInformationTable from "./GuestInformationTable";
 import ReservationForm from "./ReservationForm";
+import { useNavigate } from "react-router-dom";
 
 const ReservationList = () => {
+  const navigate = useNavigate();
   const [roomBookOpen, setRoomBookOpen] = useState(false);
   const [guestDrawerOpen, setGuestDrawerOpen] = useState(false);
   const [roomConfirm, setRoomConfirm] = useState(false);
@@ -19,7 +30,7 @@ const ReservationList = () => {
   const [selectedData, setSelectedData] = useState([]);
   const [clickCreateContact, setClickCreateContact] = useState(false);
 
-  console.log(selectedData, "SelectedData")
+  console.log(selectedData, "SelectedData");
 
   const options = [
     { value: "1", label: "1" },
@@ -42,18 +53,13 @@ const ReservationList = () => {
           },
         };
       },
-
     },
 
     {
       title: "Room",
       dataIndex: "room",
       render: (value) => (
-        <Select
-          defaultValue={value}
-          options={options}
-          className="w-20"
-        />
+        <Select defaultValue={value} options={options} className="w-20" />
       ),
     },
 
@@ -63,9 +69,7 @@ const ReservationList = () => {
       render: (value) => (
         <div>
           <p>{value[0]}</p>
-          <p className="text-gray-500 text-sm">
-            {value[1]}
-          </p>
+          <p className="text-gray-500 text-sm">{value[1]}</p>
         </div>
       ),
     },
@@ -74,22 +78,14 @@ const ReservationList = () => {
       title: "Adult",
       dataIndex: "adult",
       render: (value) => (
-        <Select
-          defaultValue={value}
-          options={options}
-          className="w-20"
-        />
+        <Select defaultValue={value} options={options} className="w-20" />
       ),
     },
     {
       title: "Child",
       dataIndex: "child",
       render: (value) => (
-        <Select
-          defaultValue={value}
-          options={options}
-          className="w-20"
-        />
+        <Select defaultValue={value} options={options} className="w-20" />
       ),
     },
 
@@ -97,47 +93,37 @@ const ReservationList = () => {
       title: "Extra Bed",
       dataIndex: "extraBed",
       render: (value) => (
-        <Select
-          defaultValue={value}
-          options={options}
-          className="w-20"
-        />
+        <Select defaultValue={value} options={options} className="w-20" />
       ),
     },
     {
       title: "",
       render: (_, record, index) => {
         const isRoomBooked = (key) => {
-          return selectedData.some(item => item.key === key);
+          return selectedData.some((item) => item.key === key);
         };
 
         return (
-
           <Button
             className={
               isRoomBooked(record?.key) ? "" : "!border-blue-500 !text-blue-500"
             }
             type={isRoomBooked(record?.key) ? "primary" : "default"}
             onClick={() => {
-              return (
-
-                setSelectedData((prev) => {
-                  if (isRoomBooked(record?.key)) {
-                    return prev.filter((item) => item.key !== record.key);
-                  } else {
-                    return [...prev, record];
-                  }
-                })
-              )
-            }
-            }
+              return setSelectedData((prev) => {
+                if (isRoomBooked(record?.key)) {
+                  return prev.filter((item) => item.key !== record.key);
+                } else {
+                  return [...prev, record];
+                }
+              });
+            }}
           >
             Booked
-          </Button >
-        )
+          </Button>
+        );
       },
     },
-
   ];
 
   const dataSource = [
@@ -184,12 +170,13 @@ const ReservationList = () => {
   ];
 
   return (
-    <div className="w-full px-6 py-2">
+    <div className="w-full px-6">
       {/* <ReservationHeader /> */}
       {/* <ReservationMenu /> */}
 
       <div className="flex justify-end mb-3">
-        <Button className="!border-blue-500"
+        <Button
+          className="!border-blue-500"
           onClick={() => {
             // setRefreshReservation(true),
             setSearchReservation(false);
@@ -198,112 +185,116 @@ const ReservationList = () => {
           }}
         >
           <ReloadOutlined className="!text-blue-500" />
-          <span className="!text-blue-500" >Refresh</span>
+          <span className="!text-blue-500">Refresh</span>
         </Button>
       </div>
 
-      <ReservationForm onSearch={() => { setSearchReservation(true) }} afterRoomConfirm={roomConfirm} />
+      <ReservationForm
+        onSearch={() => {
+          setSearchReservation(true);
+        }}
+        afterRoomConfirm={roomConfirm}
+      />
 
-      {
-        refreshReservation &&
-        (
-          <ReservationForm onSearch={() => setSearchReservation(true)} afterRoomConfirm={roomConfirm} />
-        )
-      }
+      {refreshReservation && (
+        <ReservationForm
+          onSearch={() => setSearchReservation(true)}
+          afterRoomConfirm={roomConfirm}
+        />
+      )}
 
-      {
-        roomConfirm ?
-          <>
-            {selectedData.map((i) => (
-              <Card className="!my-3" key={i?.key}>
-                <div className="flex justify-between">
-                  <div className="flex">
-                    <p className="mb-3">{i?.roomType}</p>
-                  </div>
-                  <div>
-                    <Tag color="blue">{i?.room} Room</Tag>
-                  </div>
-                </div>
-
+      {roomConfirm ? (
+        <>
+          {selectedData.map((i) => (
+            <Card className="!my-3" key={i?.key}>
+              <div className="flex justify-between">
                 <div className="flex">
-                  <div className="flex mr-3">
-                    <MdPeopleOutline />
-                    <span className="text-xs ml-1">{i.adult}</span>
-                  </div>
-                  <div className="flex">
-                    <MdOutlineEscalatorWarning />
-                    <span className="text-xs ml-1">{i?.child}</span>
-                  </div>
+                  <p className="mb-3">{i?.roomType}</p>
+                </div>
+                <div>
+                  <Tag color="blue">{i?.room} Room</Tag>
+                </div>
+              </div>
 
-                  <div className="text-xs text-gray-400 mx-2">|</div>
-
-                  <div>{i?.extraBed} Extra Bed</div>
+              <div className="flex">
+                <div className="flex mr-3">
+                  <MdPeopleOutline />
+                  <span className="text-xs ml-1">{i.adult}</span>
+                </div>
+                <div className="flex">
+                  <MdOutlineEscalatorWarning />
+                  <span className="text-xs ml-1">{i?.child}</span>
                 </div>
 
-                <Divider />
+                <div className="text-xs text-gray-400 mx-2">|</div>
 
-                <div className="flex justify-between">
-                  <p>{i?.rateAndPrices[1]}</p>
-                  <p className="font-bold">{i?.rateAndPrices[0]}</p>
-                </div>
-              </Card>
-            ))}
+                <div>{i?.extraBed} Extra Bed</div>
+              </div>
 
-            <Card>
-              <h1 className="text-lg font-bold my-2">Contact Person</h1>
+              <Divider />
 
-              {
-                guestInfoTable ?
-                  <GuestInformationTable
-                    guestInfoTable={guestInfoTable}
-                    setGuestInfoTable={setGuestInfoTable}
-                  /> :
-                  null
-              }
-
-
-              {
-                clickCreateContact ? null :
-                  <Button type="primary" onClick={() => setGuestDrawerOpen(true)} className="my-4">
-                    Add Contact Person
-                    <PlusOutlined />
-                  </Button>
-              }
-
+              <div className="flex justify-between">
+                <p>{i?.rateAndPrices[1]}</p>
+                <p className="font-bold">{i?.rateAndPrices[0]}</p>
+              </div>
             </Card>
+          ))}
 
-            <div className="flex justify-end">
-              <Button className="!my-5 !px-10" type="primary">Submit</Button>
-            </div>
-          </>
+          <Card>
+            <h1 className="text-lg font-bold my-2">Contact Person</h1>
 
-          :
+            {guestInfoTable ? (
+              <GuestInformationTable
+                guestInfoTable={guestInfoTable}
+                setGuestInfoTable={setGuestInfoTable}
+              />
+            ) : null}
 
-          searchReservation ?
-            (
-              <Card className="!my-3">
-                <h1 className="text-lg font-bold my-2">Room Details</h1>
+            {clickCreateContact ? null : (
+              <Button
+                type="primary"
+                onClick={() => setGuestDrawerOpen(true)}
+                className="my-4"
+              >
+                Add Contact Person
+                <PlusOutlined />
+              </Button>
+            )}
+          </Card>
 
-                <Table
-                  columns={columns}
-                  dataSource={dataSource}
-                  pagination={false}
-                />
+          <div className="flex justify-end">
+            <Button
+              className="!my-5 !px-10"
+              type="primary"
+              onClick={() => {
+                navigate("/reservation/inquiry/");
+              }}
+            >
+              Submit
+            </Button>
+          </div>
+        </>
+      ) : searchReservation ? (
+        <Card className="!my-3">
+          <h1 className="text-lg font-bold my-2">Room Details</h1>
 
-                <div className="my-5">
-                  <span className="text-red-500">***</span>
-                  <span>Children under 6 years stay free in existing bedding; children aged 6 to must use and extra bed.</span>
-                </div>
+          <Table columns={columns} dataSource={dataSource} pagination={false} />
 
-                <div className="flex justify-end">
-                  <Button type="primary" onClick={() => setRoomBookOpen(true)}>View Room Booked</Button>
-                </div>
-              </Card>
-            )
-            :
-            null
-      }
+          <div className="my-5">
+            <span className="text-red-500">***</span>
+            <span>
+              Children under 6 years stay free in existing bedding; children
+              aged 6 to must use and extra bed.
+            </span>
+          </div>
 
+          <div className="flex justify-end">
+            <Button type="primary" onClick={() => setRoomBookOpen(true)}>
+              View Room Booked
+            </Button>
+          </div>
+        </Card>
+      ) : null}
 
       <CreateContactPerson
         guestDrawerOpen={guestDrawerOpen}
@@ -322,9 +313,8 @@ const ReservationList = () => {
         selectedData={selectedData}
         setSelectedData={setSelectedData}
       />
-    </div >
+    </div>
   );
 };
 
 export default ReservationList;
-

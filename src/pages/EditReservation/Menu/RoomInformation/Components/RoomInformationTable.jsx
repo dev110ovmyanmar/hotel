@@ -78,7 +78,7 @@ const RoomInformationTable = () => {
       key: "arrivalDate",
       render: (_, record) => {
         const date = record.arrivalDate
-          ? dayjs(record.arrivalDate).format("DD.MM.YYYY")
+          ? dayjs(record.arrivalDate).format("DD/MM/YYYY")
           : "-";
 
         return <div className="font-medium">{date}</div>;
@@ -90,7 +90,7 @@ const RoomInformationTable = () => {
       key: "departureDate",
       render: (_, record) => {
         const date = record.departureDate
-          ? dayjs(record.departureDate).format("DD.MM.YYYY")
+          ? dayjs(record.departureDate).format("DD/MM/YYYY")
           : "-";
 
         return <div className="font-medium">{date}</div>;

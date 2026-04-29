@@ -62,7 +62,7 @@ const ChangeStatusForm = ({ open, onClose, reservationId }) => {
             <Space direction="vertical" className="w-full">
               <Radio value="checked_in">Booked</Radio>
               <Radio value="cancelled">Cancelled</Radio>
-              <Radio value="cancelled">Confirmed</Radio>
+              <Radio value="confirmed">Confirmed</Radio>
             </Space>
           </Radio.Group>
         </Form.Item>
