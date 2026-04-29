@@ -14,6 +14,7 @@ import RoomMoveDrawer from "./RoomInformationForms/RoomMoveDrawer";
 import AssignRoomForm from "./RoomInformationForms/AssignRoomForm";
 import { set } from "lodash";
 import dayjs from "dayjs";
+import NoteDrawer from "./RoomInformationForms/NoteDrawer";
 
 const RoomInformationTable = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -22,6 +23,7 @@ const RoomInformationTable = () => {
   const [dataSource, setDataSource] = useState([]);
   const [roomMoveOpen, setRoomMoveOpen] = useState(false);
   const [assignRoomOpen, setAssignRoomOpen] = useState(false);
+  const [noteOpen, setNoteOpen] = useState(false);
 
   useEffect(() => {
     const savedRoomInfo = JSON.parse(localStorage.getItem("roomInfo")) || [];
@@ -40,34 +42,79 @@ const RoomInformationTable = () => {
       key: "id",
       width: 70,
     },
-    {
-      title: "Room Type",
-      dataIndex: "roomType",
-      key: "roomType",
-      className: "font-medium",
-      render: (text, record) => {
-        const isAssignRoom = text === "Assign Room";
+    // {
+    //   title: "Room",
+    //   dataIndex: "roomType",
+    //   key: "roomType",
+    //   className: "font-medium",
+    //   render: (text, record) => {
+    //     const isAssignRoom = text === "Assign Room";
 
-        return (
-          <span
-            style={{
-              color: isAssignRoom ? "#1890ff" : "inherit",
-              cursor: isAssignRoom ? "pointer" : "default",
-              textDecoration: isAssignRoom,
-            }}
-            onClick={(e) => {
-              if (isAssignRoom) {
-                e.stopPropagation();
-                setSelectedData(record);
-                setAssignRoomOpen(true);
-              }
-            }}
-          >
-            {text}
-          </span>
-        );
-      },
-    },
+    //     return (
+    //       <span
+    //         style={{
+    //           color: isAssignRoom ? "#1890ff" : "inherit",
+    //           cursor: isAssignRoom ? "pointer" : "default",
+    //           textDecoration: isAssignRoom,
+    //         }}
+    //         onClick={(e) => {
+    //           if (isAssignRoom) {
+    //             e.stopPropagation();
+    //             setSelectedData(record);
+    //             setAssignRoomOpen(true);
+    //           }
+    //         }}
+    //       >
+    //         {/* {text} */}
+    //         <div>
+    //             <div className="font-medium">{text}</div>
+    //             <div className="text-xs text-gray-500">{text}</div>
+    //           </div>
+    //       </span>
+    //     );
+    //   },
+    // },
+   {
+  title: "Room",
+  key: "newRoom", 
+  dataIndex: "newRoom", // Ensure dataIndex matches your data key
+  className: "font-medium",
+  render: (text, record) => {
+    // Check if the value of 'newRoom' is exactly "Assign Room"
+    const isAssignRoom = text === "Assign Room";
+
+    return (
+      <span
+        style={{
+          // Apply blue color if it is an Assign Room action
+          color: isAssignRoom ? "#1890ff" : "inherit",
+          cursor: isAssignRoom ? "pointer" : "default",
+          display: "inline-block",
+        }}
+        onClick={(e) => {
+          if (isAssignRoom) {
+            e.stopPropagation();
+            setSelectedData(record);
+            setAssignRoomOpen(true);
+          }
+        }}
+      >
+        <div className="flex flex-col">
+          {/* Top Line: The Room Name/Action */}
+          <div className={`font-medium ${isAssignRoom ? "text-blue-500" : "text-gray-900"}`}>
+            {text || "-"}
+          </div>
+
+          {/* Bottom Line: The Room Type category */}
+          <div className="text-xs text-gray-500">
+            {record.roomType}
+          </div>
+        </div>
+      </span>
+    );
+  },
+},
+
     {
       title: "Name",
       dataIndex: "guest",
@@ -135,11 +182,14 @@ const RoomInformationTable = () => {
           {
             key: "2",
             label: (
-              <Space size={4} onClick={() => {
-                setSelectedData(record);
-                setMode("edit");
-                setDrawerOpen(true);
-              }}>
+              <Space
+                size={4}
+                onClick={() => {
+                  setSelectedData(record);
+                  setMode("edit");
+                  setDrawerOpen(true);
+                }}
+              >
                 <EditOutlined style={{ fontSize: "12px" }} />
                 <span>Edit Info</span>
               </Space>
@@ -157,6 +207,21 @@ const RoomInformationTable = () => {
               >
                 <MdOutlineMeetingRoom style={{ fontSize: "12px" }} />
                 <span>Room Move</span>
+              </Space>
+            ),
+          },
+          {
+            key: "4",
+            label: (
+              <Space
+                size={4}
+                onClick={() => {
+                  setSelectedData(record);
+                  setNoteOpen(true);
+                }}
+              >
+                <UploadOutlined style={{ fontSize: "12px" }} />
+                <span>Service Note</span>
               </Space>
             ),
           },
@@ -196,6 +261,8 @@ const RoomInformationTable = () => {
         onClose={() => setAssignRoomOpen(false)}
         selectedData={selectedData}
       />
+
+      <NoteDrawer open={noteOpen} onClose={() => setNoteOpen(false)} />
     </div>
   );
 };
