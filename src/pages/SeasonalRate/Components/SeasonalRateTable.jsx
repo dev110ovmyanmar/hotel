@@ -113,7 +113,7 @@ const SeasonalRateTable = ({
       }),
     },
     {
-      title: "Seasonal Name",
+      title: "Season Name",
       dataIndex: ["rateCategory", "name"],
       key: "rateCategory",
       align: "center",
@@ -210,6 +210,7 @@ const SeasonalRateTable = ({
         size="small"
         style={{ marginTop: "16px", marginBottom: "16px" }}
         bordered
+        className="[&_.ant-table-cell]:!border [&_.ant-table-cell]:!border-blue-300"
       />
     );
   };

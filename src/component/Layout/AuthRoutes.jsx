@@ -410,8 +410,8 @@ export const authRoutes = [
       },
       {
         key: 4.5,
-        label: "Seasonal Rate",
-        path: "/rates-availability/seasonal-rate",
+        label: "Base Rate",
+        path: "/rates-availability/base-rate",
         icon: <IoFlowerOutline style={{ fontSize: "20px" }} />,
         isPrivate: true,
         component: <SeasonalRate />,
