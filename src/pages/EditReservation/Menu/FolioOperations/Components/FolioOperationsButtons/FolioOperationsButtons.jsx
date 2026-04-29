@@ -42,9 +42,9 @@ const FolioOperationsButtons = ({ reservationId }) => {
   return (
     <div>
       <div className="flex flex-row gap-2 items-center w-full mb-4">
-        <Button onClick={() => setFolioOpen(true)} type="primary">
+        {/* <Button onClick={() => setFolioOpen(true)} type="primary">
           Folio Operation
-        </Button>
+        </Button> */}
 
         <Dropdown
           menu={{ items: addOrder }}
@@ -59,8 +59,9 @@ const FolioOperationsButtons = ({ reservationId }) => {
         <Button
           className="custom-blue-btn"
           onClick={() => setPaymentOpen(true)}
+          icon={<PlusOutlined style={{ fontSize: '12px' }}/>}
         >
-          Add Payment <PlusOutlined />
+          Add Payment
         </Button>
 
         <Button className="custom-blue-btn" icon={<IoPrintOutline />}>

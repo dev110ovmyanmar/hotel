@@ -44,17 +44,22 @@ const AddNewServiceOrderForm = ({ open, onClose, reservationId }) => {
 
   return (
     <Drawer
-      title="Add New Service Order"
       open={open}
       onClose={onClose}
       size={550}
       destroyOnClose
+       initialValues={{
+        quantity: 1,
+      }}
       title={
         <div className="flex justify-between items-center">
           <span>Add New Service Order</span>
-          <Button type="primary">Create</Button>
+          <Button type="primary" onClick={() => form.submit()}>
+            Create
+          </Button>
         </div>
       }
+     
     >
       <Form layout="vertical" form={form} onFinish={handleSubmit}>
         <div className="grid grid-cols-2 gap-4">
