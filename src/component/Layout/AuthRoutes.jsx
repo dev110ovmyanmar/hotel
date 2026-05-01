@@ -297,11 +297,11 @@ export const authRoutes = [
   {
     key: 3,
     path: "/reservation/create-new-reservation",
-    label: "Reservation",
     icon: <ScheduleOutlined style={{ fontSize: "20px" }} />,
     component: <Reservation />,
     isPrivate: false,
   },
+
   {
     key: 3.1,
     path: "/reservation/booking-detail/",
@@ -336,6 +336,7 @@ export const authRoutes = [
   {
     key: 30,
     path: "/reservation/inquiry/",
+    label: "Reservation",
     icon: <ScheduleOutlined style={{ fontSize: "20px" }} />,
     component: <InquiryList />,
     isPrivate: false,
@@ -409,8 +410,8 @@ export const authRoutes = [
       },
       {
         key: 4.5,
-        label: "Seasonal Rate",
-        path: "/rates-availability/seasonal-rate",
+        label: "Base Rate",
+        path: "/rates-availability/base-rate",
         icon: <IoFlowerOutline style={{ fontSize: "20px" }} />,
         isPrivate: true,
         component: <SeasonalRate />,

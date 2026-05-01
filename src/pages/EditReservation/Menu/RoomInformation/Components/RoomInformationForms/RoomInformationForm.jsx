@@ -135,7 +135,6 @@ const RoomInformationForm = ({
                   label: "Deluxe Bangalow Double",
                 },
                 { value: "Deluxe Bangalow", label: "Deluxe Bangalow" },
-                { value: "Assign Room", label: "Assign Room" },
               ]}
             />
           </Form.Item>
@@ -149,6 +148,7 @@ const RoomInformationForm = ({
               options={[
                 { value: "DBD", label: "DBD 1001" },
                 { value: "DB", label: "DB 1001" },
+                { value: "Assign Room", label: "Assign Room" },
               ]}
             />
           </Form.Item>

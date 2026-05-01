@@ -20,6 +20,7 @@ const bookingData = [
     adults: 1,
     kids: 0,
     checkIn: "21/12/2025",
+    checkOut: "22/12/2025",
     duration: "1 Night",
     bookingDate: "10/12/2025",
     rooms: 3,
@@ -33,6 +34,7 @@ const bookingData = [
     adults: 2,
     kids: 2,
     checkIn: "21/12/2025",
+    checkOut: "22/12/2025",
     duration: "1 Night",
     bookingDate: "11/12/2025",
     rooms: 1,
@@ -46,6 +48,7 @@ const bookingData = [
     adults: 2,
     kids: 0,
     checkIn: "21/12/2025",
+    checkOut: "22/12/2025",
     duration: "1 Night",
     bookingDate: "12/12/2025",
     rooms: 2,
@@ -59,6 +62,7 @@ const bookingData = [
     adults: 2,
     kids: 2,
     checkIn: "21/12/2025",
+    checkOut: "22/12/2025",
     duration: "1 Night",
     bookingDate: "13/12/2025",
     rooms: 1,
@@ -72,6 +76,7 @@ const bookingData = [
     adults: 2,
     kids: 2,
     checkIn: "21/12/2025",
+    checkOut: "22/12/2025",
     duration: "1 Night",
     bookingDate: "14/12/2025",
     rooms: 2,
@@ -85,6 +90,7 @@ const bookingData = [
     adults: 2,
     kids: 0,
     checkIn: "21/12/2025",
+    checkOut: "22/12/2025",
     duration: "1 Night",
     bookingDate: "15/12/2025",
     rooms: 2,
@@ -205,7 +211,7 @@ const DeparturesGrid = () => {
                   {item.duration}
                 </div>
                 <div style={{ flex: 1, padding: "8px", background: "#fafafa" }}>
-                  Checkout Date
+                  {item.checkOut}
                 </div>
               </div>
 

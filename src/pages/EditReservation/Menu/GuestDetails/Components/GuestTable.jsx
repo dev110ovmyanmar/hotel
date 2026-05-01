@@ -108,23 +108,23 @@ const GuestTable = () => {
               </Space>
             ),
           },
-          {
-            key: "4",
-            label: (
-              <Space
-                size={4}
-                style={smallStyle}
-                onClick={() => {
-                  // setConfirmModal(true);
-                  setNoteOpen(true);
-                  setSelectedData(record);
-                }}
-              >
-                <InboxOutlined style={{ fontSize: "12px" }} />
-                <span style={{ fontSize: "14px" }}>Guest Note</span>
-              </Space>
-            ),
-          },
+          // {
+          //   key: "4",
+          //   label: (
+          //     <Space
+          //       size={4}
+          //       style={smallStyle}
+          //       onClick={() => {
+          //         // setConfirmModal(true);
+          //         setNoteOpen(true);
+          //         setSelectedData(record);
+          //       }}
+          //     >
+          //       <InboxOutlined style={{ fontSize: "12px" }} />
+          //       <span style={{ fontSize: "14px" }}>Guest Note</span>
+          //     </Space>
+          //   ),
+          // },
         ];
 
         return (

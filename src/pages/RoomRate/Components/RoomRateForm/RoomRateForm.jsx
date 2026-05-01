@@ -8,6 +8,7 @@ import Toast from './../../../../component/Toast/Toast';
 import usePermission from './../../../../hooks/usePermission';
 import { upsertRoomRate, roomRateDetails } from "../../../../api/roomRateApi";
 import { ratePlanMeta } from "../../../../api/ratePlanApi";
+import Status from "../../../../component/Status/Status";
 
 const RoomRateForm = ({
   mode,
@@ -18,6 +19,8 @@ const RoomRateForm = ({
   setDrawerOpen,
   page,
   setPage,
+  ratePlan,
+  roomRateUuid,
 }) => {
   const [form] = Form.useForm();
   const formValues = Form.useWatch([], form);
@@ -29,7 +32,8 @@ const RoomRateForm = ({
   const isAdd = mode === "add";
 
   const { state } = useLocation();
-  const pricingType = state?.ratePlan?.pricingType?.code;
+  const activePricingType = ratePlan?.pricingType?.code ?? state?.ratePlan?.pricingType?.code;
+  const activeRatePlanUuid = ratePlan?.uuid ?? state?.ratePlan?.uuid;
 
   const { data: ratePlanMetas } = useApiQuery({
     fetchQueryName: "rate-plan-meta",
@@ -60,15 +64,16 @@ const RoomRateForm = ({
   const { data: roomRateDetailData } = useApiQuery({
     fetchQueryName: "room-rate-details",
     fetchQueryFunction: roomRateDetails,
-    params: { uuid: selectedData?.uuid },
+    params: { uuid: roomRateUuid },
     options: {
-      enabled: !!selectedData?.uuid && !isAdd && drawerOpen,
+      enabled: !!roomRateUuid && !isAdd && drawerOpen,
     },
   });
 
   useEffect(() => {
     if (!isAdd && roomRateDetailData) {
       form.setFieldsValue({
+        ...roomRateDetailData,
         uuid: roomRateDetailData?.uuid,
         roomType: {
           uuid: roomRateDetailData?.roomType?.uuid
@@ -76,23 +81,25 @@ const RoomRateForm = ({
         price: roomRateDetailData?.price,
         durationHours: roomRateDetailData?.durationHours,
         ...roomRateDetailData?.weekdays,
-        ...Object.keys(roomRateDetailData?.weekdays).reduce((acc, day) => {
+        ...Object.keys(roomRateDetailData?.weekdays || {}).reduce((acc, day) => {
           acc[`enable_${day}`] = roomRateDetailData?.weekdays[day] !== null;
           return acc;
         }, {}),
       });
-
       setSelectedData(roomRateDetailData);
     } else if (isAdd) {
       form.resetFields();
+      if (roomRateUuid) {
+        form.setFieldsValue({ roomType: { uuid: roomRateUuid } });
+      }
     }
-  }, [roomRateDetailData, isAdd, form]);
+  }, [roomRateDetailData, isAdd, form, roomRateUuid]);
 
   const onFinish = (values) => {
     const payload = {
       ...values,
-      uuid: isEdit ? roomRateDetailData?.uuid : null,
-      ratePlan: { uuid: state?.ratePlan?.uuid },
+      ...(isEdit && { uuid: roomRateDetailData?.uuid }),
+      ratePlan: { uuid: activeRatePlanUuid },
       roomType: values?.roomType,
       weekdays: {
         mon: values?.mon ? values?.mon : null,
@@ -213,7 +220,7 @@ const RoomRateForm = ({
 
             <Col span={12}>
               {
-                pricingType !== "daily" &&
+                activePricingType !== "daily" &&
                 <Form.Item
                   label="Duration Hours"
                   name="durationHours"
@@ -227,6 +234,8 @@ const RoomRateForm = ({
               }
             </Col>
           </Row>
+
+          <Status isView={isView}/>
 
           <Row gutter={16}>
             <Col span={12}>

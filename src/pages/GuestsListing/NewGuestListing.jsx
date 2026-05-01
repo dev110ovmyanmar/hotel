@@ -67,8 +67,13 @@ const GuestList = () => {
   };
 
   const handleNameClick = (record) => {
-    navigate(`/guest-list/guests/${record?.id}/profile`);
-};
+    navigate(
+      `/guest-list/guests/${record?.id}/profile`,
+      {
+        state: { guestDetails: record }
+      }
+    );
+  };
 
   return (
     <div className="w-full px-5">
