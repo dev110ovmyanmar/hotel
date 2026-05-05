@@ -9,6 +9,7 @@ import {
   Select,
   Checkbox,
   Switch,
+  InputNumber
 } from "antd";
 import Toast from "../../../../component/Toast/Toast";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
@@ -35,6 +36,7 @@ const RatePlanForm = ({
   setDrawerOpen,
   setPage,
   page,
+  ratePlanList,
 }) => {
   const [form] = Form.useForm();
   const { hasPermission } = usePermission();
@@ -75,7 +77,6 @@ const RatePlanForm = ({
 
   const policy = ratePlanMetaData?.policies?.cancellation?.map((policy) => ({
     value: policy.uuid,
-    // label: policy.name,
     label: `${policy.name} (${policy?.policyType.name} Policy)`,
   }));
 
@@ -85,6 +86,11 @@ const RatePlanForm = ({
       value: channel,
     }),
   );
+
+  const roomTypes = ratePlanMetaData?.room_types?.map((roomType) => ({
+    label: roomType.name,
+    value: roomType.uuid,
+  }));
 
   const createRatePlans = useApiMutation({
     mutationFn: createRatePlan,
@@ -107,26 +113,42 @@ const RatePlanForm = ({
   });
 
   useEffect(() => {
-    if (!isAdd && data) {
+    if (isAdd && !ratePlanList) {
+      form.resetFields();
+      form.setFieldsValue({ isDefault: true });
+    } else if (!isAdd && data) {
       const selectedChannels = Object.keys(data.channelVisibility || {}).filter(
         (key) => data.channelVisibility[key],
       );
+      const apiRoomTypes = data.roomTypes || [];
+
+      const roomTypePrices = apiRoomTypes.reduce((acc, item) => {
+        acc[item.uuid] = item.price;
+        return acc;
+      }, {});
 
       form.setFieldsValue({
         ...data,
-        mealUuid: data?.mealPlan?.uuid,
-        policyUuid: data?.policy?.uuid,
+        ...roomTypePrices,
+        mealPlan: data?.mealPlan?.uuid,
+        policy: data?.policy?.uuid,
         currency: data?.currency?.uuid,
-        pricing_type: data?.pricingType?.uuid,
+        pricingType: data?.pricingType?.uuid,
         status: data?.status?.uuid,
         channels: selectedChannels,
-        isPublic: data?.isPublic,
+        isDefault: data?.isDefault,
         description: data?.description,
       });
     }
-  }, [data]);
+  }, [data, isAdd, ratePlanList]);
+
+  const isDisableDefault = ratePlanList ? false : true;
+
+  console.log("RatePlanList", ratePlanList);
+  console.log("isDisableDefault",isDisableDefault);
 
   const onFinish = (values) => {
+    console.log("Values", values);
     const channelVisibility = {};
     channelOptions.forEach((channel) => {
       channelVisibility[channel.value] = values.channels?.includes(
@@ -134,15 +156,26 @@ const RatePlanForm = ({
       );
     });
 
+    const formattedRoomTypes = roomTypes.map(rt => ({
+      uuid: rt.value,
+      price: String(values[rt.value])
+    }));
+
     const createValues = {
-      ...values,
-      mealPlan: { uuid: values.mealUuid },
-      policy: { uuid: values.policyUuid },
+      name: values.name,
+      code: values.code,
+      mealPlan: { uuid: values.mealPlan },
+      policy: { uuid: values.policy },
       currency: { uuid: values.currency },
-      pricingType: { uuid: values.pricing_type },
+      pricingType: { uuid: values.pricingType },
       status: { uuid: values.status },
-      channelVisibility,
+      roomTypes: formattedRoomTypes,
+      channelVisibility: channelVisibility,
+      isDefault: values.isDefault,
+      description: values.description,
     };
+
+    roomTypes.forEach(rt => delete createValues[rt.value]);
 
     if (isAdd) {
       createRatePlans.mutate(createValues, {
@@ -158,13 +191,17 @@ const RatePlanForm = ({
     if (isEdit) {
       editRatePlans.mutate(
         {
-          ...values,
-          mealPlan: { uuid: values.mealUuid },
-          policy: { uuid: values.policyUuid },
+          mealPlan: { uuid: values.mealPlan },
+          policy: { uuid: values.policy },
           currency: { uuid: values.currency },
-          pricingType: { uuid: values.pricing_type },
+          pricingType: { uuid: values.pricingType },
           status: { uuid: values.status },
-          channelVisibility,
+          // roomTypes: formattedRoomTypes,
+          channelVisibility: channelVisibility,
+          isDefault: values.isDefault,
+          description: values.description,
+          name: values.name,
+          code: values.code,
           uuid: data?.uuid,
         },
         {
@@ -174,6 +211,8 @@ const RatePlanForm = ({
           },
         },
       );
+
+      roomTypes.forEach(rt => delete editValues[rt.value]);
     }
   };
 
@@ -253,123 +292,119 @@ const RatePlanForm = ({
                 </Col>
               </Row>
 
-              <Form.Item
-                label="Meal Plan"
-                name="mealUuid"
-                rules={[{ required: true, message: "Meal Plan is Required" }]}
-                getValueProps={(value) => ({
-                  value: isView
-                    ? mealPlans.find((item) => item.value === value)?.label
-                    : value,
-                })}
-              >
-                {isView ? (
-                  <Input readOnly={isView} />
-                ) : (
-                  <Select
-                    showSearch={{
-                      filterOption: (input, option) =>
-                        (option?.label ?? "")
-                          .toLowerCase()
-                          .includes(input.toLowerCase()),
-                    }}
-                    options={mealPlans}
-                    placeholder="Select Meal Plan"
-                  />
-                )}
-              </Form.Item>
+              <Row gutter={16}>
+                <Col span={12}>
+                  <Form.Item
+                    label="Meal Plan"
+                    name="mealPlan"
+                    rules={[{ required: true, message: "Meal Plan is Required" }]}
+                    getValueProps={(value) => ({
+                      value: isView
+                        ? mealPlans.find((item) => item.value === value)?.label
+                        : value,
+                    })}
+                  >
+                    {isView ? (
+                      <Input readOnly={isView} />
+                    ) : (
+                      <Select
+                        showSearch={{
+                          filterOption: (input, option) =>
+                            (option?.label ?? "")
+                              .toLowerCase()
+                              .includes(input.toLowerCase()),
+                        }}
+                        options={mealPlans}
+                        placeholder="Select Meal Plan"
+                      />
+                    )}
+                  </Form.Item>
+                </Col>
 
-              <Form.Item
-                label="Policy"
-                name="policyUuid"
-                rules={[{ required: true, message: "Policy is Required" }]}
-                getValueProps={(value) => ({
-                  value: isView
-                    ? policy.find((item) => item.value === value)?.label
-                    : value,
-                })}
-              >
-                {isView ? (
-                  <Input readOnly={isView} />
-                ) : (
-                  <Select
-                    showSearch={{
-                      filterOption: (input, option) =>
-                        (option?.label ?? "")
-                          .toLowerCase()
-                          .includes(input.toLowerCase()),
-                    }}
-                    options={policy}
-                    placeholder="Select Policy"
-                  />
-                )}
-              </Form.Item>
+                <Col span={12}>
+                  <Form.Item
+                    label="Policy"
+                    name="policy"
+                    rules={[{ required: true, message: "Policy is Required" }]}
+                    getValueProps={(value) => ({
+                      value: isView
+                        ? policy.find((item) => item.value === value)?.label
+                        : value,
+                    })}
+                  >
+                    {isView ? (
+                      <Input readOnly={isView} />
+                    ) : (
+                      <Select
+                        showSearch={{
+                          filterOption: (input, option) =>
+                            (option?.label ?? "")
+                              .toLowerCase()
+                              .includes(input.toLowerCase()),
+                        }}
+                        options={policy}
+                        placeholder="Select Policy"
+                      />
+                    )}
+                  </Form.Item>
+                </Col>
 
-              <Form.Item
-                label="Currency"
-                name="currency"
-                rules={[{ required: true, message: "Currency is Required" }]}
-                getValueProps={(value) => ({
-                  value: isView
-                    ? currencies.find((item) => item.value === value)?.label
-                    : value,
-                })}
-              >
-                {isView ? (
-                  <Input readOnly={isView} />
-                ) : (
-                  <Select
-                    showSearch={{
-                      filterOption: (input, option) =>
-                        (option?.label ?? "")
-                          .toLowerCase()
-                          .includes(input.toLowerCase()),
-                    }}
-                    options={currencies}
-                    placeholder="Select Currency"
-                  />
-                )}
-              </Form.Item>
+                <Col span={12}>
+                  <Form.Item
+                    label="Currency"
+                    name="currency"
+                    rules={[{ required: true, message: "Currency is Required" }]}
+                    getValueProps={(value) => ({
+                      value: isView
+                        ? currencies.find((item) => item.value === value)?.label
+                        : value,
+                    })}
+                  >
+                    {isView ? (
+                      <Input readOnly={isView} />
+                    ) : (
+                      <Select
+                        showSearch={{
+                          filterOption: (input, option) =>
+                            (option?.label ?? "")
+                              .toLowerCase()
+                              .includes(input.toLowerCase()),
+                        }}
+                        options={currencies}
+                        placeholder="Select Currency"
+                      />
+                    )}
+                  </Form.Item>
+                </Col>
 
-              <Form.Item
-                label="Pricing Type"
-                name="pricing_type"
-                rules={[{ required: true, message: "Pricing Type is Required" }]}
-                getValueProps={(value) => ({
-                  value: isView
-                    ? pricingType.find((item) => item.value === value)?.label
-                    : value,
-                })}
-              >
-                {isView ? (
-                  <Input readOnly={isView} />
-                ) : (
-                  <Select
-                    showSearch={{
-                      filterOption: (input, option) =>
-                        (option?.label ?? "")
-                          .toLowerCase()
-                          .includes(input.toLowerCase()),
-                    }}
-                    options={pricingType}
-                    placeholder="Select Pricing Type"
-                  />
-                )}
-              </Form.Item>
-
-              <Form.Item
-                label="Channels"
-                name="channels"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please select at least one channel",
-                  },
-                ]}
-                className={isView ? "custom-disabled-checkbox" : ""}
-              >
-                <Checkbox.Group options={channelOptions} disabled={isView} />
-              </Form.Item>
+                <Col span={12}>
+                  <Form.Item
+                    label="Pricing Type"
+                    name="pricingType"
+                    rules={[{ required: true, message: "Pricing Type is Required" }]}
+                    getValueProps={(value) => ({
+                      value: isView
+                        ? pricingType.find((item) => item.value === value)?.label
+                        : value,
+                    })}
+                  >
+                    {isView ? (
+                      <Input readOnly={isView} />
+                    ) : (
+                      <Select
+                        showSearch={{
+                          filterOption: (input, option) =>
+                            (option?.label ?? "")
+                              .toLowerCase()
+                              .includes(input.toLowerCase()),
+                        }}
+                        options={pricingType}
+                        placeholder="Select Pricing Type"
+                      />
+                    )}
+                  </Form.Item>
+                </Col>
+              </Row>
 
               <Form.Item
                 label="Status"
@@ -397,9 +432,66 @@ const RatePlanForm = ({
                 )}
               </Form.Item>
 
-              <Form.Item label="Description" name="description">
-                <TextArea readOnly={isView} placeholder="Enter Description" />
+              <Form.Item
+                label="Channels"
+                name="channels"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please select at least one channel",
+                  },
+                ]}
+                className={isView ? "custom-disabled-checkbox" : ""}
+              >
+                <Checkbox.Group options={channelOptions} disabled={isView} />
               </Form.Item>
+
+              <Form.Item label="Description" name="description">
+                <TextArea rows={3} readOnly={isView} placeholder="Enter Description" />
+              </Form.Item>
+
+         
+                 <Form.Item
+                  label="Is Default"
+                  name="isDefault"
+                  rules={[{ required: true, message: "Please select Is Default!" }]}
+                >
+                  <Switch
+                    disabled={isView || isDisableDefault }
+                    checkedChildren="True"
+                    unCheckedChildren="False"
+                  />
+                </Form.Item>
+
+              {roomTypes?.map((roomType) => (
+                isAdd &&
+                <Row key={roomType?.value} align="middle" style={{ marginBottom: 16 }}>
+                  <Col span={1}>
+                    <span className="text-red-500">*</span>
+                  </Col>
+                  <Col span={9}>
+                    <span style={{ fontWeight: 500 }}>{roomType?.label}</span>
+                  </Col>
+
+                  <Col span={1} style={{ textAlign: 'center' }}>:</Col>
+
+                  <Col span={13}>
+                    <Form.Item
+                      name={roomType?.value}
+                      noStyle
+                      rules={[{ required: true, message: "Rate is required!" }]}
+                    >
+                      <InputNumber
+                        min={0}
+                        style={{ width: '100%' }}
+                        placeholder="Enter Rate"
+                        suffix="MMK"
+                      />
+                    </Form.Item>
+                  </Col>
+                </Row>
+              ))}
+
             </Form>
           )}
       </Drawer >

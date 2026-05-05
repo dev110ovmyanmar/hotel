@@ -25,7 +25,7 @@ const RoomInformationList = () => {
         <ReservationListHeader
           reservationId="123212321"
           onAddreservation={handleAddRoom}
-          addButtonText={"Add Room Information"}
+          addButtonText={"Add New Room"}
         />
       </div>
 
