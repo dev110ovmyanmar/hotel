@@ -41,6 +41,7 @@ const NewGuestUploadForm = ({ open, onClose, selectedRow }) => {
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState(null);
   const uploadRefs = useRef({});
+  const profileUploadRef = useRef(null);
 
   const isFileObject = guestPhoto instanceof File;
 
@@ -122,25 +123,30 @@ const NewGuestUploadForm = ({ open, onClose, selectedRow }) => {
   };
 
   useEffect(() => {
-    if (!data) return;
-    setGuestPhoto(data?.guestFiles?.profile || null);
-    setNrcFront(data?.guestFiles?.nrc?.frontFile || null);
-    setNrcBack(data?.guestFiles?.nrc?.backFile || null);
-    setPassport1(data?.guestFiles?.passport?.frontFile || null);
-    setPassport2(data?.guestFiles?.passport?.backFile || null);
+    if (open) {
+      if (data) {
+        setGuestPhoto(data?.guestFiles?.profile || null);
+        setNrcFront(data?.guestFiles?.nrc?.frontFile || null);
+        setNrcBack(data?.guestFiles?.nrc?.backFile || null);
+        setPassport1(data?.guestFiles?.passport?.frontFile || null);
+        setPassport2(data?.guestFiles?.passport?.backFile || null);
 
-    if (data?.guestFiles?.files) {
-      const formatted = data.guestFiles.files.map((f) => ({
-        id: f.uuid,
-        uuid: f.uuid,
-        name: f.name,
-        file: f.file,
-      }));
+        if (data?.guestFiles?.files) {
+          const formatted = data.guestFiles.files.map((f) => ({
+            id: f.uuid,
+            uuid: f.uuid,
+            name: f.name,
+            file: f.file,
+          }));
 
-      setOtherDocs(formatted);
-      setOriginalDocs(formatted);
+          setOtherDocs(formatted);
+          setOriginalDocs(formatted);
+        }
+      }
+    } else {
+      form.resetFields();
     }
-  }, [data]);
+  }, [data, open, form]);
 
   const onFinish = () => {
     const filesPayload = otherDocs
@@ -221,6 +227,22 @@ const NewGuestUploadForm = ({ open, onClose, selectedRow }) => {
     setPreviewOpen(true);
   };
 
+  const handleEditProfile = (e) => {
+    if (e && e.stopPropagation) e.stopPropagation();
+    const uploadInstance = profileUploadRef.current;
+    if (uploadInstance) {
+      const input = uploadInstance.querySelector('input[type="file"]');
+      if (input) {
+        input.click();
+      }
+    }
+  };
+
+  const handleClose = () => {
+    form.resetFields();
+    onClose(false);
+  };
+
   return (
     <Drawer
       title={`${selectedRow?.name} `}
@@ -228,6 +250,7 @@ const NewGuestUploadForm = ({ open, onClose, selectedRow }) => {
       size={550}
       onClose={onClose}
       open={open}
+      destroyOnClose
       extra={
         <FormButtons
           type="primary"
@@ -243,56 +266,65 @@ const NewGuestUploadForm = ({ open, onClose, selectedRow }) => {
           Profile
         </Title>
 
-        <Upload
-          className="guest-upload"
-          showUploadList={false}
-          beforeUpload={(file) => {
-            setGuestPhoto(file);
-            return false;
-          }}
-        >
-          <div
-            style={{
-              border: "1px solid #d9d9d9",
-              width: 130,
-              height: 130,
-              margin: "auto",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              cursor: "pointer",
-              overflow: "hidden",
-              position: "relative",
-              background: "#f5f5f5",
-              borderRadius: 5,
+        <div ref={profileUploadRef}>
+          {" "}
+          <Upload
+            className="guest-upload"
+            showUploadList={false}
+            beforeUpload={(file) => {
+              setGuestPhoto(file);
+              return false;
             }}
           >
-            {guestPhoto ? (
-              <>
-                <img
-                  src={
-                    isFileObject ? URL.createObjectURL(guestPhoto) : guestPhoto
-                  }
-                  alt="guest"
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                  }}
-                />
+            <div
+              style={{
+                border: "1px solid #d9d9d9",
+                width: 130,
+                height: 130,
+                margin: "auto",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                cursor: "pointer",
+                overflow: "hidden",
+                position: "relative",
+                background: "#f5f5f5",
+                borderRadius: 5,
+              }}
+            >
+              {guestPhoto ? (
+                <>
+                  <img
+                    src={
+                      isFileObject
+                        ? URL.createObjectURL(guestPhoto)
+                        : guestPhoto
+                    }
+                    alt="guest"
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                    }}
+                  />
 
-                <GuestPreview onPreview={handlePreview} size={32} />
-              </>
-            ) : (
-              <>
-                <PlusOutlined style={{ fontSize: 24, color: "#999" }} />
-                <div style={{ fontSize: 12, color: "#999", marginTop: 4 }}>
-                  Upload
-                </div>
-              </>
-            )}
-          </div>
-        </Upload>
+                  <GuestPreview
+                    onPreview={handlePreview}
+                    onEdit={handleEditProfile}
+                    size={32}
+                  />
+                </>
+              ) : (
+                <>
+                  <PlusOutlined style={{ fontSize: 24, color: "#999" }} />
+                  <div style={{ fontSize: 12, color: "#999", marginTop: 4 }}>
+                    Upload
+                  </div>
+                </>
+              )}
+            </div>
+          </Upload>
+        </div>
 
         {guestPhoto && (
           <Image

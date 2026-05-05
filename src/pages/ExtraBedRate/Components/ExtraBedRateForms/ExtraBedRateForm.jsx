@@ -41,9 +41,15 @@ const ExtraBedRateForm = ({
   const isEdit = mode === "edit";
   const isAdd = mode === "add";
 
+  const { RangePicker } = DatePicker;
+
   const { hasPermission } = usePermission();
   const canEdit = hasPermission(PERMISSIONS.EXTRA_BED_RATE_EDIT);
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
+
+  const disabledDate = current => {
+    return current && current < dayjs().startOf('day');
+  };
 
   const ageList = initData?.statuses?.age_type?.map((ageType) => ({
     value: ageType.uuid,
@@ -91,8 +97,12 @@ const ExtraBedRateForm = ({
         roomTypeUuid: data?.roomType?.uuid,
         ratePlanUuid: data?.ratePlan?.uuid,
         ageType: data?.ageType?.uuid,
-        startDate: data?.startDate ? dayjs(data.startDate) : null,
-        endDate: data?.endDate ? dayjs(data.endDate) : null,
+        // startDate: data?.startDate ? dayjs(data.startDate) : null,
+        // endDate: data?.endDate ? dayjs(data.endDate) : null,
+        dateRange: [
+          data.startDate ? dayjs(data.startDate) : null,
+          data.endDate ? dayjs(data.endDate) : null
+        ],
       });
 
       setSelectedData(data);
@@ -100,14 +110,18 @@ const ExtraBedRateForm = ({
   }, [data]);
 
   const onFinish = (values) => {
+    const [start, end] = values.dateRange || [];
+
     if (isAdd) {
       const createValues = {
         ...values,
         ageType: { uuid: values.ageType },
         roomType: { uuid: values.roomTypeUuid },
         ratePlan: { uuid: values.ratePlanUuid },
-        startDate: getFormattedDate(values.startDate, false),
-        endDate: getFormattedDate(values.endDate, false),
+        // startDate: getFormattedDate(values.startDate, false),
+        // endDate: getFormattedDate(values.endDate, false),
+        startDate: start ? getFormattedDate(start, false) : null,
+        endDate: end ? getFormattedDate(end, false) : null,
       };
 
       createExtraBedRates.mutate(createValues, {
@@ -125,8 +139,10 @@ const ExtraBedRateForm = ({
         ageType: { uuid: values?.ageType },
         roomType: { uuid: values.roomTypeUuid },
         ratePlan: { uuid: values.ratePlanUuid },
-        startDate: getFormattedDate(values.startDate, false),
-        endDate: getFormattedDate(values.endDate, false),
+        // startDate: getFormattedDate(values.startDate, false),
+        // endDate: getFormattedDate(values.endDate, false),
+        startDate: start ? getFormattedDate(start, false) : null,
+        endDate: end ? getFormattedDate(end, false) : null,
         uuid: data?.uuid,
       };
 
@@ -268,46 +284,24 @@ const ExtraBedRateForm = ({
             />
           </Form.Item>
 
-          <Row gutter={16}>
-            <Col span={12}>
-              <Form.Item
-                label="Start Date"
-                name="startDate"
-                rules={[
-                  { required: true, message: "Please select Start Date" },
-                ]}
-              >
-                <DatePicker
-                  className="w-full"
-                  disabled={isView}
-                  disabledDate={(current) => {
-                    return current && current < dayjs().startOf("day");
-                  }}
-                />
-              </Form.Item>
-            </Col>
-
-            <Col span={12}>
-              <Form.Item
-                label="End date"
-                name="endDate"
-                rules={[{ required: true, message: "Please select End Date" }]}
-              >
-                <DatePicker
-                  className="w-full"
-                  disabled={isView}
-                  disabledDate={(current) => {
-                    return (
-                      current && current < dayjs().add(1, "day").startOf("day")
-                    );
-                  }}
-                />
-              </Form.Item>
-            </Col>
-          </Row>
+          <Form.Item
+            name="dateRange"
+            label="Date Range"
+            rules={[{ required: true, message: "Please select Date Range" }]}
+            labelCol={{ span: 24 }}
+            wrapperCol={{ span: 24 }}
+          >
+            <RangePicker
+              disabledDate={disabledDate}
+              disabled={isView}
+              suffixIcon={isView ? null : undefined}
+              className="w-full flex"
+              style={{ width: '100%' }}
+            />
+          </Form.Item>
         </Form>
       </Drawer>
-    </div>
+    </div >
   );
 };
 

@@ -65,6 +65,12 @@ const RoomInventoryForm = ({
     }
   }, [data]);
 
+  const handleClose = () => {
+    setDrawerOpen(false);
+    setSelectedData(null);
+    form.resetFields();
+  };
+
   const onFinish = (values) => {
     if (isEdit) {
       const editValues = {
@@ -75,6 +81,7 @@ const RoomInventoryForm = ({
 
       updateRoomInventory.mutate(editValues, {
         onSuccess: () => {
+          handleClose();
           setDrawerOpen(false);
           Toast.success("Room Inventory Updated Successfully!");
         },
@@ -93,7 +100,7 @@ const RoomInventoryForm = ({
     <div>
       <Drawer
         open={drawerOpen}
-        onClose={() => setDrawerOpen(false)}
+        onClose={handleClose}
         size={550}
         title={
           <div className="flex justify-between items-center">

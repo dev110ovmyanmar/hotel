@@ -17,7 +17,7 @@ const FacilityPackageTable = ({
   total,
   changePage,
   changePerPage,
-  loading
+  loading,
 }) => {
   const { hasPermission } = usePermission();
 
@@ -35,13 +35,13 @@ const FacilityPackageTable = ({
       title: "Name",
       dataIndex: "name",
       key: "name",
-      align: "left"
+      align: "left",
     },
     {
       title: "Facility",
       dataIndex: ["facility", "name"],
       key: "facility",
-      align: "left"
+      align: "left",
     },
     {
       title: "Price Type",
@@ -52,7 +52,7 @@ const FacilityPackageTable = ({
       title: "Base Price (MMK)",
       dataIndex: "basePrice",
       key: "basePrice",
-      render: (text) => <PriceTag value={text} />
+      render: (text) => <PriceTag value={text} />,
     },
     {
       title: "Included Hours",
@@ -65,16 +65,18 @@ const FacilityPackageTable = ({
       key: "includedPax",
     },
     {
-      title: "Extra Hour Price",
+      title: "Extra Hour Price (MMK)",
       dataIndex: "extraHourPrice",
       key: "extraHourPrice",
-      render: (text) => <PriceTag value={text} />
+      align: "end",
+      render: (text) => <PriceTag value={text} />,
     },
     {
-      title: "Extra Pax Price",
+      title: "Extra Pax Price (MMK)",
       dataIndex: "extraPaxPrice",
       key: "extraPaxPrice",
-      render: (text) => <PriceTag value={text} />
+      align: "end",
+      render: (text) => <PriceTag value={text} />,
     },
     {
       title: "Action",
