@@ -34,6 +34,11 @@ const RoomInventoryCreateForm = ({
 }) => {
   const [form] = Form.useForm();
 
+  const { RangePicker } = DatePicker;
+  const disabledDate = current => {
+    return current && current < dayjs().startOf('day');
+  };
+
   const isView = mode === "view";
   const isEdit = mode === "edit";
   const isAdd = mode === "add";
@@ -44,7 +49,7 @@ const RoomInventoryCreateForm = ({
   });
 
   const roomType = roomMetaData?.room_types?.map((type) => ({
-    value: type.uuid,
+    value: type.id,
     label: type.name,
   }));
 
@@ -72,6 +77,10 @@ const RoomInventoryCreateForm = ({
     if (!isAdd && data) {
       form.setFieldsValue({
         ...data,
+        dateRange: [
+          data.startDate ? dayjs(data.startDate) : null,
+          data.endDate ? dayjs(data.endDate) : null
+        ],
         roomType: data?.roomType?.filter((r) => r.selected).map((r) => r.id),
       });
 
@@ -79,14 +88,14 @@ const RoomInventoryCreateForm = ({
     }
   }, [data]);
 
-  const onFinish = (values) => {
-    if (isAdd) {
-      const createValues = {
-        ...values,
-        roomType: { ids: values.roomTypeId },
-        startDate: getFormattedDate(values.startDate, false),
-        endDate: getFormattedDate(values.endDate, false),
-      };
+    const onFinish = (values) => {
+      const [start, end] = values.dateRange || [];
+      if (isAdd) {
+        const createValues = {
+          startDate: start ? getFormattedDate(start, false) : null,
+          endDate: end ? getFormattedDate(end, false) : null,
+          roomType: { ids: values.roomTypeId ?? [] },
+        };
 
       createAvailabilityCalendars.mutate(createValues, {
         onSuccess: () => {
@@ -136,35 +145,50 @@ const RoomInventoryCreateForm = ({
           style={{ width: "100%" }}
           onFinish={onFinish}
         >
-          <Form.Item
-            label="Room Type"
-            name="roomTypeId"
-            rules={[{ required: true }]}
-            getValueProps={(value) => ({
-              value: isView
-                ? roomType.find((item) => item.value === value)?.label
-                : value,
-            })}
-          >
-            {isView ? (
-              <Input readOnly={isView} />
-            ) : (
-              <Select
-                mode="multiple"
-                showSearch={{
-                  filterOption: (input, option) =>
-                    (option?.label ?? "")
-                      .toLowerCase()
-                      .includes(input.toLowerCase()),
-                }}
-                options={roomType}
-                placeholder="Select Room Type"
-                maxTagCount="responsive"
-              />
-            )}
-          </Form.Item>
-
           <Row gutter={16}>
+            <Col span={12}>
+              <Form.Item
+                label="Room Type"
+                name="roomTypeId"
+                rules={[{ required: true }]}
+                getValueProps={(value) => ({
+                  value: isView
+                    ? roomType.find((item) => item.value === value)?.label
+                    : value,
+                })}
+              >
+                {isView ? (
+                  <Input readOnly={isView} />
+                ) : (
+                  <Select
+                    mode="multiple"
+                    showSearch={{
+                      filterOption: (input, option) =>
+                        (option?.label ?? "")
+                          .toLowerCase()
+                          .includes(input.toLowerCase()),
+                    }}
+                    options={roomType}
+                    placeholder="Select Room Type"
+                    maxTagCount="responsive"
+                  />
+                )}
+              </Form.Item>
+            </Col>
+
+
+
+            <Col span={12}>
+              <Form.Item
+                name="dateRange"
+                label="Date Range"
+                rules={[{ required: true, message: "Please select Date Range" }]}>
+                <RangePicker disabledDate={disabledDate} disabled={isView} suffixIcon={isView ? null : undefined} />
+              </Form.Item>
+            </Col>
+          </Row>
+
+          {/* <Row gutter={16}>
             <Col span={12}>
               <Form.Item
                 label="Start Date"
@@ -200,7 +224,7 @@ const RoomInventoryCreateForm = ({
                 />
               </Form.Item>
             </Col>
-          </Row>
+          </Row> */}
         </Form>
       </Drawer>
     </div>
