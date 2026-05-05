@@ -3,12 +3,12 @@ import { useParams, useLocation } from "react-router-dom";
 import { Form, Input, Button, Select, Drawer, Row, Col, InputNumber, Checkbox } from "antd";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
 import useApiQuery from "../../../../hooks/useApiQuery";
+import { queryClient } from "../../../../app/queryClient";
 import FormButton from "../../../../component/FormButtons/FormButtons";
 import Toast from './../../../../component/Toast/Toast';
 import usePermission from './../../../../hooks/usePermission';
 import { upsertRoomRate, roomRateDetails } from "../../../../api/roomRateApi";
 import { ratePlanMeta } from "../../../../api/ratePlanApi";
-import Status from "../../../../component/Status/Status";
 
 const RoomRateForm = ({
   mode,
@@ -38,12 +38,21 @@ const RoomRateForm = ({
   const { data: ratePlanMetas } = useApiQuery({
     fetchQueryName: "rate-plan-meta",
     fetchQueryFunction: ratePlanMeta
-  })
+  });
+
+  const initData = queryClient.getQueryData(["initData", "authenticated"]);
 
   const roomTypeOptions = ratePlanMetas?.room_types?.map(item => ({
     label: item.name,
     value: item.uuid
-  }))
+  }));
+
+  const statuses = initData?.statuses?.status
+    ?.filter((item) => item.code !== "blocked")
+    ?.map((status) => ({
+      value: status.uuid,
+      label: status.name,
+    }));
 
   const days = [
     { key: 'mon', label: 'Monday' },
@@ -80,6 +89,7 @@ const RoomRateForm = ({
         },
         price: roomRateDetailData?.price,
         durationHours: roomRateDetailData?.durationHours,
+        status: roomRateDetailData?.status?.uuid,
         ...roomRateDetailData?.weekdays,
         ...Object.keys(roomRateDetailData?.weekdays || {}).reduce((acc, day) => {
           acc[`enable_${day}`] = roomRateDetailData?.weekdays[day] !== null;
@@ -101,6 +111,7 @@ const RoomRateForm = ({
       ...(isEdit && { uuid: roomRateDetailData?.uuid }),
       ratePlan: { uuid: activeRatePlanUuid },
       roomType: values?.roomType,
+      status: { uuid: values?.status },
       weekdays: {
         mon: values?.mon ? values?.mon : null,
         tue: values?.tue ? values?.tue : null,
@@ -235,7 +246,36 @@ const RoomRateForm = ({
             </Col>
           </Row>
 
-          <Status isView={isView}/>
+          {/* <Status isView={isView}/> */}
+          <Row gutter={16}>
+            <Col span={24}>
+              <Form.Item
+                label="Status"
+                name="status"
+                rules={[{ required: true, message: "Status is required" }]}
+                getValueProps={(value) => ({
+                  value: isView
+                    ? statuses.find((item) => item.value === value)?.label
+                    : value,
+                })}
+              >
+                {isView ? (
+                  <Input readOnly={isView} />
+                ) : (
+                  <Select
+                    showSearch={{
+                      filterOption: (input, option) =>
+                        (option?.label ?? "")
+                          .toLowerCase()
+                          .includes(input.toLowerCase()),
+                    }}
+                    options={statuses}
+                    placeholder="Select Status"
+                  />
+                )}
+              </Form.Item>
+            </Col>
+          </Row>
 
           <Row gutter={16}>
             <Col span={12}>
