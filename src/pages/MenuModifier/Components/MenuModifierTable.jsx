@@ -41,16 +41,19 @@ const MenuModifierTable = ({
       title: "Purchasing Price (MMK)",
       dataIndex: "unitCost",
       key: "unitCost",
+      align:"end",
       render: (text) => <PriceTag value={text} />
     },
     {
       title: "Selling Price (MMK)",
       dataIndex: "unitPrice",
       key: "unitPrice",
+      align:"end",
       render: (text) => <PriceTag value={text} />
     },
     {
       title: "Action",
+      align:"center",
       render: (_, record) => {
         const smallStyle = { fontSize: "12px" };
 

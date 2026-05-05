@@ -86,7 +86,7 @@ export default function SignIn() {
 
   return (
     <>
-      <NetworkErrorPage/>
+      <NetworkErrorPage />
       <div
         className="min-h-screen flex items-center justify-center bg-cover bg-center"
         style={{ backgroundImage: `url(${signIn})` }}
@@ -117,7 +117,7 @@ export default function SignIn() {
               <Input
                 size="large"
                 placeholder="example123@gmail.com"
-                className="!bg-white/10 !text-amber-50 !rounded-md placeholder:!text-gray-300"
+                className="!bg-white/10 !text-amber-50 !rounded-md placeholder:!text-gray-400"
               />
             </Form.Item>
 
@@ -128,8 +128,8 @@ export default function SignIn() {
             >
               <Input.Password
                 size="large"
-                placeholder="Password"
-                className="!bg-white/10 !text-amber-50 !rounded-md"
+                placeholder="password"
+                className="!bg-white/10 !text-amber-50 !rounded-md [&_input]:placeholder:!text-gray-400"
               />
             </Form.Item>
 

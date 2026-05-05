@@ -19,6 +19,7 @@ const FloorForm = ({
   setDrawerOpen,
   page,
   setPage,
+  setSelectedData,
 }) => {
   const [form] = Form.useForm();
 
@@ -63,12 +64,19 @@ const FloorForm = ({
     }
   }, [isAdd]);
 
+  const handleClose = () => {
+    setDrawerOpen(false);
+    setSelectedData(null);
+    form.resetFields();
+  };
+
   const onFinish = (values) => {
     if (isAdd) {
       createFloors.mutate(values, {
         onSuccess: () => {
           setPage(1);
           setDrawerOpen(false);
+          handleClose();
           Toast.success("Floor Created Successfully!");
           form.resetFields();
         },
@@ -83,6 +91,7 @@ const FloorForm = ({
 
       editFloors.mutate(editValues, {
         onSuccess: () => {
+          handleClose();
           setDrawerOpen(false);
           Toast.success("Floor Updated Successfully!");
         },
@@ -96,7 +105,7 @@ const FloorForm = ({
         destroyOnClose
         size={500}
         open={drawerOpen}
-        onClose={() => setDrawerOpen(false)}
+        onClose={handleClose}
         title={
           <div className="flex justify-between items-center">
             <span>
@@ -106,8 +115,8 @@ const FloorForm = ({
                   ? "Edit Floor"
                   : "Add Floor"}
             </span>
-            {isView ?
-              (canEdit && (
+            {isView ? (
+              canEdit && (
                 <Button
                   type="primary"
                   onClick={() => {
@@ -116,53 +125,55 @@ const FloorForm = ({
                 >
                   Edit
                 </Button>
-              )) : (
-                <FormButtons
-                  onClick={() => form.submit()}
-                  isPending={
-                    isAdd ? createFloors.isPending : editFloors.isPending
-                  }
-                  mode={mode}
-                />
-              )}
+              )
+            ) : (
+              <FormButtons
+                onClick={() => form.submit()}
+                isPending={
+                  isAdd ? createFloors.isPending : editFloors.isPending
+                }
+                mode={mode}
+              />
+            )}
           </div>
         }
       >
-        {
-          isLoading ? (
-            <div className="flex items-center justify-center h-full min-h-[300px]">
-              <Loader />
-            </div>
-          ) : (
-            <Form
-              form={form}
-              layout="vertical"
-              validateTrigger="onSubmit"
-              onFinish={onFinish}
+        {isLoading ? (
+          <div className="flex items-center justify-center h-full min-h-[300px]">
+            <Loader />
+          </div>
+        ) : (
+          <Form
+            form={form}
+            layout="vertical"
+            validateTrigger="onSubmit"
+            onFinish={onFinish}
+          >
+            <Form.Item
+              label="Name"
+              name="name"
+              rules={[{ required: true, message: "Please enter floor name" }]}
             >
-              <Form.Item
-                label="Name"
-                name="name"
-                rules={[{ required: true, message: "Please enter floor name" }]}
-              >
-                <Input readOnly={isView} placeholder="Enter Floor Name" />
-              </Form.Item>
-              <Form.Item
-                label="Floor / Zone"
-                name="floorNo"
-                rules={[{ required: true, message: "Please enter floor no" }]}
-              >
-                <Input readOnly={isView} placeholder="Enter Floor Number" />
-              </Form.Item>
+              <Input readOnly={isView} placeholder="Enter Floor Name" />
+            </Form.Item>
+            <Form.Item
+              label="Floor / Zone"
+              name="floorNo"
+              rules={[{ required: true, message: "Please enter floor no" }]}
+            >
+              <Input readOnly={isView} placeholder="Enter Floor Number" />
+            </Form.Item>
 
-              <Form.Item label="Description" name="description">
-                <TextArea readOnly={isView} placeholder="Enter Floor Description" />
-              </Form.Item>
-            </Form>
-          )
-        }
-      </Drawer >
-    </div >
+            <Form.Item label="Description" name="description">
+              <TextArea
+                readOnly={isView}
+                placeholder="Enter Floor Description"
+              />
+            </Form.Item>
+          </Form>
+        )}
+      </Drawer>
+    </div>
   );
 };
 

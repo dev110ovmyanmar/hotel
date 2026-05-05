@@ -7,7 +7,7 @@ import {
   Select,
   Row,
   Col,
-  InputNumber
+  InputNumber,
 } from "antd";
 import Toast from "../../../../component/Toast/Toast";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
@@ -15,11 +15,11 @@ import useApiQuery from "../../../../hooks/useApiQuery";
 import {
   upsertPartner,
   partnerDetails,
-  fetchCompanyUpload
+  fetchCompanyUpload,
 } from "../../../../api/partnerApi";
 import FormButtons from "../../../../component/FormButtons/FormButtons";
-import { queryClient } from './../../../../app/queryClient';
-import Status from './../../../../component/Status/Status';
+import { queryClient } from "./../../../../app/queryClient";
+import Status from "./../../../../component/Status/Status";
 import ImageUpload from "../../../../component/ImageUpload/ImageUpload";
 import { deleteImageUpload } from "../../../../api/deleteImageApi";
 
@@ -43,7 +43,11 @@ const CompanyForm = ({
   const isEdit = mode === "edit";
   const isAdd = mode === "add";
 
-  const initData = queryClient.getQueryData(["initData", "authenticated"])?.statuses;
+  const initData = queryClient.getQueryData([
+    "initData",
+    "authenticated",
+  ])?.statuses;
+  const initDataStatus = initData?.status;
   const chargeType = initData?.charge_type;
 
   const chargeTypeValue = Form.useWatch(["chargeType", "uuid"], form);
@@ -51,8 +55,7 @@ const CompanyForm = ({
   const upsertPartners = useApiMutation({
     mutationFn: upsertPartner,
     invalidateKeys: [["companys"]],
-    shouldInvalidate: isEdit ? true : page === 1
-
+    shouldInvalidate: isEdit ? true : page === 1,
   });
 
   const { data, isPending, error } = useApiQuery({
@@ -60,40 +63,52 @@ const CompanyForm = ({
     fetchQueryFunction: partnerDetails,
     params: {
       uuid: selectedData?.uuid,
-      partnerType: "Company"
+      partnerType: "Company",
     },
     options: {
       enabled: !!selectedData?.uuid,
     },
-
   });
-
-  useEffect(() => {
-    if (!isAdd && data) {
-      form.setFieldsValue({
-        ...data
-      });
-    }
-  }, [data, isEdit]);
 
   useEffect(() => {
     if (isAdd) {
       form.resetFields();
     }
-  }, [isAdd]);
+
+    if (isAdd && initDataStatus) {
+      form.setFieldsValue({
+        status: {
+          uuid: initDataStatus?.find((item) => item.code === "active")?.uuid,
+        },
+      });
+    }
+
+    if (isEdit && data) {
+      form.setFieldsValue({
+        ...data,
+      });
+    }
+  }, [data, isEdit]);
+
+  const handleClose = () => {
+    setDrawerOpen(false);
+    setSelectedData(null);
+    form.resetFields();
+  };
 
   const onFinish = (values) => {
     const modifiedValues = {
       ...values,
-      partnerType: "Company"
-    }
+      partnerType: "Company",
+    };
     if (isAdd) {
       upsertPartners.mutate(modifiedValues, {
         onSuccess: () => {
+          form.resetFields();
           setPage(1);
           setDrawerOpen(false);
+          handleClose();
           Toast.success("Company Created Successfully!");
-          form.resetFields();
         },
       });
     }
@@ -108,6 +123,7 @@ const CompanyForm = ({
       upsertPartners.mutate(editValues, {
         onSuccess: () => {
           setDrawerOpen(false);
+          handleClose();
           Toast.success("Company Updated Successfully!");
         },
       });
@@ -128,7 +144,7 @@ const CompanyForm = ({
     <div className="flex justify-center">
       <Drawer
         open={drawerOpen}
-        onClose={() => setDrawerOpen(false)}
+        onClose={handleClose}
         size={550}
         title={
           <div className="flex justify-between items-center">
@@ -163,9 +179,7 @@ const CompanyForm = ({
           layout="vertical"
           validateTrigger="onSubmit"
           onFinish={onFinish}
-
         >
-
           <Form.Item
             label="Name"
             name="name"
@@ -177,7 +191,9 @@ const CompanyForm = ({
           <Form.Item
             label="Contact Person Name"
             name="contactPerson"
-            rules={[{ required: true, message: "Contact Person Name is Required" }]}
+            rules={[
+              { required: true, message: "Contact Person Name is Required" },
+            ]}
           >
             <Input readOnly={isView} placeholder="Enter Contact Person Name" />
           </Form.Item>
@@ -195,7 +211,15 @@ const CompanyForm = ({
             name="phone"
             rules={[{ required: true, message: "Phone is Required" }]}
           >
-            <Input readOnly={isView} placeholder="Enter Phone Number" />
+            <Input
+              readOnly={isView}
+              placeholder="Enter Phone Number"
+              onKeyPress={(e) => {
+                if (!/[0-9]/.test(e.key)) {
+                  e.preventDefault();
+                }
+              }}
+            />
           </Form.Item>
 
           <Row gutter={16}>
@@ -210,22 +234,17 @@ const CompanyForm = ({
                     : value,
                 })}
               >
-                {
-                  isView ?
-                    <Input readOnly={isView} /> :
-                    <Select
-                      options={
-                        chargeType?.map(item => (
-                          {
-                            label: item.name,
-                            value: item.uuid
-                          }
-                        ))
-                      }
-                      placeholder="Select Charge Type"
-
-                    ></Select>
-                }
+                {isView ? (
+                  <Input readOnly={isView} />
+                ) : (
+                  <Select
+                    options={chargeType?.map((item) => ({
+                      label: item.name,
+                      value: item.uuid,
+                    }))}
+                    placeholder="Select Charge Type"
+                  ></Select>
+                )}
               </Form.Item>
             </Col>
 
@@ -237,10 +256,9 @@ const CompanyForm = ({
                   { required: true, message: "Charge Value is Required" },
                   {
                     validator: (_, value) => {
-                      const selectedType =
-                        chargeType?.find(
-                          (item) => item.uuid === chargeTypeValue,
-                        );
+                      const selectedType = chargeType?.find(
+                        (item) => item.uuid === chargeTypeValue,
+                      );
 
                       if (selectedType?.code === "percentage") {
                         const numValue = Number(value);
@@ -265,7 +283,8 @@ const CompanyForm = ({
                     return selected?.code === "percentage" ? "%" : "MMK";
                   })()}
                   readOnly={isView}
-                  placeholder="Enter Charge Value" />
+                  placeholder="Enter Charge Value"
+                />
               </Form.Item>
             </Col>
           </Row>
@@ -278,14 +297,11 @@ const CompanyForm = ({
             <TextArea readOnly={isView} placeholder="Enter Address" />
           </Form.Item>
 
-          <Form.Item
-            label="Remark"
-            name="remark"
-          >
+          <Form.Item label="Remark" name="remark">
             <TextArea readOnly={isView} placeholder="Enter Remark" />
           </Form.Item>
 
-          <Status isView={isView} />
+          <Status isView={isView} statusValue={initDataStatus} />
         </Form>
       </Drawer>
 

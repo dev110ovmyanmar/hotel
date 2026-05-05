@@ -39,7 +39,7 @@ const GuestProfile = () => {
 
   const [activeTab, setActiveTab] = useState("1");
   const [drawerOpen, setDrawerOpen] = useState(false);
-  // const [selectedData, setSelectedData] = useState(guestDetailDatas);
+  const [selectedData, setSelectedData] = useState(guestDetailDatas);
   const [mode, setMode] = useState("edit");
 
 
@@ -47,8 +47,8 @@ const GuestProfile = () => {
   const tabItems = [
     { key: "1", label: "Personal Information" },
     { key: "2", label: "Stay History" },
-    { key: "3", label: "Preferences & Loyalty" },
-    { key: "4", label: "Notes" },
+    // { key: "3", label: "Preferences & Loyalty" },
+    { key: "3", label: "Notes" },
   ];
 
   // Logic to switch components based on state
@@ -56,8 +56,8 @@ const GuestProfile = () => {
     switch (activeTab) {
       case "1": return <PersonalInformation personalInfo={guestDetailDatas} />;
       case "2": return <StayHistory />;
-      case "3": return <PreferencesLoyalty />;
-      case "4": return <GuestNotes />;
+      // case "3": return <PreferencesLoyalty />;
+      case "3": return <GuestNotes />;
       default: return <PersonalInformation />;
     }
   };

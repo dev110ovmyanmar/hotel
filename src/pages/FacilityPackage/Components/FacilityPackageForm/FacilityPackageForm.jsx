@@ -1,5 +1,15 @@
 import React, { useEffect } from "react";
-import { Form, Input, Button, Select, Image, Drawer, AutoComplete, InputNumber, TimePicker } from "antd";
+import {
+  Form,
+  Input,
+  Button,
+  Select,
+  Image,
+  Drawer,
+  AutoComplete,
+  InputNumber,
+  TimePicker,
+} from "antd";
 import Toast from "../../../../component/Toast/Toast";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
 import useApiQuery from "../../../../hooks/useApiQuery";
@@ -95,6 +105,12 @@ const FacilityPackageForm = ({
     }
   }, [data]);
 
+  const handleClose = () => {
+    setDrawerOpen(false);
+    setSelectedData(null);
+    form.resetFields();
+  };
+
   const onFinish = (values) => {
     if (isAdd) {
       const createValues = {
@@ -106,6 +122,7 @@ const FacilityPackageForm = ({
       createFacility.mutate(createValues, {
         onSuccess: () => {
           form.resetFields();
+          handleClose();
           setDrawerOpen(false);
           setPage(1);
           Toast.success("Facility Package Created Successfully!");
@@ -125,6 +142,7 @@ const FacilityPackageForm = ({
 
       editFacility.mutate(editValues, {
         onSuccess: () => {
+          handleClose();
           setDrawerOpen(false);
           Toast.success("Facility Package Updated Successfully!");
         },
@@ -136,7 +154,7 @@ const FacilityPackageForm = ({
     <div>
       <Drawer
         open={drawerOpen}
-        onClose={() => setDrawerOpen(false)}
+        onClose={handleClose}
         size={550}
         title={
           <div className="flex justify-between items-center">
@@ -168,100 +186,101 @@ const FacilityPackageForm = ({
           </div>
         }
       >
-        {
-          isLoading ? (
-            <div className="flex items-center justify-center h-full min-h-[300px]">
-              <Loader />
-            </div>
-          ) :
-            (
-              <Form
-                form={form}
-                layout="vertical"
-                style={{ width: "100%" }}
-                onFinish={onFinish}
-              >
-                <Form.Item
-                  label="Name"
-                  name="name"
-                  rules={[{ required: true, message: "Name is Required" }]}
-                >
-                  <Input readOnly={isView} placeholder="Enter Facility Package Name" />
-                </Form.Item>
+        {isLoading ? (
+          <div className="flex items-center justify-center h-full min-h-[300px]">
+            <Loader />
+          </div>
+        ) : (
+          <Form
+            form={form}
+            layout="vertical"
+            style={{ width: "100%" }}
+            onFinish={onFinish}
+          >
+            <Form.Item
+              label="Name"
+              name="name"
+              rules={[{ required: true, message: "Name is Required" }]}
+            >
+              <Input
+                readOnly={isView}
+                placeholder="Enter Facility Package Name"
+              />
+            </Form.Item>
 
-                <Form.Item
-                  label="Facility Name"
-                  name="facility"
-                  rules={[{ required: true, message: "Facility Name is Required" }]}
-                  getValueProps={(value) => ({
-                    value: isView
-                      ? facilityList.find((item) => item.value === value)?.label
-                      : value,
-                  })}
-                >
-                  {isView ? (
-                    <Input readOnly={isView} />
-                  ) : (
-                    <Select
-                      showSearch={{
-                        filterOption: (input, option) =>
-                          (option?.label ?? "")
-                            .toLowerCase()
-                            .includes(input.toLowerCase()),
-                      }}
-                      options={facilityList}
-                      placeholder="Select Facility"
-                    />
-                  )}
-                </Form.Item>
+            <Form.Item
+              label="Facility Name"
+              name="facility"
+              rules={[{ required: true, message: "Facility Name is Required" }]}
+              getValueProps={(value) => ({
+                value: isView
+                  ? facilityList.find((item) => item.value === value)?.label
+                  : value,
+              })}
+            >
+              {isView ? (
+                <Input readOnly={isView} />
+              ) : (
+                <Select
+                  showSearch={{
+                    filterOption: (input, option) =>
+                      (option?.label ?? "")
+                        .toLowerCase()
+                        .includes(input.toLowerCase()),
+                  }}
+                  options={facilityList}
+                  placeholder="Select Facility"
+                />
+              )}
+            </Form.Item>
 
-                <Form.Item
-                  label="Pricing Type"
-                  name="pricingType"
-                  rules={[{ required: true, message: "Pricing Type is Required" }]}
-                  getValueProps={(value) => ({
-                    value: isView
-                      ? pricingTypesList.find((item) => item.value === value)?.label
-                      : value,
-                  })}
-                >
-                  {isView ? (
-                    <Input readOnly={isView} />
-                  ) : (
-                    <Select
-                      showSearch={{
-                        filterOption: (input, option) =>
-                          (option?.label ?? "")
-                            .toLowerCase()
-                            .includes(input.toLowerCase()),
-                      }}
-                      options={pricingTypesList}
-                      placeholder="Select Pricing Type"
-                    />
-                  )}
-                </Form.Item>
+            <Form.Item
+              label="Pricing Type"
+              name="pricingType"
+              rules={[{ required: true, message: "Pricing Type is Required" }]}
+              getValueProps={(value) => ({
+                value: isView
+                  ? pricingTypesList.find((item) => item.value === value)?.label
+                  : value,
+              })}
+            >
+              {isView ? (
+                <Input readOnly={isView} />
+              ) : (
+                <Select
+                  showSearch={{
+                    filterOption: (input, option) =>
+                      (option?.label ?? "")
+                        .toLowerCase()
+                        .includes(input.toLowerCase()),
+                  }}
+                  options={pricingTypesList}
+                  placeholder="Select Pricing Type"
+                />
+              )}
+            </Form.Item>
 
-                <Form.Item
-                  label="Base Price"
-                  name="basePrice"
-                  rules={[{ required: true, message: "Base Price is Required" }]}
-                >
-                  {/* <Space.Compact>
+            <Form.Item
+              label="Base Price"
+              name="basePrice"
+              rules={[{ required: true, message: "Base Price is Required" }]}
+            >
+              {/* <Space.Compact>
               <Input readOnly={isView} />
               {addon}
             </Space.Compact> */}
-                  {/* <Input readOnly={isView} suffix="MMK" /> */}
-                  <InputNumber
-                    className="!w-full"
-                    min={0}
-                    readOnly={isView}
-                    placeholder="Enter Base Price"
-                    suffix="MMK"
-                  />
-                </Form.Item>
+              {/* <Input readOnly={isView} suffix="MMK" /> */}
+              <InputNumber
+                className="!w-full"
+                min={0}
+                readOnly={isView}
+                placeholder="Enter Base Price"
+                suffix="MMK"
+              />
+            </Form.Item>
 
-                <div className="grid grid-cols-2 gap-4">
-                  {/* <Form.Item
+            <div className="grid grid-cols-2 gap-4">
+              {/* <Form.Item
                     label="Included Hours"
                     name="includedHours"
                     rules={[
@@ -282,86 +301,87 @@ const FacilityPackageForm = ({
                     />
                   </Form.Item> */}
 
-                  <Form.Item
-                    label="Included Hours"
-                    name="includedHours"
-                    rules={[
-                      { required: true, message: "Included Hours is Required" },
-                    ]}
-                  >
-                    <TimePicker
-                      style={{
-                        width: "100%"
-                      }}
-                    />
-                  </Form.Item>
+              <Form.Item
+                label="Included Hours"
+                name="includedHours"
+                rules={[
+                  { required: true, message: "Included Hours is Required" },
+                ]}
+              >
+                <TimePicker
+                  style={{
+                    width: "100%",
+                  }}
+                />
+              </Form.Item>
 
-                  <Form.Item
-                    label="Included Pax"
-                    name="includedPax"
-                    rules={[{ required: true, message: "Included Pax is Required" }]}
-                  >
-                    <InputNumber
-                      className="!w-full"
-                      min={0}
-                      readOnly={isView}
-                      placeholder="Enter Included Pax"
-                      {...{
-                        mode: "spinner",
-                        min: 0,
-                        max: 24,
-                        style: { width: "100%" },
-                      }}
-                    />
-                  </Form.Item>
-                </div>
+              <Form.Item
+                label="Included Pax"
+                name="includedPax"
+                rules={[
+                  { required: true, message: "Included Pax is Required" },
+                ]}
+              >
+                <InputNumber
+                  className="!w-full"
+                  min={0}
+                  readOnly={isView}
+                  placeholder="Enter Included Pax"
+                  {...{
+                    mode: "spinner",
+                    min: 0,
+                    max: 24,
+                    style: { width: "100%" },
+                  }}
+                />
+              </Form.Item>
+            </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <Form.Item
-                    label="Extra Hour Price"
-                    name="extraHourPrice"
-                    rules={[
-                      { required: true, message: "Extra Hour Price is Required" },
-                    ]}
-                  >
-                    <InputNumber
-                      className="!w-full"
-                      min={0}
-                      readOnly={isView}
-                      placeholder="Enter Extra Hour Price"
-                      suffix="MMK"
-                    />
-                  </Form.Item>
+            <div className="grid grid-cols-2 gap-4">
+              <Form.Item
+                label="Extra Hour Price"
+                name="extraHourPrice"
+                rules={[
+                  { required: true, message: "Extra Hour Price is Required" },
+                ]}
+              >
+                <InputNumber
+                  className="!w-full"
+                  min={0}
+                  readOnly={isView}
+                  placeholder="Enter Extra Hour Price"
+                  suffix="MMK"
+                />
+              </Form.Item>
 
-                  <Form.Item
-                    label="Extra Pax Price"
-                    name="extraPaxPrice"
-                    rules={[
-                      { required: true, message: "ExtraPax Price is Required" },
-                    ]}
-                  >
-                    <InputNumber
-                      className="!w-full"
-                      min={0}
-                      readOnly={isView}
-                      placeholder="Enter Extra Pax Price"
-                      suffix="MMK"
-                    />
-                  </Form.Item>
-                </div>
+              <Form.Item
+                label="Extra Pax Price"
+                name="extraPaxPrice"
+                rules={[
+                  { required: true, message: "ExtraPax Price is Required" },
+                ]}
+              >
+                <InputNumber
+                  className="!w-full"
+                  min={0}
+                  readOnly={isView}
+                  placeholder="Enter Extra Pax Price"
+                  suffix="MMK"
+                />
+              </Form.Item>
+            </div>
 
-                <Form.Item
-                  label="Remark"
-                  name="remark"
-                  rules={[{ required: true, message: "Remark is Required" }]}
-                >
-                  <Input.TextArea readOnly={isView} placeholder="Enter Remark" />
-                </Form.Item>
-              </Form>
-            )
-        }
+            <Form.Item
+              label="Remark"
+              name="remark"
+              rules={[{ required: true, message: "Remark is Required" }]}
+            >
+              <Input.TextArea readOnly={isView} placeholder="Enter Remark" />
+            </Form.Item>
+          </Form>
+        )}
       </Drawer>
-    </div >
+    </div>
   );
 };
 

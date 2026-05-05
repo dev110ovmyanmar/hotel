@@ -34,15 +34,18 @@ const PersonalInformation = ({
       <DataRow label="Date of Birth" value={personalInfo?.dob} />
       <DataRow label="Nationality" value={personalInfo?.nationality} />
       <DataRow label="Father Name" value="U Tin Lin" />
+      <DataRow label="ID Type" value="NRC" />
+      <DataRow label="ID Number" value={personalInfo?.nrcNo}/>
+      <DataRow label="Passport Number" value={personalInfo?.passport} />
     </InfoSection>
 
-    <InfoSection title="Identification" icon={<CreditCard size={18} />}>
+    {/* <InfoSection title="Identification" icon={<CreditCard size={18} />}>
       <DataRow label="ID Type" value="NRC" />
       <DataRow label="ID Number" value={personalInfo?.nrcNo}/>
       <DataRow label="Passport Number" value={personalInfo?.passport} />
       <DataRow label="Issued Date" value="Oct 12, 2025" />
       <DataRow label="Passport Expire Date" value="Oct 11, 2030" color="text-red-400" />
-    </InfoSection>
+    </InfoSection> */}
 
     <InfoSection title="Address" icon={<MapPin size={18} />}>
       <DataRow label="Address" value={personalInfo?.address} />

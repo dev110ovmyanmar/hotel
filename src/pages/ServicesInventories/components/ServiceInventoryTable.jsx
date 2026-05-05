@@ -17,17 +17,19 @@ const ServiceInventoryTable = ({
   const columns = useServiceInventoryColumns(onEdit, onView);
 
   const expandColumns = [
-    { title: "ID", dataIndex: "id", key: "id" },
-    { title: "Service Name", dataIndex: ["service", "name"], key: "name" },
-    { title: "Quantity", dataIndex: "quantityPerService", key: "quantityPerService" },
-    { title: "Unit", dataIndex: ["unit", "name"], key: "unit" },
+    { title: "ID", dataIndex: "id", key: "id" , align:"center"},
+    { title: "Service Name", dataIndex: ["service", "name"], key: "name", align: "center" },
+    { title: "Quantity", dataIndex: "quantityPerService", key: "quantityPerService", align: "center" },
+    { title: "Unit", dataIndex: ["unit", "name"], key: "unit", align: "center" },
   ];
 
   const expandedRowRender = (record) => {
+    
     return (
       <>
         <Table
-          className="custom-table-style"
+          // className="custom-table-style"
+          className="[&_.ant-table-cell]:!border [&_.ant-table-cell]:!border-blue-300 [&_.ant-table-thead>tr>th]:!bg-[#F0F5FF]"
           columns={expandColumns}
           dataSource={record.serviceInventoryMappings || []}
           rowKey="uuid"

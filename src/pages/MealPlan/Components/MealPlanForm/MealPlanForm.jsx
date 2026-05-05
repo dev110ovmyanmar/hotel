@@ -4,12 +4,11 @@ import Toast from "../../../../component/Toast/Toast";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
 import useApiQuery from "../../../../hooks/useApiQuery";
 import FormButtons from "./../../../../component/FormButtons/FormButtons";
-import { queryClient } from "./../../../../app/queryClient";
 import {
   upsertMealPlan,
   mealPlanDetails,
 } from "../../../../api/mealPlanApi";
-import Status from './../../../../component/Status/Status';
+import { queryClient } from "./../../../../app/queryClient";
 import Loader from "../../../../component/Loader/Loader";
 import { PERMISSIONS } from "../../../../variables/permission";
 import usePermission from "../../../../hooks/usePermission";
@@ -35,7 +34,15 @@ const MeanPlanForm = ({
   const { hasPermission } = usePermission();
   const canEdit = hasPermission(PERMISSIONS.MEAL_PLAN_EDIT);
 
-  // const initData = queryClient.getQueryData(["initData", "authenticated"])?.statuses?.status;
+
+  const initData = queryClient.getQueryData(["initData", "authenticated"]);
+
+  const statuses = initData?.statuses?.status
+    ?.filter((item) => item.code !== "blocked")
+    ?.map((status) => ({
+      value: status.uuid,
+      label: status.name,
+    }));
 
   const upsertMealPlans = useApiMutation({
     mutationFn: upsertMealPlan,
@@ -56,9 +63,7 @@ const MeanPlanForm = ({
     if (!isAdd && data) {
       form.setFieldsValue({
         ...data,
-        status: {
-          uuid: data?.status.uuid,
-        },
+        status: data?.status?.uuid,
       });
     }
   }, [data, isAdd]);
@@ -70,8 +75,13 @@ const MeanPlanForm = ({
   }, [isAdd]);
 
   const onFinish = (values) => {
+    const payload = {
+      ...values,
+      status: { uuid: values?.status },
+    }
+
     if (isAdd) {
-      upsertMealPlans.mutate(values, {
+      upsertMealPlans.mutate(payload, {
         onSuccess: () => {
           setPage(1);
           setDrawerOpen(false);
@@ -83,7 +93,7 @@ const MeanPlanForm = ({
 
     if (isEdit) {
       const editValues = {
-        ...values,
+        ...payload,
         uuid: selectedData?.uuid,
       };
 
@@ -102,7 +112,12 @@ const MeanPlanForm = ({
         destroyOnClose
         size={550}
         open={drawerOpen}
-        onClose={() => setDrawerOpen(false)}
+        onClose={() => {
+          setDrawerOpen(false);
+          form.resetFields();
+          setSelectedData(null);
+          setMode(null);
+        }}
         title={
           <div className="flex justify-between items-center">
             <span>
@@ -153,7 +168,32 @@ const MeanPlanForm = ({
             </Form.Item>
 
 
-            <Status isView={isView} />
+            {/* <Status isView={isView} /> */}
+            <Form.Item
+              label="Status"
+              name="status"
+              rules={[{ required: true, message: "Status is required" }]}
+              getValueProps={(value) => ({
+                value: isView
+                  ? statuses?.find((item) => item.value === value)?.label || value
+                  : value,
+              })}
+            >
+              {isView ? (
+                <Input readOnly={isView} />
+              ) : (
+                <Select
+                  showSearch={{
+                    filterOption: (input, option) =>
+                      (option?.label ?? "")
+                        .toLowerCase()
+                        .includes(input.toLowerCase()),
+                  }}
+                  options={statuses}
+                  placeholder="Select Status"
+                />
+              )}
+            </Form.Item>
 
             <Form.Item label="Description" name="description">
               <Input.TextArea rows={2}

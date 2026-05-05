@@ -41,7 +41,7 @@ const PaymentTable = ({ data, page, perPage, total, changePage, changePerPage, l
       render: provider => <div>{provider?.name}</div>,
     },
     {
-      title: 'isOnline',
+      title: 'Is Online',
       dataIndex: 'isOnline',
       key: 'isOnline',
       render: (isOnline) =>

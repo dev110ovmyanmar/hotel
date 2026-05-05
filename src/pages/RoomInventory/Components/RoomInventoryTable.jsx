@@ -160,12 +160,16 @@ const RoomInventoryTable = ({
       align: "center",
       render: (_, record) => {
         const isPastOrToday = dayjs(record.date).isSameOrBefore(dayjs(), "day");
-
+        const isDisabled = isPastOrToday || updatingId === record.id;
         const switchComponent = (
           <Switch
             checked={record.stopSell === true}
             loading={updatingId === record.id}
-            disabled={isPastOrToday || updatingId === record.id}
+            disabled={isDisabled}
+            style={{
+              opacity: isDisabled ? 0.2 : 1,
+              backgroundColor: record.stopSell ? "#ff4d4f" : "#56ec0b",
+            }}
             onChange={(checked) => {
               setSelectedRecord(record);
               setSwitchValue(checked);
@@ -245,7 +249,8 @@ const RoomInventoryTable = ({
     console.log(record, "record");
     return (
       <Table
-        className="custom-table-style"
+        // className="custom-table-style"
+        className="[&_.ant-table-cell]:!border [&_.ant-table-cell]:!border-blue-300 [&_.ant-table-thead>tr>th]:!bg-[#F0F5FF]"
         columns={expandColumns}
         dataSource={record?.calendars}
         rowKey="uuid"
