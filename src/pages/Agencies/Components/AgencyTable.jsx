@@ -9,6 +9,7 @@ import ColorStatusTag from './../../../component/ColorStatusTag/ColorStatusTag';
 import { FaFileContract } from "react-icons/fa";
 import ImageUpload from "../../../component/ImageUpload/ImageUpload";
 import { useApiMutation } from "../../../hooks/useApiMutation";
+import PriceTag from "../../../component/PriceTag/PriceTag";
 
 
 const AgencyTable = ({
@@ -74,7 +75,7 @@ const AgencyTable = ({
         const chargeTypeName = record?.chargeType?.code;
 
         if (chargeTypeName === "flat") {
-          return <div>{chargeValue} MMK</div>
+          return <div>{chargeValue.toLocaleString()} MMK</div>
         } else {
           return <div>{chargeValue} %</div>
         }

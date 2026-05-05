@@ -38,13 +38,17 @@ const AdminForm = ({
   const isAdd = mode === "add";
 
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
+  const initDataStatus = initData?.statuses.status;
+
   const [adminDrawerOpen, setAdminDrawerOpen] = useState(false);
   const [selectedPermissions, setSelectedPermissions] = useState([]);
 
   // Modal
   const [openModal, setOpenModal] = useState(false);
-  const [initialRole, setInitialRole] = useState(null);
+  // const [initialRole, setInitialRole] = useState(null);
+  const [initialValue, setInitialValue] = useState(null);
   const [finalValues, setFinalValues] = useState(null);
+
 
   const roles = initData?.roles?.map((role) => ({
     value: role.uuid,
@@ -129,7 +133,7 @@ const AdminForm = ({
   }
 
   useEffect(() => {
-    if (!isAdd && data) {
+    if (isEdit && data) {
       form.setFieldsValue({
         ...data,
         role: data?.role?.uuid,
@@ -141,16 +145,19 @@ const AdminForm = ({
   }, [data]);
 
   useEffect(() => {
-    if (data?.role?.uuid) {
-      setInitialRole(data?.role?.uuid)
+    // if (data?.role?.uuid) {
+    //   setInitialRole(data?.role?.uuid)
+    // }
+    if (data) {
+      setInitialValue(data)
     }
   }, [data])
 
   const formButtonSubmit = () => {
     const values = form.getFieldsValue();
 
-    if (isEdit && initialRole) {
-      const isChanged = values.role !== initialRole;
+    if (isEdit && initialValue) {
+      const isChanged = values !== initialValue;
 
       if (isChanged) {
         setFinalValues(values);
@@ -219,6 +226,16 @@ const AdminForm = ({
       setSelectedPermissions(allowPermissionIds);
     }
   }, [data]);
+
+  useEffect(() => {
+    if (isAdd) {
+      form.setFieldsValue({
+        status: {
+          uuid: initDataStatus?.find(item => item?.code === "active")?.uuid
+        }
+      })
+    }
+  }, [isAdd])
 
 
   return (
@@ -335,7 +352,7 @@ const AdminForm = ({
                   />
                 </Form.Item>
 
-                <Status isView={isView} />
+                <Status isView={isView} statusValue={initDataStatus} />
 
                 {
                   isEdit && (
@@ -432,7 +449,10 @@ const AdminForm = ({
         >
           <Divider />
           <div className="text-md !mt-3">
-            Changing the role will update permissions. Do you want to continue?
+            Changing the role will update permissions.
+            Please verify the information you entered before continuing.
+            Are you sure you want to continue?
+            {/* Do you want to continue? */}
           </div>
         </Modal>
       </Drawer>

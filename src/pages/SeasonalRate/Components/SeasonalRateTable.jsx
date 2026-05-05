@@ -61,8 +61,8 @@ const SeasonalRateTable = ({
 
   const columns = TableColumns(baseColumns);
 
-    // Process data to calculate rowSpan for rate plans and rate category
-   const processData = (data) => {
+  // Process data to calculate rowSpan for rate plans and rate category
+  const processData = (data) => {
     if (!data) return [];
     const newData = data.map(item => ({ ...item })); // Shallow clone to avoid mutating props
 
@@ -71,7 +71,7 @@ const SeasonalRateTable = ({
       while (i < newData.length) {
         // Access nested properties like ['ratePlan', 'name']
         const getValue = (obj) => keyPath.reduce((acc, key) => acc?.[key], obj);
-        
+
         let currentVal = getValue(newData[i]);
         let count = 1;
 
@@ -101,7 +101,7 @@ const SeasonalRateTable = ({
   };
 
   const expandColumns = [
-       { title: "ID", dataIndex: "id", key: "id",align: "center" },
+    { title: "ID", dataIndex: "id", key: "id", align: "center" },
     {
       title: "Rate Plan",
       align: "center",
@@ -145,6 +145,7 @@ const SeasonalRateTable = ({
     },
     {
       title: "Action",
+      align: "center",
       render: (_, record) => {
         const smallStyle = { fontSize: "12px" };
 
@@ -199,10 +200,11 @@ const SeasonalRateTable = ({
   ];
 
   const expandedRowRender = (record) => {
-      const processedRates = processData(record?.rates || []);
+    const processedRates = processData(record?.rates || []);
     return (
       <Table
-        className="custom-table-style"
+        // className="custom-table-style"
+        className="[&_.ant-table-cell]:!border [&_.ant-table-cell]:!border-blue-300 [&_.ant-table-thead>tr>th]:!bg-[#F0F5FF]"
         columns={expandColumns}
         // dataSource={record?.rates}
         dataSource={processedRates}
@@ -210,7 +212,7 @@ const SeasonalRateTable = ({
         size="small"
         style={{ marginTop: "16px", marginBottom: "16px" }}
         bordered
-        className="[&_.ant-table-cell]:!border [&_.ant-table-cell]:!border-blue-300"
+        className="[&_.ant-table-cell]:!border [&_.ant-table-cell]:!border-blue-300 [&_.ant-table-thead>tr>th]:!bg-[#F0F5FF]"
       />
     );
   };

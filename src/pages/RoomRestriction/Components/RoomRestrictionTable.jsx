@@ -63,13 +63,14 @@ const RoomRestrictionTable = ({ data, page, setPage }) => {
   };
 
   const expandColumns = [
-    { title: "ID", dataIndex: "id", key: "id",align: "center" },
-    { title: "Rate Plan", dataIndex: ["ratePlan", "name"], key: "ratePlan",align: "center",
-       onCell: (record) => ({
+    { title: "ID", dataIndex: "id", key: "id", align: "center" },
+    {
+      title: "Rate Plan", dataIndex: ["ratePlan", "name"], key: "ratePlan", align: "center",
+      onCell: (record) => ({
         rowSpan: record.rowSpan,
         style: { verticalAlign: "middle" },
       }),
-     },
+    },
     {
       title: "Date",
       dataIndex: "date",
@@ -146,10 +147,11 @@ const RoomRestrictionTable = ({ data, page, setPage }) => {
   ];
 
   const expandedRowRender = (record) => {
-   const processedRates = processData(record?.calendars || []);
+    const processedRates = processData(record?.calendars || []);
     return (
       <Table
-        className="custom-table-style"
+        // className="custom-table-style"
+        className="[&_.ant-table-cell]:!border [&_.ant-table-cell]:!border-blue-300 [&_.ant-table-thead>tr>th]:!bg-[#F0F5FF]"
         columns={expandColumns}
         // dataSource={record?.calendars}
         dataSource={processedRates}

@@ -44,6 +44,7 @@ const ReferralForm = ({
   const isAdd = mode === "add";
 
   const initData = queryClient.getQueryData(["initData", "authenticated"])?.statuses;
+  const initDataStatus = initData?.status;
   const chargeType = initData?.charge_type;
 
   const chargeTypeValue = Form.useWatch(["chargeType", "uuid"], form);
@@ -69,18 +70,24 @@ const ReferralForm = ({
   });
 
   useEffect(() => {
-    if (!isAdd && data) {
+    if (isAdd) {
+      form.resetFields();
+    }
+
+    if (isAdd && initDataStatus) {
+      form.setFieldsValue({
+        status: {
+          uuid: initDataStatus?.find(item => item?.code === "active")?.uuid
+        }
+      })
+    }
+
+    if (isEdit && data) {
       form.setFieldsValue({
         ...data
       });
     }
-  }, [data, isEdit]);
-
-  useEffect(() => {
-    if (isAdd) {
-      form.resetFields();
-    }
-  }, [isAdd]);
+  }, [data, isEdit, isAdd, initDataStatus]);
 
   const onFinish = (values) => {
     const modifiedValues = {
@@ -113,16 +120,16 @@ const ReferralForm = ({
       });
     }
   };
-""
+  ""
   const fetchReferralFormUploads = useApiMutation({
-    mutationFn : fetchReferralFormUpload,
-    invalidateKeys : [["referral-agents-details",{uuid: selectedData?.uuid}]],
+    mutationFn: fetchReferralFormUpload,
+    invalidateKeys: [["referral-agents-details", { uuid: selectedData?.uuid }]],
   });
 
   const deleteReferralAgentUpload = useApiMutation({
-      mutationFn: deleteImageUpload,
-      invalidateKeys: [["referral-agents-details", { uuid: selectedData?.uuid }]],
-    });
+    mutationFn: deleteImageUpload,
+    invalidateKeys: [["referral-agents-details", { uuid: selectedData?.uuid }]],
+  });
 
   return (
     <div className="flex justify-center">
@@ -195,7 +202,16 @@ const ReferralForm = ({
             rules={[{ required: true, message: "Phone is Required" }]}
 
           >
-            <Input readOnly={isView} placeholder="Enter Phone Number" />
+            <Input
+              readOnly={isView}
+              placeholder="Enter Phone Number"
+              onKeyPress={(e) => {
+                if (!/[0-9]/.test(e.key)) {
+                  e.preventDefault()
+                }
+              }}
+
+            />
           </Form.Item>
 
           <Row gutter={16}>
@@ -284,7 +300,7 @@ const ReferralForm = ({
             <TextArea readOnly={isView} placeholder="Enter Remark" />
           </Form.Item>
 
-          <Status isView={isView} />
+          <Status isView={isView} statusValue={initDataStatus}/>
         </Form>
       </Drawer>
 

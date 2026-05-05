@@ -127,12 +127,13 @@ const MenuItemTable = ({
   ];
 
   const expandColumns = [
-    { title: "ID", dataIndex: "id", key: "id" },
-    { title: "F&B Inventory Name", dataIndex: ["fnbInventoryItem", "name"], key: "name" },
-    { title: "Quantity", dataIndex: "quantityPerItem", key: "quantityPerItem" },
-    { title: "Unit", dataIndex: ["unit", "name"], key: "unit" },
+    { title: "ID", dataIndex: "id", key: "id" , align:"center"},
+    { title: "F&B Inventory Name", dataIndex: ["fnbInventoryItem", "name"], key: "name" , align:"center"},
+    { title: "Quantity", dataIndex: "quantityPerItem", key: "quantityPerItem" , align:"center"},
+    { title: "Unit", dataIndex: ["unit", "name"], key: "unit" , align:"center"},
     {
       title: "Action",
+      align: "center",
       render: (_, record) => {
         const smallStyle = { fontSize: "12px" };
 
@@ -197,7 +198,8 @@ const MenuItemTable = ({
         {
           record?.menuInventoryMappings?.length <= 0 ? null :
             <Table
-              className="custom-table-style"
+              // className="custom-table-style"
+              className="[&_.ant-table-cell]:!border [&_.ant-table-cell]:!border-blue-300 [&_.ant-table-thead>tr>th]:!bg-[#F0F5FF]"
               columns={expandColumns}
               dataSource={record.menuInventoryMappings || []}
               rowKey="uuid"
