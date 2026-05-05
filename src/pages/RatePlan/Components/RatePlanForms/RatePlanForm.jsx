@@ -144,8 +144,6 @@ const RatePlanForm = ({
 
   const isDisableDefault = ratePlanList ? false : true;
 
-  console.log("RatePlanList", ratePlanList);
-  console.log("isDisableDefault",isDisableDefault);
 
   const onFinish = (values) => {
     console.log("Values", values);
@@ -220,7 +218,10 @@ const RatePlanForm = ({
     <div>
       <Drawer
         open={drawerOpen}
-        onClose={() => setDrawerOpen(false)}
+        onClose={() => {
+          setDrawerOpen(false)
+          setSelectedData(null);
+        }}
         size={550}
         title={
           <div className="flex justify-between items-center">
@@ -450,18 +451,18 @@ const RatePlanForm = ({
                 <TextArea rows={3} readOnly={isView} placeholder="Enter Description" />
               </Form.Item>
 
-         
-                 <Form.Item
-                  label="Is Default"
-                  name="isDefault"
-                  rules={[{ required: true, message: "Please select Is Default!" }]}
-                >
-                  <Switch
-                    disabled={isView || isDisableDefault }
-                    checkedChildren="True"
-                    unCheckedChildren="False"
-                  />
-                </Form.Item>
+
+              <Form.Item
+                label="Is Default"
+                name="isDefault"
+                rules={[{ required: true, message: "Please select Is Default!" }]}
+              >
+                <Switch
+                  disabled={isView || isDisableDefault}
+                  checkedChildren="True"
+                  unCheckedChildren="False"
+                />
+              </Form.Item>
 
               {roomTypes?.map((roomType) => (
                 isAdd &&
