@@ -34,6 +34,7 @@ const PolicyForm = ({
   mode,
   setMode,
   selectedData,
+  setSelectedData,
   drawerOpen,
   setDrawerOpen,
 }) => {
@@ -44,10 +45,7 @@ const PolicyForm = ({
   const isEdit = mode === "edit";
   const isAdd = mode === "add";
 
-  const isUnlimited = Form.useWatch(
-    "isUnlimited",
-    policyForm
-  );
+  const isUnlimited = Form.useWatch("isUnlimited", policyForm);
 
   const [addPolicyRuleDrawer, setAddPolicyRuleDrawer] = useState(false);
 
@@ -113,6 +111,12 @@ const PolicyForm = ({
     }
   }, [isAdd]);
 
+  const handleClose = () => {
+    setDrawerOpen(false);
+    setSelectedData(null);
+    form.resetFields();
+  };
+
   const onFinish = (values) => {
     if (isAdd) {
       const modifiedValue = {
@@ -124,10 +128,11 @@ const PolicyForm = ({
 
       upsertPolicys.mutate(modifiedValue, {
         onSuccess: () => {
+          form.resetFields();
           setPage(1);
           setDrawerOpen(false);
+          handleClose();
           Toast.success("Policy Created Successfully!");
-          form.resetFields();
         },
       });
     }
@@ -144,6 +149,7 @@ const PolicyForm = ({
       upsertPolicys.mutate(editValues, {
         onSuccess: () => {
           setDrawerOpen(false);
+          handleClose();
           Toast.success("Policy Updated Successfully!");
         },
       });
@@ -219,7 +225,6 @@ const PolicyForm = ({
       key: "earlycheck",
       render: (_, record) => {
         return (
-
           <>
             {(earlyCheckin || lateCheckout) && (
               <div>
@@ -232,30 +237,31 @@ const PolicyForm = ({
 
             {(noShow || cancelCode) && (
               <div>
-                {record?.fromOffset} to {""} {record?.toOffset === 9999 ? "Unlimited" : record?.toOffset} Days
+                {record?.fromOffset} to {""}{" "}
+                {record?.toOffset === 9999 ? "Unlimited" : record?.toOffset}{" "}
+                Days
               </div>
             )}
           </>
-
         );
       },
     },
     !isView
       ? {
-        title: "Action",
-        render: (_, record) => {
-          return (
-            <EditOutlined
-              style={{ fontSize: "12px" }}
-              onClick={() => {
-                setPolicyRuleMode("editRule");
-                setAddPolicyRuleDrawer(true);
-                setSelectedPolicyRule(record);
-              }}
-            />
-          );
-        },
-      }
+          title: "Action",
+          render: (_, record) => {
+            return (
+              <EditOutlined
+                style={{ fontSize: "12px" }}
+                onClick={() => {
+                  setPolicyRuleMode("editRule");
+                  setAddPolicyRuleDrawer(true);
+                  setSelectedPolicyRule(record);
+                }}
+              />
+            );
+          },
+        }
       : {},
   ];
 
@@ -264,7 +270,6 @@ const PolicyForm = ({
       policyForm.resetFields();
     }
   }, [addPolicyRule]);
-
 
   const convertNumberToTime = (num) => {
     if (num === null || num === undefined) return null;
@@ -280,13 +285,14 @@ const PolicyForm = ({
     if (editPolicyRule && selectedPolicyRule) {
       const isUnlimitedtoOffset = selectedPolicyRule?.toOffset === 9999;
       if (earlyCheckin || lateCheckout) {
-
         policyForm.setFieldsValue({
           ...selectedPolicyRule,
 
           fromOffset: convertNumberToTime(selectedPolicyRule?.fromOffset),
 
-          toOffset: isUnlimitedtoOffset ? null : convertNumberToTime(selectedPolicyRule?.toOffset),
+          toOffset: isUnlimitedtoOffset
+            ? null
+            : convertNumberToTime(selectedPolicyRule?.toOffset),
 
           isUnlimited: isUnlimitedtoOffset,
 
@@ -295,7 +301,6 @@ const PolicyForm = ({
       }
 
       if (noShow || cancelCode) {
-
         policyForm.setFieldsValue({
           ...selectedPolicyRule,
 
@@ -308,10 +313,15 @@ const PolicyForm = ({
           chargeValue: Number(selectedPolicyRule?.chargeValue),
         });
       }
-
     }
-  }, [editPolicyRule, selectedPolicyRule, earlyCheckin, lateCheckout, noShow, cancelCode]);
-
+  }, [
+    editPolicyRule,
+    selectedPolicyRule,
+    earlyCheckin,
+    lateCheckout,
+    noShow,
+    cancelCode,
+  ]);
 
   const mapTimeToNumber = (time) => {
     if (!time) return null;
@@ -324,12 +334,10 @@ const PolicyForm = ({
     return hour;
   };
 
-
   const savePolicyRule = (values) => {
-    console.log(values,"valuesINPolicy")
+    console.log(values, "valuesINPolicy");
     // For Hour (0 === 24 format)
     if (earlyCheckin || lateCheckout) {
-
       if (values.fromOffset) {
         values.fromOffset = mapTimeToNumber(values.fromOffset);
       }
@@ -337,7 +345,6 @@ const PolicyForm = ({
       if (values.toOffset && !values.isUnlimited) {
         values.toOffset = mapTimeToNumber(values.toOffset);
       }
-
     }
 
     // Checked is ture , auto toOffset to 9999
@@ -362,12 +369,12 @@ const PolicyForm = ({
       uuid: data?.uuid,
       policyRule: addPolicyRule
         ? {
-          ...values,
-        }
+            ...values,
+          }
         : {
-          ...values,
-          uuid: selectedPolicyRule?.uuid,
-        },
+            ...values,
+            uuid: selectedPolicyRule?.uuid,
+          },
       linkTo: {
         uuid: linkTouuid,
       },
@@ -411,26 +418,29 @@ const PolicyForm = ({
     fieldName = "lateCheckout";
   } else if (noShow) {
     fieldName = "noShow";
-  };
+  }
 
-  const labelText = cancelCode ? "Cancel Between" :
-    earlyCheckin ? "Early Check-in Between" :
-      lateCheckout ? "Late Check-out Between" :
-        noShow ? "No Show" : "Something";
+  const labelText = cancelCode
+    ? "Cancel Between"
+    : earlyCheckin
+      ? "Early Check-in Between"
+      : lateCheckout
+        ? "Late Check-out Between"
+        : noShow
+          ? "No Show"
+          : "Something";
 
-  const extraText = (cancelCode || noShow) ? "(Days Before Arrival)" : null;
+  const extraText = cancelCode || noShow ? "(Days Before Arrival)" : null;
 
   // watch fromOffset value
   const fromOffsetValue = Form.useWatch("fromOffset", policyForm);
 
   useEffect(() => {
-
     // TIME MODE
     if (earlyCheckin || lateCheckout) {
       const hour = fromOffsetValue?.hour();
 
-      const currentUnlimited =
-        policyForm.getFieldValue("isUnlimited");
+      const currentUnlimited = policyForm.getFieldValue("isUnlimited");
 
       // If 12 AM → auto check
       if (hour === 0 && !currentUnlimited) {
@@ -460,18 +470,17 @@ const PolicyForm = ({
       //   });
       // }
     }
-
   }, [fromOffsetValue, earlyCheckin, lateCheckout]);
 
   const handleSwitchChange = (value) => {
     console.log("SwitchValue:", value);
-  }
+  };
 
   return (
     <div className="flex justify-center">
       <Drawer
         open={drawerOpen}
-        onClose={() => setDrawerOpen(false)}
+        onClose={handleClose}
         size={550}
         title={
           <div className="flex justify-between items-center">
@@ -527,23 +536,22 @@ const PolicyForm = ({
               rules={[{ required: true, message: "Link To is Required" }]}
               getValueProps={(value) => {
                 return {
-                  value: isView ?
-                    linkTo?.find(item => item.uuid === value)?.name
-                    : value
-                }
+                  value: isView
+                    ? linkTo?.find((item) => item.uuid === value)?.name
+                    : value,
+                };
               }}
             >
-              {
-                isView ?
-                  <Input readOnly={isView} />
-                  :
-                  <Select
-                    options={linkTo?.map((item) => ({
-                      label: item?.name,
-                      value: item?.uuid,
-                    }))}
-                  ></Select>
-              }
+              {isView ? (
+                <Input readOnly={isView} />
+              ) : (
+                <Select
+                  options={linkTo?.map((item) => ({
+                    label: item?.name,
+                    value: item?.uuid,
+                  }))}
+                ></Select>
+              )}
             </Form.Item>
 
             <Form.Item
@@ -552,24 +560,23 @@ const PolicyForm = ({
               rules={[{ required: true, message: "Policy Name is Required" }]}
               getValueProps={(value) => {
                 return {
-                  value: isView ?
-                    policyType?.find(item => item.uuid === value)?.name
-                    : value
-                }
+                  value: isView
+                    ? policyType?.find((item) => item.uuid === value)?.name
+                    : value,
+                };
               }}
             >
-              {
-                isView ?
-                  <Input readOnly={isView} />
-                  :
-                  <Select
-                    options={policyType?.map((item) => ({
-                      label: item.name,
-                      value: item.uuid,
-                    }))}
-                    open={isView ? false : undefined}
-                  ></Select>
-              }
+              {isView ? (
+                <Input readOnly={isView} />
+              ) : (
+                <Select
+                  options={policyType?.map((item) => ({
+                    label: item.name,
+                    value: item.uuid,
+                  }))}
+                  open={isView ? false : undefined}
+                ></Select>
+              )}
             </Form.Item>
 
             <Form.Item
@@ -588,16 +595,15 @@ const PolicyForm = ({
                 };
               }}
             >
-              {
-                isView ?
-                  <Input readOnly={isView}/>
-                  :
-                  <Switch 
-                    onChange={handleSwitchChange} 
-                    checkedChildren="True"
-                    unCheckedChildren="False"
-                  />
-              }
+              {isView ? (
+                <Input readOnly={isView} />
+              ) : (
+                <Switch
+                  onChange={handleSwitchChange}
+                  checkedChildren="True"
+                  unCheckedChildren="False"
+                />
+              )}
             </Form.Item>
 
             <Form.Item
@@ -607,8 +613,6 @@ const PolicyForm = ({
             >
               <TextArea readOnly={isView} rows={4}></TextArea>
             </Form.Item>
-
-
 
             {(isEdit || isView) && (
               <>
@@ -704,7 +708,7 @@ const PolicyForm = ({
                           getValueProps={(value) => ({
                             value: isView
                               ? chargeType.find((item) => item.value === value)
-                                ?.label
+                                  ?.label
                               : value,
                           })}
                         >
@@ -777,9 +781,7 @@ const PolicyForm = ({
                     <Form.Item
                       label={
                         <>
-                          <span>
-                            {labelText}
-                          </span>
+                          <span>{labelText}</span>
                           <span
                             style={{ fontWeight: "bold", marginLeft: "5px" }}
                           >
@@ -791,38 +793,79 @@ const PolicyForm = ({
                     >
                       <Row gutter={[16, 16]}>
                         <Col span={9}>
-                          {
-                            (earlyCheckin || lateCheckout) ?
+                          {earlyCheckin || lateCheckout ? (
+                            <Form.Item
+                              name="fromOffset"
+                              rules={[
+                                { required: true, message: "From is Required" },
+                              ]}
+                              style={{ marginBottom: 0 }}
+                            >
+                              <TimePicker
+                                use12Hours
+                                readOnly={isView}
+                                style={{ width: "100%" }}
+                                placeholder="From"
+                                format={"h A"}
+                              />
+                            </Form.Item>
+                          ) : (
+                            <Form.Item
+                              name="fromOffset"
+                              rules={[
+                                { required: true, message: "From is Required" },
+                                {
+                                  validator: (_, value) => {
+                                    if (!value) {
+                                      return Promise.resolve();
+                                    }
+                                    if (value < 1 || value > 30) {
+                                      return Promise.reject(
+                                        "Number must be between 1 and 30.",
+                                      );
+                                    }
+                                    return Promise.resolve();
+                                  },
+                                },
+                              ]}
+                              style={{ marginBottom: 0 }}
+                            >
+                              <InputNumber
+                                readOnly={isView}
+                                style={{ width: "100%" }}
+                                suffix={
+                                  earlyCheckin || lateCheckout ? "Hrs" : "Day"
+                                }
+                                placeholder="From"
+                              />
+                            </Form.Item>
+                          )}
+                        </Col>
+
+                        {!isUnlimited && (
+                          <Col span={9}>
+                            {earlyCheckin || lateCheckout ? (
                               <Form.Item
-                                name="fromOffset"
+                                name="toOffset"
                                 rules={[
-                                  { required: true, message: "From is Required" },
+                                  { required: true, message: "To is Required" },
                                 ]}
                                 style={{ marginBottom: 0 }}
                               >
                                 <TimePicker
+                                  disabled={isUnlimited}
                                   use12Hours
                                   readOnly={isView}
                                   style={{ width: "100%" }}
-                                  placeholder="From"
+                                  placeholder="To"
                                   format={"h A"}
                                 />
-                              </Form.Item> :
+                              </Form.Item>
+                            ) : (
                               <Form.Item
-                                name="fromOffset"
+                                name="toOffset"
                                 rules={[
-                                  { required: true, message: "From is Required" },
-                                  {
-                                    validator: (_, value) => {
-                                      if (!value) {
-                                        return Promise.resolve();
-                                      }
-                                      if (value < 1 || value > 30) {
-                                        return Promise.reject("Number must be between 1 and 30.")
-                                      }
-                                      return Promise.resolve()
-                                    }
-                                  }
+                                  { required: true, message: "To is Required" },
                                 ]}
                                 style={{ marginBottom: 0 }}
                               >
@@ -830,75 +873,26 @@ const PolicyForm = ({
                                   readOnly={isView}
                                   style={{ width: "100%" }}
                                   suffix={
-                                    earlyCheckin || lateCheckout ? "Hrs" : "Day"
+                                    earlyCheckin || lateCheckout ? "Hr" : "Day"
                                   }
-                                  placeholder="From"
+                                  placeholder="To"
                                 />
                               </Form.Item>
-                          }
-
-                        </Col>
-
-                        {
-                          !isUnlimited &&
-                          <Col span={9}>
-                            {
-                              (earlyCheckin || lateCheckout) ?
-                                <Form.Item
-                                  name="toOffset"
-                                  rules={[
-                                    { required: true, message: "To is Required" },
-                                  ]}
-                                  style={{ marginBottom: 0 }}
-                                >
-                                  <TimePicker
-                                    disabled={isUnlimited}
-                                    use12Hours
-                                    readOnly={isView}
-                                    style={{ width: "100%" }}
-                                    placeholder="To"
-                                    format={"h A"}
-
-                                  />
-                                </Form.Item>
-                                :
-                                <Form.Item
-                                  name="toOffset"
-                                  rules={[
-                                    { required: true, message: "To is Required" },
-                                  ]}
-                                  style={{ marginBottom: 0 }}
-                                >
-                                  <InputNumber
-                                    readOnly={isView}
-                                    style={{ width: "100%" }}
-                                    suffix={
-                                      earlyCheckin || lateCheckout ? "Hr" : "Day"
-                                    }
-                                    placeholder="To"
-                                  />
-                                </Form.Item>
-                            }
-
+                            )}
                           </Col>
-                        }
+                        )}
 
                         <Col span={6}>
-                          <Form.Item
-                            name="isUnlimited"
-                            valuePropName="checked"
-                          >
+                          <Form.Item name="isUnlimited" valuePropName="checked">
                             <Checkbox
                               rules={[
-                                { required: true, message: "To is Required" }]}
-
+                                { required: true, message: "To is Required" },
+                              ]}
                             >
                               <span>No Limit</span>
                             </Checkbox>
-
                           </Form.Item>
                         </Col>
-
                       </Row>
                     </Form.Item>
 
@@ -906,7 +900,7 @@ const PolicyForm = ({
                       label="Sort Order"
                       name="priority"
                       rules={[
-                        { required: true, message: "Sort Order is Required" }
+                        { required: true, message: "Sort Order is Required" },
                       ]}
                     >
                       <InputNumber
@@ -927,4 +921,3 @@ const PolicyForm = ({
 };
 
 export default PolicyForm;
-

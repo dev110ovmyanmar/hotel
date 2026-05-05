@@ -91,12 +91,18 @@ export const editRoomTypeAmenity = async (params) => {
   return data.response;
 };
 
-
+// upload api
 export const fetchRoomTypeUpload = async (params) => {
-    const {data} = await apiClient.post(
-        `/room-type/upload`,
-        params,
-        {isMultipart: true}
-    );
-    return data.response;
+  const { data } = await apiClient.post(
+    `/room-type/upload`,
+    params,
+    { isMultipart: true }
+  );
+  return data.response;
 }
+
+// rate plan meta
+export const ratePlanMeta = async (params) => {
+  const { data } = await apiClient.get("rate-plan/meta", params);
+  return data.response;
+};

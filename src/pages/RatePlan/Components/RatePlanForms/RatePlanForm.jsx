@@ -9,7 +9,7 @@ import {
   Select,
   Checkbox,
   Switch,
-  InputNumber
+  InputNumber,
 } from "antd";
 import Toast from "../../../../component/Toast/Toast";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
@@ -144,6 +144,11 @@ const RatePlanForm = ({
 
   const isDisableDefault = ratePlanList ? false : true;
 
+  const handleClose = () => {
+    setDrawerOpen(false);
+    setSelectedData(null);
+    form.resetFields();
+  };
 
   const onFinish = (values) => {
     console.log("Values", values);
@@ -154,9 +159,9 @@ const RatePlanForm = ({
       );
     });
 
-    const formattedRoomTypes = roomTypes.map(rt => ({
+    const formattedRoomTypes = roomTypes.map((rt) => ({
       uuid: rt.value,
-      price: String(values[rt.value])
+      price: String(values[rt.value]),
     }));
 
     const createValues = {
@@ -173,7 +178,7 @@ const RatePlanForm = ({
       description: values.description,
     };
 
-    roomTypes.forEach(rt => delete createValues[rt.value]);
+    roomTypes.forEach((rt) => delete createValues[rt.value]);
 
     if (isAdd) {
       createRatePlans.mutate(createValues, {
@@ -181,6 +186,7 @@ const RatePlanForm = ({
           form.resetFields();
           setDrawerOpen(false);
           setPage(1);
+          handleClose();
           Toast.success("Rate plan Created Successfully!");
         },
       });
@@ -205,12 +211,13 @@ const RatePlanForm = ({
         {
           onSuccess: () => {
             setDrawerOpen(false);
+            handleClose();
             Toast.success("Rate Plan Updated Successfully!");
           },
         },
       );
 
-      roomTypes.forEach(rt => delete editValues[rt.value]);
+      roomTypes.forEach((rt) => delete editValues[rt.value]);
     }
   };
 
@@ -218,10 +225,7 @@ const RatePlanForm = ({
     <div>
       <Drawer
         open={drawerOpen}
-        onClose={() => {
-          setDrawerOpen(false)
-          setSelectedData(null);
-        }}
+        onClose={handleClose}
         size={550}
         title={
           <div className="flex justify-between items-center">
@@ -232,271 +236,282 @@ const RatePlanForm = ({
                   ? "Edit Rate Plan"
                   : "Create Rate Plan"}
             </span>
-            {
-              isView ? (
-                canEdit && (
-                  < Button
-                    type="primary"
-                    onClick={() => {
-                      setMode("edit");
-                    }}
-                  >
-                    Edit
-                  </Button>
-                )
-              ) : (
-                <FormButton
-                  onClick={() => form.submit()}
-                  isPending={createRatePlans.isPending || editRatePlans.isPending}
-                  mode={mode}
-                />
+            {isView ? (
+              canEdit && (
+                <Button
+                  type="primary"
+                  onClick={() => {
+                    setMode("edit");
+                  }}
+                >
+                  Edit
+                </Button>
               )
-            }
+            ) : (
+              <FormButton
+                onClick={() => form.submit()}
+                isPending={createRatePlans.isPending || editRatePlans.isPending}
+                mode={mode}
+              />
+            )}
           </div>
         }
       >
-        {
-          ratePlanDetailsLoading ? (
-            <div className="flex items-center justify-center h-full min-h-[300px]" >
-              <Loader />
-            </div>
-          ) : (
-            <Form
-              form={form}
-              layout="vertical"
-              style={{ width: "100%" }}
-              onFinish={onFinish}
+        {ratePlanDetailsLoading ? (
+          <div className="flex items-center justify-center h-full min-h-[300px]">
+            <Loader />
+          </div>
+        ) : (
+          <Form
+            form={form}
+            layout="vertical"
+            style={{ width: "100%" }}
+            onFinish={onFinish}
             // disabled={isView}
+          >
+            <Row gutter={24}>
+              <Col span={16}>
+                <Form.Item
+                  label="Name"
+                  name="name"
+                  rules={[
+                    { required: true, message: "Please enter rate plan name" },
+                  ]}
+                >
+                  <Input readOnly={isView} placeholder="Enter Rate Plan Name" />
+                </Form.Item>
+              </Col>
+              <Col span={8}>
+                <Form.Item
+                  label="Code"
+                  name="code"
+                  rules={[
+                    { required: true, message: "Please enter rate plan code" },
+                  ]}
+                >
+                  <Input readOnly={isView} placeholder="Enter Rate Plan Code" />
+                </Form.Item>
+              </Col>
+            </Row>
+
+            <Row gutter={16}>
+              <Col span={12}>
+                <Form.Item
+                  label="Meal Plan"
+                  name="mealPlan"
+                  rules={[{ required: true, message: "Meal Plan is Required" }]}
+                  getValueProps={(value) => ({
+                    value: isView
+                      ? mealPlans.find((item) => item.value === value)?.label
+                      : value,
+                  })}
+                >
+                  {isView ? (
+                    <Input readOnly={isView} />
+                  ) : (
+                    <Select
+                      showSearch={{
+                        filterOption: (input, option) =>
+                          (option?.label ?? "")
+                            .toLowerCase()
+                            .includes(input.toLowerCase()),
+                      }}
+                      options={mealPlans}
+                      placeholder="Select Meal Plan"
+                    />
+                  )}
+                </Form.Item>
+              </Col>
+
+              <Col span={12}>
+                <Form.Item
+                  label="Policy"
+                  name="policy"
+                  rules={[{ required: true, message: "Policy is Required" }]}
+                  getValueProps={(value) => ({
+                    value: isView
+                      ? policy.find((item) => item.value === value)?.label
+                      : value,
+                  })}
+                >
+                  {isView ? (
+                    <Input readOnly={isView} />
+                  ) : (
+                    <Select
+                      showSearch={{
+                        filterOption: (input, option) =>
+                          (option?.label ?? "")
+                            .toLowerCase()
+                            .includes(input.toLowerCase()),
+                      }}
+                      options={policy}
+                      placeholder="Select Policy"
+                    />
+                  )}
+                </Form.Item>
+              </Col>
+
+              <Col span={12}>
+                <Form.Item
+                  label="Currency"
+                  name="currency"
+                  rules={[{ required: true, message: "Currency is Required" }]}
+                  getValueProps={(value) => ({
+                    value: isView
+                      ? currencies.find((item) => item.value === value)?.label
+                      : value,
+                  })}
+                >
+                  {isView ? (
+                    <Input readOnly={isView} />
+                  ) : (
+                    <Select
+                      showSearch={{
+                        filterOption: (input, option) =>
+                          (option?.label ?? "")
+                            .toLowerCase()
+                            .includes(input.toLowerCase()),
+                      }}
+                      options={currencies}
+                      placeholder="Select Currency"
+                    />
+                  )}
+                </Form.Item>
+              </Col>
+
+              <Col span={12}>
+                <Form.Item
+                  label="Pricing Type"
+                  name="pricingType"
+                  rules={[
+                    { required: true, message: "Pricing Type is Required" },
+                  ]}
+                  getValueProps={(value) => ({
+                    value: isView
+                      ? pricingType.find((item) => item.value === value)?.label
+                      : value,
+                  })}
+                >
+                  {isView ? (
+                    <Input readOnly={isView} />
+                  ) : (
+                    <Select
+                      showSearch={{
+                        filterOption: (input, option) =>
+                          (option?.label ?? "")
+                            .toLowerCase()
+                            .includes(input.toLowerCase()),
+                      }}
+                      options={pricingType}
+                      placeholder="Select Pricing Type"
+                    />
+                  )}
+                </Form.Item>
+              </Col>
+            </Row>
+
+            <Form.Item
+              label="Status"
+              name="status"
+              rules={[{ required: true, message: "Status is required" }]}
+              getValueProps={(value) => ({
+                value: isView
+                  ? statuses.find((item) => item.value === value)?.label
+                  : value,
+              })}
             >
-              <Row gutter={24}>
-                <Col span={16}>
-                  <Form.Item
-                    label="Name"
-                    name="name"
-                    rules={[
-                      { required: true, message: "Please enter rate plan name" },
-                    ]}
-                  >
-                    <Input readOnly={isView} placeholder="Enter Rate Plan Name" />
-                  </Form.Item>
-                </Col>
-                <Col span={8}>
-                  <Form.Item
-                    label="Code"
-                    name="code"
-                    rules={[
-                      { required: true, message: "Please enter rate plan code" },
-                    ]}
-                  >
-                    <Input readOnly={isView} placeholder="Enter Rate Plan Code" />
-                  </Form.Item>
-                </Col>
-              </Row>
-
-              <Row gutter={16}>
-                <Col span={12}>
-                  <Form.Item
-                    label="Meal Plan"
-                    name="mealPlan"
-                    rules={[{ required: true, message: "Meal Plan is Required" }]}
-                    getValueProps={(value) => ({
-                      value: isView
-                        ? mealPlans.find((item) => item.value === value)?.label
-                        : value,
-                    })}
-                  >
-                    {isView ? (
-                      <Input readOnly={isView} />
-                    ) : (
-                      <Select
-                        showSearch={{
-                          filterOption: (input, option) =>
-                            (option?.label ?? "")
-                              .toLowerCase()
-                              .includes(input.toLowerCase()),
-                        }}
-                        options={mealPlans}
-                        placeholder="Select Meal Plan"
-                      />
-                    )}
-                  </Form.Item>
-                </Col>
-
-                <Col span={12}>
-                  <Form.Item
-                    label="Policy"
-                    name="policy"
-                    rules={[{ required: true, message: "Policy is Required" }]}
-                    getValueProps={(value) => ({
-                      value: isView
-                        ? policy.find((item) => item.value === value)?.label
-                        : value,
-                    })}
-                  >
-                    {isView ? (
-                      <Input readOnly={isView} />
-                    ) : (
-                      <Select
-                        showSearch={{
-                          filterOption: (input, option) =>
-                            (option?.label ?? "")
-                              .toLowerCase()
-                              .includes(input.toLowerCase()),
-                        }}
-                        options={policy}
-                        placeholder="Select Policy"
-                      />
-                    )}
-                  </Form.Item>
-                </Col>
-
-                <Col span={12}>
-                  <Form.Item
-                    label="Currency"
-                    name="currency"
-                    rules={[{ required: true, message: "Currency is Required" }]}
-                    getValueProps={(value) => ({
-                      value: isView
-                        ? currencies.find((item) => item.value === value)?.label
-                        : value,
-                    })}
-                  >
-                    {isView ? (
-                      <Input readOnly={isView} />
-                    ) : (
-                      <Select
-                        showSearch={{
-                          filterOption: (input, option) =>
-                            (option?.label ?? "")
-                              .toLowerCase()
-                              .includes(input.toLowerCase()),
-                        }}
-                        options={currencies}
-                        placeholder="Select Currency"
-                      />
-                    )}
-                  </Form.Item>
-                </Col>
-
-                <Col span={12}>
-                  <Form.Item
-                    label="Pricing Type"
-                    name="pricingType"
-                    rules={[{ required: true, message: "Pricing Type is Required" }]}
-                    getValueProps={(value) => ({
-                      value: isView
-                        ? pricingType.find((item) => item.value === value)?.label
-                        : value,
-                    })}
-                  >
-                    {isView ? (
-                      <Input readOnly={isView} />
-                    ) : (
-                      <Select
-                        showSearch={{
-                          filterOption: (input, option) =>
-                            (option?.label ?? "")
-                              .toLowerCase()
-                              .includes(input.toLowerCase()),
-                        }}
-                        options={pricingType}
-                        placeholder="Select Pricing Type"
-                      />
-                    )}
-                  </Form.Item>
-                </Col>
-              </Row>
-
-              <Form.Item
-                label="Status"
-                name="status"
-                rules={[{ required: true, message: "Status is required" }]}
-                getValueProps={(value) => ({
-                  value: isView
-                    ? statuses.find((item) => item.value === value)?.label
-                    : value,
-                })}
-              >
-                {isView ? (
-                  <Input readOnly={isView} />
-                ) : (
-                  <Select
-                    showSearch={{
-                      filterOption: (input, option) =>
-                        (option?.label ?? "")
-                          .toLowerCase()
-                          .includes(input.toLowerCase()),
-                    }}
-                    options={statuses}
-                    placeholder="Select Status"
-                  />
-                )}
-              </Form.Item>
-
-              <Form.Item
-                label="Channels"
-                name="channels"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please select at least one channel",
-                  },
-                ]}
-                className={isView ? "custom-disabled-checkbox" : ""}
-              >
-                <Checkbox.Group options={channelOptions} disabled={isView} />
-              </Form.Item>
-
-              <Form.Item label="Description" name="description">
-                <TextArea rows={3} readOnly={isView} placeholder="Enter Description" />
-              </Form.Item>
-
-
-              <Form.Item
-                label="Is Default"
-                name="isDefault"
-                rules={[{ required: true, message: "Please select Is Default!" }]}
-              >
-                <Switch
-                  disabled={isView || isDisableDefault}
-                  checkedChildren="True"
-                  unCheckedChildren="False"
+              {isView ? (
+                <Input readOnly={isView} />
+              ) : (
+                <Select
+                  showSearch={{
+                    filterOption: (input, option) =>
+                      (option?.label ?? "")
+                        .toLowerCase()
+                        .includes(input.toLowerCase()),
+                  }}
+                  options={statuses}
+                  placeholder="Select Status"
                 />
-              </Form.Item>
+              )}
+            </Form.Item>
 
-              {roomTypes?.map((roomType) => (
-                isAdd &&
-                <Row key={roomType?.value} align="middle" style={{ marginBottom: 16 }}>
-                  <Col span={1}>
-                    <span className="text-red-500">*</span>
-                  </Col>
-                  <Col span={9}>
-                    <span style={{ fontWeight: 500 }}>{roomType?.label}</span>
-                  </Col>
+            <Form.Item
+              label="Channels"
+              name="channels"
+              rules={[
+                {
+                  required: true,
+                  message: "Please select at least one channel",
+                },
+              ]}
+              className={isView ? "custom-disabled-checkbox" : ""}
+            >
+              <Checkbox.Group options={channelOptions} disabled={isView} />
+            </Form.Item>
 
-                  <Col span={1} style={{ textAlign: 'center' }}>:</Col>
+            <Form.Item label="Description" name="description">
+              <TextArea
+                rows={3}
+                readOnly={isView}
+                placeholder="Enter Description"
+              />
+            </Form.Item>
 
-                  <Col span={13}>
-                    <Form.Item
-                      name={roomType?.value}
-                      noStyle
-                      rules={[{ required: true, message: "Rate is required!" }]}
-                    >
-                      <InputNumber
-                        min={0}
-                        style={{ width: '100%' }}
-                        placeholder="Enter Rate"
-                        suffix="MMK"
-                      />
-                    </Form.Item>
-                  </Col>
-                </Row>
-              ))}
+            <Form.Item
+              label="Is Default"
+              name="isDefault"
+              rules={[{ required: true, message: "Please select Is Default!" }]}
+            >
+              <Switch
+                disabled={isView || isDisableDefault}
+                checkedChildren="True"
+                unCheckedChildren="False"
+              />
+            </Form.Item>
 
-            </Form>
-          )}
-      </Drawer >
-    </div >
+            {roomTypes?.map(
+              (roomType) =>
+                isAdd && (
+                  <Row
+                    key={roomType?.value}
+                    align="middle"
+                    style={{ marginBottom: 16 }}
+                  >
+                    <Col span={1}>
+                      <span className="text-red-500">*</span>
+                    </Col>
+                    <Col span={9}>
+                      <span style={{ fontWeight: 500 }}>{roomType?.label}</span>
+                    </Col>
+
+                    <Col span={1} style={{ textAlign: "center" }}>
+                      :
+                    </Col>
+
+                    <Col span={13}>
+                      <Form.Item
+                        name={roomType?.value}
+                        noStyle
+                        rules={[
+                          { required: true, message: "Rate is required!" },
+                        ]}
+                      >
+                        <InputNumber
+                          min={0}
+                          style={{ width: "100%" }}
+                          placeholder="Enter Rate"
+                          suffix="MMK"
+                        />
+                      </Form.Item>
+                    </Col>
+                  </Row>
+                ),
+            )}
+          </Form>
+        )}
+      </Drawer>
+    </div>
   );
 };
 

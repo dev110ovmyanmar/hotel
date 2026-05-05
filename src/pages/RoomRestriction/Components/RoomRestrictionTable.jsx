@@ -1,4 +1,4 @@
-import { Dropdown, Space, Table, Tag } from "antd";
+import { Dropdown, Modal, Space, Switch, Table, Tag, Tooltip } from "antd";
 import { useState } from "react";
 import {
   MoreOutlined,
@@ -7,9 +7,15 @@ import {
   FileAddOutlined,
 } from "@ant-design/icons";
 // import { PERMISSIONS } from "../../../variables/permission";
-import usePermission from "../../../hooks/usePermission";
+// import usePermission from "../../../hooks/usePermission";
 import RoomRestrictionForm from "./RoomRestrictionForms/RoomRestrictionForm";
 import PriceTag from "../../../component/PriceTag/PriceTag";
+import dayjs from "dayjs";
+import { updateStopSell } from "../../../api/roomrestriction";
+import { useApiMutation } from "../../../hooks/useApiMutation";
+import isSameOrBeforePlugin from "dayjs/plugin/isSameOrBefore";
+
+dayjs.extend(isSameOrBeforePlugin);
 
 const RoomRestrictionTable = ({ data, page, setPage }) => {
   //   const { hasPermission } = usePermission();
@@ -18,6 +24,29 @@ const RoomRestrictionTable = ({ data, page, setPage }) => {
   const [mode, setMode] = useState(null);
   const [selectedData, setSelectedData] = useState({});
   const [expandedRowKeys, setExpandedRowKeys] = useState([]);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [switchValue, setSwitchValue] = useState(null);
+  const [selectedRecord, setSelectedRecord] = useState(null);
+  const [updatingId, setUpdatingId] = useState(null);
+
+  const updateStopSelling = useApiMutation({
+    mutationFn: updateStopSell,
+    invalidateKeys: [["roomRestriction"]],
+  });
+
+  const handleConfirmStopSell = () => {
+    const params = {
+      uuid: selectedRecord?.uuid,
+      stopSell: switchValue,
+    };
+
+    updateStopSelling.mutate(params, {
+      onSuccess: () => {
+        setConfirmOpen(false);
+        Toast.success("Stop Selling Updated Successfully!");
+      },
+    });
+  };
 
   const columns = [
     {
@@ -65,7 +94,10 @@ const RoomRestrictionTable = ({ data, page, setPage }) => {
   const expandColumns = [
     { title: "ID", dataIndex: "id", key: "id", align: "center" },
     {
-      title: "Rate Plan", dataIndex: ["ratePlan", "name"], key: "ratePlan", align: "center",
+      title: "Rate Plan",
+      dataIndex: ["ratePlan", "name"],
+      key: "ratePlan",
+      align: "center",
       onCell: (record) => ({
         rowSpan: record.rowSpan,
         style: { verticalAlign: "middle" },
@@ -82,13 +114,51 @@ const RoomRestrictionTable = ({ data, page, setPage }) => {
       title: "Min Stay",
       dataIndex: "minStay",
       key: "minStay",
-      align: "center"
+      align: "center",
     },
     {
       title: "Max Stay",
       dataIndex: "maxStay",
       key: "maxStay",
-      align: "center"
+      align: "center",
+    },
+    {
+      title: "Stop Sell",
+      dataIndex: "stopSell",
+      key: "stopSell",
+      width: 150,
+      align: "center",
+      render: (_, record) => {
+        const isPastOrToday = dayjs(record.date).isSameOrBefore(dayjs(), "day");
+
+        const isDisabled = isPastOrToday || updatingId === record.id;
+        const switchComponent = (
+          <Switch
+            checked={record.stopSell === true}
+            loading={updatingId === record.id}
+            disabled={isDisabled}
+            style={{
+              opacity: isDisabled ? 0.2 : 1,
+              backgroundColor: record.stopSell ? "#ff4d4f" : "#56ec0b",
+            }}
+            onChange={(checked) => {
+              setSelectedRecord(record);
+              setSwitchValue(checked);
+              setConfirmOpen(true);
+            }}
+          />
+        );
+
+        if (isPastOrToday) {
+          return (
+            <Tooltip title="Cannot modify past or today dates">
+              {switchComponent}
+            </Tooltip>
+          );
+        }
+
+        return switchComponent;
+      },
     },
     {
       title: "Action",
@@ -150,8 +220,7 @@ const RoomRestrictionTable = ({ data, page, setPage }) => {
     const processedRates = processData(record?.calendars || []);
     return (
       <Table
-        // className="custom-table-style"
-        className="[&_.ant-table-cell]:!border [&_.ant-table-cell]:!border-blue-300 [&_.ant-table-thead>tr>th]:!bg-[#F0F5FF]"
+        className="custom-table-style"
         columns={expandColumns}
         // dataSource={record?.calendars}
         dataSource={processedRates}
@@ -185,6 +254,24 @@ const RoomRestrictionTable = ({ data, page, setPage }) => {
         selectedData={selectedData}
         setSelectedData={setSelectedData}
       />
+
+      <Modal
+        open={confirmOpen}
+        title={"Confirm Stop Selling"}
+        okText="Confirm"
+        cancelText="Cancel"
+        confirmLoading={updateStopSelling.isLoading}
+        onOk={handleConfirmStopSell}
+        onCancel={() => {
+          setConfirmOpen(false);
+        }}
+      >
+        <p>
+          Are you sure you want to stop selling{" "}
+          <strong>{selectedRecord?.roomType?.name}</strong> for{" "}
+          <strong>{selectedRecord?.date}</strong>?
+        </p>
+      </Modal>
     </div>
   );
 };

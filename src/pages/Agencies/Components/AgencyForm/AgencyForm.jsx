@@ -70,30 +70,34 @@ const AgencyForm = ({
     },
   });
 
-
   useEffect(() => {
     if (isAdd) {
       form.resetFields();
     }
 
-    if(isAdd && initDataStatus){
+    if (isAdd && initDataStatus) {
       form.setFieldsValue({
         status: {
-          uuid: initDataStatus?.find(item => item?.code === "active")?.uuid
-        }
-      })
+          uuid: initDataStatus?.find((item) => item?.code === "active")?.uuid,
+        },
+      });
     }
 
     if (isEdit && data) {
       form.setFieldsValue({
         ...data,
         status: {
-          uuid: data?.status?.uuid
-        }
+          uuid: data?.status?.uuid,
+        },
       });
     }
   }, [data, isEdit, isAdd]);
 
+  const handleClose = () => {
+    setDrawerOpen(false);
+    setSelectedData(null);
+    form.resetFields();
+  };
 
   const onFinish = (values) => {
     const modifiedValues = {
@@ -103,10 +107,11 @@ const AgencyForm = ({
     if (isAdd) {
       upsertPartners.mutate(modifiedValues, {
         onSuccess: () => {
+          form.resetFields();
           setPage(1);
           setDrawerOpen(false);
+          handleClose();
           Toast.success("Agency Created Successfully!");
-          form.resetFields();
         },
       });
     }
@@ -121,6 +126,7 @@ const AgencyForm = ({
       upsertPartners.mutate(editValues, {
         onSuccess: () => {
           setDrawerOpen(false);
+          handleClose();
           Toast.success("Agency Updated Successfully!");
         },
       });
@@ -138,14 +144,17 @@ const AgencyForm = ({
   });
 
   if (data) {
-    console.log(data?.agencyFiles.map(i => i), "DataForAgencyFiles")
+    console.log(
+      data?.agencyFiles.map((i) => i),
+      "DataForAgencyFiles",
+    );
   }
 
   return (
     <div className="flex justify-center">
       <Drawer
         open={drawerOpen}
-        onClose={() => setDrawerOpen(false)}
+        onClose={handleClose}
         size={550}
         title={
           <div className="flex justify-between items-center">
@@ -211,10 +220,7 @@ const AgencyForm = ({
             label="Phone"
             name="phone"
             validateTrigger="onChange"
-            rules={[
-              { required: true, message: "Phone is Required" },
-
-            ]}
+            rules={[{ required: true, message: "Phone is Required" }]}
           >
             <Input
               readOnly={isView}
