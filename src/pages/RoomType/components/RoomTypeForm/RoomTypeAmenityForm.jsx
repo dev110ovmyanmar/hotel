@@ -45,17 +45,26 @@ const RoomAttributesForm = ({
   });
 
   useEffect(() => {
-    if (isEdit && selectedAmenity) {
-      form.setFieldsValue({
-        roomTypeAmenityUuid: selectedAmenity?.amenity?.uuid,
-        extraPrice: selectedAmenity?.extraPrice,
-        isFree: selectedAmenity?.isFree ? 1 : 0,
-      });
+    if (open) {
+      if (isEdit && selectedAmenity) {
+        form.setFieldsValue({
+          roomTypeAmenityUuid: selectedAmenity?.amenity?.uuid,
+          extraPrice: selectedAmenity?.extraPrice,
+          isFree: selectedAmenity?.isFree ? 1 : 0,
+          // isFree: !!selectedAmenity?.isFree,
+        });
+      } else {
+        form.resetFields();
+      }
     } else {
       form.resetFields();
     }
-  }, [selectedAmenity, mode]);
+  }, [open, selectedAmenity, mode, form]);
 
+  const handleClose = () => {
+    setDrawerOpen(false);
+    form.resetFields();
+  };
   const onFinish = (values) => {
     const payload = {
       extraPrice: values.extraPrice,
@@ -95,11 +104,6 @@ const RoomAttributesForm = ({
     }
   };
 
-  const handleClose = () => {
-    form.resetFields();
-    setDrawerOpen(false);
-  };
-
   return (
     <Drawer
       size={550}
@@ -122,6 +126,7 @@ const RoomAttributesForm = ({
       }
       open={open}
       onClose={handleClose}
+      destroyOnClose
     >
       {open && (
         <Form

@@ -81,6 +81,12 @@ const FAndBInventoryForm = ({
     }
   }, [data]);
 
+  const handleClose = () => {
+    setDrawerOpen(false);
+    setSelectedData(null);
+    form.resetFields();
+  };
+
   const onFinish = (values) => {
     if (isAdd) {
       const createValues = {
@@ -93,6 +99,7 @@ const FAndBInventoryForm = ({
       createFacility.mutate(createValues, {
         onSuccess: () => {
           form.resetFields();
+          handleClose();
           setDrawerOpen(false);
           setPage(1);
           Toast.success("FAndB Inventory Created Successfully!");
@@ -111,6 +118,7 @@ const FAndBInventoryForm = ({
       editFacility.mutate(editValues, {
         onSuccess: () => {
           setDrawerOpen(false);
+          handleClose();
           Toast.success("Facility Package Updated Successfully!");
         },
       });
@@ -121,7 +129,7 @@ const FAndBInventoryForm = ({
     <div>
       <Drawer
         open={drawerOpen}
-        onClose={() => setDrawerOpen(false)}
+        onClose={handleClose}
         size={550}
         title={
           <div className="flex justify-between items-center">
@@ -151,194 +159,194 @@ const FAndBInventoryForm = ({
           </div>
         }
       >
-        {
-          isLoading ? (
-            <div className="flex items-center justify-center h-full min-h-[300px]">
-              <Loader />
-            </div>
-          ) : (
-            <Form
-              form={form}
-              layout="vertical"
-              style={{ width: "100%" }}
-              onFinish={onFinish}
+        {isLoading ? (
+          <div className="flex items-center justify-center h-full min-h-[300px]">
+            <Loader />
+          </div>
+        ) : (
+          <Form
+            form={form}
+            layout="vertical"
+            style={{ width: "100%" }}
+            onFinish={onFinish}
+          >
+            <Form.Item
+              label="Name"
+              name="name"
+              rules={[{ required: true, message: "Name is Required" }]}
             >
+              <Input readOnly={isView} placeholder="Enter Name" />
+            </Form.Item>
+
+            <Form.Item
+              label="Category Name"
+              name="category"
+              rules={[{ required: true, message: "Category Name is Required" }]}
+              getValueProps={(value) => ({
+                value: isView
+                  ? categoryList.find((item) => item.value === value)?.label
+                  : value,
+              })}
+            >
+              {isView ? (
+                <Input readOnly={isView} />
+              ) : (
+                <Select
+                  showSearch={{
+                    filterOption: (input, option) =>
+                      (option?.label ?? "")
+                        .toLowerCase()
+                        .includes(input.toLowerCase()),
+                  }}
+                  options={categoryList}
+                  placeholder="Select Category"
+                />
+              )}
+            </Form.Item>
+
+            <Form.Item
+              label="Unit"
+              name="unit"
+              rules={[{ required: true, message: "Unit is Required" }]}
+              getValueProps={(value) => ({
+                value: isView
+                  ? unitList.find((item) => item.value === value)?.label
+                  : value,
+              })}
+            >
+              {isView ? (
+                <Input readOnly={isView} />
+              ) : (
+                <Select
+                  showSearch={{
+                    filterOption: (input, option) =>
+                      (option?.label ?? "")
+                        .toLowerCase()
+                        .includes(input.toLowerCase()),
+                  }}
+                  options={unitList}
+                  placeholder="Select Unit"
+                />
+              )}
+            </Form.Item>
+
+            <Form.Item
+              label="Supplier"
+              name="supplier"
+              rules={[{ required: true, message: "Supplier is Required" }]}
+              getValueProps={(value) => ({
+                value: isView
+                  ? supplierList.find((item) => item.value === value)?.label
+                  : value,
+              })}
+            >
+              {isView ? (
+                <Input readOnly={isView} />
+              ) : (
+                <Select
+                  showSearch={{
+                    filterOption: (input, option) =>
+                      (option?.label ?? "")
+                        .toLowerCase()
+                        .includes(input.toLowerCase()),
+                  }}
+                  options={supplierList}
+                  placeholder="Select Supplier"
+                />
+              )}
+            </Form.Item>
+
+            <div className="grid grid-cols-2 gap-4">
               <Form.Item
-                label="Name"
-                name="name"
-                rules={[{ required: true, message: "Name is Required" }]}
+                label="Purchase Price"
+                name="unitCost"
+                rules={[
+                  { required: true, message: "Purchase Price is Required" },
+                ]}
               >
-                <Input readOnly={isView} placeholder="Enter Name" />
+                <InputNumber
+                  className="w-full!"
+                  min={0}
+                  placeholder="Purchase Price"
+                  disabled={isView}
+                  suffix="MMK"
+                />
               </Form.Item>
 
               <Form.Item
-                label="Category Name"
-                name="category"
-                rules={[{ required: true, message: "Category Name is Required" }]}
-                getValueProps={(value) => ({
-                  value: isView
-                    ? categoryList.find((item) => item.value === value)?.label
-                    : value,
-                })}
+                label="Selling Price"
+                name="unitPrice"
+                dependencies={["unitCost"]}
+                rules={[
+                  { required: true, message: "Selling Price is Required" },
+                  ({ getFieldValue }) => ({
+                    validator(_, value) {
+                      const purchasePrice = getFieldValue("unitCost");
+                      if (
+                        !value ||
+                        !purchasePrice ||
+                        Number(value) > Number(purchasePrice)
+                      ) {
+                        return Promise.resolve();
+                      }
+                      return Promise.reject(
+                        new Error(
+                          "Selling price must be greater than purchase price",
+                        ),
+                      );
+                    },
+                  }),
+                ]}
               >
-                {isView ? (
-                  <Input readOnly={isView} />
-                ) : (
-                  <Select
-                    showSearch={{
-                      filterOption: (input, option) =>
-                        (option?.label ?? "")
-                          .toLowerCase()
-                          .includes(input.toLowerCase()),
-                    }}
-                    options={categoryList}
-                    placeholder="Select Category"
-                  />
-                )}
+                <InputNumber
+                  className="w-full!"
+                  min={0}
+                  placeholder="Selling Price"
+                  disabled={isView}
+                  suffix="MMK"
+                />
+              </Form.Item>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <Form.Item
+                label="Reorder Level"
+                name="reorderLevel"
+                rules={[
+                  { required: true, message: "Reorder Level is Required" },
+                ]}
+              >
+                <InputNumber
+                  className="w-full!"
+                  mode={"spinner"}
+                  min={1}
+                  placeholder="Reorder Level"
+                  disabled={isView}
+                />
               </Form.Item>
 
               <Form.Item
-                label="Unit"
-                name="unit"
-                rules={[{ required: true, message: "Unit is Required" }]}
-                getValueProps={(value) => ({
-                  value: isView
-                    ? unitList.find((item) => item.value === value)?.label
-                    : value,
-                })}
+                label="Stock Quantity"
+                name="stockQuantity"
+                rules={[
+                  { required: true, message: "Stock Quantity is Required" },
+                ]}
               >
-                {isView ? (
-                  <Input readOnly={isView} />
-                ) : (
-                  <Select
-                    showSearch={{
-                      filterOption: (input, option) =>
-                        (option?.label ?? "")
-                          .toLowerCase()
-                          .includes(input.toLowerCase()),
-                    }}
-                    options={unitList}
-                    placeholder="Select Unit"
-                  />
-                )}
+                <InputNumber
+                  className="w-full!"
+                  mode={"spinner"}
+                  min={1}
+                  max={100}
+                  placeholder="Stock Quantity"
+                  disabled={isView}
+                />
               </Form.Item>
-
-              <Form.Item
-                label="Supplier"
-                name="supplier"
-                rules={[{ required: true, message: "Supplier is Required" }]}
-                getValueProps={(value) => ({
-                  value: isView
-                    ? supplierList.find((item) => item.value === value)?.label
-                    : value,
-                })}
-              >
-                {isView ? (
-                  <Input readOnly={isView} />
-                ) : (
-                  <Select
-                    showSearch={{
-                      filterOption: (input, option) =>
-                        (option?.label ?? "")
-                          .toLowerCase()
-                          .includes(input.toLowerCase()),
-                    }}
-                    options={supplierList}
-                    placeholder="Select Supplier"
-                  />
-                )}
-              </Form.Item>
-
-              <div className="grid grid-cols-2 gap-4">
-                <Form.Item
-                  label="Purchase Price"
-                  name="unitCost"
-                  rules={[
-                    { required: true, message: "Purchase Price is Required" },
-                  ]}
-                >
-                  <InputNumber
-                    className="w-full!"
-                    min={0}
-                    placeholder="Purchase Price"
-                    disabled={isView}
-                    suffix="MMK"
-                  />
-                </Form.Item>
-
-                <Form.Item
-                  label="Selling Price"
-                  name="unitPrice"
-                  dependencies={["unitCost"]}
-                  rules={[
-                    { required: true, message: "Selling Price is Required" },
-                    ({ getFieldValue }) => ({
-                      validator(_, value) {
-                        const purchasePrice = getFieldValue("unitCost");
-                        if (
-                          !value ||
-                          !purchasePrice ||
-                          Number(value) > Number(purchasePrice)
-                        ) {
-                          return Promise.resolve();
-                        }
-                        return Promise.reject(
-                          new Error(
-                            "Selling price must be greater than purchase price",
-                          ),
-                        );
-                      },
-                    }),
-                  ]}
-                >
-                  <InputNumber
-                    className="w-full!"
-                    min={0}
-                    placeholder="Selling Price"
-                    disabled={isView}
-                    suffix="MMK"
-                  />
-                </Form.Item>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <Form.Item
-                  label="Reorder Level"
-                  name="reorderLevel"
-                  rules={[{ required: true, message: "Reorder Level is Required" }]}
-                >
-                  <InputNumber
-                    className="w-full!"
-                    mode={"spinner"}
-                    min={1}
-                    placeholder="Reorder Level"
-                    disabled={isView}
-                  />
-                </Form.Item>
-
-                <Form.Item
-                  label="Stock Quantity"
-                  name="stockQuantity"
-                  rules={[
-                    { required: true, message: "Stock Quantity is Required" },
-                  ]}
-                >
-                  <InputNumber
-                    className="w-full!"
-                    mode={"spinner"}
-                    min={1}
-                    max={100}
-                    placeholder="Stock Quantity"
-                    disabled={isView}
-                  />
-                </Form.Item>
-              </div>
-              <Status isView={isView} />
-            </Form>
-          )
-        }
+            </div>
+            <Status isView={isView} />
+          </Form>
+        )}
       </Drawer>
-    </div >
+    </div>
   );
 };
 

@@ -1,24 +1,13 @@
 import React, { useEffect, useState } from "react";
-import {
-  Form,
-  Input,
-  Button,
-  Drawer,
-  Modal,
-  Table,
-  Space,
-} from "antd";
+import { Form, Input, Button, Drawer, Modal, Table, Space } from "antd";
 import Toast from "../../../../component/Toast/Toast";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
 import useApiQuery from "../../../../hooks/useApiQuery";
-import {
-  upsertLocation,
-  locationDetails,
-} from "../../../../api/locationApi";
+import { upsertLocation, locationDetails } from "../../../../api/locationApi";
 import { FiEdit } from "react-icons/fi";
 import ListHeader from "./../../../../component/ListHeader/ListHeader";
 import FormButtons from "./../../../../component/FormButtons/FormButtons";
-import { queryClient } from './../../../../app/queryClient';
+import { queryClient } from "./../../../../app/queryClient";
 import Loader from "../../../../component/Loader/Loader";
 
 const LocationForm = ({
@@ -49,8 +38,7 @@ const LocationForm = ({
   const upsertLocations = useApiMutation({
     mutationFn: upsertLocation,
     invalidateKeys: [["locations"]],
-    shouldInvalidate: isEdit ? true : page === 1
-
+    shouldInvalidate: isEdit ? true : page === 1,
   });
 
   const { data, isLoading, error } = useApiQuery({
@@ -79,14 +67,21 @@ const LocationForm = ({
     }
   }, [isAdd, isCityAdd]);
 
+  const handleClose = () => {
+    setModalOpen(false);
+    setSelectedData(null);
+    form.resetFields();
+  };
+
   const onFinish = (values) => {
     if (isAdd) {
       upsertLocations.mutate(values, {
         onSuccess: () => {
+          form.resetFields();
           setPage(1);
           setModalOpen(false);
+          handleClose();
           Toast.success("Country Created Successfully!");
-          form.resetFields();
         },
       });
     }
@@ -100,6 +95,7 @@ const LocationForm = ({
       upsertLocations.mutate(editValues, {
         onSuccess: () => {
           setModalOpen(false);
+          handleClose();
           Toast.success("Country Updated Successfully!");
         },
       });
@@ -153,7 +149,6 @@ const LocationForm = ({
           queryClient.invalidateQueries(["locations"]);
           setCreateDrawerOpen(false);
           Toast.success("City Create Successfully!");
-
         },
       });
     }
@@ -203,8 +198,14 @@ const LocationForm = ({
                   <span style={{ fontWeight: "normal" }}>Country: </span>
                   <span>{data?.name}</span>
                 </div>
-                <Button type="primary" onClick={()=>{setCreateDrawerOpen(true);setCityMode("cityAdd")}}>
-                    Add New City
+                <Button
+                  type="primary"
+                  onClick={() => {
+                    setCreateDrawerOpen(true);
+                    setCityMode("cityAdd");
+                  }}
+                >
+                  Add New City
                 </Button>
               </div>
             </>
@@ -247,31 +248,30 @@ const LocationForm = ({
               </div>
             }
           >
-            {
-              isLoading ? (
-                <div className="flex items-center justify-center h-full min-h-[300px]">
-                  <Loader />
-                </div>
-              ) : (
-                <Form form={cityForm} onFinish={onCityFinish} layout="vertical">
-                  <Form.Item
-                    label="City"
-                    name={["city", "name"]}
-                    rules={[{ required: true, message: "City is required" }]}
-                  >
-                    <Input />
-                  </Form.Item>
-                </Form>
-              )
-            }
+            {isLoading ? (
+              <div className="flex items-center justify-center h-full min-h-[300px]">
+                <Loader />
+              </div>
+            ) : (
+              <Form form={cityForm} onFinish={onCityFinish} layout="vertical">
+                <Form.Item
+                  label="City"
+                  name={["city", "name"]}
+                  rules={[{ required: true, message: "City is required" }]}
+                >
+                  <Input />
+                </Form.Item>
+              </Form>
+            )}
           </Drawer>
-        </Drawer >
+        </Drawer>
       )}
 
       <Modal
         width={400}
         open={modalOpen}
-        onCancel={() => setModalOpen(false)}
+        // onCancel={() => setModalOpen(false)}handleClose
+        onCancel={handleClose}
         title={mode === "add" ? "Add New Location" : "Edit Location"}
         footer={null}
       >
@@ -307,7 +307,7 @@ const LocationForm = ({
           )}
         </Form>
       </Modal>
-    </div >
+    </div>
   );
 };
 

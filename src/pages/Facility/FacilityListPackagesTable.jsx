@@ -75,15 +75,17 @@ const FacilityListPackagesTable = ({
       key: "includedPax",
     },
     {
-      title: "Extra Hour Price",
+      title: "Extra Hour Price (MMK)",
       dataIndex: "extraHourPrice",
       key: "extraHourPrice",
+      align: "end",
       render: (text) => <PriceTag value={text} />
     },
     {
-      title: "Extra Pax Price",
+      title: "Extra Pax Price (MMK)",
       dataIndex: "extraPaxPrice",
       key: "extraPaxPrice",
+      align: "end",
       render: (text) => <PriceTag value={text} />
     },
     {

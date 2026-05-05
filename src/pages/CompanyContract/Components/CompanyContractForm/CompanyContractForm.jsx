@@ -90,6 +90,12 @@ const CompanyContractForm = ({
     }
   }, [partnerContractDetailData]);
 
+  const handleClose = () => {
+    setDrawerOpen(false);
+    setSelectedData(null);
+    form.resetFields();
+  };
+
   const onFinish = (values) => {
     console.log(values, "valuesonFinish");
     const createValues = {
@@ -109,6 +115,7 @@ const CompanyContractForm = ({
         onSuccess: () => {
           form.resetFields();
           setDrawerOpen(false);
+          handleClose();
           setPage(1);
           Toast.success("Company Contract Created Successfully!");
         },
@@ -132,6 +139,7 @@ const CompanyContractForm = ({
       upsertPartnerContracts.mutate(editValues, {
         onSuccess: () => {
           setDrawerOpen(false);
+          handleClose();
           Toast.success("Company Contract Updated Successfully!");
         },
       });
@@ -147,14 +155,16 @@ const CompanyContractForm = ({
 
   const deleteCompanyContractUpload = useApiMutation({
     mutationFn: deleteImageUpload,
-    invalidateKeys: [["partner-contract-details", { uuid: selectedData?.uuid }]],
+    invalidateKeys: [
+      ["partner-contract-details", { uuid: selectedData?.uuid }],
+    ],
   });
-  
+
   return (
     <div>
       <Drawer
         open={drawerOpen}
-        onClose={() => setDrawerOpen(false)}
+        onClose={handleClose}
         size={550}
         title={
           <div className="flex justify-between items-center">

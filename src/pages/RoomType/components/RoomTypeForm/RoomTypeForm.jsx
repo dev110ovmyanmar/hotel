@@ -10,6 +10,7 @@ import {
   Card,
   Tag,
   InputNumber,
+  Select,
 } from "antd";
 import Toast from "../../../../component/Toast/Toast";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
@@ -20,7 +21,7 @@ import {
   editRoomType,
   roomTypeDetails,
   fetchRoomTypeUpload,
-
+  ratePlanMeta,
 } from "../../../../api/roomApi";
 import TextArea from "antd/es/input/TextArea";
 import RoomTypeAmenityForm from "./RoomTypeAmenityForm";
@@ -32,8 +33,7 @@ import { PERMISSIONS } from "../../../../variables/permission";
 import usePermission from "../../../../hooks/usePermission";
 import { hasIn } from "lodash";
 import { deleteImageUpload } from "../../../../api/deleteImageApi";
-
-
+import { queryClient } from "../../../../app/queryClient";
 
 const onChange = (value) => {
   console.log("changed", value);
@@ -63,7 +63,9 @@ const RoomTypeForm = ({
   const { hasPermission } = usePermission();
 
   const canEdit = hasPermission(PERMISSIONS.ROOM_TYPE_EDIT);
-  const canEditOrCreateRoomTypeAmenity = hasPermission(PERMISSIONS.ROOM_TYPE_AMENITY)
+  const canEditOrCreateRoomTypeAmenity = hasPermission(
+    PERMISSIONS.ROOM_TYPE_AMENITY,
+  );
 
   const sharedProps = {
     mode: "spinner",
@@ -82,6 +84,28 @@ const RoomTypeForm = ({
     onChange,
     style: { width: 150 },
   };
+
+  const initData = queryClient.getQueryData(["initData", "authenticated"]);
+
+  const statuses = initData?.statuses?.room_status?.map((status) => ({
+    value: status.uuid,
+    label: status.name,
+  }));
+
+  const { data: ratePlanMetaData } = useApiQuery({
+    fetchQueryName: "ratePlanMetaData",
+    fetchQueryFunction: ratePlanMeta,
+  });
+
+  // const ratePlan = ratePlanMetaData?.rate_plans?.map((rate) => ({
+  //   value: rate.uuid,
+  //   label: rate.name,
+  // }));
+  // Change 'ratePlan' to 'ratePlans'
+  const ratePlans = ratePlanMetaData?.rate_plans?.map((rate) => ({
+    value: rate.uuid,
+    label: rate.name,
+  }));
 
   const createRoomTypes = useApiMutation({
     mutationFn: createRoomType,
@@ -107,36 +131,50 @@ const RoomTypeForm = ({
     if (!isAdd && data) {
       form.setFieldsValue({
         ...data,
+        roomNo: data?.roomNo,
+        status: data?.status?.uuid,
+        floorUuid: data?.floor?.uuid,
+        roomTypeUuid: data?.roomType?.uuid,
       });
+
       setSelectedData(data);
     }
   }, [data]);
 
-  const onFinish = (values) => {
-    if (isAdd) {
-      const createValues = {
-        ...values,
-      };
+  const handleClose = () => {
+    setDrawerOpen(false);
+    setSelectedData(null);
+    form.resetFields();
+  };
 
-      createRoomTypes.mutate(createValues, {
+  const onFinish = (values) => {
+    const formattedRatePlans = ratePlans.map((rp) => ({
+      uuid: rp.value,
+      price: String(values[rp.value]),
+    }));
+
+    const payload = {
+      ...values,
+      status: { uuid: values.status },
+      ratePlans: formattedRatePlans,
+    };
+
+    if (isEdit) {
+      payload.uuid = data?.uuid;
+      editRoomTypes.mutate(payload, {
         onSuccess: () => {
-          form.resetFields();
+          handleClose();
           setDrawerOpen(false);
-          setPage(1);
-          Toast.success("Room Type Created Successfully!");
+          Toast.success("Updated Successfully!");
         },
       });
-    }
-    if (isEdit) {
-      const editValues = {
-        ...values,
-        uuid: data?.uuid,
-      };
-
-      editRoomTypes.mutate(editValues, {
+    } else {
+      createRoomTypes.mutate(payload, {
         onSuccess: () => {
+          form.resetFields();
+          handleClose();
           setDrawerOpen(false);
-          Toast.success("Room Type Updated Successfully!");
+          Toast.success("Created Successfully!");
         },
       });
     }
@@ -152,14 +190,19 @@ const RoomTypeForm = ({
       title: "Extra Price (MMK)",
       dataIndex: "extraPrice",
       key: "extraPrice",
+      align: "end",
       render: (price) => <PriceTag value={price} />,
     },
     {
       title: "Is Free",
       dataIndex: "isFree",
       key: "isFree",
-      render: text => <div className={text === true ? "text-[#389E0D]" : "text-[#CF1322]"}>{text === true ? "True" : "False"}</div>,
-
+      align: "center",
+      render: (text) => (
+        <div className={text === true ? "text-[#389E0D]" : "text-[#CF1322]"}>
+          {text === true ? "True" : "False"}
+        </div>
+      ),
     },
     {
       title: "Action",
@@ -190,12 +233,11 @@ const RoomTypeForm = ({
     invalidateKeys: [["roomTypeData", { uuid: selectedData?.uuid }]],
   });
 
-
   return (
     <div>
       <Drawer
         open={drawerOpen}
-        onClose={() => setDrawerOpen(false)}
+        onClose={handleClose}
         size={600}
         title={
           <div className="flex justify-between items-center">
@@ -217,14 +259,13 @@ const RoomTypeForm = ({
                   Edit
                 </Button>
               )
-            )
-              : (
-                <FormButton
-                  onClick={() => form.submit()}
-                  isPending={createRoomTypes.isPending || editRoomTypes.isPending}
-                  mode={mode}
-                />
-              )}
+            ) : (
+              <FormButton
+                onClick={() => form.submit()}
+                isPending={createRoomTypes.isPending || editRoomTypes.isPending}
+                mode={mode}
+              />
+            )}
           </div>
         }
       >
@@ -241,6 +282,7 @@ const RoomTypeForm = ({
             initialValues={{
               maxAdults: 1,
               maxOccupancy: 1,
+              totalRooms: 1,
             }}
           >
             <Row gutter={24}>
@@ -293,72 +335,6 @@ const RoomTypeForm = ({
               </Form.Item>
             </div>
 
-            {/* <Row gutter={24}>
-              <Col span={8}>
-                <Form.Item
-                  label="Max Adults"
-                  name="maxAdults"
-                  rules={[
-                    { required: true },
-                    // {
-                    //   type: "number",
-                    //   min: 1,
-                    // },
-                  ]}
-                >
-                  <InputNumber
-                    // {...sharedProps}
-                    {...{
-                      mode: "spinner",
-                      min: 1,
-                      max: 10,
-                      defaultValue: 1,
-                      onChange,
-                      style: { width: 150 },
-                    }}
-                    placeholder="Outlined"
-                    readOnly={isView}
-                    width={20}
-                  />
-                </Form.Item>
-              </Col>
-              <Col span={8}>
-                <Form.Item label="Max Children" name="maxChildren">
-                  <InputNumber
-                    {...{
-                      mode: "spinner",
-                      min: 0,
-                      max: 10,
-                      defaultValue: 0,
-                      onChange,
-                      style: { width: 150 },
-                    }}
-                    placeholder="Outlined"
-                    readOnly={isView}
-                  />
-                </Form.Item>
-              </Col>
-              <Col span={8}>
-                <Form.Item
-                  label="Max Occupancy"
-                  name="maxOccupancy"
-                  rules={[{ required: true }]}
-                >
-                  <InputNumber
-                    {...{
-                      mode: "spinner",
-                      min: 1,
-                      max: 10,
-                      defaultValue: 1,
-                      onChange,
-                      style: { width: 150 },
-                    }}
-                    placeholder="Outlined"
-                    readOnly={isView}
-                  />
-                </Form.Item>
-              </Col>
-            </Row> */}
             <div className="grid grid-cols-2 gap-6">
               <Form.Item
                 label="Max Adults"
@@ -418,12 +394,77 @@ const RoomTypeForm = ({
               />
             </Form.Item>
 
+            <Form.Item
+              label="Status"
+              name="status"
+              rules={[{ required: true, message: "Status is Required" }]}
+              getValueProps={(value) => ({
+                value: isView
+                  ? statuses.find((item) => item.value === value)?.label
+                  : value,
+              })}
+            >
+              {isView ? (
+                <Input readOnly={isView} />
+              ) : (
+                <Select
+                  showSearch={{
+                    filterOption: (input, option) =>
+                      (option?.label ?? "")
+                        .toLowerCase()
+                        .includes(input.toLowerCase()),
+                  }}
+                  options={statuses}
+                  placeholder="Select Status"
+                />
+              )}
+            </Form.Item>
+
+            {ratePlans?.map(
+              (ratePlan) =>
+                isAdd && (
+                  <Row
+                    key={ratePlan?.value}
+                    align="middle"
+                    style={{ marginBottom: 16 }}
+                  >
+                    <Col span={1}>
+                      <span className="text-red-500">*</span>
+                    </Col>
+                    <Col span={9}>
+                      <span style={{ fontWeight: 500 }}>{ratePlan?.label}</span>
+                    </Col>
+
+                    <Col span={1} style={{ textAlign: "center" }}>
+                      :
+                    </Col>
+
+                    <Col span={13}>
+                      <Form.Item
+                        name={ratePlan?.value}
+                        noStyle
+                        rules={[
+                          { required: true, message: "Rate is required!" },
+                        ]}
+                      >
+                        <InputNumber
+                          min={0}
+                          style={{ width: "100%" }}
+                          placeholder="Enter Rate"
+                          suffix="MMK"
+                        />
+                      </Form.Item>
+                    </Col>
+                  </Row>
+                ),
+            )}
+
             {!isAdd && (
               <Card className="mt-5 shadow-sm  border border-gray-100 bg-gray-100!">
                 <div className="flex justify-between items-center text-base font-semibold mb-5">
                   <span>Room Type Amenity </span>
 
-                  {(!isView && canEditOrCreateRoomTypeAmenity) && (
+                  {!isView && canEditOrCreateRoomTypeAmenity && (
                     <Button
                       type="primary"
                       icon={<PlusOutlined />}
@@ -474,11 +515,8 @@ const RoomTypeForm = ({
         setImageDrawerOpen={setImageDrawerOpen}
         fileCategoryName="room_type"
         deleteMutation={deleteRoomTypeUpload}
-
-
       />
-
-    </div >
+    </div>
   );
 };
 
