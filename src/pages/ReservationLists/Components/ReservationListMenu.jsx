@@ -10,7 +10,7 @@ const ReservationListMenu = ({ view, onViewChange }) => {
   const pathSegment = location.pathname.split("/").pop();
 
   const activeKey =
-    pathSegment === "reservation" || !pathSegment ? "inquiry" : pathSegment;
+    pathSegment === "reservation" || !pathSegment ? "all" : pathSegment;
 
   const onChange = (key) => {
     navigate(`/reservation/${key}`);
@@ -34,7 +34,7 @@ const ReservationListMenu = ({ view, onViewChange }) => {
   return (
     <div className="w-full px-6">
       <Tabs
-        activeKey={activeKey} 
+        activeKey={activeKey}
         tabBarExtraContent={renderExtraContent}
         onChange={onChange}
         items={[
@@ -42,7 +42,7 @@ const ReservationListMenu = ({ view, onViewChange }) => {
             label: (
               <Space>
                 Inquiry
-                <Badge count={5} />
+                <Badge count={5} color="cyan" />
               </Space>
             ),
             key: "inquiry",
@@ -51,7 +51,7 @@ const ReservationListMenu = ({ view, onViewChange }) => {
             label: (
               <Space>
                 Booking
-                <Badge count={5} />
+                <Badge count={5} color="blue" />
               </Space>
             ),
             key: "booking",
@@ -60,7 +60,7 @@ const ReservationListMenu = ({ view, onViewChange }) => {
             label: (
               <Space>
                 Arrivals
-                <Badge count={5} />
+                <Badge count={5} color="green" />
               </Space>
             ),
             key: "arrivals",
@@ -69,7 +69,7 @@ const ReservationListMenu = ({ view, onViewChange }) => {
             label: (
               <Space>
                 Departures
-                <Badge count={5} />
+                <Badge count={5} color="orange" />
               </Space>
             ),
             key: "departures",
@@ -78,7 +78,7 @@ const ReservationListMenu = ({ view, onViewChange }) => {
             label: (
               <Space>
                 In-house
-                <Badge count={15} />
+                <Badge count={15} color="#cd74dd" />
               </Space>
             ),
             key: "in-house",
@@ -87,7 +87,7 @@ const ReservationListMenu = ({ view, onViewChange }) => {
             label: (
               <Space>
                 Cancelled
-                <Badge count={15} />
+                <Badge count={15} color="red" />
               </Space>
             ),
             key: "cancelled",
@@ -96,7 +96,7 @@ const ReservationListMenu = ({ view, onViewChange }) => {
             label: (
               <Space>
                 All
-                <Badge count={15} />
+                <Badge count={15} color="#2f34de" />
               </Space>
             ),
             key: "all",

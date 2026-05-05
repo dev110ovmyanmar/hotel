@@ -335,10 +335,10 @@ export const authRoutes = [
 
   {
     key: 30,
-    path: "/reservation/inquiry/",
+    path: "/reservation/all/",
     label: "Reservation",
     icon: <ScheduleOutlined style={{ fontSize: "20px" }} />,
-    component: <InquiryList />,
+    component: <AllList />,
     isPrivate: false,
   },
   {
