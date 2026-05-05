@@ -88,6 +88,12 @@ const RoomInventoryCreateForm = ({
     }
   }, [data]);
 
+    const handleClose = () => {
+    setDrawerOpen(false);
+    setSelectedData(null);
+    form.resetFields();
+  };
+
     const onFinish = (values) => {
       const [start, end] = values.dateRange || [];
       if (isAdd) {
@@ -102,6 +108,7 @@ const RoomInventoryCreateForm = ({
           form.resetFields();
           setDrawerOpen(false);
           setPage(1);
+          handleClose();
           Toast.success("Availabilty Calendars Created Successfully!");
         },
       });
@@ -112,7 +119,7 @@ const RoomInventoryCreateForm = ({
     <div>
       <Drawer
         open={drawerOpen}
-        onClose={() => setDrawerOpen(false)}
+        onClose={handleClose}
         size={550}
         title={
           <div className="flex justify-between items-center">

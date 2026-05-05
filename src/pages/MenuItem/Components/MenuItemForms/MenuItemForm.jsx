@@ -91,6 +91,12 @@ const MenuItemForm = ({
     }
   }, [data]);
 
+  const handleClose = () => {
+    setDrawerOpen(false);
+    setSelectedData(null);
+    form.resetFields();
+  };
+
   const onFinish = (values) => {
     if (isAdd) {
       const createValues = {
@@ -103,6 +109,7 @@ const MenuItemForm = ({
       createMenuItems.mutate(createValues, {
         onSuccess: () => {
           form.resetFields();
+          handleClose();
           setDrawerOpen(false);
           setPage(1);
           Toast.success("Menu Item Created Successfully!");
@@ -120,6 +127,7 @@ const MenuItemForm = ({
 
       editMenuItems.mutate(editValues, {
         onSuccess: () => {
+          handleClose();
           setDrawerOpen(false);
           Toast.success("Menu Item Updated Successfully!");
         },
@@ -131,7 +139,7 @@ const MenuItemForm = ({
     <div>
       <Drawer
         open={drawerOpen}
-        onClose={() => setDrawerOpen(false)}
+        onClose={handleClose}
         size={600}
         title={
           <div className="flex justify-between items-center">
@@ -210,7 +218,11 @@ const MenuItemForm = ({
                   { required: true, message: "Selling Price is Required" },
                 ]}
               >
-                <InputNumber readOnly={isView} suffix="MMK"  style={{ width: "100%" }}/>
+                <InputNumber
+                  readOnly={isView}
+                  suffix="MMK"
+                  style={{ width: "100%" }}
+                />
               </Form.Item>
             </Col>
 
@@ -222,7 +234,11 @@ const MenuItemForm = ({
                   { required: true, message: "Purchase Price is Required" },
                 ]}
               >
-                <InputNumber readOnly={isView} suffix="MMK"  style={{ width: "100%" }}/>
+                <InputNumber
+                  readOnly={isView}
+                  suffix="MMK"
+                  style={{ width: "100%" }}
+                />
               </Form.Item>
             </Col>
           </Row>

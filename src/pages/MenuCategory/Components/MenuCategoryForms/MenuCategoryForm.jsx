@@ -59,17 +59,6 @@ const MenuCategoryForm = ({
     },
   });
 
-  // useEffect(() => {
-  //   if (!isAdd && data) {
-  //     form.setFieldsValue({
-  //       ...data,
-  //       displayOrder: Number(data?.displayOrder),
-  //       status: data?.status?.uuid,
-  //     });
-
-  //     setSelectedData(data);
-  //   }
-  // }, [data]);
   useEffect(() => {
     if (!isAdd && data) {
       form.resetFields();
@@ -82,6 +71,13 @@ const MenuCategoryForm = ({
       setSelectedData(data);
     }
   }, [data]);
+
+  const handleClose = () => {
+    setDrawerOpen(false);
+    setSelectedData(null);
+    form.resetFields();
+  };
+
   const onFinish = (values) => {
     if (isAdd) {
       const createValues = {
@@ -93,6 +89,7 @@ const MenuCategoryForm = ({
       createMenuCategories.mutate(createValues, {
         onSuccess: () => {
           form.resetFields();
+          handleClose();
           setDrawerOpen(false);
           setPage(1);
           Toast.success("Menu Category Created Successfully!");
@@ -109,6 +106,7 @@ const MenuCategoryForm = ({
 
       editMenuCategories.mutate(editValues, {
         onSuccess: () => {
+          handleClose();
           setDrawerOpen(false);
           Toast.success("Menu Category Updated Successfully!");
         },
@@ -120,7 +118,7 @@ const MenuCategoryForm = ({
     <div>
       <Drawer
         open={drawerOpen}
-        onClose={() => setDrawerOpen(false)}
+        onClose={handleClose}
         size={600}
         title={
           <div className="flex justify-between items-center">
@@ -152,41 +150,42 @@ const MenuCategoryForm = ({
           </div>
         }
       >
-        {
-          isLoading ? (
-            <div className="flex items-center justify-center h-full min-h-[300px]">
-              <Loader />
-            </div>
-          ) :
-            (
-              <Form
-                form={form}
-                layout="vertical"
-                style={{ width: "100%" }}
-                onFinish={onFinish}
-              >
-                <Form.Item
-                  label="Name"
-                  name="name"
-                  rules={[{ required: true, message: "Name is Required" }]}
-                >
-                  <Input readOnly={isView} placeholder="Enter Menu Category Name" />
-                </Form.Item>
+        {isLoading ? (
+          <div className="flex items-center justify-center h-full min-h-[300px]">
+            <Loader />
+          </div>
+        ) : (
+          <Form
+            form={form}
+            layout="vertical"
+            style={{ width: "100%" }}
+            onFinish={onFinish}
+          >
+            <Form.Item
+              label="Name"
+              name="name"
+              rules={[{ required: true, message: "Name is Required" }]}
+            >
+              <Input readOnly={isView} placeholder="Enter Menu Category Name" />
+            </Form.Item>
 
-                <Form.Item
-                  label="Display Order"
-                  name="displayOrder"
-                  rules={[{ required: true }]}
-                >
-                  <InputNumber disabled={isView} className="!w-full" placeholder="Enter Display Order" />
-                </Form.Item>
+            <Form.Item
+              label="Display Order"
+              name="displayOrder"
+              rules={[{ required: true }]}
+            >
+              <InputNumber
+                disabled={isView}
+                className="!w-full"
+                placeholder="Enter Display Order"
+              />
+            </Form.Item>
 
-                <Status isView={isView} />
-              </Form>
-            )
-        }
+            <Status isView={isView} />
+          </Form>
+        )}
       </Drawer>
-    </div >
+    </div>
   );
 };
 

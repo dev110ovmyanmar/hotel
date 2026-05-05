@@ -44,16 +44,60 @@ const RoomAttributesForm = ({
   });
 
   useEffect(() => {
-    if (isEdit && selectedAttribute) {
-      form.setFieldsValue({
-        roomAttributeUuid: selectedAttribute?.roomAttribute?.uuid,
-        value: selectedAttribute?.value,
-      });
+    if (open) {
+      if (isEdit && selectedAttribute) {
+        form.setFieldsValue({
+          roomAttributeUuid: selectedAttribute?.roomAttribute?.uuid,
+          value: selectedAttribute?.value,
+        });
+      } else {
+        form.resetFields();
+      }
     } else {
       form.resetFields();
     }
-  }, [selectedAttribute, mode]);
+  }, [open, selectedAttribute, mode, form]);
 
+  const handleClose = () => {
+    setDrawerOpen(false);
+    setSelectedData(null);
+    form.resetFields();
+  };
+
+  // const onFinish = (values) => {
+  //   if (isAdd) {
+  //     const payload = {
+  //       value: values.value,
+  //       roomAttribute: { uuid: values.roomAttributeUuid },
+  //       room: { uuid: roomUuid },
+  //     };
+
+  //     createAttribute.mutate(payload, {
+  //       onSuccess: () => {
+  //         queryClient.invalidateQueries(["roomData", { uuid: roomUuid }]);
+  //         form.resetFields();
+  //         setDrawerOpen(false);
+  //         Toast.success("Room Attribute Value Created Successfully!");
+  //       },
+  //     });
+  //   }
+  //   if (isEdit) {
+  //     const editValues = {
+  //       uuid: selectedAttribute?.uuid,
+  //       value: values.value,
+  //       roomAttribute: { uuid: values.roomAttributeUuid },
+  //       room: { uuid: roomUuid },
+  //     };
+
+  //     editAttribute.mutate(editValues, {
+  //       onSuccess: () => {
+  //         queryClient.invalidateQueries(["roomData", { uuid: roomUuid }]);
+  //         setDrawerOpen(false);
+  //         Toast.success("Room Attribute value Updated Successfully!");
+  //       },
+  //     });
+  //   }
+  // };
   const onFinish = (values) => {
     if (isAdd) {
       const payload = {
@@ -104,7 +148,8 @@ const RoomAttributesForm = ({
         </div>
       }
       open={open}
-      onClose={() => setDrawerOpen(false)}
+      onClose={handleClose}
+      destroyOnClose
     >
       <Form form={form} layout="vertical" onFinish={onFinish}>
         <Form.Item

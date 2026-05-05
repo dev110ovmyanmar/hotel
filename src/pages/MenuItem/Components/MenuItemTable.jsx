@@ -43,20 +43,26 @@ const MenuItemTable = ({
       title: "Price (MMK)",
       dataIndex: "price",
       key: "price",
-      render: (price) => <PriceTag value={price} />
+      align: "end",
+      render: (price) => <PriceTag value={price} />,
     },
     {
       title: "Cost (MMK)",
       dataIndex: "cost",
       key: "cost",
-      render: (price) => <PriceTag value={price} />
+      align: "end",
+      render: (price) => <PriceTag value={price} />,
     },
     {
       title: "Is Taxable",
       dataIndex: "isTaxable",
       key: "isTaxable",
       render: (_, record) => (
-        <div className={record.isTaxable === true ? "text-[#389E0D]" : "text-[#CF1322]"}>
+        <div
+          className={
+            record.isTaxable === true ? "text-[#389E0D]" : "text-[#CF1322]"
+          }
+        >
           {record.isTaxable === true ? "True" : "False"}
         </div>
       ),
@@ -127,10 +133,25 @@ const MenuItemTable = ({
   ];
 
   const expandColumns = [
-    { title: "ID", dataIndex: "id", key: "id" , align:"center"},
-    { title: "F&B Inventory Name", dataIndex: ["fnbInventoryItem", "name"], key: "name" , align:"center"},
-    { title: "Quantity", dataIndex: "quantityPerItem", key: "quantityPerItem" , align:"center"},
-    { title: "Unit", dataIndex: ["unit", "name"], key: "unit" , align:"center"},
+    { title: "ID", dataIndex: "id", key: "id", align: "center" },
+    {
+      title: "F&B Inventory Name",
+      dataIndex: ["fnbInventoryItem", "name"],
+      key: "name",
+      align: "center",
+    },
+    {
+      title: "Quantity",
+      dataIndex: "quantityPerItem",
+      key: "quantityPerItem",
+      align: "center",
+    },
+    {
+      title: "Unit",
+      dataIndex: ["unit", "name"],
+      key: "unit",
+      align: "center",
+    },
     {
       title: "Action",
       align: "center",
@@ -194,20 +215,17 @@ const MenuItemTable = ({
           </Button>
         </div>
 
-
-        {
-          record?.menuInventoryMappings?.length <= 0 ? null :
-            <Table
-              // className="custom-table-style"
-              className="[&_.ant-table-cell]:!border [&_.ant-table-cell]:!border-blue-300 [&_.ant-table-thead>tr>th]:!bg-[#F0F5FF]"
-              columns={expandColumns}
-              dataSource={record.menuInventoryMappings || []}
-              rowKey="uuid"
-              pagination={false}
-              size="small"
-            />
-        }
-
+        {record?.menuInventoryMappings?.length <= 0 ? null : (
+          <Table
+            // className="custom-table-style"
+            className="[&_.ant-table-cell]:!border [&_.ant-table-cell]:!border-blue-300 [&_.ant-table-thead>tr>th]:!bg-[#F0F5FF]"
+            columns={expandColumns}
+            dataSource={record.menuInventoryMappings || []}
+            rowKey="uuid"
+            pagination={false}
+            size="small"
+          />
+        )}
       </div>
     );
   };

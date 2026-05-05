@@ -7,7 +7,7 @@ import {
   Select,
   Row,
   Col,
-  InputNumber
+  InputNumber,
 } from "antd";
 import Toast from "../../../../component/Toast/Toast";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
@@ -15,11 +15,11 @@ import useApiQuery from "../../../../hooks/useApiQuery";
 import {
   upsertPartner,
   partnerDetails,
-  fetchReferralFormUpload
+  fetchReferralFormUpload,
 } from "../../../../api/partnerApi";
 import FormButtons from "../../../../component/FormButtons/FormButtons";
-import { queryClient } from './../../../../app/queryClient';
-import Status from './../../../../component/Status/Status';
+import { queryClient } from "./../../../../app/queryClient";
+import Status from "./../../../../component/Status/Status";
 import ImageUpload from "../../../../component/ImageUpload/ImageUpload";
 import { deleteImageUpload } from "../../../../api/deleteImageApi";
 
@@ -43,7 +43,10 @@ const ReferralForm = ({
   const isEdit = mode === "edit";
   const isAdd = mode === "add";
 
-  const initData = queryClient.getQueryData(["initData", "authenticated"])?.statuses;
+  const initData = queryClient.getQueryData([
+    "initData",
+    "authenticated",
+  ])?.statuses;
   const initDataStatus = initData?.status;
   const chargeType = initData?.charge_type;
 
@@ -52,8 +55,7 @@ const ReferralForm = ({
   const upsertPartners = useApiMutation({
     mutationFn: upsertPartner,
     invalidateKeys: [["referral-agents"]],
-    shouldInvalidate: isEdit ? true : page === 1
-
+    shouldInvalidate: isEdit ? true : page === 1,
   });
 
   const { data, isPending, error } = useApiQuery({
@@ -61,12 +63,11 @@ const ReferralForm = ({
     fetchQueryFunction: partnerDetails,
     params: {
       uuid: selectedData?.uuid,
-      partnerType: "Referral Agent"
+      partnerType: "Referral Agent",
     },
     options: {
       enabled: !!selectedData?.uuid,
     },
-
   });
 
   useEffect(() => {
@@ -77,30 +78,37 @@ const ReferralForm = ({
     if (isAdd && initDataStatus) {
       form.setFieldsValue({
         status: {
-          uuid: initDataStatus?.find(item => item?.code === "active")?.uuid
-        }
-      })
+          uuid: initDataStatus?.find((item) => item?.code === "active")?.uuid,
+        },
+      });
     }
 
     if (isEdit && data) {
       form.setFieldsValue({
-        ...data
+        ...data,
       });
     }
   }, [data, isEdit, isAdd, initDataStatus]);
 
+  const handleClose = () => {
+    setDrawerOpen(false);
+    setSelectedData(null);
+    form.resetFields();
+  };
+
   const onFinish = (values) => {
     const modifiedValues = {
       ...values,
-      partnerType: "Referral Agent"
-    }
+      partnerType: "Referral Agent",
+    };
     if (isAdd) {
       upsertPartners.mutate(modifiedValues, {
         onSuccess: () => {
+          form.resetFields();
           setPage(1);
           setDrawerOpen(false);
+          handleClose();
           Toast.success("Referral Agent Created Successfully!");
-          form.resetFields();
         },
       });
     }
@@ -115,12 +123,13 @@ const ReferralForm = ({
       upsertPartners.mutate(editValues, {
         onSuccess: () => {
           setDrawerOpen(false);
+          handleClose();
           Toast.success("Referral Agent Updated Successfully!");
         },
       });
     }
   };
-  ""
+  ("");
   const fetchReferralFormUploads = useApiMutation({
     mutationFn: fetchReferralFormUpload,
     invalidateKeys: [["referral-agents-details", { uuid: selectedData?.uuid }]],
@@ -135,7 +144,7 @@ const ReferralForm = ({
     <div className="flex justify-center">
       <Drawer
         open={drawerOpen}
-        onClose={() => setDrawerOpen(false)}
+        onClose={handleClose}
         size={550}
         title={
           <div className="flex justify-between items-center">
@@ -170,13 +179,13 @@ const ReferralForm = ({
           layout="vertical"
           validateTrigger="onSubmit"
           onFinish={onFinish}
-
         >
-
           <Form.Item
             label="Name"
             name="name"
-            rules={[{ required: true, message: "Referral Agent Name is Required" }]}
+            rules={[
+              { required: true, message: "Referral Agent Name is Required" },
+            ]}
           >
             <Input readOnly={isView} placeholder="Enter Referral Agent Name" />
           </Form.Item>
@@ -189,10 +198,7 @@ const ReferralForm = ({
             <Input readOnly={isView} placeholder="Enter Card Number" />
           </Form.Item>
 
-          <Form.Item
-            label="Email"
-            name="email"
-          >
+          <Form.Item label="Email" name="email">
             <Input readOnly={isView} placeholder="Enter Email Address" />
           </Form.Item>
 
@@ -200,17 +206,15 @@ const ReferralForm = ({
             label="Phone"
             name="phone"
             rules={[{ required: true, message: "Phone is Required" }]}
-
           >
             <Input
               readOnly={isView}
               placeholder="Enter Phone Number"
               onKeyPress={(e) => {
                 if (!/[0-9]/.test(e.key)) {
-                  e.preventDefault()
+                  e.preventDefault();
                 }
               }}
-
             />
           </Form.Item>
 
@@ -226,22 +230,17 @@ const ReferralForm = ({
                     : value,
                 })}
               >
-                {
-                  isView ?
-                    <Input readOnly={isView} /> :
-                    <Select
-                      options={
-                        chargeType?.map(item => (
-                          {
-                            label: item.name,
-                            value: item.uuid
-                          }
-                        ))
-                      }
-                      placeholder="Select Charge Type"
-
-                    ></Select>
-                }
+                {isView ? (
+                  <Input readOnly={isView} />
+                ) : (
+                  <Select
+                    options={chargeType?.map((item) => ({
+                      label: item.name,
+                      value: item.uuid,
+                    }))}
+                    placeholder="Select Charge Type"
+                  ></Select>
+                )}
               </Form.Item>
             </Col>
 
@@ -253,10 +252,9 @@ const ReferralForm = ({
                   { required: true, message: "Charge Value is Required" },
                   {
                     validator: (_, value) => {
-                      const selectedType =
-                        chargeType?.find(
-                          (item) => item.uuid === chargeTypeValue,
-                        );
+                      const selectedType = chargeType?.find(
+                        (item) => item.uuid === chargeTypeValue,
+                      );
 
                       if (selectedType?.code === "percentage") {
                         const numValue = Number(value);
@@ -281,26 +279,21 @@ const ReferralForm = ({
                     return selected?.code === "percentage" ? "%" : "MMK";
                   })()}
                   readOnly={isView}
-                  placeholder="Enter Charge Value" />
+                  placeholder="Enter Charge Value"
+                />
               </Form.Item>
             </Col>
           </Row>
 
-          <Form.Item
-            label="Address"
-            name="address"
-          >
+          <Form.Item label="Address" name="address">
             <TextArea readOnly={isView} placeholder="Enter Address" />
           </Form.Item>
 
-          <Form.Item
-            label="Remark"
-            name="remark"
-          >
+          <Form.Item label="Remark" name="remark">
             <TextArea readOnly={isView} placeholder="Enter Remark" />
           </Form.Item>
 
-          <Status isView={isView} statusValue={initDataStatus}/>
+          <Status isView={isView} statusValue={initDataStatus} />
         </Form>
       </Drawer>
 
@@ -313,7 +306,6 @@ const ReferralForm = ({
         title={selectedData?.name}
         fileCategoryName="referral_agent"
         deleteMutation={deleteReferralAgentUpload}
-
       />
     </div>
   );

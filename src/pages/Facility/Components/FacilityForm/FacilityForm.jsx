@@ -70,7 +70,7 @@ const FacilityForm = ({
 
   useEffect(() => {
     if (!isAdd && data) {
-      console.log(data, "data")
+      console.log(data, "data");
       form.setFieldsValue({
         ...data,
         facilityType: data?.facilityType.uuid,
@@ -79,6 +79,12 @@ const FacilityForm = ({
       setSelectedData(data);
     }
   }, [data]);
+
+  const handleClose = () => {
+    setDrawerOpen(false);
+    setSelectedData(null);
+    form.resetFields();
+  };
 
   const onFinish = (values) => {
     if (isAdd) {
@@ -91,6 +97,7 @@ const FacilityForm = ({
       createFacility.mutate(createValues, {
         onSuccess: () => {
           form.resetFields();
+          handleClose();
           setDrawerOpen(false);
           setPage(1);
           Toast.success("Service Created Successfully!");
@@ -107,6 +114,7 @@ const FacilityForm = ({
 
       editFacility.mutate(editValues, {
         onSuccess: () => {
+          handleClose();
           setDrawerOpen(false);
           Toast.success("facility Updated Successfully!");
         },
@@ -118,7 +126,7 @@ const FacilityForm = ({
     <div>
       <Drawer
         open={drawerOpen}
-        onClose={() => setDrawerOpen(false)}
+        onClose={handleClose}
         size={550}
         title={
           <div className="flex justify-between items-center">
@@ -129,116 +137,119 @@ const FacilityForm = ({
                   ? "Edit Facility"
                   : "Create Facility"}
             </span>
-            {isView ?
-              (canEdit &&
-                (
-                  <Button
-                    type="primary"
-                    onClick={() => {
-                      setMode("edit");
-                    }}
-                  >
-                    Edit
-                  </Button>
-                )
-              ) : (
-                <FormButtons
-                  onClick={() => form.submit()}
-                  isPending={createFacility.isPending || editFacility.isPending}
-                  mode={mode}
-                />
-              )}
+            {isView ? (
+              canEdit && (
+                <Button
+                  type="primary"
+                  onClick={() => {
+                    setMode("edit");
+                  }}
+                >
+                  Edit
+                </Button>
+              )
+            ) : (
+              <FormButtons
+                onClick={() => form.submit()}
+                isPending={createFacility.isPending || editFacility.isPending}
+                mode={mode}
+              />
+            )}
           </div>
         }
       >
-        {
-          isLoading ? (
-            <div className="flex items-center justify-center h-full min-h-[300px]">
-              <Loader />
-            </div>
-          ) : (
-            <Form
-              form={form}
-              layout="vertical"
-              style={{ width: "100%" }}
-              onFinish={onFinish}
+        {isLoading ? (
+          <div className="flex items-center justify-center h-full min-h-[300px]">
+            <Loader />
+          </div>
+        ) : (
+          <Form
+            form={form}
+            layout="vertical"
+            style={{ width: "100%" }}
+            onFinish={onFinish}
+          >
+            <Form.Item
+              label="Name"
+              name="name"
+              rules={[{ required: true, message: "Name is Required" }]}
             >
-              <Form.Item
-                label="Name"
-                name="name"
-                rules={[{ required: true, message: "Name is Required" }]}
-              >
-                <Input readOnly={isView} placeholder="Enter Facility Name" />
-              </Form.Item>
+              <Input readOnly={isView} placeholder="Enter Facility Name" />
+            </Form.Item>
 
-              <Form.Item label="Capacity" name="capacity" readOnly={isView}>
-                {/* <Input placeholder="Enter Capacity" /> */}
-                <Input
-                  type="number"
-                  placeholder="Enter Capacity" disabled={isView} />
-              </Form.Item>
+            <Form.Item label="Capacity" name="capacity" readOnly={isView}>
+              {/* <Input placeholder="Enter Capacity" /> */}
+              <Input
+                type="number"
+                placeholder="Enter Capacity"
+                disabled={isView}
+              />
+            </Form.Item>
 
-              <Form.Item
-                label="Facility Type"
-                name="facilityType"
-                rules={[{ required: true, message: "Facility Type is Required" }]}
-                getValueProps={(value) => ({
-                  value: isView
-                    ? facilityTypesList.find((item) => item.value === value)?.label
-                    : value,
-                })}
-              >
-                {isView ? (
-                  <Input readOnly={isView} />
-                ) : (
-                  <Select
-                    showSearch={{
-                      filterOption: (input, option) =>
-                        (option?.label ?? "")
-                          .toLowerCase()
-                          .includes(input.toLowerCase()),
-                    }}
-                    options={facilityTypesList}
-                    placeholder="Select Facility Type"
-                  />
-                )}
-              </Form.Item>
+            <Form.Item
+              label="Facility Type"
+              name="facilityType"
+              rules={[{ required: true, message: "Facility Type is Required" }]}
+              getValueProps={(value) => ({
+                value: isView
+                  ? facilityTypesList.find((item) => item.value === value)
+                      ?.label
+                  : value,
+              })}
+            >
+              {isView ? (
+                <Input readOnly={isView} />
+              ) : (
+                <Select
+                  showSearch={{
+                    filterOption: (input, option) =>
+                      (option?.label ?? "")
+                        .toLowerCase()
+                        .includes(input.toLowerCase()),
+                  }}
+                  options={facilityTypesList}
+                  placeholder="Select Facility Type"
+                />
+              )}
+            </Form.Item>
 
-              <Form.Item
-                label="Status"
-                name="status"
-                rules={[{ required: true, message: "Status is Required" }]}
-                getValueProps={(value) => ({
-                  value: isView
-                    ? statusList.find((item) => item.value === value)?.label
-                    : value,
-                })}
-              >
-                {isView ? (
-                  <Input readOnly={isView} />
-                ) : (
-                  <Select
-                    showSearch={{
-                      filterOption: (input, option) =>
-                        (option?.label ?? "")
-                          .toLowerCase()
-                          .includes(input.toLowerCase()),
-                    }}
-                    options={statusList}
-                    placeholder="Select Status"
-                  />
-                )}
-              </Form.Item>
+            <Form.Item
+              label="Status"
+              name="status"
+              rules={[{ required: true, message: "Status is Required" }]}
+              getValueProps={(value) => ({
+                value: isView
+                  ? statusList.find((item) => item.value === value)?.label
+                  : value,
+              })}
+            >
+              {isView ? (
+                <Input readOnly={isView} />
+              ) : (
+                <Select
+                  showSearch={{
+                    filterOption: (input, option) =>
+                      (option?.label ?? "")
+                        .toLowerCase()
+                        .includes(input.toLowerCase()),
+                  }}
+                  options={statusList}
+                  placeholder="Select Status"
+                />
+              )}
+            </Form.Item>
 
-              <Form.Item label="Description" name="description">
-                <Input.TextArea readOnly={isView} rows={3}
-                  placeholder="Enter Description" />
-              </Form.Item>
-            </Form>
-          )
-        }
+            <Form.Item label="Description" name="description">
+              <Input.TextArea
+                readOnly={isView}
+                rows={3}
+                placeholder="Enter Description"
+              />
+            </Form.Item>
+          </Form>
+        )}
       </Drawer>
-    </div >
+    </div>
   );
 };
 
