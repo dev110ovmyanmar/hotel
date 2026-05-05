@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 import { MoreOutlined, EyeOutlined, EditOutlined } from "@ant-design/icons";
 import usePermission from "../../../hooks/usePermission";
 import { PERMISSIONS } from "../../../variables/permission";
-import RatePlanForm from "./RatePlanForms/RatePlanForm";
 import { TableColumns } from "../../../component/TableColumns/TableColumns";
 import PriceTag from "../../../component/PriceTag/PriceTag";
 import RoomRateForm from "../../RoomRate/Components/RoomRateForm/RoomRateForm";
@@ -17,12 +16,12 @@ const RatePlanTable = ({
   total,
   changePage,
   changePerPage,
-  loading
+  loading,
+  setDrawerOpen,
+  setMode,
+  setSelectedData,
 }) => {
   const { hasPermission } = usePermission();
-  const [drawerOpen, setDrawerOpen] = useState(false);
-  const [mode, setMode] = useState(null);
-  const [selectedData, setSelectedData] = useState(null);
 
   const [roomRateDrawerOpen, setRoomRateDrawerOpen] = useState(false);
   const [roomRateMode, setRoomRateMode] = useState(null);
@@ -295,15 +294,7 @@ const RatePlanTable = ({
         }}
       />
 
-      <RatePlanForm
-        page={page}
-        mode={mode}
-        setMode={setMode}
-        drawerOpen={drawerOpen}
-        setDrawerOpen={setDrawerOpen}
-        selectedData={selectedData}
-        setSelectedData={setSelectedData}
-      />
+
 
       <RoomRateForm
         mode={roomRateMode}

@@ -74,46 +74,46 @@ const RoomInformationTable = () => {
     //     );
     //   },
     // },
-   {
-  title: "Room",
-  key: "newRoom", 
-  dataIndex: "newRoom", // Ensure dataIndex matches your data key
-  className: "font-medium",
-  render: (text, record) => {
-    // Check if the value of 'newRoom' is exactly "Assign Room"
-    const isAssignRoom = text === "Assign Room";
+    {
+      title: "Room",
+      key: "newRoom",
+      dataIndex: "newRoom", // Ensure dataIndex matches your data key
+      className: "font-medium",
+      render: (text, record) => {
+        // Check if the value of 'newRoom' is exactly "Assign Room"
+        const isAssignRoom = text === "Assign Room";
 
-    return (
-      <span
-        style={{
-          // Apply blue color if it is an Assign Room action
-          color: isAssignRoom ? "#1890ff" : "inherit",
-          cursor: isAssignRoom ? "pointer" : "default",
-          display: "inline-block",
-        }}
-        onClick={(e) => {
-          if (isAssignRoom) {
-            e.stopPropagation();
-            setSelectedData(record);
-            setAssignRoomOpen(true);
-          }
-        }}
-      >
-        <div className="flex flex-col">
-          {/* Top Line: The Room Name/Action */}
-          <div className={`font-medium ${isAssignRoom ? "text-blue-500" : "text-gray-900"}`}>
-            {text || "-"}
-          </div>
+        return (
+          <span
+            style={{
+              // Apply blue color if it is an Assign Room action
+              color: isAssignRoom ? "#1890ff" : "inherit",
+              cursor: isAssignRoom ? "pointer" : "default",
+              display: "inline-block",
+            }}
+            onClick={(e) => {
+              if (isAssignRoom) {
+                e.stopPropagation();
+                setSelectedData(record);
+                setAssignRoomOpen(true);
+              }
+            }}
+          >
+            <div className="flex flex-col">
+              {/* Top Line: The Room Name/Action */}
+              <div
+                className={`font-medium ${isAssignRoom ? "text-blue-500" : "text-gray-900"}`}
+              >
+                {text || "-"}
+              </div>
 
-          {/* Bottom Line: The Room Type category */}
-          <div className="text-xs text-gray-500">
-            {record.roomType}
-          </div>
-        </div>
-      </span>
-    );
-  },
-},
+              {/* Bottom Line: The Room Type category */}
+              <div className="text-xs text-gray-500">{record.roomType}</div>
+            </div>
+          </span>
+        );
+      },
+    },
 
     {
       title: "Name",
@@ -161,78 +161,42 @@ const RoomInformationTable = () => {
     },
     {
       title: "Action",
-      render: (_, record) => {
-        const items = [
-          {
-            key: "1",
-            label: (
-              <Space
-                size={4}
-                onClick={() => {
-                  setSelectedData(record);
-                  setMode("view");
-                  setDrawerOpen(true);
-                }}
-              >
-                <EyeOutlined style={{ fontSize: "12px" }} />
-                <span>View Info</span>
-              </Space>
-            ),
-          },
-          {
-            key: "2",
-            label: (
-              <Space
-                size={4}
-                onClick={() => {
-                  setSelectedData(record);
-                  setMode("edit");
-                  setDrawerOpen(true);
-                }}
-              >
-                <EditOutlined style={{ fontSize: "12px" }} />
-                <span>Edit Info</span>
-              </Space>
-            ),
-          },
-          {
-            key: "3",
-            label: (
-              <Space
-                size={4}
-                onClick={() => {
-                  setSelectedData(record);
-                  setRoomMoveOpen(true);
-                }}
-              >
-                <MdOutlineMeetingRoom style={{ fontSize: "12px" }} />
-                <span>Room Move</span>
-              </Space>
-            ),
-          },
-          {
-            key: "4",
-            label: (
-              <Space
-                size={4}
-                onClick={() => {
-                  setSelectedData(record);
-                  setNoteOpen(true);
-                }}
-              >
-                <UploadOutlined style={{ fontSize: "12px" }} />
-                <span>Service Note</span>
-              </Space>
-            ),
-          },
-        ];
+      align: "center",
+      render: (_, record) => (
+        <Space size="middle">
+          <EyeOutlined
+            onClick={() => {
+              setSelectedData(record);
+              setMode("view");
+              setDrawerOpen(true);
+            }}
+          />
 
-        return (
-          <Dropdown menu={{ items }} trigger={["click"]}>
-            <MoreOutlined style={{ fontSize: "16px", cursor: "pointer" }} />
-          </Dropdown>
-        );
-      },
+          <EditOutlined
+            onClick={() => {
+              setSelectedData(record);
+              setMode("edit");
+              setDrawerOpen(true);
+            }}
+          />
+
+          <MdOutlineMeetingRoom
+            style={{ fontSize: "20px" }}
+            onClick={() => {
+              setSelectedData(record);
+              setRoomMoveOpen(true);
+            }}
+          />
+
+          <InboxOutlined
+            style={{ fontSize: "20px" }}
+            onClick={() => {
+              setSelectedData(record);
+              setNoteOpen(true);
+            }}
+          />
+        </Space>
+      ),
     },
   ];
 

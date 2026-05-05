@@ -1,6 +1,11 @@
 import React from "react";
-import { Table, Button, Dropdown, Space } from "antd";
-import { EditOutlined, EyeOutlined, MoreOutlined, UploadOutlined } from "@ant-design/icons";
+import { Table, Button, Dropdown, Space, Modal } from "antd";
+import {
+  EditOutlined,
+  EyeOutlined,
+  MoreOutlined,
+  UploadOutlined,
+} from "@ant-design/icons";
 
 const FolioOperationsTable = () => {
   const columns = [
@@ -40,70 +45,36 @@ const FolioOperationsTable = () => {
       key: "amount",
       render: (text) => (text ? `${text.toLocaleString()} MMK` : "-"),
     },
+
     {
       title: "Action",
-      render: (_, record) => {
-        const smallStyle = { fontSize: "12px" };
+      align: "center",
+      render: (_, record) => (
+        <Space size="middle">
+          <EyeOutlined
+            onClick={() => {
+              setSelectedData(record);
+              setMode("view");
+              setDrawerOpen(true);
+            }}
+          />
 
-        const items = [
-          {
-            key: "1",
-            label: (
-              <Space
-                size={4}
-                style={smallStyle}
-                onClick={() => {
-                  setDrawerOpen(true);
-                  setMode("view");
-                  setSelectedData(record);
-                }}
-              >
-                <EyeOutlined style={{ fontSize: "12px" }} />
-                <span style={{ fontSize: "14px" }}>View</span>
-              </Space>
-            ),
-          },
-          {
-            key: "2",
-            label: (
-              <Space
-                size={4}
-                style={smallStyle}
-                onClick={() => {
-                  setDrawerOpen(true);
-                  setMode("edit");
-                  // setSelectedData(record);
-                }}
-              >
-                <EditOutlined style={{ fontSize: "12px" }} />
-                <span style={{ fontSize: "14px" }}>Edit</span>
-              </Space>
-            ),
-          },
-          {
-            key: "3",
-            label: (
-              <Space
-                size={4}
-                style={smallStyle}
-                onClick={() => {
-                  setSelectedData(record);
-                  setUploadOpen(true);
-                }}
-              >
-                <UploadOutlined style={{ fontSize: "12px" }} />
-                <span style={{ fontSize: "14px" }}>Upload File</span>
-              </Space>
-            ),
-          },
-        ];
+          <EditOutlined
+            onClick={() => {
+              setSelectedData(record);
+              setMode("edit");
+              setDrawerOpen(true);
+            }}
+          />
 
-        return (
-          <Dropdown menu={{ items }} trigger={["click"]}>
-            <MoreOutlined style={{ fontSize: "16px" }} />
-          </Dropdown>
-        );
-      },
+          <UploadOutlined
+            onClick={() => {
+              setSelectedData(record);
+              setUploadOpen(true);
+            }}
+          />
+        </Space>
+      ),
     },
   ];
 
@@ -175,16 +146,18 @@ const FolioOperationsTable = () => {
   ];
 
   return (
-    <Table
-      columns={columns}
-      dataSource={data}
-      pagination={false}
-      // expandable={{
-      //   defaultExpandAllRows: true,
-      // }}
-      bordered={false}
-      className="custom-folio-table"
-    />
+    <>
+      <Table
+        columns={columns}
+        dataSource={data}
+        pagination={false}
+        // expandable={{
+        //   defaultExpandAllRows: true,
+        // }}
+        bordered={false}
+        className="custom-folio-table"
+      />
+    </>
   );
 };
 

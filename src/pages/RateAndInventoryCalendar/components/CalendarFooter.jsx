@@ -1,0 +1,64 @@
+import React from 'react';
+
+/**
+ * CalendarFooter
+ * Renders the sticky <tfoot> with Total Available and Occupancy % rows.
+ * Props:
+ *   dailyStats    – [{ available, sold, occupancy }]
+ *   daysMeta      – [{ cellClass }]
+ *   CELL_WIDTH    – number (px)
+ *   SIDEBAR_WIDTH – number (px)
+ */
+const CalendarFooter = ({ dailyStats, daysMeta, CELL_WIDTH, SIDEBAR_WIDTH }) => (
+    <tfoot className="sticky bottom-0 z-[55] bg-white border-t-2 border-gray-200">
+        {/* Total Available row */}
+        <tr className="bg-gray-50/80">
+            <td
+                className="sticky left-0 z-40 bg-gray-50 border-b border-r border-[#dee2e6] p-3 font-bold"
+                style={{ width: SIDEBAR_WIDTH, minWidth: SIDEBAR_WIDTH }}
+            >
+                <span className="text-[12px] uppercase text-gray-500">Total Available</span>
+            </td>
+            {dailyStats.map((stat, i) => (
+                <td
+                    key={i}
+                    className={`border-b border-[#dee2e6] text-center p-2 font-bold ${daysMeta[i].cellClass}`}
+                    style={{ width: CELL_WIDTH, minWidth: CELL_WIDTH }}
+                >
+                    <div className={`text-sm ${stat.available === 0 ? 'text-red-500' : 'text-green-600'}`}>
+                        {stat.available}
+                    </div>
+                </td>
+            ))}
+        </tr>
+
+        {/* Occupancy % row */}
+        <tr className="bg-gray-50/80">
+            <td
+                className="sticky left-0 z-40 bg-gray-50 border-b border-r border-[#dee2e6] p-3 font-bold"
+                style={{ width: SIDEBAR_WIDTH, minWidth: SIDEBAR_WIDTH }}
+            >
+                <span className="text-[12px] uppercase text-gray-500">Occupancy %</span>
+            </td>
+            {dailyStats.map((stat, i) => (
+                <td
+                    key={i}
+                    className={`border-b border-[#dee2e6] text-center p-2 ${daysMeta[i].cellClass}`}
+                    style={{ width: CELL_WIDTH, minWidth: CELL_WIDTH }}
+                >
+                    <div className="flex flex-col items-center">
+                        <div className="text-[12px] font-bold text-gray-700">{stat.occupancy}%</div>
+                        <div className="w-full bg-gray-200 h-1 mt-1 rounded-full overflow-hidden">
+                            <div
+                                className={`h-full ${stat.occupancy > 80 ? 'bg-amber-500' : 'bg-blue-500'}`}
+                                style={{ width: `${stat.occupancy}%` }}
+                            />
+                        </div>
+                    </div>
+                </td>
+            ))}
+        </tr>
+    </tfoot>
+);
+
+export default CalendarFooter;

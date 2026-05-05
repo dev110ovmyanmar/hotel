@@ -128,23 +128,24 @@ const AllTable = () => {
       ),
     },
     { title: "Order Total", dataIndex: "total", key: "total" },
+
     {
       title: "Action",
       key: "action",
       align: "center",
       render: (_, record) => (
-        <Dropdown
-          menu={{
-            items: [
-              { key: "edit", label: "Edit", icon: <EditOutlined /> },
-              { key: "print", label: "Print", icon: <PrinterOutlined /> },
-            ],
-            onClick: ({ key }) => handleMenuClick(key, record.orderId),
-          }}
-          trigger={["click"]}
-        >
-          <Button type="text" icon={<MoreOutlined />} />
-        </Dropdown>
+        <div style={{ display: "flex", justifyContent: "center", gap: "8px" }}>
+          <Button
+            type="text"
+            icon={<EditOutlined />}
+            onClick={() => handleMenuClick("edit", record.orderId)}
+          />
+          <Button
+            type="text"
+            icon={<PrinterOutlined />}
+            onClick={() => handleMenuClick("print", record.orderId)}
+          />
+        </div>
       ),
     },
   ];
