@@ -213,7 +213,11 @@ const PaymentForm = ({
             valuePropName="checked"
             rules={[{ required: true, message: "is Online is Required" }]}
           >
-            <Switch disabled={isView} />
+            <Switch
+              disabled={isView}
+              checkedChildren="True"
+              unCheckedChildren="False"
+            />
           </Form.Item>
           <Status isView={isView} />
         </Form>

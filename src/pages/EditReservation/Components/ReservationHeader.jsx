@@ -19,7 +19,7 @@ const ReservationHeader = () => {
             <span className="text-xs font-semibold mt-1">
               11/11/2026
               <span className="ml-2 border border-gray-300 text-gray-800 px-2 py-0.5 text-xs font-medium">
-                10:00 PM
+                2:00 PM
               </span>
             </span>
           </div>
@@ -29,7 +29,7 @@ const ReservationHeader = () => {
             <span className="text-xs mt-1 font-semibold">
               13/11/2026
               <span className="ml-2 border border-gray-300 text-gray-800 px-2 py-0.5  text-xs font-medium">
-                10:00 PM
+                12:00 PM
               </span>
             </span>
           </div>

@@ -83,52 +83,26 @@ const ServiceAddOnTable = () => {
     },
     {
       title: "Action",
-      render: (_, record) => {
-        const smallStyle = { fontSize: "12px" };
+      align: "center",
+      render: (_, record) => (
+        <Space size="middle">
+          <EyeOutlined
+            onClick={() => {
+              setSelectedData(record);
+              setMode("view");
+              setDrawerOpen(true);
+            }}
+          />
 
-        const items = [
-          {
-            key: "1",
-            label: (
-              <Space
-                size={4}
-                style={smallStyle}
-                onClick={() => {
-                  setDrawerOpen(true);
-                  setMode("view");
-                  setSelectedData(record);
-                }}
-              >
-                <EyeOutlined style={{ fontSize: "12px" }} />
-                <span style={{ fontSize: "14px" }}>View</span>
-              </Space>
-            ),
-          },
-          {
-            key: "2",
-            label: (
-              <Space
-                size={4}
-                style={smallStyle}
-                onClick={() => {
-                  setDrawerOpen(true);
-                  setMode("edit");
-                  setSelectedData(record);
-                }}
-              >
-                <EditOutlined style={{ fontSize: "12px" }} />
-                <span style={{ fontSize: "14px" }}>Edit</span>
-              </Space>
-            ),
-          },
-        ];
-
-        return (
-          <Dropdown menu={{ items }} trigger={["click"]}>
-            <MoreOutlined style={{ fontSize: "16px" }} />
-          </Dropdown>
-        );
-      },
+          <EditOutlined
+            onClick={() => {
+              setSelectedData(record);
+              setMode("edit");
+              setDrawerOpen(true);
+            }}
+          />
+        </Space>
+      ),
     },
   ];
 

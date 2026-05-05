@@ -18,7 +18,7 @@ const RatePlanList = () => {
 
   const normalStatus = status === "all" ? null : status;
 
-  const { data, isLoading } = useApiQuery({
+  const { data: ratePlanList , isLoading } = useApiQuery({
     fetchQueryName: "ratePlan",
     fetchQueryFunction: fetchRatePlan,
     params: {
@@ -30,6 +30,8 @@ const RatePlanList = () => {
       status: normalStatus,
     },
   });
+
+  const ratePlanListing = ratePlanList;
 
   useEffect(() => {
     setPage(1);
@@ -56,10 +58,10 @@ const RatePlanList = () => {
       </div>
 
       <RatePlanTable
-        data={data?.data || []}
-        page={data?.pagination.currentPage}
-        perPage={data?.pagination.perPage}
-        total={data?.pagination?.total}
+        data={ratePlanList?.data || []}
+        page={ratePlanList?.pagination.currentPage}
+        perPage={ratePlanList?.pagination.perPage}
+        total={ratePlanList?.pagination?.total}
         changePage={(page) => setPage(page)}
         changePerPage={(perPage) => setPerPage(perPage)}
         loading={isLoading}
@@ -74,6 +76,7 @@ const RatePlanList = () => {
         setDrawerOpen={setDrawerOpen}
         selectedData={selectedData}
         setSelectedData={setSelectedData}
+        ratePlanList={ratePlanListing}
       />
     </div>
   );
