@@ -44,6 +44,7 @@ const CompanyForm = ({
   const isAdd = mode === "add";
 
   const initData = queryClient.getQueryData(["initData", "authenticated"])?.statuses;
+  const initDataStatus = initData?.status;
   const chargeType = initData?.charge_type;
 
   const chargeTypeValue = Form.useWatch(["chargeType", "uuid"], form);
@@ -69,18 +70,24 @@ const CompanyForm = ({
   });
 
   useEffect(() => {
-    if (!isAdd && data) {
+    if (isAdd) {
+      form.resetFields();
+    }
+
+    if (isAdd && initDataStatus) {
+      form.setFieldsValue({
+        status: {
+          uuid: initDataStatus?.find(item => item.code === "active")?.uuid
+        }
+      })
+    }
+
+    if (isEdit && data) {
       form.setFieldsValue({
         ...data
       });
     }
   }, [data, isEdit]);
-
-  useEffect(() => {
-    if (isAdd) {
-      form.resetFields();
-    }
-  }, [isAdd]);
 
   const onFinish = (values) => {
     const modifiedValues = {
@@ -195,7 +202,16 @@ const CompanyForm = ({
             name="phone"
             rules={[{ required: true, message: "Phone is Required" }]}
           >
-            <Input readOnly={isView} placeholder="Enter Phone Number" />
+            <Input 
+              readOnly={isView} 
+              placeholder="Enter Phone Number" 
+              onKeyPress={(e)=>{
+                if(!/[0-9]/.test(e.key)){
+                  e.preventDefault()
+                }
+              }}
+              
+              />
           </Form.Item>
 
           <Row gutter={16}>
@@ -285,7 +301,7 @@ const CompanyForm = ({
             <TextArea readOnly={isView} placeholder="Enter Remark" />
           </Form.Item>
 
-          <Status isView={isView} />
+          <Status isView={isView} statusValue={initDataStatus} />
         </Form>
       </Drawer>
 

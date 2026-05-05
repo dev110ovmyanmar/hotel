@@ -14,6 +14,7 @@ import {
   TimePicker,
   Checkbox,
   Card,
+  Switch,
 } from "antd";
 import Toast from "../../../../component/Toast/Toast";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
@@ -325,7 +326,7 @@ const PolicyForm = ({
 
 
   const savePolicyRule = (values) => {
-
+    console.log(values,"valuesINPolicy")
     // For Hour (0 === 24 format)
     if (earlyCheckin || lateCheckout) {
 
@@ -462,6 +463,10 @@ const PolicyForm = ({
 
   }, [fromOffsetValue, earlyCheckin, lateCheckout]);
 
+  const handleSwitchChange = (value) => {
+    console.log("SwitchValue:", value);
+  }
+
   return (
     <div className="flex justify-center">
       <Drawer
@@ -542,7 +547,7 @@ const PolicyForm = ({
             </Form.Item>
 
             <Form.Item
-              label="Type"
+              label="Policy Type"
               name={["policyType", "uuid"]}
               rules={[{ required: true, message: "Policy Name is Required" }]}
               getValueProps={(value) => {
@@ -587,13 +592,11 @@ const PolicyForm = ({
                 isView ?
                   <Input readOnly={isView}/>
                   :
-                  <Select
-                    options={[
-                      { label: "True", value: true },
-                      { label: "False", value: false },
-                    ]}
-                    open={isView ? false : undefined}
-                  ></Select>
+                  <Switch 
+                    onChange={handleSwitchChange} 
+                    checkedChildren="True"
+                    unCheckedChildren="False"
+                  />
               }
             </Form.Item>
 

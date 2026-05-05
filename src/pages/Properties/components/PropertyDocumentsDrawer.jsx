@@ -41,7 +41,7 @@ const PropertyDocumentsDrawer = ({ open, onClose, property }) => {
       />
 
       <ImageUploadCard
-        label="Email Photo"
+        label="Email Letterhead"
         type="email_photo"
         property={property}
         uploadMutation={uploadMutation}
@@ -49,7 +49,7 @@ const PropertyDocumentsDrawer = ({ open, onClose, property }) => {
       />
 
       <ImageUploadCard
-        label="Login Photo"
+        label="Login Background Photo"
         type="login_photo"
         property={property}
         uploadMutation={uploadMutation}

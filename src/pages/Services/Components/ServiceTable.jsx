@@ -121,20 +121,23 @@ const ServiceTable = ({
   ];
 
   const expandColumns = [
-    { title: "ID", dataIndex: "id", key: "id" },
+    { title: "ID", dataIndex: "id", key: "id" , align:"center" },
     {
       title: "Item Name",
       dataIndex: ["serviceInventoryItem", "name"],
       key: "name",
+      align: "center",
     },
     {
       title: "Quantity",
       dataIndex: "quantityPerService",
       key: "quantityPerService",
+      align: "center",
     },
-    { title: "Unit", dataIndex: ["unit", "name"], key: "unit" },
+    { title: "Unit", dataIndex: ["unit", "name"], key: "unit", align: "center" },
     {
       title: "Action",
+      align: "center",
       render: (_, record) => {
         const smallStyle = { fontSize: "12px" };
 
@@ -199,7 +202,8 @@ const ServiceTable = ({
         {
           record?.serviceInventoryMappings <= 0 ? null :
             <Table
-              className="custom-table-style"
+              // className="custom-table-style"
+              className="[&_.ant-table-cell]:!border [&_.ant-table-cell]:!border-blue-300 [&_.ant-table-thead>tr>th]:!bg-[#F0F5FF]"
               columns={expandColumns}
               dataSource={record.serviceInventoryMappings || []}
               rowKey="uuid"

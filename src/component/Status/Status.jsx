@@ -6,9 +6,9 @@ import { Input } from 'antd';
 
 const Status = ({
     needBlock,
-    isView
+    isView,
+    statusValue
 }) => {
-    const initData = queryClient.getQueryData(["initData", "authenticated"])?.statuses.status;
 
     return (
         <>
@@ -22,7 +22,7 @@ const Status = ({
                             (value) => {
                                 return ({
                                     value: isView ?
-                                        initData?.find(item => item?.uuid === value)?.name :
+                                        statusValue?.find(item => item?.uuid === value)?.name :
                                         value
                                 })
                             }
@@ -32,11 +32,12 @@ const Status = ({
                             isView ?
                                 <Input readOnly={isView} /> :
                                 <Select
-                                    options={initData?.map((item) => ({
+                                    options={statusValue?.map((item) => ({
                                         label: item.name,
                                         value: item.uuid,
                                     }))}
                                     placeholder="Select Status"
+                                    
                                 ></Select>
                         }
 
@@ -50,7 +51,7 @@ const Status = ({
                             (value) => {
                                 return ({
                                     value: isView ?
-                                        initData?.find(item => item?.uuid === value)?.name :
+                                        statusValue?.find(item => item?.uuid === value)?.name :
                                         value
                                 })
                             }
@@ -60,13 +61,14 @@ const Status = ({
                             isView ?
                                 <Input readOnly={isView} /> :
                                 <Select
-                                    options={initData?.filter(item =>
+                                    options={statusValue?.filter(item =>
                                         item?.code !== "blocked"
                                     ).map((item) => ({
                                         label: item.name,
                                         value: item.uuid,
                                     }))}
                                     placeholder="Select Status"
+                                    
                                 ></Select>
                         }
 
