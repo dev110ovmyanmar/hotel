@@ -37,6 +37,7 @@ const AdminForm = ({
   setDrawerOpen,
   page,
   setPage,
+  staffList,
 }) => {
   const [form] = Form.useForm();
 
@@ -77,19 +78,6 @@ const AdminForm = ({
       enabled: !!selectedData?.uuid,
     },
   });
-
-  const { data: adminMetaData } = useApiQuery({
-    fetchQueryName: "admin-meta",
-    fetchQueryFunction: adminMeta,
-    options: {
-      enabled: !!selectedData?.uuid,
-    },
-  });
-
-  const staffList = adminMetaData?.staffs?.map((staff) => ({
-    value: staff.uuid,
-    label: staff.name,
-  }));
 
   // Add On Permission
   const [allowMode, setAllowMode] = useState(""); // "allow" or "notAllow"
@@ -381,7 +369,7 @@ const AdminForm = ({
                 )}
 
                 {!hasPermission(PERMISSIONS.ADMIN_PERMISSION) ||
-                changesAllowList?.length <= 0 ? null : (
+                  changesAllowList?.length <= 0 ? null : (
                   <div
                     style={{
                       background: "#f5f5f5",

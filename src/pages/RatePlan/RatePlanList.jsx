@@ -32,7 +32,6 @@ const RatePlanList = () => {
   });
 
   const ratePlanListing = ratePlanList;
-  console.log("RatePlanListing", ratePlanList);
 
   useEffect(() => {
     setPage(1);
