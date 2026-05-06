@@ -3,7 +3,8 @@ import useApiQuery from "../../hooks/useApiQuery";
 import { queryClient } from "../../app/queryClient";
 import dayjs from "dayjs";
 import { availabilitySearch, reservationMeta } from "../../api/availabilitySearchApi";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useApiMutation } from "../../hooks/useApiMutation";
 
 
 const ReservationForm = ({
@@ -11,12 +12,11 @@ const ReservationForm = ({
     afterRoomConfirm
 }) => {
 
-    // console.log(onSearch, "OnSearchProps");
     const [form] = Form.useForm();
 
     const [selectedSourceType, setSelectedSourceType] = useState(null);
 
-    const { data : reservationMetas } = useApiQuery({
+    const { data: reservationMetas } = useApiQuery({
         fetchQueryName: "reservation-meta",
         fetchQueryFunction: reservationMeta,
     });
@@ -31,19 +31,23 @@ const ReservationForm = ({
         value: item.uuid,
     })) || [];
 
-    // fetchQueryName,
-    //   fetchQueryFunction,
-    // const { data : availabilitySearchs } = useApiQuery({
-    //     fetchQueryName: "availability-search",
-    //     fetchQueryFunction: availabilitySearch,
-    // });
+    const availabilitySearchs = useApiMutation({
+        mutationFn: availabilitySearch,
+        invalidateKeys: [["availability-search"]],
+        options: {
+            onSuccess: () => {
+                // setConfirmModal(false);
+                Toast.success("Availability search completed successfully");
+            },
+        },
+    });
 
     const initData = queryClient.getQueryData(["initData", "authenticated"]);
     const checkInTime = initData?.property?.checkinTime;
     const checkOutTime = initData?.property?.checkoutTime;
 
-    const checkInDate = Form.useWatch("checkInDate",form);
-    const checkOutDate = Form.useWatch("checkOutDate",form);
+    const checkInDate = Form.useWatch(["filter", "checkinDate"], form);
+    const checkOutDate = Form.useWatch(["filter", "checkoutDate"], form);
 
     const totalNights = checkInDate && checkOutDate ? dayjs(checkOutDate).diff(dayjs(checkInDate), "day") : 0;
 
@@ -58,12 +62,37 @@ const ReservationForm = ({
     })) || [];
 
     const searchSubmit = (values) => {
-        console.log(values, "FormValues");
+        const modifiedValues = {
+            ...values,
+            filter: {
+                checkinDate: values?.filter?.checkinDate ? dayjs(values?.filter?.checkinDate).format("YYYY-MM-DD") : null,
+                checkoutDate: values?.filter?.checkoutDate ? dayjs(values?.filter?.checkoutDate).format("YYYY-MM-DD") : null,
+            },
+            bookedVia: {
+                uuid: values.bookedVia,
+            },
+            sourceType: {
+                uuid: values.sourceType,
+            },
+            source: {
+                uuid: values.source,
+            }
+        };
+
+        availabilitySearchs.mutate(modifiedValues);
     };
 
     const handleChange = (value, option) => {
         setSelectedSourceType(option?.label);
     };
+
+    useEffect(() => {
+        form.setFieldsValue({
+            checkInTime: dayjs(checkInTime, 'HH:mm:ss'),
+            checkOutTime: dayjs(checkOutTime, 'HH:mm:ss'),
+            totalNight: totalNights
+        });
+    }, [checkInTime, checkOutTime, totalNights]);
 
     return (
         <Card >
@@ -76,7 +105,7 @@ const ReservationForm = ({
                 <div className="flex w-full gap-2 my-5">
                     <div className="flex-1">
                         {/* <p className="mb-2">Check-in Date</p> */}
-                        <Form.Item name="checkInDate" label="Check-in Date">
+                        <Form.Item name={["filter", "checkinDate"]} label="Check-in Date">
                             <DatePicker
                                 className="w-[100%] "
                                 format="YYYY-MM-DD"
@@ -97,7 +126,7 @@ const ReservationForm = ({
 
                     <div className="flex-1">
                         {/* <p className="mb-2">Check-out Date</p> */}
-                        <Form.Item name="checkOutDate" label="Check-out Date">
+                        <Form.Item name={["filter", "checkoutDate"]} label="Check-out Date">
                             <DatePicker
                                 className="w-[100%]"
                                 format="YYYY-MM-DD"
@@ -111,8 +140,8 @@ const ReservationForm = ({
                             <TimePicker
                                 className="w-[100%] "
                                 defaultValue={dayjs(checkOutTime, 'HH:mm:ss')}
-                            // readOnly={true}
-                            // disabled={true}
+                                // readOnly={true}
+                                disabled={true}
                             />
                         </Form.Item>
                     </div>
@@ -162,7 +191,7 @@ const ReservationForm = ({
                             (selectedSourceType === "Agency" ||
                                 selectedSourceType === "Company") && (
 
-                                <Form.Item name="bookingSource" label="Booking Source">
+                                <Form.Item name="source" label="Booking Source">
                                     <Select
                                         options={selectedSourceType === "Agency" ? agenciesOptions : companyOptions}
                                         className="w-[100%] "
@@ -184,7 +213,7 @@ const ReservationForm = ({
                         :
                         <div className="flex justify-end">
                             <Form.Item>
-                                <Button type="primary" htmlType="submit" onClick={onSearch}>Search</Button>
+                                <Button type="primary" htmlType="submit" >Search</Button>
                             </Form.Item>
                         </div>
                 }
