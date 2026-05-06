@@ -66,19 +66,6 @@ const RateAndInventoryCalendar = () => {
         },
     });
 
-//     const { data: apiData, isLoading, isFetching } = useApiQuery({
-//     fetchQueryName: 'rateInventoryCalendar',
-//     fetchQueryFunction: getCalendarData,
-//     params: calendarParams,
-//     options: {
-//         staleTime: 0, // Data becomes stale immediately
-//         gcTime: GC_TIME,
-//         placeholderData: (prev) => prev,
-//         refetchOnMount: true, // Ensures refetch when component remounts
-//         refetchOnWindowFocus: true, // Refetch when user switches tabs back to the app
-//     },
-// });
-
     const { data: roomMetaData } = useApiQuery({
         fetchQueryName: "room-meta",
         fetchQueryFunction: roomMeta,
@@ -91,7 +78,7 @@ const RateAndInventoryCalendar = () => {
 
     const floorOptions = roomMetaData?.floors?.map((floor) => ({
         value: floor.uuid,
-        label: floor.floorNo,
+        label : <span>{floor?.name} ({floor?.floorNo})</span>
     }));
 
     const ratePlanOptions = roomMetaData?.rate_plans?.map((ratePlan) => ({
@@ -162,16 +149,12 @@ const RateAndInventoryCalendar = () => {
 
     // ── Effects ───────────────────────────────────────────────────────────────
 
-    // ── Effects ───────────────────────────────────────────────────────────────
-
     // Expand first 2 room types when data loads
     // useEffect(() => {
     //     if (roomTypes.length > 0) {
     //         setExpandedGroups(new Set(roomTypes.slice(0, 2).map((rt) => rt.id)));
     //     }
     // }, [roomTypes]);
-
-
 
     // Auto-scroll to today on initial load
     useEffect(() => {
@@ -620,11 +603,6 @@ const RateAndInventoryCalendar = () => {
                     disabled
                 />
                 <div className="flex-1 relative overflow-hidden">
-                    {/* <div className="absolute inset-0 z-[50] flex items-center justify-center bg-white/40 backdrop-blur-sm">
-                        <div className="flex flex-col items-center gap-3 bg-white rounded-2xl shadow-2xl px-10 py-8">
-                            <Loader />
-                        </div>
-                    </div> */}
                     <div className="absolute inset-0 z-[50] flex items-center justify-center bg-white/40 backdrop-blur-sm">
                         <div className="flex flex-col items-center gap-3 bg-white rounded-2xl shadow-2xl px-10 py-8">
                             <Loader />

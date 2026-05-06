@@ -53,51 +53,14 @@ const RoomAttributesForm = ({
       } else {
         form.resetFields();
       }
-    } else {
-      form.resetFields();
     }
   }, [open, selectedAttribute, mode, form]);
 
   const handleClose = () => {
     setDrawerOpen(false);
-    setSelectedData(null);
     form.resetFields();
   };
 
-  // const onFinish = (values) => {
-  //   if (isAdd) {
-  //     const payload = {
-  //       value: values.value,
-  //       roomAttribute: { uuid: values.roomAttributeUuid },
-  //       room: { uuid: roomUuid },
-  //     };
-
-  //     createAttribute.mutate(payload, {
-  //       onSuccess: () => {
-  //         queryClient.invalidateQueries(["roomData", { uuid: roomUuid }]);
-  //         form.resetFields();
-  //         setDrawerOpen(false);
-  //         Toast.success("Room Attribute Value Created Successfully!");
-  //       },
-  //     });
-  //   }
-  //   if (isEdit) {
-  //     const editValues = {
-  //       uuid: selectedAttribute?.uuid,
-  //       value: values.value,
-  //       roomAttribute: { uuid: values.roomAttributeUuid },
-  //       room: { uuid: roomUuid },
-  //     };
-
-  //     editAttribute.mutate(editValues, {
-  //       onSuccess: () => {
-  //         queryClient.invalidateQueries(["roomData", { uuid: roomUuid }]);
-  //         setDrawerOpen(false);
-  //         Toast.success("Room Attribute value Updated Successfully!");
-  //       },
-  //     });
-  //   }
-  // };
   const onFinish = (values) => {
     if (isAdd) {
       const payload = {
