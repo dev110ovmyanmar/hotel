@@ -227,10 +227,6 @@ const GuestForm = ({
                       if (!/^\d+$/.test(value)) {
                         return Promise.reject(new Error("Phone number must contain only digits"));
                       }
-                      // Optional: Check for minimum length
-                      if (value.length < 9) {
-                        return Promise.reject(new Error("Phone number is too short"));
-                      }
                       return Promise.resolve();
                     },
                   },

@@ -1,16 +1,5 @@
 import React, { useState } from "react";
-import {
-  Button,
-  Card,
-  DatePicker,
-  Divider,
-  Select,
-  Table,
-  Tag,
-  TimePicker,
-} from "antd";
-import ReservationHeader from "./ReservationHeader";
-import ReservationMenu from "./ReservationMenu";
+import { Button, Card, Divider, Select, Table, Tag } from "antd";
 import { PlusOutlined, ReloadOutlined } from "@ant-design/icons";
 import RoomBookedDrawer from "./RoomBookedDrawer";
 import CreateContactPerson from "./CreateContactPerson";
@@ -21,18 +10,21 @@ import { useNavigate } from "react-router-dom";
 import { useApiMutation } from "../../hooks/useApiMutation";
 import { availabilitySearch } from "../../api/availabilitySearchApi";
 import Toast from "../../component/Toast/Toast";
-import PriceTag from "../../component/PriceTag/PriceTag";
 
 const ReservationList = () => {
   const navigate = useNavigate();
+
   const [roomBookOpen, setRoomBookOpen] = useState(false);
   const [guestDrawerOpen, setGuestDrawerOpen] = useState(false);
   const [roomConfirm, setRoomConfirm] = useState(false);
   const [guestInfoTable, setGuestInfoTable] = useState(false);
   const [searchReservation, setSearchReservation] = useState(false);
-  const [refreshReservation, setRefreshReservation] = useState(false);
+
   const [storeData, setStoreData] = useState(null);
+
   const [selectedData, setSelectedData] = useState([]);
+  const [selectedRooms, setSelectedRooms] = useState({});
+
   const [clickCreateContact, setClickCreateContact] = useState(false);
 
   const availabilitySearchs = useApiMutation({
@@ -47,92 +39,107 @@ const ReservationList = () => {
     },
   });
 
+  //total booked rooms per roomType
+  const getBookedCount = (roomTypeId) => {
+    return selectedData
+      .filter((item) => item.roomTypeId === roomTypeId)
+      .reduce((sum, item) => sum + (item.selectedRoomCount || 1), 0);
+  };
 
-  const options = storeData?.rooms?.flatMap((item) => Array.from({ length: item.totalRooms }, (_, i) => ({
-    label: i + 1,
-    value: i + 1,
-  })));
-
+  //remaining rooms
+  const getRemainingRooms = (record) => {
+    const booked = getBookedCount(record.roomTypeId);
+    return record.totalRooms - booked;
+  };
 
   const columns = [
     {
       title: "Room Type",
       dataIndex: "roomType",
-      key: "roomType",
-
-      render: (text, row, index) => {
-        return {
-          children: text,
-
-          props: {
-            rowSpan: row.rowSpan,
-          },
-        };
-      },
+      render: (text, row) => ({
+        children: text,
+        props: { rowSpan: row.rowSpan },
+      }),
     },
     {
       title: "Room",
       dataIndex: "totalRooms",
-      render: (value) => {
-        const options = Array.from({ length: value }, (_, i) => ({
-          label: i + 1,
-          value: i + 1,
-        }));
+      render: (value, record) => {
+        const remainingRooms = getRemainingRooms(record);
+
+        const options = Array.from(
+          { length: remainingRooms > 0 ? remainingRooms : 0 },
+          (_, i) => ({
+            label: i + 1,
+            value: i + 1,
+          }),
+        );
+
         return (
-          <Select options={options} defaultValue={value} className="w-20" />
-        )
+          <Select
+            options={options}
+            value={selectedRooms[record.key] || 1}
+            disabled={remainingRooms <= 0}
+            onChange={(val) => {
+              setSelectedRooms((prev) => ({
+                ...prev,
+                [record.key]: val,
+              }));
+            }}
+            className="w-20"
+          />
+        );
       },
-
     },
-
     {
       title: "Rate & Prices",
       dataIndex: "ratePlans",
       align: "center",
-      render: (value) => {
-        return (
-          <div key={value.key} className="mb-2">
-            <p>{value?.minPrice.toLocaleString()} MMK</p>
-            {/* <PriceTag value={item?.minPrice} /> */}
-            <p className="text-gray-500 text-sm">{value?.name}</p>
-          </div>
-        )
-      }
+      render: (value) => (
+        <div className="mb-2">
+          <p>{value?.minPrice.toLocaleString()} MMK</p>
+          <p className="text-gray-500 text-sm">{value?.name}</p>
+        </div>
+      ),
     },
-
     {
       title: "Adult",
       dataIndex: "adults",
-      render: (value) => (
-        <div>{value}</div>
-      ),
     },
     {
       title: "Extra Bed",
       dataIndex: "extraBed",
-      render: (value) => (
-        <div>{value}</div>
-      ),
     },
     {
       title: "",
-      render: (_, record, index) => {
-        const isRoomBooked = (key) => {
-          return selectedData.some((item) => item.key === key);
-        };
+      render: (_, record) => {
+        const isBooked = selectedData.some((item) => item.key === record.key);
 
         return (
           <Button
-            className={
-              isRoomBooked(record?.key) ? "" : "!border-blue-500 !text-blue-500"
-            }
-            type={isRoomBooked(record?.key) ? "primary" : "default"}
+            className={isBooked ? "" : "!border-blue-500 !text-blue-500"}
+            type={isBooked ? "primary" : "default"}
+            disabled={!isBooked && getRemainingRooms(record) <= 0} // disable if no rooms left
             onClick={() => {
-              return setSelectedData((prev) => {
-                if (isRoomBooked(record?.key)) {
+              const selectedCount = selectedRooms[record.key] || 1;
+              const remainingRooms = getRemainingRooms(record);
+
+              if (!isBooked && selectedCount > remainingRooms) {
+                Toast.error("Not enough rooms available");
+                return;
+              }
+
+              setSelectedData((prev) => {
+                if (isBooked) {
                   return prev.filter((item) => item.key !== record.key);
                 } else {
-                  return [...prev, record];
+                  return [
+                    ...prev,
+                    {
+                      ...record,
+                      selectedRoomCount: selectedCount,
+                    },
+                  ];
                 }
               });
             }}
@@ -144,34 +151,30 @@ const ReservationList = () => {
     },
   ];
 
-  const dataSource = storeData?.rooms?.flatMap((room) => {
-    return (
-      room.ratePlans.map((rate, index) => ({
-        key: rate.key,
-        roomType: room.roomType.name,
-        totalRooms: room.totalRooms,
-        ratePlans: rate,
-        adults: room.adults,
-        extraBed: room.extraBed,
-        rowSpan: index === 0 ? room.ratePlans.length : 0,
-      }))
-    )
-  }
-
-
+  const dataSource = storeData?.rooms?.flatMap((room) =>
+    room.ratePlans.map((rate, index) => ({
+      key: `${room.roomType.id}-${rate.id}-${index}`,
+      roomType: room.roomType.name,
+      roomTypeId: room.roomType.id, //important for counting booked rooms
+      totalRooms: room.totalRooms,
+      ratePlans: rate,
+      adults: room.adults,
+      extraBed: room.extraBed,
+      rowSpan: index === 0 ? room.ratePlans.length : 0,
+    })),
   );
 
   return (
     <div className="w-full px-6">
-
       <div className="flex justify-end mb-3">
         <Button
           className="!border-blue-500"
           onClick={() => {
-            // setRefreshReservation(true),
             setSearchReservation(false);
             setRoomConfirm(false);
             setGuestInfoTable(false);
+            setSelectedData([]);
+            setSelectedRooms({});
           }}
         >
           <ReloadOutlined className="!text-blue-500" />
@@ -184,46 +187,33 @@ const ReservationList = () => {
         availabilitySearchResults={availabilitySearchs}
       />
 
-      {/* {refreshReservation && (
-        <ReservationForm
-          onSearch={() => setSearchReservation(true)}
-          afterRoomConfirm={roomConfirm}
-        />
-      )} */}
-
       {roomConfirm ? (
         <>
           {storeData?.rooms?.map((i) => (
-            <Card className="!my-3" key={i?.key}>
+            <Card className="!my-3" key={i?.roomType?.id}>
               <div className="flex justify-between">
-                <div className="flex">
-                  <p className="mb-3">{i?.roomType}</p>
-                </div>
-                <div>
-                  <Tag color="blue">{i?.room} Room</Tag>
-                </div>
+                <p>{i?.roomType?.name}</p>
+                <Tag color="blue">{i?.totalRooms} Room</Tag>
               </div>
 
               <div className="flex">
-                <div className="flex mr-3">
-                  <MdPeopleOutline />
-                  <span className="text-xs ml-1">{i.adult}</span>
-                </div>
-                <div className="flex">
-                  <MdOutlineEscalatorWarning />
-                  <span className="text-xs ml-1">{i?.child}</span>
-                </div>
+                <MdPeopleOutline />
+                <span className="ml-1 text-xs">{i.adults}</span>
 
-                <div className="text-xs text-gray-400 mx-2">|</div>
+                <MdOutlineEscalatorWarning className="ml-3" />
+                <span className="ml-1 text-xs">{i.child}</span>
 
-                <div>{i?.extraBed} Extra Bed</div>
+                <div className="mx-2 text-gray-400">|</div>
+                <div>{i.extraBed} Extra Bed</div>
               </div>
 
               <Divider />
 
               <div className="flex justify-between">
-                <p>{i?.rateAndPrices[1]}</p>
-                <p className="font-bold">{i?.rateAndPrices[0]}</p>
+                <p>{i?.ratePlans?.[0]?.name}</p>
+                <p className="font-bold">
+                  {i?.ratePlans?.[0]?.minPrice?.toLocaleString()} MMK
+                </p>
               </div>
             </Card>
           ))}
@@ -231,21 +221,20 @@ const ReservationList = () => {
           <Card>
             <h1 className="text-lg font-bold my-2">Contact Person</h1>
 
-            {guestInfoTable ? (
+            {guestInfoTable && (
               <GuestInformationTable
                 guestInfoTable={guestInfoTable}
                 setGuestInfoTable={setGuestInfoTable}
               />
-            ) : null}
+            )}
 
-            {clickCreateContact ? null : (
+            {!clickCreateContact && (
               <Button
                 type="primary"
                 onClick={() => setGuestDrawerOpen(true)}
                 className="my-4"
               >
-                Add Contact Person
-                <PlusOutlined />
+                Add Contact Person <PlusOutlined />
               </Button>
             )}
           </Card>
@@ -254,9 +243,7 @@ const ReservationList = () => {
             <Button
               className="!my-5 !px-10"
               type="primary"
-              onClick={() => {
-                navigate("/reservation/inquiry/");
-              }}
+              onClick={() => navigate("/reservation/inquiry/")}
             >
               Submit
             </Button>
@@ -266,13 +253,26 @@ const ReservationList = () => {
         <Card className="!my-3">
           <h1 className="text-lg font-bold my-2">Room Details</h1>
 
-          <Table columns={columns} dataSource={dataSource} pagination={false} />
+          <Table
+            columns={columns}
+            dataSource={dataSource}
+            pagination={false}
+            rowClassName={(record) => {
+              const isBooked = selectedData.some(
+                (item) => item.key === record.key,
+              );
+              const remainingRooms = getRemainingRooms(record);
+              return !isBooked && remainingRooms <= 0
+                ? "opacity-50 grayscale bg-gray-50"
+                : "";
+            }}
+          />
 
           <div className="my-5">
-            <span className="text-red-500">***</span>
+            <span className="text-red-500">*** </span>
             <span>
               Children under 6 years stay free in existing bedding; children
-              aged 6 to must use and extra bed.
+              aged 6+ must use extra bed.
             </span>
           </div>
 
