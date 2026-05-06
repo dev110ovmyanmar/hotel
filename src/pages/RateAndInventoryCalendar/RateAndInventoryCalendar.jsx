@@ -55,25 +55,34 @@ const RateAndInventoryCalendar = () => {
         ratePlan: filters.ratePlan ? { uuid: filters.ratePlan } : null,
     }), [month, keyword, filters]);
 
-    console.log("Calendar Params:", calendarParams);
-
     const { data: apiData, isLoading, isFetching } = useApiQuery({
         fetchQueryName: 'rateInventoryCalendar',
         fetchQueryFunction: getCalendarData,
         params: calendarParams,
         options: {
-            staleTime: STALE_TIME,
-            gcTime: GC_TIME,
+            // staleTime: STALE_TIME,
+            // gcTime: GC_TIME,
             placeholderData: (prev) => prev,
         },
     });
+
+//     const { data: apiData, isLoading, isFetching } = useApiQuery({
+//     fetchQueryName: 'rateInventoryCalendar',
+//     fetchQueryFunction: getCalendarData,
+//     params: calendarParams,
+//     options: {
+//         staleTime: 0, // Data becomes stale immediately
+//         gcTime: GC_TIME,
+//         placeholderData: (prev) => prev,
+//         refetchOnMount: true, // Ensures refetch when component remounts
+//         refetchOnWindowFocus: true, // Refetch when user switches tabs back to the app
+//     },
+// });
 
     const { data: roomMetaData } = useApiQuery({
         fetchQueryName: "room-meta",
         fetchQueryFunction: roomMeta,
     });
-
-    console.log("RoomMetaData", roomMetaData);
 
     const roomTypeOptions = roomMetaData?.room_types?.map((roomType) => ({
         value: roomType.uuid,
