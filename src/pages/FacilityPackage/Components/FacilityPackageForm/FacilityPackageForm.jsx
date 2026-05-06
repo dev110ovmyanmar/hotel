@@ -46,7 +46,7 @@ const FacilityPackageForm = ({
 
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
   const status = initData?.statuses?.status;
-  const pricingType = initData?.statuses?.pricing_type;
+  const pricingType = initData?.statuses?.facility_pricing_type;
 
   const pricingTypesList = pricingType?.map((type) => ({
     value: type.uuid,
@@ -92,13 +92,12 @@ const FacilityPackageForm = ({
 
   useEffect(() => {
     if (!isAdd && data) {
-      console.log(data, "data");
       form.setFieldsValue({
         ...data,
         facility: data?.facility.uuid,
         pricingType: data?.pricingType?.uuid,
         includedHours: data.includedHours
-          ? dayjs(data.includedHours, "HH:mm:ss")
+          ? dayjs(data.includedHours, "HH:mm")
           : null,
       });
       setSelectedData(data);
@@ -117,6 +116,8 @@ const FacilityPackageForm = ({
         ...values,
         facility: { uuid: values.facility },
         pricingType: { uuid: values.pricingType },
+        includedHours: values.includedHours ? values.includedHours.format("HH:mm:ss")
+          : null,
       };
 
       createFacility.mutate(createValues, {
@@ -312,6 +313,7 @@ const FacilityPackageForm = ({
                   style={{
                     width: "100%",
                   }}
+                  format="HH:mm"
                 />
               </Form.Item>
 
