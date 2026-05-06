@@ -37,9 +37,9 @@ const AdminForm = ({
   setDrawerOpen,
   page,
   setPage,
-  staffList,
 }) => {
   const [form] = Form.useForm();
+
 
   const { hasPermission } = usePermission();
 
@@ -78,6 +78,17 @@ const AdminForm = ({
       enabled: !!selectedData?.uuid,
     },
   });
+
+
+  const { data: adminMetaData } = useApiQuery({
+    fetchQueryName: "admin-meta",
+    fetchQueryFunction: adminMeta,
+  });
+
+  const staffList = adminMetaData?.staffs?.map((staff) => ({
+    value: staff.uuid,
+    label: staff.name,
+  }));
 
   // Add On Permission
   const [allowMode, setAllowMode] = useState(""); // "allow" or "notAllow"
@@ -324,17 +335,31 @@ const AdminForm = ({
               )}
             </Form.Item>
 
-            <Form.Item label="Staff" name="staff" className="flex-2">
-              <Select
-                showSearch={{
-                  filterOption: (input, option) =>
-                    (option?.label ?? "")
-                      .toLowerCase()
-                      .includes(input.toLowerCase()),
-                }}
-                options={staffList}
-                placeholder="Select Staff"
-              />
+            <Form.Item
+              label="Staff"
+              name="staff"
+              className="flex-2"
+              getValueProps={(value) => ({
+                value: isView
+                  ? staffList?.find((item) => item.value === value)?.label
+                  : value,
+              })}
+            >
+              {
+                isView ?
+                  <Input readOnly={isView} />
+                  :
+                  < Select
+                    showSearch={{
+                      filterOption: (input, option) =>
+                        (option?.label ?? "")
+                          .toLowerCase()
+                          .includes(input.toLowerCase()),
+                    }}
+                    options={staffList}
+                    placeholder="Select Staff"
+                  />
+              }
             </Form.Item>
 
             <Status isView={isView} statusValue={initDataStatus} />
@@ -435,7 +460,7 @@ const AdminForm = ({
           </div>
         </Modal>
       </Drawer>
-    </div>
+    </div >
   );
 };
 
