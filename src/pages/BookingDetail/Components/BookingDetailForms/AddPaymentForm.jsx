@@ -20,6 +20,15 @@ import FormButtons from "../../../../component/FormButtons/FormButtons";
 import dayjs from "dayjs";
 import { PlusOutlined } from "@ant-design/icons";
 import { FcApproval } from "react-icons/fc";
+import aya from "../../../../assets/images/payments/aya.png";
+import ayaPay from "../../../../assets/images/payments/ayaPay.png";
+import kbz from "../../../../assets/images/payments/kbz.png";
+import kPay from "../../../../assets/images/payments/kPay.png";
+import cb from "../../../../assets/images/payments/cb.png";
+import cbPay from "../../../../assets/images/payments/cbPay.png";
+import uab from "../../../../assets/images/payments/uab.png";
+import uabPay from "../../../../assets/images/payments/uabPay.png";
+import wave from "../../../../assets/images/payments/wave.png";
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -28,7 +37,7 @@ const AddPaymentForm = ({ open, onClose, reservationId }) => {
   const [form] = Form.useForm();
   const [payBy, setPayBy] = useState("Digital");
 
-  const handleSubmit = (values) => {
+  const onFinish = (values) => {
     console.log("Amend Booking Data:", {
       reservationId,
       ...values,
@@ -81,8 +90,8 @@ const AddPaymentForm = ({ open, onClose, reservationId }) => {
       <Form
         form={form}
         layout="vertical"
-        onFinish={handleSubmit}
-        initialValues={{ payBy: "Digital", payDate: dayjs("2026-02-20") }}
+        onFinish={onFinish}
+        initialValues={{ payBy: "Digital" }}
       >
         {/* Pay By Section */}
         <Form.Item label={<strong>Pay By</strong>} name="payBy">
@@ -106,28 +115,60 @@ const AddPaymentForm = ({ open, onClose, reservationId }) => {
                   <PaymentCard
                     name="KBZ Pay"
                     value="kbz_pay"
-                    icon={<FcApproval />}
+                    icon={
+                      <div className="flex justify-center items-center w-full">
+                        <img
+                          src={kPay}
+                          alt="KPay Logo"
+                          className="h-6 w-auto object-contain"
+                        />
+                      </div>
+                    }
                   />
                 </Col>
                 <Col span={6}>
                   <PaymentCard
                     name="CB Pay"
                     value="cb_pay"
-                    icon={<FcApproval />}
+                    icon={
+                      <div className="flex justify-center items-center w-full">
+                        <img
+                          src={cbPay}
+                          alt="CBPay Logo"
+                          className="h-6 w-auto object-contain"
+                        />
+                      </div>
+                    }
                   />
                 </Col>
                 <Col span={6}>
                   <PaymentCard
                     name="AYA Pay"
                     value="aya_pay"
-                    icon={<FcApproval />}
+                    icon={
+                      <div className="flex justify-center items-center w-full">
+                        <img
+                          src={ayaPay}
+                          alt="AYAPay Logo"
+                          className="h-6 w-auto object-contain"
+                        />
+                      </div>
+                    }
                   />
                 </Col>
                 <Col span={6}>
                   <PaymentCard
                     name="UAB Pay"
                     value="uab_pay"
-                    icon={<FcApproval />}
+                    icon={
+                      <div className="flex justify-center items-center w-full">
+                        <img
+                          src={uabPay}
+                          alt="UABPay Logo"
+                          className="h-6 w-auto object-contain"
+                        />
+                      </div>
+                    }
                   />
                 </Col>
               </Row>
@@ -143,32 +184,77 @@ const AddPaymentForm = ({ open, onClose, reservationId }) => {
                   <PaymentCard
                     name="KBZ Bank"
                     value="kbz_bank"
-                    icon={<FcApproval />}
+                    icon={
+                      <div className="flex justify-center items-center w-full">
+                        <img
+                          src={kbz}
+                          alt="KBZ Bank Logo"
+                          className="h-6 w-auto object-contain"
+                        />
+                      </div>
+                    }
                   />
                 </Col>
                 <Col span={4.8} style={{ width: "20%" }}>
                   <PaymentCard
                     name="CB Bank"
                     value="cb_bank"
-                    icon={<FcApproval />}
+                    icon={
+                      <div className="flex justify-center items-center w-full">
+                        <img
+                          src={cb}
+                          alt="CB Bank Logo"
+                          className="h-6 w-auto object-contain"
+                        />
+                      </div>
+                    }
                   />
                 </Col>
+
                 <Col span={4.8} style={{ width: "20%" }}>
                   <PaymentCard
                     name="AYA Bank"
                     value="aya_bank"
-                    icon={<FcApproval />}
+                    icon={
+                      <div className="flex justify-center items-center w-full">
+                        <img
+                          src={aya}
+                          alt="AYA Bank Logo"
+                          className="h-6 w-auto object-contain"
+                        />
+                      </div>
+                    }
                   />
                 </Col>
                 <Col span={4.8} style={{ width: "20%" }}>
                   <PaymentCard
                     name="UAB Bank"
                     value="uab_bank"
-                    icon={<FcApproval />}
+                    icon={
+                      <div className="flex justify-center items-center w-full">
+                        <img
+                          src={uab}
+                          alt="UAB Bank Logo"
+                          className="h-6 w-auto object-contain"
+                        />
+                      </div>
+                    }
                   />
                 </Col>
                 <Col span={4.8} style={{ width: "20%" }}>
-                  <PaymentCard name="Wave" value="wave" icon={<FcApproval />} />
+                  <PaymentCard
+                    name="Wave"
+                    value="wave"
+                    icon={
+                      <div className="flex justify-center items-center w-full">
+                        <img
+                          src={wave}
+                          alt="Wave Bank Logo"
+                          className="h-6 w-auto object-contain"
+                        />
+                      </div>
+                    }
+                  />
                 </Col>
               </Row>
             </Radio.Group>

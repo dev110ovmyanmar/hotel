@@ -4,6 +4,7 @@ import { MoreOutlined, EyeOutlined, EditOutlined } from "@ant-design/icons";
 import TaxForm from "./TaxForms/TaxForm";
 import usePermission from "../../../hooks/usePermission";
 import { PERMISSIONS } from "../../../variables/permission";
+import PriceTag from "../../../component/PriceTag/PriceTag";
 
 const TaxTable = ({
   data,
@@ -60,12 +61,17 @@ const TaxTable = ({
         }
 
         if (type === "Flat") {
-          return <span>{value} MMK</span>;
+          return (
+            <div className="flex  justify-end gap-1">
+              <PriceTag value={value} />
+              <span>MMK</span>
+            </div>
+          );
         }
 
         return value;
       },
-      align: "center",
+      align: "end",
     },
     {
       title: "Action",

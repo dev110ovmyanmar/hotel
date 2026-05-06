@@ -1,534 +1,733 @@
-import React, { useState, useMemo, useEffect, useRef } from 'react';
-import {
-    Button, Input, Space, Badge, DatePicker,
-    Spin, Modal, Switch, App, Popover, Select, Divider
-} from 'antd';
-import {
-    LeftOutlined, RightOutlined, DoubleLeftOutlined, DoubleRightOutlined,
-    SearchOutlined, UpOutlined, DownOutlined, ExclamationCircleOutlined,
-    FilterOutlined, CloseCircleOutlined, EditOutlined, CloseOutlined
-} from '@ant-design/icons';
+import React, { useState, useMemo, useCallback, useEffect, useRef } from 'react';
+import { Modal, Form, Spin, Divider } from 'antd';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
-import { fetchCalendarData } from './data';
+
+import { getCalendarData } from '../../api/rateAndInventoryCalendarApi';
+import { roomMeta } from '../../api/roomApi';
+import useApiQuery from '../../hooks/useApiQuery';
 import Loader from '../../component/Loader/Loader';
+import { updateStopSell, updateAvailabilityCalendar } from '../../api/availabilityCalendarApi';
+import { upsertRoomRestriction, roomRestrictionStopSell } from '../../api/roomrestriction';
+import { useApiMutation } from '../../hooks/useApiMutation';
+import Toast from '../../component/Toast/Toast';
+import { queryClient } from '../../app/queryClient';
 
-const Calendar = () => {
-    // --- STATE ---
+import CalendarHeader from './components/CalendarHeader';
+import CalendarTableHeader from './components/CalendarTableHeader';
+import RoomTypeGroup from './components/RoomTypeGroup';
+import CalendarFooter from './components/CalendarFooter';
+import RateInventoryModal from './components/RateInventoryModal';
+import RestrictionEditModal from './components/RestrictionEditModal';
+
+// ─── Constants ───────────────────────────────────────────────────────────────
+const DEFAULT_AVAILABILITY = { totalRooms: 0, sold: 0, available: 0, stopSell: false };
+const CELL_WIDTH = 100;
+const SIDEBAR_WIDTH = 220;
+const STALE_TIME = 5 * 60 * 1000;
+const GC_TIME = 10 * 60 * 1000;
+
+// ─── Component ───────────────────────────────────────────────────────────────
+const RateAndInventoryCalendar = () => {
+    // ── UI state ──────────────────────────────────────────────────────────────
     const [currentDate, setCurrentDate] = useState(dayjs());
-    const [allData, setAllData] = useState([]);
-    const [loading, setLoading] = useState(true);
     const [expandedGroups, setExpandedGroups] = useState(new Set());
-    const [searchQuery, setSearchQuery] = useState('');
-    const [filters, setFilters] = useState({ roomTypes: [], floors: [] });
+    const [keyword, setKeyword] = useState('');
+    const [filters, setFilters] = useState({ roomType: null, floor: null, ratePlan: null });
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [selectedData, setSelectedData] = useState(null);
+    const [selectedCell, setSelectedCell] = useState(null);
+    const [editingCell, setEditingCell] = useState(null);
+    const [restrictionEditModal, setRestrictionEditModal] = useState(null);
+    const [loadingStates, setLoadingStates] = useState({ stopSell: {}, availability: {} });
 
-    const [dailyStatus, setDailyStatus] = useState({});
-
+    const [restrictionForm] = Form.useForm();
     const gridRef = useRef(null);
-    const CELL_WIDTH = 85;
-    const SIDEBAR_WIDTH = 200;
 
-    const handleModalClick = (group, day) => {
-        const dateStr = day.format('DD.MM.YYYY');
-        const statusKey = `${group.type}-${day.format('YYYY-MM-DD')}`;
+    // ── Derived ───────────────────────────────────────────────────────────────
+    const month = useMemo(() => currentDate.format('YYYY-MM'), [currentDate]);
 
-        // Get existing data or defaults
-        const current = dailyStatus[statusKey] || {
-            stopSell: false,
-            minStay: 2,
-            maxStay: 4,
-            closeArrival: true,
-            closeDeparture: false
-        };
+    // ── API ───────────────────────────────────────────────────────────────────
+    const calendarParams = useMemo(() => ({
+        month,
+        keyword,
+        roomType: filters.roomType ? { uuid: filters.roomType } : null,
+        Floor: filters.floor ? { uuid: filters.floor } : null,
+        ratePlan: filters.ratePlan ? { uuid: filters.ratePlan } : null,
+    }), [month, keyword, filters]);
 
-        setSelectedData({ ...current, date: dateStr, groupType: group.type, key: statusKey });
-        setIsModalOpen(true);
-    };
+    const { data: apiData, isLoading, isFetching } = useApiQuery({
+        fetchQueryName: 'rateInventoryCalendar',
+        fetchQueryFunction: getCalendarData,
+        params: calendarParams,
+        options: {
+            // staleTime: STALE_TIME,
+            // gcTime: GC_TIME,
+            placeholderData: (prev) => prev,
+        },
+    });
 
-    const handleModalClose = () => {
-        setIsModalOpen(false);
-    };
+    const { data: roomMetaData } = useApiQuery({
+        fetchQueryName: "room-meta",
+        fetchQueryFunction: roomMeta,
+    });
 
-    // --- FETCH DATA ---
-    useEffect(() => {
-        const getData = async () => {
-            setLoading(true);
-            try {
-                const result = await fetchCalendarData();
-                setAllData(result);
-                setExpandedGroups(new Set(result.slice(0, 2).map(g => g.type)));
+    const roomTypeOptions = roomMetaData?.room_types?.map((roomType) => ({
+        value: roomType.uuid,
+        label: roomType.name,
+    }));
 
-                // Initialize dailyStatus based on initial data if needed
-                const initialStatus = {};
-                result.forEach(group => {
-                    // Logic to fill initialStatus from API would go here
-                });
-                setDailyStatus(initialStatus);
-            } catch (error) {
-                console.error("Failed to fetch data", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        getData();
-    }, []);
+    const floorOptions = roomMetaData?.floors?.map((floor) => ({
+        value: floor.uuid,
+        label : <span>{floor?.name} ({floor?.floorNo})</span>
+    }));
 
-    // --- HANDLERS ---
-    const toggleGroup = (type) => {
-        const newSet = new Set(expandedGroups);
-        if (newSet.has(type)) newSet.delete(type);
-        else newSet.add(type);
-        setExpandedGroups(newSet);
-    };
+    const ratePlanOptions = roomMetaData?.rate_plans?.map((ratePlan) => ({
+        value: ratePlan.uuid,
+        label: ratePlan.name,
+    }));
 
-    // NEW: Handle Toggle with Confirmation Modal
-    const handleSwitchChange = (checked, groupType, dateStr) => {
-        const statusKey = `${groupType}-${dateStr}`;
-        const actionText = checked ? "Open" : "Close";
+    const updateStopSelling = useApiMutation({ mutationFn: updateStopSell, invalidateKeys: [] });
+    const updateRoomInventory = useApiMutation({ mutationFn: updateAvailabilityCalendar, invalidateKeys: [] });
+    const editRoomRestriction = useApiMutation({ mutationFn: upsertRoomRestriction, invalidateKeys: [] });
+    const updateRoomRestrictionStopSell = useApiMutation({ mutationFn: roomRestrictionStopSell, invalidateKeys: [] });
 
-        Modal.confirm({
-            title: 'Confirm Status Change',
-            icon: <ExclamationCircleOutlined />,
-            content: `Are you sure you want to ${actionText} the status for ${groupType} on ${dateStr}?`,
-            okText: 'Confirm',
-            cancelText: 'Cancel',
-            centered: true,
-            onOk: () => {
-                setDailyStatus(prev => ({
-                    ...prev,
-                    [statusKey]: checked
-                }));
-            },
+    // ── Derived data from API ─────────────────────────────────────────────────
+    const roomTypes = useMemo(() => apiData?.roomTypes ?? [], [apiData]);
+
+    /** { [rtId]: { [dateStr]: { availability, rateMap: { [rateId]: rate } } } } */
+    const rtDateMap = useMemo(() => {
+        const map = {};
+        roomTypes.forEach((rt) => {
+            map[rt.id] = {};
+            (rt.dates ?? []).forEach((d) => {
+                const rateMap = {};
+                (d.rates ?? []).forEach((r) => { rateMap[r.id] = r; });
+                map[rt.id][d.date] = { availability: d.availability, rateMap };
+            });
         });
-    };
+        return map;
+    }, [roomTypes]);
+
+    /** { [roomId]: { [dateStr]: { isBooked, isAvailable } } } */
+    const roomDateMap = useMemo(() => {
+        const map = {};
+        roomTypes.forEach((rt) => {
+            (rt.rooms ?? []).forEach((room) => {
+                map[room.id] = {};
+                (room.dates ?? []).forEach((d) => {
+                    map[room.id][d.date] = { isBooked: d.isBooked, isAvailable: d.isAvailable };
+                });
+            });
+        });
+        return map;
+    }, [roomTypes]);
+
+    const todayStr = useMemo(() => dayjs().format('YYYY-MM-DD'), []);
 
     const days = useMemo(() => {
         const start = currentDate.startOf('month');
         return Array.from({ length: start.daysInMonth() }, (_, i) => start.add(i, 'day'));
     }, [currentDate]);
 
-    // --- AUTO SCROLL TO TODAY ---
-    useEffect(() => {
-        if (!loading && gridRef.current) {
-            const today = dayjs();
-            // Only scroll if we're viewing the current month
-            if (currentDate.isSame(today, 'month')) {
-                const todayIdx = today.date() - 1;
-                // Scroll so 'today' is visible, keeping 1 column as left padding
-                const scrollAmount = (todayIdx * CELL_WIDTH) - CELL_WIDTH;
-                // Small timeout ensures the DOM has painted before scrolling
-                setTimeout(() => {
-                    gridRef.current?.scrollTo({
-                        left: Math.max(0, scrollAmount),
-                        behavior: 'smooth'
-                    });
-                }, 100);
-            }
-        }
-    }, [loading, currentDate]);
-
-    const filteredData = useMemo(() => {
-        return allData
-            .map(group => {
-                const typeMatch = filters.roomTypes.length === 0 || filters.roomTypes.includes(group.type);
-                const filteredRooms = group.rooms.filter(room => {
-                    const floorMatch = filters.floors.length === 0 || filters.floors.includes(room.floor);
-                    const searchMatch = room.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                        group.type.toLowerCase().includes(searchQuery.toLowerCase());
-                    return floorMatch && searchMatch;
-                });
-
-                if (typeMatch && filteredRooms.length > 0) {
-                    return { ...group, rooms: filteredRooms };
-                }
-                return null;
-            })
-            .filter(Boolean);
-    }, [allData, filters, searchQuery]);
-
-    const dailyStats = useMemo(() => {
-        const totalRoomsCount = allData.reduce((acc, g) => acc + g.rooms.length, 0);
-        if (totalRoomsCount === 0) return [];
-
-        return days.map(day => {
-            let occupiedCount = 0;
-            allData.forEach(group => {
-                group.rooms.forEach(room => {
-                    const isOccupied = room.bookings.some(b => {
-                        const start = dayjs(b.checkIn);
-                        const end = dayjs(b.checkOut);
-                        // Occupied from check-in up to (but not including) check-out
-                        return (day.isSame(start, 'day') || day.isAfter(start, 'day')) && day.isBefore(end, 'day');
-                    });
-                    if (isOccupied) occupiedCount++;
-                });
-            });
-
+    /** Pre-computed per-day metadata — avoids repeated format/isBefore calls in cells */
+    const daysMeta = useMemo(() => {
+        const today = dayjs();
+        return days.map((day) => {
+            const dateStr = day.format('YYYY-MM-DD');
             return {
-                available: totalRoomsCount - occupiedCount,
-                occupancy: Math.round((occupiedCount / totalRoomsCount) * 100)
+                day,
+                dateStr,
+                isPast: day.isBefore(today, 'day'),
+                isToday: dateStr === todayStr,
+                cellClass:
+                    dateStr === todayStr
+                        ? 'bg-[#E6F4FF] border-r-2 border-r-[#91CAFF] border-l-2 border-l-[#91CAFF]'
+                        : 'bg-[#fcfcfc] border-r',
             };
         });
-    }, [allData, days]);
+    }, [days, todayStr]);
 
-    const filterContent = (
-        <div className="w-72 p-1 flex flex-col gap-4">
-            <div>
-                <div className="text-[11px] font-bold text-gray-400 uppercase mb-2">Room Type</div>
-                <Select
-                    mode="multiple" allowClear className="w-full" placeholder="All Types"
-                    value={filters.roomTypes}
-                    onChange={(v) => setFilters(prev => ({ ...prev, roomTypes: v }))}
-                    options={allData.map(g => ({ label: g.type, value: g.type }))}
-                />
-            </div>
-            <div>
-                <div className="text-[11px] font-bold text-gray-400 uppercase mb-2">Floor</div>
-                <Select
-                    mode="multiple" allowClear className="w-full" placeholder="All Floors"
-                    value={filters.floors}
-                    onChange={(v) => setFilters(prev => ({ ...prev, floors: v }))}
-                    options={Array.from(new Set(allData.flatMap(g => g.rooms.map(r => r.floor)))).sort().map(f => ({ label: f, value: f }))}
-                />
-            </div>
-            <Divider className="my-2" />
-            <Button type="text" danger block icon={<CloseCircleOutlined />}
-                onClick={() => setFilters({ roomTypes: [], floors: [] })}>
-                Reset All Filters
-            </Button>
-        </div>
+    // ── Effects ───────────────────────────────────────────────────────────────
+
+    // Expand first 2 room types when data loads
+    // useEffect(() => {
+    //     if (roomTypes.length > 0) {
+    //         setExpandedGroups(new Set(roomTypes.slice(0, 2).map((rt) => rt.id)));
+    //     }
+    // }, [roomTypes]);
+
+    // Auto-scroll to today on initial load
+    useEffect(() => {
+        if (!isLoading && gridRef.current && currentDate.isSame(dayjs(), 'month')) {
+            const todayIdx = dayjs().date() - 1;
+            setTimeout(() => {
+                gridRef.current?.scrollTo({
+                    left: Math.max(0, todayIdx * CELL_WIDTH - CELL_WIDTH),
+                    behavior: 'smooth',
+                });
+            }, 100);
+        }
+    }, [isLoading, currentDate]);
+
+    // ── Callbacks ─────────────────────────────────────────────────────────────
+
+    const toggleGroup = useCallback((id) => {
+        setExpandedGroups((prev) => {
+            const next = new Set(prev);
+            next.has(id) ? next.delete(id) : next.add(id);
+            return next;
+        });
+    }, []);
+
+    const getAvailability = useCallback(
+        (rtId, dateStr) => rtDateMap[rtId]?.[dateStr]?.availability ?? DEFAULT_AVAILABILITY,
+        [rtDateMap]
     );
 
-    if (loading) return <div className="h-screen w-full flex items-center justify-center"><Loader /></div>;
+    const getRateData = useCallback(
+        (rtId, ratePlanId, dateStr) => rtDateMap[rtId]?.[dateStr]?.rateMap?.[ratePlanId] ?? null,
+        [rtDateMap]
+    );
 
-    return (
-        <div className="flex flex-col h-screen bg-white overflow-hidden text-[#333]">
-            {/* HEADER */}
-            <div className="bg-white px-6 py-3 flex justify-between items-center border-b border-[#dee2e6] z-50">
-                <div className="flex items-center gap-4">
-                    <Space>
-                        <DoubleLeftOutlined className="text-gray-400 cursor-pointer" onClick={() => setCurrentDate(currentDate.subtract(1, 'year'))} />
-                        <LeftOutlined className="text-gray-400 cursor-pointer" onClick={() => setCurrentDate(currentDate.subtract(1, 'month'))} />
-                        <DatePicker
-                            // picker="month"
-                            picker="date"
-                            value={currentDate}
-                            format="MMMM YYYY"
-                            allowClear={false}
-                            suffixIcon={null}
-                            variant="borderless"
-                            styles={{ input: { textAlign: 'center' } }}
-                            className="font-bold text-lg w-30 p-0 cursor-pointer"
-                            onChange={(date) => date && setCurrentDate(date)}
-                        />
-                        <RightOutlined className="text-gray-400 cursor-pointer" onClick={() => setCurrentDate(currentDate.add(1, 'month'))} />
-                        <DoubleRightOutlined className="text-gray-400 cursor-pointer" onClick={() => setCurrentDate(currentDate.add(1, 'year'))} />
-                    </Space>
+    const handleConfirmStopSell = useCallback(
+        (newStopSellValue, availableUuid, rtId) => {
+            setLoadingStates((prev) => ({
+                ...prev,
+                stopSell: { ...prev.stopSell, [availableUuid]: true },
+            }));
+            updateStopSelling.mutate({ uuid: availableUuid, stopSell: newStopSellValue }, {
+                onSuccess: () => {
+                    queryClient.setQueriesData({ queryKey: ['rateInventoryCalendar'] }, (old) => {
+                        if (!old) return old;
+                        return {
+                            ...old,
+                            roomTypes: old.roomTypes.map((rt) =>
+                                rt.id === rtId
+                                    ? {
+                                        ...rt,
+                                        dates: rt.dates.map((d) =>
+                                            d.availability?.uuid === availableUuid
+                                                ? { ...d, availability: { ...d.availability, stopSell: newStopSellValue } }
+                                                : d
+                                        ),
+                                    }
+                                    : rt
+                            ),
+                        };
+                    });
+                    Toast.success('Stop Selling Updated Successfully!');
+                },
+                onSettled: () => {
+                    setLoadingStates((prev) => {
+                        const { [availableUuid]: _, ...rest } = prev.stopSell;
+                        return { ...prev, stopSell: rest };
+                    });
+                },
+            });
+        },
+        [updateStopSelling, month]
+    );
+
+    const handleStopSellToggle = useCallback(
+        (rtId, dateStr, stopSellValue, availUuid) => {
+            const newStopSellValue = !stopSellValue;
+            const roomType = roomTypes.find(r => r.id === rtId);
+            const rtName = roomType?.name || 'this room type';
+            const formattedDate = dayjs(dateStr).format('D MMM YYYY');
+
+            Modal.confirm({
+                icon: null,
+                title: (
+                    <div className="flex justify-between items-center w-full">
+                        <span className="text-[16px] font-bold">
+                            {stopSellValue ? 'Open sales for this room type?' : 'Stop sell for this room type?'}
+                        </span>
+                    </div>
+                ),
+                closable: true,
+                content: (
+                    <div className="mt-[-20px]">
+                        <Divider className="my-3 border-gray-200" />
+                        <div className="text-[14px] text-gray-600">
+                            {stopSellValue
+                                ? <span>This will open all availability for <strong>{rtName}</strong> on <strong>{formattedDate}</strong>. Guests will now be able to book this date.</span>
+                                : <span>This will remove all availability for <strong>{rtName}</strong> on <strong>{formattedDate}</strong>. Guests will no longer be able to book this date.</span>
+                            }
+                        </div>
+                        <Divider className="my-3 border-gray-200" />
+                    </div>
+                ),
+                okText: 'Save',
+                cancelText: 'Cancel',
+                okButtonProps: { type: 'primary', className: 'px-6' },
+                cancelButtonProps: { className: 'bg-gray-100 border-none' },
+                centered: true,
+                width: 440,
+                onOk: () => handleConfirmStopSell(newStopSellValue, availUuid, rtId),
+            });
+        },
+        [handleConfirmStopSell]
+    );
+
+    const handleAvailableUpdate = useCallback(
+        (rtId, uuid, value, totalRooms) => {
+            const parsed = parseInt(value, 10);
+            if (isNaN(parsed) || parsed < 0) {
+                setEditingCell(null);
+                return;
+            }
+            if (totalRooms != null && parsed > totalRooms) {
+                setEditingCell(null);
+                return;
+            }
+            Modal.confirm({
+                icon: null,
+                title: (
+                    <div className="flex justify-between items-center w-full">
+                        <span className="text-[16px] font-bold">Confirm Availability Change</span>
+                    </div>
+                ),
+                closable: true,
+                content: (
+                    <div className="mt-[-20px]">
+                        <Divider className="my-3 border-gray-200" />
+                        <div className="text-[14px] text-gray-600">
+                            {`Are you sure you want to update available rooms to `}<strong>{parsed}</strong>{`?`}
+                        </div>
+                        <Divider className="my-3 border-gray-200" />
+                    </div>
+                ),
+                okText: 'Save',
+                cancelText: 'Cancel',
+                okButtonProps: { type: 'primary', className: 'px-6' },
+                cancelButtonProps: { className: 'bg-gray-100 border-none' },
+                centered: true,
+                width: 440,
+                onOk: () => {
+                    setLoadingStates((prev) => ({
+                        ...prev,
+                        availability: { ...prev.availability, [uuid]: true },
+                    }));
+                    updateRoomInventory.mutate({ uuid, availableRooms: parsed }, {
+                        onSuccess: () => {
+                            queryClient.setQueriesData({ queryKey: ['rateInventoryCalendar'] }, (old) => {
+                                if (!old) return old;
+                                return {
+                                    ...old,
+                                    roomTypes: old.roomTypes.map((rt) =>
+                                        rt.id === rtId
+                                            ? {
+                                                ...rt,
+                                                dates: rt.dates.map((d) =>
+                                                    d.availability?.uuid === uuid
+                                                        ? { ...d, availability: { ...d.availability, available: parsed } }
+                                                        : d
+                                                ),
+                                            }
+                                            : rt
+                                    ),
+                                };
+                            });
+                            Toast.success('Availability Updated Successfully!');
+                            setEditingCell(null);
+                        },
+                        onSettled: () => {
+                            setLoadingStates((prev) => {
+                                const { [uuid]: _, ...rest } = prev.availability;
+                                return { ...prev, availability: rest };
+                            });
+                        },
+                    });
+                },
+                onCancel: () => setEditingCell(null),
+            });
+        },
+        [updateRoomInventory, month]
+    );
+
+    const handleCellClick = useCallback(
+        (rt, dateStr) => {
+            const avail = getAvailability(rt.id, dateStr);
+            setSelectedCell({
+                roomTypeName: rt.name,
+                date: dayjs(dateStr).format('DD.MM.YYYY'),
+                dateStr,
+                isPast: dayjs(dateStr).isBefore(dayjs(), 'day'),
+                rtId: rt.id,
+                rtUuid: rt.uuid,
+                availability: avail,
+                ratePlans: (rt.ratePlans ?? []).map((rp) => {
+                    const rateData = getRateData(rt.id, rp.id, dateStr);
+                    return {
+                        id: rp.id,
+                        name: rp.name,
+                        ratePlanUuid: rp.uuid,
+                        price: rateData?.price ?? null,
+                        extraBed: rateData?.extraBed ?? null,
+                        restriction: rateData?.restriction ?? null,
+                    };
+                }),
+            });
+            setIsModalOpen(true);
+        },
+        [getAvailability, getRateData]
+    );
+
+    const handleRestrictionEditOpen = useCallback(
+        (restriction, rp, rt, dateStr, isViewMode = false, isPast = false) => {
+            const vals = {
+                uuid: restriction?.uuid ?? null,
+                roomTypeUuid: rt.uuid,
+                ratePlanUuid: rp.uuid,
+                roomTypeName: rt.name,
+                ratePlanName: rp.name,
+                dateStr,
+                minStay: restriction?.minStay ?? 0,
+                maxStay: restriction?.maxStay ?? 0,
+                closedToArrival: !!restriction?.cta,
+                closedToDeparture: !!restriction?.ctd,
+                stopSell: !!restriction?.stopSell,
+                isViewMode,
+                isPast,
+            };
+            setRestrictionEditModal(vals);
+            restrictionForm.setFieldsValue({
+                minStay: vals.minStay,
+                maxStay: vals.maxStay,
+                closedToArrival: vals.closedToArrival,
+                closedToDeparture: vals.closedToDeparture,
+                stopSell: vals.stopSell,
+            });
+        },
+        [restrictionForm]
+    );
+
+    const handleRestrictionEditFinish = useCallback(
+        (values) => {
+            const { roomTypeUuid, ratePlanUuid, dateStr, uuid } = restrictionEditModal;
+            const payload = {
+                ...values,
+                roomType: { uuid: roomTypeUuid },
+                ratePlan: { uuid: ratePlanUuid },
+                date: dateStr,
+                uuid,
+            };
+            editRoomRestriction.mutate(payload, {
+                onSuccess: (responseData) => {
+                    queryClient.setQueriesData({ queryKey: ['rateInventoryCalendar'] }, (old) => {
+                        if (!old) return old;
+                        return {
+                            ...old,
+                            roomTypes: old.roomTypes.map((rt) =>
+                                rt.uuid === roomTypeUuid
+                                    ? {
+                                        ...rt,
+                                        dates: rt.dates.map((d) =>
+                                            d.date === dateStr
+                                                ? {
+                                                    ...d,
+                                                    rates: d.rates.map((r) =>
+                                                        r.uuid === ratePlanUuid
+                                                            ? {
+                                                                ...r,
+                                                                restriction: {
+                                                                    uuid: responseData?.uuid ?? uuid,
+                                                                    minStay: values.minStay,
+                                                                    maxStay: values.maxStay,
+                                                                    cta: values.closedToArrival,
+                                                                    ctd: values.closedToDeparture,
+                                                                    stopSell: values.stopSell,
+                                                                },
+                                                            }
+                                                            : r
+                                                    ),
+                                                }
+                                                : d
+                                        ),
+                                    }
+                                    : rt
+                            ),
+                        };
+                    });
+                    setRestrictionEditModal(null);
+                    Toast.success('Room Restriction Updated Successfully!');
+                },
+            });
+        },
+        [editRoomRestriction, restrictionEditModal, month]
+    );
+
+    const handleRoomRestrictionStopSell = useCallback((roomRestrictionUuid) => {
+        const { roomTypeUuid, ratePlanUuid, dateStr, stopSell } = restrictionEditModal || {};
+        const targetStopSell = !stopSell;
+
+        const roomTypeName = restrictionEditModal?.roomTypeName || 'this room type';
+        const formattedDate = dayjs(dateStr).format('D MMM YYYY');
+
+        Modal.confirm({
+            icon: null,
+            title: (
+                <div className="flex justify-between items-center w-full">
+                    <span className="text-[16px] font-bold">
+                        {restrictionEditModal?.stopSell ? 'Open sales for this rate plan?' : 'Stop sell for this rate plan?'}
+                    </span>
                 </div>
+            ),
+            closable: true,
+            content: (
+                <div className="mt-[-20px]">
+                    <Divider className="my-3 border-gray-200" />
+                    <div className="text-[14px] text-gray-600">
+                        {restrictionEditModal?.stopSell
+                            ? <span>This will open all availability for <strong>{roomTypeName}</strong> on <strong>{formattedDate}</strong>. Guests will now be able to book this date.</span>
+                            : <span>This will remove all availability for <strong>{roomTypeName}</strong> on <strong>{formattedDate}</strong>. Guests will no longer be able to book this date.</span>
+                        }
+                    </div>
+                    <Divider className="my-3 border-gray-200" />
+                </div>
+            ),
+            okText: 'Save',
+            cancelText: 'Cancel',
+            okButtonProps: { type: 'primary', className: 'px-6' },
+            cancelButtonProps: { className: 'bg-gray-100 border-none' },
+            centered: true,
+            onOk: () => {
+                setLoadingStates((prev) => ({
+                    ...prev,
+                    stopSell: { ...prev.stopSell, [roomRestrictionUuid]: true },
+                }));
+                // We perform the optimistic update immediately upon confirm
+                setRestrictionEditModal((prev) => prev ? { ...prev, stopSell: targetStopSell } : prev);
 
-                <div className="flex items-center gap-4">
-                    <div className="text-lg font-medium w-full text-center">
-                        {currentDate ? currentDate.format('DD MMMM YYYY') : ''}
+                updateRoomRestrictionStopSell.mutate(
+                    { uuid: roomRestrictionUuid, stopSell: targetStopSell },
+                    {
+                        onSuccess: (responseData) => {
+                            queryClient.setQueriesData({ queryKey: ['rateInventoryCalendar'] }, (old) => {
+                                if (!old) return old;
+                                return {
+                                    ...old,
+                                    roomTypes: old.roomTypes.map((rt) =>
+                                        rt.uuid === roomTypeUuid
+                                            ? {
+                                                ...rt,
+                                                dates: rt.dates.map((d) =>
+                                                    d.date === dateStr
+                                                        ? {
+                                                            ...d,
+                                                            rates: d.rates.map((r) =>
+                                                                r.uuid === ratePlanUuid
+                                                                    ? {
+                                                                        ...r,
+                                                                        restriction: {
+                                                                            ...r.restriction,
+                                                                            stopSell: targetStopSell,
+                                                                        },
+                                                                    }
+                                                                    : r
+                                                            ),
+                                                        }
+                                                        : d
+                                                ),
+                                            }
+                                            : rt
+                                    ),
+                                };
+                            });
+                            Toast.success('Room Restriction Stop Sell Updated Successfully!');
+                        },
+                        onError: () => {
+                            Toast.error('Failed to update Room Restriction Stop Sell!');
+                            setRestrictionEditModal((prev) => prev ? { ...prev, stopSell: !prev.stopSell } : prev);
+                        },
+                        onSettled: () => {
+                            setLoadingStates((prev) => {
+                                const { [roomRestrictionUuid]: _, ...rest } = prev.stopSell;
+                                return { ...prev, stopSell: rest };
+                            });
+                        },
+                    }
+                );
+            }
+        });
+    }, [updateRoomRestrictionStopSell, restrictionEditModal, month]);
+
+    // ── Filter options ────────────────────────────────────────────────────────
+
+    /** Footer: total available + occupancy per day */
+    const dailyStats = useMemo(
+        () =>
+            daysMeta.map(({ dateStr }) => {
+                let totalAvailable = 0, totalSold = 0, totalRooms = 0;
+                roomTypes.forEach((rt) => {
+                    const avail = rtDateMap[rt.id]?.[dateStr]?.availability ?? DEFAULT_AVAILABILITY;
+                    totalAvailable += avail.available;
+                    totalSold += avail.sold;
+                    totalRooms += avail.totalRooms ?? 0;
+                });
+                const occupancy = totalRooms > 0 ? Math.round((totalSold / totalRooms) * 100) : 0;
+                return { available: totalAvailable, sold: totalSold, occupancy };
+            }),
+        [daysMeta, roomTypes, rtDateMap]
+    );
+
+    /** Select options for filter popover come from metadata */
+
+    const handleFiltersChange = useCallback(
+        (partial) => setFilters((prev) => ({ ...prev, ...partial })),
+        []
+    );
+    const handleResetFilters = useCallback(
+        () => setFilters({ roomType: null, floor: null, ratePlan: null }),
+        []
+    );
+
+    // ── Loading skeleton ──────────────────────────────────────────────────────
+    if (isLoading && !apiData) {
+        return (
+            <div className="flex flex-col h-screen bg-white overflow-hidden text-[#333]">
+                <div className="h-0.5 bg-blue-100 w-full">
+                    <div className="h-full bg-blue-500 animate-pulse w-full" />
+                </div>
+                <CalendarHeader
+                    currentDate={currentDate}
+                    onDateChange={setCurrentDate}
+                    keyword=""
+                    onKeywordChange={() => { }}
+                    filters={filters}
+                    filterOptions={roomTypeOptions || []}
+                    floorOptions={floorOptions || []}
+                    ratePlanOptions={ratePlanOptions || []}
+                    onFiltersChange={() => { }}
+                    onReset={() => { }}
+                    disabled
+                />
+                <div className="flex-1 relative overflow-hidden">
+                    <div className="absolute inset-0 z-[50] flex items-center justify-center bg-white/40 backdrop-blur-sm">
+                        <div className="flex flex-col items-center gap-3 bg-white rounded-2xl shadow-2xl px-10 py-8">
+                            <Loader />
+                        </div>
+                    </div>
+                    <div className="w-full h-full overflow-auto" ref={gridRef}>
+                        <table className="border-separate border-spacing-0 table-fixed">
+                            <CalendarTableHeader
+                                daysMeta={daysMeta}
+                                CELL_WIDTH={CELL_WIDTH}
+                                SIDEBAR_WIDTH={SIDEBAR_WIDTH}
+                            />
+                            <tbody>
+                                <tr>
+                                    <td colSpan={days.length + 1} className="text-center py-20">
+                                        <Loader />
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
+            </div>
+        );
+    }
 
-                <div className="flex items-center gap-3">
-                    <Input prefix={<SearchOutlined />} placeholder="Search..." className="w-64" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
-                    <Button type="primary" onClick={() => setCurrentDate(dayjs())}>Today</Button>
-                    <Popover content={filterContent} title="Filter Rooms" trigger="click" placement="bottomRight">
-                        <Badge dot={Object.values(filters).some(f => f.length > 0)}>
-                            <Button icon={<FilterOutlined />}>Filter</Button>
-                        </Badge>
-                    </Popover>
+    // ── Main render ───────────────────────────────────────────────────────────
+    return (
+        <div className="flex flex-col h-screen bg-white overflow-hidden text-[#333]">
+            {/* Refetch progress bar */}
+            {isFetching && (
+                <div className="h-0.5 bg-blue-100 w-full">
+                    <div className="h-full bg-blue-500 animate-pulse w-full" />
                 </div>
-            </div>
+            )}
 
-            {/* GRID */}
-            <div className="flex-1 overflow-auto relative" ref={gridRef}>
-                <table className="border-separate border-spacing-0 table-fixed">
-                    <thead>
-                        <tr>
-                            <th className="sticky top-0 left-0 z-[60] bg-[#f8f9fa] border-b border-r border-[#dee2e6] p-4 text-left font-bold" style={{ width: SIDEBAR_WIDTH }}>Room Type</th>
-                            {days.map((day, i) => {
-                                const isToday = day.isSame(dayjs(), 'day');
-                                return (
-                                    <th key={i} className={`sticky top-0 z-[50] border-b border-[#dee2e6] text-center p-2 
-                                        ${isToday
-                                            ? 'bg-[#E6F4FF] border-r-2 border-r-[#91CAFF] border-l-2 border-l-[#91CAFF]'
-                                            : 'bg-[#f8f9fa] border-r'
-                                        }`} style={{ width: CELL_WIDTH, minWidth: CELL_WIDTH }}>
-                                        <div className={`text-[10px] uppercase ${isToday ? 'text-blue-500 font-bold' : 'text-gray-400'}`}>{day.format('MMM')}</div>
-                                        <div className={`text-base font-bold ${isToday ? 'text-blue-600' : ''}`}>{day.format('D')}</div>
-                                        <div className={`text-[11px] ${isToday ? 'text-blue-500 font-bold' : 'text-gray-500'}`}>{day.format('ddd')}</div>
-                                    </th>
-                                );
-                            })}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {filteredData.map((group) => (
-                            <React.Fragment key={group.type}>
-                                <tr className="bg-[#fcfcfc] cursor-pointer hover:bg-gray-100 h-10" onClick={() => toggleGroup(group.type)}>
-                                    <td className="sticky left-0 z-40 bg-[#fcfcfc] border-r border-[#dee2e6] p-3 font-bold">
-                                        <div className="flex justify-between items-center">
-                                            <span className="text-[12px] truncate">{group.type}</span>
-                                            {expandedGroups.has(group.type) ? <UpOutlined className="!text-[9px]" /> : <DownOutlined className="!text-[9px]" />}
-                                        </div>
-                                    </td>
-                                    {days.map((day, i) => {
-                                        const statusKey = `${group.type}-${day.format('YYYY-MM-DD')}`;
-                                        const isStopSell = dailyStatus[statusKey]?.stopSell;
-                                        const isToday = day.isSame(dayjs(), 'day');
+            {/* Header */}
+            <CalendarHeader
+                currentDate={currentDate}
+                onDateChange={setCurrentDate}
+                keyword={keyword}
+                onKeywordChange={setKeyword}
+                filters={filters}
+                filterOptions={roomTypeOptions || []}
+                floorOptions={floorOptions || []}
+                ratePlanOptions={ratePlanOptions || []}
+                onFiltersChange={handleFiltersChange}
+                onReset={handleResetFilters}
+            />
 
-                                        return (
-                                            <td key={i} className={`border-b border-[#dee2e6] text-center p-0 relative
-                                                ${isToday
-                                                    ? 'bg-[#E6F4FF] border-r-2 border-r-[#91CAFF] border-l-2 border-l-[#91CAFF]'
-                                                    : 'bg-[#fcfcfc] border-r'
-                                                }`} style={{ width: CELL_WIDTH }}>
-                                                <div
-                                                    onClick={() => handleModalClick(group, day)}
-                                                    className={`
-                                                    mx-auto flex items-center justify-center cursor-pointer transition-all relative
-                                                    hover:brightness-95 active:scale-95
-                                                    w-[85px] h-[80px] rounded-[4px] text-[11px] font-semibold text-black border
-                                                    ${isStopSell
-                                                            ? "bg-[#fff1f0] border-[#ffccc7]"
-                                                            : "bg-[#feffe6] border-[#fffb8f]"
-                                                        }
-                                                `}
-                                                >
-                                                    <ExclamationCircleOutlined className="absolute top-1 right-1 text-xs" />
-                                                    {group.price}
-                                                </div>
-                                            </td>
-                                        );
-                                    })}
-                                </tr>
-
-                                {/* ROW 2: DAILY TOGGLES */}
-                                <tr className="bg-[#fcfcfc] h-8">
-                                    <td className="sticky left-0 z-40 bg-[#fcfcfc] border-r border-[#dee2e6] px-3 text-black text-[12px] pl-4">Dynamic Rate</td>
-                                    {days.map((day, i) => {
-                                        const dateStr = day.format('YYYY-MM-DD');
-                                        const isChecked = dailyStatus[`${group.type}-${dateStr}`] || false;
-                                        const isToday = day.isSame(dayjs(), 'day');
-                                        return (
-                                            <td key={i} className={`border-b border-[#dee2e6] text-center p-0 relative
-                                                ${isToday
-                                                    ? 'bg-[#E6F4FF] border-r-2 border-r-[#91CAFF] border-l-2 border-l-[#91CAFF]'
-                                                    : 'bg-[#fcfcfc] border-r'
-                                                }`}>
-                                                <Switch
-                                                    size="small"
-                                                    checked={isChecked}
-                                                    onChange={(checked) => handleSwitchChange(checked, group.type, dateStr)}
-                                                    style={{ backgroundColor: isChecked ? '#ff4d4f' : '#52c41a' }}
-                                                    disabled={day.isBefore(dayjs(), 'day')}
-                                                />
-                                            </td>
-                                        );
-                                    })}
-                                </tr>
-
-                                <tr className="bg-[#fcfcfc] h-8">
-                                    <td className="sticky left-0 z-40 bg-[#fcfcfc] border-r border-[#dee2e6] px-3 text-black text-[12px] pl-4">Total Rooms</td>
-                                    {days.map((day, i) => {
-                                        const isToday = day.isSame(dayjs(), 'day');
-                                        return (
-                                            <td key={i} className={`border-b border-[#dee2e6] text-center font-bold
-                                                ${isToday
-                                                    ? 'bg-[#E6F4FF] border-r-2 border-r-[#91CAFF] border-l-2 border-l-[#91CAFF]'
-                                                    : 'bg-[#fcfcfc] border-r'
-                                                }`}>
-                                                <Input readOnly value={group.rooms.length} style={{ padding: '0 2px', height: '24px', fontSize: '12px' }} className="!w-5 text-center bg-white" />
-                                            </td>
-                                        )
-                                    })}
-                                </tr>
-
-                                <tr className="bg-[#fcfcfc] h-8">
-                                    <td className="sticky left-0 z-40 bg-[#fcfcfc] border-r border-[#dee2e6] px-3 text-black text-[12px] pl-4">Room Available</td>
-                                    {days.map((day, i) => {
-                                        const isToday = day.isSame(dayjs(), 'day');
-                                        return (
-                                            <td key={i} className={`border-b border-[#dee2e6] text-center font-bold
-                                                ${isToday
-                                                    ? 'bg-[#E6F4FF] border-r-2 border-r-[#91CAFF] border-l-2 border-l-[#91CAFF]'
-                                                    : 'bg-[#fcfcfc] border-r'
-                                                }`}>{group.rooms.length}</td>
-                                        )
-                                    })}
-                                </tr>
-
-                                {/* ROW 3 & 4: INFO ROWS (Simplified for brevity) */}
-                                <tr className="bg-[#fcfcfc] h-8">
-                                    <td className="sticky left-0 z-40 bg-[#fcfcfc] border-b border-r border-[#dee2e6] px-3 text-black text-[12px] pl-4">Sold Rooms</td>
-                                    {days.map((day, i) => {
-                                        const isToday = day.isSame(dayjs(), 'day');
-                                        return (
-                                            <td key={i} className={`border-b border-[#dee2e6] text-center font-bold
-                                                ${isToday
-                                                    ? 'bg-[#E6F4FF] border-r-2 border-r-[#91CAFF] border-l-2 border-l-[#91CAFF]'
-                                                    : 'bg-[#fcfcfc] border-r'
-                                                }`}>0</td>
-                                        )
-                                    })}
-                                </tr>
-
-                                {/* EXPANDED ROOM ROWS WITH DAILY SQUARE BOXES */}
-                                {expandedGroups.has(group.type) && group.rooms.map((room) => (
-                                    <tr key={room.id} className="h-12 hover:bg-gray-50">
-                                        <td className="sticky left-0 z-30 bg-[#fcfcfc] border-b border-r border-[#dee2e6] px-4 py-1">
-                                            <div className="font-bold text-[12px] text-gray-700">{room.id}</div>
-                                            <div className="text-[9px] text-gray-400 uppercase">{room.floor}</div>
-                                        </td>
-                                        {days.map((day, dayIdx) => {
-                                            const dateStr = day.format('YYYY-MM-DD');
-                                            const isChecked = dailyStatus[`${group.type}-${dateStr}`] || false;
-                                            const isToday = day.isSame(dayjs(), 'day');
-                                            return (
-                                                <td key={dayIdx} className={`border-b border-[#dee2e6] p-0 relative text-center
-                                                    ${isToday
-                                                        ? 'bg-[#E6F4FF] border-r-2 border-r-[#91CAFF] border-l-2 border-l-[#91CAFF]'
-                                                        : 'bg-[#fcfcfc] border-r'
-                                                    }`}>
-                                                    <div className="flex justify-center items-center h-full w-full py-3">
-                                                        <div
-                                                            className="w-5 h-5 rounded-sm shadow-sm transition-colors duration-300"
-                                                            style={{ backgroundColor: isChecked ? '#ff4d4f' : '#52c41a' }}
-                                                        ></div>
-                                                    </div>
-                                                </td>
-                                            );
-                                        })}
-                                    </tr>
-                                ))}
-                            </React.Fragment>
-                        ))}
-                    </tbody>
-
-                    <tfoot className="sticky bottom-0 z-[55] bg-white border-t-2 border-gray-200">
-                        {/* ROOMS AVAILABLE ROW */}
-                        <tr className="bg-gray-50/80">
-                            <td className="sticky left-0 z-40 bg-gray-50 border-b border-r border-[#dee2e6] p-3 font-bold" style={{ width: SIDEBAR_WIDTH, minWidth: SIDEBAR_WIDTH, maxWidth: SIDEBAR_WIDTH }}>
-                                <span className="text-[11px] uppercase text-gray-500">Rooms Available</span>
-                            </td>
-                            {dailyStats.map((stat, i) => {
-                                const isZero = stat.available === 0;
-                                const isToday = days[i].isSame(dayjs(), 'day');
-                                return (
-                                    <td key={i} className={`border-b border-[#dee2e6] text-center p-2 font-bold
-                                        ${isToday
-                                            ? 'bg-[#E6F4FF] border-r-2 border-r-[#91CAFF] border-l-2 border-l-[#91CAFF]'
-                                            : 'bg-[#fcfcfc] border-r'
-                                        }`} style={{ width: CELL_WIDTH, minWidth: CELL_WIDTH, maxWidth: CELL_WIDTH }}>
-                                        <div className={`text-sm ${isZero ? 'text-red-500' : 'text-green-600'}`}>
-                                            {stat.available}
-                                        </div>
-                                    </td>
-                                );
-                            })}
-                        </tr>
-                        {/* OCCUPANCY ROW */}
-                        <tr className="bg-gray-50/80">
-                            <td className="sticky left-0 z-40 bg-gray-50 border-b border-r border-[#dee2e6] p-3 font-bold" style={{ width: SIDEBAR_WIDTH, minWidth: SIDEBAR_WIDTH, maxWidth: SIDEBAR_WIDTH }}>
-                                <span className="text-[11px] uppercase text-gray-500">Occupancy %</span>
-                            </td>
-                            {dailyStats.map((stat, i) => {
-                                const isToday = days[i].isSame(dayjs(), 'day');
-                                return (
-                                    <td key={i} className={`border-b border-[#dee2e6] text-center p-2
-                                        ${isToday
-                                            ? 'bg-[#E6F4FF] border-r-2 border-r-[#91CAFF] border-l-2 border-l-[#91CAFF]'
-                                            : 'bg-[#fcfcfc] border-r'
-                                        }`} style={{ width: CELL_WIDTH, minWidth: CELL_WIDTH, maxWidth: CELL_WIDTH }}>
-                                        <div className="flex flex-col items-center">
-                                            <div className="text-[11px] font-bold text-gray-700">{stat.occupancy}%</div>
-                                            <div className="w-full bg-gray-200 h-1 mt-1 rounded-full overflow-hidden">
-                                                <div
-                                                    className={`h-full ${stat.occupancy > 80 ? 'bg-amber-500' : 'bg-blue-500'}`}
-                                                    style={{ width: `${stat.occupancy}%` }}
-                                                />
-                                            </div>
-                                        </div>
-                                    </td>
-                                );
-                            })}
-                        </tr>
-                    </tfoot>
-                </table>
-            </div>
-
-            {/* MODAL BOX - Matching Figma Design */}
-            <Modal
-                title={<span className="text-[16px] font-bold">Room Inventory Restriction</span>}
-                open={isModalOpen}
-                onCancel={() => setIsModalOpen(false)}
-                footer={null}
-                closeIcon={<CloseOutlined />}
-                width={420}
-                centered
-            >
-                {selectedData && (
-                    <div className="flex flex-col gap-4 text-[13px]">
-                        <div className="flex flex-col gap-1.5 mt-2">
-                            <div className="flex justify-between">
-                                <span className="text-gray-500 font-medium">Date:</span>
-                                <span className="font-bold">{selectedData.date}</span>
-                            </div>
-
-                            <div className="flex justify-between items-center">
-                                <span className="text-gray-500 font-medium">Stop Sell:</span>
-                                <Switch
-                                    size="small"
-                                    checked={selectedData.stopSell}
-                                    style={{ backgroundColor: selectedData.stopSell ? '#ff4d4f' : '#52c41a' }}
-                                    onChange={(checked) => {
-                                        setDailyStatus(prev => ({
-                                            ...prev,
-                                            [selectedData.key]: { ...selectedData, stopSell: checked }
-                                        }));
-                                        setSelectedData(prev => ({ ...prev, stopSell: checked }));
-                                    }}
-                                />
-                            </div>
-
-                            <div className="flex justify-between">
-                                <span className="text-gray-500 font-medium">Min-Stay:</span>
-                                <span className="font-bold">{selectedData.minStay} days</span>
-                            </div>
-
-                            <div className="flex justify-between">
-                                <span className="text-gray-500 font-medium">Max-Stay:</span>
-                                <span className="font-bold">{selectedData.maxStay} days</span>
-                            </div>
-
-                            <div className="flex justify-between">
-                                <span className="text-gray-500 font-medium">Close to Arrival:</span>
-                                <span className="text-green-600 font-bold">{selectedData.closeArrival ? 'True' : 'False'}</span>
-                            </div>
-
-                            <div className="flex justify-between">
-                                <span className="text-gray-500 font-medium">Close to Departure:</span>
-                                <span className="text-red-500 font-bold">{selectedData.closeDeparture ? 'True' : 'False'}</span>
-                            </div>
-                        </div>
-
-                        <Divider className="my-1" />
-
-                        <div className="flex justify-between items-center text-gray-500">
-                            <span className="text-[11px] leading-tight max-w-[250px]">
-                                Update Availability, Stop Sell And Setting Minimum/Maximum Lengths Of Stay In Real-Time
-                            </span>
-                            <EditOutlined className="text-blue-500 text-lg cursor-pointer hover:scale-110 transition-transform" />
+            {/* Calendar grid */}
+            <div className="flex-1 relative overflow-hidden">
+                {/* Loading overlay — covers only the grid area, below the header */}
+                {isFetching && (
+                    <div className="absolute inset-0 z-[50] flex items-center justify-center bg-white/40 backdrop-blur-sm">
+                        <div className="flex flex-col items-center gap-3 bg-white rounded-2xl shadow-2xl px-10 py-8">
+                            <Loader />
                         </div>
                     </div>
                 )}
-            </Modal>
-        </div >
+                <div className="w-full h-full overflow-auto" ref={gridRef}>
+                    <table className="border-separate border-spacing-0 table-fixed">
+                        <CalendarTableHeader
+                            daysMeta={daysMeta}
+                            CELL_WIDTH={CELL_WIDTH}
+                            SIDEBAR_WIDTH={SIDEBAR_WIDTH}
+                        />
+                        <tbody>
+                            {roomTypes.map((rt) => (
+                                <RoomTypeGroup
+                                    key={rt.id}
+                                    rt={rt}
+                                    daysMeta={daysMeta}
+                                    isExpanded={expandedGroups.has(rt.id)}
+                                    onToggle={() => toggleGroup(rt.id)}
+                                    getAvailability={getAvailability}
+                                    handleCellClick={handleCellClick}
+                                    handleStopSellToggle={handleStopSellToggle}
+                                    handleAvailableUpdate={handleAvailableUpdate}
+                                    loadingStates={loadingStates}
+                                    editingCell={editingCell}
+                                    setEditingCell={setEditingCell}
+                                    getRateData={getRateData}
+                                    handleRestrictionEditOpen={handleRestrictionEditOpen}
+                                    roomDateMap={roomDateMap}
+                                />
+                            ))}
+                        </tbody>
+
+                        <CalendarFooter
+                            dailyStats={dailyStats}
+                            daysMeta={daysMeta}
+                            CELL_WIDTH={CELL_WIDTH}
+                            SIDEBAR_WIDTH={SIDEBAR_WIDTH}
+                        />
+                    </table>
+                </div>
+            </div>
+
+            {/* Modals */}
+            <RateInventoryModal
+                open={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                selectedCell={selectedCell}
+                loadingStates={loadingStates}
+                handleStopSellToggle={handleStopSellToggle}
+                handleRestrictionEditOpen={handleRestrictionEditOpen}
+            />
+
+            <RestrictionEditModal
+                open={!!restrictionEditModal}
+                onClose={() => setRestrictionEditModal(null)}
+                onOk={() => restrictionForm.submit()}
+                form={restrictionForm}
+                isPending={editRoomRestriction.isPending}
+                onFinish={handleRestrictionEditFinish}
+                isViewMode={restrictionEditModal?.isViewMode}
+                isPast={restrictionEditModal?.isPast}
+                dateStr={restrictionEditModal?.dateStr}
+                modalData={restrictionEditModal}
+                loadingStates={loadingStates}
+                handleRoomRestrictionStopSell={handleRoomRestrictionStopSell}
+            />
+        </div>
     );
 };
 
-export default Calendar;
+export default RateAndInventoryCalendar;

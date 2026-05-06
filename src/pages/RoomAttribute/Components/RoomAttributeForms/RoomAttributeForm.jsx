@@ -9,7 +9,7 @@ import {
   editRoomAttribute,
   roomAttributeDetails,
 } from "../../../../api/roomApi";
-import Loader from "../../../../component/Loader/Loader"
+import Loader from "../../../../component/Loader/Loader";
 import { PERMISSIONS } from "../../../../variables/permission";
 import usePermission from "../../../../hooks/usePermission";
 
@@ -21,7 +21,7 @@ const RoomAttributeForm = ({
   drawerOpen,
   setDrawerOpen,
   setPage,
-  page
+  page,
 }) => {
   const [form] = Form.useForm();
 
@@ -61,6 +61,12 @@ const RoomAttributeForm = ({
     }
   }, [data]);
 
+  const handleClose = () => {
+    setDrawerOpen(false);
+    setSelectedData(null);
+    form.resetFields();
+  };
+
   const onFinish = (values) => {
     if (isAdd) {
       const createValues = {
@@ -70,6 +76,7 @@ const RoomAttributeForm = ({
       createRoomAttributes.mutate(createValues, {
         onSuccess: () => {
           form.resetFields();
+          handleClose();
           setDrawerOpen(false);
           setPage(1);
           Toast.success("Room Attribute Created Successfully!");
@@ -84,6 +91,7 @@ const RoomAttributeForm = ({
 
       editRoomAttributes.mutate(editValues, {
         onSuccess: () => {
+          handleClose();
           setDrawerOpen(false);
           Toast.success("Room Attribute Updated Successfully!");
         },
@@ -95,7 +103,7 @@ const RoomAttributeForm = ({
     <div>
       <Drawer
         open={drawerOpen}
-        onClose={() => setDrawerOpen(false)}
+        onClose={handleClose}
         size={550}
         title={
           <div className="flex justify-between items-center">
@@ -106,16 +114,18 @@ const RoomAttributeForm = ({
                   ? "Edit Room Attribute"
                   : "Create Room Attribute"}
             </span>
-            {isView ? (canEdit && (
-              <Button
-                type="primary"
-                onClick={() => {
-                  setMode("edit");
-                }}
-              >
-                Edit
-              </Button>
-            )) : (
+            {isView ? (
+              canEdit && (
+                <Button
+                  type="primary"
+                  onClick={() => {
+                    setMode("edit");
+                  }}
+                >
+                  Edit
+                </Button>
+              )
+            ) : (
               <FormButton
                 onClick={() => form.submit()}
                 isPending={
@@ -127,31 +137,27 @@ const RoomAttributeForm = ({
           </div>
         }
       >
-        {
-          isLoading ? (
-            <div className="flex items-center justify-center h-full min-h-[300px]">
-              <Loader />
-            </div>
-          ) :
-            (
-              <Form
-                form={form}
-                layout="vertical"
-                style={{ width: "100%" }}
-                onFinish={onFinish}
-              >
-                <Form.Item
-                  label="Name"
-                  name="name"
-                  rules={[{ required: true }]}
-                >
-                  <Input readOnly={isView} placeholder="Enter Room Attribute Name" />
-                </Form.Item>
-              </Form>
-            )
-        }
+        {isLoading ? (
+          <div className="flex items-center justify-center h-full min-h-[300px]">
+            <Loader />
+          </div>
+        ) : (
+          <Form
+            form={form}
+            layout="vertical"
+            style={{ width: "100%" }}
+            onFinish={onFinish}
+          >
+            <Form.Item label="Name" name="name" rules={[{ required: true }]}>
+              <Input
+                readOnly={isView}
+                placeholder="Enter Room Attribute Name"
+              />
+            </Form.Item>
+          </Form>
+        )}
       </Drawer>
-    </div >
+    </div>
   );
 };
 

@@ -139,16 +139,16 @@ const RoomRestrictionForm = ({
     console.log("changed", value);
   };
 
-  const sharedProps = {
-    mode: "spinner",
-    min: 1,
-    max: 10,
-    defaultValue: 1,
-    onChange,
-    style: { width: 150 },
-  };
+  // const sharedProps = {
+  //   mode: "spinner",
+  //   min: 1,
+  //   max: 10,
+  //   defaultValue: 1,
+  //   onChange,
+  //   style: { width: 150 },
+  // };
 
-    const childSharedProps = {
+  const childSharedProps = {
     mode: "spinner",
     min: 0,
     max: 10,
@@ -199,64 +199,66 @@ const RoomRestrictionForm = ({
           layout="vertical"
           style={{ width: "100%" }}
           onFinish={onFinish}
-           initialValues={{
+          initialValues={{
             closedToArrival: false,
             closedToDeparture: false,
-            minStay:0,
-            maxStay:1,
+            minStay: 0,
+            maxStay: 0,
           }}
         >
-          <Form.Item
-            label="Room Type"
-            name="roomTypeUuid"
-            rules={[{ required: true }]}
-            getValueProps={(value) => ({
-              value: isView
-                ? roomType.find((item) => item.value === value)?.label
-                : value,
-            })}
-          >
-            {isView ? (
-              <Input readOnly={isView} />
-            ) : (
-              <Select
-                showSearch={{
-                  filterOption: (input, option) =>
-                    (option?.label ?? "")
-                      .toLowerCase()
-                      .includes(input.toLowerCase()),
-                }}
-                options={roomType}
-                placeholder="Select Room Type"
-              />
-            )}
-          </Form.Item>
-
-          <Form.Item
-            label="Rate Plan"
-            name="ratePlanUuid"
-            rules={[{ required: true }]}
-            getValueProps={(value) => ({
-              value: isView
-                ? ratePlan.find((item) => item.value === value)?.label
-                : value,
-            })}
-          >
-            {isView ? (
-              <Input readOnly={isView} />
-            ) : (
-              <Select
-                showSearch={{
-                  filterOption: (input, option) =>
-                    (option?.label ?? "")
-                      .toLowerCase()
-                      .includes(input.toLowerCase()),
-                }}
-                options={ratePlan}
-                placeholder="Select rate Plan"
-              />
-            )}
-          </Form.Item>
+          <div className="grid grid-cols-2 gap-6">
+            {" "}
+            <Form.Item
+              label="Room Type"
+              name="roomTypeUuid"
+              rules={[{ required: true }]}
+              getValueProps={(value) => ({
+                value: isView
+                  ? roomType.find((item) => item.value === value)?.label
+                  : value,
+              })}
+            >
+              {isView ? (
+                <Input readOnly={isView} />
+              ) : (
+                <Select
+                  showSearch={{
+                    filterOption: (input, option) =>
+                      (option?.label ?? "")
+                        .toLowerCase()
+                        .includes(input.toLowerCase()),
+                  }}
+                  options={roomType}
+                  placeholder="Select Room Type"
+                />
+              )}
+            </Form.Item>
+            <Form.Item
+              label="Rate Plan"
+              name="ratePlanUuid"
+              rules={[{ required: true }]}
+              getValueProps={(value) => ({
+                value: isView
+                  ? ratePlan.find((item) => item.value === value)?.label
+                  : value,
+              })}
+            >
+              {isView ? (
+                <Input readOnly={isView} />
+              ) : (
+                <Select
+                  showSearch={{
+                    filterOption: (input, option) =>
+                      (option?.label ?? "")
+                        .toLowerCase()
+                        .includes(input.toLowerCase()),
+                  }}
+                  options={ratePlan}
+                  placeholder="Select rate Plan"
+                />
+              )}
+            </Form.Item>
+          </div>
 
           <Form.Item
             label="Date"
@@ -264,7 +266,7 @@ const RoomRestrictionForm = ({
             rules={[{ required: true, message: "Please select Date" }]}
           >
             <DatePicker
-              className="w-full"
+              className="w-60"
               disabled={isView}
               //   disabledDate={(current) => {
               //     return current && current < dayjs().startOf("day");
@@ -292,7 +294,7 @@ const RoomRestrictionForm = ({
               rules={[{ required: true }]}
             >
               <InputNumber
-                {...sharedProps}
+                {...childSharedProps}
                 placeholder="Outlined"
                 readOnly={isView}
                 style={{ width: "100%" }}

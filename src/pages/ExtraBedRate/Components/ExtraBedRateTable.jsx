@@ -116,7 +116,7 @@ const ExtraBedRateTable = ({ data, page, setPage }) => {
   ];
 
   // Process data to calculate rowSpan for rate plans
- const processData = (data) => {
+  const processData = (data) => {
     if (!data) return [];
     const newData = data.map(item => ({ ...item })); // Shallow clone to avoid mutating props
 
@@ -125,7 +125,7 @@ const ExtraBedRateTable = ({ data, page, setPage }) => {
       while (i < newData.length) {
         // Access nested properties like ['ratePlan', 'name']
         const getValue = (obj) => keyPath.reduce((acc, key) => acc?.[key], obj);
-        
+
         let currentVal = getValue(newData[i]);
         let count = 1;
 
@@ -155,19 +155,22 @@ const ExtraBedRateTable = ({ data, page, setPage }) => {
   };
 
   const expandedRowRender = (record) => {
-     const processedRates = processData(record?.rates || []);
-   return (<Table
-      className="custom-table-style"
+    const processedRates = processData(record?.rates || []);
+    return (
+    <Table
+      // className="custom-table-style"
+      className="[&_.ant-table-cell]:!border [&_.ant-table-cell]:!border-blue-300 [&_.ant-table-thead>tr>th]:!bg-[#F0F5FF]"
       columns={nestedColumns}
       // dataSource={record.rates || []}
-       dataSource={processedRates}
-       bordered
+      dataSource={processedRates}
+      bordered
       pagination={false}
       rowKey="id"
       size="small"
       style={{ marginTop: "16px", marginBottom: "16px" }}
-    />)
-   };
+    />
+  )
+  };
 
   const columns = [
     {

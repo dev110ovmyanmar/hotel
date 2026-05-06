@@ -1,7 +1,5 @@
-// data.js
 import dayjs from 'dayjs';
 
-// Accept the viewed month so bookings always align to the displayed calendar
 export const fetchCalendarData = (monthDate) => {
     const monthStart = dayjs(monthDate).startOf('month');
     const groups = [
@@ -54,7 +52,7 @@ export const fetchCalendarData = (monthDate) => {
                     checkIn,
                     checkOut,
                     nights,
-                    status: ['confirmed', 'pending', 'checkin', 'booked'][rIdx % 4],
+                    status: ['confirmed', 'pending', 'cancelled', 'booked', 'checkout'][rIdx % 4],
                     price: `$${150 + (gIdx * 20)}`,
                     guests: (rIdx % 4) + 1,
                     specialRequests: rIdx % 2 === 0 ? 'Sea view preferred, extra towels requested' : 'None'

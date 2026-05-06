@@ -27,3 +27,17 @@ export const roomRestrictionDetails = async (params) => {
   const { data } = await apiClient.get("/room-restriction", { params });
   return data.response;
 };
+
+export const roomRestrictionStopSell = async (params) => {
+  const { data } = await apiClient.put("/room-restriction/stop-sell", params);
+  return data.response;
+}
+
+// stopsell
+export const updateStopSell = async (params) => {
+  const { data } = await apiClient.put(
+    "/room-restriction/stop-sell",
+    params
+  );
+  return data.response;
+};

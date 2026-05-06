@@ -38,7 +38,9 @@ const RoomForm = ({
   const isAdd = mode === "add";
 
   const canEdit = hasPermission(PERMISSIONS.ROOM_EDIT);
-  const canCreateAttribute = hasPermission(PERMISSIONS.ROOM_ATTRIBUTE_VALUE_CREATE);
+  const canCreateAttribute = hasPermission(
+    PERMISSIONS.ROOM_ATTRIBUTE_VALUE_CREATE,
+  );
 
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
 
@@ -95,6 +97,12 @@ const RoomForm = ({
     }
   }, [data]);
 
+  const handleClose = () => {
+    setDrawerOpen(false);
+    setSelectedData(null);
+    form.resetFields();
+  };
+
   const onFinish = (values) => {
     if (isAdd) {
       const createValues = {
@@ -107,6 +115,7 @@ const RoomForm = ({
       createRooms.mutate(createValues, {
         onSuccess: () => {
           form.resetFields();
+          handleClose();
           setDrawerOpen(false);
           setPage(1);
           Toast.success("Room Created Successfully!");
@@ -125,12 +134,20 @@ const RoomForm = ({
 
       editRooms.mutate(editValues, {
         onSuccess: () => {
+          handleClose();
           setDrawerOpen(false);
           Toast.success("Room Updated Successfully!");
         },
       });
     }
   };
+
+  // const handleClose = () => {
+  //   setDrawerOpen(false);
+  //   form.resetFields();
+  //   setMode("add");
+  //   setSelectedData(null);
+  // };
 
   const attributeColumns = [
     {
@@ -166,7 +183,7 @@ const RoomForm = ({
     <>
       <Drawer
         open={drawerOpen}
-        onClose={() => setDrawerOpen(false)}
+        onClose={handleClose}
         size={600}
         title={
           <div className="flex justify-between items-center">
@@ -323,15 +340,14 @@ const RoomForm = ({
             )}
           </Form>
         )}
+        <RoomAttributesForm
+          mode={attributeMode}
+          open={attributeOpen}
+          setDrawerOpen={setAttributeOpen}
+          roomUuid={selectedData?.uuid}
+          selectedAttribute={selectedAttribute}
+        />
       </Drawer>
-
-      <RoomAttributesForm
-        mode={attributeMode}
-        open={attributeOpen}
-        setDrawerOpen={setAttributeOpen}
-        roomUuid={selectedData?.uuid}
-        selectedAttribute={selectedAttribute}
-      />
     </>
   );
 };

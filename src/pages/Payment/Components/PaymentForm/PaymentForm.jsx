@@ -29,6 +29,7 @@ const PaymentForm = ({
   mode,
   setMode,
   selectedData,
+  setSelectedData,
   drawerOpen,
   setDrawerOpen,
   page,
@@ -75,14 +76,21 @@ const PaymentForm = ({
     }
   }, [isAdd]);
 
+  const handleClose = () => {
+    setDrawerOpen(false);
+    setSelectedData(null);
+    form.resetFields();
+  };
+
   const onFinish = (values) => {
     if (isAdd) {
       upsertPayments.mutate(values, {
         onSuccess: () => {
+          form.resetFields();
           setPage(1);
           setDrawerOpen(false);
+          handleClose();
           Toast.success("Payment Created Successfully!");
-          form.resetFields();
         },
       });
     }
@@ -96,6 +104,7 @@ const PaymentForm = ({
       upsertPayments.mutate(editValues, {
         onSuccess: () => {
           setDrawerOpen(false);
+          handleClose();
           Toast.success("Payment Updated Successfully!");
         },
       });
@@ -118,7 +127,7 @@ const PaymentForm = ({
       <Drawer
         size={550}
         open={drawerOpen}
-        onClose={() => setDrawerOpen(false)}
+        onClose={handleClose}
         title={
           <div className="flex justify-between items-center">
             <span>
@@ -213,7 +222,11 @@ const PaymentForm = ({
             valuePropName="checked"
             rules={[{ required: true, message: "is Online is Required" }]}
           >
-            <Switch disabled={isView} />
+            <Switch
+              disabled={isView}
+              checkedChildren="True"
+              unCheckedChildren="False"
+            />
           </Form.Item>
           <Status isView={isView} />
         </Form>

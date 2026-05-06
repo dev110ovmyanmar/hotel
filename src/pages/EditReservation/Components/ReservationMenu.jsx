@@ -17,11 +17,10 @@ const ReservationMenu = () => {
       activeKey={activeKey}
       onChange={onChange}
       items={[
-        { label: "Booking Detail", key: "booking-detail" },
+        { label: "Booking Details", key: "booking-detail" },
         { label: "Room Information", key: "room-information" },
         { label: "Guest Details", key: "guest-details" },
         { label: "Event Facility Order", key: "event-facility-order" },
-        { label: "Room Charges", key: "room-charges" },
         { label: "Folio Operations", key: "folio-operations" },
         { label: "Service Add On", key: "service-add-on" },
       ]}

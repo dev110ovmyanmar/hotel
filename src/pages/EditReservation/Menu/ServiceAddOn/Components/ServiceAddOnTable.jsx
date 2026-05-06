@@ -10,6 +10,7 @@ import {
 } from "@ant-design/icons";
 import ServiceAddOnForm from "./ServiceAddOnForms/ServiceAddOnForm";
 import PriceTag from "../../../../../component/PriceTag/PriceTag";
+import dayjs from "dayjs";
 
 const ServiceAddOnTable = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -35,12 +36,31 @@ const ServiceAddOnTable = () => {
 
   const columns = [
     { title: "ID", dataIndex: "id", key: "id", width: 70 },
-    { title: "Service Name", dataIndex: "selectService", key: "nselectServiceame" },
+    {
+      title: "Service Name",
+      dataIndex: "selectService",
+      key: "nselectServiceame",
+    },
+
     {
       title: "Start Date Time",
-      dataIndex:"serviceOrderDate",
-      key: "serviceOrderDate",
+      key: "startDateTime",
+      render: (_, record) => {
+        const date = record.serviceOrderDate
+          ? dayjs(record.serviceOrderDate).format("DD-MM-YYYY")
+          : "-";
+        const time = record.serviceOrderTime
+          ? dayjs(record.serviceOrderTime).format("h:mm A")
+          : "";
+        return (
+          <div>
+            <div className="font-medium">{date}</div>
+            <div className="text-xs text-gray-500">{time}</div>
+          </div>
+        );
+      },
     },
+
     {
       title: "Room No",
       dataIndex: "roomNo",
@@ -63,52 +83,26 @@ const ServiceAddOnTable = () => {
     },
     {
       title: "Action",
-      render: (_, record) => {
-        const smallStyle = { fontSize: "12px" };
+      align: "center",
+      render: (_, record) => (
+        <Space size="middle">
+          <EyeOutlined
+            onClick={() => {
+              setSelectedData(record);
+              setMode("view");
+              setDrawerOpen(true);
+            }}
+          />
 
-        const items = [
-          {
-            key: "1",
-            label: (
-              <Space
-                size={4}
-                style={smallStyle}
-                onClick={() => {
-                  setDrawerOpen(true);
-                  setMode("view");
-                  setSelectedData(record);
-                }}
-              >
-                <EyeOutlined style={{ fontSize: "12px" }} />
-                <span style={{ fontSize: "14px" }}>View</span>
-              </Space>
-            ),
-          },
-          {
-            key: "2",
-            label: (
-              <Space
-                size={4}
-                style={smallStyle}
-                onClick={() => {
-                  setDrawerOpen(true);
-                  setMode("edit");
-                  setSelectedData(record);
-                }}
-              >
-                <EditOutlined style={{ fontSize: "12px" }} />
-                <span style={{ fontSize: "14px" }}>Edit</span>
-              </Space>
-            ),
-          },
-        ];
-
-        return (
-          <Dropdown menu={{ items }} trigger={["click"]}>
-            <MoreOutlined style={{ fontSize: "16px" }} />
-          </Dropdown>
-        );
-      },
+          <EditOutlined
+            onClick={() => {
+              setSelectedData(record);
+              setMode("edit");
+              setDrawerOpen(true);
+            }}
+          />
+        </Space>
+      ),
     },
   ];
 

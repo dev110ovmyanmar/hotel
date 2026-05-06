@@ -21,7 +21,7 @@ const onChange = (value) => {
 const AmendBookingForm = ({ open, onClose, reservationId }) => {
   const [form] = Form.useForm();
 
-  const handleSubmit = (values) => {
+  const onFinish = (values) => {
     console.log("Amend Booking Data:", {
       reservationId,
       ...values,
@@ -62,7 +62,7 @@ const AmendBookingForm = ({ open, onClose, reservationId }) => {
         </div>
       }
     >
-      <Form layout="vertical" form={form} onFinish={handleSubmit}>
+      <Form layout="vertical" form={form} onFinish={onFinish}>
         <div className="grid grid-cols-2 gap-4">
           <Form.Item label="Arrival Date" name="arrivalDate">
             <DatePicker className="w-full" />
@@ -96,7 +96,6 @@ const AmendBookingForm = ({ open, onClose, reservationId }) => {
             <InputNumber
               {...sharedProps}
               placeholder="Outlined"
-              //   readOnly={isView}
               style={{ width: "100%" }}
             />
           </Form.Item>

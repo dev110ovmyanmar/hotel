@@ -47,6 +47,7 @@ const AgencyForm = ({
     "initData",
     "authenticated",
   ])?.statuses;
+  const initDataStatus = initData?.status;
   const chargeType = initData?.charge_type;
 
   const chargeTypeValue = Form.useWatch(["chargeType", "uuid"], form);
@@ -69,20 +70,34 @@ const AgencyForm = ({
     },
   });
 
-
-  useEffect(() => {
-    if (!isAdd && data) {
-      form.setFieldsValue({
-        ...data,
-      });
-    }
-  }, [data, isEdit]);
-
   useEffect(() => {
     if (isAdd) {
       form.resetFields();
     }
-  }, [isAdd]);
+
+    if (isAdd && initDataStatus) {
+      form.setFieldsValue({
+        status: {
+          uuid: initDataStatus?.find((item) => item?.code === "active")?.uuid,
+        },
+      });
+    }
+
+    if (isEdit && data) {
+      form.setFieldsValue({
+        ...data,
+        status: {
+          uuid: data?.status?.uuid,
+        },
+      });
+    }
+  }, [data, isEdit, isAdd]);
+
+  const handleClose = () => {
+    setDrawerOpen(false);
+    setSelectedData(null);
+    form.resetFields();
+  };
 
   const onFinish = (values) => {
     const modifiedValues = {
@@ -92,10 +107,11 @@ const AgencyForm = ({
     if (isAdd) {
       upsertPartners.mutate(modifiedValues, {
         onSuccess: () => {
+          form.resetFields();
           setPage(1);
           setDrawerOpen(false);
+          handleClose();
           Toast.success("Agency Created Successfully!");
-          form.resetFields();
         },
       });
     }
@@ -110,6 +126,7 @@ const AgencyForm = ({
       upsertPartners.mutate(editValues, {
         onSuccess: () => {
           setDrawerOpen(false);
+          handleClose();
           Toast.success("Agency Updated Successfully!");
         },
       });
@@ -123,18 +140,21 @@ const AgencyForm = ({
 
   const deleteAgencyUpload = useApiMutation({
     mutationFn: deleteImageUpload,
-    invalidateKeys : [["agency-details", { uuid: selectedData?.uuid }]],
+    invalidateKeys: [["agency-details", { uuid: selectedData?.uuid }]],
   });
 
-  if(data){
-    console.log(data?.agencyFiles.map(i=>i),"DataForAgencyFiles")
+  if (data) {
+    console.log(
+      data?.agencyFiles.map((i) => i),
+      "DataForAgencyFiles",
+    );
   }
 
   return (
     <div className="flex justify-center">
       <Drawer
         open={drawerOpen}
-        onClose={() => setDrawerOpen(false)}
+        onClose={handleClose}
         size={550}
         title={
           <div className="flex justify-between items-center">
@@ -199,9 +219,18 @@ const AgencyForm = ({
           <Form.Item
             label="Phone"
             name="phone"
+            validateTrigger="onChange"
             rules={[{ required: true, message: "Phone is Required" }]}
           >
-            <Input readOnly={isView} placeholder="Enter Phone Number" />
+            <Input
+              readOnly={isView}
+              placeholder="Enter Phone Number"
+              onKeyPress={(e) => {
+                if (!/[0-9]/.test(e.key)) {
+                  e.preventDefault();
+                }
+              }}
+            />
           </Form.Item>
 
           <Row gutter={16}>
@@ -283,7 +312,7 @@ const AgencyForm = ({
             <TextArea readOnly={isView} placeholder="Enter Remark" />
           </Form.Item>
 
-          <Status isView={isView} />
+          <Status isView={isView} statusValue={initDataStatus} />
         </Form>
       </Drawer>
 
@@ -295,7 +324,7 @@ const AgencyForm = ({
         setImageDrawerOpen={setImageDrawerOpen}
         title={selectedData?.name}
         fileCategoryName="agency"
-        deleteMutation={deleteAgencyUpload} 
+        deleteMutation={deleteAgencyUpload}
       />
     </div>
   );

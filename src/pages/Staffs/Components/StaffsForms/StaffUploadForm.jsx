@@ -42,6 +42,7 @@ const StaffUploadForm = ({ open, onClose, selectedRow }) => {
   const [previewImage, setPreviewImage] = useState(null);
   const uploadRefs = useRef({});
   const isFileObject = staffPhoto instanceof File;
+  const profileUploadRef = useRef(null);
 
   const { data } = useApiQuery({
     fetchQueryName: "staffData-detail",
@@ -120,25 +121,29 @@ const StaffUploadForm = ({ open, onClose, selectedRow }) => {
   };
 
   useEffect(() => {
-    if (!data) return;
-    setStaffPhoto(data?.staffFiles?.profile || null);
-    setNrcFront(data?.staffFiles?.nrc?.frontFile || null);
-    setNrcBack(data?.staffFiles?.nrc?.backFile || null);
-    setPassport1(data?.staffFiles?.passport?.frontFile || null);
-    setPassport2(data?.staffFiles?.passport?.backFile || null);
+    if (open) {
+      if (data) {
+        setStaffPhoto(data?.staffFiles?.profile || null);
+        setNrcFront(data?.staffFiles?.nrc?.frontFile || null);
+        setNrcBack(data?.staffFiles?.nrc?.backFile || null);
+        setPassport1(data?.staffFiles?.passport?.frontFile || null);
+        setPassport2(data?.staffFiles?.passport?.backFile || null);
 
-    if (data?.staffFiles?.files) {
-      const formatted = data.staffFiles.files.map((f) => ({
-        id: f.uuid,
-        uuid: f.uuid,
-        name: f.name,
-        file: f.file,
-      }));
-
-      setOtherDocs(formatted);
-      setOriginalDocs(formatted);
+        if (data?.staffFiles?.files) {
+          const formatted = data.staffFiles.files.map((f) => ({
+            id: f.uuid,
+            uuid: f.uuid,
+            name: f.name,
+            file: f.file,
+          }));
+          setOtherDocs(formatted);
+          setOriginalDocs(formatted);
+        }
+      }
+    } else {
+      form.resetFields();
     }
-  }, [data]);
+  }, [data, open, form]);
 
   const onFinish = () => {
     const filesPayload = otherDocs
@@ -219,13 +224,30 @@ const StaffUploadForm = ({ open, onClose, selectedRow }) => {
     setPreviewOpen(true);
   };
 
+  const handleEditProfile = (e) => {
+    if (e && e.stopPropagation) e.stopPropagation();
+    const uploadInstance = profileUploadRef.current;
+    if (uploadInstance) {
+      const input = uploadInstance.querySelector('input[type="file"]');
+      if (input) {
+        input.click();
+      }
+    }
+  };
+
+  const handleClose = () => {
+    form.resetFields();
+    onClose(false);
+  };
+  
   return (
     <Drawer
       title={`${selectedRow?.name} `}
       placement="right"
       size={550}
-      onClose={onClose}
+      onClose={handleClose}
       open={open}
+      destroyOnClose
       extra={
         <FormButtons
           type="primary"
@@ -240,57 +262,64 @@ const StaffUploadForm = ({ open, onClose, selectedRow }) => {
         <Title level={5} className="mt-[-10px]">
           Profile
         </Title>
-
-        <Upload
-          className="staff-upload"
-          showUploadList={false}
-          beforeUpload={(file) => {
-            setStaffPhoto(file);
-            return false;
-          }}
-        >
-          <div
-            style={{
-              border: "1px solid #d9d9d9",
-              width: 130,
-              height: 130,
-              margin: "auto",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              cursor: "pointer",
-              overflow: "hidden",
-              position: "relative",
-              background: "#f5f5f5",
-              borderRadius: 5,
+        <div ref={profileUploadRef}>
+          <Upload
+            className="staff-upload"
+            showUploadList={false}
+            beforeUpload={(file) => {
+              setStaffPhoto(file);
+              return false;
             }}
           >
-            {staffPhoto ? (
-              <>
-                <img
-                  src={
-                    isFileObject ? URL.createObjectURL(staffPhoto) : staffPhoto
-                  }
-                  alt="staff"
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                  }}
-                />
+            <div
+              style={{
+                border: "1px solid #d9d9d9",
+                width: 130,
+                height: 130,
+                margin: "auto",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                cursor: "pointer",
+                overflow: "hidden",
+                position: "relative",
+                background: "#f5f5f5",
+                borderRadius: 5,
+              }}
+            >
+              {staffPhoto ? (
+                <>
+                  <img
+                    src={
+                      isFileObject
+                        ? URL.createObjectURL(staffPhoto)
+                        : staffPhoto
+                    }
+                    alt="staff"
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                    }}
+                  />
 
-                <GuestPreview onPreview={handlePreview} size={32} />
-              </>
-            ) : (
-              <>
-                <PlusOutlined style={{ fontSize: 24, color: "#999" }} />
-                <div style={{ fontSize: 12, color: "#999", marginTop: 4 }}>
-                  Upload
-                </div>
-              </>
-            )}
-          </div>
-        </Upload>
+                  <GuestPreview
+                    onPreview={handlePreview}
+                    onEdit={handleEditProfile}
+                    size={32}
+                  />
+                </>
+              ) : (
+                <>
+                  <PlusOutlined style={{ fontSize: 24, color: "#999" }} />
+                  <div style={{ fontSize: 12, color: "#999", marginTop: 4 }}>
+                    Upload
+                  </div>
+                </>
+              )}
+            </div>
+          </Upload>
+        </div>
 
         {staffPhoto && (
           <Image

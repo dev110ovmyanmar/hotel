@@ -44,15 +44,22 @@ const RoomAttributesForm = ({
   });
 
   useEffect(() => {
-    if (isEdit && selectedAttribute) {
-      form.setFieldsValue({
-        roomAttributeUuid: selectedAttribute?.roomAttribute?.uuid,
-        value: selectedAttribute?.value,
-      });
-    } else {
-      form.resetFields();
+    if (open) {
+      if (isEdit && selectedAttribute) {
+        form.setFieldsValue({
+          roomAttributeUuid: selectedAttribute?.roomAttribute?.uuid,
+          value: selectedAttribute?.value,
+        });
+      } else {
+        form.resetFields();
+      }
     }
-  }, [selectedAttribute, mode]);
+  }, [open, selectedAttribute, mode, form]);
+
+  const handleClose = () => {
+    setDrawerOpen(false);
+    form.resetFields();
+  };
 
   const onFinish = (values) => {
     if (isAdd) {
@@ -104,7 +111,8 @@ const RoomAttributesForm = ({
         </div>
       }
       open={open}
-      onClose={() => setDrawerOpen(false)}
+      onClose={handleClose}
+      destroyOnClose
     >
       <Form form={form} layout="vertical" onFinish={onFinish}>
         <Form.Item

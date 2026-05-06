@@ -3,6 +3,7 @@ import { useParams, useLocation } from "react-router-dom";
 import { Form, Input, Button, Select, Drawer, Row, Col, InputNumber, Checkbox } from "antd";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
 import useApiQuery from "../../../../hooks/useApiQuery";
+import { queryClient } from "../../../../app/queryClient";
 import FormButton from "../../../../component/FormButtons/FormButtons";
 import Toast from './../../../../component/Toast/Toast';
 import usePermission from './../../../../hooks/usePermission';
@@ -18,6 +19,8 @@ const RoomRateForm = ({
   setDrawerOpen,
   page,
   setPage,
+  ratePlan,
+  roomRateUuid,
 }) => {
   const [form] = Form.useForm();
   const formValues = Form.useWatch([], form);
@@ -29,17 +32,27 @@ const RoomRateForm = ({
   const isAdd = mode === "add";
 
   const { state } = useLocation();
-  const pricingType = state?.ratePlan?.pricingType?.code;
+  const activePricingType = ratePlan?.pricingType?.code ?? state?.ratePlan?.pricingType?.code;
+  const activeRatePlanUuid = ratePlan?.uuid ?? state?.ratePlan?.uuid;
 
   const { data: ratePlanMetas } = useApiQuery({
     fetchQueryName: "rate-plan-meta",
     fetchQueryFunction: ratePlanMeta
-  })
+  });
+
+  const initData = queryClient.getQueryData(["initData", "authenticated"]);
 
   const roomTypeOptions = ratePlanMetas?.room_types?.map(item => ({
     label: item.name,
     value: item.uuid
-  }))
+  }));
+
+  const statuses = initData?.statuses?.status
+    ?.filter((item) => item.code !== "blocked")
+    ?.map((status) => ({
+      value: status.uuid,
+      label: status.name,
+    }));
 
   const days = [
     { key: 'mon', label: 'Monday' },
@@ -60,40 +73,45 @@ const RoomRateForm = ({
   const { data: roomRateDetailData } = useApiQuery({
     fetchQueryName: "room-rate-details",
     fetchQueryFunction: roomRateDetails,
-    params: { uuid: selectedData?.uuid },
+    params: { uuid: roomRateUuid },
     options: {
-      enabled: !!selectedData?.uuid && !isAdd && drawerOpen,
+      enabled: !!roomRateUuid && !isAdd && drawerOpen,
     },
   });
 
   useEffect(() => {
     if (!isAdd && roomRateDetailData) {
       form.setFieldsValue({
+        ...roomRateDetailData,
         uuid: roomRateDetailData?.uuid,
         roomType: {
           uuid: roomRateDetailData?.roomType?.uuid
         },
         price: roomRateDetailData?.price,
         durationHours: roomRateDetailData?.durationHours,
+        status: roomRateDetailData?.status?.uuid,
         ...roomRateDetailData?.weekdays,
-        ...Object.keys(roomRateDetailData?.weekdays).reduce((acc, day) => {
+        ...Object.keys(roomRateDetailData?.weekdays || {}).reduce((acc, day) => {
           acc[`enable_${day}`] = roomRateDetailData?.weekdays[day] !== null;
           return acc;
         }, {}),
       });
-
       setSelectedData(roomRateDetailData);
     } else if (isAdd) {
       form.resetFields();
+      if (roomRateUuid) {
+        form.setFieldsValue({ roomType: { uuid: roomRateUuid } });
+      }
     }
-  }, [roomRateDetailData, isAdd, form]);
+  }, [roomRateDetailData, isAdd, form, roomRateUuid]);
 
   const onFinish = (values) => {
     const payload = {
       ...values,
-      uuid: isEdit ? roomRateDetailData?.uuid : null,
-      ratePlan: { uuid: state?.ratePlan?.uuid },
+      ...(isEdit && { uuid: roomRateDetailData?.uuid }),
+      ratePlan: { uuid: activeRatePlanUuid },
       roomType: values?.roomType,
+      status: { uuid: values?.status },
       weekdays: {
         mon: values?.mon ? values?.mon : null,
         tue: values?.tue ? values?.tue : null,
@@ -213,7 +231,7 @@ const RoomRateForm = ({
 
             <Col span={12}>
               {
-                pricingType !== "daily" &&
+                activePricingType !== "daily" &&
                 <Form.Item
                   label="Duration Hours"
                   name="durationHours"
@@ -225,6 +243,37 @@ const RoomRateForm = ({
                   />
                 </Form.Item>
               }
+            </Col>
+          </Row>
+
+          {/* <Status isView={isView}/> */}
+          <Row gutter={16}>
+            <Col span={24}>
+              <Form.Item
+                label="Status"
+                name="status"
+                rules={[{ required: true, message: "Status is required" }]}
+                getValueProps={(value) => ({
+                  value: isView
+                    ? statuses.find((item) => item.value === value)?.label
+                    : value,
+                })}
+              >
+                {isView ? (
+                  <Input readOnly={isView} />
+                ) : (
+                  <Select
+                    showSearch={{
+                      filterOption: (input, option) =>
+                        (option?.label ?? "")
+                          .toLowerCase()
+                          .includes(input.toLowerCase()),
+                    }}
+                    options={statuses}
+                    placeholder="Select Status"
+                  />
+                )}
+              </Form.Item>
             </Col>
           </Row>
 

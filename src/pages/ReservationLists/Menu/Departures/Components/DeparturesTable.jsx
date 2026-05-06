@@ -9,6 +9,8 @@ import {
   EditOutlined,
   PrinterOutlined,
 } from "@ant-design/icons";
+import { FaChild } from "react-icons/fa";
+import { IoPeopleSharp } from "react-icons/io5";
 
 const dataSource = [
   {
@@ -99,18 +101,19 @@ const DeparturesTable = () => {
       title: "Contact & Guests",
       key: "contact",
       render: (_, record) => (
-        <div style={{ fontSize: "12px" }}>
-          <div>
+        <div className="flex flex-col gap-1" style={{ fontSize: "12px" }}>
+          <div className="flex items-center gap-1">
             <PhoneOutlined /> {record.contact.phone}
           </div>
-          <Space size="middle">
-            <span>
-              <UserOutlined /> {record.contact.adults}
+
+          <div className="flex items-center gap-3 text-gray-500">
+            <span className="flex items-center gap-1">
+              <IoPeopleSharp /> {record.contact.adults}
             </span>
-            <span>
-              <TeamOutlined /> {record.contact.kids}
+            <span className="flex items-center gap-1">
+              <FaChild /> {record.contact.kids}
             </span>
-          </Space>
+          </div>
         </div>
       ),
     },
@@ -130,18 +133,18 @@ const DeparturesTable = () => {
       key: "action",
       align: "center",
       render: (_, record) => (
-        <Dropdown
-          menu={{
-            items: [
-              { key: "edit", label: "Edit", icon: <EditOutlined /> },
-              { key: "print", label: "Print", icon: <PrinterOutlined /> },
-            ],
-            onClick: ({ key }) => handleMenuClick(key, record.orderId),
-          }}
-          trigger={["click"]}
-        >
-          <Button type="text" icon={<MoreOutlined />} />
-        </Dropdown>
+        <div style={{ display: "flex", justifyContent: "center", gap: "8px" }}>
+          <Button
+            type="text"
+            icon={<EditOutlined />}
+            onClick={() => handleMenuClick("edit", record.orderId)}
+          />
+          <Button
+            type="text"
+            icon={<PrinterOutlined />}
+            onClick={() => handleMenuClick("print", record.orderId)}
+          />
+        </div>
       ),
     },
   ];

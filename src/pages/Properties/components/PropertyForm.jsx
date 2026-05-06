@@ -40,6 +40,7 @@ const PropertyForm = ({
   setSelectedCountryUuid
 }) => {
   const [form] = Form.useForm();
+  const [settingForm] = Form.useForm();
   const [settingDrawer, setSettingDrawer] = useState(false);
   const [editingSetting, setEditingSetting] = useState(null);
 
@@ -474,11 +475,28 @@ const PropertyForm = ({
         title={editingSetting ? "Edit Setting" : "Add Setting"}
         size={550}
         open={settingDrawer}
-        onClose={() => setSettingDrawer(false)}
+        onClose={() => {
+            setSettingDrawer(false);
+            settingForm.resetFields(); // Reset when closing
+        }}
+        footer={null}
+        destroyOnClose // Important for clean form states
+        extra={
+        <div className="flex gap-2">
+          <Button 
+          type="primary" 
+          onClick={() => settingForm.submit()} // Triggers SettingForm's onFinish
+          loading={editProperty.isLoading} // Show loading state if API is active
+          >
+        Create
+        </Button>
+        </div>
+  }
       >
         <SettingForm
           // initialValues={editingSetting}
           // isSaving={isSaving}
+          form={settingForm} // Pass the instance down
           onFinish={(settingVals) => {
             if (data?.uuid) {
               // 1. Get all current values from the main property form
@@ -497,6 +515,7 @@ const PropertyForm = ({
               // 3. Trigger the API call
               handlePropertySubmit(combinedPayload);
               setSettingDrawer(false);
+              settingForm.resetFields();
             }
           }}
         />

@@ -10,7 +10,7 @@ const ReservationListHeader = ({
 }) => {
   return (
     <div className="flex flex-row justify-between items-center w-full gap-2">
-      <span>Reservation id: {reservationId}</span>
+     <span>Reservation id: <strong>{reservationId}</strong></span>
       <div>
         <div className="w-full flex justify-end">
           <Button

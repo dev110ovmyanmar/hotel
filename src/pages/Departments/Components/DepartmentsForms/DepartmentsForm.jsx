@@ -11,7 +11,7 @@ import {
   departmentDetails,
   editDepartment,
 } from "../../../../api/departmentApi";
-import Loader from "../../../../component/Loader/Loader"
+import Loader from "../../../../component/Loader/Loader";
 import { PERMISSIONS } from "../../../../variables/permission";
 import usePermission from "../../../../hooks/usePermission";
 
@@ -42,6 +42,7 @@ const DepartmentsForm = ({
       value: status.uuid,
       label: status.name,
     }));
+  const defaultStatusUuid = statuses?.[0]?.value;
 
   const createDepartments = useApiMutation({
     mutationFn: createDepartment,
@@ -73,6 +74,12 @@ const DepartmentsForm = ({
     }
   }, [data]);
 
+  const handleClose = () => {
+    setDrawerOpen(false);
+    setSelectedData(null);
+    form.resetFields();
+  };
+
   const onFinish = (values) => {
     if (isAdd) {
       const createValues = {
@@ -83,6 +90,7 @@ const DepartmentsForm = ({
       createDepartments.mutate(createValues, {
         onSuccess: () => {
           setPage(1);
+          handleClose();
           setDrawerOpen(false);
           Toast.success("Department Created Successfully!");
           form.resetFields();
@@ -98,6 +106,7 @@ const DepartmentsForm = ({
 
       editDepartments.mutate(editValues, {
         onSuccess: () => {
+          handleClose();
           setDrawerOpen(false);
           Toast.success("Department Updated Successfully!");
         },
@@ -109,7 +118,7 @@ const DepartmentsForm = ({
     <div>
       <Drawer
         open={drawerOpen}
-        onClose={() => setDrawerOpen(false)}
+        onClose={handleClose}
         size={500}
         title={
           <div className="flex justify-between items-center">
@@ -120,96 +129,92 @@ const DepartmentsForm = ({
                   ? "Edit Department"
                   : "Create Department"}
             </span>
-            {isView ?
-              (
-                canEdit && (
-                  <Button
-                    type="primary"
-                    onClick={() => {
-                      setMode("edit");
-                    }}
-                  >
-                    Edit
-                  </Button>
-                )
+            {isView ? (
+              canEdit && (
+                <Button
+                  type="primary"
+                  onClick={() => {
+                    setMode("edit");
+                  }}
+                >
+                  Edit
+                </Button>
               )
-              : (
-                <FormButton
-                  onClick={() => form.submit()}
-                  isPending={
-                    createDepartments.isPending || editDepartments.isPending
-                  }
-                  mode={mode}
-                />
-              )}
+            ) : (
+              <FormButton
+                onClick={() => form.submit()}
+                isPending={
+                  createDepartments.isPending || editDepartments.isPending
+                }
+                mode={mode}
+              />
+            )}
           </div>
         }
       >
-        {
-          isLoading ? (
-            <div className="flex items-center justify-center h-full min-h-[300px]">
-              <Loader />
-            </div>
-          )
-            :
-            (
-              <Form
-                form={form}
-                layout="vertical"
-                style={{ width: "100%" }}
-                onFinish={onFinish}
-              >
-                <Form.Item
-                  label="Name"
-                  name="name"
-                  rules={[{ required: true, message: "Name is Required" }]}
-                >
-                  <Input readOnly={isView} placeholder="Enter Department Name" />
-                </Form.Item>
+        {isLoading ? (
+          <div className="flex items-center justify-center h-full min-h-[300px]">
+            <Loader />
+          </div>
+        ) : (
+          <Form
+            form={form}
+            layout="vertical"
+            style={{ width: "100%" }}
+            onFinish={onFinish}
+            initialValues={{
+              status: defaultStatusUuid,
+            }}
+          >
+            <Form.Item
+              label="Name"
+              name="name"
+              rules={[{ required: true, message: "Name is Required" }]}
+            >
+              <Input readOnly={isView} placeholder="Enter Department Name" />
+            </Form.Item>
 
-                <Form.Item
-                  label="Code"
-                  name="code"
-                  rules={[{ required: true, message: "Code is Required" }]}
-                >
-                  <Input readOnly={isView} placeholder="Enter Department Code" />
-                </Form.Item>
+            <Form.Item
+              label="Code"
+              name="code"
+              rules={[{ required: true, message: "Code is Required" }]}
+            >
+              <Input readOnly={isView} placeholder="Enter Department Code" />
+            </Form.Item>
 
-                <Form.Item
-                  label="Status"
-                  name="status"
-                  rules={[{ required: true, message: "Status is Required" }]}
-                  getValueProps={(value) => ({
-                    value: isView
-                      ? statuses.find((item) => item.value === value)?.label
-                      : value,
-                  })}
-                >
-                  {isView ? (
-                    <Input readOnly={isView} />
-                  ) : (
-                    <Select
-                      showSearch={{
-                        filterOption: (input, option) =>
-                          (option?.label ?? "")
-                            .toLowerCase()
-                            .includes(input.toLowerCase()),
-                      }}
-                      options={statuses}
-                      placeholder="Select Status"
-                    />
-                  )}
-                </Form.Item>
+            <Form.Item
+              label="Status"
+              name="status"
+              rules={[{ required: true, message: "Status is Required" }]}
+              getValueProps={(value) => ({
+                value: isView
+                  ? statuses.find((item) => item.value === value)?.label
+                  : value,
+              })}
+            >
+              {isView ? (
+                <Input readOnly={isView} />
+              ) : (
+                <Select
+                  showSearch={{
+                    filterOption: (input, option) =>
+                      (option?.label ?? "")
+                        .toLowerCase()
+                        .includes(input.toLowerCase()),
+                  }}
+                  options={statuses}
+                  placeholder="Select Status"
+                />
+              )}
+            </Form.Item>
 
-                <Form.Item label="Description" name="description">
-                  <TextArea readOnly={isView} placeholder="Enter Description" />
-                </Form.Item>
-
-              </Form>
-            )
-        }
+            <Form.Item label="Description" name="description">
+              <TextArea readOnly={isView} placeholder="Enter Description" />
+            </Form.Item>
+          </Form>
+        )}
       </Drawer>
-    </div >
+    </div>
   );
 };
 
