@@ -18,6 +18,10 @@ import { MdOutlineEscalatorWarning, MdPeopleOutline } from "react-icons/md";
 import GuestInformationTable from "./GuestInformationTable";
 import ReservationForm from "./ReservationForm";
 import { useNavigate } from "react-router-dom";
+import { useApiMutation } from "../../hooks/useApiMutation";
+import { availabilitySearch } from "../../api/availabilitySearchApi";
+import Toast from "../../component/Toast/Toast";
+import PriceTag from "../../component/PriceTag/PriceTag";
 
 const ReservationList = () => {
   const navigate = useNavigate();
@@ -27,16 +31,28 @@ const ReservationList = () => {
   const [guestInfoTable, setGuestInfoTable] = useState(false);
   const [searchReservation, setSearchReservation] = useState(false);
   const [refreshReservation, setRefreshReservation] = useState(false);
+  const [storeData, setStoreData] = useState(null);
   const [selectedData, setSelectedData] = useState([]);
   const [clickCreateContact, setClickCreateContact] = useState(false);
 
-  console.log(selectedData, "SelectedData");
+  const availabilitySearchs = useApiMutation({
+    mutationFn: availabilitySearch,
+    invalidateKeys: [["availability-search"]],
+    options: {
+      onSuccess: (values) => {
+        Toast.success("Availability search completed successfully");
+        setStoreData(values);
+        setSearchReservation(true);
+      },
+    },
+  });
 
-  const options = [
-    { value: "1", label: "1" },
-    { value: "2", label: "2" },
-    { value: "3", label: "3" },
-  ];
+
+  const options = storeData?.rooms?.flatMap((item) => Array.from({ length: item.totalRooms }, (_, i) => ({
+    label: i + 1,
+    value: i + 1,
+  })));
+
 
   const columns = [
     {
@@ -54,46 +70,48 @@ const ReservationList = () => {
         };
       },
     },
-
     {
       title: "Room",
-      dataIndex: "room",
-      render: (value) => (
-        <Select defaultValue={value} options={options} className="w-20" />
-      ),
+      dataIndex: "totalRooms",
+      render: (value) => {
+        const options = Array.from({ length: value }, (_, i) => ({
+          label: i + 1,
+          value: i + 1,
+        }));
+        return (
+          <Select options={options} defaultValue={value} className="w-20" />
+        )
+      },
+
     },
 
     {
       title: "Rate & Prices",
-      dataIndex: "rateAndPrices",
-      render: (value) => (
-        <div>
-          <p>{value[0]}</p>
-          <p className="text-gray-500 text-sm">{value[1]}</p>
-        </div>
-      ),
+      dataIndex: "ratePlans",
+      align: "center",
+      render: (value) => {
+        return (
+          <div key={value.key} className="mb-2">
+            <p>{value?.minPrice.toLocaleString()} MMK</p>
+            {/* <PriceTag value={item?.minPrice} /> */}
+            <p className="text-gray-500 text-sm">{value?.name}</p>
+          </div>
+        )
+      }
     },
 
     {
       title: "Adult",
-      dataIndex: "adult",
+      dataIndex: "adults",
       render: (value) => (
-        <Select defaultValue={value} options={options} className="w-20" />
+        <div>{value}</div>
       ),
     },
-    {
-      title: "Child",
-      dataIndex: "child",
-      render: (value) => (
-        <Select defaultValue={value} options={options} className="w-20" />
-      ),
-    },
-
     {
       title: "Extra Bed",
       dataIndex: "extraBed",
       render: (value) => (
-        <Select defaultValue={value} options={options} className="w-20" />
+        <div>{value}</div>
       ),
     },
     {
@@ -126,53 +144,25 @@ const ReservationList = () => {
     },
   ];
 
-  const dataSource = [
-    {
-      key: "1",
-      roomType: "Delux",
-      rowSpan: 2,
-      room: "1",
-      rateAndPrices: ["125,000 MMK", "Standard Rate"],
-      adult: "2",
-      child: "1",
-      extraBed: "1",
-    },
-    {
-      key: "2",
-      roomType: "Delux",
-      rowSpan: 0,
-      room: "2",
-      rateAndPrices: ["125,000 MMK", "Standard Rate"],
-      adult: "2",
-      child: "1",
-      extraBed: "1",
-    },
-    {
-      key: "3",
-      roomType: "Delux One",
-      rowSpan: 1,
-      room: "2",
-      rateAndPrices: ["125,000 MMK", "Standard Rate"],
-      adult: "2",
-      child: "1",
-      extraBed: "1",
-    },
-    {
-      key: "4",
-      roomType: "Delux Two",
-      rowSpan: 1,
-      room: "2",
-      rateAndPrices: ["125,000 MMK", "Standard Rate"],
-      adult: "2",
-      child: "1",
-      extraBed: "1",
-    },
-  ];
+  const dataSource = storeData?.rooms?.flatMap((room) => {
+    return (
+      room.ratePlans.map((rate, index) => ({
+        key: rate.key,
+        roomType: room.roomType.name,
+        totalRooms: room.totalRooms,
+        ratePlans: rate,
+        adults: room.adults,
+        extraBed: room.extraBed,
+        rowSpan: index === 0 ? room.ratePlans.length : 0,
+      }))
+    )
+  }
+
+
+  );
 
   return (
     <div className="w-full px-6">
-      {/* <ReservationHeader /> */}
-      {/* <ReservationMenu /> */}
 
       <div className="flex justify-end mb-3">
         <Button
@@ -190,22 +180,20 @@ const ReservationList = () => {
       </div>
 
       <ReservationForm
-        onSearch={() => {
-          setSearchReservation(true);
-        }}
         afterRoomConfirm={roomConfirm}
+        availabilitySearchResults={availabilitySearchs}
       />
 
-      {refreshReservation && (
+      {/* {refreshReservation && (
         <ReservationForm
           onSearch={() => setSearchReservation(true)}
           afterRoomConfirm={roomConfirm}
         />
-      )}
+      )} */}
 
       {roomConfirm ? (
         <>
-          {selectedData.map((i) => (
+          {storeData?.rooms?.map((i) => (
             <Card className="!my-3" key={i?.key}>
               <div className="flex justify-between">
                 <div className="flex">

@@ -8,8 +8,8 @@ import { useApiMutation } from "../../hooks/useApiMutation";
 
 
 const ReservationForm = ({
-    onSearch,
-    afterRoomConfirm
+    afterRoomConfirm,
+    availabilitySearchResults
 }) => {
 
     const [form] = Form.useForm();
@@ -31,16 +31,6 @@ const ReservationForm = ({
         value: item.uuid,
     })) || [];
 
-    const availabilitySearchs = useApiMutation({
-        mutationFn: availabilitySearch,
-        invalidateKeys: [["availability-search"]],
-        options: {
-            onSuccess: () => {
-                // setConfirmModal(false);
-                Toast.success("Availability search completed successfully");
-            },
-        },
-    });
 
     const initData = queryClient.getQueryData(["initData", "authenticated"]);
     const checkInTime = initData?.property?.checkinTime;
@@ -79,7 +69,7 @@ const ReservationForm = ({
             }
         };
 
-        availabilitySearchs.mutate(modifiedValues);
+        availabilitySearchResults.mutate(modifiedValues);
     };
 
     const handleChange = (value, option) => {
@@ -213,7 +203,9 @@ const ReservationForm = ({
                         :
                         <div className="flex justify-end">
                             <Form.Item>
-                                <Button type="primary" htmlType="submit" >Search</Button>
+                                <Button type="primary" htmlType="submit">
+                                    Search
+                                </Button>
                             </Form.Item>
                         </div>
                 }
