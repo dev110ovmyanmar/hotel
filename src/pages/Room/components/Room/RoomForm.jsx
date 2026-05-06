@@ -340,15 +340,14 @@ const RoomForm = ({
             )}
           </Form>
         )}
+        <RoomAttributesForm
+          mode={attributeMode}
+          open={attributeOpen}
+          setDrawerOpen={setAttributeOpen}
+          roomUuid={selectedData?.uuid}
+          selectedAttribute={selectedAttribute}
+        />
       </Drawer>
-
-      <RoomAttributesForm
-        mode={attributeMode}
-        open={attributeOpen}
-        setDrawerOpen={setAttributeOpen}
-        roomUuid={selectedData?.uuid}
-        selectedAttribute={selectedAttribute}
-      />
     </>
   );
 };
