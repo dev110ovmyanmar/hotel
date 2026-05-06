@@ -1,9 +1,8 @@
 import React, { useEffect } from "react";
-import { Form, Input, Button, Radio, InputNumber, Switch } from "antd";
+import { Form, Input, Button, Radio, InputNumber, Switch, Alert } from "antd";
 import Toast from "../../../component/Toast/Toast";
 
-const SettingForm = ({ onFinish, initialValues }) => {
-  const [form] = Form.useForm();
+const SettingForm = ({ onFinish, initialValues, form }) => {
   const selectedType = Form.useWatch("type", form);
 
   const handleSubmit = (values) => {
@@ -44,7 +43,17 @@ const SettingForm = ({ onFinish, initialValues }) => {
         </Radio.Group>
       </Form.Item>
 
-      <div className="mt-4 p-4 border rounded bg-gray-50">
+      {!selectedType && (
+        <Alert
+          message="Notice"
+          description="Please select a data type above to reveal the value input field."
+          type="info"
+          showIcon
+          className="mb-4"
+        />
+      )}
+      <div className="mt-4 p-4　rounded bg-gray-50">
+
         {selectedType === "string" && (
           <Form.Item name="value" rules={[{ required: true }]}>
             <Input placeholder="Enter Text" />
@@ -69,10 +78,6 @@ const SettingForm = ({ onFinish, initialValues }) => {
           </Form.Item>
         )}
       </div>
-
-      <Button type="primary" htmlType="submit" block className="mt-4">
-        Save
-      </Button>
     </Form>
   );
 };
