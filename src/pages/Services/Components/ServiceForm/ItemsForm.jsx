@@ -1,4 +1,4 @@
-import { Button, Drawer, Form, Input, InputNumber, Select } from "antd";
+import { Button, Drawer, Form, Input, InputNumber, Select, Row, Col } from "antd";
 import React, { useEffect } from "react";
 import FormButtons from "../../../../component/FormButtons/FormButtons";
 import useApiQuery from "../../../../hooks/useApiQuery";
@@ -30,14 +30,31 @@ const ItemsForm = ({
   const serviceInventoryOptions = serviceMetaData?.service_inventory_items?.map(
     (item) => ({
       value: item.uuid,
-      label: item.name,
+      label: <span>
+        {item?.name}
+        {item?.unit?.shortName && ` (${item.unit.shortName})`}
+      </span>,
     }),
   );
 
-  const unitOptions = serviceMetaData?.units?.map((unit) => ({
-    value: unit.uuid,
-    label: unit.name,
-  }));
+  const onServiceItemChange = (selectedUuid) => {
+    // Find the selected item from your original metadata list
+    const selectedItem = serviceMetaData?.service_inventory_items?.find(
+      (item) => item.uuid === selectedUuid
+    );
+
+    // Update the 'unit' field in the form with the unit's uuid
+    if (selectedItem?.unit?.uuid) {
+      form.setFieldsValue({
+        unit: selectedItem.unit.uuid,
+      });
+    }
+  };
+
+  // const unitOptions = serviceMetaData?.units?.map((unit) => ({
+  //   value: unit.uuid,
+  //   label: unit.name,
+  // }));
 
   const createItem = useApiMutation({
     mutationFn: upsertServiceInventoryMapping,
@@ -67,7 +84,7 @@ const ItemsForm = ({
       });
       setSelectedItem(data);
     }
-  }, [data]);
+  }, [data, !isAdd]);
 
   const onFinish = (values) => {
     if (isAdd) {
@@ -145,69 +162,52 @@ const ItemsForm = ({
           style={{ width: "100%" }}
           onFinish={onFinish}
         >
-          <Form.Item
-            label="Item"
-            name="serviceInventoryItem"
-            rules={[{ required: true, message: "Item is Required" }]}
-            getValueProps={(value) => ({
-              value: isView
-                ? serviceInventoryOptions.find((item) => item.value === value)
-                    ?.label
-                : value,
-            })}
-          >
-            {isView ? (
-              <Input readOnly={isView} />
-            ) : (
-              <Select
-                showSearch={{
-                  filterOption: (input, option) =>
-                    (option?.label ?? "")
-                      .toLowerCase()
-                      .includes(input.toLowerCase()),
-                }}
-                options={serviceInventoryOptions}
-                placeholder="Select Item"
-              />
-            )}
-          </Form.Item>
+          <Row gutter={16}>
+            <Col span={12}>
+              <Form.Item
+                label="Item"
+                name="serviceInventoryItem"
+                rules={[{ required: true, message: "Item is Required" }]}
+                getValueProps={(value) => ({
+                  value: isView
+                    ? serviceInventoryOptions.find((item) => item.value === value)
+                      ?.label
+                    : value,
+                })}
+              >
+                {isView ? (
+                  <Input readOnly={isView} />
+                ) : (
+                  <Select
+                    showSearch={{
+                      filterOption: (input, option) =>
+                        (option?.label ?? "")
+                          .toLowerCase()
+                          .includes(input.toLowerCase()),
+                    }}
+                    options={serviceInventoryOptions}
+                    onChange={onServiceItemChange} // Trigger the unit update
+                    placeholder="Select Item"
+                  />
+                )}
+              </Form.Item>
+              <Form.Item name="unit" hidden>
+                <Input />
+              </Form.Item>
+            </Col>
 
-          <Form.Item
-            label="Unit"
-            name="unit"
-            rules={[{ required: true, message: "Units is Required" }]}
-            getValueProps={(value) => ({
-              value: isView
-                ? unitOptions.find((item) => item.value === value)?.label
-                : value,
-            })}
-          >
-            {isView ? (
-              <Input readOnly={isView} />
-            ) : (
-              <Select
-                showSearch={{
-                  filterOption: (input, option) =>
-                    (option?.label ?? "")
-                      .toLowerCase()
-                      .includes(input.toLowerCase()),
-                }}
-                options={unitOptions}
-                placeholder="Select Unit"
-                open={isView ? false : undefined}
-              />
-            )}
-          </Form.Item>
-
-          <Form.Item label="Quantity" name="quantityPerService">
-            <InputNumber
-              className="w-full!"
-              mode="spinner"
-              min={1}
-              readOnly={isView}
-              placeholder="Enter Quantity"
-            />
-          </Form.Item>
+            <Col span={12}>
+              <Form.Item label="Quantity" name="quantityPerService">
+                <InputNumber
+                  className="w-full!"
+                  mode="spinner"
+                  min={1}
+                  readOnly={isView}
+                  placeholder="Enter Quantity"
+                />
+              </Form.Item>
+            </Col>
+          </Row>
         </Form>
       </Drawer>
     </div>
