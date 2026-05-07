@@ -9,7 +9,8 @@ import { useApiMutation } from "../../hooks/useApiMutation";
 
 const ReservationForm = ({
     afterRoomConfirm,
-    availabilitySearchResults
+    availabilitySearchResults,
+    setReservationFormValues
 }) => {
 
     const [form] = Form.useForm();
@@ -52,6 +53,7 @@ const ReservationForm = ({
     })) || [];
 
     const searchSubmit = (values) => {
+        setReservationFormValues(values);
         const modifiedValues = {
             ...values,
             filter: {

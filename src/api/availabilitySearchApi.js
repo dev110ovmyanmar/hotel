@@ -15,3 +15,14 @@ export const availabilitySearch = async (params) => {
     );
     return data.response;
 };
+
+
+export const rateQuote = async (params) => {
+    const { data } = await apiClient.get(
+        `/rate/quote`,
+        { params }
+    );
+    return data.response;
+};
+
+
