@@ -6,7 +6,6 @@ import useApiQuery from "../../hooks/useApiQuery";
 import ListHeader from "../../component/ListHeader/ListHeader";
 import { PERMISSIONS } from "../../variables/permission";
 import { fetchAdmin } from './../../api/adminApi';
-import { adminMeta } from "./../../api/adminApi";
 
 const AdminList = () => {
   const [keyword, setKeyword] = useState("");
@@ -31,16 +30,6 @@ const AdminList = () => {
       status: normalStatus,
     },
   });
-
-  const { data: adminMetaData } = useApiQuery({
-    fetchQueryName: "admin-meta",
-    fetchQueryFunction: adminMeta,
-  });
-
-  const staffList = adminMetaData?.staffs?.map((staff) => ({
-    value: staff.uuid,
-    label: staff.name,
-  }));
 
   useEffect(() => {
     setPage(1);
@@ -85,7 +74,6 @@ const AdminList = () => {
         setMode={setMode}
         selectedData={selectedData}
         setSelectedData={setSelectedData}
-        staffList={staffList}
       />
     </div>
   );

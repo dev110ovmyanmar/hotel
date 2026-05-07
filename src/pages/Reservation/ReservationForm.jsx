@@ -5,14 +5,18 @@ import dayjs from "dayjs";
 import { availabilitySearch, reservationMeta } from "../../api/availabilitySearchApi";
 import { useEffect, useState } from "react";
 import { useApiMutation } from "../../hooks/useApiMutation";
+import { data } from "react-router-dom";
+
+const { RangePicker } = DatePicker;
 
 
 const ReservationForm = ({
+    form,
     afterRoomConfirm,
-    availabilitySearchResults
+    availabilitySearchResults,
+    setReservationFormValues,
 }) => {
-
-    const [form] = Form.useForm();
+    const dateRange = Form.useWatch("filter", form);
 
     const [selectedSourceType, setSelectedSourceType] = useState(null);
 
@@ -36,8 +40,8 @@ const ReservationForm = ({
     const checkInTime = initData?.property?.checkinTime;
     const checkOutTime = initData?.property?.checkoutTime;
 
-    const checkInDate = Form.useWatch(["filter", "checkinDate"], form);
-    const checkOutDate = Form.useWatch(["filter", "checkoutDate"], form);
+    const checkInDate = dateRange?.[0]?.format("YYYY-MM-DD");
+    const checkOutDate = dateRange?.[1]?.format("YYYY-MM-DD");
 
     const totalNights = checkInDate && checkOutDate ? dayjs(checkOutDate).diff(dayjs(checkInDate), "day") : 0;
 
@@ -46,17 +50,19 @@ const ReservationForm = ({
         value: item.uuid,
     })) || [];
 
+
     const sourceTypeOptions = initData?.statuses?.source_type.map((item) => ({
         label: item.name,
         value: item.uuid,
     })) || [];
 
     const searchSubmit = (values) => {
+        setReservationFormValues(values);
         const modifiedValues = {
             ...values,
             filter: {
-                checkinDate: values?.filter?.checkinDate ? dayjs(values?.filter?.checkinDate).format("YYYY-MM-DD") : null,
-                checkoutDate: values?.filter?.checkoutDate ? dayjs(values?.filter?.checkoutDate).format("YYYY-MM-DD") : null,
+                checkinDate: values?.filter?.[0] ? dayjs(values?.filter?.[0]).format("YYYY-MM-DD") : null,
+                checkoutDate: values?.filter?.[1] ? dayjs(values?.filter?.[1]).format("YYYY-MM-DD") : null,
             },
             bookedVia: {
                 uuid: values.bookedVia,
@@ -66,7 +72,8 @@ const ReservationForm = ({
             },
             source: {
                 uuid: values.source,
-            }
+            },
+            // totalNight: totalNights
         };
 
         availabilitySearchResults.mutate(modifiedValues);
@@ -77,12 +84,26 @@ const ReservationForm = ({
     };
 
     useEffect(() => {
-        form.setFieldsValue({
-            checkInTime: dayjs(checkInTime, 'HH:mm:ss'),
-            checkOutTime: dayjs(checkOutTime, 'HH:mm:ss'),
-            totalNight: totalNights
-        });
-    }, [checkInTime, checkOutTime, totalNights]);
+        if (bookedViaOptions?.length > 0 || sourceTypeOptions?.length > 0 ) {
+            form.setFieldsValue({
+                bookedVia: bookedViaOptions?.[0]?.value,
+                sourceType: sourceTypeOptions?.[0]?.value,
+            });
+        }
+    }, [bookedViaOptions,sourceTypeOptions]);
+
+    useEffect(()=>{
+        if(totalNights){
+            form.setFieldsValue({
+                totalNight: totalNights
+            })
+        }
+    },[totalNights])
+
+    // Range Picker
+    const disabledDate = current => {
+        return current < dayjs().startOf('day');
+    };
 
     return (
         <Card >
@@ -92,52 +113,37 @@ const ReservationForm = ({
                 layout="vertical"
             >
                 <h1 className="text-lg font-bold my-2">Create New Reservation</h1>
-                <div className="flex w-full gap-2 my-5">
-                    <div className="flex-1">
-                        {/* <p className="mb-2">Check-in Date</p> */}
-                        <Form.Item name={["filter", "checkinDate"]} label="Check-in Date">
-                            <DatePicker
-                                className="w-[100%] "
-                                format="YYYY-MM-DD"
-                            />
-                        </Form.Item>
-                    </div>
+                <div className="flex gap-6 justify-between">
+                    <div className="flex-3">
+                        <Form.Item name="filter" label="Check-in Date" rules={[{required:true,message:"Please Select Date"}]}>
+                            <RangePicker
+                                className="!w-full"
+                                format="YYYY-MM-DD HH:mm"
+                                disabledDate={disabledDate}
+                                onChange={(dates) => {
+                                    if (!dates) return;
 
-                    <div className="flex-1">
-                        {/* <p className="mb-2">Check-in Time</p> */}
-                        <Form.Item name="checkInTime" label="Check-in Time">
-                            <TimePicker
-                                className="w-[100%]"
-                                defaultValue={dayjs(checkInTime, 'HH:mm:ss')}
-                                disabled={true}
-                            />
-                        </Form.Item>
-                    </div>
+                                    const updatedDates = [
+                                        dates[0]
+                                            ?.hour(dayjs(checkInTime, "HH:mm:ss").hour())
+                                            ?.minute(dayjs(checkInTime, "HH:mm:ss").minute()),
 
-                    <div className="flex-1">
-                        {/* <p className="mb-2">Check-out Date</p> */}
-                        <Form.Item name={["filter", "checkoutDate"]} label="Check-out Date">
-                            <DatePicker
-                                className="w-[100%]"
-                                format="YYYY-MM-DD"
-                            />
-                        </Form.Item>
-                    </div>
+                                        dates[1]
+                                            ?.hour(dayjs(checkOutTime, "HH:mm:ss").hour())
+                                            ?.minute(dayjs(checkOutTime, "HH:mm:ss").minute()),
+                                    ];
 
-                    <div className="flex-1">
-                        {/* <p className="mb-2">Check-out Time</p> */}
-                        <Form.Item name="checkOutTime" label="Check-out Time">
-                            <TimePicker
-                                className="w-[100%] "
-                                defaultValue={dayjs(checkOutTime, 'HH:mm:ss')}
-                                // readOnly={true}
-                                disabled={true}
+                                    form.setFieldsValue({
+                                        filter: updatedDates,
+                                    });
+                                }}
+
                             />
                         </Form.Item>
                     </div>
 
                     <div className="flex items-center">
-                        <Form.Item name="totalNight" label="Nights" className="mb-0">
+                        <Form.Item name="totalNight" label="Nights" className="mb-0" rules={[{required:true}]}>
                             <div className="w-[61px] h-[32px] bg-gray-400 rounded-md flex flex-col justify-center items-center">
 
                                 <p className="text-xs leading-none">{totalNights}</p>
@@ -147,14 +153,9 @@ const ReservationForm = ({
                         </Form.Item>
                     </div>
 
-                </div>
-
-                <div className="flex w-full gap-2 my-5">
-                    <div className="flex-1">
-                        {/* <p className="mb-2">Booked Via</p> */}
-                        <Form.Item name="bookedVia" label="Booked Via">
+                    <div className="flex-2">
+                        <Form.Item name="bookedVia" label="Booking Source" rules={[{required:true,message:"Please Select Booking Source"}]}>
                             <Select
-                                // defaultValue="1"
                                 options={bookedViaOptions}
                                 className="w-[100%] "
                                 placeholder="Select Booked Via"
@@ -163,11 +164,9 @@ const ReservationForm = ({
                         </Form.Item>
                     </div>
 
-                    <div className="flex-1">
-                        {/* <p className="mb-2">Source Type</p> */}
-                        <Form.Item name="sourceType" label="Source Type">
+                    <div className="flex-2">
+                        <Form.Item name="sourceType" label="Source Type" rules={[{required:true,message:"Please Select Source Type"}]}>
                             <Select
-                                // defaultValue="direct"
                                 options={sourceTypeOptions}
                                 className="w-[100%]"
                                 onChange={handleChange}
@@ -181,7 +180,7 @@ const ReservationForm = ({
                             (selectedSourceType === "Agency" ||
                                 selectedSourceType === "Company") && (
 
-                                <Form.Item name="source" label="Booking Source">
+                                <Form.Item name="source" label="Booking Source" rules={[{required:true,message:"Please Select Booking Source"}]}>
                                     <Select
                                         options={selectedSourceType === "Agency" ? agenciesOptions : companyOptions}
                                         className="w-[100%] "
@@ -194,21 +193,22 @@ const ReservationForm = ({
                         }
                     </div>
 
-
+                    <div className="mt-7">
+                        {
+                            afterRoomConfirm ?
+                                null
+                                :
+                                // <div >
+                                    <Form.Item>
+                                        <Button type="primary" htmlType="submit">
+                                            Search
+                                        </Button>
+                                    </Form.Item>
+                                // </div>
+                        }
+                    </div>
                 </div>
 
-                {
-                    afterRoomConfirm ?
-                        null
-                        :
-                        <div className="flex justify-end">
-                            <Form.Item>
-                                <Button type="primary" htmlType="submit">
-                                    Search
-                                </Button>
-                            </Form.Item>
-                        </div>
-                }
             </Form>
 
         </Card>
