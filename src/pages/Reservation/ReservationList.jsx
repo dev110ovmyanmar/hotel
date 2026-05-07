@@ -8,8 +8,9 @@ import GuestInformationTable from "./GuestInformationTable";
 import ReservationForm from "./ReservationForm";
 import { useNavigate } from "react-router-dom";
 import { useApiMutation } from "../../hooks/useApiMutation";
-import { availabilitySearch } from "../../api/availabilitySearchApi";
+import { availabilitySearch, rateQuote } from "../../api/availabilitySearchApi";
 import Toast from "../../component/Toast/Toast";
+import dayjs from "dayjs";
 
 const ReservationList = () => {
   const navigate = useNavigate();
@@ -24,6 +25,8 @@ const ReservationList = () => {
 
   const [selectedData, setSelectedData] = useState([]);
   const [selectedRooms, setSelectedRooms] = useState({});
+  const [roomBookValues, setRoomBookValues] = useState();
+  const [reservationFormValues, setReservationFormValues] = useState(null);
 
   const [clickCreateContact, setClickCreateContact] = useState(false);
 
@@ -38,6 +41,74 @@ const ReservationList = () => {
       },
     },
   });
+
+
+  const rateQuotes = useApiMutation({
+    mutationFn: rateQuote,
+    invalidateKeys: [["rate-quote"]],
+    options: {
+      onSuccess: (values) => {
+        Toast.success("Rate quote obtained successfully");
+        setRoomBookOpen(true);
+        setRoomBookValues(values);
+      },
+    },
+  });
+
+  console.log(roomBookValues, "RoomBookValuesInReservationList");
+
+
+  const viewRoomBookedMutate = () => {
+    if (!selectedData.length) {
+      Toast.error("Please select at least one room");
+      return;
+    }
+
+    const groupedRooms = Object.values(
+      selectedData.reduce((acc, item) => {
+        const roomTypeUuid = item.roomTypeUuid;
+        if (!acc[roomTypeUuid]) {
+          acc[roomTypeUuid] = {
+            roomType: {
+              uuid: roomTypeUuid,
+            },
+            ratePlans: [],
+          };
+        }
+
+        acc[roomTypeUuid].ratePlans.push({
+          id: item.ratePlans.id,
+          subTotalRooms: item.selectedRoomCount,
+        });
+
+        return acc;
+      }, {})
+    );
+
+    const payload = {
+
+      filter: {
+        checkinDate: dayjs(reservationFormValues?.filter.checkinDate).format("YYYY-MM-DD"),
+        checkoutDate: dayjs(reservationFormValues?.filter.checkoutDate).format("YYYY-MM-DD"),
+      },
+      bookedVia: {
+        uuid: reservationFormValues?.bookedVia,
+      },
+      sourceType: {
+        uuid: reservationFormValues?.sourceType,
+      },
+      source: {
+        uuid: reservationFormValues?.source,
+      },
+      totalNight: reservationFormValues?.totalNight,
+
+      rooms: groupedRooms
+
+    };
+
+    rateQuotes.mutate(payload);
+  };
+
 
   //total booked rooms per roomType
   const getBookedCount = (roomTypeId) => {
@@ -85,6 +156,13 @@ const ReservationList = () => {
                 ...prev,
                 [record.key]: val,
               }));
+              // setSelectedRooms((prev) => {
+              //   console.log(prev, "PrevIinSelectBox")
+              //   return ({
+              //     ...prev,
+              //     [record.key]: val,
+              //   })
+              // });
             }}
             className="w-20"
           />
@@ -161,6 +239,7 @@ const ReservationList = () => {
       adults: room.adults,
       extraBed: room.extraBed,
       rowSpan: index === 0 ? room.ratePlans.length : 0,
+      roomTypeUuid: room.roomType.uuid,
     })),
   );
 
@@ -185,36 +264,39 @@ const ReservationList = () => {
       <ReservationForm
         afterRoomConfirm={roomConfirm}
         availabilitySearchResults={availabilitySearchs}
+        setReservationFormValues={setReservationFormValues}
       />
 
       {roomConfirm ? (
         <>
-          {storeData?.rooms?.map((i) => (
-            <Card className="!my-3" key={i?.roomType?.id}>
+          {roomBookValues?.rooms?.map((i) => (
+            <Card className="!my-3" >
               <div className="flex justify-between">
                 <p>{i?.roomType?.name}</p>
                 <Tag color="blue">{i?.totalRooms} Room</Tag>
               </div>
 
               <div className="flex">
-                <MdPeopleOutline />
-                <span className="ml-1 text-xs">{i.adults}</span>
+                <MdPeopleOutline fontSize={19} className="mt-1"/>
+                <span className="text-md ml-1 mt-1">{i.adults}</span>
 
-                <MdOutlineEscalatorWarning className="ml-3" />
-                <span className="ml-1 text-xs">{i.child}</span>
+                {/* <MdOutlineEscalatorWarning className="ml-3" />
+                <span className="ml-1 text-xs">{i.child}</span> */}
 
-                <div className="mx-2 text-gray-400">|</div>
-                <div>{i.extraBed} Extra Bed</div>
+                <div className="text-lg text-gray-400 mx-2">|</div>
+                <div className="!text-md ml-1 mt-1">{i.extraBed} Extra Bed</div>
               </div>
 
               <Divider />
 
-              <div className="flex justify-between">
-                <p>{i?.ratePlans?.[0]?.name}</p>
-                <p className="font-bold">
-                  {i?.ratePlans?.[0]?.minPrice?.toLocaleString()} MMK
-                </p>
-              </div>
+              {
+                i?.ratePlans?.map((rate) =>
+                  <div className="flex justify-between">
+                    <p>{rate?.name}</p>
+                    <p className="font-bold">{rate?.subTotalPrice.toLocaleString()} MMK</p>
+                  </div>
+                )
+              }
             </Card>
           ))}
 
@@ -277,7 +359,7 @@ const ReservationList = () => {
           </div>
 
           <div className="flex justify-end">
-            <Button type="primary" onClick={() => setRoomBookOpen(true)}>
+            <Button type="primary" onClick={viewRoomBookedMutate}>
               View Room Booked
             </Button>
           </div>
@@ -300,6 +382,9 @@ const ReservationList = () => {
         setRoomConfirm={setRoomConfirm}
         selectedData={selectedData}
         setSelectedData={setSelectedData}
+        roomBookValues={roomBookValues}
+        setRoomBookValues={setRoomBookValues}
+
       />
     </div>
   );
