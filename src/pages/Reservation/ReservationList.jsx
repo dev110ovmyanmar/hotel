@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Card, Divider, Select, Table, Tag } from "antd";
+import { Button, Card, Divider, Form, Select, Table, Tag } from "antd";
 import { PlusOutlined, ReloadOutlined } from "@ant-design/icons";
 import RoomBookedDrawer from "./RoomBookedDrawer";
 import CreateContactPerson from "./CreateContactPerson";
@@ -14,7 +14,7 @@ import dayjs from "dayjs";
 
 const ReservationList = () => {
   const navigate = useNavigate();
-
+  const [form] = Form.useForm();
   const [roomBookOpen, setRoomBookOpen] = useState(false);
   const [guestDrawerOpen, setGuestDrawerOpen] = useState(false);
   const [roomConfirm, setRoomConfirm] = useState(false);
@@ -55,9 +55,6 @@ const ReservationList = () => {
     },
   });
 
-  console.log(roomBookValues, "RoomBookValuesInReservationList");
-
-
   const viewRoomBookedMutate = () => {
     if (!selectedData.length) {
       Toast.error("Please select at least one room");
@@ -88,8 +85,8 @@ const ReservationList = () => {
     const payload = {
 
       filter: {
-        checkinDate: dayjs(reservationFormValues?.filter.checkinDate).format("YYYY-MM-DD"),
-        checkoutDate: dayjs(reservationFormValues?.filter.checkoutDate).format("YYYY-MM-DD"),
+        checkinDate: dayjs(reservationFormValues?.filter?.[0]).format("YYYY-MM-DD"),
+        checkoutDate: dayjs(reservationFormValues?.filter?.[1]).format("YYYY-MM-DD"),
       },
       bookedVia: {
         uuid: reservationFormValues?.bookedVia,
@@ -156,13 +153,6 @@ const ReservationList = () => {
                 ...prev,
                 [record.key]: val,
               }));
-              // setSelectedRooms((prev) => {
-              //   console.log(prev, "PrevIinSelectBox")
-              //   return ({
-              //     ...prev,
-              //     [record.key]: val,
-              //   })
-              // });
             }}
             className="w-20"
           />
@@ -254,6 +244,9 @@ const ReservationList = () => {
             setGuestInfoTable(false);
             setSelectedData([]);
             setSelectedRooms({});
+            setReservationFormValues(null);
+            form.resetFields()
+            
           }}
         >
           <ReloadOutlined className="!text-blue-500" />
@@ -265,6 +258,9 @@ const ReservationList = () => {
         afterRoomConfirm={roomConfirm}
         availabilitySearchResults={availabilitySearchs}
         setReservationFormValues={setReservationFormValues}
+        // reservationFormField={reservationFormField}
+        form={form}
+
       />
 
       {roomConfirm ? (
