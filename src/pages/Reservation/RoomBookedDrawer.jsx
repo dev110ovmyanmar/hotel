@@ -115,7 +115,7 @@ const RoomBookedDrawer = ({
                                 room?.ratePlans?.map((rate) =>
                                     <div className="flex justify-between">
                                         <p>{rate?.name}</p>
-                                        <p className="font-bold">{rate?.subTotalPrice.toLocaleString()} MMK</p>
+                                        <p className="font-bold">{rate?.totalPrice?.toLocaleString()} MMK</p>
                                     </div>
                                 )
                             }

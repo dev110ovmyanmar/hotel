@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   Button,
   Col,
@@ -8,52 +8,87 @@ import {
   Row,
   Select
 } from "antd";
-import { reservationMeta } from "../../api/availabilitySearchApi";
+import { reservationMeta } from "../../api/reservationSectionApi";
 import useApiQuery from "../../hooks/useApiQuery";
+import { useApiMutation } from "../../hooks/useApiMutation";
+import { upsertGuest } from "../../api/guestApi";
+import { queryClient } from "../../app/queryClient";
 
 const CreateGuestForm = ({
   guestDrawerOpen,
   setGuestDrawerOpen,
   setGuestInfoTable,
-  setClickCreateContact
+  setClickCreateContact,
+  upsertMutation,
+
+
 }) => {
   const [form] = Form.useForm();
 
   const [searchText, setSearchText] = useState("");
+
+  const initData = queryClient.getQueryData(["initData", "authenticated"]);
+
+  const titleOptions = useMemo(() => {
+    return initData?.statuses?.name_title?.map(t => ({ value: t.name, label: t.name })) || [];
+  }, [initData]);
+
+  const statusOptions = useMemo(() =>
+    initData?.statuses?.status?.map(s => ({ value: s.uuid, label: s.name })) || [], [initData]);
 
   const { data: reservationMetas } = useApiQuery({
     fetchQueryName: "reservation-meta",
     fetchQueryFunction: reservationMeta,
   });
 
-  const guestsOptions =
-    reservationMetas?.guests?.map((item) => ({
-      label: item.name,
-      value: item.uuid,
-    })) || [];
+  const
+    guestsOptions =
+      reservationMetas?.guests?.map((item) => ({
+        label: item.name,
+        value: item.uuid,
+      })) || [];
 
   const onClick = () => {
     form.validateFields().then((values) => {
-      console.log("Form Values:", values);
+      //       {
+      //     "title": "Mr",
+      //     "name": "f2c7bdf7c2a249e9a4ac28925625d59b",
+      //     "phone": "09123456789"
+      // }
 
-      // 👉 if user typed new name
-      if (!values.name && searchText) {
-        values.name = searchText;
+      const selectedGuest = reservationMetas?.guests?.find(
+        (guest) => guest.uuid === values.name
+      );
+
+      let payload = {
+        title: values.title,
+        phone: values.phone,
+        status: {
+          uuid: statusOptions[0]?.value,
+        },
+      };
+
+      // existing guest
+      if (selectedGuest) {
+        payload = {
+          ...payload,
+          uuid: selectedGuest.uuid,
+          name: selectedGuest.name,
+        };
       }
 
-      console.log("Final Name:", values.name);
+      // new guest
+      else {
+        payload = {
+          ...payload,
+          uuid: null,
+          name: values.name,
+        };
+      }
 
-      setGuestDrawerOpen(false);
-      setGuestInfoTable(true);
-      setClickCreateContact(true);
+      upsertMutation.mutate(payload);
     });
   };
-
-  const titleOptions = [
-    { label: "Mr.", value: "mr." },
-    { label: "Mrs.", value: "mrs." },
-  ];
-
   return (
     <Drawer
       size={550}
@@ -71,7 +106,7 @@ const CreateGuestForm = ({
       <Form layout="vertical" form={form}>
         <Row gutter={16}>
           <Col span={4}>
-            <Form.Item label="Title" name="title" initialValue="mr.">
+            <Form.Item label="Title" name="title" >
               <Select options={titleOptions} />
             </Form.Item>
           </Col>
@@ -93,18 +128,20 @@ const CreateGuestForm = ({
                     .includes(input.toLowerCase())
                 }
                 onSearch={(value) => {
-                  setSearchText(value); // 👈 store typed value
+                  setSearchText(value); //  store typed value
                 }}
-                onChange={(value) => {
-                  // 👇 reset searchText if selecting existing
+                onChange={(value, option) => {
                   setSearchText("");
                   form.setFieldValue("name", value);
+
                 }}
+
                 onInputKeyDown={(e) => {
-                  if ( searchText) {
+                  if (searchText) {
                     form.setFieldValue("name", searchText);
                   }
                 }}
+
               />
             </Form.Item>
           </Col>
@@ -115,32 +152,21 @@ const CreateGuestForm = ({
         <Row gutter={16}>
           <Col span={12}>
             <Form.Item
-              label="Phone No 1"
-              name="phoneNoOne"
+              label="Phone Number"
+              name="phone"
               rules={[
                 { required: true, message: "Phone Number is required." },
               ]}
             >
-              <Input  
-              onKeyPress={(e) => {
-                if (!/[0-9]/.test(e.key)) {
-                  e.preventDefault();
-                }
-              }}/>
+              <Input
+                onKeyPress={(e) => {
+                  if (!/[0-9]/.test(e.key)) {
+                    e.preventDefault();
+                  }
+                }} />
             </Form.Item>
           </Col>
 
-          <Col span={12}>
-            <Form.Item label="Phone No 2" name="phoneNoTwo">
-              <Input 
-               onKeyPress={(e) => {
-                if (!/[0-9]/.test(e.key)) {
-                  e.preventDefault();
-                }
-              }}
-              />
-            </Form.Item>
-          </Col>
         </Row>
       </Form>
     </Drawer>

@@ -5,25 +5,24 @@ import { PERMISSIONS } from "../../variables/permission";
 
 const GuestInformationTable = ({
     guestInfoTable,
-    setGuestInfoTable
+    setGuestInfoTable,
+    contactPersonInfo,
+    setContactPersonInfo
 }) => {
+
+    console.log(contactPersonInfo,"contentPersonInfo")
+
     const columns = [
         {
             title: "Name",
-            dataIndex: "guestName",
-            key: "guestName",
+            dataIndex: "name",
+            key: "name",
             render: (text) => <div>{text}</div>
         },
         {
-            title: "Phone Number 1",
-            dataIndex: "phoneNumberOne",
-            key: "phoneNumberOne",
-            render: (text) => <div>{text}</div>
-        },
-        {
-            title: "Phone Number 2",
-            dataIndex: "phoneNumberTwo",
-            key: "phoneNumberTwo",
+            title: "Phone",
+            dataIndex: "phone",
+            key: "phone",
             render: (text) => <div>{text}</div>
         },
         {
@@ -84,19 +83,10 @@ const GuestInformationTable = ({
 
     ];
 
-    const dataSource = [
-        {
-            key: "1",
-            guestName: "Liam Johnson Smith",
-            phoneNumberOne: "+959 123-456-789",
-            phoneNumberTwo: "+959 123-456-789"
-        }
-
-    ];
     return (
         <Table
             columns={columns}
-            dataSource={dataSource}
+            dataSource={[contactPersonInfo]}
             pagination={false}
         />
     )
