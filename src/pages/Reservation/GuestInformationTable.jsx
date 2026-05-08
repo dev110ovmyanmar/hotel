@@ -88,6 +88,7 @@ const GuestInformationTable = ({
             columns={columns}
             dataSource={[contactPersonInfo]}
             pagination={false}
+        
         />
     )
 }

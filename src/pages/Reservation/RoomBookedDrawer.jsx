@@ -13,7 +13,8 @@ const RoomBookedDrawer = ({
     selectedData,
     setSelectedData,
     roomBookValues,
-    setRoomBookValues
+    setRoomBookValues,
+    rateQuotes
 }) => {
     const [modalOpen, setModalOpen] = useState(false);
     const [deleteKey, setDeleteKey] = useState();
@@ -23,24 +24,24 @@ const RoomBookedDrawer = ({
         setRoomBookOpen(false);
     };
 
+    const handleDelete = () => {
+        setRoomBookValues((prev) => ({
+            ...prev,
+            rooms: prev.rooms.filter(
+                (room) => room.roomType.uuid !== deleteKey
+            )
+        }));
 
-    // const handleDelete = (one, two) => {
-    //     setSelectedData((prev) => {
-    //         return (prev.filter(item => item.key !== deleteKey))
-    //     });
+        setModalOpen(false);
+    }
 
-    //     setModalOpen(false);
-    //     setRoomBookOpen(false);
-    // }
-
-    console.log(roomBookValues, "INRoomBookDrawer");
     return (
         <Drawer
             size={550}
             title={
-                <div className="flex justify-between gap-4">
+                <div className="flex justify-between gap-4" >
                     <span>View Room Booked</span>
-                    <Button type="primary" onClick={roomConfirmClick} >
+                    <Button type="primary" onClick={roomConfirmClick}>
                         Room Confirm
                     </Button>
                 </div>
@@ -87,8 +88,8 @@ const RoomBookedDrawer = ({
                                 </div>
                                 <div>
                                     <DeleteOutlined className="!text-red-500" onClick={() => {
-                                        // setModalOpen(true),
-                                        // setDeleteKey(i?.key)
+                                        setModalOpen(true),
+                                            setDeleteKey(room?.roomType?.uuid)
                                     }}
                                     />
                                 </div>
@@ -132,7 +133,7 @@ const RoomBookedDrawer = ({
             <Modal
                 open={modalOpen}
                 onCancel={() => setModalOpen(false)}
-            // onOk={handleDelete}
+                onOk={handleDelete}
             >
                 Are you sure you want to delete ?
             </Modal>
