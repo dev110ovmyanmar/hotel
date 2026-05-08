@@ -66,13 +66,7 @@ const MeanPlanForm = ({
         status: data?.status?.uuid,
       });
     }
-  }, [data, isAdd]);
-
-  useEffect(() => {
-    if (isAdd) {
-      form.resetFields();
-    }
-  }, [isAdd]);
+  }, [data]);
 
   const onFinish = (values) => {
     const payload = {
@@ -86,7 +80,7 @@ const MeanPlanForm = ({
           setPage(1);
           setDrawerOpen(false);
           Toast.success("Meal Plan Created Successfully!");
-          form.resetFields();
+          // form.resetFields();
         },
       });
     }
@@ -101,6 +95,7 @@ const MeanPlanForm = ({
         onSuccess: () => {
           setDrawerOpen(false);
           Toast.success("Meal Plan Updated Successfully!");
+          // form.resetFields();
         },
       });
     }
@@ -109,13 +104,19 @@ const MeanPlanForm = ({
   return (
     <div className="flex justify-center">
       <Drawer
-        destroyOnClose
         size={550}
         open={drawerOpen}
+        afterOpenChange={(open) => {
+          if (open && isAdd) {
+            form.resetFields();
+            const defaultStatus = statuses?.find((s) => s.label.toLowerCase() === 'active')?.value;
+            form.setFieldsValue({ status: defaultStatus });
+          }
+        }}
         onClose={() => {
           setDrawerOpen(false);
-          form.resetFields();
           setSelectedData(null);
+          form.resetFields();
           setMode(null);
         }}
         title={

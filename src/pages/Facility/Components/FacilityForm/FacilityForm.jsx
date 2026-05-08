@@ -34,6 +34,7 @@ const FacilityForm = ({
 
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
   const status = initData?.statuses?.status;
+
   const facilityType = initData?.statuses?.facility_type;
 
   const facilityTypesList = facilityType?.map((type) => ({
@@ -70,7 +71,6 @@ const FacilityForm = ({
 
   useEffect(() => {
     if (!isAdd && data) {
-      console.log(data, "data");
       form.setFieldsValue({
         ...data,
         facilityType: data?.facilityType.uuid,
@@ -127,6 +127,13 @@ const FacilityForm = ({
       <Drawer
         open={drawerOpen}
         onClose={handleClose}
+        afterOpenChange={(open) => {
+          if (open && isAdd) {
+            form.resetFields();
+            const defaultStatus = status?.find((s) => s.code === 'active')?.uuid;
+            form.setFieldsValue({ status: defaultStatus });
+          }
+        }}
         size={550}
         title={
           <div className="flex justify-between items-center">
@@ -193,7 +200,7 @@ const FacilityForm = ({
               getValueProps={(value) => ({
                 value: isView
                   ? facilityTypesList.find((item) => item.value === value)
-                      ?.label
+                    ?.label
                   : value,
               })}
             >

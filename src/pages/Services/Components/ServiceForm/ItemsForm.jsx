@@ -115,6 +115,7 @@ const ItemsForm = ({
 
       editItem.mutate(editValues, {
         onSuccess: () => {
+          form.resetFields();
           setDrawerOpen(false);
           Toast.success("Item Updated Successfully!");
         },
@@ -126,7 +127,10 @@ const ItemsForm = ({
     <div>
       <Drawer
         open={drawerOpen}
-        onClose={() => setDrawerOpen(false)}
+        onClose={() => {
+          setDrawerOpen(false);
+          form.resetFields()
+        }}
         size={550}
         title={
           <div className="flex justify-between items-center">

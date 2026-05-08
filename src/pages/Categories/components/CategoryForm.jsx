@@ -142,9 +142,15 @@ const CategoryForm = ({
         </div>
       }
       size={550} // size={500} is not a valid AntD prop, use width
+      afterOpenChange={(open) => {
+        if (open && isAdd) {
+          form.resetFields();
+          const defaultStatus = statusOptions?.find((s) => s.label.toLowerCase() === 'active')?.value;
+          form.setFieldsValue({ status: defaultStatus });
+        }
+      }}
       onClose={onClose}
       open={drawerOpen}
-      destroyOnClose
     >
       {isLoading ?
         <div className="flex items-center justify-center h-full min-h-[300px]">
