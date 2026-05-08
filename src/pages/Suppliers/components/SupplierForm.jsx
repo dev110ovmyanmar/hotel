@@ -7,13 +7,14 @@ import Toast from "../../../component/Toast/Toast";
 import useApiQuery from "../../../hooks/useApiQuery";
 import { useApiMutation } from "../../../hooks/useApiMutation";
 import { upsertSupplier, getSupplierDetail } from "../../../api/supplierApi";
-import Status from "../../../component/Status/Status";
+import { phoneValidator, emailValidator } from "../../../variables/constants";
 import { PERMISSIONS } from "../../../variables/permission";
 import usePermission from "../../../hooks/usePermission";
 
 const { TextArea } = Input;
 
 const SupplierForm = ({
+    statusOptions,
     mode,
     setMode,
     drawerOpen,
@@ -33,10 +34,6 @@ const SupplierForm = ({
     const { hasPermission } = usePermission();
     const canEdit = hasPermission(PERMISSIONS.SUPPLIER_EDIT);
 
-    // 1. Get Global Options from Cache
-    const initData = queryClient.getQueryData(["initData", "authenticated"]);
-
-    // 3. API Query for Supplier Detail
     const { data, isLoading } = useApiQuery({
         fetchQueryName: "supplier-detail",
         fetchQueryFunction: getSupplierDetail,
@@ -44,17 +41,15 @@ const SupplierForm = ({
         options: { enabled: !!selectedRow?.uuid && drawerOpen },
     });
 
-    // console.log("DataAPI", data);
-
     const supplierData = data;
 
-    // 4. Fill Form when data arrives
     useEffect(() => {
         if (isAdd) {
             form.resetFields()
         } else if (supplierData) {
             form.setFieldsValue({
                 ...supplierData,
+                status: supplierData.status?.uuid,
             });
         }
     }, [supplierData, isAdd, form]);
@@ -68,7 +63,7 @@ const SupplierForm = ({
     const onFinish = (values) => {
         const payload = {
             ...values,
-            status: values.status ? values.status : null,
+            status: { uuid: values.status },
             uuid: isEdit ? selectedRow?.uuid : null,
         };
 
@@ -91,6 +86,13 @@ const SupplierForm = ({
         <Drawer
             title={isView ? "Supplier Details" : isEdit ? "Edit Supplier" : "Add Supplier"}
             size={550}
+            afterOpenChange={(open) => {
+                if (open && isAdd) {
+                    form.resetFields();
+                    const defaultStatus = statusOptions?.find((s) => s.label.toLowerCase() === 'active')?.value;
+                    form.setFieldsValue({ status: defaultStatus });
+                }
+            }}
             onClose={handleClose}
             open={drawerOpen}
             extra={isView ?
@@ -119,13 +121,13 @@ const SupplierForm = ({
                         </div>
 
                         <div className="col-span-6">
-                            <Form.Item label="Phone" name="phone" rules={[{ required: true }]}>
+                            <Form.Item label="Phone" name="phone" rules={[{ required: true }, { validator: phoneValidator }]}>
                                 <Input readOnly={isView} placeholder="Enter Phone Number" />
                             </Form.Item>
                         </div>
 
                         <div className="col-span-6">
-                            <Form.Item label="Email" name="email">
+                            <Form.Item label="Email" name="email" rules={[{ validator: emailValidator }]}>
                                 <Input readOnly={isView} placeholder="Enter Email Address" />
                             </Form.Item>
                         </div>
@@ -156,7 +158,17 @@ const SupplierForm = ({
                         </div>
 
                         <div className="col-span-12">
-                            <Status isView={isView} />
+                            <Form.Item
+                                name="status"
+                                label="Status"
+                                rules={[{ required: true, message: "Status is required" }]}
+                            >
+                                <Select
+                                    options={statusOptions || []}
+                                    placeholder="Select Status"
+                                    open={isView ? false : undefined}
+                                />
+                            </Form.Item>
                         </div>
                     </div>
                 </Form>

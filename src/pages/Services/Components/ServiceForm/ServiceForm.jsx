@@ -46,8 +46,6 @@ const ServiceForm = ({
         label: item.name,
       })) || [];
 
-  console.log("StatusOptions", statusOptions);
-
   const createService = useApiMutation({
     mutationFn: upsertService,
     invalidateKeys: [["services"]],
@@ -127,18 +125,17 @@ const ServiceForm = ({
     }
   };
 
-  useEffect(() => {
-    if (isAdd) {
-      form.setFieldsValue({
-        status: statusOptions?.find((item) => item.label === "Active").value,
-      });
-    }
-  }, [isAdd]);
-
   return (
     <div>
       <Drawer
         open={drawerOpen}
+        afterOpenChange={(open) => {
+          if (open && isAdd) {
+            form.resetFields();
+            const defaultStatus = statusOptions?.find((s) => s.label.toLowerCase() === 'active')?.value;
+            form.setFieldsValue({ status: defaultStatus });
+          }
+        }}
         onClose={handleClose}
         size={550}
         title={
@@ -273,6 +270,7 @@ const ServiceForm = ({
               label="Is Complimentary"
               name="isComplimentary"
               valuePropName="checked"
+              rules={[{ required: true }]}
             >
               <Switch readOnly={isView} disabled={isView} />
             </Form.Item>
