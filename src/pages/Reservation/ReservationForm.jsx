@@ -5,7 +5,6 @@ import dayjs from "dayjs";
 import { availabilitySearch, reservationMeta } from "../../api/reservationSectionApi";
 import { useEffect, useState } from "react";
 import { useApiMutation } from "../../hooks/useApiMutation";
-import { data } from "react-router-dom";
 
 const { RangePicker } = DatePicker;
 
@@ -15,6 +14,8 @@ const ReservationForm = ({
     afterRoomConfirm,
     availabilitySearchResults,
     setReservationFormValues,
+    searchButtonDisable,
+    setSearchButtonDisable
 }) => {
     const dateRange = Form.useWatch("filter", form);
 
@@ -103,10 +104,11 @@ const ReservationForm = ({
     const disabledDate = current => {
         return current < dayjs().startOf('day');
     };
-
+    console.log(bookedViaOptions,"bookedViaOptions")
     return (
         <Card >
             <Form
+                // values={searchButtonDisable}
                 form={form}
                 onFinish={searchSubmit}
                 layout="vertical"
@@ -118,6 +120,7 @@ const ReservationForm = ({
                         dayjs().add(1, "day").hour(12).minute(0), // check-out
                     ],
                 }}
+                onValuesChange={()=>{setSearchButtonDisable(false)}}
             >
                 <h1 className="text-lg font-bold my-2">Create New Reservation</h1>
                 <div className="flex gap-6 justify-between">
@@ -187,11 +190,11 @@ const ReservationForm = ({
                             (selectedSourceType === "Agency" ||
                                 selectedSourceType === "Company") && (
 
-                                <Form.Item name="source" label="Booking Source" rules={[{ required: true, message: "Please Select Booking Source" }]}>
+                                <Form.Item name="source" label="Source Name" rules={[{ required: true, message: "Please Select Source Name" }]}>
                                     <Select
                                         options={selectedSourceType === "Agency" ? agenciesOptions : companyOptions}
                                         className="w-[100%] "
-                                        placeholder="Select Booking Source"
+                                        placeholder="Select Source Name"
 
                                     ></Select>
                                 </Form.Item>
@@ -206,7 +209,13 @@ const ReservationForm = ({
                                 null
                                 :
                                 <Form.Item>
-                                    <Button type="primary" htmlType="submit" loading={availabilitySearchResults?.isPending}>
+                                    <Button 
+                                        type="primary" 
+                                        htmlType="submit" 
+                                        loading={availabilitySearchResults?.isPending}
+                                        disabled={searchButtonDisable} 
+                                        // onClick={()=>setSearchButtonDisable(true)}
+                                    >
                                         Search
                                     </Button>
                                 </Form.Item>
