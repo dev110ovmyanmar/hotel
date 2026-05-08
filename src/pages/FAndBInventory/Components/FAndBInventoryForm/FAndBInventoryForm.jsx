@@ -11,6 +11,7 @@ import {
 } from "../../../../api/fnbInventoryApi";
 import Status from "../../../../component/Status/Status";
 import Loader from "../../../../component/Loader/Loader";
+import { queryClient } from "../../../../app/queryClient";
 
 const FAndBInventoryForm = ({
   mode,
@@ -27,6 +28,15 @@ const FAndBInventoryForm = ({
   const isView = mode === "view";
   const isEdit = mode === "edit";
   const isAdd = mode === "add";
+
+  const initData = queryClient.getQueryData(["initData", "authenticated"]);
+
+  const statuses = initData?.statuses?.status
+  // ?.filter((item) => item.code !== "blocked")
+  // ?.map((status) => ({
+  //   value: status.uuid,
+  //   label: status.name,
+  // }));
 
   const { data: fnbMetaData } = useApiQuery({
     fetchQueryName: "fnbMetaData",
@@ -129,6 +139,19 @@ const FAndBInventoryForm = ({
     <div>
       <Drawer
         open={drawerOpen}
+        afterOpenChange={(open) => {
+          if (open && isAdd) {
+            form.resetFields();
+            const activeStatus = statuses?.find((s) => s.name.toLowerCase() === 'active');
+            if (activeStatus) {
+              form.setFieldsValue({
+                status: {
+                  uuid: activeStatus.uuid
+                }
+              });
+            }
+          }
+        }}
         onClose={handleClose}
         size={550}
         title={
@@ -342,7 +365,7 @@ const FAndBInventoryForm = ({
                 />
               </Form.Item>
             </div>
-            <Status isView={isView} />
+            <Status isView={isView} statusValue={statuses} />
           </Form>
         )}
       </Drawer>
