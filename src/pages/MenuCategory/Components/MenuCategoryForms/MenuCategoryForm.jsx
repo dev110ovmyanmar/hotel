@@ -9,7 +9,6 @@ import {
 } from "../../../../api/menuCategory";
 import useApiQuery from "../../../../hooks/useApiQuery";
 import { queryClient } from "../../../../app/queryClient";
-import Status from "../../../../component/Status/Status";
 import Loader from "../../../../component/Loader/Loader";
 
 const MenuCategoryForm = ({
@@ -22,7 +21,6 @@ const MenuCategoryForm = ({
   page,
   setPage,
 }) => {
-  console.log(page, "page");
   const [form] = Form.useForm();
 
   const isView = mode === "view";
@@ -66,6 +64,7 @@ const MenuCategoryForm = ({
       form.setFieldsValue({
         ...data,
         displayOrder: Number(data?.displayOrder),
+        status: data?.status?.uuid,
       });
 
       setSelectedData(data);
@@ -82,13 +81,12 @@ const MenuCategoryForm = ({
     if (isAdd) {
       const createValues = {
         ...values,
-        // status: { uuid: values.status },
-        status: values.status,
+        status: { uuid: values.status },
       };
 
       createMenuCategories.mutate(createValues, {
         onSuccess: () => {
-          form.resetFields();
+          // form.resetFields();
           handleClose();
           setDrawerOpen(false);
           setPage(1);
@@ -99,8 +97,7 @@ const MenuCategoryForm = ({
     if (isEdit) {
       const editValues = {
         ...values,
-        // status: { uuid: values.status },
-        status: values.status,
+        status: { uuid: values.status },
         uuid: data?.uuid,
       };
 
@@ -118,6 +115,13 @@ const MenuCategoryForm = ({
     <div>
       <Drawer
         open={drawerOpen}
+        afterOpenChange={(open) => {
+          if (open && isAdd) {
+            form.resetFields();
+            const defaultStatus = statusList?.find((s) => s.label.toLowerCase() === 'active')?.value;
+            form.setFieldsValue({ status: defaultStatus });
+          }
+        }}
         onClose={handleClose}
         size={600}
         title={
@@ -181,7 +185,22 @@ const MenuCategoryForm = ({
               />
             </Form.Item>
 
-            <Status isView={isView} />
+            <Form.Item label="Status" name="status" rules={[{ required: true }]}
+              getValueProps={(value) => ({
+                value: isView
+                  ? statusList?.find((item) => item.value === value)?.label
+                  : value,
+              })}>
+              {
+                isView ?
+                  <Input readOnly={isView} />
+                  :
+                  <Select
+                    options={statusList}
+                    open={isView ? false : undefined}
+                  />
+              }
+            </Form.Item>
           </Form>
         )}
       </Drawer>

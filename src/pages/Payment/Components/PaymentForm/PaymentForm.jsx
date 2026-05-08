@@ -42,7 +42,7 @@ const PaymentForm = ({
   const isAdd = mode === "add";
 
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
-  const status = initData?.statuses.status;
+  const statuses = initData?.statuses.status;
   const provider = initData?.statuses.provider;
   const providerType = initData?.statuses.provider_type;
   const cashName = providerType.find((item) => item?.name === "Cash")?.name;
@@ -83,8 +83,13 @@ const PaymentForm = ({
   };
 
   const onFinish = (values) => {
+    const payload = {
+      ...values,
+      provider: { uuid: values.provider ? values.provider : null },
+      isOnline: values.isOnline === true ? 1 : 0,
+    };
     if (isAdd) {
-      upsertPayments.mutate(values, {
+      upsertPayments.mutate(payload, {
         onSuccess: () => {
           form.resetFields();
           setPage(1);
@@ -126,6 +131,19 @@ const PaymentForm = ({
     <div className="flex justify-center">
       <Drawer
         size={550}
+        afterOpenChange={(open) => {
+          if (open && isAdd) {
+            form.resetFields();
+            const activeStatus = statuses?.find((s) => s.name.toLowerCase() === 'active');
+            if (activeStatus) {
+              form.setFieldsValue({
+                status: {
+                  uuid: activeStatus.uuid
+                }
+              });
+            }
+          }
+        }}
         open={drawerOpen}
         onClose={handleClose}
         title={
@@ -199,10 +217,12 @@ const PaymentForm = ({
               placeholder="Select Provider Type"
             ></Select>
           </Form.Item>
+
           {selectedType && selectedTypeName !== "Cash" && (
             <Form.Item
               label="Provider"
               name={["provider", "uuid"]}
+              // name="provider"
               rules={[{ required: true, message: "Provider is Required" }]}
             >
               <Select
@@ -228,7 +248,7 @@ const PaymentForm = ({
               unCheckedChildren="False"
             />
           </Form.Item>
-          <Status isView={isView} />
+          <Status isView={isView} statusValue={statuses} />
         </Form>
       </Drawer>
     </div>
