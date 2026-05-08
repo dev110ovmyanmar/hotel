@@ -2,7 +2,7 @@ import { Button, Card, DatePicker, Form, Select, TimePicker } from "antd";
 import useApiQuery from "../../hooks/useApiQuery";
 import { queryClient } from "../../app/queryClient";
 import dayjs from "dayjs";
-import { availabilitySearch, reservationMeta } from "../../api/availabilitySearchApi";
+import { availabilitySearch, reservationMeta } from "../../api/reservationSectionApi";
 import { useEffect, useState } from "react";
 import { useApiMutation } from "../../hooks/useApiMutation";
 import { data } from "react-router-dom";
@@ -144,7 +144,7 @@ const ReservationForm = ({
 
                     <div className="flex items-center">
                         <Form.Item name="totalNight" label="Nights" className="mb-0" rules={[{required:true}]}>
-                            <div className="w-[61px] h-[32px] bg-gray-400 rounded-md flex flex-col justify-center items-center">
+                            <div className="w-[61px] h-[32px] bg-[#fafafa] rounded-md flex flex-col justify-center items-center">
 
                                 <p className="text-xs leading-none">{totalNights}</p>
                                 <p className="text-xs leading-none">Nights</p>
