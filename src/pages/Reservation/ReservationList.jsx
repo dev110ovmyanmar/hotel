@@ -22,6 +22,7 @@ const ReservationList = () => {
   const [roomConfirm, setRoomConfirm] = useState(false);
   const [guestInfoTable, setGuestInfoTable] = useState(false);
   const [searchReservation, setSearchReservation] = useState(false);
+  const [searchButtonDisable, setSearchButtonDisable] = useState(false);
 
   const [storeData, setStoreData] = useState(null);
 
@@ -41,6 +42,7 @@ const ReservationList = () => {
       onSuccess: (values) => {
         setStoreData(values);
         setSearchReservation(true);
+        setSearchButtonDisable(true)
       },
     },
   });
@@ -320,12 +322,18 @@ const ReservationList = () => {
             setSelectedData([]);
             setSelectedRooms({});
             setReservationFormValues(null);
-            form.resetFields()
+            setSearchButtonDisable(false);
+            // setSelectedSourceType(null);
+            // form.resetFields();
+            
 
+          
           }}
+
+          // onClick={()=>alert("Hi")}
         >
           <ReloadOutlined className="!text-blue-500" />
-          <span className="!text-blue-500">Refresh</span>
+          <span className="!text-blue-500" >Refresh</span>
         </Button>
       </div>
 
@@ -333,8 +341,9 @@ const ReservationList = () => {
         afterRoomConfirm={roomConfirm}
         availabilitySearchResults={availabilitySearchs}
         setReservationFormValues={setReservationFormValues}
-        // reservationFormField={reservationFormField}
         form={form}
+        searchButtonDisable={searchButtonDisable}
+        setSearchButtonDisable={setSearchButtonDisable}
 
       />
 
