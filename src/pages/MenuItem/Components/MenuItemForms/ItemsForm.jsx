@@ -14,7 +14,7 @@ const ItemsForm = ({
   setDrawerOpen,
   mode,
   setMode,
-}) => {  
+}) => {
   const [form] = Form.useForm();
   const isView = mode === "item-view";
   const isEdit = mode === "item-edit";
@@ -22,9 +22,9 @@ const ItemsForm = ({
 
 
   const { data: menuMetaData } = useApiQuery({
-      fetchQueryName: "menuMetaData",
-      fetchQueryFunction: menuMeta,
-    });
+    fetchQueryName: "menuMetaData",
+    fetchQueryFunction: menuMeta,
+  });
 
   const fnbInventoryOptions = menuMetaData?.fnb_inventory_items?.map(
     (item) => ({
@@ -108,7 +108,10 @@ const ItemsForm = ({
     <div>
       <Drawer
         open={drawerOpen}
-        onClose={() => setDrawerOpen(false)}
+        onClose={() => {
+          form.resetFields();
+          setDrawerOpen(false);
+        }}
         size={550}
         title={
           <div className="flex justify-between items-center">
@@ -151,7 +154,7 @@ const ItemsForm = ({
             getValueProps={(value) => ({
               value: isView
                 ? fnbInventoryOptions.find((item) => item.value === value)
-                    ?.label
+                  ?.label
                 : value,
             })}
           >

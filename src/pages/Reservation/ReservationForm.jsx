@@ -2,7 +2,7 @@ import { Button, Card, DatePicker, Form, Select, TimePicker } from "antd";
 import useApiQuery from "../../hooks/useApiQuery";
 import { queryClient } from "../../app/queryClient";
 import dayjs from "dayjs";
-import { availabilitySearch, reservationMeta } from "../../api/availabilitySearchApi";
+import { availabilitySearch, reservationMeta } from "../../api/reservationSectionApi";
 import { useEffect, useState } from "react";
 import { useApiMutation } from "../../hooks/useApiMutation";
 import { data } from "react-router-dom";
@@ -73,7 +73,6 @@ const ReservationForm = ({
             source: {
                 uuid: values.source,
             },
-            // totalNight: totalNights
         };
 
         availabilitySearchResults.mutate(modifiedValues);
@@ -83,22 +82,22 @@ const ReservationForm = ({
         setSelectedSourceType(option?.label);
     };
 
-    useEffect(() => {
-        if (bookedViaOptions?.length > 0 || sourceTypeOptions?.length > 0 ) {
-            form.setFieldsValue({
-                bookedVia: bookedViaOptions?.[0]?.value,
-                sourceType: sourceTypeOptions?.[0]?.value,
-            });
-        }
-    }, [bookedViaOptions,sourceTypeOptions]);
+    // useEffect(() => {
+    //     if (bookedViaOptions?.length > 0 || sourceTypeOptions?.length > 0) {
+    //         form.setFieldsValue({
+    //             bookedVia: bookedViaOptions?.[0]?.value,
+    //             sourceType: sourceTypeOptions?.[0]?.value,
+    //         });
+    //     }
+    // }, [bookedViaOptions, sourceTypeOptions]);
 
-    useEffect(()=>{
-        if(totalNights){
+    useEffect(() => {
+        if (totalNights) {
             form.setFieldsValue({
                 totalNight: totalNights
             })
         }
-    },[totalNights])
+    }, [totalNights])
 
     // Range Picker
     const disabledDate = current => {
@@ -111,11 +110,19 @@ const ReservationForm = ({
                 form={form}
                 onFinish={searchSubmit}
                 layout="vertical"
+                initialValues={{
+                    bookedVia: bookedViaOptions?.[0]?.value,
+                    sourceType: sourceTypeOptions?.[0]?.value,
+                    filter: [
+                        dayjs().hour(14).minute(0), // check-in
+                        dayjs().add(1, "day").hour(12).minute(0), // check-out
+                    ],
+                }}
             >
                 <h1 className="text-lg font-bold my-2">Create New Reservation</h1>
                 <div className="flex gap-6 justify-between">
                     <div className="flex-3">
-                        <Form.Item name="filter" label="Check-in Date" rules={[{required:true,message:"Please Select Date"}]}>
+                        <Form.Item name="filter" label="Check-in / Check-out Date" rules={[{ required: true, message: "Please Select Date" }]}>
                             <RangePicker
                                 className="!w-full"
                                 format="YYYY-MM-DD HH:mm"
@@ -143,8 +150,8 @@ const ReservationForm = ({
                     </div>
 
                     <div className="flex items-center">
-                        <Form.Item name="totalNight" label="Nights" className="mb-0" rules={[{required:true}]}>
-                            <div className="w-[61px] h-[32px] bg-gray-400 rounded-md flex flex-col justify-center items-center">
+                        <Form.Item name="totalNight" label="Nights" className="mb-0" rules={[{ required: true }]}>
+                            <div className="w-[61px] h-[32px] bg-[#fafafa] rounded-md flex flex-col justify-center items-center">
 
                                 <p className="text-xs leading-none">{totalNights}</p>
                                 <p className="text-xs leading-none">Nights</p>
@@ -154,7 +161,7 @@ const ReservationForm = ({
                     </div>
 
                     <div className="flex-2">
-                        <Form.Item name="bookedVia" label="Booking Source" rules={[{required:true,message:"Please Select Booking Source"}]}>
+                        <Form.Item name="bookedVia" label="Booking Source" rules={[{ required: true, message: "Please Select Booking Source" }]}>
                             <Select
                                 options={bookedViaOptions}
                                 className="w-[100%] "
@@ -165,7 +172,7 @@ const ReservationForm = ({
                     </div>
 
                     <div className="flex-2">
-                        <Form.Item name="sourceType" label="Source Type" rules={[{required:true,message:"Please Select Source Type"}]}>
+                        <Form.Item name="sourceType" label="Source Type" rules={[{ required: true, message: "Please Select Source Type" }]}>
                             <Select
                                 options={sourceTypeOptions}
                                 className="w-[100%]"
@@ -180,7 +187,7 @@ const ReservationForm = ({
                             (selectedSourceType === "Agency" ||
                                 selectedSourceType === "Company") && (
 
-                                <Form.Item name="source" label="Booking Source" rules={[{required:true,message:"Please Select Booking Source"}]}>
+                                <Form.Item name="source" label="Booking Source" rules={[{ required: true, message: "Please Select Booking Source" }]}>
                                     <Select
                                         options={selectedSourceType === "Agency" ? agenciesOptions : companyOptions}
                                         className="w-[100%] "
@@ -198,13 +205,11 @@ const ReservationForm = ({
                             afterRoomConfirm ?
                                 null
                                 :
-                                // <div >
-                                    <Form.Item>
-                                        <Button type="primary" htmlType="submit">
-                                            Search
-                                        </Button>
-                                    </Form.Item>
-                                // </div>
+                                <Form.Item>
+                                    <Button type="primary" htmlType="submit" loading={availabilitySearchResults?.isPending}>
+                                        Search
+                                    </Button>
+                                </Form.Item>
                         }
                     </div>
                 </div>
