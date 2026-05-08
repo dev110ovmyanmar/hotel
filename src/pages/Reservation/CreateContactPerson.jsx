@@ -20,12 +20,13 @@ const CreateGuestForm = ({
   setGuestInfoTable,
   setClickCreateContact,
   upsertMutation,
-
-
+  createContactFinish,
+  setCreateContactFinish
 }) => {
   const [form] = Form.useForm();
 
   const [searchText, setSearchText] = useState("");
+  
 
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
 
@@ -49,6 +50,7 @@ const CreateGuestForm = ({
       })) || [];
 
   const onClick = () => {
+    setCreateContactFinish(true);
     form.validateFields().then((values) => {
       //       {
       //     "title": "Mr",
@@ -96,8 +98,8 @@ const CreateGuestForm = ({
       onClose={() => setGuestDrawerOpen(false)}
       title={
         <div className="flex justify-between gap-4">
-          <span>Create Guest</span>
-          <Button type="primary" onClick={onClick}>
+          <span>Create Contact Person</span>
+          <Button type="primary" onClick={onClick} loading={upsertMutation?.isPending}>
             Create
           </Button>
         </div>
@@ -115,7 +117,7 @@ const CreateGuestForm = ({
             <Form.Item
               label="Name"
               name="name"
-              rules={[{ required: false }]} // handled manually
+              rules={[{ required: false }]} // handled manualcly
             >
               <Select
                 showSearch
