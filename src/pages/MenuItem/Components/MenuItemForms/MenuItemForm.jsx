@@ -139,6 +139,13 @@ const MenuItemForm = ({
     <div>
       <Drawer
         open={drawerOpen}
+        afterOpenChange={(open) => {
+          if (open && isAdd) {
+            form.resetFields();
+            const defaultStatus = statusList?.find((s) => s.label.toLowerCase() === 'active')?.value;
+            form.setFieldsValue({ status: defaultStatus });
+          }
+        }}
         onClose={handleClose}
         size={600}
         title={

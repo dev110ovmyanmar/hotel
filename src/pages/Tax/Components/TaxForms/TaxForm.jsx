@@ -18,6 +18,7 @@ import FormButton from "../../../../component/FormButtons/FormButtons";
 import { createTax, editTax, TaxDetails } from "../../../../api/TaxApi";
 import TextArea from "antd/es/input/TextArea";
 import Loader from "../../../../component/Loader/Loader";
+import Status from "../../../../component/Status/Status";
 
 const TaxForm = ({
   mode,
@@ -63,11 +64,6 @@ const TaxForm = ({
   }));
 
   const statuses = initData?.statuses?.status
-    ?.filter((item) => item.code !== "blocked")
-    ?.map((status) => ({
-      value: status.uuid,
-      label: status.name,
-    }));
 
   const createTaxs = useApiMutation({
     mutationFn: createTax,
@@ -98,7 +94,7 @@ const TaxForm = ({
         charge_type: data?.chargeType?.uuid,
         charge_apply_type: data?.chargeApplyType?.uuid,
         per_unit: data?.perUnit?.uuid,
-        status: data?.status?.uuid,
+        // status: data?.status?.uuid,
       });
       setSelectedData(data);
     }
@@ -118,7 +114,6 @@ const TaxForm = ({
         chargeType: { uuid: values.charge_type },
         chargeApplyType: { uuid: values.charge_apply_type },
         perUnit: { uuid: values.per_unit },
-        status: { uuid: values.status },
       };
 
       createTaxs.mutate(createValues, {
@@ -138,7 +133,6 @@ const TaxForm = ({
         chargeType: { uuid: values.charge_type },
         chargeApplyType: { uuid: values.charge_apply_type },
         perUnit: { uuid: values.per_unit },
-        status: { uuid: values.status },
         uuid: data?.uuid,
       };
       editTaxs.mutate(editValues, {
@@ -155,6 +149,19 @@ const TaxForm = ({
     <div>
       <Drawer
         open={drawerOpen}
+        afterOpenChange={(open) => {
+          if (open && isAdd) {
+            form.resetFields();
+            const activeStatus = statuses?.find((s) => s.name.toLowerCase() === 'active');
+            if (activeStatus) {
+              form.setFieldsValue({
+                status: {
+                  uuid: activeStatus.uuid
+                }
+              });
+            }
+          }
+        }}
         onClose={handleClose}
         size={500}
         title={
@@ -363,7 +370,7 @@ const TaxForm = ({
                   getValueProps={(value) => ({
                     value: isView
                       ? chargeApplyType.find((item) => item.value === value)
-                          ?.label
+                        ?.label
                       : value,
                   })}
                 >
@@ -385,31 +392,7 @@ const TaxForm = ({
               </Col>
 
               <Col span={12}>
-                <Form.Item
-                  label="Status"
-                  name="status"
-                  rules={[{ required: true, message: "Status is Required" }]}
-                  getValueProps={(value) => ({
-                    value: isView
-                      ? statuses.find((item) => item.value === value)?.label
-                      : value,
-                  })}
-                >
-                  {isView ? (
-                    <Input readOnly={isView} />
-                  ) : (
-                    <Select
-                      showSearch={{
-                        filterOption: (input, option) =>
-                          (option?.label ?? "")
-                            .toLowerCase()
-                            .includes(input.toLowerCase()),
-                      }}
-                      options={statuses}
-                      placeholder="Select Status"
-                    />
-                  )}
-                </Form.Item>
+                <Status isView={isView} statusValue={statuses} />
               </Col>
             </Row>
 
