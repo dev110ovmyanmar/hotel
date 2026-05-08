@@ -31,8 +31,8 @@ const ReservationList = () => {
   const [reservationFormValues, setReservationFormValues] = useState(null);
   const [contactPersonInfo, setContactPersonInfo] = useState();
 
-
   const [clickCreateContact, setClickCreateContact] = useState(false);
+  const [createContactFinish, setCreateContactFinish] = useState(false);
 
   const availabilitySearchs = useApiMutation({
     mutationFn: availabilitySearch,
@@ -133,7 +133,7 @@ const ReservationList = () => {
   };
 
   const submitReservation = () => {
-    
+
     const rooms = roomBookValues?.rooms.map((room) => ({
       roomType: {
         uuid: room.roomType.uuid
@@ -371,7 +371,7 @@ const ReservationList = () => {
             </Card>
           ))}
 
-          <Card>
+          <Card className="!my-3">
             <h1 className="text-lg font-bold my-2">Contact Person</h1>
 
             {guestInfoTable && (
@@ -395,15 +395,18 @@ const ReservationList = () => {
             )}
           </Card>
 
-          <div className="flex justify-end">
-            <Button
-              className="!my-5 !px-10"
-              type="primary"
-              onClick={submitReservation}
-            >
-              Submit
-            </Button>
-          </div>
+          {
+            createContactFinish &&
+            <div className="flex justify-end">
+              <Button
+                className="!my-5 !px-10"
+                type="primary"
+                onClick={submitReservation}
+              >
+                Submit
+              </Button>
+            </div>
+          }
         </>
       ) : searchReservation ? (
         <Card className="!my-3">
@@ -433,7 +436,7 @@ const ReservationList = () => {
           </div>
 
           <div className="flex justify-end">
-            <Button type="primary" onClick={viewRoomBookedMutate}>
+            <Button type="primary" onClick={viewRoomBookedMutate} loading={rateQuotes?.isPending}>
               View Room Booked
             </Button>
           </div>
@@ -448,6 +451,8 @@ const ReservationList = () => {
         clickCreateContact={clickCreateContact}
         setClickCreateContact={setClickCreateContact}
         upsertMutation={upsertMutation}
+        createContactFinish={createContactFinish}
+        setCreateContactFinish={setCreateContactFinish}
       />
 
       <RoomBookedDrawer
@@ -459,6 +464,7 @@ const ReservationList = () => {
         setSelectedData={setSelectedData}
         roomBookValues={roomBookValues}
         setRoomBookValues={setRoomBookValues}
+        rateQuotes={rateQuotes}
 
       />
     </div>
