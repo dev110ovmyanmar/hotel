@@ -19,6 +19,7 @@ const AgencyTable = ({
   total,
   changePage,
   changePerPage,
+  loading
 }) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mode, setMode] = useState(null);
@@ -80,7 +81,7 @@ const AgencyTable = ({
           return <div>{chargeValue} %</div>
         }
       },
-      align:"center"
+      align: "center"
     },
     {
       title: "Status",
@@ -143,8 +144,11 @@ const AgencyTable = ({
           action => (!action.permission || hasPermission(action.permission)) && !action.hidden
         ).map(action => ({
           key: action.key,
+          onClick: action.onClick,
           label: (
-            <Space size={4} style={smallStyle} onClick={action.onClick}>
+            <Space size={4} style={smallStyle}
+            // onClick={action.onClick}
+            >
               {action.icon}
               <span style={{ fontSize: "14px" }}>{action.label}</span>
             </Space>
@@ -169,6 +173,7 @@ const AgencyTable = ({
         columns={columns}
         dataSource={data}
         rowKey="uuid"
+        loading={loading}
         pagination={{
           current: page,
           pageSize: perPage,
@@ -190,10 +195,10 @@ const AgencyTable = ({
         setImageDrawerOpen={setImageDrawerOpen}
         selectedData={selectedData}
         setSelectedData={setSelectedData}
-        page={page} 
+        page={page}
       />
 
-      
+
     </div>
   );
 };

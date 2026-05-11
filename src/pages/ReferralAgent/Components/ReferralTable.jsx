@@ -14,13 +14,14 @@ const ReferralTable = ({
   total,
   changePage,
   changePerPage,
+  loading,
 }) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mode, setMode] = useState(null);
   const [selectedData, setSelectedData] = useState({});
-  const [imageDrawerOpen,setImageDrawerOpen] = useState(false);
+  const [imageDrawerOpen, setImageDrawerOpen] = useState(false);
 
-  const {hasPermission} = usePermission();
+  const { hasPermission } = usePermission();
 
   const columns = [
     {
@@ -51,17 +52,17 @@ const ReferralTable = ({
       title: "Charge Value",
       dataIndex: "chargeValue",
       key: "chargeValue",
-      render: (_,record) => {
+      render: (_, record) => {
         const chargeValue = record?.chargeValue;
         const chargeTypeName = record?.chargeType?.code;
 
-        if(chargeTypeName === "flat"){
+        if (chargeTypeName === "flat") {
           return <div>{chargeValue?.toLocaleString()} MMK</div>
         } else {
           return <div>{chargeValue} %</div>
         }
       },
-      align:"center"
+      align: "center"
     },
     {
       title: "Status",
@@ -116,8 +117,9 @@ const ReferralTable = ({
           )
           .map((action) => ({
             key: action.key,
+            onClick: action.onClick,
             label: (
-              <Space size={4} style={smallStyle} onClick={action.onClick}>
+              <Space size={4} style={smallStyle}>
                 {action.icon}
                 <span style={{ fontSize: "14px" }}>{action.label}</span>
               </Space>
@@ -140,6 +142,7 @@ const ReferralTable = ({
         scroll={{ x: 1000 }}
         columns={columns}
         dataSource={data}
+        loading={loading}
         rowKey="uuid"
         pagination={{
           current: page,

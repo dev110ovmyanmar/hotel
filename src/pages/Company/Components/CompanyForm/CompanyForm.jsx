@@ -82,8 +82,8 @@ const CompanyForm = ({
         },
       });
     }
-
-    if (isEdit && data) {
+    const isViewCompanyFormData = isView || isEdit;
+    if (isViewCompanyFormData && data) {
       form.setFieldsValue({
         ...data,
       });
