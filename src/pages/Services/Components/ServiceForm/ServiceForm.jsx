@@ -1,12 +1,11 @@
 import React, { useEffect } from "react";
-import { Form, Input, Button, Select, Drawer, InputNumber } from "antd";
+import { Form, Input, Button, Select, Drawer, InputNumber, Switch } from "antd";
 import Toast from "../../../../component/Toast/Toast";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
 import useApiQuery from "../../../../hooks/useApiQuery";
 import { queryClient } from "../../../../app/queryClient";
 import { getServiceDetails, upsertService } from "../../../../api/serviceApi";
 import FormButtons from "../../../../component/FormButtons/FormButtons";
-import Status from "../../../../component/Status/Status";
 import Loader from "../../../../component/Loader/Loader";
 
 const ServiceForm = ({
@@ -39,6 +38,14 @@ const ServiceForm = ({
     label: service.name,
   }));
 
+  const statusOptions =
+    initData?.statuses?.status
+      ?.filter((item) => item.name.toLowerCase() !== "blocked")
+      ?.map((item) => ({
+        value: item.uuid,
+        label: item.name,
+      })) || [];
+
   const createService = useApiMutation({
     mutationFn: upsertService,
     invalidateKeys: [["services"]],
@@ -65,6 +72,8 @@ const ServiceForm = ({
         ...data,
         billingType: data?.billingType?.uuid,
         serviceType: data?.serviceType?.uuid,
+        status: data?.status?.uuid,
+        isComplimentary: data?.isComplimentary === true ? 1 : 0,
       });
       setSelectedData(data);
     }
@@ -82,7 +91,8 @@ const ServiceForm = ({
         ...values,
         serviceType: { uuid: values.serviceType },
         billingType: { uuid: values.billingType },
-        status: values.status,
+        status: { uuid: values.status },
+        isComplimentary: values.isComplimentary === true ? 1 : 0,
       };
 
       createService.mutate(createValues, {
@@ -100,7 +110,8 @@ const ServiceForm = ({
         ...values, // merge new form values
         serviceType: { uuid: values.serviceType },
         billingType: { uuid: values.billingType },
-        status: values.status,
+        status: { uuid: values.status },
+        isComplimentary: values.isComplimentary === true ? 1 : 0,
         uuid: data?.uuid,
       };
 
@@ -118,6 +129,13 @@ const ServiceForm = ({
     <div>
       <Drawer
         open={drawerOpen}
+        afterOpenChange={(open) => {
+          if (open && isAdd) {
+            form.resetFields();
+            const defaultStatus = statusOptions?.find((s) => s.label.toLowerCase() === 'active')?.value;
+            form.setFieldsValue({ status: defaultStatus });
+          }
+        }}
         onClose={handleClose}
         size={550}
         title={
@@ -184,7 +202,7 @@ const ServiceForm = ({
               getValueProps={(value) => ({
                 value: isView
                   ? servicesTypesList.find((item) => item.value === value)
-                      ?.label
+                    ?.label
                   : value,
               })}
             >
@@ -231,7 +249,31 @@ const ServiceForm = ({
               )}
             </Form.Item>
 
-            <Status isView={isView} />
+            <Form.Item label="Status" name="status" rules={[{ required: true }]}
+              getValueProps={(value) => ({
+                value: isView
+                  ? statusOptions.find((item) => item.value === value)?.label
+                  : value,
+              })}>
+              {
+                isView ?
+                  <Input readOnly={isView} />
+                  :
+                  <Select
+                    options={statusOptions}
+                    open={isView ? false : undefined}
+                  />
+              }
+            </Form.Item>
+
+            <Form.Item
+              label="Is Complimentary"
+              name="isComplimentary"
+              valuePropName="checked"
+              rules={[{ required: true }]}
+            >
+              <Switch readOnly={isView} disabled={isView} />
+            </Form.Item>
 
             <Form.Item label="Description" name="description">
               <Input.TextArea

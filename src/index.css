@@ -82,7 +82,7 @@
   --ant-border-radius: 5px;
 }
 
-.ant-form-item-label>label {
+.ant-form-item-label > label {
   --ant-form-label-font-size: 12px;
   font-weight: 500;
   --ant-form-label-color: #474141;
@@ -166,7 +166,7 @@
   --ant-color-text-disabled: rgba(0, 0, 0, 1);
 }
 
-.ant-checkbox-disabled+span {
+.ant-checkbox-disabled + span {
   --ant-color-text-disabled: rgba(0, 0, 0, 1);
 }
 
@@ -194,6 +194,7 @@
 .css-var-_r_0_ {
   --ant-color-bg-container-disabled: rgba(0, 0, 0, 0);
   --ant-color-text-disabled: #000000;
+  --ant-border-radius-lg: 5px;
 }
 
 .ant-input-number-outlined {
@@ -250,12 +251,12 @@ span .ant-upload {
   transition: all 0.3s ease;
 } */
 
-.custom-table-style .ant-table-thead>tr>th {
+.custom-table-style .ant-table-thead > tr > th {
   background-color: #f0f5ff;
   border-bottom: 1px solid #adc6ff;
 }
 
-.custom-table-style .ant-table-tbody>tr>td {
+.custom-table-style .ant-table-tbody > tr > td {
   background-color: #ffffff;
   border-bottom: 1px solid #adc6ff;
 }
@@ -277,14 +278,36 @@ span .ant-upload {
   padding: 8px 25px;
 }
 
-.ant-table-tbody>tr.ant-table-expanded-row {
+.ant-table-tbody > tr.ant-table-expanded-row {
   background-color: #f3f4f6;
 }
 
-:where(.css-dev-only-do-not-override-1t2537o).ant-table-wrapper .ant-table-tbody>tr>th>.ant-table-wrapper:only-child .ant-table,
-:where(.css-dev-only-do-not-override-1t2537o).ant-table-wrapper .ant-table-tbody>tr>td>.ant-table-wrapper:only-child .ant-table,
-:where(.css-dev-only-do-not-override-1t2537o).ant-table-wrapper .ant-table-tbody>tr>th>.ant-table-expanded-row-fixed>.ant-table-wrapper:only-child .ant-table,
-:where(.css-dev-only-do-not-override-1t2537o).ant-table-wrapper .ant-table-tbody>tr>td>.ant-table-expanded-row-fixed>.ant-table-wrapper:only-child .ant-table {
+:where(.css-dev-only-do-not-override-1t2537o).ant-table-wrapper
+  .ant-table-tbody
+  > tr
+  > th
+  > .ant-table-wrapper:only-child
+  .ant-table,
+:where(.css-dev-only-do-not-override-1t2537o).ant-table-wrapper
+  .ant-table-tbody
+  > tr
+  > td
+  > .ant-table-wrapper:only-child
+  .ant-table,
+:where(.css-dev-only-do-not-override-1t2537o).ant-table-wrapper
+  .ant-table-tbody
+  > tr
+  > th
+  > .ant-table-expanded-row-fixed
+  > .ant-table-wrapper:only-child
+  .ant-table,
+:where(.css-dev-only-do-not-override-1t2537o).ant-table-wrapper
+  .ant-table-tbody
+  > tr
+  > td
+  > .ant-table-expanded-row-fixed
+  > .ant-table-wrapper:only-child
+  .ant-table {
   margin-block: 0 !important;
   margin-inline: 0 !important;
   padding: 0 !important;
@@ -360,14 +383,13 @@ span .ant-upload {
   border-bottom: none !important;
 }
 
-
 /* Dark Mode For Nested Table */
-.dark .custom-table-style .ant-table-thead>tr>th {
+.dark .custom-table-style .ant-table-thead > tr > th {
   background-color: #0f172a;
   border-bottom: 1px solid #9ca8c5;
 }
 
-.dark .custom-table-style .ant-table-tbody>tr>td {
+.dark .custom-table-style .ant-table-tbody > tr > td {
   background-color: #0f172a;
   border-bottom: 1px solid #adc6ff;
 }
@@ -377,7 +399,7 @@ span .ant-upload {
   border-radius: 4px;
 }
 
-.dark .ant-table-tbody>tr.ant-table-expanded-row {
+.dark .ant-table-tbody > tr.ant-table-expanded-row {
   background-color: #0f172a;
 }
 
@@ -397,4 +419,142 @@ span .ant-upload {
 .ant-tabs-tab-btn {
   font-weight: 700;
   font-size: 16px;
+}
+
+/* edit reservation modal */
+.custom-ant-modal {
+  --ant-modal-content-padding: 0px 0px 10px 0px;
+  --ant-modal-header-padding: 20px 0px 10px 20px;
+  --ant-modal-footer-padding: 0px 10px 10px 0px;
+  --ant-modal-header-margin: 0px 0px 0px 10px;
+  --ant-modal-header-bg: #f2f2f2;
+  /* --ant-modal-body-padding: 10px 20px 0px 20px; */
+} /* Top: 20px | Right: 0px | Bottom: 10px | Left: 0px */
+
+/* reservation booking detail */
+.custom-line {
+  margin: 8px 0px;
+}
+.line-height .css-var-_r_0_ {
+  --ant-line-height: 30px;
+}
+
+/* reservation booking details (payment summary card) */
+.payment-icon-box {
+  background-color: #fbffee;
+  border: 1px solid #ebeb5c;
+  border-radius: 6px;
+  padding: 4px;
+  display: flex;
+}
+
+.payment-card .ant-card-head {
+  border-left: 4px solid #ebeb5c;
+  padding-left: 12px;
+}
+
+/* reservation booking details (room card) */
+.room-icon-box {
+  background-color: #f4f4ff;
+  border: 1px solid #7779ef;
+  border-radius: 6px;
+  padding: 4px;
+  display: flex;
+}
+
+.room-card .ant-card-head {
+  border-left: 4px solid #5241ec;
+  padding-left: 12px;
+}
+
+/* reservation booking details (event facility card) */
+.event-icon-box {
+  background-color: #fdfbff;
+  border: 1px solid #b57cff;
+  border-radius: 6px;
+  padding: 4px;
+  display: flex;
+}
+
+.event-card .ant-card-head {
+  border-left: 4px solid #6738a4;
+  padding-left: 12px;
+}
+
+/* reservation booking details (Service Add On card) */
+.service-icon-box {
+  background-color: #ebfffc;
+  border: 1px solid #bafaf2;
+  border-radius: 6px;
+  padding: 4px;
+  display: flex;
+}
+
+.service-card .ant-card-head {
+  border-left: 4px solid #28e1c8;
+  padding-left: 12px;
+}
+
+/* reservation booking details (food and beverage card) */
+.food-icon-box {
+  background-color: #fff9f5;
+  border: 1px solid #e7a383;
+  border-radius: 6px;
+  padding: 4px;
+  display: flex;
+}
+
+.food-card .ant-card-head {
+  border-left: 4px solid #e58337;
+  padding-left: 12px;
+}
+
+/* reservation booking details (summary card) */
+.summary-icon-box {
+  background-color: #ffffff;
+  border: 1px solid #049423;
+  border-radius: 6px;
+  padding: 4px;
+  display: flex;
+}
+
+.summary-card .ant-card-head {
+  border-left: 4px solid #52c41a;
+  padding-left: 12px;
+}
+
+/* reservation booking details (booking status card) */
+.booking-icon-box {
+  background-color: #fcf5fb;
+  border: 1px solid #f49bd9;
+  border-radius: 6px;
+  padding: 4px;
+  display: flex;
+}
+
+.booking-status-card .ant-card-head {
+  border-left: 4px solid #e761d1;
+  padding-left: 12px;
+}
+
+/* reservation booking details (contact person card) */
+.contact-icon-box {
+  background-color: #fcfcfc;
+  border: 1px solid #737373;
+  border-radius: 6px;
+  padding: 4px;
+  display: flex;
+}
+
+.contact-card .ant-card-head {
+  border-left: 4px solid #403f41;
+  padding-left: 12px;
+}
+
+.ant-tabs .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: #4fa52c;
+}
+
+.css-var-_r_0_.ant-tabs-css-var {
+  --ant-tabs-ink-bar-color: #4fa52c;
 }

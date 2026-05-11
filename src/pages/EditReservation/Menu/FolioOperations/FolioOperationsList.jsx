@@ -5,7 +5,7 @@ import ReservationListHeader from "../../../../component/ReservationHeader/Reser
 import FolioOperationsButtons from "./Components/FolioOperationsButtons/FolioOperationsButtons";
 import FolioOperationsTable from "./Components/FolioOperationsTable";
 import FolioOperationsForm from "./Components/FolioOperationsForms/FolioOperationsForm";
-import { Card, Modal } from "antd";
+import { Card, Divider, Modal } from "antd";
 
 const FolioOperationsList = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -43,10 +43,13 @@ const FolioOperationsList = () => {
         onCancel={() => setModalOpen(false)}
         okText="Create Folio"
         closable={false}
+        centered
+        className="custom-ant-modal"
       >
-        <p className="mt-5 mb-5">
+        <p className="ml-5 mt-5">
           Do you want to create a new Folio for Reservation Id: 1234567890?
         </p>
+        <Divider />
       </Modal>
     </div>
   );

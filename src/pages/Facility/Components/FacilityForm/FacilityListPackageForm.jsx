@@ -39,7 +39,7 @@ const FacilityListPackageForm = ({
         size={550}
         title={
           <div className="flex justify-between items-center">
-            <span>"Facility Package Details"</span>
+            <span>Facility Package Details</span>
           </div>
         }
       >
@@ -47,7 +47,7 @@ const FacilityListPackageForm = ({
           form={form}
           layout="vertical"
           style={{ width: "100%" }}
-          //  onFinish={onFinish}
+        //  onFinish={onFinish}
         >
           <Form.Item
             label="Name"
@@ -164,7 +164,7 @@ const FacilityListPackageForm = ({
             name="remark"
             rules={[{ required: true, message: "Remark is Required" }]}
           >
-            <Input.TextArea readOnly={isView}/>
+            <Input.TextArea readOnly={isView} />
           </Form.Item>
         </Form>
       </Drawer>

@@ -1,45 +1,55 @@
 import React from "react";
-import { Card, Row, Col, Typography, Divider } from "antd";
+import { Card, Row, Typography, Divider, Space } from "antd";
+import { DollarCircleOutlined } from "@ant-design/icons";
 
-const { Text } = Typography;
+const { Text, Title } = Typography;
 
 const SummaryCard = () => {
+  const CustomTitle = (
+    <Space>
+      <div className="summary-icon-box">
+        <DollarCircleOutlined style={{ color: "#52c41a", fontSize: "20px" }} />
+      </div>
+      <Text>Summary</Text>
+    </Space>
+  );
+
   return (
-    <Card title="Summary">
-      <Row justify="space-between" style={{ marginBottom: 12 }}>
+    <Card title={CustomTitle} className="summary-card line-height">
+      <Row justify="space-between">
         <Text>Total Charge</Text>
-        <Text strong>250,000 MMK</Text>
+        <Text>250,000 MMK</Text>
       </Row>
 
-      <Row justify="space-between" style={{ marginBottom: 12 }}>
+      <Row justify="space-between">
         <Text>Tax(3%)</Text>
-        <Text strong>15,000 MMK</Text>
+        <Text>7,500 MMK</Text>
       </Row>
 
-      <Divider style={{ margin: "12px 0" }} />
+      <Divider className="custom-line" />
 
-      <Row justify="space-between" style={{ marginBottom: 12 }}>
+      <Row justify="space-between">
         <Text>Total Amount</Text>
-        <Text strong>265,000 MMK</Text>
+        <Text>257,500 MMK</Text>
       </Row>
 
-      <Row justify="space-between" style={{ marginBottom: 12 }}>
+      <Row justify="space-between">
         <Text>Payment</Text>
-        <Text strong>- 0 MMK</Text>
+        <Text>- 300,000 MMK</Text>
       </Row>
 
-      <Divider style={{ margin: "12px 0" }} />
+      <Divider className="custom-line" />
 
-      <Row justify="space-between" style={{ marginBottom: 12 }}>
+      <Row justify="space-between">
         <Text strong>Balance</Text>
-        <Text strong>265,000 MMK</Text>
+        <Text>42,500 MMK</Text>
       </Row>
 
-      <Divider style={{ margin: "12px 0" }} />
+      <Divider className="custom-line" />
 
       <Row justify="space-between">
         <Text>Total Credit</Text>
-        <Text strong>0 MMK</Text>
+        <Text>0 MMK</Text>
       </Row>
     </Card>
   );

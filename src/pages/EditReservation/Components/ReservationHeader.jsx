@@ -1,70 +1,91 @@
-import { Divider, Tag } from "antd";
+import React from "react";
+import { Divider, Tag, Spin } from "antd";
 import { FaChild } from "react-icons/fa";
 import { IoPeopleSharp } from "react-icons/io5";
+import { reservationDetails } from "../../../api/reservationList";
+import useApiQuery from "../../../hooks/useApiQuery";
+import { useLocation } from "react-router-dom";
+import dayjs from "dayjs";
 
 const ReservationHeader = () => {
+  const location = useLocation();
+  const uuid = location.state?.bookingId;
+
+  const { data, isLoading } = useApiQuery({
+    fetchQueryName: ["reservation-details", uuid],
+    fetchQueryFunction: reservationDetails,
+    params: { uuid },
+    options: { enabled: !!uuid },
+  });
+
+  if (isLoading) {
+    return <Spin className="w-full flex justify-center my-10" />;
+  }
+
   return (
     <div>
       <div className="flex items-center space-x-2">
         <div className="flex items-center gap-2">
-          <h1 className="text-lg font-bold">Liam Johnson Smith</h1>
-          <Tag color="warning" className="rounded-full px-3">
-            Pending
+          <h1 className="text-lg font-bold">{data?.guest?.name}</h1>
+          <Tag
+            color={
+              data?.reservationStatus?.code === "pending" ? "warning" : "blue"
+            }
+            className="rounded-full px-3"
+          >
+            {data?.reservationStatus?.name}
           </Tag>
         </div>
 
         <div className="flex justify-between space-x-10 mx-40">
           <div className="flex flex-col">
-            <span>Arrival</span>
+            <span className="text-gray-500 text-sm">Arrival</span>
             <span className="text-xs font-semibold mt-1">
-              11/11/2026
+              {dayjs(data?.actualCheckin).format("DD/MM/YYYY")}
               <span className="ml-2 border border-gray-300 text-gray-800 px-2 py-0.5 text-xs font-medium">
-                2:00 PM
+                {dayjs(data?.actualCheckin).format("h:mm A")}
               </span>
             </span>
           </div>
 
           <div className="flex flex-col">
-            <span>Departure</span>
+            <span className="text-gray-500 text-sm">Departure</span>
             <span className="text-xs mt-1 font-semibold">
-              13/11/2026
-              <span className="ml-2 border border-gray-300 text-gray-800 px-2 py-0.5  text-xs font-medium">
-                12:00 PM
+              {dayjs(data?.actualCheckout).format("DD/MM/YYYY")}
+              <span className="ml-2 border border-gray-300 text-gray-800 px-2 py-0.5 text-xs font-medium">
+                {dayjs(data?.actualCheckout).format("h:mm A")}
               </span>
             </span>
           </div>
 
           <div className="flex flex-col">
-            <span>Night</span>
-            <span className="text-xs mt-1 font-semibold ">2</span>
+            <span className="text-gray-500 text-sm">Night</span>
+            <span className="text-xs mt-1 font-semibold ">
+              {data?.totalNight}
+            </span>
           </div>
         </div>
       </div>
 
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "6px",
-          // marginLeft: "10px",
-        }}
-      >
-        <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
-          <IoPeopleSharp />
-          <h1 style={{ margin: 0, fontSize: "10px" }}>2</h1>
+      <div className="flex items-center gap-4 mt-2">
+        <div className="flex items-center gap-1.5">
+          <IoPeopleSharp className="text-gray-600" />
+          <span className="text-xs font-medium">{data?.adults} Adults</span>
         </div>
 
-        <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
-          <FaChild />
-          <h1 style={{ margin: 0, fontSize: "10px" }}>1</h1>
+        <div className="flex items-center gap-1.5">
+          <FaChild className="text-gray-600" />
+          <span className="text-xs font-medium">{data?.children} Children</span>
         </div>
 
-        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-          <span style={{ color: "#000000" }}>|</span>
-          <span style={{ fontWeight: "100", color: "#555" }}>1 Extra bed</span>
+        <div className="flex items-center gap-2">
+          <span className="text-gray-300">|</span>
+          <span className="text-xs text-gray-500">{data?.totalRooms} Room</span>
+          <span className="text-xs text-blue-500 bg-blue-50 px-2 py-0.5 rounded">
+            {data?.bookedVia?.name}
+          </span>
         </div>
       </div>
-      <Divider className="custom-divider" />
     </div>
   );
 };

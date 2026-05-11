@@ -1,105 +1,229 @@
-import { Button, Card, DatePicker, Select, TimePicker } from "antd";
+import { Button, Card, DatePicker, Form, Select, TimePicker } from "antd";
+import useApiQuery from "../../hooks/useApiQuery";
+import { queryClient } from "../../app/queryClient";
+import dayjs from "dayjs";
+import { availabilitySearch, reservationMeta } from "../../api/reservationSectionApi";
+import { useEffect, useState } from "react";
+import { useApiMutation } from "../../hooks/useApiMutation";
+
+const { RangePicker } = DatePicker;
 
 
 const ReservationForm = ({
-    onSearch,
-    afterRoomConfirm
+    form,
+    afterRoomConfirm,
+    availabilitySearchResults,
+    setReservationFormValues,
+    searchButtonDisable,
+    setSearchButtonDisable
 }) => {
+    const dateRange = Form.useWatch("filter", form);
 
+    const [selectedSourceType, setSelectedSourceType] = useState(null);
+
+    const { data: reservationMetas } = useApiQuery({
+        fetchQueryName: "reservation-meta",
+        fetchQueryFunction: reservationMeta,
+    });
+
+    const agenciesOptions = reservationMetas?.agencies.map((item) => ({
+        label: item.name,
+        value: item.uuid,
+    })) || [];
+
+    const companyOptions = reservationMetas?.companies.map((item) => ({
+        label: item.name,
+        value: item.uuid,
+    })) || [];
+
+
+    const initData = queryClient.getQueryData(["initData", "authenticated"]);
+    const checkInTime = initData?.property?.checkinTime;
+    const checkOutTime = initData?.property?.checkoutTime;
+
+    const checkInDate = dateRange?.[0]?.format("YYYY-MM-DD");
+    const checkOutDate = dateRange?.[1]?.format("YYYY-MM-DD");
+
+    const totalNights = checkInDate && checkOutDate ? dayjs(checkOutDate).diff(dayjs(checkInDate), "day") : 0;
+
+    const bookedViaOptions = initData?.statuses?.booked_via.map((item) => ({
+        label: item.name,
+        value: item.uuid,
+    })) || [];
+
+
+    const sourceTypeOptions = initData?.statuses?.source_type.map((item) => ({
+        label: item.name,
+        value: item.uuid,
+    })) || [];
+
+    const searchSubmit = (values) => {
+        setReservationFormValues(values);
+        const modifiedValues = {
+            ...values,
+            filter: {
+                checkinDate: values?.filter?.[0] ? dayjs(values?.filter?.[0]).format("YYYY-MM-DD") : null,
+                checkoutDate: values?.filter?.[1] ? dayjs(values?.filter?.[1]).format("YYYY-MM-DD") : null,
+            },
+            bookedVia: {
+                uuid: values.bookedVia,
+            },
+            sourceType: {
+                uuid: values.sourceType,
+            },
+            source: {
+                uuid: values.source,
+            },
+        };
+
+        availabilitySearchResults.mutate(modifiedValues);
+    };
+
+    const handleChange = (value, option) => {
+        setSelectedSourceType(option?.label);
+    };
+
+    // useEffect(() => {
+    //     if (bookedViaOptions?.length > 0 || sourceTypeOptions?.length > 0) {
+    //         form.setFieldsValue({
+    //             bookedVia: bookedViaOptions?.[0]?.value,
+    //             sourceType: sourceTypeOptions?.[0]?.value,
+    //         });
+    //     }
+    // }, [bookedViaOptions, sourceTypeOptions]);
+
+    useEffect(() => {
+        if (totalNights) {
+            form.setFieldsValue({
+                totalNight: totalNights
+            })
+        }
+    }, [totalNights])
+
+    // Range Picker
+    const disabledDate = current => {
+        return current < dayjs().startOf('day');
+    };
+    console.log(bookedViaOptions,"bookedViaOptions")
     return (
         <Card >
-            <h1 className="text-lg font-bold my-2">Create New Reservation</h1>
-            <div className="flex w-full gap-2 my-5">
-                <div className="flex-1">
-                    <p className="mb-2">Check-in Date</p>
-                    <DatePicker className="w-[100%] " />
-                </div>
+            <Form
+                // values={searchButtonDisable}
+                form={form}
+                onFinish={searchSubmit}
+                layout="vertical"
+                initialValues={{
+                    bookedVia: bookedViaOptions?.[0]?.value,
+                    sourceType: sourceTypeOptions?.[0]?.value,
+                    filter: [
+                        dayjs().hour(14).minute(0), // check-in
+                        dayjs().add(1, "day").hour(12).minute(0), // check-out
+                    ],
+                }}
+                onValuesChange={()=>{setSearchButtonDisable(false)}}
+            >
+                <h1 className="text-lg font-bold my-2">Create New Reservation</h1>
+                <div className="flex gap-6 justify-between">
+                    <div className="flex-3">
+                        <Form.Item name="filter" label="Check-in / Check-out Date" rules={[{ required: true, message: "Please Select Date" }]}>
+                            <RangePicker
+                                className="!w-full"
+                                format="YYYY-MM-DD HH:mm"
+                                disabledDate={disabledDate}
+                                onChange={(dates) => {
+                                    if (!dates) return;
 
-                <div className="flex-1">
-                    <p className="mb-2">Check-in Time</p>
-                    <TimePicker className="w-[100%] " />
-                </div>
+                                    const updatedDates = [
+                                        dates[0]
+                                            ?.hour(dayjs(checkInTime, "HH:mm:ss").hour())
+                                            ?.minute(dayjs(checkInTime, "HH:mm:ss").minute()),
 
-                <div className="mt-[30px] flex items-center">
-                    <div className="w-[61px] h-[32px] bg-gray-400 rounded-md flex flex-col justify-center items-center">
-                        <p className="text-xs leading-none">6</p>
-                        <p className="text-xs leading-none">Nights</p>
+                                        dates[1]
+                                            ?.hour(dayjs(checkOutTime, "HH:mm:ss").hour())
+                                            ?.minute(dayjs(checkOutTime, "HH:mm:ss").minute()),
+                                    ];
+
+                                    form.setFieldsValue({
+                                        filter: updatedDates,
+                                    });
+                                }}
+
+                            />
+                        </Form.Item>
+                    </div>
+
+                    <div className="flex items-center">
+                        <Form.Item name="totalNight" label="Nights" className="mb-0" rules={[{ required: true }]}>
+                            <div className="w-[61px] h-[32px] bg-[#fafafa] rounded-md flex flex-col justify-center items-center">
+
+                                <p className="text-xs leading-none">{totalNights}</p>
+                                <p className="text-xs leading-none">Nights</p>
+
+                            </div>
+                        </Form.Item>
+                    </div>
+
+                    <div className="flex-2">
+                        <Form.Item name="bookedVia" label="Booking Source" rules={[{ required: true, message: "Please Select Booking Source" }]}>
+                            <Select
+                                options={bookedViaOptions}
+                                className="w-[100%] "
+                                placeholder="Select Booked Via"
+                            >
+                            </Select>
+                        </Form.Item>
+                    </div>
+
+                    <div className="flex-2">
+                        <Form.Item name="sourceType" label="Source Type" rules={[{ required: true, message: "Please Select Source Type" }]}>
+                            <Select
+                                options={sourceTypeOptions}
+                                className="w-[100%]"
+                                onChange={handleChange}
+                                placeholder="Select Source Type"
+                            ></Select>
+                        </Form.Item>
+                    </div>
+
+                    <div className="flex-1">
+                        {
+                            (selectedSourceType === "Agency" ||
+                                selectedSourceType === "Company") && (
+
+                                <Form.Item name="source" label="Source Name" rules={[{ required: true, message: "Please Select Source Name" }]}>
+                                    <Select
+                                        options={selectedSourceType === "Agency" ? agenciesOptions : companyOptions}
+                                        className="w-[100%] "
+                                        placeholder="Select Source Name"
+
+                                    ></Select>
+                                </Form.Item>
+
+                            )
+                        }
+                    </div>
+
+                    <div className="mt-7">
+                        {
+                            afterRoomConfirm ?
+                                null
+                                :
+                                <Form.Item>
+                                    <Button 
+                                        type="primary" 
+                                        htmlType="submit" 
+                                        loading={availabilitySearchResults?.isPending}
+                                        disabled={searchButtonDisable} 
+                                        // onClick={()=>setSearchButtonDisable(true)}
+                                    >
+                                        Search
+                                    </Button>
+                                </Form.Item>
+                        }
                     </div>
                 </div>
 
-                <div className="flex-1">
-                    <p className="mb-2">Check-out Date</p>
-                    <DatePicker className="w-[100%] " />
-                </div>
-
-                <div className="flex-1">
-                    <p className="mb-2">Check-out Time</p>
-                    <TimePicker className="w-[100%] " />
-                </div>
-
-            </div>
-
-            <div className="flex w-full gap-2 my-5">
-                <div className="flex-1">
-                    <p className="mb-2">Adult</p>
-                    <Select
-                        defaultValue="1"
-                        options={[
-                            { value: "1", label: "1" },
-                            { value: "2", label: "2" },
-                        ]}
-                        className="w-[100%] "
-                    >
-
-                    </Select>
-                </div>
-
-                <div className="flex-1">
-                    <p className="mb-2">Child</p>
-                    <Select
-                        defaultValue="1"
-                        options={[
-                            { value: "1", label: "1" },
-                            { value: "2", label: "2" },
-                        ]}
-                        className="w-[100%] "
-                    ></Select>
-                </div>
-
-                <div className="flex-1">
-                    <p className="mb-2">Source Type</p>
-                    <Select
-                        defaultValue="direct"
-                        options={[
-                            { value: "direct", label: "Direct" },
-                            { value: "indirect", label: "Indirect" },
-                        ]}
-                        className="w-[100%] "
-                    ></Select>
-                </div>
-
-                <div className="flex-1">
-                    <p className="mb-2">Booking Source</p>
-                    <Select
-                        defaultValue="officalWebsite"
-                        options={[
-                            { value: "officalWebsite", label: "Offical Website" },
-                            { value: "agency", label: "Agency" },
-                        ]}
-                        className="w-[100%] "
-                    ></Select>
-                </div>
-
-            </div>
-
-            {
-                afterRoomConfirm ?
-                null 
-                :
-                <div className="flex justify-end">
-                    <Button type="primary" onClick={onSearch}>Search</Button>
-                </div>
-            }
+            </Form>
 
         </Card>
     )

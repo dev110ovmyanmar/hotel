@@ -55,15 +55,13 @@ const RateAndInventoryCalendar = () => {
         ratePlan: filters.ratePlan ? { uuid: filters.ratePlan } : null,
     }), [month, keyword, filters]);
 
-    console.log("Calendar Params:", calendarParams);
-
     const { data: apiData, isLoading, isFetching } = useApiQuery({
         fetchQueryName: 'rateInventoryCalendar',
         fetchQueryFunction: getCalendarData,
         params: calendarParams,
         options: {
-            staleTime: STALE_TIME,
-            gcTime: GC_TIME,
+            // staleTime: STALE_TIME,
+            // gcTime: GC_TIME,
             placeholderData: (prev) => prev,
         },
     });
@@ -73,8 +71,6 @@ const RateAndInventoryCalendar = () => {
         fetchQueryFunction: roomMeta,
     });
 
-    console.log("RoomMetaData", roomMetaData);
-
     const roomTypeOptions = roomMetaData?.room_types?.map((roomType) => ({
         value: roomType.uuid,
         label: roomType.name,
@@ -82,7 +78,7 @@ const RateAndInventoryCalendar = () => {
 
     const floorOptions = roomMetaData?.floors?.map((floor) => ({
         value: floor.uuid,
-        label: floor.floorNo,
+        label : <span>{floor?.name} ({floor?.floorNo})</span>
     }));
 
     const ratePlanOptions = roomMetaData?.rate_plans?.map((ratePlan) => ({
@@ -153,16 +149,12 @@ const RateAndInventoryCalendar = () => {
 
     // ── Effects ───────────────────────────────────────────────────────────────
 
-    // ── Effects ───────────────────────────────────────────────────────────────
-
     // Expand first 2 room types when data loads
     // useEffect(() => {
     //     if (roomTypes.length > 0) {
     //         setExpandedGroups(new Set(roomTypes.slice(0, 2).map((rt) => rt.id)));
     //     }
     // }, [roomTypes]);
-
-
 
     // Auto-scroll to today on initial load
     useEffect(() => {
@@ -611,11 +603,6 @@ const RateAndInventoryCalendar = () => {
                     disabled
                 />
                 <div className="flex-1 relative overflow-hidden">
-                    {/* <div className="absolute inset-0 z-[50] flex items-center justify-center bg-white/40 backdrop-blur-sm">
-                        <div className="flex flex-col items-center gap-3 bg-white rounded-2xl shadow-2xl px-10 py-8">
-                            <Loader />
-                        </div>
-                    </div> */}
                     <div className="absolute inset-0 z-[50] flex items-center justify-center bg-white/40 backdrop-blur-sm">
                         <div className="flex flex-col items-center gap-3 bg-white rounded-2xl shadow-2xl px-10 py-8">
                             <Loader />

@@ -90,7 +90,7 @@ const FoodBeverageOrder = ({ open, onClose, reservationId }) => {
         }
       >
         <Form layout="vertical" form={form} onFinish={handleSubmit}>
-          <Card size="small" title="Order Info" className="shadow-sm rounded">
+          <Card size="small" title="Order Info" className="shadow-sm rounded" headStyle={{ backgroundColor: "#fafafa" }}>
             <div className="grid grid-cols-2 gap-4">
               <Form.Item
                 label="Order Date"
@@ -162,6 +162,7 @@ const FoodBeverageOrder = ({ open, onClose, reservationId }) => {
                   key={order.id}
                   title={`Order ${index + 1}`}
                   className="shadow-sm rounded mb-4 border-l-4 border-blue-500"
+                  headStyle={{ backgroundColor: "#fafafa" }}
                   size="small"
                   extra={
                     orders.length > 1 && (

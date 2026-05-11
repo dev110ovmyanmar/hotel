@@ -27,6 +27,7 @@ import Status from "./../../../../component/Status/Status";
 import { adminMeta } from "../../../../api/adminApi";
 import { UserOutlined } from "@ant-design/icons";
 import Loader from "../../../../component/Loader/Loader";
+import { emailValidator } from "../../../../variables/constants";
 
 const AdminForm = ({
   mode,
@@ -47,7 +48,12 @@ const AdminForm = ({
   const isAdd = mode === "add";
 
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
-  const initDataStatus = initData?.statuses.status;
+  const statusOptions = initData?.statuses?.status
+    ?.filter((item) => item.code !== "blocked")
+    ?.map((status) => ({
+      value: status.uuid,
+      label: status.name,
+    }));
 
   const [adminDrawerOpen, setAdminDrawerOpen] = useState(false);
   const [selectedPermissions, setSelectedPermissions] = useState([]);
@@ -78,12 +84,10 @@ const AdminForm = ({
     },
   });
 
+
   const { data: adminMetaData } = useApiQuery({
     fetchQueryName: "admin-meta",
     fetchQueryFunction: adminMeta,
-    options: {
-      enabled: !!selectedData?.uuid,
-    },
   });
 
   const staffList = adminMetaData?.staffs?.map((staff) => ({
@@ -133,6 +137,7 @@ const AdminForm = ({
         ...data,
         role: data?.role?.uuid,
         staff: data?.staff?.uuid,
+        status: data?.status?.uuid,
       });
       setSelectedData(data);
     }
@@ -184,7 +189,7 @@ const AdminForm = ({
       const createValues = {
         ...values,
         role: { uuid: values.role },
-        status: values.status,
+        status: { uuid: values.status },
         staff: { uuid: values.staff },
       };
 
@@ -202,7 +207,7 @@ const AdminForm = ({
       const editValues = {
         ...values, // merge new form values
         role: { uuid: values.role },
-        status: values.status,
+        status: { uuid: values.status },
         staff: { uuid: values.staff },
         uuid: data?.uuid,
       };
@@ -228,21 +233,18 @@ const AdminForm = ({
     }
   }, [data]);
 
-  useEffect(() => {
-    if (isAdd) {
-      form.setFieldsValue({
-        status: {
-          uuid: initDataStatus?.find((item) => item?.code === "active")?.uuid,
-        },
-      });
-    }
-  }, [isAdd]);
-
   return (
     <div>
       <Drawer
         open={drawerOpen}
         onClose={handleClose}
+        afterOpenChange={(open) => {
+          if (open && isAdd) {
+            form.resetFields();
+            const defaultStatus = statusOptions?.find((s) => s.label === 'Active')?.value;
+            form.setFieldsValue({ status: defaultStatus });
+          }
+        }}
         size={550}
         title={
           <div className="flex justify-between items-center">
@@ -303,7 +305,9 @@ const AdminForm = ({
             <Form.Item
               label="Email"
               name="email"
-              rules={[{ required: true, message: "Admin Email is Required" }]}
+              rules={[{ required: true, message: "Admin Email is Required" }, {
+                validator: emailValidator
+              }]}
             >
               <Input readOnly={isView} placeholder="Enter Email Address" />
             </Form.Item>
@@ -336,20 +340,52 @@ const AdminForm = ({
               )}
             </Form.Item>
 
-            <Form.Item label="Staff" name="staff" className="flex-2">
-              <Select
-                showSearch={{
-                  filterOption: (input, option) =>
-                    (option?.label ?? "")
-                      .toLowerCase()
-                      .includes(input.toLowerCase()),
-                }}
-                options={staffList}
-                placeholder="Select Staff"
-              />
+            <Form.Item
+              label="Staff"
+              name="staff"
+              className="flex-2"
+              getValueProps={(value) => ({
+                value: isView
+                  ? staffList?.find((item) => item.value === value)?.label
+                  : value,
+              })}
+            >
+              {
+                isView ?
+                  <Input readOnly={isView} />
+                  :
+                  < Select
+                    showSearch={{
+                      filterOption: (input, option) =>
+                        (option?.label ?? "")
+                          .toLowerCase()
+                          .includes(input.toLowerCase()),
+                    }}
+                    options={staffList}
+                    placeholder="Select Staff"
+                  />
+              }
             </Form.Item>
 
-            <Status isView={isView} statusValue={initDataStatus} />
+            <Form.Item
+              label="Status"
+              name="status"
+              rules={[{ required: true, message: "Status is required" }]}
+              getValueProps={(value) => ({
+                value: isView
+                  ? initDataStatus.find((item) => item.value === value)?.label
+                  : value,
+              })}
+            >
+              {isView ? (
+                <Input readOnly={isView} />
+              ) : (
+                <Select
+                  options={statusOptions}
+                  placeholder="Select Status"
+                />
+              )}
+            </Form.Item>
 
             {isEdit && (
               <div className="mt-6">
@@ -381,7 +417,7 @@ const AdminForm = ({
                 )}
 
                 {!hasPermission(PERMISSIONS.ADMIN_PERMISSION) ||
-                changesAllowList?.length <= 0 ? null : (
+                  changesAllowList?.length <= 0 ? null : (
                   <div
                     style={{
                       background: "#f5f5f5",
@@ -447,7 +483,7 @@ const AdminForm = ({
           </div>
         </Modal>
       </Drawer>
-    </div>
+    </div >
   );
 };
 

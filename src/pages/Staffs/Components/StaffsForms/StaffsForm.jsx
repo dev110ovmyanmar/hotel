@@ -17,7 +17,7 @@ import FormButton from "../../../../component/FormButtons/FormButtons";
 import { createStaff, editStaff, staffDetails } from "../../../../api/staffApi";
 import dayjs from "dayjs";
 import { getFormattedDate } from "../../../../utils";
-import Status from "../../../../component/Status/Status";
+// import Status from "../../../../component/Status/Status";
 import Loader from "../../../../component/Loader/Loader";
 import { PERMISSIONS } from "../../../../variables/permission";
 import usePermission from "../../../../hooks/usePermission";
@@ -45,6 +45,13 @@ const StaffsForm = ({
   const [selectedRegion, setSelectedRegion] = useState(null);
 
   const [isCurrent, setIsCurrent] = useState(false);
+
+  const statuses = initData?.statuses?.status
+    ?.filter((item) => item.code !== "blocked")
+    ?.map((status) => ({
+      value: status.uuid,
+      label: status.name,
+    }));
 
   const departments = initData?.departments?.map((department) => ({
     value: department.uuid,
@@ -101,7 +108,10 @@ const StaffsForm = ({
   });
 
   useEffect(() => {
-    if (!isAdd && data) {
+    if (isAdd) {
+      form.resetFields();
+      form.setFieldValue("status", statuses?.find((item) => item.label === "Active")?.value);
+    } else if (!isAdd && data) {
       const nrcSrNo = data?.nrc?.srNo || null;
       const nrcTownship = data?.nrc?.township || null;
       const nrcType = data?.nrc?.type || null;
@@ -117,11 +127,12 @@ const StaffsForm = ({
         nrcNumber: nrcNumber,
         joinedAt: data?.joinedAt ? dayjs(data.joinedAt) : null,
         endedAt: data?.endedAt ? dayjs(data.endedAt) : null,
+        status: data?.status?.uuid,
       });
       setSelectedRegion(nrcSrNo);
       setSelectedData(data);
     }
-  }, [data]);
+  }, [data, isAdd]);
 
   const handleClose = () => {
     setDrawerOpen(false);
@@ -153,6 +164,7 @@ const StaffsForm = ({
         department: { uuid: values.department },
         gender: { uuid: values.genderUuid },
         citizenship: { uuid: values.nrc_type },
+        status: { uuid: values.status },
       };
 
       createStaffs.mutate(createValues, {
@@ -172,6 +184,7 @@ const StaffsForm = ({
         department: { uuid: values.department },
         gender: { uuid: values.genderUuid },
         citizenship: { uuid: values.nrc_type },
+        status: { uuid: values.status },
         uuid: data?.uuid,
       };
 
@@ -189,6 +202,13 @@ const StaffsForm = ({
     <>
       <Drawer
         open={drawerOpen}
+        afterOpenChange={(open) => {
+          if (open && isAdd) {
+            form.resetFields();
+            const defaultStatus = statuses?.find((s) => s.label.toLowerCase() === 'active')?.value;
+            form.setFieldsValue({ status: defaultStatus });
+          }
+        }}
         onClose={handleClose}
         size={600}
         title={
@@ -344,7 +364,7 @@ const StaffsForm = ({
                     getValueProps={(value) => ({
                       value: isView
                         ? citizenship.find((item) => item.value === value)
-                            ?.label
+                          ?.label
                         : value,
                     })}
                   >
@@ -480,7 +500,26 @@ const StaffsForm = ({
               )
             )}
 
-            <Status isView={isView} />
+            <Form.Item
+              label="Status"
+              name="status"
+              rules={[{ required: true, message: "Status is required" }]}
+              getValueProps={(value) => ({
+                value: isView
+                  ? statuses.find((item) => item.value === value)?.label
+                  : value,
+              })}
+            >
+              {isView ? (
+                <Input readOnly={isView} />
+              ) : (
+                <Select
+                  options={statuses}
+                  placeholder="Select Status"
+                />
+              )}
+            </Form.Item>
+
           </Form>
         )}
       </Drawer>
