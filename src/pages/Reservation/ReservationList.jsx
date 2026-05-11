@@ -13,8 +13,22 @@ import Toast from "../../component/Toast/Toast";
 import dayjs from "dayjs";
 import { upsertGuest } from "../../api/guestApi";
 import store from "../../app/store";
+import { queryClient } from "../../app/queryClient";
 
 const ReservationList = () => {
+
+  const initData = queryClient.getQueryData(["initData", "authenticated"]);
+
+  const bookedViaOptions = initData?.statuses?.booked_via.map((item) => ({
+    label: item.name,
+    value: item.uuid,
+  })) || [];
+
+  const sourceTypeOptions = initData?.statuses?.source_type.map((item) => ({
+    label: item.name,
+    value: item.uuid,
+  })) || [];
+
   const navigate = useNavigate();
   const [form] = Form.useForm();
   const [roomBookOpen, setRoomBookOpen] = useState(false);
@@ -34,6 +48,11 @@ const ReservationList = () => {
 
   const [clickCreateContact, setClickCreateContact] = useState(false);
   const [createContactFinish, setCreateContactFinish] = useState(false);
+
+  const defaultFilter = [
+    dayjs().hour(14).minute(0),
+    dayjs().add(1, "day").hour(12).minute(0)
+  ];
 
   const availabilitySearchs = useApiMutation({
     mutationFn: availabilitySearch,
@@ -324,7 +343,14 @@ const ReservationList = () => {
             setReservationFormValues(null);
             setSearchButtonDisable(false);
             // setSelectedSourceType(null);
-            form.resetFields();  
+            form.setFieldsValue({
+              filter: [
+                dayjs().hour(14).minute(0),
+                dayjs().add(1, "day").hour(12).minute(0),
+              ],
+              bookedVia: bookedViaOptions?.[0]?.value,
+              sourceType: sourceTypeOptions?.[0]?.value,
+            });
           }}
         >
           <ReloadOutlined className="!text-blue-500" />
@@ -339,7 +365,9 @@ const ReservationList = () => {
         form={form}
         searchButtonDisable={searchButtonDisable}
         setSearchButtonDisable={setSearchButtonDisable}
-
+        defaultFilter={defaultFilter}
+        bookedViaOptions={bookedViaOptions}
+        sourceTypeOptions={sourceTypeOptions}
       />
 
       {roomConfirm ? (
