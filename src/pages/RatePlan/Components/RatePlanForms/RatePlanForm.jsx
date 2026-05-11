@@ -113,10 +113,7 @@ const RatePlanForm = ({
   });
 
   useEffect(() => {
-    if (isAdd && !ratePlanList) {
-      form.resetFields();
-      form.setFieldsValue({ isDefault: true });
-    } else if (!isAdd && data) {
+    if (!isAdd && data) {
       const selectedChannels = Object.keys(data.channelVisibility || {}).filter(
         (key) => data.channelVisibility[key],
       );
@@ -140,7 +137,7 @@ const RatePlanForm = ({
         description: data?.description,
       });
     }
-  }, [data, isAdd, ratePlanList]);
+  }, [data]);
 
   const isDisableDefault = ratePlanList ? false : true;
 
@@ -227,6 +224,15 @@ const RatePlanForm = ({
         open={drawerOpen}
         onClose={handleClose}
         size={550}
+        afterOpenChange={(open) => {
+          if (open && isAdd) {
+            form.resetFields();
+            form.setFieldValue("status", statuses?.find((item) => item.label === "Active")?.value);
+            if (!ratePlanList) {
+              form.setFieldValue("isDefault", true);
+            }
+          }
+        }}
         title={
           <div className="flex justify-between items-center">
             <span>
@@ -267,7 +273,7 @@ const RatePlanForm = ({
             layout="vertical"
             style={{ width: "100%" }}
             onFinish={onFinish}
-            // disabled={isView}
+          // disabled={isView}
           >
             <Row gutter={24}>
               <Col span={16}>

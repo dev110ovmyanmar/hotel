@@ -8,9 +8,11 @@ import GuestInformationTable from "./GuestInformationTable";
 import ReservationForm from "./ReservationForm";
 import { useNavigate } from "react-router-dom";
 import { useApiMutation } from "../../hooks/useApiMutation";
-import { availabilitySearch, rateQuote } from "../../api/availabilitySearchApi";
+import { availabilitySearch, createReservation, rateQuote } from "../../api/reservationSectionApi";
 import Toast from "../../component/Toast/Toast";
 import dayjs from "dayjs";
+import { upsertGuest } from "../../api/guestApi";
+import store from "../../app/store";
 
 const ReservationList = () => {
   const navigate = useNavigate();
@@ -20,6 +22,7 @@ const ReservationList = () => {
   const [roomConfirm, setRoomConfirm] = useState(false);
   const [guestInfoTable, setGuestInfoTable] = useState(false);
   const [searchReservation, setSearchReservation] = useState(false);
+  const [searchButtonDisable, setSearchButtonDisable] = useState(false);
 
   const [storeData, setStoreData] = useState(null);
 
@@ -27,17 +30,19 @@ const ReservationList = () => {
   const [selectedRooms, setSelectedRooms] = useState({});
   const [roomBookValues, setRoomBookValues] = useState();
   const [reservationFormValues, setReservationFormValues] = useState(null);
+  const [contactPersonInfo, setContactPersonInfo] = useState();
 
   const [clickCreateContact, setClickCreateContact] = useState(false);
+  const [createContactFinish, setCreateContactFinish] = useState(false);
 
   const availabilitySearchs = useApiMutation({
     mutationFn: availabilitySearch,
     invalidateKeys: [["availability-search"]],
     options: {
       onSuccess: (values) => {
-        Toast.success("Availability search completed successfully");
         setStoreData(values);
         setSearchReservation(true);
+        setSearchButtonDisable(true)
       },
     },
   });
@@ -48,9 +53,32 @@ const ReservationList = () => {
     invalidateKeys: [["rate-quote"]],
     options: {
       onSuccess: (values) => {
-        Toast.success("Rate quote obtained successfully");
         setRoomBookOpen(true);
         setRoomBookValues(values);
+      },
+    },
+  });
+
+  const upsertMutation = useApiMutation({
+    mutationFn: upsertGuest,
+    // invalidateKeys: [["guests"]],
+    options: {
+      onSuccess: (values) => {
+        Toast.success("Create Contact Preson successfully");
+        setGuestDrawerOpen(false);
+        setGuestInfoTable(true);
+        setClickCreateContact(true);
+        setContactPersonInfo(values)
+      },
+    },
+  });
+
+  const submitReservationMutate = useApiMutation({
+    mutationFn: createReservation,
+    options: {
+      onSuccess: (values) => {
+        Toast.success(values);
+        navigate("/reservation/inquiry/")
       },
     },
   });
@@ -75,7 +103,7 @@ const ReservationList = () => {
 
         acc[roomTypeUuid].ratePlans.push({
           id: item.ratePlans.id,
-          subTotalRooms: item.selectedRoomCount,
+          totalRooms: item.selectedRoomCount,
         });
 
         return acc;
@@ -105,6 +133,54 @@ const ReservationList = () => {
 
     rateQuotes.mutate(payload);
   };
+
+  const submitReservation = () => {
+
+    const rooms = roomBookValues?.rooms.map((room) => ({
+      roomType: {
+        uuid: room.roomType.uuid
+      },
+
+      subTotal: room.subTotal,
+      taxTotal: room.taxTotal,
+      discountTotal: room.discountTotal,
+      grandTotal: room.grandTotal,
+
+      ratePlans: room.ratePlans.map((rate) => ({
+        id: rate.id,
+        totalRooms: rate.totalRooms,
+        totalPrice: rate.totalPrice
+      }))
+    }));
+
+    const payload = {
+
+      filter: {
+        checkinDate: dayjs(reservationFormValues?.filter?.[0]).format("YYYY-MM-DD"),
+        checkoutDate: dayjs(reservationFormValues?.filter?.[1]).format("YYYY-MM-DD"),
+      },
+      bookedVia: {
+        uuid: reservationFormValues?.bookedVia,
+      },
+      sourceType: {
+        uuid: reservationFormValues?.sourceType,
+      },
+      source: {
+        uuid: reservationFormValues?.source,
+      },
+      totalNight: reservationFormValues?.totalNight,
+      guest: {
+        uuid: contactPersonInfo?.uuid
+      },
+      subTotal: roomBookValues?.subTotal,
+      taxTotal: roomBookValues?.taxTotal,
+      discountTotal: roomBookValues?.discountTotal,
+      grandTotal: roomBookValues?.grandTotal,
+      rooms
+
+    };
+    submitReservationMutate.mutate(payload);
+  }
 
 
   //total booked rooms per roomType
@@ -165,7 +241,7 @@ const ReservationList = () => {
       align: "center",
       render: (value) => (
         <div className="mb-2">
-          <p>{value?.minPrice.toLocaleString()} MMK</p>
+          <p>{value?.minPrice?.toLocaleString()} MMK</p>
           <p className="text-gray-500 text-sm">{value?.name}</p>
         </div>
       ),
@@ -219,6 +295,7 @@ const ReservationList = () => {
     },
   ];
 
+
   const dataSource = storeData?.rooms?.flatMap((room) =>
     room.ratePlans.map((rate, index) => ({
       key: `${room.roomType.id}-${rate.id}-${index}`,
@@ -245,12 +322,13 @@ const ReservationList = () => {
             setSelectedData([]);
             setSelectedRooms({});
             setReservationFormValues(null);
-            form.resetFields()
-            
+            setSearchButtonDisable(false);
+            // setSelectedSourceType(null);
+            form.resetFields();  
           }}
         >
           <ReloadOutlined className="!text-blue-500" />
-          <span className="!text-blue-500">Refresh</span>
+          <span className="!text-blue-500" >Refresh</span>
         </Button>
       </div>
 
@@ -258,8 +336,9 @@ const ReservationList = () => {
         afterRoomConfirm={roomConfirm}
         availabilitySearchResults={availabilitySearchs}
         setReservationFormValues={setReservationFormValues}
-        // reservationFormField={reservationFormField}
         form={form}
+        searchButtonDisable={searchButtonDisable}
+        setSearchButtonDisable={setSearchButtonDisable}
 
       />
 
@@ -273,7 +352,7 @@ const ReservationList = () => {
               </div>
 
               <div className="flex">
-                <MdPeopleOutline fontSize={19} className="mt-1"/>
+                <MdPeopleOutline fontSize={19} className="mt-1" />
                 <span className="text-md ml-1 mt-1">{i.adults}</span>
 
                 {/* <MdOutlineEscalatorWarning className="ml-3" />
@@ -289,20 +368,23 @@ const ReservationList = () => {
                 i?.ratePlans?.map((rate) =>
                   <div className="flex justify-between">
                     <p>{rate?.name}</p>
-                    <p className="font-bold">{rate?.subTotalPrice.toLocaleString()} MMK</p>
+                    <p className="font-bold">{rate?.totalPrice?.toLocaleString()} MMK</p>
                   </div>
                 )
               }
             </Card>
           ))}
 
-          <Card>
+          <Card className="!my-3">
             <h1 className="text-lg font-bold my-2">Contact Person</h1>
 
             {guestInfoTable && (
               <GuestInformationTable
                 guestInfoTable={guestInfoTable}
                 setGuestInfoTable={setGuestInfoTable}
+                contactPersonInfo={contactPersonInfo}
+                setContactPersonInfo={setContactPersonInfo}
+
               />
             )}
 
@@ -317,15 +399,18 @@ const ReservationList = () => {
             )}
           </Card>
 
-          <div className="flex justify-end">
-            <Button
-              className="!my-5 !px-10"
-              type="primary"
-              onClick={() => navigate("/reservation/inquiry/")}
-            >
-              Submit
-            </Button>
-          </div>
+          {
+            createContactFinish &&
+            <div className="flex justify-end">
+              <Button
+                className="!my-5 !px-10"
+                type="primary"
+                onClick={submitReservation}
+              >
+                Submit
+              </Button>
+            </div>
+          }
         </>
       ) : searchReservation ? (
         <Card className="!my-3">
@@ -355,7 +440,7 @@ const ReservationList = () => {
           </div>
 
           <div className="flex justify-end">
-            <Button type="primary" onClick={viewRoomBookedMutate}>
+            <Button type="primary" onClick={viewRoomBookedMutate} loading={rateQuotes?.isPending}>
               View Room Booked
             </Button>
           </div>
@@ -369,6 +454,9 @@ const ReservationList = () => {
         setGuestInfoTable={setGuestInfoTable}
         clickCreateContact={clickCreateContact}
         setClickCreateContact={setClickCreateContact}
+        upsertMutation={upsertMutation}
+        createContactFinish={createContactFinish}
+        setCreateContactFinish={setCreateContactFinish}
       />
 
       <RoomBookedDrawer
@@ -380,6 +468,7 @@ const ReservationList = () => {
         setSelectedData={setSelectedData}
         roomBookValues={roomBookValues}
         setRoomBookValues={setRoomBookValues}
+        rateQuotes={rateQuotes}
 
       />
     </div>

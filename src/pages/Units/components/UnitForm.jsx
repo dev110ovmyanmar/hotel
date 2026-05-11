@@ -11,8 +11,6 @@ import { PERMISSIONS } from "../../../variables/permission";
 
 const UnitForm = ({
   mode,
-  units = [],
-  loading = false,
   switchToEdit,
   page,
   setPage,
@@ -46,7 +44,7 @@ const UnitForm = ({
     } else if (data) {
       form.setFieldsValue({
         ...data,
-        statusUuid: data.status?.uuid
+        status: data.status?.uuid
       });
     }
   }, [data, mode]);
@@ -64,21 +62,11 @@ const UnitForm = ({
 
 
   const onFinish = (values) => {
-    console.log('Form values:', values);
-
-    // Validate required fields
-    if (!values.statusUuid) {
-      Toast.error('Please select a status');
-      return;
-    }
-
     const basePayload = {
       name: values.name,
       shortName: values.shortName,
-      status: { uuid: values.statusUuid }
+      status: { uuid: values.status }
     };
-
-    console.log('Final payload:', basePayload);
 
     if (isAdd) {
       createUnit.mutate(basePayload, {
@@ -87,10 +75,6 @@ const UnitForm = ({
           setDrawerOpen(false);
           Toast.success("Unit Created Successfully!");
         },
-        onError: (error) => {
-          console.error('Create error:', error);
-          Toast.error(error?.response?.data?.error?.text || 'Failed to create unit');
-        }
       });
     }
     if (isEdit) {
@@ -102,20 +86,10 @@ const UnitForm = ({
         onSuccess: () => {
           setDrawerOpen(false);
           Toast.success("Unit Updated Successfully!");
-        },
-        onError: (error) => {
-          console.error('Update error:', error);
-          Toast.error(error?.response?.data?.error?.text || 'Failed to update unit');
         }
       });
     }
   }
-
-
-  // Use watch to get the value in real-time for the read-only display
-  const currentStatusUuid = Form.useWatch("statusUuid", form);
-  const getStatusLabel = (val) =>
-    statusOptions?.find((s) => s.value === val)?.label || "-";
 
   const onClose = () => {
     form.resetFields();
@@ -150,9 +124,15 @@ const UnitForm = ({
         </div>
       }
       size={550}
+      afterOpenChange={(open) => {
+        if (open && isAdd) {
+          form.resetFields();
+          const defaultStatus = statusOptions?.find((s) => s.label.toLowerCase() === 'active')?.value;
+          form.setFieldsValue({ status: defaultStatus });
+        }
+      }}
       onClose={onClose}
       open={drawerOpen}
-      destroyOnClose
     >
       {isLoading ? (
         <div className="flex items-center justify-center h-full min-h-[300px]">
@@ -179,21 +159,15 @@ const UnitForm = ({
           </Form.Item>
 
           <Form.Item
-            name="statusUuid"
+            name="status"
             label="Status"
             rules={[{ required: true, message: "Status is required" }]}
           >
-            {/* {isView ? (
-              <div className="border border-gray-200 rounded-lg px-4 h-11 flex items-center bg-gray-50 text-gray-600">
-                {getStatusLabel(currentStatusUuid)}
-              </div>
-            ) : ( */}
             <Select
               options={statusOptions || []}
               placeholder="Select Status"
               open={isView ? false : undefined}
             />
-            {/* )} */}
           </Form.Item>
         </Form>
       )}

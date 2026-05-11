@@ -6,6 +6,7 @@ import SupplierTable from "./Components/SupplierTable";
 import SupplierForm from "./components/SupplierForm";
 import { LIMITS } from "../../variables/constants";
 import { PERMISSIONS } from "../../variables/permission";
+import { queryClient } from "../../app/queryClient";
 
 const SupplierListing = () => {
     const [selectedRow, setSelectedRow] = useState(null);
@@ -27,6 +28,16 @@ const SupplierListing = () => {
             keyword,
         },
     });
+
+    const initData = queryClient.getQueryData(["initData", "authenticated"]);
+
+    const statusOptions =
+        initData?.statuses?.status
+            ?.filter((item) => item.name.toLowerCase() !== "blocked")
+            ?.map((item) => ({
+                value: item.uuid,
+                label: item.name,
+            })) || [];
 
     const suppliers = data?.data || [];
 
@@ -89,6 +100,7 @@ const SupplierListing = () => {
                 setSelectedRow={setSelectedRow}
                 setPage={setPage}
                 page={data?.pagination?.currentPage}
+                statusOptions={statusOptions}
             />
         </div>
     );

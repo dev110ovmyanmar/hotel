@@ -25,4 +25,12 @@ export const rateQuote = async (params) => {
     return data.response;
 };
 
+export const createReservation = async (params) => {
+    const {data} = await apiClient.post(
+        `/reservation/create`,
+        params
+    );
+    return data.response;
+}
+
 
