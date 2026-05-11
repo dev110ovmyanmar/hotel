@@ -82,8 +82,8 @@ const AgencyForm = ({
         },
       });
     }
-
-    if (isEdit && data) {
+    const AgencyFormDataView = isView || isEdit;
+    if (AgencyFormDataView && data) {
       form.setFieldsValue({
         ...data,
         status: {
