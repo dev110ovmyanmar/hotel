@@ -1,5 +1,5 @@
 import React from "react";
-import { Row, Col, Table, Card, Tag } from "antd";
+import { Row, Col, Table, Card, Tag, Spin } from "antd";
 import ReservationHeader from "../EditReservation/Components/ReservationHeader";
 import ReservationMenu from "../EditReservation/Components/ReservationMenu";
 import ReservationListHeader from "../../component/ReservationHeader/ReservationListHeader";
@@ -8,20 +8,31 @@ import EventFacility from "./Components/BookingDetailsTables/EventFacility";
 import ServiceAddOn from "./Components/BookingDetailsTables/ServiceAddOn";
 import FoodBeverageOrder from "./Components/BookingDetailsTables/FoodBeverageOrder";
 import SummaryCard from "./Components/BookingDetailsTables/SummaryCard";
-import ContactPersonTable from "./Components/BookingDetailsTables/ContactPersonTable";
 import RoomStatusTable from "./Components/BookingDetailsTables/RoomStatusTable";
 import BookingDetailButton from "./Components/BookingDetailButton/BookingDetailButton";
 import BookingStatusCard from "./Components/BookingDetailsTables/BookingStatusCard";
+import ContactPersonCard from "./Components/BookingDetailsTables/ContactPersonTable";
+import { useLocation } from "react-router-dom";
+import useApiQuery from "../../hooks/useApiQuery";
+import { reservationDetails } from "../../api/reservationList";
 
 const BookingDetailList = () => {
+  const location = useLocation();
+  const uuid = location.state?.bookingId;
+
+  const { data, isLoading } = useApiQuery({
+    fetchQueryName: ["reservation-details", uuid],
+    fetchQueryFunction: reservationDetails,
+    params: { uuid },
+    options: { enabled: !!uuid },
+  });
+
+  if (isLoading) {
+    return <Spin className="w-full flex justify-center my-10" />;
+  }
   const columns = [
     { title: "Name", dataIndex: "name", key: "name" },
     { title: "Age", dataIndex: "age", key: "age" },
-  ];
-
-  const data = [
-    { key: "1", name: "John", age: 30 },
-    { key: "2", name: "Jane", age: 25 },
   ];
 
   return (
@@ -37,36 +48,22 @@ const BookingDetailList = () => {
         <Col span={16}>
           <Row gutter={[0, 16]}>
             <Col span={24}>
-              <Card title="Payment Summary">
-                {/* <Table columns={columns} dataSource={data} pagination={false} /> */}
-                <PaymentSummaryTable />
-              </Card>
+              <PaymentSummaryTable data={data?.data || []} />
             </Col>
 
             <Col span={24}>
-              <Card
-                title="Room Status"
-                extra={<Tag color="blue">Reserved - 2 Rooms</Tag>}
-              >
-                <RoomStatusTable />
-              </Card>
+              <RoomStatusTable />
             </Col>
 
             <Col span={24}>
-              <Card title="Event Facility">
-                <EventFacility />
-              </Card>
+              <EventFacility />
             </Col>
             <Col span={24}>
-              <Card title="Service Add On">
-                <ServiceAddOn />
-              </Card>
+              <ServiceAddOn />
             </Col>
 
             <Col span={24}>
-              <Card title="Food Beverage Order">
-                <FoodBeverageOrder />
-              </Card>
+              <FoodBeverageOrder />
             </Col>
           </Row>
         </Col>
@@ -79,22 +76,14 @@ const BookingDetailList = () => {
             </Col>
 
             <Col span={24}>
-              <Card
-                title="Booking Status"
-                extra={<Tag color="warning">Pending</Tag>}
-              >
-                <BookingStatusCard />
-              </Card>
+              <BookingStatusCard />
             </Col>
 
             <Col span={24}>
-              <Card title="Contact Person">
-                <ContactPersonTable />
-              </Card>
+              <ContactPersonCard />
             </Col>
           </Row>
         </Col>
-        <Col span={8}></Col>
       </Row>
     </div>
   );

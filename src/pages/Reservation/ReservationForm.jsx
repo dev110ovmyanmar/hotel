@@ -15,9 +15,14 @@ const ReservationForm = ({
     availabilitySearchResults,
     setReservationFormValues,
     searchButtonDisable,
-    setSearchButtonDisable
+    setSearchButtonDisable,
+    defaultFilter,
+    bookedViaOptions,
+    sourceTypeOptions,
+
 }) => {
     const dateRange = Form.useWatch("filter", form);
+    const sourceTypeValue = Form.useWatch("sourceType", form); // Added this line to watch sourceType
 
     const [selectedSourceType, setSelectedSourceType] = useState(null);
 
@@ -41,21 +46,16 @@ const ReservationForm = ({
     const checkInTime = initData?.property?.checkinTime;
     const checkOutTime = initData?.property?.checkoutTime;
 
-    const checkInDate = dateRange?.[0]?.format("YYYY-MM-DD");
-    const checkOutDate = dateRange?.[1]?.format("YYYY-MM-DD");
+    const checkInDate = dateRange?.[0];
+    const checkOutDate = dateRange?.[1];
 
-    const totalNights = checkInDate && checkOutDate ? dayjs(checkOutDate).diff(dayjs(checkInDate), "day") : 0;
-
-    const bookedViaOptions = initData?.statuses?.booked_via.map((item) => ({
-        label: item.name,
-        value: item.uuid,
-    })) || [];
-
-
-    const sourceTypeOptions = initData?.statuses?.source_type.map((item) => ({
-        label: item.name,
-        value: item.uuid,
-    })) || [];
+    const totalNights =
+        checkInDate && checkOutDate
+            ? checkOutDate.startOf("day").diff(
+                checkInDate.startOf("day"),
+                "day"
+            )
+            : 0;
 
     const searchSubmit = (values) => {
         setReservationFormValues(values);
@@ -74,6 +74,7 @@ const ReservationForm = ({
             source: {
                 uuid: values.source,
             },
+            totalNight: totalNights
         };
 
         availabilitySearchResults.mutate(modifiedValues);
@@ -83,14 +84,34 @@ const ReservationForm = ({
         setSelectedSourceType(option?.label);
     };
 
-    // useEffect(() => {
-    //     if (bookedViaOptions?.length > 0 || sourceTypeOptions?.length > 0) {
-    //         form.setFieldsValue({
-    //             bookedVia: bookedViaOptions?.[0]?.value,
-    //             sourceType: sourceTypeOptions?.[0]?.value,
-    //         });
-    //     }
-    // }, [bookedViaOptions, sourceTypeOptions]);
+    // Added this useEffect to update selectedSourceType when sourceTypeValue changes
+    useEffect(() => {
+        if (sourceTypeValue) {
+            const selectedOption = sourceTypeOptions.find(option => option.value === sourceTypeValue);
+            if (selectedOption) {
+                setSelectedSourceType(selectedOption.label);
+            }
+        } else {
+            setSelectedSourceType(null);
+        }
+    }, [sourceTypeValue, sourceTypeOptions]);
+
+    useEffect(() => {
+        const currentValues = form.getFieldsValue();
+
+        if (
+            bookedViaOptions?.length > 0 &&
+            sourceTypeOptions?.length > 0 &&
+            !currentValues.bookedVia &&
+            !currentValues.sourceType
+        ) {
+            form.setFieldsValue({
+                filter: defaultFilter,
+                bookedVia: bookedViaOptions[0]?.value,
+                sourceType: sourceTypeOptions[0]?.value,
+            });
+        }
+    }, [bookedViaOptions, sourceTypeOptions, form, defaultFilter]);
 
     useEffect(() => {
         if (totalNights) {
@@ -98,13 +119,13 @@ const ReservationForm = ({
                 totalNight: totalNights
             })
         }
-    }, [totalNights])
+    }, [totalNights,form])
 
     // Range Picker
     const disabledDate = current => {
         return current < dayjs().startOf('day');
     };
-    console.log(bookedViaOptions,"bookedViaOptions")
+    console.log(bookedViaOptions, "bookedViaOptions")
     return (
         <Card >
             <Form
@@ -112,15 +133,12 @@ const ReservationForm = ({
                 form={form}
                 onFinish={searchSubmit}
                 layout="vertical"
-                initialValues={{
-                    bookedVia: bookedViaOptions?.[0]?.value,
-                    sourceType: sourceTypeOptions?.[0]?.value,
-                    filter: [
-                        dayjs().hour(14).minute(0), // check-in
-                        dayjs().add(1, "day").hour(12).minute(0), // check-out
-                    ],
-                }}
-                onValuesChange={()=>{setSearchButtonDisable(false)}}
+                // initialValues={{
+                //     bookedVia: bookedViaOptions?.[0]?.value,
+                //     sourceType: sourceTypeOptions?.[0]?.value,
+
+                // }}
+                onValuesChange={() => { setSearchButtonDisable(false) }}
             >
                 <h1 className="text-lg font-bold my-2">Create New Reservation</h1>
                 <div className="flex gap-6 justify-between">
@@ -209,12 +227,12 @@ const ReservationForm = ({
                                 null
                                 :
                                 <Form.Item>
-                                    <Button 
-                                        type="primary" 
-                                        htmlType="submit" 
+                                    <Button
+                                        type="primary"
+                                        htmlType="submit"
                                         loading={availabilitySearchResults?.isPending}
-                                        disabled={searchButtonDisable} 
-                                        // onClick={()=>setSearchButtonDisable(true)}
+                                        disabled={searchButtonDisable}
+                                    // onClick={()=>setSearchButtonDisable(true)}
                                     >
                                         Search
                                     </Button>

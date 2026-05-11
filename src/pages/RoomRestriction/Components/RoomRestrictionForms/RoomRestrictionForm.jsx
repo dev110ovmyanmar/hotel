@@ -99,6 +99,12 @@ const RoomRestrictionForm = ({
     }
   }, [data]);
 
+  const handleClose = () => {
+    setDrawerOpen(false);
+    setSelectedData(null);
+    form.resetFields();
+  };
+
   const onFinish = (values) => {
     if (isAdd) {
       const createValues = {
@@ -113,6 +119,7 @@ const RoomRestrictionForm = ({
           form.resetFields();
           setDrawerOpen(false);
           setPage(1);
+          handleClose();
           Toast.success("Extra Bed Rate Created Successfully!");
         },
       });
@@ -130,6 +137,7 @@ const RoomRestrictionForm = ({
       editRoomRestriction.mutate(editValues, {
         onSuccess: () => {
           setDrawerOpen(false);
+          handleClose();
           Toast.success("Extra Bed Rate Updated Successfully!");
         },
       });
@@ -161,7 +169,7 @@ const RoomRestrictionForm = ({
     <div>
       <Drawer
         open={drawerOpen}
-        onClose={() => setDrawerOpen(false)}
+        onClose={handleClose}
         size={550}
         title={
           <div className="flex justify-between items-center">
@@ -207,7 +215,6 @@ const RoomRestrictionForm = ({
           }}
         >
           <div className="grid grid-cols-2 gap-6">
-            {" "}
             <Form.Item
               label="Room Type"
               name="roomTypeUuid"
