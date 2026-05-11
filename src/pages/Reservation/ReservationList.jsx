@@ -13,8 +13,22 @@ import Toast from "../../component/Toast/Toast";
 import dayjs from "dayjs";
 import { upsertGuest } from "../../api/guestApi";
 import store from "../../app/store";
+import { queryClient } from "../../app/queryClient";
 
 const ReservationList = () => {
+
+  const initData = queryClient.getQueryData(["initData", "authenticated"]);
+
+  const bookedViaOptions = initData?.statuses?.booked_via.map((item) => ({
+    label: item.name,
+    value: item.uuid,
+  })) || [];
+
+  const sourceTypeOptions = initData?.statuses?.source_type.map((item) => ({
+    label: item.name,
+    value: item.uuid,
+  })) || [];
+
   const navigate = useNavigate();
   const [form] = Form.useForm();
   const [roomBookOpen, setRoomBookOpen] = useState(false);
@@ -22,6 +36,7 @@ const ReservationList = () => {
   const [roomConfirm, setRoomConfirm] = useState(false);
   const [guestInfoTable, setGuestInfoTable] = useState(false);
   const [searchReservation, setSearchReservation] = useState(false);
+  const [searchButtonDisable, setSearchButtonDisable] = useState(false);
 
   const [storeData, setStoreData] = useState(null);
 
@@ -34,6 +49,11 @@ const ReservationList = () => {
   const [clickCreateContact, setClickCreateContact] = useState(false);
   const [createContactFinish, setCreateContactFinish] = useState(false);
 
+  const defaultFilter = [
+    dayjs().hour(14).minute(0),
+    dayjs().add(1, "day").hour(12).minute(0)
+  ];
+
   const availabilitySearchs = useApiMutation({
     mutationFn: availabilitySearch,
     invalidateKeys: [["availability-search"]],
@@ -41,6 +61,7 @@ const ReservationList = () => {
       onSuccess: (values) => {
         setStoreData(values);
         setSearchReservation(true);
+        setSearchButtonDisable(true)
       },
     },
   });
@@ -320,12 +341,20 @@ const ReservationList = () => {
             setSelectedData([]);
             setSelectedRooms({});
             setReservationFormValues(null);
-            form.resetFields()
-
+            setSearchButtonDisable(false);
+            // setSelectedSourceType(null);
+            form.setFieldsValue({
+              filter: [
+                dayjs().hour(14).minute(0),
+                dayjs().add(1, "day").hour(12).minute(0),
+              ],
+              bookedVia: bookedViaOptions?.[0]?.value,
+              sourceType: sourceTypeOptions?.[0]?.value,
+            });
           }}
         >
           <ReloadOutlined className="!text-blue-500" />
-          <span className="!text-blue-500">Refresh</span>
+          <span className="!text-blue-500" >Refresh</span>
         </Button>
       </div>
 
@@ -333,9 +362,12 @@ const ReservationList = () => {
         afterRoomConfirm={roomConfirm}
         availabilitySearchResults={availabilitySearchs}
         setReservationFormValues={setReservationFormValues}
-        // reservationFormField={reservationFormField}
         form={form}
-
+        searchButtonDisable={searchButtonDisable}
+        setSearchButtonDisable={setSearchButtonDisable}
+        defaultFilter={defaultFilter}
+        bookedViaOptions={bookedViaOptions}
+        sourceTypeOptions={sourceTypeOptions}
       />
 
       {roomConfirm ? (

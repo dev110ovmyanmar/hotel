@@ -72,9 +72,9 @@ const Calendar = lazy(() => import("../../pages/Calendar/Calendar"));
 const Reservation = lazy(
   () => import("../../pages/Reservation/ReservationList"),
 );
-const ReservationForm = lazy(
-  () => import("../../pages/ReservationForm/ReservationForm"),
-);
+// const ReservationForm = lazy(
+//   () => import("../../pages/ReservationForm/ReservationForm"),
+// );
 const GuestDetails = lazy(
   () => import("../../pages/EditReservation/Menu/GuestDetails/GuestList"),
 );
@@ -228,38 +228,6 @@ const FolioOperations = lazy(
     import("../../pages/EditReservation/Menu/FolioOperations/FolioOperationsList"),
 );
 
-const ReservationListMenu = lazy(
-  () => import("../../pages/ReservationLists/Components/ReservationListMenu"),
-);
-
-const BookingList = lazy(
-  () => import("../../pages/ReservationLists/Menu/Booking/BookingList"),
-);
-
-const InquiryList = lazy(
-  () => import("../../pages/ReservationLists/Menu/Inquiry/InquiryList"),
-);
-
-const ArrivalsList = lazy(
-  () => import("../../pages/ReservationLists/Menu/Arrivals/ArrivalsList"),
-);
-
-const DeparturesList = lazy(
-  () => import("../../pages/ReservationLists/Menu/Departures/DeparturesList"),
-);
-
-const InHouseList = lazy(
-  () => import("../../pages/ReservationLists/Menu/InHouse/InHouseList"),
-);
-
-const CancelledList = lazy(
-  () => import("../../pages/ReservationLists/Menu/Cancelled/CancelledList"),
-);
-
-const AllList = lazy(
-  () => import("../../pages/ReservationLists/Menu/All/AllList"),
-);
-
 const NightAudit = lazy(() => import("../../pages/NightAudit/NightAudit"));
 
 const EventFacilityOrderList = lazy(
@@ -274,6 +242,10 @@ const AddOnServiceList = lazy(
 
 const RateAndInventoryCalendar = lazy(
   () => import("../../pages/RateAndInventoryCalendar/RateAndInventoryCalendar"),
+);
+
+const ReservationsMenu = lazy(
+  () => import("../../pages/NewReservation/Components/ReservationsMenu"),
 );
 
 export const authRoutes = [
@@ -294,11 +266,21 @@ export const authRoutes = [
     isPrivate: false,
     permission: PERMISSIONS.AVAILABILITY_CALENDAR_LIST,
   },
+
   {
     key: 3,
     path: "/reservation/create-new-reservation",
     icon: <ScheduleOutlined style={{ fontSize: "20px" }} />,
     component: <Reservation />,
+    isPrivate: false,
+  },
+
+  {
+    key: 40,
+    label: "Reservations",
+    path: "/reservations",
+    icon: <ScheduleOutlined style={{ fontSize: "20px" }} />,
+    component: <ReservationsMenu />,
     isPrivate: false,
   },
 
@@ -333,49 +315,6 @@ export const authRoutes = [
     component: <AddOnServiceList />,
   },
 
-  {
-    key: 30,
-    path: "/reservation/all/",
-    label: "Reservation",
-    icon: <ScheduleOutlined style={{ fontSize: "20px" }} />,
-    component: <AllList />,
-    isPrivate: false,
-  },
-  {
-    key: 30.1,
-    path: "/reservation/inquiry/",
-    component: <InquiryList />,
-  },
-  {
-    key: 30.2,
-    path: "/reservation/booking/",
-    component: <BookingList />,
-  },
-  {
-    key: 30.3,
-    path: "/reservation/arrivals/",
-    component: <ArrivalsList />,
-  },
-  {
-    key: 30.4,
-    path: "/reservation/departures/",
-    component: <DeparturesList />,
-  },
-  {
-    key: 30.5,
-    path: "/reservation/in-house/",
-    component: <InHouseList />,
-  },
-  {
-    key: 30.6,
-    path: "/reservation/cancelled/",
-    component: <CancelledList />,
-  },
-  {
-    key: 30.6,
-    path: "/reservation/all/",
-    component: <AllList />,
-  },
   {
     key: 4,
     label: "Rates & Availability",
@@ -1042,12 +981,12 @@ export const authRoutes = [
     component: <Profile />,
     isPrivate: false,
   },
-  {
-    key: 24,
-    path: "/reservation-form/",
-    component: <ReservationForm />,
-    isPrivate: false,
-  },
+  // {
+  //   key: 24,
+  //   path: "/reservation-form/",
+  //   component: <ReservationForm />,
+  //   isPrivate: false,
+  // },
   // {
   //   key: 26,
   //   path: "/room-inventory/",

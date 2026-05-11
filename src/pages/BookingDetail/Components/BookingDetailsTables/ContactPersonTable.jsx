@@ -1,33 +1,32 @@
-import { Table } from "antd";
+import React from "react";
+import { Card, Row, Typography, Divider, Space } from "antd";
+import { DollarCircleOutlined, PhoneOutlined } from "@ant-design/icons";
 
-const columns = [
-  {
-    title: "Name",
-    dataIndex: "name",
-    key: "name",
-  },
-  {
-    title: "Phone Number",
-    dataIndex: "phoneNumber",
-    key: "phoneNumber",
-    align: "end",
-  },
-];
+const { Text, Title } = Typography;
 
-const data = [
-  { key: 1, name: "John", phoneNumber: "091234567890" },
-  { key: 2, name: "Jane", phoneNumber: "091234567890" },
-];
+const ContactPersonCard = () => {
+  const CustomTitle = (
+    <Space>
+      <div className="contact-icon-box">
+        <PhoneOutlined style={{ color: "#312f2f", fontSize: "20px" }} />
+      </div>
+      <Text>Contact Person</Text>
+    </Space>
+  );
 
-const ContactPersonTable = () => {
   return (
-    <Table
-      columns={columns}
-      dataSource={data}
-      size="small"
-      pagination={false}
-    />
+    <Card title={CustomTitle} className="contact-card line-height">
+      <Row justify="space-between">
+        <Text strong>Name</Text>
+        <Text strong>Phone Number</Text>
+      </Row>
+
+      <Row justify="space-between" className="mt-3">
+        <Text >Emily Brown</Text>
+        <Text>+9591234567890</Text>
+      </Row>
+    </Card>
   );
 };
 
-export default ContactPersonTable;
+export default ContactPersonCard;

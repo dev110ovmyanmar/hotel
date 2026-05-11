@@ -1,4 +1,4 @@
-import { Dropdown, Space, Table, Button } from "antd";
+import { Dropdown, Space, Table, Button, Tooltip } from "antd";
 import { useState, useEffect } from "react";
 import {
   MoreOutlined,
@@ -164,37 +164,45 @@ const RoomInformationTable = () => {
       align: "center",
       render: (_, record) => (
         <Space size="middle">
-          <EyeOutlined
-            onClick={() => {
-              setSelectedData(record);
-              setMode("view");
-              setDrawerOpen(true);
-            }}
-          />
+          <Tooltip title="View Details">
+            <EyeOutlined
+              onClick={() => {
+                setSelectedData(record);
+                setMode("view");
+                setDrawerOpen(true);
+              }}
+            />
+          </Tooltip>
 
-          <EditOutlined
-            onClick={() => {
-              setSelectedData(record);
-              setMode("edit");
-              setDrawerOpen(true);
-            }}
-          />
+          <Tooltip title="Edit">
+            <EditOutlined
+              onClick={() => {
+                setSelectedData(record);
+                setMode("edit");
+                setDrawerOpen(true);
+              }}
+            />
+          </Tooltip>
 
-          <MdOutlineMeetingRoom
-            style={{ fontSize: "20px" }}
-            onClick={() => {
-              setSelectedData(record);
-              setRoomMoveOpen(true);
-            }}
-          />
+          <Tooltip title="Move Room">
+            <MdOutlineMeetingRoom
+              style={{ fontSize: "20px", cursor: "pointer" }}
+              onClick={() => {
+                setSelectedData(record);
+                setRoomMoveOpen(true);
+              }}
+            />
+          </Tooltip>
 
-          <InboxOutlined
-            style={{ fontSize: "20px" }}
-            onClick={() => {
-              setSelectedData(record);
-              setNoteOpen(true);
-            }}
-          />
+          <Tooltip title="Archive/Notes">
+            <InboxOutlined
+              style={{ fontSize: "20px", cursor: "pointer" }}
+              onClick={() => {
+                setSelectedData(record);
+                setNoteOpen(true);
+              }}
+            />
+          </Tooltip>
         </Space>
       ),
     },

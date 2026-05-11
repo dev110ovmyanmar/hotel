@@ -1,5 +1,8 @@
 import { EditOutlined, EyeOutlined, MoreOutlined } from "@ant-design/icons";
-import { Dropdown, Space, Table } from "antd";
+import { Card, Dropdown, Space, Table, Typography } from "antd";
+import { IoCalendarClearOutline, IoCardOutline } from "react-icons/io5";
+
+const { Text } = Typography;
 
 const columns = [
   {
@@ -15,8 +18,8 @@ const columns = [
   },
   {
     title: "Date",
-    dataIndex: "date",
-    key: "date",
+    dataIndex: "updatedAt",
+    key: "updatedAt",
   },
   {
     title: "Pay By",
@@ -80,33 +83,25 @@ const columns = [
     },
   },
 ];
-const data = [
-  {
-    key: 1,
-    transitionId: "11",
-    folioId: "-",
-    date: "11/11/2026",
-    payBy: "Bank Transfer",
-    amount: "10,000 MMK",
-  },
-  {
-    key: 2,
-    transitionId: "22",
-    folioId: "-",
-    date: "11/11/2026",
-    payBy: "Cash",
-    amount: "10,000 MMK",
-  },
-];
 
-const PaymentSummaryTable = () => {
+const PaymentSummaryTable = ({ data }) => {
+  const CustomTitle = (
+    <Space>
+      <div className="payment-icon-box">
+        <IoCardOutline style={{ color: "#a6b019", fontSize: "18px" }} />
+      </div>
+      <Text>Payment Summary</Text>
+    </Space>
+  );
   return (
-    <Table
-      columns={columns}
-      dataSource={data}
-      size="small"
-      pagination={false}
-    />
+    <Card title={CustomTitle} className="payment-card">
+      <Table
+        columns={columns}
+        dataSource={data}
+        size="small"
+        pagination={false}
+      />
+    </Card>
   );
 };
 
