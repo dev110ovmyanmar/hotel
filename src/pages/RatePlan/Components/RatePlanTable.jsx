@@ -260,7 +260,7 @@ const RatePlanTable = ({
     const processedRates = processData(record?.roomRateMappings || []);
     return (
       <Table
-        className="custom-table-style"
+        className="[&_.ant-table-cell]:!border [&_.ant-table-cell]:!border-blue-300 [&_.ant-table-thead>tr>th]:!bg-[#F0F5FF]"
         columns={expandColumns(record)}
         dataSource={processedRates}
         rowKey="uuid"

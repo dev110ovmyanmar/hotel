@@ -52,7 +52,7 @@ const CompanyContractTable = ({
           return <div>{chargeValue} %</div>
         }
       },
-      align:"center"
+      align: "center"
     },
     {
       title: "Contract Start Date",
@@ -113,8 +113,10 @@ const CompanyContractTable = ({
           )
           .map((action) => ({
             key: action.key,
+            onClick: action.onClick,
             label: (
-              <Space size={4} style={smallStyle} onClick={action.onClick}>
+              <Space size={4} style={smallStyle}
+              >
                 {action.icon}
                 <span style={{ fontSize: "14px" }}>{action.label}</span>
               </Space>

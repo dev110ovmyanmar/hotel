@@ -19,7 +19,7 @@ const ReferralList = () => {
 
   const { data, isLoading, error } = useApiQuery({
     fetchQueryName: "referral-agents",
-    fetchQueryFunction: fetchPartner ,
+    fetchQueryFunction: fetchPartner,
     params: {
       pagination: {
         page: page,
@@ -27,7 +27,7 @@ const ReferralList = () => {
       },
       keyword,
       status: normalStatus,
-      partnerType : "Referral Agent" 
+      partnerType: "Referral Agent"
     },
   });
 
@@ -59,6 +59,7 @@ const ReferralList = () => {
         total={data?.pagination?.total}
         changePage={(page) => setPage(page)}
         changePerPage={(perPage) => setPerPage(perPage)}
+        loading={isLoading}
       />
 
       <ReferralForm
