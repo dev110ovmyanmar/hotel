@@ -1,13 +1,16 @@
-import React from "react";
-import { Table, Button, Dropdown, Space, Modal } from "antd";
+import React, { useState } from "react";
+import { Table, Button, Dropdown, Space, Modal, Radio, Divider, Tooltip } from "antd";
 import {
   EditOutlined,
   EyeOutlined,
   MoreOutlined,
   UploadOutlined,
 } from "@ant-design/icons";
+import { Divide } from "lucide-react";
 
 const FolioOperationsTable = () => {
+  const [modalOpen, setModalOpen] = useState(false);
+
   const columns = [
     {
       title: "Folio No",
@@ -51,28 +54,34 @@ const FolioOperationsTable = () => {
       align: "center",
       render: (_, record) => (
         <Space size="middle">
-          <EyeOutlined
-            onClick={() => {
-              setSelectedData(record);
-              setMode("view");
-              setDrawerOpen(true);
-            }}
-          />
+          <Tooltip title="View Details">
+            <EyeOutlined
+              onClick={() => {
+                setSelectedData(record);
+                setMode("view");
+                setDrawerOpen(true);
+              }}
+            />
+          </Tooltip>
 
-          <EditOutlined
-            onClick={() => {
-              setSelectedData(record);
-              setMode("edit");
-              setDrawerOpen(true);
-            }}
-          />
+          <Tooltip title="Edit">
+            <EditOutlined
+              onClick={() => {
+                setSelectedData(record);
+                setMode("edit");
+                setDrawerOpen(true);
+              }}
+            />
+          </Tooltip>
 
-          <UploadOutlined
-            onClick={() => {
-              setSelectedData(record);
-              setUploadOpen(true);
-            }}
-          />
+          <Tooltip title="File Move To">
+            <UploadOutlined
+              onClick={() => {
+                // setSelectedData(record);
+                setModalOpen(true);
+              }}
+            />
+          </Tooltip>
         </Space>
       ),
     },
@@ -157,6 +166,26 @@ const FolioOperationsTable = () => {
         bordered={false}
         className="custom-folio-table"
       />
+      <Modal
+        title="File Move To"
+        open={modalOpen}
+        onCancel={() => setModalOpen(false)}
+        closable={false}
+        okText="Submit"
+        centered
+        width={400}
+        className="custom-ant-modal"
+      >
+        <div className="ml-5 mt-5">
+          <Radio.Group>
+            <Space direction="vertical">
+              <Radio>FOL - 1001 - 1</Radio>
+              <Radio>FOL - 1001 - 2</Radio>
+            </Space>
+          </Radio.Group>
+        </div>
+        <Divider />
+      </Modal>
     </>
   );
 };

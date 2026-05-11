@@ -1,117 +1,49 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Card, Row, Col, Tag, Dropdown, Button, Space, Pagination } from "antd";
+import {
+  Card,
+  Row,
+  Col,
+  Tag,
+  Dropdown,
+  Button,
+  Space,
+  Pagination,
+  Empty,
+} from "antd";
 import {
   PhoneOutlined,
-  UserOutlined,
-  TeamOutlined,
   MoreOutlined,
   EditOutlined,
   PrinterOutlined,
 } from "@ant-design/icons";
 import { FaChild } from "react-icons/fa";
 import { IoPeopleSharp } from "react-icons/io5";
+import PriceTag from "../../../component/PriceTag/PriceTag";
 
-const bookingData = [
-  {
-    id: 5001,
-    name: "Liam Johnson Smith",
-    phone: "+959 123-4567-890",
-    adults: 1,
-    kids: 0,
-    checkIn: "21/12/2025",
-    checkOut: "22/12/2025",
-    duration: "1 Night",
-    bookingDate: "10/12/2025",
-    rooms: 3,
-    status: "Pending",
-    total: "950,000 MMK",
-  },
-  {
-    id: 5002,
-    name: "Zane Carter",
-    phone: "+959 123-4567-890",
-    adults: 2,
-    kids: 2,
-    checkIn: "21/12/2025",
-    checkOut: "22/12/2025",
-    duration: "1 Night",
-    bookingDate: "11/12/2025",
-    rooms: 1,
-    status: "Check-in",
-    total: "150,000 MMK",
-  },
-  {
-    id: 5003,
-    name: "Evelyn Carter",
-    phone: "+959 123-4567-890",
-    adults: 2,
-    kids: 0,
-    checkIn: "21/12/2025",
-    checkOut: "22/12/2025",
-    duration: "1 Night",
-    bookingDate: "12/12/2025",
-    rooms: 2,
-    status: "Pending",
-    total: "200,000 MMK",
-  },
-  {
-    id: 5004,
-    name: "Sophia Martinez",
-    phone: "+959 123-4567-890",
-    adults: 2,
-    kids: 2,
-    checkIn: "21/12/2025",
-    checkOut: "22/12/2025",
-    duration: "1 Night",
-    bookingDate: "13/12/2025",
-    rooms: 1,
-    status: "Booked",
-    total: "150,000 MMK",
-  },
-  {
-    id: 5005,
-    name: "Oliver Brown",
-    phone: "+959 123-4567-890",
-    adults: 2,
-    kids: 2,
-    checkIn: "21/12/2025",
-    checkOut: "22/12/2025",
-    duration: "1 Night",
-    bookingDate: "14/12/2025",
-    rooms: 2,
-    status: "Booked",
-    total: "300,000 MMK",
-  },
-  {
-    id: 5006,
-    name: "Mia Wilson",
-    phone: "+959 123-4567-890",
-    adults: 2,
-    kids: 0,
-    checkIn: "21/12/2025",
-    checkOut: "22/12/2025",
-    duration: "1 Night",
-    bookingDate: "15/12/2025",
-    rooms: 2,
-    status: "Check-out",
-    total: "400,000 MMK",
-  },
-];
-
-const DeparturesGrid = () => {
-  const [currentPage, setCurrentPage] = useState(1);
-  const pageSize = 6;
+const ReservationsGrid = ({
+  data,
+  page,
+  perPage,
+  total,
+  changePage,
+  changePerPage,
+}) => {
   const navigate = useNavigate();
 
-  const filteredData = bookingData.filter(
-    (item) => item.status === "Check-in" || item.status === "Check-out",
-  );
-
-  const paginatedData = filteredData.slice(
-    (currentPage - 1) * pageSize,
-    currentPage * pageSize,
-  );
+  const getStatusColor = (status) => {
+    switch (status?.toLowerCase()) {
+      case "booked":
+      case "confirmed":
+        return "green";
+      case "cancelled":
+        return "red";
+      case "pending":
+        return "orange";
+      default:
+        return "blue";
+    }
+  };
 
   const handleMenuClick = (key, id) => {
     if (key === "edit") {
@@ -119,20 +51,22 @@ const DeparturesGrid = () => {
     }
   };
 
-  const statusColors = {
-    "Check-in": "cyan",
-    "Check-out": "#8B4513",
-    Booked: "blue",
-    Pending: "gold",
-  };
+  if (!data || data.length === 0) {
+    return (
+      <Empty description="No Reservations Found" style={{ marginTop: 60 }} />
+    );
+  }
 
   return (
     <div>
       <Row gutter={[16, 16]}>
-        {paginatedData.map((item) => (
+        {data.map((item) => (
           <Col xs={24} sm={12} lg={8} key={item.id}>
             <Card
-              title={item.name}
+              hoverable
+              title={
+                <span style={{ fontWeight: 600 }}>{item?.guest?.name}</span>
+              }
               extra={
                 <Dropdown
                   menu={{
@@ -144,7 +78,8 @@ const DeparturesGrid = () => {
                         icon: <PrinterOutlined />,
                       },
                     ],
-                    onClick: ({ key }) => handleMenuClick(key, item.id),
+                    // onClick: ({ key }) => handleMenuClick(key, item.id),
+                    onClick: ({ key }) => handleMenuClick(key, item.uuid),
                   }}
                   trigger={["click"]}
                 >
@@ -162,9 +97,8 @@ const DeparturesGrid = () => {
                       gap: "6px",
                     }}
                   >
-                    <PhoneOutlined /> {item.phone}
+                    <PhoneOutlined /> {item?.guest?.phone}
                   </span>
-
                   <span
                     style={{
                       display: "flex",
@@ -174,7 +108,6 @@ const DeparturesGrid = () => {
                   >
                     <IoPeopleSharp /> {item.adults}
                   </span>
-
                   <span
                     style={{
                       display: "flex",
@@ -182,7 +115,7 @@ const DeparturesGrid = () => {
                       gap: "6px",
                     }}
                   >
-                    <FaChild /> {item.kids}
+                    <FaChild /> {item.children}
                   </span>
                 </Space>
               </div>
@@ -195,10 +128,11 @@ const DeparturesGrid = () => {
                   borderRadius: "4px",
                   textAlign: "center",
                   marginBottom: 16,
+                  overflow: "hidden",
                 }}
               >
                 <div style={{ flex: 1, padding: "8px", background: "#fafafa" }}>
-                  {item.checkIn}
+                  {item.actualCheckin}
                 </div>
                 <div
                   style={{
@@ -208,14 +142,14 @@ const DeparturesGrid = () => {
                     borderRight: "1px solid #f0f0f0",
                   }}
                 >
-                  {item.duration}
+                  {item.totalNight}
                 </div>
                 <div style={{ flex: 1, padding: "8px", background: "#fafafa" }}>
-                  {item.checkOut}
+                  {item.actualCheckout}
                 </div>
               </div>
 
-              {/* Details */}
+              {/* Details List */}
               <div
                 style={{ display: "flex", flexDirection: "column", gap: "8px" }}
               >
@@ -229,20 +163,23 @@ const DeparturesGrid = () => {
                   style={{ display: "flex", justifyContent: "space-between" }}
                 >
                   <span style={{ color: "#8c8c8c" }}>Booking Date</span>
-                  <span>{item.bookingDate}</span>
+                  <span>{item.createdAt}</span>
                 </div>
                 <div
                   style={{ display: "flex", justifyContent: "space-between" }}
                 >
-                  <span style={{ color: "#8c8c8c" }}>Number of Room</span>
-                  <span>{item.rooms}</span>
+                  <span style={{ color: "#8c8c8c" }}>Rooms</span>
+                  <span>{item.totalRooms}</span>
                 </div>
                 <div
                   style={{ display: "flex", justifyContent: "space-between" }}
                 >
-                  <span style={{ color: "#8c8c8c" }}>Order Status</span>
-                  <Tag color={statusColors[item.status]}>{item.status}</Tag>
+                  <span style={{ color: "#8c8c8c" }}>Status</span>
+                  <Tag color={getStatusColor(item?.reservationStatus?.name)}>
+                    {item?.reservationStatus?.name}
+                  </Tag>
                 </div>
+
                 <hr
                   style={{
                     border: "none",
@@ -250,6 +187,7 @@ const DeparturesGrid = () => {
                     margin: "8px 0",
                   }}
                 />
+
                 <div
                   style={{
                     display: "flex",
@@ -258,7 +196,16 @@ const DeparturesGrid = () => {
                   }}
                 >
                   <span>Total</span>
-                  <span>{item.total}</span>
+                  <span
+                    style={{
+                      display: "flex",
+                      gap: "4px",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    <PriceTag value={item.grandTotal} />
+                    <span>MMK</span>
+                  </span>
                 </div>
               </div>
             </Card>
@@ -266,25 +213,26 @@ const DeparturesGrid = () => {
         ))}
       </Row>
 
-      {/* Pagination length */}
       <div
         style={{
-          marginTop: "20px",
+          marginTop: "24px",
           display: "flex",
           justifyContent: "flex-end",
         }}
       >
         <Pagination
-          current={currentPage}
-          total={filteredData.length}
-          pageSize={pageSize}
-          onChange={(page) => setCurrentPage(page)}
-          showSizeChanger={false}
-          hideOnSinglePage={true}
+          current={page}
+          total={total}
+          pageSize={perPage}
+          onChange={(page, perPage) => {
+            changePage(page);
+            changePerPage(perPage);
+          }}
+          showSizeChanger={true}
         />
       </div>
     </div>
   );
 };
 
-export default DeparturesGrid;
+export default ReservationsGrid;
