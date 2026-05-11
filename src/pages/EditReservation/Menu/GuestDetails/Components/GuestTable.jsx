@@ -1,4 +1,4 @@
-import { Dropdown, Space, Table, Button } from "antd";
+import { Dropdown, Space, Table, Button, Tooltip } from "antd";
 import { useState, useEffect } from "react";
 import {
   MoreOutlined,
@@ -57,28 +57,34 @@ const GuestTable = () => {
       align: "center",
       render: (_, record) => (
         <Space size="middle">
-          <EyeOutlined
-            onClick={() => {
-              setSelectedData(record);
-              setMode("view");
-              setDrawerOpen(true);
-            }}
-          />
+          <Tooltip title="View Details">
+            <EyeOutlined
+              onClick={() => {
+                setSelectedData(record);
+                setMode("view");
+                setDrawerOpen(true);
+              }}
+            />
+          </Tooltip>
 
-          <EditOutlined
-            onClick={() => {
-              setSelectedData(record);
-              setMode("edit");
-              setDrawerOpen(true);
-            }}
-          />
+          <Tooltip title="Edit">
+            <EditOutlined
+              onClick={() => {
+                setSelectedData(record);
+                setMode("edit");
+                setDrawerOpen(true);
+              }}
+            />
+          </Tooltip>
 
-          <UploadOutlined
-            onClick={() => {
-              setSelectedData(record);
-              setUploadOpen(true);
-            }}
-          />
+          <Tooltip title="File Upload">
+            <UploadOutlined
+              onClick={() => {
+                setSelectedData(record);
+                setUploadOpen(true);
+              }}
+            />
+          </Tooltip>
 
           {/* <InboxOutlined
             onClick={() => {
