@@ -13,10 +13,10 @@ const usePermission = () => {
 
     if (Array.isArray(permission)) {
       // If any of the permissions match, allow
-      return permission.some((p) => permissions.includes(p));
+      return permission.some((p) => permissions?.includes(p));
     }
 
-    return permissions.includes(permission);
+    return permissions?.includes(permission);
   };
 
   return { hasPermission, permissions };

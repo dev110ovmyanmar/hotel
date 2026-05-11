@@ -49,6 +49,7 @@ const ReservationList = () => {
   const [clickCreateContact, setClickCreateContact] = useState(false);
   const [createContactFinish, setCreateContactFinish] = useState(false);
 
+
   const defaultFilter = [
     dayjs().hour(14).minute(0),
     dayjs().add(1, "day").hour(12).minute(0)
@@ -344,10 +345,7 @@ const ReservationList = () => {
             setSearchButtonDisable(false);
             // setSelectedSourceType(null);
             form.setFieldsValue({
-              filter: [
-                dayjs().hour(14).minute(0),
-                dayjs().add(1, "day").hour(12).minute(0),
-              ],
+              filter: defaultFilter,
               bookedVia: bookedViaOptions?.[0]?.value,
               sourceType: sourceTypeOptions?.[0]?.value,
             });
