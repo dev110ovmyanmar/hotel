@@ -18,6 +18,7 @@ const ReservationForm = ({
     setSearchButtonDisable
 }) => {
     const dateRange = Form.useWatch("filter", form);
+    const sourceTypeValue = Form.useWatch("sourceType", form); // Added this line to watch sourceType
 
     const [selectedSourceType, setSelectedSourceType] = useState(null);
 
@@ -82,6 +83,18 @@ const ReservationForm = ({
     const handleChange = (value, option) => {
         setSelectedSourceType(option?.label);
     };
+
+    // Added this useEffect to update selectedSourceType when sourceTypeValue changes
+    useEffect(() => {
+        if (sourceTypeValue) {
+            const selectedOption = sourceTypeOptions.find(option => option.value === sourceTypeValue);
+            if (selectedOption) {
+                setSelectedSourceType(selectedOption.label);
+            }
+        } else {
+            setSelectedSourceType(null);
+        }
+    }, [sourceTypeValue, sourceTypeOptions]);
 
     // useEffect(() => {
     //     if (bookedViaOptions?.length > 0 || sourceTypeOptions?.length > 0) {

@@ -324,13 +324,8 @@ const ReservationList = () => {
             setReservationFormValues(null);
             setSearchButtonDisable(false);
             // setSelectedSourceType(null);
-            // form.resetFields();
-            
-
-          
+            form.resetFields();  
           }}
-
-          // onClick={()=>alert("Hi")}
         >
           <ReloadOutlined className="!text-blue-500" />
           <span className="!text-blue-500" >Refresh</span>
