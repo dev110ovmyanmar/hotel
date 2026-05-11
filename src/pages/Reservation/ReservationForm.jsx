@@ -98,7 +98,6 @@ const ReservationForm = ({
 
     useEffect(() => {
         const currentValues = form.getFieldsValue();
-
         if (
             bookedViaOptions?.length > 0 &&
             sourceTypeOptions?.length > 0 &&
@@ -125,7 +124,7 @@ const ReservationForm = ({
     const disabledDate = current => {
         return current < dayjs().startOf('day');
     };
-    console.log(bookedViaOptions, "bookedViaOptions")
+
     return (
         <Card >
             <Form
@@ -133,11 +132,6 @@ const ReservationForm = ({
                 form={form}
                 onFinish={searchSubmit}
                 layout="vertical"
-                // initialValues={{
-                //     bookedVia: bookedViaOptions?.[0]?.value,
-                //     sourceType: sourceTypeOptions?.[0]?.value,
-
-                // }}
                 onValuesChange={() => { setSearchButtonDisable(false) }}
             >
                 <h1 className="text-lg font-bold my-2">Create New Reservation</h1>

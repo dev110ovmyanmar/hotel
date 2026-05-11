@@ -10,8 +10,6 @@ const GuestInformationTable = ({
     setContactPersonInfo
 }) => {
 
-    console.log(contactPersonInfo,"contentPersonInfo")
-
     const columns = [
         {
             title: "Name",
