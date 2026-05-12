@@ -278,7 +278,7 @@ export const authRoutes = [
   {
     key: 40,
     label: "Reservations",
-    path: "/reservations",
+    path: "/reservations/:status",
     icon: <ScheduleOutlined style={{ fontSize: "20px" }} />,
     component: <ReservationsMenu />,
     isPrivate: false,

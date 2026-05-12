@@ -7,21 +7,8 @@ import useApiQuery from "../../../hooks/useApiQuery";
 import { useLocation } from "react-router-dom";
 import dayjs from "dayjs";
 
-const ReservationHeader = () => {
-  const location = useLocation();
-  const uuid = location.state?.bookingId;
-
-  const { data, isLoading } = useApiQuery({
-    fetchQueryName: ["reservation-details", uuid],
-    fetchQueryFunction: reservationDetails,
-    params: { uuid },
-    options: { enabled: !!uuid },
-  });
-
-  if (isLoading) {
-    return <Spin className="w-full flex justify-center my-10" />;
-  }
-
+const ReservationHeader = ({ data }) => {
+  console.log(data, "header");
   return (
     <div>
       <div className="flex items-center space-x-2">
@@ -31,7 +18,7 @@ const ReservationHeader = () => {
             color={
               data?.reservationStatus?.code === "pending" ? "warning" : "blue"
             }
-            className="rounded-full px-3"
+            className="rounded px-3"
           >
             {data?.reservationStatus?.name}
           </Tag>
@@ -42,7 +29,7 @@ const ReservationHeader = () => {
             <span className="text-gray-500 text-sm">Arrival</span>
             <span className="text-xs font-semibold mt-1">
               {dayjs(data?.actualCheckin).format("DD/MM/YYYY")}
-              <span className="ml-2 border border-gray-300 text-gray-800 px-2 py-0.5 text-xs font-medium">
+              <span className="ml-2 border border-gray-300 rounded text-gray-800 px-2 py-0.5 text-xs font-medium">
                 {dayjs(data?.actualCheckin).format("h:mm A")}
               </span>
             </span>
@@ -52,7 +39,7 @@ const ReservationHeader = () => {
             <span className="text-gray-500 text-sm">Departure</span>
             <span className="text-xs mt-1 font-semibold">
               {dayjs(data?.actualCheckout).format("DD/MM/YYYY")}
-              <span className="ml-2 border border-gray-300 text-gray-800 px-2 py-0.5 text-xs font-medium">
+              <span className="ml-2 border border-gray-300 rounded text-gray-800 px-2 py-0.5 text-xs font-medium">
                 {dayjs(data?.actualCheckout).format("h:mm A")}
               </span>
             </span>
