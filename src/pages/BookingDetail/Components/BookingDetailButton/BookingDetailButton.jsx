@@ -91,6 +91,7 @@ const BookingDetailButton = ({ data }) => {
         open={open}
         onClose={() => setOpen(false)}
         reservationId={data?.reservationNo}
+        reservationDetails={data}
       />
 
       <AmendBookingForm
