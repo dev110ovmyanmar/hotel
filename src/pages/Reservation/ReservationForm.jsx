@@ -128,7 +128,6 @@ const ReservationForm = ({
     return (
         <Card >
             <Form
-                // values={searchButtonDisable}
                 form={form}
                 onFinish={searchSubmit}
                 layout="vertical"
@@ -136,7 +135,7 @@ const ReservationForm = ({
             >
                 <h1 className="text-lg font-bold my-2">Create New Reservation</h1>
                 <div className="flex flex-wrap gap-3">
-                    <div className="flex-[3] min-w-[320px]">
+                    <div className="flex-[2] min-w-[320px]">
                         <Form.Item name="filter" label="Check-in / Check-out Date" rules={[{ required: true, message: "Please Select Date" }]}>
                             <RangePicker
                                 className="!w-full"
@@ -175,7 +174,7 @@ const ReservationForm = ({
                         </Form.Item>
                     </div>
 
-                    <div className="w-full min-w-[200px] sm:w-[45%] md:w-[30%] md:flex-1 lg:flex-2">
+                    <div className="w-full min-w-[200px] sm:w-[45%] md:w-[30%] md:flex-1 lg:flex-[1]">
                         <Form.Item name="bookedVia" label="Booking Source" rules={[{ required: true, message: "Please Select Booking Source" }]}>
                             <Select
                                 options={bookedViaOptions}
@@ -186,7 +185,7 @@ const ReservationForm = ({
                         </Form.Item>
                     </div>
 
-                    <div className="w-full min-w-[200px] sm:w-[45%] md:w-[30%] lg:flex-2">
+                    <div className="w-full min-w-[200px] sm:w-[45%] md:w-[30%] lg:flex-[1]">
                         <Form.Item name="sourceType" label="Source Type" rules={[{ required: true, message: "Please Select Source Type" }]}>
                             <Select
                                 options={sourceTypeOptions}
@@ -197,15 +196,20 @@ const ReservationForm = ({
                         </Form.Item>
                     </div>
 
-                    <div className="w-[200px]">
+                    <div className={selectedSourceType === "Agency" || selectedSourceType === "Company"? "w-[220px]": null}>
                         {
                             (selectedSourceType === "Agency" ||
                                 selectedSourceType === "Company") && (
 
-                                <Form.Item name="source" label="Source Name" rules={[{ required: true, message: "Please Select Source Name" }]}>
+                                <Form.Item 
+                                    name="source" 
+                                    label="Source Name" 
+                                    rules={[{ required: true, message: "Please Select Source Name" }]} 
+                                    className="!w-full "
+                                >
                                     <Select
                                         options={selectedSourceType === "Agency" ? agenciesOptions : companyOptions}
-                                        className="w-[100%] "
+                                        
                                         placeholder="Select Source Name"
 
                                     ></Select>
@@ -215,7 +219,7 @@ const ReservationForm = ({
                         }
                     </div>
 
-                    <div className="mt-[30px] flex items-center ">
+                    <div className="-ml-2 sm:m-0 flex items-end">
                         {
                             afterRoomConfirm ?
                                 null
@@ -226,7 +230,6 @@ const ReservationForm = ({
                                         htmlType="submit"
                                         loading={availabilitySearchResults?.isPending}
                                         disabled={searchButtonDisable}
-                                    // onClick={()=>setSearchButtonDisable(true)}
                                     >
                                         Search
                                     </Button>
