@@ -14,7 +14,7 @@ import BookingStatusCard from "./Components/BookingDetailsTables/BookingStatusCa
 import ContactPersonCard from "./Components/BookingDetailsTables/ContactPersonTable";
 import { useLocation } from "react-router-dom";
 import useApiQuery from "../../hooks/useApiQuery";
-import { reservationDetails } from "../../api/reservationList";
+import { reservationDetails } from "../../api/reservationSectionApi";
 
 const BookingDetailList = () => {
   const location = useLocation();
