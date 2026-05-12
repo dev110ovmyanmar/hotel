@@ -2,14 +2,15 @@ import React from "react";
 import { Tabs } from "antd";
 import { useNavigate, useLocation } from "react-router-dom";
 
-const ReservationMenu = () => {
+const ReservationMenu = ({ data }) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const bookingId = location.state?.bookingId;
 
   const activeKey = location.pathname.split("/").pop();
 
   const onChange = (key) => {
-    navigate(`/reservation/${key}`);
+    navigate(`/reservation/${key}`, { state: { bookingId } });
   };
 
   return (
