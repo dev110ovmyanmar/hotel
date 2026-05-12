@@ -6,7 +6,7 @@ import { MdOutlineMeetingRoom } from "react-icons/md";
 
 const { Text } = Typography;
 
-const RoomStatusCard = () => {
+const RoomStatusCard = ({ data }) => {
   const CustomTitle = (
     <Space>
       <div className="booking-icon-box">
@@ -30,7 +30,7 @@ const RoomStatusCard = () => {
               borderRadius: "4px",
             }}
           >
-            Pending
+            {data?.reservationStatus?.name}
           </Tag>
         }
       >
@@ -49,8 +49,8 @@ const RoomStatusCard = () => {
         <Row>
           <Col span={8}>
             <div style={{ display: "flex", alignItems: "center", gap: "2px" }}>
-              <IoPeopleSharp /> <h1>1</h1>
-              <FaChild /> <h1>1</h1>
+              <IoPeopleSharp /> <h1>{data?.adults}</h1>
+              <FaChild /> <h1>{data?.children}</h1>
             </div>
           </Col>
           <Col span={8}>

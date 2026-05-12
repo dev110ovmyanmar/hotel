@@ -220,9 +220,8 @@ const RoomRestrictionTable = ({ data, page, setPage }) => {
     const processedRates = processData(record?.calendars || []);
     return (
       <Table
-        className="custom-table-style"
+        className="[&_.ant-table-cell]:!border [&_.ant-table-cell]:!border-blue-300 [&_.ant-table-thead>tr>th]:!bg-[#F0F5FF]"
         columns={expandColumns}
-        // dataSource={record?.calendars}
         dataSource={processedRates}
         pagination={false}
         size="small"
