@@ -2,7 +2,7 @@ import React from "react";
 import { Divider, Tag, Spin } from "antd";
 import { FaChild } from "react-icons/fa";
 import { IoPeopleSharp } from "react-icons/io5";
-import { reservationDetails } from "../../../api/reservationList";
+import { reservationDetails } from "../../../api/reservationSectionApi";
 import useApiQuery from "../../../hooks/useApiQuery";
 import { useLocation } from "react-router-dom";
 import dayjs from "dayjs";
