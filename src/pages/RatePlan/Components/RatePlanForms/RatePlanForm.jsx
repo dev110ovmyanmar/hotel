@@ -171,7 +171,7 @@ const RatePlanForm = ({
       status: { uuid: values.status },
       roomTypes: formattedRoomTypes,
       channelVisibility: channelVisibility,
-      isDefault: values.isDefault,
+      isDefault: values.isDefault === true ? 1 : 0,
       description: values.description,
     };
 
@@ -199,7 +199,7 @@ const RatePlanForm = ({
           status: { uuid: values.status },
           // roomTypes: formattedRoomTypes,
           channelVisibility: channelVisibility,
-          isDefault: values.isDefault,
+          isDefault: values.isDefault === true ? 1 : 0,
           description: values.description,
           name: values.name,
           code: values.code,
@@ -467,6 +467,7 @@ const RatePlanForm = ({
             <Form.Item
               label="Is Default"
               name="isDefault"
+              initialValue={0}
               rules={[{ required: true, message: "Please select Is Default!" }]}
             >
               <Switch

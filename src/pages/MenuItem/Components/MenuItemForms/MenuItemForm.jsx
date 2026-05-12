@@ -18,6 +18,7 @@ import FormButtons from "../../../../component/FormButtons/FormButtons";
 import useApiQuery from "../../../../hooks/useApiQuery";
 import { menuDetails, menuMeta, upsertMenu } from "../../../../api/menuApi";
 import { queryClient } from "../../../../app/queryClient";
+import { sellingPriceValidator } from "../../../../variables/constants";
 
 const MenuItemForm = ({
   mode,
@@ -104,6 +105,7 @@ const MenuItemForm = ({
         status: { uuid: values.status },
         menuCategory: { uuid: values.menuCategoryUuid },
         menuModifier: { ids: values.menuModifier },
+        isTaxable: values.isTaxable ? 1 : 0,
       };
 
       createMenuItems.mutate(createValues, {
@@ -123,6 +125,7 @@ const MenuItemForm = ({
         menuCategory: { uuid: values.menuCategoryUuid },
         menuModifier: { ids: values.menuModifier },
         uuid: data?.uuid,
+        isTaxable: values.isTaxable ? 1 : 0,
       };
 
       editMenuItems.mutate(editValues, {
@@ -187,7 +190,7 @@ const MenuItemForm = ({
             name="name"
             rules={[{ required: true, message: "Name is Required" }]}
           >
-            <Input readOnly={isView} />
+            <Input readOnly={isView} placeholder="Enter Item Name" />
           </Form.Item>
 
           <Form.Item
@@ -221,14 +224,17 @@ const MenuItemForm = ({
               <Form.Item
                 label="Selling Price"
                 name="price"
+                dependencies={['cost']} // This ensures validation triggers when Purchase Price changes
                 rules={[
-                  { required: true, message: "Selling Price is Required" },
+                  { required: true, message: 'Please enter selling price' },
+                  sellingPriceValidator("cost"),
                 ]}
               >
                 <InputNumber
                   readOnly={isView}
                   suffix="MMK"
                   style={{ width: "100%" }}
+                  placeholder="Enter Selling Price"
                 />
               </Form.Item>
             </Col>
@@ -245,6 +251,7 @@ const MenuItemForm = ({
                   readOnly={isView}
                   suffix="MMK"
                   style={{ width: "100%" }}
+                  placeholder="Enter Purchase Price"
                 />
               </Form.Item>
             </Col>
@@ -254,7 +261,8 @@ const MenuItemForm = ({
             label="Is Taxable"
             name="isTaxable"
             valuePropName="checked"
-            normalize={(value) => (value ? 1 : 0)}
+            initialValue={0}
+            rules={[{ required: true }]}
           >
             <Switch
               checkedChildren="True"
