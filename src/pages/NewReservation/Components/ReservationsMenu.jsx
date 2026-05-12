@@ -1,44 +1,46 @@
 import React, { useEffect, useState } from "react";
-import {
-  Tabs,
-  Badge,
-  Row,
-  Col,
-  Input,
-  DatePicker,
-  Radio,
-  Space,
-  Button,
-} from "antd";
-import {
-  AppstoreOutlined,
-  BarsOutlined,
-  UnorderedListOutlined,
-} from "@ant-design/icons";
+import { Tabs, Badge, Space, Button, Spin } from "antd";
+import { AppstoreOutlined, UnorderedListOutlined } from "@ant-design/icons";
 import ReservationsGrid from "./ReservationsGrid";
-import ReservationList from "../../Reservation/ReservationList";
-import ReservationsTable from "./ReservationsTable";
 import { reservationList } from "../../../api/reservationList";
+import ReservationsTable from "./ReservationsTable";
 import useApiQuery from "../../../hooks/useApiQuery";
 import { LIMITS } from "../../../variables/constants";
 import ReservationSearchBar from "./ReservationsSearch";
+import { useNavigate, useParams } from "react-router-dom";
 
-const { RangePicker } = DatePicker;
+const statusColors = {
+  inquery: { color: "#faad14", bg: "#fff7e6", border: "#faad14" },
+  booking: { color: "#1677ff", bg: "#e6f4ff", border: "#1677ff" },
+  arrival: { color: "#52c41a", bg: "#f6ffed", border: "#52c41a" },
+  departure: { color: "#fa8c16", bg: "#fff2e8", border: "#fa8c16" },
+  "in-house": { color: "#13c2c2", bg: "#e6fffb", border: "#13c2c2" },
+  cancelled: { color: "#ff4d4f", bg: "#fff1f0", border: "#ff4d4f" },
+  all: { color: "#373434", bg: "#f5f5f5", border: "#373434" },
+};
 
-const ReservationMenu = ({ activeStatus, onStatusChange, onViewChange }) => {
+const ReservationMenu = ({ onStatusChange, onViewChange }) => {
+  const navigate = useNavigate();
+  const { status: routeStatus } = useParams();
+
+  const activeStatus =
+    !routeStatus || routeStatus === ":status" ? "all" : routeStatus;
+
   const [view, setView] = useState("grid");
-
   const [keyword, setKeyword] = useState("");
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
-  const [status, setStatus] = useState("all");
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(LIMITS.PAGE_SIZE);
 
-  const normalStatus = status === "all" ? null : status;
+  useEffect(() => {
+    if (!routeStatus || routeStatus === ":status") {
+      navigate("/reservations/all", { replace: true });
+    }
+  }, [routeStatus, navigate]);
 
   const { data, isLoading } = useApiQuery({
-    fetchQueryName: ["reservation-list", activeStatus, keyword, page],
+    fetchQueryName: ["reservation-list", activeStatus, keyword, page, perPage],
     fetchQueryFunction: reservationList,
     params: {
       pagination: {
@@ -46,7 +48,7 @@ const ReservationMenu = ({ activeStatus, onStatusChange, onViewChange }) => {
         perPage: perPage,
       },
       keyword,
-      status: { name: normalStatus },
+      status: { name: activeStatus === "all" ? null : activeStatus },
     },
   });
 
@@ -54,17 +56,7 @@ const ReservationMenu = ({ activeStatus, onStatusChange, onViewChange }) => {
 
   useEffect(() => {
     setPage(1);
-  }, [keyword, status, perPage]);
-
-  const statusColors = {
-    inquery: { color: "#faad14", bg: "#fff7e6", border: "#faad14" },
-    booking: { color: "#1677ff", bg: "#e6f4ff", border: "#1677ff" },
-    arrival: { color: "#52c41a", bg: "#f6ffed", border: "#52c41a" },
-    departure: { color: "#fa8c16", bg: "#fff2e8", border: "#fa8c16" },
-    "in-house": { color: "#13c2c2", bg: "#e6fffb", border: "#13c2c2" },
-    cancelled: { color: "#ff4d4f", bg: "#fff1f0", border: "#ff4d4f" },
-    all: { color: "#8c8c8c", bg: "#f5f5f5", border: "#d9d9d9" },
-  };
+  }, [keyword, activeStatus, perPage]);
 
   const items = [
     {
@@ -101,8 +93,7 @@ const ReservationMenu = ({ activeStatus, onStatusChange, onViewChange }) => {
   ];
 
   const handleTabChange = (key) => {
-    setStatus(key);
-    setPage(1);
+    navigate(`/reservations/${key}`);
 
     if (onStatusChange) {
       onStatusChange(key);
@@ -111,6 +102,7 @@ const ReservationMenu = ({ activeStatus, onStatusChange, onViewChange }) => {
 
   const handleViewChange = (newView) => {
     setView(newView);
+    
     if (onViewChange) {
       onViewChange(newView);
     }
@@ -138,9 +130,9 @@ const ReservationMenu = ({ activeStatus, onStatusChange, onViewChange }) => {
           activeKey={activeStatus}
           tabBarExtraContent={renderExtraContent}
           onChange={handleTabChange}
+          className="custom-tabs"
           items={items.map((item) => {
             const colors = statusColors[item.key] || {};
-
             return {
               key: item.key,
               label: (
@@ -154,6 +146,7 @@ const ReservationMenu = ({ activeStatus, onStatusChange, onViewChange }) => {
                       border: `1px solid ${colors.border}`,
                       fontSize: "12px",
                       borderRadius: "3px",
+                      marginLeft: "8px",
                     }}
                   />
                 </span>
@@ -175,20 +168,21 @@ const ReservationMenu = ({ activeStatus, onStatusChange, onViewChange }) => {
         {view === "grid" ? (
           <ReservationsGrid
             data={data?.data || []}
-            page={data?.pagination.currentPage}
-            perPage={data?.pagination.perPage}
+            page={page}
+            perPage={perPage}
             total={data?.pagination?.total}
-            changePage={(page) => setPage(page)}
-            changePerPage={(perPage) => setPerPage(perPage)}
+            changePage={setPage}
+            changePerPage={setPerPage}
+            loading={isLoading}
           />
         ) : (
           <ReservationsTable
             data={data?.data || []}
-            page={data?.pagination.currentPage}
-            perPage={data?.pagination.perPage}
+            page={page}
+            perPage={perPage}
             total={data?.pagination?.total}
-            changePage={(page) => setPage(page)}
-            changePerPage={(perPage) => setPerPage(perPage)}
+            changePage={setPage}
+            changePerPage={setPerPage}
             loading={isLoading}
           />
         )}
@@ -196,4 +190,5 @@ const ReservationMenu = ({ activeStatus, onStatusChange, onViewChange }) => {
     </>
   );
 };
+
 export default ReservationMenu;

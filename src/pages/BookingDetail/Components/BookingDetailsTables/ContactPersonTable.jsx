@@ -4,7 +4,7 @@ import { DollarCircleOutlined, PhoneOutlined } from "@ant-design/icons";
 
 const { Text, Title } = Typography;
 
-const ContactPersonCard = () => {
+const ContactPersonCard = ({data}) => {
   const CustomTitle = (
     <Space>
       <div className="contact-icon-box">
@@ -22,8 +22,8 @@ const ContactPersonCard = () => {
       </Row>
 
       <Row justify="space-between" className="mt-3">
-        <Text >Emily Brown</Text>
-        <Text>+9591234567890</Text>
+        <Text >{data?.guest?.name}</Text>
+        <Text>{data?.guest?.phone}</Text>
       </Row>
     </Card>
   );

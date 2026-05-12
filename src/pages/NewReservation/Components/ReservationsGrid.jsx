@@ -45,10 +45,14 @@ const ReservationsGrid = ({
     }
   };
 
-  const handleMenuClick = (key, id) => {
+  const handleMenuClick = (key, uuid) => {
     if (key === "edit") {
-      navigate(`/reservation/booking-detail`, { state: { bookingId: id } });
+      navigate(`/reservation/booking-detail`, { state: { bookingId: uuid } });
     }
+  };
+
+  const handelCardClick = (uuid) => {
+    navigate(`/reservation/booking-detail`, { state: { bookingId: uuid } });
   };
 
   if (!data || data.length === 0) {
@@ -64,6 +68,7 @@ const ReservationsGrid = ({
           <Col xs={24} sm={12} lg={8} key={item.id}>
             <Card
               hoverable
+              onClick={() => handelCardClick(item.uuid)}
               title={
                 <span style={{ fontWeight: 600 }}>{item?.guest?.name}</span>
               }
@@ -78,7 +83,7 @@ const ReservationsGrid = ({
                         icon: <PrinterOutlined />,
                       },
                     ],
-                    // onClick: ({ key }) => handleMenuClick(key, item.id),
+
                     onClick: ({ key }) => handleMenuClick(key, item.uuid),
                   }}
                   trigger={["click"]}
@@ -174,7 +179,9 @@ const ReservationsGrid = ({
                 <div
                   style={{ display: "flex", justifyContent: "space-between" }}
                 >
-                  <span style={{ color: "#8c8c8c" }}>Status</span>
+                  <span style={{ color: "#8c8c8c", borderRadius: "5px" }}>
+                    Status
+                  </span>
                   <Tag color={getStatusColor(item?.reservationStatus?.name)}>
                     {item?.reservationStatus?.name}
                   </Tag>

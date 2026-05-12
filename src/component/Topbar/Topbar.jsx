@@ -274,7 +274,7 @@ const Topbar = withDirection(function (props) {
                 <img
                   src={loginAdminDetails?.file}
                   alt="Profile"
-                  className="md:w-8 md:h-8 lg:w-10 lg:w-10 rounded-full object-cover"
+                  className="md:w-8 md:h-8 lg:w-10 lg:h-10 rounded-full object-cover"
                 />
               </div>
             </div>
