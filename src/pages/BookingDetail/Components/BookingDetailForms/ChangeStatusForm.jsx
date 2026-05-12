@@ -75,13 +75,7 @@
 // export default ChangeStatusForm;
 
 import React, { useMemo, useEffect } from "react";
-import {
-  Drawer,
-  Form,
-  Space,
-  Radio,
-  Tag,
-} from "antd";
+import { Drawer, Form, Space, Radio, Tag } from "antd";
 import FormButtons from "../../../../component/FormButtons/FormButtons";
 import { queryClient } from "../../../../app/queryClient";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
@@ -125,14 +119,14 @@ const ChangeStatusForm = ({
   //Filter next statuses
   const nextStatuses = useMemo(() => {
     return reservationStatus.filter((status) =>
-      nextStatusCodes.includes(status.code)
+      nextStatusCodes.includes(status.code),
     );
   }, [reservationStatus, nextStatusCodes]);
 
   //Mutation api call
   const updateReservationStatusMutation = useApiMutation({
     mutationFn: updateReservationStatus,
-    invalidateKeys: [["reservations"]],
+    invalidateKeys: [["reservation-details"]]
   });
 
   //Reset form when drawer closes
@@ -154,6 +148,7 @@ const ChangeStatusForm = ({
     updateReservationStatusMutation.mutate(payload, {
       onSuccess: () => {
         Toast.success("Reservation Status Updated Successfully!");
+         onClose();
       },
       onError: (error) => {
         console.error("Change status failed:", error);
@@ -178,9 +173,7 @@ const ChangeStatusForm = ({
         {/* Current Status */}
         <Form.Item
           label={
-            <span className="font-bold text-md">
-              Current Booking Status
-            </span>
+            <span className="font-bold text-md">Current Booking Status</span>
           }
           name="currentBookingStatus"
         >
@@ -194,9 +187,7 @@ const ChangeStatusForm = ({
         {/* Change Status */}
         <Form.Item
           label={
-            <span className="font-bold text-md">
-              Change Booking Status To
-            </span>
+            <span className="font-bold text-md">Change Booking Status To</span>
           }
           name="changeBookingStatusTo"
           rules={[{ required: true, message: "Please select status" }]}
