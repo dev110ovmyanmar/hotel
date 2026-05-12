@@ -83,7 +83,9 @@ const ReferralForm = ({
       });
     }
 
-    if (isEdit && data) {
+    const isViewReferralFormData = isView || isEdit;
+
+    if (isViewReferralFormData && data) {
       form.setFieldsValue({
         ...data,
       });

@@ -1,10 +1,11 @@
 import React from "react";
 import { Card, Row, Typography, Divider, Space } from "antd";
 import { DollarCircleOutlined } from "@ant-design/icons";
+import PriceTag from "../../../../component/PriceTag/PriceTag";
 
 const { Text, Title } = Typography;
 
-const SummaryCard = () => {
+const SummaryCard = ({ data }) => {
   const CustomTitle = (
     <Space>
       <div className="summary-icon-box">
@@ -18,11 +19,14 @@ const SummaryCard = () => {
     <Card title={CustomTitle} className="summary-card line-height">
       <Row justify="space-between">
         <Text>Total Charge</Text>
-        <Text>250,000 MMK</Text>
+        <div className="flex  justify-end gap-1">
+          <PriceTag value={data?.subTotal} />
+          <span>MMK</span>
+        </div>
       </Row>
 
       <Row justify="space-between">
-        <Text>Tax(3%)</Text>
+        <Text>Tax({data?.taxPercentage}%)</Text>
         <Text>7,500 MMK</Text>
       </Row>
 

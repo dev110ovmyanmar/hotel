@@ -218,11 +218,16 @@ const GuestForm = ({
             </div>
             <div className="col-span-12">
               <Form.Item
-                label="Phone Number"
+                label="Phone"
                 name="phoneNumber"
                 rules={[
                   {
                     validator: (_, value) => {
+                      // approve submit when value is empty
+                      if (!value) {
+                        return Promise.resolve();
+                      }
+
                       // Check if contains only digits
                       if (!/^\d+$/.test(value)) {
                         return Promise.reject(new Error("Phone number must contain only digits"));
@@ -235,7 +240,7 @@ const GuestForm = ({
                 <Input
                   readOnly={isView}
                   placeholder="Enter Phone Number"
-                  onInput={(e) => (e.target.value = e.target.value.replace(/\D/g, ""))}
+                // onInput={(e) => (e.target.value = e.target.value.replace(/\D/g, ""))}
                 />
               </Form.Item>
             </div>
@@ -281,6 +286,7 @@ const GuestForm = ({
                       className="bg-white text-black cursor-default border-gray-200"
                       // Ensure it doesn't look grayed out
                       variant="outlined"
+                      placeholder="Select Region"
                     />
                   ) : (
                     <Select
@@ -304,6 +310,7 @@ const GuestForm = ({
                     <Input
                       readOnly
                       className="bg-white text-black cursor-default border-gray-200"
+                      placeholder="Select Township"
                       // Ensure it doesn't look grayed out
                       variant="outlined"
                     />
@@ -336,12 +343,21 @@ const GuestForm = ({
                   rules={[
                     {
                       validator: (_, value) => {
+                        // 1. If value is empty, allow it (since it's not required)
+                        if (!value) {
+                          return Promise.resolve();
+                        }
+
+                        // 2. Check if it's strictly numeric
                         if (!/^\d+$/.test(value)) {
                           return Promise.reject(new Error("Only numbers are allowed"));
                         }
+
+                        // 3. Check length
                         if (value.length !== 6) {
                           return Promise.reject(new Error("Must be exactly 6 digits"));
                         }
+
                         return Promise.resolve();
                       },
                     },
@@ -351,7 +367,6 @@ const GuestForm = ({
                     maxLength={6}
                     readOnly={isView}
                     placeholder="Enter 6-digit NRC Number"
-                    onInput={(e) => (e.target.value = e.target.value.replace(/\D/g, ""))}
                   />
                 </Form.Item>
               </div>
@@ -402,6 +417,7 @@ const GuestForm = ({
                     value={getLabel(form.getFieldValue('country'), countryOptions)}
                     className="bg-white text-black cursor-default border-gray-200"
                     variant="outlined"
+                    placeholder="Select Country"
                   />
                 </Form.Item>
               ) : (
@@ -423,6 +439,7 @@ const GuestForm = ({
                     value={getLabel(form.getFieldValue('city'), cityOptions)}
                     className="bg-white text-black cursor-default border-gray-200"
                     variant="outlined"
+                    placeholder="Select City"
                   />
                 </Form.Item>
               ) : (
