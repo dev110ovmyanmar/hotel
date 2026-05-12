@@ -25,15 +25,21 @@ const RoomBookedDrawer = ({
     };
 
     const handleDelete = () => {
-        setRoomBookValues((prev) => ({
-            ...prev,
-            rooms: prev.rooms.filter(
-                (room) => room.roomType.uuid !== deleteKey
-            )
-        }));
+        setRoomBookValues((prev) => {
+            const updatedValues = {
+                ...prev,
+                rooms: prev.rooms.filter(
+                    (room) => room.roomType.uuid !== deleteKey
+                )
+            };
+
+            rateQuotes.mutate(updatedValues);
+
+            return updatedValues;
+        });
 
         setModalOpen(false);
-    }
+    };
 
     return (
         <Drawer
@@ -49,10 +55,30 @@ const RoomBookedDrawer = ({
             open={roomBookOpen}
             onClose={() => setRoomBookOpen(false)}
             footer={
-                <div className="flex justify-around gap-4 py-3">
-                    <span className="!text-md">Total</span>
-                    <span className="!text-md !font-bold">{roomBookValues?.grandTotal.toLocaleString()} MMK</span>
-                </div>
+                <>
+                    <div className="flex gap-4 py-3">
+                        <div className="ml-2">SubTotal</div>
+                        <div className="flex flex-1 !justify-end">
+                            <div className="!text-md !font-bold">{roomBookValues?.subTotal.toLocaleString()} MMK</div>
+                        </div>
+                    </div>
+
+                    <div className="flex gap-4 py-3">
+                        <div className="ml-2">Tax Total</div>
+                        <div className="flex flex-1 !justify-end">
+                            <div className="!text-md !font-bold">{roomBookValues?.taxTotal.toLocaleString()} MMK</div>
+                        </div>
+                    </div>
+
+                    <Divider />
+
+                    <div className="flex gap-4 py-3">
+                        <div className="!text-xl font-bold ml-2">Grand Total</div>
+                        <div className="flex flex-1 !justify-end">
+                            <div className="!text-md !font-bold">{roomBookValues?.grandTotal.toLocaleString()} MMK</div>
+                        </div>
+                    </div>
+                </>
             }
 
         >
@@ -120,6 +146,11 @@ const RoomBookedDrawer = ({
                                     </div>
                                 )
                             }
+
+                            <div className="flex justify-between">
+                                <p>Tax</p>
+                                <p className="font-bold">{room?.taxTotal.toLocaleString()} MMK</p>
+                            </div>
 
 
 

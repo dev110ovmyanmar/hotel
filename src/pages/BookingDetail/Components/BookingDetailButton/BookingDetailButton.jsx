@@ -14,13 +14,10 @@ import {
   BUTTON_CONFIG,
 } from "./../../../../component/BookingActions/BookingActions";
 
-const BookingDetailButton = ({ data }) => {
-  console.log(data, "booking");
+const BookingDetailButton = ({ data}) => {
 
   const status = data?.reservationStatus?.name?.toUpperCase();
-  console.log(status, "status");
   const actions = STATUS_ACTIONS[status] || [];
-  console.log(actions, "action");
 
   const [form] = Form.useForm();
   const [open, setOpen] = useState(false);
