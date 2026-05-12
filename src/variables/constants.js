@@ -262,3 +262,29 @@ export const MAX_REORDER_LEVEL = 200;
 
 export const MIN_STOCK_QUANTITY = 0;
 export const MAX_STOCK_QUANTITY = 200;
+
+// sellingPriceValidator
+export const sellingPriceValidator = (fieldName) => ({ getFieldValue }) => ({
+  validator(_, value) {
+    const comparisonValue = getFieldValue(fieldName);
+
+    // 1. If selling price is empty, let '{required: true}' handle it
+    if (value === undefined || value === null || value === '') {
+      return Promise.resolve();
+    }
+
+    // 2. If the field we are comparing against is empty, we can't validate yet
+    if (comparisonValue === undefined || comparisonValue === null) {
+      return Promise.resolve();
+    }
+
+    // 3. Perform the comparison
+    if (Number(value) <= Number(comparisonValue)) {
+      return Promise.reject(
+        new Error(`Selling price must be higher than ${fieldName} price`)
+      );
+    }
+
+    return Promise.resolve();
+  },
+});

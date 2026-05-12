@@ -9,8 +9,19 @@ import AddReundForm from "../BookingDetailForms/AddRefundForm";
 import RoomMoveForm from "../BookingDetailForms/RoomMoveForm";
 import AmendStayForm from "../BookingDetailForms/AmendStayForm";
 import AddPaymentForm from "../BookingDetailForms/AddPaymentForm";
+import {
+  STATUS_ACTIONS,
+  BUTTON_CONFIG,
+} from "./../../../../component/BookingActions/BookingActions";
 
-const BookingDetailButton = ({ reservationId }) => {
+const BookingDetailButton = ({ data }) => {
+  console.log(data, "booking");
+
+  const status = data?.reservationStatus?.name?.toUpperCase();
+  console.log(status, "status");
+  const actions = STATUS_ACTIONS[status] || [];
+  console.log(actions, "action");
+
   const [form] = Form.useForm();
   const [open, setOpen] = useState(false);
   const [amendOpen, setAmendOpen] = useState(false);
@@ -20,107 +31,103 @@ const BookingDetailButton = ({ reservationId }) => {
   const [amendStayOpen, setAmendStayOpen] = useState(false);
   const [addPaymentOpen, setAddPaymentOpen] = useState(false);
 
-  const handleSubmit = (values) => {
-    console.log("Status update:", values);
-    setOpen(false);
+  const handleAction = (key) => {
+    switch (key) {
+      case "changeStatus":
+        setOpen(true);
+        break;
+
+      case "amendBooking":
+        setAmendOpen(true);
+        break;
+
+      case "addPayment":
+        setAddPaymentOpen(true);
+        break;
+
+      case "addRefund":
+        setRefundOpen(true);
+        break;
+
+      case "overtimeCharges":
+        setOvertimeOpen(true);
+        break;
+
+      case "roomMove":
+        setRoomMoveOpen(true);
+        break;
+
+      case "printInvoice":
+        setOpen.print();
+        break;
+    }
   };
 
   return (
     <div>
       <div className="text-sm mb-6 mt-1.5">
-        Reservation id: <strong>{reservationId}</strong>
+        Reservation id: {data?.reservationNo}
       </div>
 
-      <div className="flex flex-row gap-2 items-center w-full">
-        <Button onClick={() => setOpen(true)} className="custom-blue-btn">
-          Change Status
-        </Button>
+      <div className="flex gap-2">
+        {actions.map((key) => {
+          const btn = BUTTON_CONFIG[key];
+          if (!btn) return null;
 
-        <Button onClick={() => setAmendOpen(true)} className="custom-blue-btn">
-          Amend Booking
-        </Button>
-
-        <Button
-          onClick={() => setAddPaymentOpen(true)}
-          className="custom-blue-btn"
-          icon={<PlusOutlined style={{ fontSize: "12px" }} />}
-        >
-          Add Payment
-        </Button>
-
-        <Button
-          onClick={() => setRefundOpen(true)}
-          className="custom-blue-btn"
-          icon={<PlusOutlined style={{ fontSize: "12px" }} />}
-        >
-          Add Refund
-        </Button>
-
-        <Button
-          onClick={() => setAmendStayOpen(true)}
-          className="custom-blue-btn"
-        >
-          Amend Stay
-        </Button>
-
-        <Button
-          onClick={() => setOvertimeOpen(true)}
-          className="custom-blue-btn"
-        >
-          Overtime Charges
-        </Button>
-
-        <Button
-          onClick={() => setRoomMoveOpen(true)}
-          className="custom-blue-btn"
-        >
-          Room Move
-        </Button>
-        <Button className="custom-blue-btn" icon={<IoPrintOutline />}>
-          Print Invoice
-        </Button>
+          return (
+            <Button
+              key={key}
+              className="custom-blue-btn"
+              icon={btn.icon ? <PlusOutlined /> : null}
+              onClick={() => handleAction(key)}
+            >
+              {btn.label}
+            </Button>
+          );
+        })}
       </div>
 
       <ChangeStatusForm
         open={open}
         onClose={() => setOpen(false)}
-        reservationId={reservationId}
+        reservationId={data?.reservationNo}
+        reservationDetails={data}
       />
 
       <AmendBookingForm
         open={amendOpen}
         onClose={() => setAmendOpen(false)}
-        reservationId={reservationId}
+        reservationId={data?.reservationNo}
       />
 
       <AddPaymentForm
         open={addPaymentOpen}
         onClose={() => setAddPaymentOpen(false)}
-        reservationId={reservationId}
+        reservationId={data?.reservationNo}
       />
 
       <AddReundForm
         open={refundOpen}
         onClose={() => setRefundOpen(false)}
-        reservationId={reservationId}
+        reservationId={data?.reservationNo}
       />
 
       <AmendStayForm
         open={amendStayOpen}
         onClose={() => setAmendStayOpen(false)}
-        reservationId={reservationId}
+        reservationId={data?.reservationNo}
       />
 
       <OvertimeChargeForm
         open={overtimeOpen}
         onClose={() => setOvertimeOpen(false)}
-        reservationId={reservationId}
+        reservationId={data?.reservationNo}
       />
 
       <RoomMoveForm
         open={roomMoveOpen}
         onClose={() => setRoomMoveOpen(false)}
-        reservationId={reservationId}
+        reservationId={data?.reservationNo}
       />
     </div>
   );

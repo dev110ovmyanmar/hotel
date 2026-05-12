@@ -13,8 +13,24 @@ import Toast from "../../component/Toast/Toast";
 import dayjs from "dayjs";
 import { upsertGuest } from "../../api/guestApi";
 import store from "../../app/store";
+import { queryClient } from "../../app/queryClient";
+import RoomDetailsTable from "./RoomDetailsTable";
+import RoomConfirmFinish from "./RoomConfirmFinish";
 
 const ReservationList = () => {
+
+  const initData = queryClient.getQueryData(["initData", "authenticated"]);
+
+  const bookedViaOptions = initData?.statuses?.booked_via.map((item) => ({
+    label: item.name,
+    value: item.uuid,
+  })) || [];
+
+  const sourceTypeOptions = initData?.statuses?.source_type.map((item) => ({
+    label: item.name,
+    value: item.uuid,
+  })) || [];
+
   const navigate = useNavigate();
   const [form] = Form.useForm();
   const [roomBookOpen, setRoomBookOpen] = useState(false);
@@ -34,6 +50,12 @@ const ReservationList = () => {
 
   const [clickCreateContact, setClickCreateContact] = useState(false);
   const [createContactFinish, setCreateContactFinish] = useState(false);
+
+
+  const defaultFilter = [
+    dayjs().hour(14).minute(0),
+    dayjs().add(1, "day").hour(12).minute(0)
+  ];
 
   const availabilitySearchs = useApiMutation({
     mutationFn: availabilitySearch,
@@ -78,7 +100,7 @@ const ReservationList = () => {
     options: {
       onSuccess: (values) => {
         Toast.success(values);
-        navigate("/reservation/inquiry/")
+        navigate("/reservations/inquery/")
       },
     },
   });
@@ -221,6 +243,7 @@ const ReservationList = () => {
 
         return (
           <Select
+            className={remainingRooms <= 0 ? "!w-20 [&_.ant-select-content]:!text-gray-500 [$_.ant-select-input]:!text-gray-500" : "!w-20"}
             options={options}
             value={selectedRooms[record.key] || 1}
             disabled={remainingRooms <= 0}
@@ -230,7 +253,6 @@ const ReservationList = () => {
                 [record.key]: val,
               }));
             }}
-            className="w-20"
           />
         );
       },
@@ -239,10 +261,10 @@ const ReservationList = () => {
       title: "Rate & Prices",
       dataIndex: "ratePlans",
       align: "center",
-      render: (value) => (
+      render: (value,record) => (
         <div className="mb-2">
           <p>{value?.minPrice?.toLocaleString()} MMK</p>
-          <p className="text-gray-500 text-sm">{value?.name}</p>
+          <p className="!text-gray-400 !text-sm">{value?.name}</p>
         </div>
       ),
     },
@@ -261,7 +283,7 @@ const ReservationList = () => {
 
         return (
           <Button
-            className={isBooked ? "" : "!border-blue-500 !text-blue-500"}
+            className={getRemainingRooms(record) <= 0 ? "border-gray-100 !text-gray-300" : isBooked? "" : "!border-blue-500 !text-blue-500"}
             type={isBooked ? "primary" : "default"}
             disabled={!isBooked && getRemainingRooms(record) <= 0} // disable if no rooms left
             onClick={() => {
@@ -324,7 +346,11 @@ const ReservationList = () => {
             setReservationFormValues(null);
             setSearchButtonDisable(false);
             // setSelectedSourceType(null);
-            form.resetFields();  
+            form.setFieldsValue({
+              filter: defaultFilter,
+              bookedVia: bookedViaOptions?.[0]?.value,
+              sourceType: sourceTypeOptions?.[0]?.value,
+            });
           }}
         >
           <ReloadOutlined className="!text-blue-500" />
@@ -339,41 +365,16 @@ const ReservationList = () => {
         form={form}
         searchButtonDisable={searchButtonDisable}
         setSearchButtonDisable={setSearchButtonDisable}
-
+        defaultFilter={defaultFilter}
+        bookedViaOptions={bookedViaOptions}
+        sourceTypeOptions={sourceTypeOptions}
       />
 
       {roomConfirm ? (
         <>
-          {roomBookValues?.rooms?.map((i) => (
-            <Card className="!my-3" >
-              <div className="flex justify-between">
-                <p>{i?.roomType?.name}</p>
-                <Tag color="blue">{i?.totalRooms} Room</Tag>
-              </div>
-
-              <div className="flex">
-                <MdPeopleOutline fontSize={19} className="mt-1" />
-                <span className="text-md ml-1 mt-1">{i.adults}</span>
-
-                {/* <MdOutlineEscalatorWarning className="ml-3" />
-                <span className="ml-1 text-xs">{i.child}</span> */}
-
-                <div className="text-lg text-gray-400 mx-2">|</div>
-                <div className="!text-md ml-1 mt-1">{i.extraBed} Extra Bed</div>
-              </div>
-
-              <Divider />
-
-              {
-                i?.ratePlans?.map((rate) =>
-                  <div className="flex justify-between">
-                    <p>{rate?.name}</p>
-                    <p className="font-bold">{rate?.totalPrice?.toLocaleString()} MMK</p>
-                  </div>
-                )
-              }
-            </Card>
-          ))}
+          <RoomConfirmFinish 
+            roomBookValues={roomBookValues}
+          />
 
           <Card className="!my-3">
             <h1 className="text-lg font-bold my-2">Contact Person</h1>
@@ -413,38 +414,14 @@ const ReservationList = () => {
           }
         </>
       ) : searchReservation ? (
-        <Card className="!my-3">
-          <h1 className="text-lg font-bold my-2">Room Details</h1>
-
-          <Table
-            columns={columns}
-            dataSource={dataSource}
-            pagination={false}
-            rowClassName={(record) => {
-              const isBooked = selectedData.some(
-                (item) => item.key === record.key,
-              );
-              const remainingRooms = getRemainingRooms(record);
-              return !isBooked && remainingRooms <= 0
-                ? "opacity-50 grayscale bg-gray-50"
-                : "";
-            }}
-          />
-
-          <div className="my-5">
-            <span className="text-red-500">*** </span>
-            <span>
-              Children under 6 years stay free in existing bedding; children
-              aged 6+ must use extra bed.
-            </span>
-          </div>
-
-          <div className="flex justify-end">
-            <Button type="primary" onClick={viewRoomBookedMutate} loading={rateQuotes?.isPending}>
-              View Room Booked
-            </Button>
-          </div>
-        </Card>
+        <RoomDetailsTable
+          columns={columns}
+          dataSource={dataSource}
+          selectedData={selectedData}
+          getRemainingRooms={getRemainingRooms}
+          viewRoomBookedMutate={viewRoomBookedMutate}
+          rateQuotes={rateQuotes}
+        />
       ) : null}
 
       <CreateContactPerson

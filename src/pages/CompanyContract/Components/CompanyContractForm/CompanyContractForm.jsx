@@ -43,6 +43,11 @@ const CompanyContractForm = ({
 }) => {
   const [form] = Form.useForm();
 
+  const { RangePicker } = DatePicker;
+  const disabledDate = current => {
+    return current && current < dayjs().startOf('day');
+  };
+
   const { state } = useLocation();
 
   const { hasPermission } = usePermission();
@@ -83,8 +88,10 @@ const CompanyContractForm = ({
     if (!isAdd && partnerContractDetailData) {
       form.setFieldsValue({
         ...partnerContractDetailData,
-        contractStart: dayjs(partnerContractDetailData?.contractStart),
-        contractEnd: dayjs(partnerContractDetailData?.contractEnd),
+        dateRange: [
+          partnerContractDetailData.contractStart ? dayjs(partnerContractDetailData.contractStart) : null,
+          partnerContractDetailData.contractEnd ? dayjs(partnerContractDetailData.contractEnd) : null
+        ],
       });
       setSelectedData(partnerContractDetailData);
     }
@@ -97,9 +104,13 @@ const CompanyContractForm = ({
   };
 
   const onFinish = (values) => {
-    console.log(values, "valuesonFinish");
+    const [startDate, endDate] = values.dateRange || [];
     const createValues = {
-      ...values,
+      // ...values,
+      chargeType: {
+        uuid: values?.chargeType?.uuid
+      },
+      chargeValue: values?.chargeValue,
       property: {
         uuid: propertyName?.uuid,
       },
@@ -107,8 +118,8 @@ const CompanyContractForm = ({
         uuid: state?.companyRecord?.uuid,
       },
       partnerType: "Company",
-      contractStart: getFormattedDate(values?.contractStart),
-      contractEnd: getFormattedDate(values?.contractEnd),
+      contractStart: startDate ? getFormattedDate(startDate, false) : null,
+      contractEnd: endDate ? getFormattedDate(endDate, false) : null,
     };
     if (isAdd) {
       upsertPartnerContracts.mutate(createValues, {
@@ -123,7 +134,11 @@ const CompanyContractForm = ({
     }
     if (isEdit) {
       const editValues = {
-        ...values,
+        // ...values,
+        chargeType: {
+          uuid: values?.chargeType?.uuid
+        },
+        chargeValue: values?.chargeValue,
         property: {
           uuid: propertyName?.uuid,
         },
@@ -131,8 +146,8 @@ const CompanyContractForm = ({
           uuid: state?.companyRecord?.uuid,
         },
         partnerType: "Company",
-        contractStart: getFormattedDate(values?.contractStart),
-        contractEnd: getFormattedDate(values?.contractEnd),
+        contractStart: startDate ? getFormattedDate(startDate, false) : null,
+        contractEnd: endDate ? getFormattedDate(endDate, false) : null,
         uuid: partnerContractDetailData?.uuid,
       };
 
@@ -269,7 +284,25 @@ const CompanyContractForm = ({
             </Col>
           </Row>
 
+
           <Row gutter={16}>
+            <Col span={24}>
+              <Form.Item
+                name="dateRange"
+                label="Date Range"
+                rules={[{ required: true, message: "Please select Date Range" }]}
+              >
+                <RangePicker
+                  disabledDate={disabledDate}
+                  disabled={isView}
+                  suffixIcon={isView ? null : undefined}
+                  style={{ width: '100%' }}
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+
+          {/* <Row gutter={16}>
             <Col span={12}>
               <Form.Item
                 label="Start Contract Date"
@@ -283,9 +316,9 @@ const CompanyContractForm = ({
               >
                 <DatePicker style={{ width: "100%" }} disabled={isView} />
               </Form.Item>
-            </Col>
+            </Col> */}
 
-            <Col span={12}>
+          {/* <Col span={12}>
               <Form.Item
                 label="End Contract Date"
                 name="contractEnd"
@@ -295,8 +328,8 @@ const CompanyContractForm = ({
               >
                 <DatePicker style={{ width: "100%" }} disabled={isView} />
               </Form.Item>
-            </Col>
-          </Row>
+            </Col> */}
+          {/* </Row> */}
         </Form>
       </Drawer>
 

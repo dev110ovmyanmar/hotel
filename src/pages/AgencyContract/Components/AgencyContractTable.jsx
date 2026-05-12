@@ -19,6 +19,7 @@ const AgencyContractTable = ({
   total,
   changePage,
   changePerPage,
+  loading,
 }) => {
   const { hasPermission } = usePermission();
 
@@ -37,7 +38,7 @@ const AgencyContractTable = ({
       title: "Phone",
       dataIndex: ["agency", "phone"],
       key: "agencyPhone",
-      render: (text) => <div>{text? text : "-"}</div>,
+      render: (text) => <div>{text ? text : "-"}</div>,
     },
     {
       title: "Charge Type",
@@ -53,19 +54,19 @@ const AgencyContractTable = ({
           return <div>{chargeValue} %</div>
         }
       },
-      align:"center"
+      align: "center"
     },
     {
       title: "Contract Start Date",
       dataIndex: "contractStart",
       key: "contractStart",
-      render: (_,record) => <div>{record?.contractStart}</div>
+      render: (_, record) => <div>{record?.contractStart}</div>
     },
     {
       title: "Contract End Date",
       dataIndex: "contractEnd",
       key: "contractEnd ",
-      render: (_,record) => <div>{record?.contractEnd}</div>
+      render: (_, record) => <div>{record?.contractEnd}</div>
     },
     {
       title: "Action",
@@ -114,8 +115,9 @@ const AgencyContractTable = ({
           )
           .map((action) => ({
             key: action.key,
+            onClick: action.onClick,
             label: (
-              <Space size={4} style={smallStyle} onClick={action.onClick}>
+              <Space size={4} style={smallStyle}>
                 {action.icon}
                 <span style={{ fontSize: "14px" }}>{action.label}</span>
               </Space>
@@ -136,6 +138,7 @@ const AgencyContractTable = ({
       <Table
         tableLayout="fixed"
         scroll={{ x: 1000 }}
+        loading={loading}
         columns={columns}
         dataSource={data}
         rowKey="roomrate"

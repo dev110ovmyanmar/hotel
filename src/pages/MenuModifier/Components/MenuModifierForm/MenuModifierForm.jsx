@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Form, Input, Button, Select, Drawer, InputNumber } from "antd";
+import { Form, Input, Button, Select, Drawer, InputNumber, Row, Col } from "antd";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
 import useApiQuery from "../../../../hooks/useApiQuery";
 import FormButton from "../../../../component/FormButtons/FormButtons";
@@ -10,6 +10,7 @@ import {
   menuModifierDetails,
 } from "../../../../api/menuModifierApi";
 import Loader from "../../../../component/Loader/Loader";
+import { sellingPriceValidator } from "../../../../variables/constants";
 
 const MenuModifierForm = ({
   mode,
@@ -139,51 +140,44 @@ const MenuModifierForm = ({
             >
               <Input readOnly={isView} placeholder="Enter Menu Modifier Name" />
             </Form.Item>
-            <Form.Item
-              label="Purchase Price"
-              name="unitCost"
-              rules={[
-                { required: true, message: "Purchase Price is Required" },
-              ]}
-            >
-              <InputNumber
-                disabled={isView}
-                min={1}
-                className="!w-full"
-                placeholder="Enter Price"
-                suffix="MMK"
-              />
-            </Form.Item>
+            <Row gutter={16}>
+              <Col span={12}>
+                <Form.Item
+                  label="Purchase Price"
+                  name="unitCost"
+                  rules={[
+                    { required: true, message: "Purchase Price is Required" },
+                  ]}
+                >
+                  <InputNumber
+                    disabled={isView}
+                    min={1}
+                    className="!w-full"
+                    placeholder="Enter Price"
+                    suffix="MMK"
+                  />
+                </Form.Item>
+              </Col>
 
-            <Form.Item
-              label="Selling Price"
-              name="unitPrice"
-              rules={[
-                { required: true, message: "Please enter selling price" },
-                ({ getFieldValue }) => ({
-                  validator(_, value) {
-                    const purchasePrice = getFieldValue("unitCost");
-                    // Only validate if both values exist
-                    if (!value || !purchasePrice || value > purchasePrice) {
-                      return Promise.resolve();
-                    }
-                    return Promise.reject(
-                      new Error(
-                        "Selling price must be higher than purchase price",
-                      ),
-                    );
-                  },
-                }),
-              ]}
-            >
-              <InputNumber
-                disabled={isView}
-                min={1}
-                className="!w-full"
-                placeholder="Enter Price"
-                suffix="MMK"
-              />
-            </Form.Item>
+              <Col span={12}>
+                <Form.Item
+                  label="Selling Price"
+                  dependencies={['unitCost']}
+                  name="unitPrice"
+                  rules={[
+                    { required: true, message: "Please enter selling price" },
+                    sellingPriceValidator("unitCost", "unitPrice", true)
+                  ]}
+                >
+                  <InputNumber
+                    disabled={isView}
+                    min={1}
+                    className="!w-full"
+                    placeholder="Enter Price"
+                    suffix="MMK"
+                  />
+                </Form.Item></Col>
+            </Row>
           </Form>
         )}
       </Drawer>

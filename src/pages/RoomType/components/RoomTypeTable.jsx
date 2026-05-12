@@ -11,6 +11,7 @@ import { PERMISSIONS } from "../../../variables/permission";
 import RoomTypeForm from "./RoomTypeForm/RoomTypeForm";
 import PriceTag from "../../../component/PriceTag/PriceTag";
 import { TableColumns } from "../../../component/TableColumns/TableColumns";
+import ColorStatusTag from "../../../component/ColorStatusTag/ColorStatusTag";
 
 const RoomTypeTable = ({
   data,
@@ -62,19 +63,26 @@ const RoomTypeTable = ({
       align: "center",
     },
     {
-      title: "Extra Bed",
-      dataIndex: "extraBed",
-      key: "extraBed",
-      width: 110,
+      title: "Max Extra Bed",
+      dataIndex: "maxExtraBed",
+      key: "maxExtraBed",
+      width: 130,
       align: "center",
     },
+    // {
+    //   title: "Price (MMK)",
+    //   dataIndex: "basePrice",
+    //   key: "basePrice",
+    //   render: (text) => <PriceTag value={text} />,
+    //   align: "end",
+    // },
     {
-      title: "Price (MMK)",
-      dataIndex: "basePrice",
-      key: "basePrice",
-      render: (text) => <PriceTag value={text} />,
-      align: "end",
-    },
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      render: (status) => <ColorStatusTag status={status} />,
+    }
+    ,
     {
       title: "Action",
       render: (_, record) => {
