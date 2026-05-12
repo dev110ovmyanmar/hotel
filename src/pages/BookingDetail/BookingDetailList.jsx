@@ -21,12 +21,11 @@ const BookingDetailList = () => {
   const uuid = location.state?.bookingId;
 
   const { data, isLoading } = useApiQuery({
-    fetchQueryName: ["reservation-details"],
+    fetchQueryName: "reservation-details",
     fetchQueryFunction: reservationDetails,
     params: { uuid },
     options: { enabled: !!uuid },
   });
-  console.log(data, "data");
 
   if (isLoading) {
     return <Spin className="w-full flex justify-center my-10" />;
@@ -38,7 +37,9 @@ const BookingDetailList = () => {
 
       <ReservationMenu data={data || {}} />
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
-        <BookingDetailButton data={data || {}} />
+        <BookingDetailButton 
+        data={data || {}}
+          />
       </div>
 
       <Row gutter={[16, 16]}>
