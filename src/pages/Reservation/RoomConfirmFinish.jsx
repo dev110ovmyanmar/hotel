@@ -20,7 +20,7 @@ const RoomConfirmFinish = ({
                             <span className="text-md ml-1 mt-1">{i.adults}</span>
 
                             {/* <MdOutlineEscalatorWarning className="ml-3" />
-                <span className="ml-1 text-xs">{i.child}</span> */}
+                                <span className="ml-1 text-xs">{i.child}</span> */}
 
                             <div className="text-lg text-gray-400 mx-2">|</div>
                             <div className="!text-md ml-1 mt-1">{i.extraBed} Extra Bed</div>
@@ -36,6 +36,11 @@ const RoomConfirmFinish = ({
                                 </div>
                             )
                         }
+
+                        <div className="flex justify-between">
+                            <p>Tax</p>
+                            <p className="font-bold">{i?.taxTotal.toLocaleString()} MMK</p>
+                        </div>
                     </Card>
                 ))
             }
