@@ -12,6 +12,7 @@ import {
 import Status from "../../../../component/Status/Status";
 import Loader from "../../../../component/Loader/Loader";
 import { queryClient } from "../../../../app/queryClient";
+import { sellingPriceValidator } from "../../../../variables/constants";
 
 const FAndBInventoryForm = ({
   mode,
@@ -302,23 +303,7 @@ const FAndBInventoryForm = ({
                 dependencies={["unitCost"]}
                 rules={[
                   { required: true, message: "Selling Price is Required" },
-                  ({ getFieldValue }) => ({
-                    validator(_, value) {
-                      const purchasePrice = getFieldValue("unitCost");
-                      if (
-                        !value ||
-                        !purchasePrice ||
-                        Number(value) > Number(purchasePrice)
-                      ) {
-                        return Promise.resolve();
-                      }
-                      return Promise.reject(
-                        new Error(
-                          "Selling price must be greater than purchase price",
-                        ),
-                      );
-                    },
-                  }),
+                  sellingPriceValidator("unitCost")
                 ]}
               >
                 <InputNumber

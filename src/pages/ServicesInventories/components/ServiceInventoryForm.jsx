@@ -8,7 +8,7 @@ import { getServiceInventoryDetail, upsertInventory } from "../../../api/service
 import { useApiMutation } from "../../../hooks/useApiMutation";
 import { getServiceMeta } from "../../../api/serviceInventoryApi";
 import Toast from "../../../component/Toast/Toast";
-import { MIN_REORDER_LEVEL, MAX_REORDER_LEVEL, MIN_STOCK_QUANTITY, MAX_STOCK_QUANTITY } from "../../../variables/constants";
+import { MIN_REORDER_LEVEL, MAX_REORDER_LEVEL, MIN_STOCK_QUANTITY, MAX_STOCK_QUANTITY, sellingPriceValidator } from "../../../variables/constants";
 
 const ServiceInventoryForm = ({
   mode,
@@ -58,11 +58,6 @@ const ServiceInventoryForm = ({
   useEffect(() => {
     if (isAdd) {
       form.resetFields();
-      // Set default values for NEW items here
-      form.setFieldsValue({
-        laundryStatus: false, // Default to Standard
-        isFree: false,        // Default to Paid
-      });
     } else if (data) {
       form.setFieldsValue({
         ...data,
@@ -136,7 +131,7 @@ const ServiceInventoryForm = ({
   };
 
   const DrawerTitle = isView
-    ? "Inventory View"
+    ? "Inventory Details"
     : isEdit
       ? "Inventory Edit"
       : "Inventory Create";
@@ -210,19 +205,10 @@ const ServiceInventoryForm = ({
               <Form.Item
                 label={<span className="text-xs">Selling Price</span>}
                 name="unitPrice"
-                dependencies={['unitCost']} // This ensures validation triggers when Purchase Price changes
+                dependencies={['unitCost']}
                 rules={[
                   { required: true, message: 'Please enter selling price' },
-                  ({ getFieldValue }) => ({
-                    validator(_, value) {
-                      const purchasePrice = getFieldValue('unitCost');
-                      // Only validate if both values exist
-                      if (!value || !purchasePrice || value > purchasePrice) {
-                        return Promise.resolve();
-                      }
-                      return Promise.reject(new Error('Selling price must be higher than purchase price'));
-                    },
-                  }),
+                  sellingPriceValidator("unitCost"),
                 ]}
               >
                 <InputNumber
@@ -336,6 +322,7 @@ const ServiceInventoryForm = ({
               <Form.Item
                 label="Laundry Requirement"
                 name="laundryStatus"
+                initialValue={0}
                 rules={[{ required: true, message: "Please select laundry status!" }]}
               >
                 <Switch
@@ -348,6 +335,7 @@ const ServiceInventoryForm = ({
               <Form.Item
                 label="Is this item free?"
                 name="isFree"
+                initialValue={0}
                 rules={[{ required: true, message: "Please select billing type!" }]}
               >
                 <Switch
