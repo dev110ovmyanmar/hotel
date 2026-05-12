@@ -26,7 +26,7 @@ const CreateGuestForm = ({
   const [form] = Form.useForm();
 
   const [searchText, setSearchText] = useState("");
-  
+
 
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
 
@@ -108,8 +108,11 @@ const CreateGuestForm = ({
       <Form layout="vertical" form={form}>
         <Row gutter={16}>
           <Col span={4}>
-            <Form.Item label="Title" name="title" >
-              <Select options={titleOptions} />
+            <Form.Item
+              label="Title"
+              name="title"
+            >
+              <Select options={titleOptions} placeholder="Select Title" />
             </Form.Item>
           </Col>
 
@@ -117,7 +120,8 @@ const CreateGuestForm = ({
             <Form.Item
               label="Name"
               name="name"
-              rules={[{ required: false }]} // handled manualcly
+              rules={[{ required: false }]}
+            // handled manualcly
             >
               <Select
                 showSearch
@@ -165,7 +169,9 @@ const CreateGuestForm = ({
                   if (!/[0-9]/.test(e.key)) {
                     e.preventDefault();
                   }
-                }} />
+                }}
+                placeholder="Enter Phone Number"
+              />
             </Form.Item>
           </Col>
 
