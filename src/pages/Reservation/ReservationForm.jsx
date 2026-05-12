@@ -135,8 +135,8 @@ const ReservationForm = ({
                 onValuesChange={() => { setSearchButtonDisable(false) }}
             >
                 <h1 className="text-lg font-bold my-2">Create New Reservation</h1>
-                <div className="flex gap-6 justify-between">
-                    <div className="flex-3">
+                <div className="flex flex-wrap gap-3">
+                    <div className="flex-[3] min-w-[320px]">
                         <Form.Item name="filter" label="Check-in / Check-out Date" rules={[{ required: true, message: "Please Select Date" }]}>
                             <RangePicker
                                 className="!w-full"
@@ -164,8 +164,8 @@ const ReservationForm = ({
                         </Form.Item>
                     </div>
 
-                    <div className="flex items-center">
-                        <Form.Item name="totalNight" label="Nights" className="mb-0" rules={[{ required: true }]}>
+                    <div >
+                        <Form.Item name="totalNight" label="Nights" rules={[{ required: true }]}>
                             <div className="w-[61px] h-[32px] bg-[#fafafa] rounded-md flex flex-col justify-center items-center">
 
                                 <p className="text-xs leading-none">{totalNights}</p>
@@ -175,7 +175,7 @@ const ReservationForm = ({
                         </Form.Item>
                     </div>
 
-                    <div className="flex-2">
+                    <div className="w-full min-w-[200px] sm:w-[45%] md:w-[30%] md:flex-1 lg:flex-2">
                         <Form.Item name="bookedVia" label="Booking Source" rules={[{ required: true, message: "Please Select Booking Source" }]}>
                             <Select
                                 options={bookedViaOptions}
@@ -186,7 +186,7 @@ const ReservationForm = ({
                         </Form.Item>
                     </div>
 
-                    <div className="flex-2">
+                    <div className="w-full min-w-[200px] sm:w-[45%] md:w-[30%] lg:flex-2">
                         <Form.Item name="sourceType" label="Source Type" rules={[{ required: true, message: "Please Select Source Type" }]}>
                             <Select
                                 options={sourceTypeOptions}
@@ -197,7 +197,7 @@ const ReservationForm = ({
                         </Form.Item>
                     </div>
 
-                    <div className="flex-1">
+                    <div className="w-[200px]">
                         {
                             (selectedSourceType === "Agency" ||
                                 selectedSourceType === "Company") && (
@@ -215,7 +215,7 @@ const ReservationForm = ({
                         }
                     </div>
 
-                    <div className="mt-7">
+                    <div className="mt-[30px] flex items-center ">
                         {
                             afterRoomConfirm ?
                                 null
