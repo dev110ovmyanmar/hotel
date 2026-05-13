@@ -3,6 +3,7 @@ import ReservationHeader from "../../Components/ReservationHeader";
 import ReservationMenu from "../../Components/ReservationMenu";
 import GuestTable from "./Components/GuestTable";
 import GuestForm from "./Components/GuestForms/GuestForm";
+import ReservationListHeader from "../../../../component/ReservationHeader/ReservationListHeader";
 
 const GuestList = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -20,18 +21,19 @@ const GuestList = () => {
       <ReservationHeader />
       <ReservationMenu />
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
-        <div className="text-sm mb-6 mt-1.5">
-          Reservation id: <strong> 1212122 </strong>
-        </div>
+        <ReservationListHeader
+          reservationId="123212321"
+          onAddreservation={handleAddGuest}
+          addButtonText={"Add New Guest"}
+        />
       </div>
-
       <GuestTable />
-      
-      {/* <GuestForm
+
+      <GuestForm
         drawerOpen={drawerOpen}
         setDrawerOpen={setDrawerOpen}
         mode={mode}
-      /> */}
+      />
     </div>
   );
 };
