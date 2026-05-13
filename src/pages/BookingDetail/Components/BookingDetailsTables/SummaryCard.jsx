@@ -6,7 +6,7 @@ import PriceTag from "../../../../component/PriceTag/PriceTag";
 const { Text, Title } = Typography;
 
 const SummaryCard = ({ data }) => {
-  const data = data?.reservation;
+  const reservation = data?.reservation;
   const CustomTitle = (
     <Space>
       <div className="summary-icon-box">
@@ -21,13 +21,13 @@ const SummaryCard = ({ data }) => {
       <Row justify="space-between">
         <Text>Total Charge</Text>
         <div className="flex  justify-end gap-1">
-          <PriceTag value={data?.subTotal} />
+          <PriceTag value={reservation?.subTotal} />
           <span>MMK</span>
         </div>
       </Row>
 
       <Row justify="space-between">
-        <Text>Tax({data?.taxPercentage}%)</Text>
+        <Text>Tax({reservation?.taxPercentage}%)</Text>
         <Text>7,500 MMK</Text>
       </Row>
 

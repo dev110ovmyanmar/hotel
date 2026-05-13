@@ -9,13 +9,13 @@ import dayjs from "dayjs";
 import ReservationStatusColor from "../../../component/ReservationStatusColor/ReservationStatusColor";
 
 const ReservationHeader = ({ data }) => {
-  const data = data?.reservation;
+  const reservation = data?.reservation;
   return (
     <div>
       <div className="flex items-center space-x-2">
         <div className="flex items-center gap-2">
-          <h1 className="text-lg font-bold">{data?.guest?.name}</h1>
-          <ReservationStatusColor status={data?.reservationStatus?.name} />
+          <h1 className="text-lg font-bold">{reservation?.guest?.name}</h1>
+          <ReservationStatusColor status={reservation?.reservationStatus?.name} />
         </div>
 
         <div className="flex flex-col sm:flex-row justify-between gap-6 sm:gap-10 mx-4 md:mx-20 lg:mx-40">
@@ -23,10 +23,10 @@ const ReservationHeader = ({ data }) => {
             <span className="text-gray-500 text-sm">Arrival</span>
             <div className="flex items-center flex-wrap gap-2 mt-1">
               <span className="text-xs font-semibold">
-                {dayjs(data?.actualCheckin).format("DD/MM/YYYY")}
+                {dayjs(reservation?.actualCheckin).format("DD/MM/YYYY")}
               </span>
               <span className="border border-gray-300 rounded text-gray-800 px-2 sm:text-xs font-medium">
-                {dayjs(data?.actualCheckin).format("h:mm A")}
+                {dayjs(reservation?.actualCheckin).format("h:mm A")}
               </span>
             </div>
           </div>
@@ -35,10 +35,10 @@ const ReservationHeader = ({ data }) => {
             <span className="text-gray-500 text-sm">Departure</span>
             <div className="flex items-center flex-wrap gap-2 mt-1">
               <span className="text-xs font-semibold">
-                {dayjs(data?.actualCheckout).format("DD/MM/YYYY")}
+                {dayjs(reservation?.actualCheckout).format("DD/MM/YYYY")}
               </span>
               <span className="border border-gray-300 rounded text-gray-800 px-2 sm:text-xs font-medium">
-                {dayjs(data?.actualCheckout).format("h:mm A")}
+                {dayjs(reservation?.actualCheckout).format("h:mm A")}
               </span>
             </div>
           </div>
@@ -46,7 +46,7 @@ const ReservationHeader = ({ data }) => {
           <div className="flex flex-col">
             <span className="text-gray-500 text-sm">Night</span>
             <span className="text-xs mt-1 font-semibold ">
-              {data?.totalNight}
+              {reservation?.totalNight}
             </span>
           </div>
         </div>
@@ -55,17 +55,17 @@ const ReservationHeader = ({ data }) => {
       <div className="flex items-center gap-4 mt-2">
         <div className="flex items-center gap-1.5">
           <IoPeopleSharp className="text-gray-600" />
-          <span className="text-xs font-medium">{data?.adults} Adults</span>
+          <span className="text-xs font-medium">{reservation?.adults} Adults</span>
         </div>
 
         <div className="flex items-center gap-1.5">
           <FaChild className="text-gray-600" />
-          <span className="text-xs font-medium">{data?.children} Children</span>
+          <span className="text-xs font-medium">{reservation?.children} Children</span>
         </div>
 
         <div className="flex items-center gap-2">
           <span className="text-gray-300">|</span>
-          <span className="text-xs text-gray-500">{data?.totalRooms} Room</span>
+          <span className="text-xs text-gray-500">{reservation?.totalRooms} Room</span>
         </div>
       </div>
     </div>
