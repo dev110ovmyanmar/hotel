@@ -134,9 +134,28 @@ const ReservationForm = ({
                 layout="vertical"
                 onValuesChange={() => { setSearchButtonDisable(false) }}
             >
-                <h1 className="text-lg font-bold my-2">Create New Reservation</h1>
-                <div className="flex flex-wrap gap-3">
-                    <div className="flex-[2] min-w-[320px]">
+                <div className="flex justify-between">
+                    <h1 className="text-lg font-bold my-2">Create New Reservation</h1>
+                    {
+                        afterRoomConfirm ?
+                            null
+                            :
+                            <Form.Item className="hidden md:block">
+                                <Button
+                                    type="primary"
+                                    htmlType="submit"
+                                    loading={availabilitySearchResults?.isPending}
+                                    disabled={searchButtonDisable}
+                                    className="min-w-[125px]"
+                                >
+                                    Search
+                                </Button>
+                            </Form.Item>
+                    }
+                </div>
+
+                <div className="flex flex-wrap gap-x-5">
+                    <div className="w-75 flex-auto md:flex-initial">
                         <Form.Item name="filter" label="Check-in / Check-out Date" rules={[{ required: true, message: "Please Select Date" }]}>
                             <RangePicker
                                 className="!w-full"
@@ -165,7 +184,7 @@ const ReservationForm = ({
                         </Form.Item>
                     </div>
 
-                    <div >
+                    <div className="flex-initial">
                         <Form.Item name="totalNight" label="Nights" rules={[{ required: true }]}>
                             <div className="w-[61px] h-[32px] bg-[#fafafa] rounded-md flex flex-col justify-center items-center">
 
@@ -176,15 +195,12 @@ const ReservationForm = ({
                         </Form.Item>
                     </div>
 
-                    <div className="w-full min-w-[200px] sm:w-[45%] md:w-[30%] md:flex-1 lg:flex-[1]">
-
-
+                    <div className="w-60 md:w-42 lg:w-50 flex-auto md:flex-initial">
                         <Form.Item
                             name="bookedVia"
                             label="Booking Source"
                             rules={[{ required: true, message: "Please Select Booking Source" }]}
                             getValueProps={(value) => {
-                                console.log(value)
                                 return {
                                     value: afterRoomConfirm ?
                                         bookedViaOptions?.find(item => item.value === value)?.label :
@@ -197,11 +213,11 @@ const ReservationForm = ({
                                 afterRoomConfirm ?
                                     <Input
                                         readOnly={afterRoomConfirm}
-                                        className="w-[100%] "
+                                    // className="w-[100%] "
                                     /> :
                                     <Select
                                         options={bookedViaOptions}
-                                        className="w-[100%] "
+                                        // className="w-[100%] "
                                         placeholder="Select Booked Via"
                                     >
                                     </Select>
@@ -209,7 +225,7 @@ const ReservationForm = ({
                         </Form.Item>
                     </div>
 
-                    <div className="w-full min-w-[200px] sm:w-[45%] md:w-[30%] lg:flex-[1]">
+                    <div className="w-60 md:w-42 lg:w-50 flex-auto md:flex-initial">
                         <Form.Item
                             name="sourceType"
                             label="Source Type"
@@ -226,6 +242,7 @@ const ReservationForm = ({
                                 afterRoomConfirm ?
                                     <Input
                                         readOnly={afterRoomConfirm}
+                                        className="w-[100%] "
                                     /> :
                                     <Select
                                         options={sourceTypeOptions}
@@ -235,9 +252,10 @@ const ReservationForm = ({
                                     ></Select>
                             }
                         </Form.Item>
+
                     </div>
 
-                    <div className={selectedSourceType === "Agency" || selectedSourceType === "Company" ? "w-[220px]" : null}>
+                    <div className="w-60 md:w-42 lg:w-50 flex-auto md:flex-initial">
                         {
                             (selectedSourceType === "Agency" ||
                                 selectedSourceType === "Company") && (
@@ -246,24 +264,26 @@ const ReservationForm = ({
                                     name="source"
                                     label="Source Name"
                                     rules={[{ required: true, message: "Please Select Source Name" }]}
-                                    className="!w-full "
-                                    getValueProps={(value)=>{
-                                        return{
+                                    getValueProps={(value) => {
+                                        return {
                                             value: (afterRoomConfirm && selectedSourceType === "Agency") ?
-                                                   agenciesOptions?.find(item=>item?.value === value)?.label:
-                                                   (afterRoomConfirm && selectedSourceType === "Company") ?
-                                                   companyOptions?.find(item=>item?.value === value)?.label:
-                                                   value  
+                                                agenciesOptions?.find(item => item?.value === value)?.label :
+                                                (afterRoomConfirm && selectedSourceType === "Company") ?
+                                                    companyOptions?.find(item => item?.value === value)?.label :
+                                                    value
                                         }
                                     }}
                                 >
                                     {
                                         afterRoomConfirm ?
-                                            <Input /> :
+                                            <Input
+                                                className="w-[100%]"
+                                                readOnly={afterRoomConfirm}
+                                            /> :
                                             <Select
                                                 options={selectedSourceType === "Agency" ? agenciesOptions : companyOptions}
                                                 placeholder="Select Source Name"
-
+                                                className="!w-[100%]"
                                             ></Select>
                                     }
                                 </Form.Item>
@@ -271,25 +291,27 @@ const ReservationForm = ({
                             )
                         }
                     </div>
-
-                    <div className="-ml-2 sm:m-0 flex items-end">
-                        {
-                            afterRoomConfirm ?
-                                null
-                                :
-                                <Form.Item>
-                                    <Button
-                                        type="primary"
-                                        htmlType="submit"
-                                        loading={availabilitySearchResults?.isPending}
-                                        disabled={searchButtonDisable}
-                                    >
-                                        Search
-                                    </Button>
-                                </Form.Item>
-                        }
-                    </div>
                 </div>
+
+                {/* Mobile Button */}
+                {
+                    afterRoomConfirm ?
+                        null
+                        :
+                        <div className="flex justify-end">
+                            <Form.Item className="block md:hidden mt-4">
+                                <Button
+                                    type="primary"
+                                    htmlType="submit"
+                                    loading={availabilitySearchResults?.isPending}
+                                    disabled={searchButtonDisable}
+                                    className="w-full"
+                                >
+                                    Search
+                                </Button>
+                            </Form.Item>
+                        </div>
+                }
 
             </Form>
 
