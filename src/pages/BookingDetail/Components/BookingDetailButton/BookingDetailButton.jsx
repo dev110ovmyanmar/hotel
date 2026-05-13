@@ -15,8 +15,8 @@ import {
 } from "./../../../../component/BookingActions/BookingActions";
 
 const BookingDetailButton = ({ data }) => {
-  const data = data?.reservation;
-  const status = data?.reservationStatus?.name?.toUpperCase();
+  const reservation = data?.reservation;
+  const status = reservation?.reservationStatus?.name?.toUpperCase();
   const actions = status_actions[status] || [];
 
   const [form] = Form.useForm();
@@ -63,7 +63,7 @@ const BookingDetailButton = ({ data }) => {
   return (
     <div>
       <div className="text-sm mb-6 mt-1.5">
-        Reservation id:<strong> {data?.reservationNo}</strong>
+        Reservation id:<strong> {reservation?.reservationNo}</strong>
       </div>
 
       <div className="flex gap-2">
