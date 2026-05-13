@@ -8,6 +8,7 @@ import ReservationStatusColor from "../../../../component/ReservationStatusColor
 const { Text } = Typography;
 
 const RoomStatusCard = ({ data }) => {
+  const data = data?.reservation;
   const CustomTitle = (
     <Space>
       <div className="booking-icon-box">
@@ -23,16 +24,6 @@ const RoomStatusCard = ({ data }) => {
         title={CustomTitle}
         className="booking-status-card line-height"
         extra={
-          // <Tag
-          //   style={{
-          //     backgroundColor: "#fffbe6",
-          //     color: "#d99408",
-          //     border: "1px solid #ffe58f",
-          //     borderRadius: "4px",
-          //   }}
-          // >
-          //   {data?.reservationStatus?.name}
-          // </Tag>
           <ReservationStatusColor status={data?.reservationStatus?.name} />
         }
       >
@@ -56,10 +47,10 @@ const RoomStatusCard = ({ data }) => {
             </div>
           </Col>
           <Col span={8}>
-            <Text>2 Night</Text>
+            <Text>{data?.totalNight}</Text>
           </Col>
           <Col span={8}>
-            <Text>1 Bed</Text>
+            <Text>{data?.totalRooms}</Text>
           </Col>
         </Row>
 

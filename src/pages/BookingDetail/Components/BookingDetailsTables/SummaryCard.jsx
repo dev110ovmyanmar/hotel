@@ -6,6 +6,7 @@ import PriceTag from "../../../../component/PriceTag/PriceTag";
 const { Text, Title } = Typography;
 
 const SummaryCard = ({ data }) => {
+  const data = data?.reservation;
   const CustomTitle = (
     <Space>
       <div className="summary-icon-box">

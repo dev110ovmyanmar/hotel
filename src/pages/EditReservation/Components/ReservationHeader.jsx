@@ -9,6 +9,7 @@ import dayjs from "dayjs";
 import ReservationStatusColor from "../../../component/ReservationStatusColor/ReservationStatusColor";
 
 const ReservationHeader = ({ data }) => {
+  const data = data?.reservation;
   return (
     <div>
       <div className="flex items-center space-x-2">

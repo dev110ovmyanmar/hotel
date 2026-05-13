@@ -13,6 +13,7 @@ import { FaChild } from "react-icons/fa";
 import { IoPeopleSharp } from "react-icons/io5";
 import PriceTag from "../../../component/PriceTag/PriceTag";
 import ReservationStatusColor from "../../../component/ReservationStatusColor/ReservationStatusColor";
+import dayjs from "dayjs";
 
 const ReservationsTable = ({
   data,
@@ -38,21 +39,29 @@ const ReservationsTable = ({
       key: "totalRooms",
       align: "center",
     },
-    { title: "Arrival Date", dataIndex: "actualCheckin", key: "actualCheckin" },
+    {
+      title: "Arrival Date",
+      dataIndex: "actualCheckin",
+      key: "actualCheckin",
+      render: (value) => (value ? dayjs(value).format("DD/MM/YYYY") : "-"),
+    },
     {
       title: "Departure Date",
       dataIndex: "actualCheckout",
       key: "actualCheckout",
+      render: (value) => (value ? dayjs(value).format("DD/MM/YYYY") : "-"),
     },
     {
       title: "Booking Date",
       dataIndex: "createdAt",
       key: "createdAt",
+      render: (value) => (value ? dayjs(value).format("DD/MM/YYYY") : "-"),
     },
     {
       title: "Night",
       dataIndex: "totalNight",
       key: "totalNight",
+      width: 70,
     },
     {
       title: "Contact & Guests",
@@ -78,6 +87,7 @@ const ReservationsTable = ({
       title: "Order Status",
       dataIndex: ["reservationStatus", "name"],
       key: "status",
+      align: "end",
       render: (reservationStatus) => (
         <ReservationStatusColor status={reservationStatus} />
       ),
@@ -118,6 +128,8 @@ const ReservationsTable = ({
   return (
     <div>
       <Table
+        tableLayout="fixed"
+        scroll={{ x: 1000 }}
         columns={columns}
         dataSource={data}
         pagination={{

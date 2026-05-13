@@ -21,6 +21,7 @@ import { FaChild } from "react-icons/fa";
 import { IoPeopleSharp } from "react-icons/io5";
 import PriceTag from "../../../component/PriceTag/PriceTag";
 import ReservationStatusColor from "./../../../component/ReservationStatusColor/ReservationStatusColor";
+import dayjs from "dayjs";
 
 const ReservationsGrid = ({
   data,
@@ -56,11 +57,13 @@ const ReservationsGrid = ({
                   menu={{
                     items: [
                       {
+                        key: "edit",
                         label: "Edit",
                         icon: <EditOutlined />,
                         onClick: () => handleMenuClick(item.uuid),
                       },
                       {
+                        key: "print",
                         label: "Print",
                         icon: <PrinterOutlined />,
                       },
@@ -123,7 +126,9 @@ const ReservationsGrid = ({
                   <div
                     style={{ flex: 1, padding: "8px", background: "#fafafa" }}
                   >
-                    {item.actualCheckin}
+                    {item.actualCheckin
+                      ? dayjs(item.actualCheckin).format("DD/MM/YYYY")
+                      : "-"}
                   </div>
                   <div
                     style={{
@@ -138,7 +143,9 @@ const ReservationsGrid = ({
                   <div
                     style={{ flex: 1, padding: "8px", background: "#fafafa" }}
                   >
-                    {item.actualCheckout}
+                    {item.actualCheckout
+                      ? dayjs(item.actualCheckin).format("DD/MM/YYYY")
+                      : "-"}
                   </div>
                 </div>
 
@@ -160,7 +167,11 @@ const ReservationsGrid = ({
                     style={{ display: "flex", justifyContent: "space-between" }}
                   >
                     <span style={{ color: "#8c8c8c" }}>Booking Date</span>
-                    <span>{item.createdAt}</span>
+                    <span>
+                      {item.createdAt
+                      ? dayjs(item.actualCheckin).format("DD/MM/YYYY")
+                      : "-"}
+                    </span>
                   </div>
                   <div
                     style={{ display: "flex", justifyContent: "space-between" }}
