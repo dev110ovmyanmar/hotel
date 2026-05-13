@@ -42,11 +42,6 @@ const ReservationSearchBar = ({
     };
   }, []);
 
-  const cityFunction = () => {
-    setCityMode("cityAdd");
-    setCreateDrawerOpen(true);
-  };
-
   return (
     <div className="flex flex-row justify-between items-center w-full mb-3 gap-20 ">
       <Input

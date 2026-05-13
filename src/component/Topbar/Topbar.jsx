@@ -264,7 +264,7 @@ const Topbar = withDirection(function (props) {
             />
 
             <div className="cursor-pointer">
-              <div className="flex items-center gap-2">
+              <div className="flex items-center">
                 {/* <div className="w-8 h-8 rounded-full  flex items-center justify-center">
                   <UserOutlined />
                 </div> */}
@@ -274,7 +274,7 @@ const Topbar = withDirection(function (props) {
                 <img
                   src={loginAdminDetails?.file}
                   alt="Profile"
-                  className="md:w-8 md:h-8 lg:w-10 lg:h-10 rounded-full object-cover"
+                  className="md:w-7 md:h-7 lg:w-10 lg:h-10 rounded-full object-fit"
                 />
               </div>
             </div>
