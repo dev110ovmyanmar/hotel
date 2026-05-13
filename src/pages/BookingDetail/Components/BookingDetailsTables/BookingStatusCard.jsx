@@ -3,6 +3,7 @@ import { Row, Col, Typography, Card, Space, Tag } from "antd";
 import { FaChild } from "react-icons/fa";
 import { IoPeopleSharp } from "react-icons/io5";
 import { MdOutlineMeetingRoom } from "react-icons/md";
+import ReservationStatusColor from "../../../../component/ReservationStatusColor/ReservationStatusColor";
 
 const { Text } = Typography;
 
@@ -22,16 +23,17 @@ const RoomStatusCard = ({ data }) => {
         title={CustomTitle}
         className="booking-status-card line-height"
         extra={
-          <Tag
-            style={{
-              backgroundColor: "#fffbe6",
-              color: "#d99408",
-              border: "1px solid #ffe58f",
-              borderRadius: "4px",
-            }}
-          >
-            {data?.reservationStatus?.name}
-          </Tag>
+          // <Tag
+          //   style={{
+          //     backgroundColor: "#fffbe6",
+          //     color: "#d99408",
+          //     border: "1px solid #ffe58f",
+          //     borderRadius: "4px",
+          //   }}
+          // >
+          //   {data?.reservationStatus?.name}
+          // </Tag>
+          <ReservationStatusColor status={data?.reservationStatus?.name} />
         }
       >
         <Row>

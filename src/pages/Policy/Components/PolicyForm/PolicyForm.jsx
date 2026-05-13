@@ -248,20 +248,20 @@ const PolicyForm = ({
     },
     !isView
       ? {
-          title: "Action",
-          render: (_, record) => {
-            return (
-              <EditOutlined
-                style={{ fontSize: "12px" }}
-                onClick={() => {
-                  setPolicyRuleMode("editRule");
-                  setAddPolicyRuleDrawer(true);
-                  setSelectedPolicyRule(record);
-                }}
-              />
-            );
-          },
-        }
+        title: "Action",
+        render: (_, record) => {
+          return (
+            <EditOutlined
+              style={{ fontSize: "12px" }}
+              onClick={() => {
+                setPolicyRuleMode("editRule");
+                setAddPolicyRuleDrawer(true);
+                setSelectedPolicyRule(record);
+              }}
+            />
+          );
+        },
+      }
       : {},
   ];
 
@@ -362,19 +362,19 @@ const PolicyForm = ({
       name: data?.name,
       description: data?.description,
       version: data?.version,
-      isActive: data?.isActive,
+      isActive: data?.isActive === true ? true : false,
       isDuplicate: data?.isDuplicate,
       isEdit: data?.isEdit,
       isLatest: data?.isLatest,
       uuid: data?.uuid,
       policyRule: addPolicyRule
         ? {
-            ...values,
-          }
+          ...values,
+        }
         : {
-            ...values,
-            uuid: selectedPolicyRule?.uuid,
-          },
+          ...values,
+          uuid: selectedPolicyRule?.uuid,
+        },
       linkTo: {
         uuid: linkTouuid,
       },
@@ -527,7 +527,7 @@ const PolicyForm = ({
               name="name"
               rules={[{ required: true, message: "Policy Name is Required" }]}
             >
-              <Input />
+              <Input placeholder="Enter Policy Name" />
             </Form.Item>
 
             <Form.Item
@@ -550,6 +550,7 @@ const PolicyForm = ({
                     label: item?.name,
                     value: item?.uuid,
                   }))}
+                  placeholder="Select Link To"
                 ></Select>
               )}
             </Form.Item>
@@ -575,35 +576,24 @@ const PolicyForm = ({
                     value: item.uuid,
                   }))}
                   open={isView ? false : undefined}
+                  placeholder="Select Policy Type"
                 ></Select>
               )}
             </Form.Item>
 
             <Form.Item
               label="Is Active"
+              initialValue={false}
               name="isActive"
               rules={[{ required: true, message: "Is Active is Required" }]}
-              getValueProps={(value) => {
-                return {
-                  value: isView
-                    ? value === true
-                      ? "True"
-                      : value === false
-                        ? "False"
-                        : ""
-                    : value,
-                };
-              }}
             >
-              {isView ? (
-                <Input readOnly={isView} />
-              ) : (
-                <Switch
-                  onChange={handleSwitchChange}
-                  checkedChildren="True"
-                  unCheckedChildren="False"
-                />
-              )}
+              <Switch
+                readOnly={isView}
+                disabled={isView}
+                onChange={handleSwitchChange}
+                checkedChildren="True"
+                unCheckedChildren="False"
+              />
             </Form.Item>
 
             <Form.Item
@@ -611,7 +601,7 @@ const PolicyForm = ({
               name="description"
               rules={[{ required: true, message: "Description is Required" }]}
             >
-              <TextArea readOnly={isView} rows={4}></TextArea>
+              <TextArea readOnly={isView} rows={4} placeholder="Enter Description"></TextArea>
             </Form.Item>
 
             {(isEdit || isView) && (
@@ -691,6 +681,7 @@ const PolicyForm = ({
                           label: item.name,
                           value: item.uuid,
                         }))}
+                        placeholder="Select Charge Base Type"
                       ></Select>
                     </Form.Item>
 
@@ -708,7 +699,7 @@ const PolicyForm = ({
                           getValueProps={(value) => ({
                             value: isView
                               ? chargeType.find((item) => item.value === value)
-                                  ?.label
+                                ?.label
                               : value,
                           })}
                         >
@@ -746,12 +737,12 @@ const PolicyForm = ({
                                   const numValue = Number(value);
                                   if (
                                     isNaN(numValue) ||
-                                    numValue < 1 ||
+                                    numValue < 0 ||
                                     numValue > 100
                                   ) {
                                     return Promise.reject(
                                       new Error(
-                                        "Percentage must be between 1 and 100",
+                                        "Percentage must be between 0 and 100",
                                       ),
                                     );
                                   }
@@ -773,6 +764,7 @@ const PolicyForm = ({
                                 : "MMK";
                             })()}
                             readOnly={isView}
+                            placeholder="Enter Charge Value"
                           />
                         </Form.Item>
                       </Col>
@@ -907,6 +899,7 @@ const PolicyForm = ({
                         readOnly={isView}
                         style={{ width: "100%" }}
                         min={0}
+                        placeholder="Enter Sort Order"
                       />
                     </Form.Item>
                   </Form>

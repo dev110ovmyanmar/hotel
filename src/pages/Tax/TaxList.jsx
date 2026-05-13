@@ -19,7 +19,7 @@ const TaxList = () => {
   const normalStatus = status === "all" ? null : status;
 
   const { data, isLoading } = useApiQuery({
-    fetchQueryName: "taxData",
+    fetchQueryName: "taxListData",
     fetchQueryFunction: fetchTax,
     params: {
       pagination: {

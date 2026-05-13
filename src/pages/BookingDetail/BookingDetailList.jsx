@@ -14,22 +14,26 @@ import BookingStatusCard from "./Components/BookingDetailsTables/BookingStatusCa
 import ContactPersonCard from "./Components/BookingDetailsTables/ContactPersonTable";
 import { useLocation } from "react-router-dom";
 import useApiQuery from "../../hooks/useApiQuery";
-import { reservationDetails } from "../../api/reservationList";
+import { reservationDetails } from "../../api/reservationSectionApi";
+import Loader from "../../component/Loader/Loader";
 
 const BookingDetailList = () => {
   const location = useLocation();
   const uuid = location.state?.bookingId;
 
   const { data, isLoading } = useApiQuery({
-    fetchQueryName: ["reservation-details"],
+    fetchQueryName: "reservation-details",
     fetchQueryFunction: reservationDetails,
     params: { uuid },
     options: { enabled: !!uuid },
   });
-  console.log(data, "data");
 
   if (isLoading) {
-    return <Spin className="w-full flex justify-center my-10" />;
+    return (
+      <div className="flex items-center justify-center h-full min-h-[300px]">
+        <Loader />
+      </div>
+    );
   }
 
   return (

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import ReservationHeader from "../../Components/ReservationHeader";
 import ReservationMenu from "../../Components/ReservationMenu";
-import ReservationListHeader from "../../../../component/ReservationHeader/ReservationListHeader";
 import GuestTable from "./Components/GuestTable";
 import GuestForm from "./Components/GuestForms/GuestForm";
 
@@ -21,19 +20,18 @@ const GuestList = () => {
       <ReservationHeader />
       <ReservationMenu />
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
-        <ReservationListHeader
-          reservationId="123212321"
-          onAddreservation={handleAddGuest}
-          addButtonText={"Add Guest"}
-        />
+        <div className="text-sm mb-6 mt-1.5">
+          Reservation id: <strong> 1212122 </strong>
+        </div>
       </div>
 
       <GuestTable />
-      <GuestForm
+      
+      {/* <GuestForm
         drawerOpen={drawerOpen}
         setDrawerOpen={setDrawerOpen}
         mode={mode}
-      />
+      /> */}
     </div>
   );
 };

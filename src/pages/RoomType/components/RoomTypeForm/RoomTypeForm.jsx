@@ -153,15 +153,23 @@ const RoomTypeForm = ({
       price: String(values[rp.value]),
     }));
 
-    const payload = {
+    const roomTypeCreatePayload = {
       ...values,
+      basePrice: 0,
       status: { uuid: values.status },
       ratePlans: formattedRatePlans,
     };
 
+    const roomTypeUpdatePayload = {
+      ...values,
+      basePrice: 0,
+      status: { uuid: values.status },
+      // ratePlans: formattedRatePlans,
+    };
+
     if (isEdit) {
-      payload.uuid = data?.uuid;
-      editRoomTypes.mutate(payload, {
+      roomTypeUpdatePayload.uuid = data?.uuid;
+      editRoomTypes.mutate(roomTypeUpdatePayload, {
         onSuccess: () => {
           handleClose();
           setDrawerOpen(false);
@@ -169,7 +177,7 @@ const RoomTypeForm = ({
         },
       });
     } else {
-      createRoomTypes.mutate(payload, {
+      createRoomTypes.mutate(roomTypeCreatePayload, {
         onSuccess: () => {
           form.resetFields();
           handleClose();
@@ -306,34 +314,9 @@ const RoomTypeForm = ({
               </Col>
             </Row>
 
-            <div className="grid grid-cols-2 gap-6">
-              <Form.Item
-                label="Base Price"
-                name="basePrice"
-                rules={[{ required: true }]}
-              >
-                <InputNumber
-                  className="!w-full"
-                  min={1}
-                  readOnly={isView}
-                  placeholder="Enter Base Price"
-                  suffix="MMK"
-                />
-              </Form.Item>
-
-              <Form.Item
-                label="Total Rooms"
-                name="totalRooms"
-                rules={[{ required: true }]}
-              >
-                <InputNumber
-                  {...sharedProps}
-                  disabled={isView}
-                  style={{ width: "100%" }}
-                  placeholder="Enter Totals Rooms"
-                />
-              </Form.Item>
-            </div>
+            <Form.Item name="basePrice" hidden>
+              <InputNumber readOnly={isView} />
+            </Form.Item>
 
             <div className="grid grid-cols-2 gap-6">
               <Form.Item
@@ -373,7 +356,7 @@ const RoomTypeForm = ({
                 />
               </Form.Item>
 
-              <Form.Item label="Max Extra Bed" name="extraBed">
+              <Form.Item label="Max Extra Bed" name="maxExtraBed">
                 <InputNumber
                   {...childSharedProps}
                   placeholder="Outlined"
@@ -383,9 +366,31 @@ const RoomTypeForm = ({
               </Form.Item>
             </div>
 
-            <Form.Item label="Room Size" name="areaSize">
-              <Input readOnly={isView} placeholder="Enter Room Size" />
-            </Form.Item>
+            <div className="grid grid-cols-2 gap-6">
+
+              <Form.Item
+                label="Total Rooms"
+                name="totalRooms"
+                rules={[{ required: true }]}
+              >
+                <InputNumber
+                  {...sharedProps}
+                  disabled={isView}
+                  style={{ width: "100%" }}
+                  placeholder="Enter Totals Rooms"
+                />
+              </Form.Item>
+
+              <Form.Item label="Room Size" name="areaSize">
+                <Input readOnly={isView} placeholder="Enter Room Size" />
+                {/* <InputNumber
+                  {...sharedProps}
+                  disabled={isView}
+                  style={{ width: "100%" }}
+                  placeholder="Enter Room Size"
+                /> */}
+              </Form.Item>
+            </div>
 
             <Form.Item label="Description" name="description">
               <TextArea

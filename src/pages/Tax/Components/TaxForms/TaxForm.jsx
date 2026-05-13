@@ -67,13 +67,13 @@ const TaxForm = ({
 
   const createTaxs = useApiMutation({
     mutationFn: createTax,
-    invalidateKeys: [["taxData"]],
+    invalidateKeys: [["taxListData"]],
     page: page,
   });
 
   const editTaxs = useApiMutation({
     mutationFn: editTax,
-    invalidateKeys: [["taxData"]],
+    invalidateKeys: [["taxListData"]],
     page: page,
   });
 
@@ -110,6 +110,7 @@ const TaxForm = ({
     if (isAdd) {
       const createValues = {
         ...values,
+        isInclusive: values.isInclusive === true ? 1 : 0,
         chargeCategory: { uuid: values.charge_category },
         chargeType: { uuid: values.charge_type },
         chargeApplyType: { uuid: values.charge_apply_type },
@@ -129,6 +130,7 @@ const TaxForm = ({
     if (isEdit) {
       const editValues = {
         ...values,
+        isInclusive: values.isInclusive === true ? 1 : 0,
         chargeCategory: { uuid: values.charge_category },
         chargeType: { uuid: values.charge_type },
         chargeApplyType: { uuid: values.charge_apply_type },
@@ -269,7 +271,9 @@ const TaxForm = ({
               label="Is Inclusive"
               name="isInclusive"
               valuePropName="checked"
-              normalize={(value) => (value ? 1 : 0)}
+              // normalize={(value) => (value ? 1 : 0)}
+              initialValue={0}
+              rules={[{ required: true, message: "Is Inclusive is Required" }]}
             >
               <Switch
                 checkedChildren="True"
