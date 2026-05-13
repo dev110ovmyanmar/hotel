@@ -1,91 +1,148 @@
 import React, { useEffect, useState } from "react";
-import { Form, Input, Drawer, Button } from "antd";
-import { PlusOutlined, CloseOutlined } from "@ant-design/icons";
-import FormButtons from "../../../../../../component/FormButtons/FormButtons";
-import GuestNoteForm from "./../../../../../GuestsListing/GuestNotes/components/GuestNoteForm";
+import {
+  Form,
+  Input,
+  Drawer,
+  Button,
+  Table,
+  Divider,
+  Space,
+  Popconfirm,
+} from "antd";
+import {
+  DeleteOutlined,
+  EditOutlined,
+  CheckOutlined,
+  CloseOutlined,
+} from "@ant-design/icons";
 
-const { TextArea } = Input;
-
-const NoteDrawer = ({
-  mode,
-  setMode,
-  open,
-  onClose,
-  selectedData,
-  onSuccess,
-}) => {
+const NoteDrawer = ({ mode, open, onClose, selectedData, onSuccess }) => {
   const [form] = Form.useForm();
+  const [dataSource, setDataSource] = useState([]);
+  const [editingKey, setEditingKey] = useState("");
+  const [editValue, setEditValue] = useState("");
+
   const isView = mode === "view";
-  const [noteOpen, setNoteOpen] = useState(false);
 
   useEffect(() => {
     if (open) {
-      if (selectedData?.notes) {
-        const notesArray = Array.isArray(selectedData.notes)
-          ? selectedData.notes
-          : [{ content: selectedData.notes }];
-        form.setFieldsValue({ guestNotes: notesArray });
-      } else {
-        form.setFieldsValue({ guestNotes: [{ content: "" }] });
-      }
-    } else {
-      form.resetFields();
+      const notes = [].concat(selectedData?.notes || []);
+      setDataSource(
+        notes.map((n, i) => ({
+          id: n.id || `n-${i}`,
+          content: n.content || n,
+        })),
+      );
     }
-  }, [open, selectedData, form]);
+  }, [open, selectedData]);
 
-  const onFinish = (values) => {
-    console.log("Saving Guest Notes:", values.guestNotes);
-    onClose();
-    if (onSuccess) onSuccess();
+  const updateNotes = (newList) => {
+    setDataSource(newList);
+    onSuccess?.(newList);
   };
+
+  const onAdd = async () => {
+    const { noteContent } = await form.validateFields();
+    const newNote = { id: Date.now().toString(), content: noteContent };
+    updateNotes([newNote, ...dataSource]);
+    form.resetFields();
+  };
+
+  const onDelete = (id) =>
+    updateNotes(dataSource.filter((item) => item.id !== id));
+
+  const onSaveEdit = (id) => {
+    updateNotes(
+      dataSource.map((item) =>
+        item.id === id ? { ...item, content: editValue } : item,
+      ),
+    );
+    setEditingKey("");
+  };
+
+  const columns = [
+    {
+      title: "Note",
+      render: (_, record) =>
+        record.id === editingKey ? (
+          <Input.TextArea
+            value={editValue}
+            onChange={(e) => setEditValue(e.target.value)}
+            autoSize
+          />
+        ) : (
+          record.content
+        ),
+    },
+    {
+      title: "Action",
+      hidden: isView,
+      width: 100,
+      render: (_, record) => (
+        <Space>
+          {record.id === editingKey ? (
+            <>
+              <CheckOutlined
+                className="text-green-500"
+                onClick={() => onSaveEdit(record.id)}
+              />
+              <CloseOutlined
+                className="text-red-500"
+                onClick={() => setEditingKey("")}
+              />
+            </>
+          ) : (
+            <>
+              <EditOutlined
+                className="text-blue-500"
+                onClick={() => {
+                  setEditingKey(record.id);
+                  setEditValue(record.content);
+                }}
+              />
+              <Popconfirm title="Delete?" onConfirm={() => onDelete(record.id)}>
+                <DeleteOutlined className="text-red-500" />
+              </Popconfirm>
+            </>
+          )}
+        </Space>
+      ),
+    },
+  ].filter((c) => !c.hidden);
 
   return (
     <Drawer
       open={open}
       onClose={onClose}
-      width={550}
-      destroyOnClose
-      title={
-        <div className="flex justify-between items-center">
-          <span>Service Note</span>
-          <Button type="primary" onClick={() => form.submit()}>
+      title="Room Notes"
+      width={500}
+      extra={
+        !isView && (
+          <Button type="primary" onClick={onAdd}>
             Create
           </Button>
-        </div>
+        )
       }
     >
-      <Form form={form} layout="vertical" onFinish={onFinish} disabled={isView}>
-        <Form.List name="guestNotes">
-          {(fields, { add, remove }) => (
-            <div className="flex flex-col gap-2">
-              {fields.map(({ key, name, ...restField }) => (
-                <div key={key} className="relative group">
-                  <Form.Item
-                    {...restField}
-                    label={<span className="text-gray-600">Service Note</span>}
-                    name={[name, "content"]}
-                  >
-                    <TextArea
-                      placeholder="Enter service details..."
-                      className="rounded-md"
-                    />
-                  </Form.Item>
-                </div>
-              ))}
-
-              {!isView && (
-                <Button
-                  onClick={() => add()}
-                  icon={<PlusOutlined />}
-                  className="custom-blue-btn w-40"
-                >
-                  Add Service Note
-                </Button>
-              )}
-            </div>
-          )}
-        </Form.List>
-      </Form>
+      {!isView && (
+        <Form form={form} layout="vertical">
+          <Form.Item
+            label="Note"
+            name="noteContent"
+            rules={[{ required: true }]}
+          >
+            <Input.TextArea placeholder="Add a new note..." />
+          </Form.Item>
+        </Form>
+      )}
+      <Divider>History</Divider>
+      <Table
+        dataSource={dataSource}
+        columns={columns}
+        rowKey="id"
+        pagination={false}
+        size="small"
+      />
     </Drawer>
   );
 };

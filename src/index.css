@@ -599,3 +599,11 @@ span .ant-upload {
 .custom-tabs:has(.ant-tabs-tab:nth-child(7).ant-tabs-tab-active) {
   --ant-tabs-ink-bar-color: #8c8c8c;
 }
+
+.ant-tabs-nav-more {
+  display: none !important;
+}
+
+.ant-tabs-nav-more .anticon {
+  display: none !important;
+}

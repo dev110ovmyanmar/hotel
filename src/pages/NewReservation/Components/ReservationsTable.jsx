@@ -12,6 +12,7 @@ import {
 import { FaChild } from "react-icons/fa";
 import { IoPeopleSharp } from "react-icons/io5";
 import PriceTag from "../../../component/PriceTag/PriceTag";
+import ReservationStatusColor from "../../../component/ReservationStatusColor/ReservationStatusColor";
 
 const ReservationsTable = ({
   data,
@@ -24,10 +25,8 @@ const ReservationsTable = ({
 }) => {
   const navigate = useNavigate();
 
-  const handleMenuClick = (key, uuid) => {
-    if (key === "edit") {
-      navigate(`/reservation/booking-detail`, { state: { bookingId: uuid } });
-    }
+  const handleMenuClick = (uuid) => {
+    navigate(`/reservation/booking-detail`, { state: { bookingId: uuid } });
   };
 
   const columns = [
@@ -79,14 +78,21 @@ const ReservationsTable = ({
       title: "Order Status",
       dataIndex: ["reservationStatus", "name"],
       key: "status",
-      render: (status) => <Tag>{status}</Tag>,
+      render: (reservationStatus) => (
+        <ReservationStatusColor status={reservationStatus} />
+      ),
     },
     {
       title: "Order Total",
       dataIndex: "grandTotal",
       key: "total",
       align: "end",
-      render: (value) => <PriceTag value={value} />,
+      render: (value) => (
+        <div className="flex items-center gap-1">
+          <PriceTag value={value} />
+          <span className="text-gray-500 font-medium ">MMK</span>
+        </div>
+      ),
     },
     {
       title: "Action",
@@ -97,12 +103,12 @@ const ReservationsTable = ({
           <Button
             type="text"
             icon={<EditOutlined />}
-            onClick={() => handleMenuClick("edit", record.uuid)}
+            onClick={() => handleMenuClick(record.uuid)}
           />
           <Button
             type="text"
             icon={<PrinterOutlined />}
-            onClick={() => handleMenuClick("print", record.orderId)}
+            onClick={() => handleMenuClick(record.uuid)}
           />
         </div>
       ),
