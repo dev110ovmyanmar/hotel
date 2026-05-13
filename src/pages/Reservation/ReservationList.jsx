@@ -51,6 +51,9 @@ const ReservationList = () => {
   const [clickCreateContact, setClickCreateContact] = useState(false);
   const [createContactFinish, setCreateContactFinish] = useState(false);
 
+  const [modalOpen, setModalOpen] = useState(false);
+
+
 
   const defaultFilter = [
     dayjs().hour(14).minute(0),
@@ -77,6 +80,10 @@ const ReservationList = () => {
       onSuccess: (values) => {
         setRoomBookOpen(true);
         setRoomBookValues(values);
+        setModalOpen(false)
+      },
+      onError: (error) => {
+        setModalOpen(false)
       },
     },
   });
@@ -261,7 +268,7 @@ const ReservationList = () => {
       title: "Rate & Prices",
       dataIndex: "ratePlans",
       align: "center",
-      render: (value,record) => (
+      render: (value, record) => (
         <div className="mb-2">
           <p>{value?.minPrice?.toLocaleString()} MMK</p>
           <p className="!text-gray-400 !text-sm">{value?.name}</p>
@@ -283,7 +290,7 @@ const ReservationList = () => {
 
         return (
           <Button
-            className={getRemainingRooms(record) <= 0 ? "border-gray-100 !text-gray-300" : isBooked? "" : "!border-blue-500 !text-blue-500"}
+            className={getRemainingRooms(record) <= 0 ? "border-gray-100 !text-gray-300" : isBooked ? "" : "!border-blue-500 !text-blue-500"}
             type={isBooked ? "primary" : "default"}
             disabled={!isBooked && getRemainingRooms(record) <= 0} // disable if no rooms left
             onClick={() => {
@@ -372,7 +379,7 @@ const ReservationList = () => {
 
       {roomConfirm ? (
         <>
-          <RoomConfirmFinish 
+          <RoomConfirmFinish
             roomBookValues={roomBookValues}
           />
 
@@ -446,6 +453,8 @@ const ReservationList = () => {
         roomBookValues={roomBookValues}
         setRoomBookValues={setRoomBookValues}
         rateQuotes={rateQuotes}
+        modalOpen={modalOpen}
+        setModalOpen={setModalOpen}
 
       />
     </div>
