@@ -6,7 +6,8 @@ import {
   Form,
   Input,
   Row,
-  Select
+  Select,
+  Space
 } from "antd";
 import { reservationMeta } from "../../api/reservationSectionApi";
 import useApiQuery from "../../hooks/useApiQuery";
@@ -107,21 +108,20 @@ const CreateGuestForm = ({
     >
       <Form layout="vertical" form={form}>
         <Row gutter={16}>
-          <Col span={5}>
+          <Space.Compact style={{ width: '100%' }}>
             <Form.Item
               label="Title"
               name="title"
+              style={{ width: '20%' }}
             >
               <Select options={titleOptions} placeholder="Select Title" />
             </Form.Item>
-          </Col>
 
-          <Col span={19}>
             <Form.Item
               label="Name"
               name="name"
               rules={[{ required: false }]}
-            // handled manualcly
+              style={{ width: '80%' }}
             >
               <Select
                 showSearch
@@ -150,30 +150,26 @@ const CreateGuestForm = ({
 
               />
             </Form.Item>
-          </Col>
+          </Space.Compact>
         </Row>
 
-        <h1 className="!mb-2 !font-bold">Contact Information</h1>
-
         <Row gutter={16}>
-          <Col span={12}>
-            <Form.Item
-              label="Phone Number"
-              name="phone"
-              rules={[
-                { required: true, message: "Phone Number is required." },
-              ]}
-            >
-              <Input
-                onKeyPress={(e) => {
-                  if (!/[0-9]/.test(e.key)) {
-                    e.preventDefault();
-                  }
-                }}
-                placeholder="Enter Phone Number"
-              />
-            </Form.Item>
-          </Col>
+          <Form.Item
+            label="Phone Number"
+            name="phone"
+            rules={[
+              { required: true, message: "Phone Number is required." },
+            ]}
+          >
+            <Input
+              onKeyPress={(e) => {
+                if (!/[0-9]/.test(e.key)) {
+                  e.preventDefault();
+                }
+              }}
+              placeholder="Enter Phone Number"
+            />
+          </Form.Item>
 
         </Row>
       </Form>

@@ -15,6 +15,7 @@ import ContactPersonCard from "./Components/BookingDetailsTables/ContactPersonTa
 import { useLocation } from "react-router-dom";
 import useApiQuery from "../../hooks/useApiQuery";
 import { reservationDetails } from "../../api/reservationSectionApi";
+import Loader from "../../component/Loader/Loader";
 
 const BookingDetailList = () => {
   const location = useLocation();
@@ -28,7 +29,11 @@ const BookingDetailList = () => {
   });
 
   if (isLoading) {
-    return <Spin className="w-full flex justify-center my-10" />;
+    return (
+      <div className="flex items-center justify-center h-full min-h-[300px]">
+        <Loader />
+      </div>
+    );
   }
 
   return (
@@ -37,9 +42,7 @@ const BookingDetailList = () => {
 
       <ReservationMenu data={data || {}} />
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
-        <BookingDetailButton 
-        data={data || {}}
-          />
+        <BookingDetailButton data={data || {}} />
       </div>
 
       <Row gutter={[16, 16]}>

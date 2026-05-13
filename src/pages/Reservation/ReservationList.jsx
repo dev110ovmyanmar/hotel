@@ -361,7 +361,7 @@ const ReservationList = () => {
           }}
         >
           <ReloadOutlined className="!text-blue-500" />
-          <span className="!text-blue-500" >Refresh</span>
+          <span className="max-w-[125px] !text-blue-500" >Refresh</span>
         </Button>
       </div>
 

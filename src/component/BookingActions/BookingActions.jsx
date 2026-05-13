@@ -1,11 +1,11 @@
 import { PlusOutlined } from "@ant-design/icons";
 
-export const BUTTON_CONFIG = {
-  changeStatus: { 
-    label: "Change Status" 
+export const button_config = {
+  changeStatus: {
+    label: "Change Status",
   },
-  amendBooking: { 
-    label: "Amend Booking" 
+  amendBooking: {
+    label: "Amend Booking",
   },
   addPayment: {
     label: "Add Payment",
@@ -15,37 +15,25 @@ export const BUTTON_CONFIG = {
     label: "Add Refund",
     icon: <PlusOutlined style={{ fontSize: "12px" }} />,
   },
-  amendStay: { 
-    label: "Amend Stay" 
+  amendStay: {
+    label: "Amend Stay",
   },
-  overtimeCharges: { 
-    label: "Overtime Charges" 
+  overtimeCharges: {
+    label: "Overtime Charges",
   },
-  roomMove: { 
-    label: "Room Move" 
+  roomMove: {
+    label: "Room Move",
   },
-  printInvoice: { 
-    label: "Print Invoice" 
+  printInvoice: {
+    label: "Print Invoice",
   },
 };
 
-export const STATUS_ACTIONS = {
-  PENDING: [
-    "changeStatus", 
-    "amendBooking", 
-    "addPayment"
-  ],
-  BOOKED: [
-    "changeStatus", 
-    "amendBooking", 
-    "addPayment"
-  ],
-  CONFIRMED: [
-    "changeStatus", 
-    "amendBooking", 
-    "addPayment", 
-    "overtimeCharges"
-  ],
+export const status_actions = {
+  PENDING: ["changeStatus", "amendBooking", "addPayment"],
+  BOOKED: ["changeStatus", "amendBooking", "addPayment"],
+  CONFIRMED: ["changeStatus", "amendBooking", "addPayment", "overtimeCharges"],
+  CANCELLED: ["changeStatus", "amendBooking", "addPayment", "overtimeCharges"],
   CHECK_IN: [
     "changeStatus",
     "amendBooking",

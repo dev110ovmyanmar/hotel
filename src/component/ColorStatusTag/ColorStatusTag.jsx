@@ -167,6 +167,8 @@ const ColorStatusTag = ({ status }) => {
     reported: "#CF1322",
     reported_bg: "#FFF1F0",
     reported_border: "#FFA39E",
+
+    inquery: "#faad14",
   };
 
   const code = status?.code;
