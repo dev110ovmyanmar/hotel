@@ -15,6 +15,7 @@ import {
 } from "./../../../../component/BookingActions/BookingActions";
 
 const BookingDetailButton = ({ data }) => {
+  const data = data?.reservation;
   const status = data?.reservationStatus?.name?.toUpperCase();
   const actions = status_actions[status] || [];
 
