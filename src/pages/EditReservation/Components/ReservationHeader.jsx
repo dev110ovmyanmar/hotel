@@ -15,7 +15,9 @@ const ReservationHeader = ({ data }) => {
       <div className="flex items-center space-x-2">
         <div className="flex items-center gap-2">
           <h1 className="text-lg font-bold">{reservation?.guest?.name}</h1>
-          <ReservationStatusColor status={reservation?.reservationStatus?.name} />
+          <ReservationStatusColor
+            status={reservation?.reservationStatus?.name}
+          />
         </div>
 
         <div className="flex flex-col sm:flex-row justify-between gap-6 sm:gap-10 mx-4 md:mx-20 lg:mx-40">
@@ -55,17 +57,23 @@ const ReservationHeader = ({ data }) => {
       <div className="flex items-center gap-4 mt-2">
         <div className="flex items-center gap-1.5">
           <IoPeopleSharp className="text-gray-600" />
-          <span className="text-xs font-medium">{reservation?.adults} Adults</span>
+          <span className="text-xs font-medium">
+            {reservation?.adults} Adults
+          </span>
         </div>
 
         <div className="flex items-center gap-1.5">
           <FaChild className="text-gray-600" />
-          <span className="text-xs font-medium">{reservation?.children} Children</span>
+          <span className="text-xs font-medium">
+            {reservation?.children} Children
+          </span>
         </div>
 
         <div className="flex items-center gap-2">
           <span className="text-gray-300">|</span>
-          <span className="text-xs text-gray-500">{reservation?.totalRooms} Room</span>
+          <span className="text-xs text-gray-500">
+            {reservation?.totalRooms} Room
+          </span>
         </div>
       </div>
     </div>
