@@ -107,7 +107,7 @@ const CreateGuestForm = ({
     >
       <Form layout="vertical" form={form}>
         <Row gutter={16}>
-          <Col span={4}>
+          <Col span={5}>
             <Form.Item
               label="Title"
               name="title"
@@ -116,7 +116,7 @@ const CreateGuestForm = ({
             </Form.Item>
           </Col>
 
-          <Col span={20}>
+          <Col span={19}>
             <Form.Item
               label="Name"
               name="name"

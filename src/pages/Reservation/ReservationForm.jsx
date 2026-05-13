@@ -1,4 +1,4 @@
-import { Button, Card, DatePicker, Form, Select, TimePicker } from "antd";
+import { Button, Card, DatePicker, Form, Input, Select, TimePicker } from "antd";
 import useApiQuery from "../../hooks/useApiQuery";
 import { queryClient } from "../../app/queryClient";
 import dayjs from "dayjs";
@@ -21,6 +21,7 @@ const ReservationForm = ({
     sourceTypeOptions,
 
 }) => {
+
     const dateRange = Form.useWatch("filter", form);
     const sourceTypeValue = Form.useWatch("sourceType", form); // Added this line to watch sourceType
 
@@ -118,7 +119,7 @@ const ReservationForm = ({
                 totalNight: totalNights
             })
         }
-    }, [totalNights,form])
+    }, [totalNights, form])
 
     // Range Picker
     const disabledDate = current => {
@@ -158,6 +159,7 @@ const ReservationForm = ({
                                         filter: updatedDates,
                                     });
                                 }}
+                                disabled={afterRoomConfirm}
 
                             />
                         </Form.Item>
@@ -175,44 +177,95 @@ const ReservationForm = ({
                     </div>
 
                     <div className="w-full min-w-[200px] sm:w-[45%] md:w-[30%] md:flex-1 lg:flex-[1]">
-                        <Form.Item name="bookedVia" label="Booking Source" rules={[{ required: true, message: "Please Select Booking Source" }]}>
-                            <Select
-                                options={bookedViaOptions}
-                                className="w-[100%] "
-                                placeholder="Select Booked Via"
-                            >
-                            </Select>
+
+
+                        <Form.Item
+                            name="bookedVia"
+                            label="Booking Source"
+                            rules={[{ required: true, message: "Please Select Booking Source" }]}
+                            getValueProps={(value) => {
+                                console.log(value)
+                                return {
+                                    value: afterRoomConfirm ?
+                                        bookedViaOptions?.find(item => item.value === value)?.label :
+                                        value
+                                }
+                            }}
+                        >
+
+                            {
+                                afterRoomConfirm ?
+                                    <Input
+                                        readOnly={afterRoomConfirm}
+                                        className="w-[100%] "
+                                    /> :
+                                    <Select
+                                        options={bookedViaOptions}
+                                        className="w-[100%] "
+                                        placeholder="Select Booked Via"
+                                    >
+                                    </Select>
+                            }
                         </Form.Item>
                     </div>
 
                     <div className="w-full min-w-[200px] sm:w-[45%] md:w-[30%] lg:flex-[1]">
-                        <Form.Item name="sourceType" label="Source Type" rules={[{ required: true, message: "Please Select Source Type" }]}>
-                            <Select
-                                options={sourceTypeOptions}
-                                className="w-[100%]"
-                                onChange={handleChange}
-                                placeholder="Select Source Type"
-                            ></Select>
+                        <Form.Item
+                            name="sourceType"
+                            label="Source Type"
+                            rules={[{ required: true, message: "Please Select Source Type" }]}
+                            getValueProps={(value) => {
+                                return {
+                                    value: afterRoomConfirm ?
+                                        sourceTypeOptions?.find(item => item.value === value)?.label :
+                                        value
+                                }
+                            }}
+                        >
+                            {
+                                afterRoomConfirm ?
+                                    <Input
+                                        readOnly={afterRoomConfirm}
+                                    /> :
+                                    <Select
+                                        options={sourceTypeOptions}
+                                        className="w-[100%]"
+                                        onChange={handleChange}
+                                        placeholder="Select Source Type"
+                                    ></Select>
+                            }
                         </Form.Item>
                     </div>
 
-                    <div className={selectedSourceType === "Agency" || selectedSourceType === "Company"? "w-[220px]": null}>
+                    <div className={selectedSourceType === "Agency" || selectedSourceType === "Company" ? "w-[220px]" : null}>
                         {
                             (selectedSourceType === "Agency" ||
                                 selectedSourceType === "Company") && (
 
-                                <Form.Item 
-                                    name="source" 
-                                    label="Source Name" 
-                                    rules={[{ required: true, message: "Please Select Source Name" }]} 
+                                <Form.Item
+                                    name="source"
+                                    label="Source Name"
+                                    rules={[{ required: true, message: "Please Select Source Name" }]}
                                     className="!w-full "
+                                    getValueProps={(value)=>{
+                                        return{
+                                            value: (afterRoomConfirm && selectedSourceType === "Agency") ?
+                                                   agenciesOptions?.find(item=>item?.value === value)?.label:
+                                                   (afterRoomConfirm && selectedSourceType === "Company") ?
+                                                   companyOptions?.find(item=>item?.value === value)?.label:
+                                                   value  
+                                        }
+                                    }}
                                 >
-                                    <Select
-                                        options={selectedSourceType === "Agency" ? agenciesOptions : companyOptions}
-                                        
-                                        placeholder="Select Source Name"
+                                    {
+                                        afterRoomConfirm ?
+                                            <Input /> :
+                                            <Select
+                                                options={selectedSourceType === "Agency" ? agenciesOptions : companyOptions}
+                                                placeholder="Select Source Name"
 
-                                    ></Select>
+                                            ></Select>
+                                    }
                                 </Form.Item>
 
                             )
@@ -240,7 +293,7 @@ const ReservationForm = ({
 
             </Form>
 
-        </Card>
+        </Card >
     )
 }
 
