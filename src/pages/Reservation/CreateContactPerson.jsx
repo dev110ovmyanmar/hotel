@@ -22,9 +22,9 @@ const CreateGuestForm = ({
   setClickCreateContact,
   upsertMutation,
   createContactFinish,
-  setCreateContactFinish
+  setCreateContactFinish,
+  createContactForm
 }) => {
-  const [form] = Form.useForm();
 
   const [searchText, setSearchText] = useState("");
 
@@ -46,19 +46,19 @@ const CreateGuestForm = ({
   const
     guestsOptions =
       reservationMetas?.guests?.map((item) => ({
-        label: item.name,
+        label: `${item.name}  ${item.nrcNo? '(' + item.nrcNo + ')' + " "+ '(' + item.phone + ')' : '(' + item.phone + ')'}`,
         value: item.uuid,
       })) || [];
 
   const onClick = () => {
     setCreateContactFinish(true);
-    form.validateFields().then((values) => {
+    createContactForm.validateFields().then((values) => {
       //       {
       //     "title": "Mr",
       //     "name": "f2c7bdf7c2a249e9a4ac28925625d59b",
       //     "phone": "09123456789"
       // }
-
+      
       const selectedGuest = reservationMetas?.guests?.find(
         (guest) => guest.uuid === values.name
       );
@@ -106,7 +106,7 @@ const CreateGuestForm = ({
         </div>
       }
     >
-      <Form layout="vertical" form={form}>
+      <Form layout="vertical" form={createContactForm}>
         <Row gutter={16}>
           <Space.Compact style={{ width: '100%' }}>
             <Form.Item
@@ -138,13 +138,13 @@ const CreateGuestForm = ({
                 }}
                 onChange={(value, option) => {
                   setSearchText("");
-                  form.setFieldValue("name", value);
+                  createContactForm.setFieldValue("name", value);
 
                 }}
 
                 onInputKeyDown={(e) => {
                   if (searchText) {
-                    form.setFieldValue("name", searchText);
+                    createContactForm.setFieldValue("name", searchText);
                   }
                 }}
 

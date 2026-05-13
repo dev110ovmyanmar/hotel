@@ -33,6 +33,7 @@ const ReservationList = () => {
 
   const navigate = useNavigate();
   const [form] = Form.useForm();
+  const [createContactForm] = Form.useForm();
   const [roomBookOpen, setRoomBookOpen] = useState(false);
   const [guestDrawerOpen, setGuestDrawerOpen] = useState(false);
   const [roomConfirm, setRoomConfirm] = useState(false);
@@ -352,6 +353,7 @@ const ReservationList = () => {
             setSelectedRooms({});
             setReservationFormValues(null);
             setSearchButtonDisable(false);
+            setClickCreateContact(false);
             // setSelectedSourceType(null);
             form.setFieldsValue({
               filter: defaultFilter,
@@ -399,7 +401,10 @@ const ReservationList = () => {
             {!clickCreateContact && (
               <Button
                 type="primary"
-                onClick={() => setGuestDrawerOpen(true)}
+                onClick={() => {
+                  setGuestDrawerOpen(true),
+                  createContactForm.resetFields()
+                }}
                 className="my-4"
               >
                 Add Contact Person <PlusOutlined />
@@ -441,6 +446,7 @@ const ReservationList = () => {
         upsertMutation={upsertMutation}
         createContactFinish={createContactFinish}
         setCreateContactFinish={setCreateContactFinish}
+        createContactForm={createContactForm}
       />
 
       <RoomBookedDrawer
