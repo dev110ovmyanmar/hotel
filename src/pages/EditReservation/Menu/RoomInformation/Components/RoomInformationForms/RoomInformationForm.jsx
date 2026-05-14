@@ -16,6 +16,7 @@ import FormButtons from "../../../../../../component/FormButtons/FormButtons";
 import { getFormattedDate } from "../../../../../../utils";
 
 const RoomInformationForm = ({
+  data,
   mode,
   setMode,
   drawerOpen,
@@ -23,59 +24,26 @@ const RoomInformationForm = ({
   selectedData,
   onSuccess,
 }) => {
+
   const [form] = Form.useForm();
   const isView = mode === "view";
 
   useEffect(() => {
-    if (drawerOpen && selectedData) {
+    if (data) {
       form.setFieldsValue({
-        ...selectedData,
-
-        arrivalDate: selectedData.arrivalDate
-          ? dayjs(selectedData.arrivalDate)
-          : null,
-        departureDate: selectedData.departureDate
-          ? dayjs(selectedData.departureDate)
-          : null,
+        ...data,
       });
-    } else if (drawerOpen && mode === "add") {
-      form.resetFields();
     }
-  }, [selectedData, drawerOpen, form, mode]);
+  }, [data]);
 
   const onFinish = (values) => {
     const formattedValues = {
       ...values,
-      arrivalDate: getFormattedDate(values.arrivalDate, false),
-      departureDate: getFormattedDate(values.departureDate, false),
+      arrivalDate: getFormattedDate(values.actualCheckin, false),
+      departureDate: getFormattedDate(values.actualCheckout, false),
     };
-
-    //  API
-    console.log("Submitted Values:", formattedValues);
-
-    // LocalStorage
-    const existingData = JSON.parse(localStorage.getItem("roomInfo")) || [];
-    if (mode === "add") {
-      localStorage.setItem(
-        "roomInfo",
-        JSON.stringify([
-          ...existingData,
-          { ...formattedValues, id: Date.now() },
-        ]),
-      );
-    } else {
-      const updated = existingData.map((item) =>
-        item.id === selectedData.id
-          ? { ...formattedValues, id: item.id }
-          : item,
-      );
-      localStorage.setItem("roomInfo", JSON.stringify(updated));
-    }
-
-    setDrawerOpen(false);
-    onSuccess();
-    form.resetFields();
   };
+
   return (
     <Drawer
       open={drawerOpen}
@@ -103,46 +71,20 @@ const RoomInformationForm = ({
     >
       <Form form={form} layout="vertical" onFinish={onFinish} disabled={isView}>
         <div className="grid grid-cols-2 gap-6">
-          <Form.Item label="Arrival Date" name="arrivalDate">
-            <DatePicker className="w-full" disabled={isView} />
+          <Form.Item label="Arrival Date" name="actualCheckin">
+            <Input disabled />
           </Form.Item>
 
-          <Form.Item label="Departure Date" name="departureDate">
-            <DatePicker className="w-full" disabled={isView} />
+          <Form.Item label="Departure Date" name="actualCheckout">
+            <Input disabled />
           </Form.Item>
         </div>
 
         <div className="grid grid-cols-2 gap-6">
-          <Form.Item label="Old Room Id" name="oldRoomId">
-            <Input readOnly={isView} placeholder="Enter Old Room Id" />
+          <Form.Item label="Room" name="room">
+            <Input disabled />
           </Form.Item>
-          <Form.Item label="Guest" name="guest">
-            <Input readOnly={isView} placeholder="Enter Guest" />
-          </Form.Item>
-        </div>
-
-        <div className="grid grid-cols-2 gap-6">
-          <Form.Item
-            label="Room Type"
-            name="roomType"
-            rules={[{ required: true }]}
-          >
-            <Select
-              placeholder="Selected Room Type"
-              options={[
-                {
-                  value: "Deluxe Bangalow Double",
-                  label: "Deluxe Bangalow Double",
-                },
-                { value: "Deluxe Bangalow", label: "Deluxe Bangalow" },
-              ]}
-            />
-          </Form.Item>
-          <Form.Item
-            label="New Room"
-            name="newRoom"
-            rules={[{ required: true }]}
-          >
+          <Form.Item label="Floor" name="floor" rules={[{ required: true }]}>
             <Select
               placeholder="Selected New Room"
               options={[
@@ -150,27 +92,6 @@ const RoomInformationForm = ({
                 { value: "DB", label: "DB 1001" },
                 { value: "Assign Room", label: "Assign Room" },
               ]}
-            />
-          </Form.Item>
-        </div>
-
-        <div className="grid grid-cols-2 gap-6">
-          <Form.Item label="Status" name="status">
-            <Select
-              placeholder="Selected Status"
-              options={[
-                { value: "active", label: "Active" },
-                { value: "inActive", label: "In Active" },
-              ]}
-            />
-          </Form.Item>
-          <Form.Item label="Amount" name="amount">
-            <InputNumber
-              className="!w-full"
-              min={1}
-              readOnly={isView}
-              placeholder="Enter Amount"
-              suffix="MMK"
             />
           </Form.Item>
         </div>

@@ -2,13 +2,50 @@ import React, { useEffect, useState } from "react";
 import { Form, Input, Drawer, Button, DatePicker, Select, Divider } from "antd";
 import dayjs from "dayjs";
 import GetRoomForm from "./GetRoomForm";
+import { reservationMeta, reservationRoomMeta } from "../../../../../../api/reservationSectionApi";
+import useApiQuery from "../../../../../../hooks/useApiQuery";
+import { useLocation } from "react-router-dom";
 
 const { RangePicker } = DatePicker;
 
-const AssignRoomForm = ({ mode, open, onClose, selectedData, onSuccess }) => {
+const AssignRoomForm = ({
+  data,
+  mode,
+  open,
+  onClose,
+  selectedData,
+  setSelectedData,
+  onSuccess,
+  reservationUuid
+}) => {
+   console.log(reservationUuid,"aa")
+  const uuid = reservationUuid?.uuid; 
+
+  console.log(uuid,"assign-uuid")
+
   const [form] = Form.useForm();
   const isView = mode === "view";
+  const isAdd = mode === "add";
   const [showRoomResults, setShowRoomResults] = useState(false);
+
+  const { data: reservationRoom } = useApiQuery({
+    fetchQueryName: "reservationRoom",
+    fetchQueryFunction: reservationRoomMeta,
+     params: {
+     reservation: {
+        uuid: uuid,
+      },
+       reservationRoom: {
+       uuid: selectedData?.uuid,
+      },
+  },  
+
+    });
+
+  const floors = reservationRoom?.floors?.map((floor) => ({
+    value: floor.uuid,
+    label: `${floor.name} (${floor.floorNo})`,
+  }));
 
   const dates = Form.useWatch("dates", form);
 
@@ -25,33 +62,16 @@ const AssignRoomForm = ({ mode, open, onClose, selectedData, onSuccess }) => {
       form.setFieldsValue({
         ...selectedData,
         dates: [
-          selectedData.arrivalDate ? dayjs(selectedData.arrivalDate) : null,
-          selectedData.departureDate ? dayjs(selectedData.departureDate) : null,
+          selectedData.checkinDate ? dayjs(selectedData.checkinDate) : null,
+          selectedData.checkoutDate ? dayjs(selectedData.checkoutDate) : null,
         ],
+         floorUuid: selectedData?.floors?.uuid, 
       });
       setShowRoomResults(false);
     }
   }, [selectedData, open, form]);
 
-  const handleSelectRoom = (roomNo) => {
-    const values = form.getFieldsValue();
-    const formattedValues = {
-      ...values,
-      arrivalDate: values.dates?.[0]?.toISOString(),
-      departureDate: values.dates?.[1]?.toISOString(),
-      newRoom: roomNo,
-    };
-
-    const existingData = JSON.parse(localStorage.getItem("roomInfo")) || [];
-    const updated = existingData.map((item) =>
-      item.id === selectedData.id ? { ...item, ...formattedValues } : item,
-    );
-
-    localStorage.setItem("roomInfo", JSON.stringify(updated));
-    setShowRoomResults(false);
-    if (onSuccess) onSuccess();
-  };
-
+   
   return (
     <Drawer
       open={open}
@@ -63,10 +83,7 @@ const AssignRoomForm = ({ mode, open, onClose, selectedData, onSuccess }) => {
       <div className="flex flex-col gap-6">
         <div className="border border-gray-200 rounded px-4 py-2">
           <Form form={form} layout="vertical" disabled={isView}>
-            <h1 className="text-base font-semibold mb-6 text-gray-700">
-              Assign Room
-            </h1>
-
+           
             <Form.Item label="Stay Duration (Check-in - Check-out)">
               <div className="flex items-center gap-3">
                 <Form.Item name="dates" noStyle>
@@ -77,7 +94,7 @@ const AssignRoomForm = ({ mode, open, onClose, selectedData, onSuccess }) => {
                   <span className="text-[12px] font-bold leading-none">
                     {calculateNights()}{" "}
                     <span className="text-[10px] text-gray-600 font-normal">
-                      {calculateNights() === 1 ? "Night" : "Nights"}
+                      {calculateNights() === 1 , "Night" }
                     </span>
                   </span>
                 </div>
@@ -85,19 +102,36 @@ const AssignRoomForm = ({ mode, open, onClose, selectedData, onSuccess }) => {
             </Form.Item>
 
             <div className="grid grid-cols-2 gap-6">
-              <Form.Item label="Room Type" name="roomType">
+              <Form.Item label="Room" name={['roomType', 'name']}>
                 <Input disabled />
               </Form.Item>
 
-              <Form.Item label="Floor Type" name="floorType">
-                <Select
-                  placeholder="Select Floor Type"
-                  options={[
-                    { value: "Garden View", label: "Garden View" },
-                    { value: "Sea View", label: "Sea View" },
-                  ]}
-                />
-              </Form.Item>
+              <Form.Item
+                    label="Floor"
+                    name="floorUuid"
+                    rules={[{ required: true, message: "Floor is Required" }]}
+                    getValueProps={(value) => ({
+                      
+                      value: isView
+                      ? floors.find((item) => item.value === value)?.label
+                                : value,
+                            })}
+                          >
+                            {isView ? (
+                              <Input readOnly={isView} />
+                            ) : (
+                              <Select
+                                showSearch={{
+                                  filterOption: (input, option) =>
+                                    (option?.label ?? "")
+                                      .toLowerCase()
+                                      .includes(input.toLowerCase()),
+                                }}
+                                options={floors}
+                                placeholder="Select Floor"
+                              />
+                            )}
+                 </Form.Item>
             </div>
 
             <div className="flex justify-end mt-4">
@@ -111,7 +145,9 @@ const AssignRoomForm = ({ mode, open, onClose, selectedData, onSuccess }) => {
         {showRoomResults && (
           <div className="mt-4">
             <Divider orientation="left">Available Rooms</Divider>
-            <GetRoomForm onSelectRoom={handleSelectRoom} />
+            <GetRoomForm
+            
+            />
           </div>
         )}
       </div>

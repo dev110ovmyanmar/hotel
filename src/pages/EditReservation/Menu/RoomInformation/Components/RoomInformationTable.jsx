@@ -24,6 +24,7 @@ const RoomInformationTable = ({
   loading,
   changePage,
   changePerPage,
+  reservationUuid,
 }) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mode, setMode] = useState("add");
@@ -33,6 +34,8 @@ const RoomInformationTable = ({
   const [assignRoomOpen, setAssignRoomOpen] = useState(false);
   const [noteOpen, setNoteOpen] = useState(false);
   const [guestOpen, setGuestOpen] = useState(false);
+
+  console.log(reservationUuid, "reservationUuidtable");
 
   const columns = [
     {
@@ -45,6 +48,28 @@ const RoomInformationTable = ({
       title: "Room",
       key: "room",
       dataIndex: "room",
+      render: (text, record) => {
+        const isRoomNull = !text;
+
+        return (
+          <span
+            style={{
+              color: isRoomNull ? "#1890ff" : "inherit",
+              cursor: isRoomNull ? "pointer" : "default",
+              textDecoration: isRoomNull ? "underline" : "none",
+            }}
+            onClick={(e) => {
+              if (isRoomNull) {
+                e.stopPropagation();
+                setSelectedData(record);
+                setAssignRoomOpen(true);
+              }
+            }}
+          >
+            {text ? text : "Assign Room"}
+          </span>
+        );
+      },
     },
 
     {
@@ -67,7 +92,6 @@ const RoomInformationTable = ({
 
     { title: "Room Status", dataIndex: "roomStatus", key: "roomStatus" },
     { title: "Rate Plan", dataIndex: ["ratePlan", "name"], key: "ratePlan" },
-    { title: "Amount", dataIndex: "amount", key: "amount" },
     {
       title: "Action",
       align: "center",
@@ -119,6 +143,8 @@ const RoomInformationTable = ({
   return (
     <div>
       <Table
+        tableLayout="fixed"
+        scroll={{ x: 1000 }}
         columns={columns}
         dataSource={data}
         rowKey="id"
@@ -150,11 +176,16 @@ const RoomInformationTable = ({
         reservationId={selectedData?.id}
       />
 
-      <AssignRoomForm
-        open={assignRoomOpen}
-        onClose={() => setAssignRoomOpen(false)}
-        selectedData={selectedData}
-      />
+      {assignRoomOpen && (
+        <AssignRoomForm
+          data={data?.data || []}
+          open={assignRoomOpen}
+          onClose={() => setAssignRoomOpen(false)}
+          selectedData={selectedData}
+          setSelectedData={setSelectedData}
+          reservationUuid={reservationUuid}
+        />
+      )}
 
       <NoteDrawer open={noteOpen} onClose={() => setNoteOpen(false)} />
     </div>
