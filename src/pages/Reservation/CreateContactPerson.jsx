@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from "react";
 import {
+  AutoComplete,
   Button,
   Col,
   Drawer,
@@ -25,10 +26,6 @@ const CreateGuestForm = ({
   setCreateContactFinish,
   createContactForm
 }) => {
-
-  const [searchText, setSearchText] = useState("");
-
-
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
 
   const titleOptions = useMemo(() => {
@@ -46,9 +43,35 @@ const CreateGuestForm = ({
   const
     guestsOptions =
       reservationMetas?.guests?.map((item) => ({
-        label: `${item.name}  ${item.nrcNo? '(' + item.nrcNo + ')' + " "+ '(' + item.phone + ')' : '(' + item.phone + ')'}`,
+        label: `${item.name}  ${item.nrcNo ? '(' + item.nrcNo + ')' + " " + '(' + item.phone + ')' : '(' + item.phone + ')'}`,
         value: item.uuid,
       })) || [];
+
+  const [searchText, setSearchText] = useState("");
+  const [options, setOptions] = useState(guestsOptions);
+  const [value, setValue] = useState("");
+
+  const handleSelect = (value) => {
+    console.log("Selected", value);
+    setValue(value)
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      const inputValue = e.target.value.trim();
+
+      if (!inputValue) return;
+
+      setOptions(prev => [
+        ...prev,
+        {
+          value: inputValue
+        }
+      ]);
+
+      setValue(inputValue)
+    }
+  }
 
   const onClick = () => {
     setCreateContactFinish(true);
@@ -58,7 +81,7 @@ const CreateGuestForm = ({
       //     "name": "f2c7bdf7c2a249e9a4ac28925625d59b",
       //     "phone": "09123456789"
       // }
-      
+
       const selectedGuest = reservationMetas?.guests?.find(
         (guest) => guest.uuid === values.name
       );
@@ -92,6 +115,20 @@ const CreateGuestForm = ({
       upsertMutation.mutate(payload);
     });
   };
+
+  const handleAddCustomer = () => {
+    if (!newCustomer.trim()) return;
+
+    const newItem = {
+      label: newCustomer,
+      value: crypto.randomUUID()
+    };
+
+    setCustomers(prev => [...prev, newItem]);
+    setNewCustomer("")
+  }
+
+
   return (
     <Drawer
       size={550}
@@ -117,13 +154,14 @@ const CreateGuestForm = ({
               <Select options={titleOptions} placeholder="Select Title" />
             </Form.Item>
 
-            <Form.Item
+            {/* <Form.Item
               label="Name"
               name="name"
               rules={[{ required: false }]}
               style={{ width: '80%' }}
             >
               <Select
+                mode="combobox"
                 showSearch
                 allowClear
                 placeholder="Select or type guest name"
@@ -149,6 +187,40 @@ const CreateGuestForm = ({
                 }}
 
               />
+
+            </Form.Item> */}
+
+            <Form.Item
+              label="Name"
+              name="name"
+              style={{ width: "80%" }}
+            >
+              <AutoComplete
+                options={guestsOptions}
+                placeholder="Select or type guest name"
+                filterOption={(inputValue, option) =>
+                  option?.label
+                    ?.toLowerCase()
+                    .includes(inputValue.toLowerCase())
+                }
+                onSelect={(value) => {
+                  createContactForm.setFieldValue("name", value);
+                }}
+                onChange={(value) => {
+                  createContactForm.setFieldValue("name", value);
+                }}
+              >
+                <Input
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      createContactForm.setFieldValue(
+                        "name",
+                        e.target.value
+                      );
+                    }
+                  }}
+                />
+              </AutoComplete>
             </Form.Item>
           </Space.Compact>
         </Row>
@@ -168,6 +240,7 @@ const CreateGuestForm = ({
                 }
               }}
               placeholder="Enter Phone Number"
+              maxLength={13}
             />
           </Form.Item>
 

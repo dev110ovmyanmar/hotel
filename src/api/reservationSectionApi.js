@@ -48,5 +48,9 @@ export const updateReservationStatus = async (params) => {
   return data.response;
 }
 
+export const reservationRoomList = async (params) => {
+  const { data } = await apiClient.get("/reservation-rooms", { params });
+  return data.response;
+};
 
 
