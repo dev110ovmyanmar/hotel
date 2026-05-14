@@ -111,7 +111,8 @@ const ChangeStatusForm = ({
   }, [initData]);
 
   //Current status
-  const currentStatus = reservationDetails?.reservationStatus?.code;
+  const currentStatus =
+    reservationDetails?.reservation?.reservationStatus?.code;
 
   //Allowed next codes
   const nextStatusCodes = STATUS_FLOW[currentStatus] || [];
@@ -126,7 +127,7 @@ const ChangeStatusForm = ({
   //Mutation api call
   const updateReservationStatusMutation = useApiMutation({
     mutationFn: updateReservationStatus,
-    invalidateKeys: [["reservation-details"]]
+    invalidateKeys: [["reservation-details"]],
   });
 
   //Reset form when drawer closes
@@ -139,7 +140,7 @@ const ChangeStatusForm = ({
   //Submit handler
   const onFinish = (values) => {
     const payload = {
-      uuid: reservationDetails?.uuid,
+      uuid: reservationDetails?.reservation?.uuid,
       reservationStatus: {
         uuid: values.changeBookingStatusTo,
       },
@@ -148,7 +149,7 @@ const ChangeStatusForm = ({
     updateReservationStatusMutation.mutate(payload, {
       onSuccess: () => {
         Toast.success("Reservation Status Updated Successfully!");
-         onClose();
+        onClose();
       },
       onError: (error) => {
         console.error("Change status failed:", error);
@@ -179,7 +180,7 @@ const ChangeStatusForm = ({
         >
           <div className="py-1">
             <Tag color="green" className="font-semibold px-5 py-5 text-sm">
-              {reservationDetails?.reservationStatus?.name}
+              {reservationDetails?.reservation?.reservationStatus?.name}
             </Tag>
           </div>
         </Form.Item>
