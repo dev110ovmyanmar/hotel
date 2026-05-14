@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Tabs, Badge, Space, Button, Spin } from "antd";
 import { AppstoreOutlined, UnorderedListOutlined } from "@ant-design/icons";
 import ReservationsGrid from "./ReservationsGrid";
-import { reservationList } from "../../../api/reservationList";
+import { reservationList } from "../../../api/reservationSectionApi";
 import ReservationsTable from "./ReservationsTable";
 import useApiQuery from "../../../hooks/useApiQuery";
 import { LIMITS } from "../../../variables/constants";

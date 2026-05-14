@@ -116,7 +116,7 @@ const GuestForm = ({
               <Col span={18}>
                 <Form.Item
                   label="Name"
-                  name="name"
+                  name="guestName"
                   rules={[
                     { required: true, message: "Please input your name!" },
                   ]}

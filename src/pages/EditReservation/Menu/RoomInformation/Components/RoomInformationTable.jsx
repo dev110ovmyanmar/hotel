@@ -1,22 +1,31 @@
-import { Dropdown, Space, Table, Button, Tooltip } from "antd";
+import { Dropdown, Space, Table, Button, Tooltip, Divider } from "antd";
 import { useState, useEffect } from "react";
 import {
   MoreOutlined,
-  EyeOutlined,
   EditOutlined,
   PlusOutlined,
-  InboxOutlined,
   UploadOutlined,
+  MessageOutlined,
 } from "@ant-design/icons";
 import { MdOutlineMeetingRoom } from "react-icons/md";
 import RoomInformationForm from "./RoomInformationForms/RoomInformationForm";
 import RoomMoveDrawer from "./RoomInformationForms/RoomMoveDrawer";
 import AssignRoomForm from "./RoomInformationForms/AssignRoomForm";
-import { set } from "lodash";
 import dayjs from "dayjs";
 import NoteDrawer from "./RoomInformationForms/NoteDrawer";
+import GuestForm from "../../GuestDetails/Components/GuestForms/GuestForm";
+import { EyeOutlined } from "@ant-design/icons";
 
-const RoomInformationTable = () => {
+const RoomInformationTable = ({
+  data,
+  page,
+  perPage,
+  total,
+  loading,
+  changePage,
+  changePerPage,
+  reservationUuid,
+}) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mode, setMode] = useState("add");
   const [selectedData, setSelectedData] = useState(null);
@@ -24,16 +33,9 @@ const RoomInformationTable = () => {
   const [roomMoveOpen, setRoomMoveOpen] = useState(false);
   const [assignRoomOpen, setAssignRoomOpen] = useState(false);
   const [noteOpen, setNoteOpen] = useState(false);
+  const [guestOpen, setGuestOpen] = useState(false);
 
-  useEffect(() => {
-    const savedRoomInfo = JSON.parse(localStorage.getItem("roomInfo")) || [];
-    setDataSource(savedRoomInfo);
-  }, []);
-
-  const refreshData = () => {
-    const savedRoomInfo = JSON.parse(localStorage.getItem("roomInfo")) || [];
-    setDataSource(savedRoomInfo);
-  };
+  console.log(reservationUuid, "reservationUuidtable");
 
   const columns = [
     {
@@ -42,74 +44,29 @@ const RoomInformationTable = () => {
       key: "id",
       width: 70,
     },
-    // {
-    //   title: "Room",
-    //   dataIndex: "roomType",
-    //   key: "roomType",
-    //   className: "font-medium",
-    //   render: (text, record) => {
-    //     const isAssignRoom = text === "Assign Room";
-
-    //     return (
-    //       <span
-    //         style={{
-    //           color: isAssignRoom ? "#1890ff" : "inherit",
-    //           cursor: isAssignRoom ? "pointer" : "default",
-    //           textDecoration: isAssignRoom,
-    //         }}
-    //         onClick={(e) => {
-    //           if (isAssignRoom) {
-    //             e.stopPropagation();
-    //             setSelectedData(record);
-    //             setAssignRoomOpen(true);
-    //           }
-    //         }}
-    //       >
-    //         {/* {text} */}
-    //         <div>
-    //             <div className="font-medium">{text}</div>
-    //             <div className="text-xs text-gray-500">{text}</div>
-    //           </div>
-    //       </span>
-    //     );
-    //   },
-    // },
     {
       title: "Room",
-      key: "newRoom",
-      dataIndex: "newRoom", // Ensure dataIndex matches your data key
-      className: "font-medium",
+      key: "room",
+      dataIndex: "room",
       render: (text, record) => {
-        // Check if the value of 'newRoom' is exactly "Assign Room"
-        const isAssignRoom = text === "Assign Room";
+        const isRoomNull = !text;
 
         return (
           <span
             style={{
-              // Apply blue color if it is an Assign Room action
-              color: isAssignRoom ? "#1890ff" : "inherit",
-              cursor: isAssignRoom ? "pointer" : "default",
-              display: "inline-block",
+              color: isRoomNull ? "#1890ff" : "inherit",
+              cursor: isRoomNull ? "pointer" : "default",
+              textDecoration: isRoomNull ? "underline" : "none",
             }}
             onClick={(e) => {
-              if (isAssignRoom) {
+              if (isRoomNull) {
                 e.stopPropagation();
                 setSelectedData(record);
                 setAssignRoomOpen(true);
               }
             }}
           >
-            <div className="flex flex-col">
-              {/* Top Line: The Room Name/Action */}
-              <div
-                className={`font-medium ${isAssignRoom ? "text-blue-500" : "text-gray-900"}`}
-              >
-                {text || "-"}
-              </div>
-
-              {/* Bottom Line: The Room Type category */}
-              <div className="text-xs text-gray-500">{record.roomType}</div>
-            </div>
+            {text ? text : "Assign Room"}
           </span>
         );
       },
@@ -117,48 +74,24 @@ const RoomInformationTable = () => {
 
     {
       title: "Name",
-      dataIndex: "guest",
-      key: "guest",
+      dataIndex: ["roomType", "name"],
+      key: "name",
     },
     {
       title: "Arrival",
-      key: "arrivalDate",
-      render: (_, record) => {
-        const date = record.arrivalDate
-          ? dayjs(record.arrivalDate).format("DD/MM/YYYY")
-          : "-";
-
-        return <div className="font-medium">{date}</div>;
-      },
+      dataIndex: "checkinDate",
+      key: "checkinDate",
+      render: (value) => (value ? dayjs(value).format("DD/MM/YYYY") : "-"),
     },
-
     {
       title: "Departure",
-      key: "departureDate",
-      render: (_, record) => {
-        const date = record.departureDate
-          ? dayjs(record.departureDate).format("DD/MM/YYYY")
-          : "-";
-
-        return <div className="font-medium">{date}</div>;
-      },
+      dataIndex: "checkoutDate",
+      key: "checkoutDate",
+      render: (value) => (value ? dayjs(value).format("DD/MM/YYYY") : "-"),
     },
 
-    {
-      title: "Room Status",
-      dataIndex: "status",
-      key: "status",
-    },
-    {
-      title: "Rate Plan",
-      dataIndex: "ratePlan",
-      key: "ratePlan",
-    },
-    {
-      title: "Amount",
-      dataIndex: "amount",
-      key: "amount",
-    },
+    { title: "Room Status", dataIndex: "roomStatus", key: "roomStatus" },
+    { title: "Rate Plan", dataIndex: ["ratePlan", "name"], key: "ratePlan" },
     {
       title: "Action",
       align: "center",
@@ -166,6 +99,7 @@ const RoomInformationTable = () => {
         <Space size="middle">
           <Tooltip title="View Details">
             <EyeOutlined
+              className="cursor-pointer"
               onClick={() => {
                 setSelectedData(record);
                 setMode("view");
@@ -173,9 +107,9 @@ const RoomInformationTable = () => {
               }}
             />
           </Tooltip>
-
           <Tooltip title="Edit">
             <EditOutlined
+              className="cursor-pointer"
               onClick={() => {
                 setSelectedData(record);
                 setMode("edit");
@@ -183,7 +117,6 @@ const RoomInformationTable = () => {
               }}
             />
           </Tooltip>
-
           <Tooltip title="Move Room">
             <MdOutlineMeetingRoom
               style={{ fontSize: "20px", cursor: "pointer" }}
@@ -193,10 +126,9 @@ const RoomInformationTable = () => {
               }}
             />
           </Tooltip>
-
-          <Tooltip title="Archive/Notes">
-            <InboxOutlined
-              style={{ fontSize: "20px", cursor: "pointer" }}
+          <Tooltip title="Notes">
+            <MessageOutlined
+              style={{ fontSize: "18px", cursor: "pointer" }}
               onClick={() => {
                 setSelectedData(record);
                 setNoteOpen(true);
@@ -210,7 +142,24 @@ const RoomInformationTable = () => {
 
   return (
     <div>
-      <Table columns={columns} dataSource={dataSource} rowKey="id" />
+      <Table
+        tableLayout="fixed"
+        scroll={{ x: 1000 }}
+        columns={columns}
+        dataSource={data}
+        rowKey="id"
+        pagination={{
+          current: page,
+          pageSize: perPage,
+          total: total,
+          onChange: (page, perPage) => {
+            changePage(page);
+            changePerPage(perPage);
+          },
+          showSizeChanger: true,
+        }}
+        loading={loading}
+      />
 
       <RoomInformationForm
         mode={mode}
@@ -218,7 +167,6 @@ const RoomInformationTable = () => {
         drawerOpen={drawerOpen}
         setDrawerOpen={setDrawerOpen}
         selectedData={selectedData}
-        onSuccess={refreshData}
       />
 
       <RoomMoveDrawer
@@ -228,11 +176,16 @@ const RoomInformationTable = () => {
         reservationId={selectedData?.id}
       />
 
-      <AssignRoomForm
-        open={assignRoomOpen}
-        onClose={() => setAssignRoomOpen(false)}
-        selectedData={selectedData}
-      />
+      {assignRoomOpen && (
+        <AssignRoomForm
+          data={data?.data || []}
+          open={assignRoomOpen}
+          onClose={() => setAssignRoomOpen(false)}
+          selectedData={selectedData}
+          setSelectedData={setSelectedData}
+          reservationUuid={reservationUuid}
+        />
+      )}
 
       <NoteDrawer open={noteOpen} onClose={() => setNoteOpen(false)} />
     </div>

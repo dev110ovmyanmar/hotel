@@ -1,6 +1,6 @@
-import { Dropdown, Space, Table, Tag } from "antd";
+import { Dropdown, Space, Table, Tag, Modal, Divider } from "antd";
 import { useState } from "react";
-import { MoreOutlined, EyeOutlined, EditOutlined } from "@ant-design/icons";
+import { MoreOutlined, EyeOutlined, EditOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
 import usePermission from "../../../hooks/usePermission";
 import SeasonalRateForm from "./SeasonalRateForms/SeasonalRateForm";
 import { PERMISSIONS } from "../../../variables/permission";
@@ -20,6 +20,14 @@ const SeasonalRateTable = ({
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mode, setMode] = useState(null);
   const [selectedData, setSelectedData] = useState(null);
+
+  const [isWeekDaysModalOpen, setIsWeekDaysModalOpen] = useState(false);
+  const [selectedWeekDayData, setSelectedWeekDayData] = useState(null);
+
+  const showWeekDayModal = (record) => {
+    setSelectedWeekDayData(record);
+    setIsWeekDaysModalOpen(true);
+  };
 
   const baseColumns = [
     {
@@ -140,8 +148,22 @@ const SeasonalRateTable = ({
       title: "Price (MMK)",
       dataIndex: "price",
       key: "price",
-      render: (text) => <PriceTag value={text} />,
       align: "right",
+      render: (text, record) => {
+        // Only show the info icon if there are actually weekday prices set
+        const hasWeekdays = record.weekdays && Object.values(record.weekdays).some(v => v !== null);
+
+        return (
+          <div className="flex gap-2 items-center justify-end">
+            <PriceTag value={text} />
+            {hasWeekdays && (
+              <a onClick={() => showWeekDayModal(record)} className="text-blue-500 hover:text-blue-700">
+                <ExclamationCircleOutlined />
+              </a>
+            )}
+          </div>
+        );
+      }
     },
     {
       title: "Action",
@@ -212,9 +234,23 @@ const SeasonalRateTable = ({
         size="small"
         style={{ marginTop: "16px", marginBottom: "16px" }}
         bordered
-        className="[&_.ant-table-cell]:!border [&_.ant-table-cell]:!border-blue-300 [&_.ant-table-thead>tr>th]:!bg-[#F0F5FF]"
+
       />
     );
+  };
+
+  // Helper to get formatted weekday list for the Modal
+  const getWeekdayList = (weekdays) => {
+    if (!weekdays) return [];
+    return [
+      { label: 'Monday', val: weekdays.mon },
+      { label: 'Tuesday', val: weekdays.tue },
+      { label: 'Wednesday', val: weekdays.wed },
+      { label: 'Thursday', val: weekdays.thu },
+      { label: 'Friday', val: weekdays.fri },
+      { label: 'Saturday', val: weekdays.sat },
+      { label: 'Sunday', val: weekdays.sun },
+    ].filter(day => day.val !== null); // Only keep days that have a price
   };
 
   return (
@@ -239,7 +275,46 @@ const SeasonalRateTable = ({
         selectedData={selectedData}
         setSelectedData={setSelectedData}
       />
-    </div>
+
+      <Modal
+        title="Price Overview"
+        open={isWeekDaysModalOpen}
+        onCancel={() => setIsWeekDaysModalOpen(false)}
+        footer={null}
+        width={320}
+        centered
+        styles={{ body: { paddingBottom: '24px' } }}
+      >
+        {selectedWeekDayData && (
+          <div>
+            {/* Base Price Section */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+              <span style={{ color: '#8c8c8c' }}>Base Price</span>
+              <span style={{ fontWeight: 600, fontSize: '16px' }}>
+                <PriceTag value={selectedWeekDayData.price} />
+              </span>
+            </div>
+
+            {getWeekdayList(selectedWeekDayData.weekdays).length > 0 && (
+              <>
+                <Divider style={{ margin: '12px 0' }} />
+                <p style={{ fontWeight: 600, marginBottom: '12px', color: '#262626' }}>Weekday Rates</p>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  {getWeekdayList(selectedWeekDayData.weekdays).map((day) => (
+                    <div key={day.label} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px' }}>
+                      <span style={{ color: '#595959' }}>{day.label}</span>
+                      <span style={{ fontWeight: 500 }}>
+                        <PriceTag value={day.val} />
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
+        )}
+      </Modal>
+    </div >
   );
 };
 

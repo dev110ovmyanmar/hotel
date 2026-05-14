@@ -197,12 +197,14 @@ const RatePlanTable = ({
       dataIndex: ["roomType", "name"],
       key: "roomType",
       render: (text) => <div>{text}</div>,
+      align: "center"
     },
     {
       title: "Price (MMK)",
       dataIndex: "price",
       key: "price",
-      render: (text) => <PriceTag value={text} />
+      render: (text) => <PriceTag value={text} />,
+      align:"right"
     },
     {
       title: "Duration Hours",
@@ -213,6 +215,7 @@ const RatePlanTable = ({
     },
     {
       title: "Action",
+      align:"center",
       render: (_, roomTypeRecord) => {
         const smallStyle = { fontSize: "12px" };
 

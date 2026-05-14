@@ -10,17 +10,14 @@ import RoomMoveForm from "../BookingDetailForms/RoomMoveForm";
 import AmendStayForm from "../BookingDetailForms/AmendStayForm";
 import AddPaymentForm from "../BookingDetailForms/AddPaymentForm";
 import {
-  STATUS_ACTIONS,
-  BUTTON_CONFIG,
+  button_config,
+  status_actions,
 } from "./../../../../component/BookingActions/BookingActions";
 
 const BookingDetailButton = ({ data }) => {
-  console.log(data, "booking");
-
-  const status = data?.reservationStatus?.name?.toUpperCase();
-  console.log(status, "status");
-  const actions = STATUS_ACTIONS[status] || [];
-  console.log(actions, "action");
+  const reservation = data?.reservation;
+  const status = reservation?.reservationStatus?.name?.toUpperCase();
+  const actions = status_actions[status] || [];
 
   const [form] = Form.useForm();
   const [open, setOpen] = useState(false);
@@ -66,19 +63,19 @@ const BookingDetailButton = ({ data }) => {
   return (
     <div>
       <div className="text-sm mb-6 mt-1.5">
-        Reservation id: {data?.reservationNo}
+        Reservation id:<strong> {reservation?.reservationNo}</strong>
       </div>
 
       <div className="flex gap-2">
         {actions.map((key) => {
-          const btn = BUTTON_CONFIG[key];
+          const btn = button_config[key];
           if (!btn) return null;
 
           return (
             <Button
               key={key}
               className="custom-blue-btn"
-              icon={btn.icon ? <PlusOutlined /> : null}
+              icon={btn.icon || null}
               onClick={() => handleAction(key)}
             >
               {btn.label}
@@ -91,6 +88,7 @@ const BookingDetailButton = ({ data }) => {
         open={open}
         onClose={() => setOpen(false)}
         reservationId={data?.reservationNo}
+        reservationDetails={data}
       />
 
       <AmendBookingForm

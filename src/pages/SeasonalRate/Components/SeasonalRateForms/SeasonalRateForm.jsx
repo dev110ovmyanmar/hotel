@@ -82,12 +82,14 @@ const SeasonalRateForm = ({
   });
 
   useEffect(() => {
-    if (!isAdd && data && ratePlanMetaData) {
+    if (data && drawerOpen) {
+      const weekdays = data.weekdays || {};
+
       form.setFieldsValue({
         ...data,
-        ...data.weekdays,
-        ...Object.keys(data.weekdays).reduce((acc, day) => {
-          acc[`enable_${day}`] = data.weekdays[day] !== null;
+        ...weekdays,
+        ...Object.keys(weekdays).reduce((acc, day) => {
+          acc[`enable_${day}`] = weekdays[day] !== null;
           return acc;
         }, {}),
         dateRange: [
@@ -99,7 +101,7 @@ const SeasonalRateForm = ({
         roomTypeUuid: data?.roomType?.uuid,
       });
     }
-  }, [data, ratePlanMetaData]);
+  }, [data, drawerOpen]);
 
   const days = [
     { key: 'mon', label: 'Monday' },
@@ -140,7 +142,6 @@ const SeasonalRateForm = ({
     };
 
     if (isAdd) {
-      form.resetFields();
       const createValues = {
         ...formattedValues,
         rateCategory: { uuid: values.rateCategory },
@@ -169,6 +170,7 @@ const SeasonalRateForm = ({
 
       editSeasonlRates.mutate(editValues, {
         onSuccess: () => {
+          form.resetFields();
           setDrawerOpen(false);
           Toast.success("Base Rate Updated Successfully!");
         },
@@ -176,11 +178,16 @@ const SeasonalRateForm = ({
     }
   };
 
+  const handleClose = () => {
+    setDrawerOpen(false);
+    form.resetFields();
+  }
+
   return (
     <div>
       <Drawer
         open={drawerOpen}
-        onClose={() => { setDrawerOpen(false); form.resetFields(); }}
+        onClose={handleClose}
         size={550}
         title={
           <div className="flex justify-between items-center">
