@@ -9,6 +9,7 @@ import { reservationRoomList } from "../../../../api/reservationSectionApi";
 import useApiQuery from "../../../../hooks/useApiQuery";
 import { useLocation } from "react-router-dom";
 import { LIMITS } from "../../../../variables/constants";
+import AssignRoomForm from "./Components/RoomInformationForms/AssignRoomForm";
 
 const RoomInformationList = () => {
   const location = useLocation();
@@ -22,6 +23,7 @@ const RoomInformationList = () => {
   const [endDate, setEndDate] = useState(null);
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(LIMITS.PAGE_SIZE);
+  const [assignRoomOpen, setAssignRoomOpen] = useState(false);
 
   const { data, isLoading } = useApiQuery({
     fetchQueryName: "reservation-room",
@@ -56,6 +58,7 @@ const RoomInformationList = () => {
           addButtonText={"Add New Room"}
         />
       </div>
+
       <RoomInformationTable
         data={data?.data || []}
         page={page}
@@ -64,12 +67,27 @@ const RoomInformationList = () => {
         changePage={setPage}
         changePerPage={setPerPage}
         loading={isLoading}
+        reservationUuid={data?.reservation || []}
       />
       <RoomInformationForm
+        data={data?.reservation || []}
         drawerOpen={drawerOpen}
-        // setDrawerOpen={setDrawerOpen}
+        setDrawerOpen={setDrawerOpen}
         mode={mode}
+        selectedData={selectedData}
+        setSelectedData={setSelectedData}
       />
+
+      {assignRoomOpen && (
+        <AssignRoomForm
+          data={data?.data || []}
+          open={assignRoomOpen}
+          onClose={() => setAssignRoomOpen(false)}
+          selectedData={selectedData}
+          setSelectedData={setSelectedData}
+          reservationUuid={data?.reservation || []}
+        />
+      )}
     </div>
   );
 };

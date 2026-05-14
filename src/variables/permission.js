@@ -228,4 +228,10 @@ export const PERMISSIONS = {
   ROOM_RESTRICTION_VIEW: "room-restriction.view",
   ROOM_RESTRICTION_CREATE: "room-restriction.create",
   ROOM_RESTRICTION_EDIT: "room-restriction.edit",
+
+  //Reservation room
+  RESERVATION_ROOM_LIST:"reservation-room.list",
+  RESERVATION_ROOM_VIEW:"reservation-room.create",
+  RESERVATION_ROOM_CREATE:"reservation-room.view",
+  RESERVATION_ROOM_SEARCH:"reservation-room.search",
 };
