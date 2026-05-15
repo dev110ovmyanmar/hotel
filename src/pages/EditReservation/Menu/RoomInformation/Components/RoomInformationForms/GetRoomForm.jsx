@@ -1,74 +1,108 @@
-import React from "react";
-import { Card, Tag, Button } from "antd";
+import React, { useState } from "react";
+import { Button, Spin, Empty } from "antd";
+import dayjs from "dayjs";
+import {
+  reservationRoomAssign,
+  reservationRoomSearch,
+} from "./../../../../../../api/reservationSectionApi";
+import { LIMITS } from "../../../../../../variables/constants";
+import useApiQuery from "../../../../../../hooks/useApiQuery";
+import { useApiMutation } from "../../../../../../hooks/useApiMutation";
+import Toast from "../../../../../../component/Toast/Toast";
 
-const GetRoomForm = ({ onSelectRoom, onClose }) => {
-  const rooms = [
-    {
-      id: 1,
-      roomNo: "DBD - 1004",
-      type: "Delux Double Room",
-      view: "Garden View",
-      status: "Cleaning",
-      statusColor: "orange",
-    },
-    {
-      id: 2,
-      roomNo: "DBD - 1007",
-      type: "Delux Double Room",
-      view: "Sea View",
-      status: "Available",
-      statusColor: "green",
-    },
-  ];
+const GetRoomForm = ({ selectedData, onSelectRoom, onClose, floorUuid }) => {
+  const [page] = useState(1);
+  const [perPage] = useState(LIMITS.PAGE_SIZE);
 
-  const handleAssignClick = (roomNo) => {
-    onSelectRoom(roomNo); // Action 1: Pass data to parent
-    onClose(); // Action 2: Close the results/drawer
+  const { data, isLoading } = useApiQuery({
+    fetchQueryName: "reservationRoom",
+    fetchQueryFunction: reservationRoomSearch,
+    params: {
+      filter: {
+        checkinDate: selectedData?.checkinDate
+          ? dayjs(selectedData.checkinDate).format("YYYY-MM-DD")
+          : null,
+        checkoutDate: selectedData?.checkoutDate
+          ? dayjs(selectedData.checkoutDate).format("YYYY-MM-DD")
+          : null,
+      },
+      roomType: { uuid: selectedData?.roomType?.uuid },
+      floor: { uuid: floorUuid },
+      pagination: { page, perPage },
+    },
+  });
+  console.log(data, "room");
+
+  const assignMutation = useApiMutation({
+    mutationFn: reservationRoomAssign,
+    invalidateKeys: [["reservation-room"]],
+  });
+
+  const handleAssignClick = (room) => {
+    const payload = {
+      reservationRoom: {
+        uuid: selectedData?.uuid,
+      },
+      room: {
+        uuid: room?.uuid,
+      },
+    };
+
+    assignMutation.mutate(payload, {
+      onSuccess: () => {
+        Toast.success(`Room ${room.roomNo} assigned successfully!`);
+        if (onSelectRoom) onSelectRoom(room);
+        onClose();
+      },
+    });
   };
 
+  if (isLoading)
+    return (
+      <div className="flex justify-center p-10">
+        <Spin />
+      </div>
+    );
+
   return (
-    <div className="flex flex-col gap-4 max-h-[400px] overflow-y-auto p-1">
-      {rooms.map((room) => (
-        <Card
-          key={room.id}
-          size="small"
-          className="shadow-sm border-gray-200 rounded-md hover:border-blue-400 transition-colors"
-        >
-          <div className="flex justify-between items-start mb-2">
+    <div className="flex flex-col gap-3 max-h-[400px] overflow-y-auto p-2">
+      {data?.rooms?.length > 0 ? (
+        data.rooms.map((room) => (
+          <div
+            key={room.uuid || room.id}
+            className="flex justify-between items-center p-3 border border-gray-100 shadow-sm rounded-lg hover:border-blue-300 transition-all bg-white"
+          >
             <div className="flex flex-col">
-              <span className="font-medium text-gray-800 text-sm">
-                {room.roomNo}
+              <span className="font-bold text-gray-800 text-sm">
+                Room {room.roomNo}
               </span>
-              <span className="text-[11px] text-gray-500 font-medium">
-                {room.type}
+              <span className="text-[11px] text-gray-500">
+                {room.roomType?.name}
               </span>
             </div>
 
             <div className="flex items-center gap-5">
               <div className="flex flex-col items-center gap-1 mr-40">
-                <Tag
-                  color={room.statusColor}
-                  className="m-0 px-2 rounded text-[10px]"
-                >
-                  {room.status}
-                </Tag>
-
-                <span className="text-[10px] text-gray-400">{room.view}</span>
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-gray-100 text-gray-600 uppercase">
+                  {room.status?.name || "Available"}
+                </span>
               </div>
 
               <Button
+                loading={assignMutation.isLoading}
+                onClick={() => handleAssignClick(room)}
                 className="custom-blue-btn"
-                onClick={() => onSelectRoom(room.roomNo)}
               >
                 Assign
               </Button>
             </div>
           </div>
-        </Card>
-      ))}
+        ))
+      ) : (
+        <Empty description="No rooms available for these criteria" />
+      )}
     </div>
   );
 };
 
 export default GetRoomForm;
-// assign button click add action like close this GetRoomForm
