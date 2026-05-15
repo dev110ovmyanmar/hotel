@@ -24,6 +24,7 @@ const RoomInformationList = () => {
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(LIMITS.PAGE_SIZE);
   const [assignRoomOpen, setAssignRoomOpen] = useState(false);
+  const [showRoomResults, setShowRoomResults] = useState(false);
 
   const { data, isLoading } = useApiQuery({
     fetchQueryName: "reservation-room",
@@ -86,6 +87,16 @@ const RoomInformationList = () => {
           selectedData={selectedData}
           setSelectedData={setSelectedData}
           reservationUuid={data?.reservation || []}
+        />
+      )}
+
+      {showRoomResults && (
+        <GetRoomForm
+          data={data?.data || []}
+          open={showRoomResults}
+          onClose={() => setShowRoomResults(false)}
+          selectedData={selectedData}
+          setSelectedData={setSelectedData}
         />
       )}
     </div>
