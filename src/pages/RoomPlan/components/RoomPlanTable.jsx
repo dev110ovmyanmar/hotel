@@ -107,6 +107,8 @@ const RoomPlanTable = ({ mode }) => {
     {
       title: "Actions",
       key: "actions",
+      fixed:"end",
+      align:"center",
       render: (_, record) => (
         <Space>
           {/* <EditOutlined

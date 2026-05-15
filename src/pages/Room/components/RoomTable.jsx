@@ -54,6 +54,8 @@ const RoomTable = ({
     },
     {
       title: "Action",
+      fixed:"end",
+      align:"center",
       render: (_, record) => {
         const smallStyle = { fontSize: "12px" };
 

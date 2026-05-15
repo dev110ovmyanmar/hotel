@@ -81,6 +81,8 @@ const RoomInventoryTable = ({
     },
     {
       title: "Max Occupancy",
+      fixed:"end",
+      align: "center",
       dataIndex: "maxOccupancy",
       key: "maxOccupancy",
     },
@@ -191,8 +193,8 @@ const RoomInventoryTable = ({
     },
     {
       title: "Action",
+      align:"center",
       width: 150,
-      align: "center",
       render: (_, record) => {
         const smallStyle = { fontSize: "12px" };
 

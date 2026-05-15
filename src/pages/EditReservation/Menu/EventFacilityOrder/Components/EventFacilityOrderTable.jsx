@@ -79,6 +79,7 @@ const EventFacilityOrderTable = () => {
 
     {
       title: "Action",
+      fixed:"end",
       align: "center",
       render: (_, record) => (
         <Space size="middle">

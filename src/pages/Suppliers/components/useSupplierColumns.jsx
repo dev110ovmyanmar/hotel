@@ -50,6 +50,7 @@ export default function useSupplierColumns(onEdit, onView) {
             title: "Actions",
             key: "actions",
             fixed: "right",
+            align:"center",
             render: (_, record) => {
                 // 1. Define available actions with permission keys
                 const actions = [

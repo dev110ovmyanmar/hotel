@@ -55,6 +55,8 @@ const FacilityTable = ({
     },
     {
       title: "Action",
+      fixed:"end",
+      align:"center",
       render: (_, record) => {
         const smallStyle = { fontSize: "12px" };
 
@@ -107,9 +109,8 @@ const FacilityTable = ({
           )
           .map((action) => ({
             key: action.key,
-            onClick: action.onClick,
             label: (
-              <Space size={4} style={smallStyle}>
+              <Space size={4} style={smallStyle} onClick={action.onClick}>
                 {action.icon}
                 <span style={{ fontSize: "14px" }}>{action.label}</span>
               </Space>
