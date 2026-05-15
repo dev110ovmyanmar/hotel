@@ -180,6 +180,8 @@ const ExtraBedRateTable = ({ data, page, setPage }) => {
     },
     {
       title: "Room Type",
+      fixed:"end",
+      align: "center",
       dataIndex: ["roomType", "name"],
       key: "roomType",
     },

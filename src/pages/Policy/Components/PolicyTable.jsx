@@ -66,6 +66,8 @@ const PolicyTable = ({ data, page, setPage, perPage, total, changePage, changePe
     },
     {
       title: "Action",
+      fixed:"end",
+      align:"center",
       render: (_, record) => {
         const smallStyle = { fontSize: "12px" };
 

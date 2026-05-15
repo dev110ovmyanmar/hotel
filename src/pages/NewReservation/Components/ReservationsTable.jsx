@@ -107,6 +107,7 @@ const ReservationsTable = ({
     {
       title: "Action",
       key: "action",
+      fixed:"end",
       align: "center",
       render: (_, record) => (
         <div style={{ display: "flex", justifyContent: "center", gap: "8px" }}>
