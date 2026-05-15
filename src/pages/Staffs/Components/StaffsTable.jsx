@@ -51,6 +51,8 @@ const StaffsTable = ({
     {
       title: "Action",
       width: 80,
+      fixed:"end",
+      align:"center",
       render: (_, record) => {
         const smallStyle = { fontSize: "12px" };
 

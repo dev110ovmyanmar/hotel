@@ -80,6 +80,8 @@ const SearchEventFacilityOrderForm = ({ open, onClose, reservationId }) => {
     { title: "Guest Name", dataIndex: "guestName", key: "guestName" },
     {
       key: "action",
+      fixed:"end",
+      align:"center",
       render: (_, record) => (
         <Button
           type="primary"

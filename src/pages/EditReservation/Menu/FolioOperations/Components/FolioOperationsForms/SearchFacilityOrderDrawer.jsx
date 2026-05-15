@@ -136,6 +136,8 @@ const SearchFacilityOrderDrawer = ({ open, onClose, reservationId }) => {
     },
     {
       key: "action",
+      fixed:"end",
+      align:"center",
       render: (_, record) => (
         <Button
           type="primary"

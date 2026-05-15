@@ -16,17 +16,19 @@ const AssignRoomForm = ({
   selectedData,
   setSelectedData,
   onSuccess,
-  reservationUuid
-}) => {
-   console.log(reservationUuid,"aa")
-  const uuid = reservationUuid?.uuid; 
-
-  console.log(uuid,"assign-uuid")
+  reservationUuid,
+}) => {  
+  const uuid = reservationUuid?.uuid;
 
   const [form] = Form.useForm();
   const isView = mode === "view";
   const isAdd = mode === "add";
   const [showRoomResults, setShowRoomResults] = useState(false);
+
+  const handleRoomSelection = (room) => {
+  console.log( room ,"Roomselected");
+  setSelectedData({ ...selectedData, roomNo: room.roomNo });
+};
 
   const { data: reservationRoom } = useApiQuery({
     fetchQueryName: "reservationRoom",
@@ -65,12 +67,14 @@ const AssignRoomForm = ({
           selectedData.checkinDate ? dayjs(selectedData.checkinDate) : null,
           selectedData.checkoutDate ? dayjs(selectedData.checkoutDate) : null,
         ],
-         floorUuid: selectedData?.floors?.uuid, 
+         floorUuid: selectedData?.floor?.uuid || selectedData?.floorUuid,
       });
       setShowRoomResults(false);
     }
   }, [selectedData, open, form]);
-
+  
+  
+console.log(reservationRoom?.floors ||[],"data")
    
   return (
     <Drawer
@@ -146,7 +150,12 @@ const AssignRoomForm = ({
           <div className="mt-4">
             <Divider orientation="left">Available Rooms</Divider>
             <GetRoomForm
-            
+              open={showRoomResults}
+              onClose={onClose}
+              selectedData={selectedData}
+              onSelectRoom={handleRoomSelection}
+              setSelectedData={setSelectedData}
+              floorUuid={form.getFieldValue("floorUuid")}
             />
           </div>
         )}

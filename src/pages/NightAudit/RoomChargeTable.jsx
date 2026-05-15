@@ -43,6 +43,8 @@ const RoomChargeTable = ({
             title: "Action",
             name: "action",
             dataIndex: "action",
+            fixed: "end",
+            align: "center",
             render: (_, record) => {
                 const smallStyle = { fontSize: "12px" };
 
@@ -140,8 +142,8 @@ const RoomChargeTable = ({
                         <Table.Summary.Cell index={3}></Table.Summary.Cell>
                         <Table.Summary.Cell index={4}></Table.Summary.Cell>
                         <Table.Summary.Cell index={5}>
-                            <Button 
-                                type="primary" 
+                            <Button
+                                type="primary"
                                 onClick={roomChargeClick}
                             >
                                 Next Step

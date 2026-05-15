@@ -36,6 +36,7 @@ export default function useRestaurantTableColumns(onEdit, onView) {
             key: "actions",
             width: 100,
             fixed: 'right',
+            align:"center",
             render: (_, record) => {
                 // 1. Define actions with their specific permission keys
                 const actions = [

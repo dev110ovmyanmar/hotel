@@ -33,6 +33,7 @@ import { LOCAL_STORAGE_KEYS } from "../../variables/constants";
 import useApiQuery from "../../hooks/useApiQuery";
 import { adminDetails } from "../../api/adminApi";
 import { saveState } from "../../utils/Utils.js";
+import TopBarDropDown from "./TopBarDropDown.jsx";
 
 const { Header } = Layout;
 
@@ -186,7 +187,7 @@ const Topbar = withDirection(function (props) {
         </div>
 
         {/* Right Section */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 hidden lg:flex">
           <Button
             type="primary"
             icon={<PlusOutlined />}
@@ -280,6 +281,17 @@ const Topbar = withDirection(function (props) {
             </div>
           </Popover>
         </div>
+
+        <TopBarDropDown 
+          addReservation = {() => navigate("/reservation/create-new-reservation")}
+          darklighmode = {() => dispatch(toggleTheme())}
+          refreshInitData = {handleRefetchInitData}
+          logoutmodal = {handleModalOpen}
+          changePassword={() => handleMenuClick("password")}
+          profileDrawer = {() => handleMenuClick("profile")}
+          refreshing={refreshing}
+
+        />
       </Header>
 
       <Drawer
