@@ -70,6 +70,7 @@ const AgencyContractTable = ({
     },
     {
       title: "Action",
+      fixed:"end",
       render: (_, record) => {
         const smallStyle = { fontSize: "12px" };
 

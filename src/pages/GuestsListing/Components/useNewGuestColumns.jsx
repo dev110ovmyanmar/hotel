@@ -77,6 +77,7 @@ export default function useGuestColumns(
       key: "actions",
       width: 100,
       fixed: "right",
+      align:"center",
       render: (_, record) => (
         <Dropdown
           menu={{

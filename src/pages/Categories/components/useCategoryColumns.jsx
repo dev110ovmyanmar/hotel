@@ -34,7 +34,8 @@ export default function useCategoryColumns(onEdit, onView) {
     {
       title: "Actions",
       key: "actions",
-      fixed: "right", // Added fixed right for consistency with your other table
+      fixed: "right",  // Added fixed right for consistency with your other table
+      align:"center",
       render: (_, record) => {
         // 1. Define all possible actions with their required permissions
         const actions = [

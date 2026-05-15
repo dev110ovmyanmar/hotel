@@ -58,6 +58,8 @@ const PaymentTable = ({ data, page, perPage, total, changePage, changePerPage, l
     },
     {
       title: "Action",
+      fixed:"end",
+      align:"center",
       render: (_, record) => {
         const smallStyle = { fontSize: "12px" };
 
