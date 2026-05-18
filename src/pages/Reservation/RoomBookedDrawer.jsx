@@ -27,6 +27,10 @@ const RoomBookedDrawer = ({
     };
 
     const handleDelete = () => {
+        setSelectedData((prev = []) => (
+            prev.filter(item => item.roomTypeUuid !== deleteKey)
+        ));
+
         setRoomBookValues((prev) => {
             const updatedValues = {
                 ...prev,
@@ -115,15 +119,15 @@ const RoomBookedDrawer = ({
                                 </div>
                                 {
                                     roomBookValues?.rooms.length === 1 ? null :
-                                    <div>
-                                        <DeleteOutlined
-                                            className="!text-red-500"
-                                            onClick={() => {
-                                                setModalOpen(true),
-                                                    setDeleteKey(room?.roomType?.uuid)
-                                            }}
-                                        />
-                                    </div>
+                                        <div>
+                                            <DeleteOutlined
+                                                className="!text-red-500"
+                                                onClick={() => {
+                                                    setModalOpen(true),
+                                                        setDeleteKey(room?.roomType?.uuid)
+                                                }}
+                                            />
+                                        </div>
                                 }
                             </div>
 
