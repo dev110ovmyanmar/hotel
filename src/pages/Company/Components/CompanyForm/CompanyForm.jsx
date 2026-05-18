@@ -22,6 +22,7 @@ import { queryClient } from "./../../../../app/queryClient";
 import Status from "./../../../../component/Status/Status";
 import ImageUpload from "../../../../component/ImageUpload/ImageUpload";
 import { deleteImageUpload } from "../../../../api/deleteImageApi";
+import { validatePhoneNumber } from "../../../../utils";
 
 const { TextArea } = Input;
 
@@ -38,6 +39,7 @@ const CompanyForm = ({
   setPage,
 }) => {
   const [form] = Form.useForm();
+  const phoneValue = Form.useWatch("phone", form);
 
   const isView = mode === "view";
   const isEdit = mode === "edit";
@@ -209,9 +211,14 @@ const CompanyForm = ({
           <Form.Item
             label="Phone"
             name="phone"
-            rules={[{ required: true, message: "Phone is Required" }]}
+            rules={[
+              { required: true },
+              {validator:validatePhoneNumber}
+            
+            ]}
           >
             <Input
+              addonBefore="+959"
               readOnly={isView}
               placeholder="Enter Phone Number"
               onKeyPress={(e) => {
@@ -219,6 +226,13 @@ const CompanyForm = ({
                   e.preventDefault();
                 }
               }}
+              maxLength={
+                phoneValue?.startsWith("09")
+                  ? 11
+                  : phoneValue?.startsWith("9")
+                    ? 10
+                    : 9
+              }
             />
           </Form.Item>
 
