@@ -21,7 +21,7 @@ const GuestInformationTable = ({
             title: "Phone",
             dataIndex: "phone",
             key: "phone",
-            render: (text) => <div>{text}</div>
+            render: (text) => <div>{(text?.length === 10 && text?.startsWith("9"))  ? `+95 ${text}` : (text?.length === 11 && text?.startsWith("09"))? `+95 ${text.slice(1)}`: `+959 ${text}`}</div>
         }
 
     ];

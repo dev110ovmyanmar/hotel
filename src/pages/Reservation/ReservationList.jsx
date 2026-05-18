@@ -207,7 +207,9 @@ const ReservationList = () => {
       taxTotal: roomBookValues?.taxTotal,
       discountTotal: roomBookValues?.discountTotal,
       grandTotal: roomBookValues?.grandTotal,
-      currencyUuid:currencyUuid,
+      currency:{
+        uuid: currencyUuid
+      },
       rooms
 
     };
