@@ -5,7 +5,10 @@ import { authRoutes } from "../Layout/AuthRoutes";
 import { loadState } from "../../utils/Utils";
 import { LOCAL_STORAGE_KEYS } from "../../variables/constants";
 
-const SidebarContent = ({ onClick }) => {
+const SidebarContent = ({ 
+  onClick,
+  sideBarMenuColor
+}) => {
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -67,6 +70,7 @@ const SidebarContent = ({ onClick }) => {
       mode="inline"
       selectedKeys={[location.pathname]}
       items={menuItems}
+      className={sideBarMenuColor}
     />
   );
 };

@@ -22,6 +22,7 @@ export default function Sidebar({
 
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
   const propretyImage = initData?.property?.file;
+  const propertyName = initData?.property?.name;
 
 
   const { view, collapsed, openDrawer, height } = useSelector(appSelector);
@@ -48,16 +49,23 @@ export default function Sidebar({
       }}
     >
       <div className='w-[100%] h-[63px] bg-secondary bg-opacity-30 flex items-center justify-center overflow-hidden'>
-        <img alt='Logo' className='w-[100%] h-[60%] object-cover object-center' src={propretyImage} />
+        {
+          isCollapsed ?
+            <div className='text-2xl sm:text-md text-center text-blue-500 border-3 border-blue-500 px-4 py-2 sm:px-3 sm:py-1 rounded-full shadow-lg'>
+              {propertyName?.[0].toUpperCase()}
+            </div>
+            :
+            <img alt='Logo' className='w-[100%] sm:w-[65%] lg:w-[95%] h-[60%] object-cover object-center' src={propretyImage} />
+        }
+
       </div>
       <Scrollbars style={{ height: height - 70 }}>
         <Menu
           // theme='dark'
           className='py-8 px-6'
           mode={mode}
-
         >
-          <SidebarMenu 
+          <SidebarMenu
             onClick={handleClick}
             sideBarMenuColor={sideBarColor}
           />
