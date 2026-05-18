@@ -16,7 +16,7 @@ import { queryClient } from "../../../../app/queryClient";
 import FormButton from "../../../../component/FormButtons/FormButtons";
 import { createStaff, editStaff, staffDetails } from "../../../../api/staffApi";
 import dayjs from "dayjs";
-import { getFormattedDate } from "../../../../utils";
+import { getFormattedDate, validatePhoneNumber } from "../../../../utils";
 // import Status from "../../../../component/Status/Status";
 import Loader from "../../../../component/Loader/Loader";
 import { PERMISSIONS } from "../../../../variables/permission";
@@ -34,7 +34,8 @@ const StaffsForm = ({
   page,
 }) => {
   const [form] = Form.useForm();
-
+  const phoneValue = Form.useWatch("phone", form);
+  
   const isView = mode === "view";
   const isEdit = mode === "edit";
   const isAdd = mode === "add";
@@ -397,8 +398,25 @@ const StaffsForm = ({
               <Input placeholder="Enter Passport" readOnly={isView} />
             </Form.Item>
 
-            <Form.Item label="Phone" name="phone">
-              <Input placeholder="Enter Phone Number" readOnly={isView} />
+            <Form.Item
+              label="Phone"
+              name="phone"
+              rules={[
+                { validator: validatePhoneNumber }
+              ]}
+            >
+              <Input
+                readOnly={isView}
+                addonBefore="+959"
+                placeholder="Enter Phone Number"
+                maxLength={
+                  phoneValue?.startsWith("09")
+                    ? 11
+                    : phoneValue?.startsWith("9")
+                      ? 10
+                      : 9
+                }
+              />
             </Form.Item>
 
             <Form.Item label="Email" name="email">

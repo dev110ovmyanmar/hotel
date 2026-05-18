@@ -56,7 +56,6 @@ const CreateGuestForm = ({
   const [value, setValue] = useState("");
 
   const handleSelect = (value) => {
-    console.log("Selected", value);
     setValue(value)
   };
 
@@ -85,7 +84,6 @@ const CreateGuestForm = ({
       //     "name": "f2c7bdf7c2a249e9a4ac28925625d59b",
       //     "phone": "09123456789"
       // }
-      console.log(values, "ValuesOnClick")
       const selectedGuest = reservationMetas?.guests?.find(
         (guest) => guest.uuid === values.name
       );
@@ -257,7 +255,6 @@ const CreateGuestForm = ({
               label="Secondary Phone Number"
               name="phonetwo"
               rules={[
-                { required: true },
                 {
                   validator: validatePhoneNumber
                 }
