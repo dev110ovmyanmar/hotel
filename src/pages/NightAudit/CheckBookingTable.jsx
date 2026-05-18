@@ -63,6 +63,8 @@ const CheckBookingTable = ({
             title: "Action",
             name: "action",
             dataIndex: "action",
+            fixed: "end",
+            align: "center",
             render: (_, record) => {
                 const smallStyle = { fontSize: "12px" };
 
@@ -171,9 +173,9 @@ const CheckBookingTable = ({
                         <Table.Summary.Cell index={6}></Table.Summary.Cell>
                         <Table.Summary.Cell index={7}></Table.Summary.Cell>
                         <Table.Summary.Cell index={8}>
-                            <Button 
+                            <Button
                                 type="primary"
-                                onClick={colorCheckBooking}    
+                                onClick={colorCheckBooking}
                             >
                                 Next Step
                                 <AiOutlineRight />

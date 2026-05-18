@@ -82,13 +82,14 @@ export default function useServiceInventoryColumns(onEdit, onView) {
         <div className={free === true ? "text-[#389E0D]" : "text-[#CF1322]"}>
           {free === true ? "True" : "False"}
         </div>
-      ),
+      ),   
     },
     {
       title: "Actions",
       key: "actions",
       width: 80,
       fixed: "right",
+      align:"center",
       render: (_, record) => {
         const actions = [
           {

@@ -83,6 +83,7 @@ const ServiceAddOnTable = () => {
     },
     {
       title: "Action",
+      fixed:"end",
       align: "center",
       render: (_, record) => (
         <Space size="middle">

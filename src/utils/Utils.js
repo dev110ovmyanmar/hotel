@@ -29,7 +29,7 @@ export const updateCounts = (state, statusName) => {
     inactiveCount: statusName !== ACTIVE ? parseInt(inactiveCount) + 1 : parseInt(inactiveCount),
   };
 
-  return  updatedCount ;
+  return updatedCount;
 }
 
 export const loadState = key => {
@@ -94,14 +94,14 @@ export const getNRCNumber = (nrcPassport) => {
  * @returns {string} - The string with the first letter capitalized.
  */
 export const capitalizeFirstLetter = (str) => {
-  if(str){
+  if (str) {
     // Capitalize the first character of the string using charAt(0) and toUpperCase()
     const firstLetter = str.charAt(0).toUpperCase();
     // Concatenate the capitalized first letter with the rest of the string (excluding the first character)
     const restOfStr = str.slice(1);
     // Return the modified string
     return firstLetter + restOfStr;
-  }else {
+  } else {
     return null;
   }
 }
@@ -117,8 +117,8 @@ export const capitalizeFirstLetter = (str) => {
 export function validateFile(file) {
   const isValidType =
     file.type === "image/jpeg" ||
-    file.type === "image/png"  ||
-    file.type === "image/jpg"  ||
+    file.type === "image/png" ||
+    file.type === "image/jpg" ||
     file.type === "image/jfif" ||
     file.type === "image/gif"
 
@@ -144,8 +144,35 @@ export function getNrc({ nrcNo, nrcName, nrcType, nrcPassport }) {
 }
 
 
+export const validatePhoneNumber = (_, value) => {
 
+  if (value.startsWith("09") && value.length !== 11) {
+    return Promise.reject(
+      new Error("Please Valid Phone Number")
+    )
+  }
 
+  if (value.startsWith("9") && value.length !== 10) {
+    if (value.length === 9) {
+      return Promise.reject(
+        new Error("If your phone number is already start with 9, put another 9 in front of your number")
+      )
+    } else {
+      return Promise.reject(
+        new Error("Please Valid Phone Number")
+      )
+    }
+
+  }
+
+  if (value.length < 9) {
+    return Promise.reject(
+      new Error("Please Valid Phone Number")
+    );
+  }
+
+  return Promise.resolve();
+};
 
 
 

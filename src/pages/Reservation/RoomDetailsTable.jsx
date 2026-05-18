@@ -15,7 +15,11 @@ const RoomDetailsTable = ({
                 <h1 className="text-lg font-bold my-2">Room Details</h1>
 
                 <Table
-                    className="[&_.ant-table-cell]:!border [&_.ant-table-cell]:!border-gray-200 [&_.ant-table-thead>tr>th]:!bg-[#F0F5FF]"
+                    className="[&_.ant-table-cell]:!border 
+                        [&_.ant-table-cell]:!border-gray-200 
+                        [&_.ant-table-thead>tr>th]:!bg-[#F0F5FF]
+                        dark:[&_.ant-table-thead>tr>th]:!bg-[#141414]
+                    "
                     columns={columns}
                     dataSource={dataSource}
                     pagination={false}

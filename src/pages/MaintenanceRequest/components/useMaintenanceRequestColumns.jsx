@@ -130,6 +130,7 @@ const useMaintenanceRequestColumns = (onEdit, onView) => {
             key: "actions",
             width: 100,
             fixed: 'right',
+            align:"center",
             render: (_, record) => {
                 const isEditDisabled = ["verified"].includes(record.maintenanceStatus?.code);
 

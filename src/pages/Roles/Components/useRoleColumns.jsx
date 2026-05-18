@@ -60,6 +60,8 @@ export default function (onEdit, onView) {
       title: "Actions",
       key: "actions",
       width: 80,
+      fixed:"end",
+      align:"center",
       render: (_, record) => (
         <Dropdown
           menu={{

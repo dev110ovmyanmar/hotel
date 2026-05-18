@@ -15,6 +15,7 @@ import useApiQuery from "../../hooks/useApiQuery";
 import { useApiMutation } from "../../hooks/useApiMutation";
 import { upsertGuest } from "../../api/guestApi";
 import { queryClient } from "../../app/queryClient";
+import { validatePhoneNumber } from "../../utils";
 
 const CreateGuestForm = ({
   guestDrawerOpen,
@@ -26,6 +27,8 @@ const CreateGuestForm = ({
   setCreateContactFinish,
   createContactForm
 }) => {
+  const phoneValue = Form.useWatch("phone", createContactForm);
+  const secondPhoneValue = Form.useWatch("phonetwo", createContactForm);
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
 
   const titleOptions = useMemo(() => {
@@ -45,6 +48,7 @@ const CreateGuestForm = ({
       reservationMetas?.guests?.map((item) => ({
         label: `${item.name}  ${item.nrcNo ? '(' + item.nrcNo + ')' + " " + '(' + item.phone + ')' : '(' + item.phone + ')'}`,
         value: item.uuid,
+        name: item.name
       })) || [];
 
   const [searchText, setSearchText] = useState("");
@@ -81,7 +85,7 @@ const CreateGuestForm = ({
       //     "name": "f2c7bdf7c2a249e9a4ac28925625d59b",
       //     "phone": "09123456789"
       // }
-
+      console.log(values, "ValuesOnClick")
       const selectedGuest = reservationMetas?.guests?.find(
         (guest) => guest.uuid === values.name
       );
@@ -126,7 +130,7 @@ const CreateGuestForm = ({
 
     setCustomers(prev => [...prev, newItem]);
     setNewCustomer("")
-  }
+  };
 
 
   return (
@@ -203,46 +207,80 @@ const CreateGuestForm = ({
                     ?.toLowerCase()
                     .includes(inputValue.toLowerCase())
                 }
-                onSelect={(value) => {
+                onSelect={(value, option) => {
+                  createContactForm.setFieldValue("name", option.name);
+                }}
+                onChange={(value, option) => {
                   createContactForm.setFieldValue("name", value);
                 }}
-                onChange={(value) => {
-                  createContactForm.setFieldValue("name", value);
-                }}
+
               >
-                <Input
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      createContactForm.setFieldValue(
-                        "name",
-                        e.target.value
-                      );
-                    }
-                  }}
-                />
+                <Input />
               </AutoComplete>
             </Form.Item>
           </Space.Compact>
         </Row>
 
         <Row gutter={16}>
-          <Form.Item
-            label="Phone Number"
-            name="phone"
-            rules={[
-              { required: true, message: "Phone Number is required." },
-            ]}
-          >
-            <Input
-              onKeyPress={(e) => {
-                if (!/[0-9]/.test(e.key)) {
-                  e.preventDefault();
+          <Col span={12}>
+            <Form.Item
+              label="Phone Number"
+              name="phone"
+              rules={[
+                { required: true },
+                {
+                  validator: validatePhoneNumber
                 }
-              }}
-              placeholder="Enter Phone Number"
-              maxLength={13}
-            />
-          </Form.Item>
+              ]}
+            >
+              <Input
+                addonBefore="+959"
+                onKeyPress={(e) => {
+                  if (!/[0-9]/.test(e.key)) {
+                    e.preventDefault();
+                  }
+                }}
+                placeholder="Enter Phone Number"
+                maxLength={
+                  phoneValue?.startsWith("09")
+                    ? 11
+                    : phoneValue?.startsWith("9")
+                      ? 10
+                      : 9
+                }
+              />
+            </Form.Item>
+          </Col>
+
+          <Col span={12}>
+            <Form.Item
+              label="Secondary Phone Number"
+              name="phonetwo"
+              rules={[
+                { required: true },
+                {
+                  validator: validatePhoneNumber
+                }
+              ]}
+            >
+              <Input
+                addonBefore="+959"
+                onKeyPress={(e) => {
+                  if (!/[0-9]/.test(e.key)) {
+                    e.preventDefault();
+                  }
+                }}
+                placeholder="Enter Phone Number"
+                maxLength={
+                  secondPhoneValue?.startsWith("09")
+                    ? 11
+                    : secondPhoneValue?.startsWith("9")
+                      ? 10
+                      : 9
+                }
+              />
+            </Form.Item>
+          </Col>
 
         </Row>
       </Form>

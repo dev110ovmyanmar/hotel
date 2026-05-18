@@ -66,7 +66,7 @@ const RoomInformationTable = ({
               }
             }}
           >
-            {text ? text : "Assign Room"}
+            {text ? text?.roomNo : "Assign Room"}
           </span>
         );
       },
@@ -94,6 +94,7 @@ const RoomInformationTable = ({
     { title: "Rate Plan", dataIndex: ["ratePlan", "name"], key: "ratePlan" },
     {
       title: "Action",
+      fixed: "end",
       align: "center",
       render: (_, record) => (
         <Space size="middle">
