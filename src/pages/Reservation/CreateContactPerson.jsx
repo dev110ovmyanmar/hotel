@@ -85,7 +85,7 @@ const CreateGuestForm = ({
       //     "name": "f2c7bdf7c2a249e9a4ac28925625d59b",
       //     "phone": "09123456789"
       // }
-
+      console.log(values, "ValuesOnClick")
       const selectedGuest = reservationMetas?.guests?.find(
         (guest) => guest.uuid === values.name
       );
@@ -211,20 +211,11 @@ const CreateGuestForm = ({
                   createContactForm.setFieldValue("name", option.name);
                 }}
                 onChange={(value, option) => {
-                  createContactForm.setFieldValue("name", option.name);
+                  createContactForm.setFieldValue("name", value);
                 }}
 
               >
-                <Input
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      createContactForm.setFieldValue(
-                        "name",
-                        e.target.value
-                      );
-                    }
-                  }}
-                />
+                <Input />
               </AutoComplete>
             </Form.Item>
           </Space.Compact>
