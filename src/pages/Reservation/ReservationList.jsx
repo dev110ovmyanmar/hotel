@@ -20,6 +20,7 @@ import RoomConfirmFinish from "./RoomConfirmFinish";
 const ReservationList = () => {
 
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
+  const currencyUuid = initData?.property?.currency?.uuid;
 
   const bookedViaOptions = initData?.statuses?.booked_via.map((item) => ({
     label: item.name,
@@ -206,6 +207,7 @@ const ReservationList = () => {
       taxTotal: roomBookValues?.taxTotal,
       discountTotal: roomBookValues?.discountTotal,
       grandTotal: roomBookValues?.grandTotal,
+      currencyUuid:currencyUuid,
       rooms
 
     };
