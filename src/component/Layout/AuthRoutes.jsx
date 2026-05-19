@@ -587,7 +587,7 @@ export const authRoutes = [
   },
   {
     key: 10,
-    path: "/access-control",
+    id: "/access-control",
     label: "Access Control",
     isPrivate: false,
     icon: <SafetyOutlined style={{ fontSize: "20px" }} />,
@@ -654,7 +654,7 @@ export const authRoutes = [
   },
   {
     key: 12,
-    path: "/facility-management",
+    id: "/facility-management",
     label: "Facility Management",
     isPrivate: false,
     icon: <BsBuildingFillGear style={{ fontSize: "20px" }} />,
@@ -693,7 +693,7 @@ export const authRoutes = [
   },
   {
     key: 13,
-    path: "/services-management",
+    id: "/services-management",
     label: "Services Management",
     isPrivate: false,
     icon: <CustomerServiceOutlined style={{ fontSize: "20px" }} />,
@@ -744,7 +744,7 @@ export const authRoutes = [
   },
   {
     key: 14,
-    path: "/f&b-management",
+    id: "/f&b-management",
     label: "F&B  Management",
     isPrivate: false,
     icon: <IoRestaurantOutline style={{ fontSize: "20px" }} />,
