@@ -68,6 +68,7 @@ export default function Sidebar({
           <SidebarMenu
             onClick={handleClick}
             sideBarMenuColor={sideBarColor}
+            isCollapsed={isCollapsed}
           />
         </Menu>
       </Scrollbars>
