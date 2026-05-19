@@ -42,21 +42,22 @@ const CreateGuestForm = ({
     fetchQueryName: "reservation-meta",
     fetchQueryFunction: reservationMeta,
   });
-
   const
     guestsOptions =
       reservationMetas?.guests?.map((item) => ({
         label: `${item.name}  ${item.nrcNo ? '(' + item.nrcNo + ')' + " " + '(' + item.phone + ')' : '(' + item.phone + ')'}`,
         value: item.uuid,
-        name: item.name
+        name: item.name,
+        phone: item.phone
       })) || [];
+
+
 
   const [searchText, setSearchText] = useState("");
   const [options, setOptions] = useState(guestsOptions);
   const [value, setValue] = useState("");
 
   const handleSelect = (value) => {
-    console.log("Selected", value);
     setValue(value)
   };
 
@@ -85,7 +86,6 @@ const CreateGuestForm = ({
       //     "name": "f2c7bdf7c2a249e9a4ac28925625d59b",
       //     "phone": "09123456789"
       // }
-
       const selectedGuest = reservationMetas?.guests?.find(
         (guest) => guest.uuid === values.name
       );
@@ -211,20 +211,13 @@ const CreateGuestForm = ({
                   createContactForm.setFieldValue("name", option.name);
                 }}
                 onChange={(value, option) => {
-                  createContactForm.setFieldValue("name", option.name);
+                  createContactForm.setFieldsValue({
+                    name: value,
+                    phone : option?.phone
+                  });  
                 }}
-
               >
-                <Input
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      createContactForm.setFieldValue(
-                        "name",
-                        e.target.value
-                      );
-                    }
-                  }}
-                />
+                <Input />
               </AutoComplete>
             </Form.Item>
           </Space.Compact>
@@ -266,7 +259,6 @@ const CreateGuestForm = ({
               label="Secondary Phone Number"
               name="phonetwo"
               rules={[
-                { required: true },
                 {
                   validator: validatePhoneNumber
                 }

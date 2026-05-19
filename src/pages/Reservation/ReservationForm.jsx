@@ -186,9 +186,9 @@ const ReservationForm = ({
 
                     <div className="flex-initial">
                         <Form.Item name="totalNight" label="Nights" rules={[{ required: true }]}>
-                            <div className="w-[61px] h-[32px] bg-[#fafafa] rounded-md flex flex-col justify-center items-center">
+                            <div className="w-[61px] h-[32px] bg-[#fafafa] dark:bg-[#141414] dark:border rounded-md flex flex-col justify-center items-center">
 
-                                <p className="text-xs leading-none">{totalNights}</p>
+                                <p className="text-xs leading-none ">{totalNights}</p>
                                 <p className="text-xs leading-none">Nights</p>
 
                             </div>

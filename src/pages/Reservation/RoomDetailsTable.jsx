@@ -24,7 +24,7 @@ const RoomDetailsTable = ({
                     dataSource={dataSource}
                     pagination={false}
                     rowClassName={(record) => {
-                        const isBooked = selectedData.some(
+                        const isBooked = selectedData?.some(
                             (item) => item.key === record.key,
                         );
                         const remainingRooms = getRemainingRooms(record);

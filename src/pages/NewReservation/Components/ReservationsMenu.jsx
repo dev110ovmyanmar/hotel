@@ -102,7 +102,7 @@ const ReservationMenu = ({ onStatusChange, onViewChange }) => {
 
   const handleViewChange = (newView) => {
     setView(newView);
-    
+
     if (onViewChange) {
       onViewChange(newView);
     }
@@ -147,6 +147,7 @@ const ReservationMenu = ({ onStatusChange, onViewChange }) => {
                       fontSize: "12px",
                       borderRadius: "3px",
                       marginLeft: "8px",
+                      marginRight: "8px",
                     }}
                   />
                 </span>

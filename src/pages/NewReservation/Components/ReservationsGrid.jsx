@@ -122,9 +122,11 @@ const ReservationsGrid = ({
                     marginBottom: 16,
                     overflow: "hidden",
                   }}
+                  
                 >
                   <div
                     style={{ flex: 1, padding: "8px", background: "#fafafa" }}
+                    className="dark:!bg-[#141414]"
                   >
                     {item.actualCheckin
                       ? dayjs(item.actualCheckin).format("DD/MM/YYYY")
@@ -137,14 +139,16 @@ const ReservationsGrid = ({
                       borderLeft: "1px solid #f0f0f0",
                       borderRight: "1px solid #f0f0f0",
                     }}
+                    className="dark:!bg-[#333333]"
                   >
                     {item.totalNight}
                   </div>
                   <div
                     style={{ flex: 1, padding: "8px", background: "#fafafa" }}
+                    className="dark:!bg-[#141414]"
                   >
                     {item.actualCheckout
-                      ? dayjs(item.actualCheckin).format("DD/MM/YYYY")
+                      ? dayjs(item.actualCheckout).format("DD/MM/YYYY")
                       : "-"}
                   </div>
                 </div>
