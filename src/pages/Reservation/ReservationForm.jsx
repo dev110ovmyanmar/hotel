@@ -1,4 +1,4 @@
-import { Button, Card, DatePicker, Form, Select, TimePicker } from "antd";
+import { Button, Card, DatePicker, Form, Input, Select, TimePicker } from "antd";
 import useApiQuery from "../../hooks/useApiQuery";
 import { queryClient } from "../../app/queryClient";
 import dayjs from "dayjs";
@@ -21,6 +21,7 @@ const ReservationForm = ({
     sourceTypeOptions,
 
 }) => {
+
     const dateRange = Form.useWatch("filter", form);
     const sourceTypeValue = Form.useWatch("sourceType", form); // Added this line to watch sourceType
 
@@ -118,7 +119,7 @@ const ReservationForm = ({
                 totalNight: totalNights
             })
         }
-    }, [totalNights,form])
+    }, [totalNights, form])
 
     // Range Picker
     const disabledDate = current => {
@@ -133,9 +134,28 @@ const ReservationForm = ({
                 layout="vertical"
                 onValuesChange={() => { setSearchButtonDisable(false) }}
             >
-                <h1 className="text-lg font-bold my-2">Create New Reservation</h1>
-                <div className="flex flex-wrap gap-3">
-                    <div className="flex-[2] min-w-[320px]">
+                <div className="flex justify-between">
+                    <h1 className="text-lg font-bold my-2">Create New Reservation</h1>
+                    {
+                        afterRoomConfirm ?
+                            null
+                            :
+                            <Form.Item className="hidden md:block">
+                                <Button
+                                    type="primary"
+                                    htmlType="submit"
+                                    loading={availabilitySearchResults?.isPending}
+                                    disabled={searchButtonDisable}
+                                    className="min-w-[125px]"
+                                >
+                                    Search
+                                </Button>
+                            </Form.Item>
+                    }
+                </div>
+
+                <div className="flex flex-wrap gap-x-5">
+                    <div className="w-75 flex-auto md:flex-initial">
                         <Form.Item name="filter" label="Check-in / Check-out Date" rules={[{ required: true, message: "Please Select Date" }]}>
                             <RangePicker
                                 className="!w-full"
@@ -158,89 +178,144 @@ const ReservationForm = ({
                                         filter: updatedDates,
                                     });
                                 }}
+                                disabled={afterRoomConfirm}
 
                             />
                         </Form.Item>
                     </div>
 
-                    <div >
+                    <div className="flex-initial">
                         <Form.Item name="totalNight" label="Nights" rules={[{ required: true }]}>
-                            <div className="w-[61px] h-[32px] bg-[#fafafa] rounded-md flex flex-col justify-center items-center">
+                            <div className="w-[61px] h-[32px] bg-[#fafafa] dark:bg-[#141414] dark:border rounded-md flex flex-col justify-center items-center">
 
-                                <p className="text-xs leading-none">{totalNights}</p>
+                                <p className="text-xs leading-none ">{totalNights}</p>
                                 <p className="text-xs leading-none">Nights</p>
 
                             </div>
                         </Form.Item>
                     </div>
 
-                    <div className="w-full min-w-[200px] sm:w-[45%] md:w-[30%] md:flex-1 lg:flex-[1]">
-                        <Form.Item name="bookedVia" label="Booking Source" rules={[{ required: true, message: "Please Select Booking Source" }]}>
-                            <Select
-                                options={bookedViaOptions}
-                                className="w-[100%] "
-                                placeholder="Select Booked Via"
-                            >
-                            </Select>
+                    <div className="w-60 md:w-42 lg:w-50 flex-auto md:flex-initial">
+                        <Form.Item
+                            name="bookedVia"
+                            label="Booking Source"
+                            rules={[{ required: true, message: "Please Select Booking Source" }]}
+                            getValueProps={(value) => {
+                                return {
+                                    value: afterRoomConfirm ?
+                                        bookedViaOptions?.find(item => item.value === value)?.label :
+                                        value
+                                }
+                            }}
+                        >
+
+                            {
+                                afterRoomConfirm ?
+                                    <Input
+                                        readOnly={afterRoomConfirm}
+                                    // className="w-[100%] "
+                                    /> :
+                                    <Select
+                                        options={bookedViaOptions}
+                                        // className="w-[100%] "
+                                        placeholder="Select Booked Via"
+                                    >
+                                    </Select>
+                            }
                         </Form.Item>
                     </div>
 
-                    <div className="w-full min-w-[200px] sm:w-[45%] md:w-[30%] lg:flex-[1]">
-                        <Form.Item name="sourceType" label="Source Type" rules={[{ required: true, message: "Please Select Source Type" }]}>
-                            <Select
-                                options={sourceTypeOptions}
-                                className="w-[100%]"
-                                onChange={handleChange}
-                                placeholder="Select Source Type"
-                            ></Select>
+                    <div className="w-60 md:w-42 lg:w-50 flex-auto md:flex-initial">
+                        <Form.Item
+                            name="sourceType"
+                            label="Source Type"
+                            rules={[{ required: true, message: "Please Select Source Type" }]}
+                            getValueProps={(value) => {
+                                return {
+                                    value: afterRoomConfirm ?
+                                        sourceTypeOptions?.find(item => item.value === value)?.label :
+                                        value
+                                }
+                            }}
+                        >
+                            {
+                                afterRoomConfirm ?
+                                    <Input
+                                        readOnly={afterRoomConfirm}
+                                        className="w-[100%] "
+                                    /> :
+                                    <Select
+                                        options={sourceTypeOptions}
+                                        className="w-[100%]"
+                                        onChange={handleChange}
+                                        placeholder="Select Source Type"
+                                    ></Select>
+                            }
                         </Form.Item>
+
                     </div>
 
-                    <div className={selectedSourceType === "Agency" || selectedSourceType === "Company"? "w-[220px]": null}>
+                    <div className="w-60 md:w-42 lg:w-50 flex-auto md:flex-initial">
                         {
                             (selectedSourceType === "Agency" ||
                                 selectedSourceType === "Company") && (
 
-                                <Form.Item 
-                                    name="source" 
-                                    label="Source Name" 
-                                    rules={[{ required: true, message: "Please Select Source Name" }]} 
-                                    className="!w-full "
+                                <Form.Item
+                                    name="source"
+                                    label="Source Name"
+                                    rules={[{ required: true, message: "Please Select Source Name" }]}
+                                    getValueProps={(value) => {
+                                        return {
+                                            value: (afterRoomConfirm && selectedSourceType === "Agency") ?
+                                                agenciesOptions?.find(item => item?.value === value)?.label :
+                                                (afterRoomConfirm && selectedSourceType === "Company") ?
+                                                    companyOptions?.find(item => item?.value === value)?.label :
+                                                    value
+                                        }
+                                    }}
                                 >
-                                    <Select
-                                        options={selectedSourceType === "Agency" ? agenciesOptions : companyOptions}
-                                        
-                                        placeholder="Select Source Name"
-
-                                    ></Select>
+                                    {
+                                        afterRoomConfirm ?
+                                            <Input
+                                                className="w-[100%]"
+                                                readOnly={afterRoomConfirm}
+                                            /> :
+                                            <Select
+                                                options={selectedSourceType === "Agency" ? agenciesOptions : companyOptions}
+                                                placeholder="Select Source Name"
+                                                className="!w-[100%]"
+                                            ></Select>
+                                    }
                                 </Form.Item>
 
                             )
                         }
                     </div>
-
-                    <div className="-ml-2 sm:m-0 flex items-end">
-                        {
-                            afterRoomConfirm ?
-                                null
-                                :
-                                <Form.Item>
-                                    <Button
-                                        type="primary"
-                                        htmlType="submit"
-                                        loading={availabilitySearchResults?.isPending}
-                                        disabled={searchButtonDisable}
-                                    >
-                                        Search
-                                    </Button>
-                                </Form.Item>
-                        }
-                    </div>
                 </div>
+
+                {/* Mobile Button */}
+                {
+                    afterRoomConfirm ?
+                        null
+                        :
+                        <div className="flex justify-end">
+                            <Form.Item className="block md:hidden mt-4">
+                                <Button
+                                    type="primary"
+                                    htmlType="submit"
+                                    loading={availabilitySearchResults?.isPending}
+                                    disabled={searchButtonDisable}
+                                    className="w-full"
+                                >
+                                    Search
+                                </Button>
+                            </Form.Item>
+                        </div>
+                }
 
             </Form>
 
-        </Card>
+        </Card >
     )
 }
 

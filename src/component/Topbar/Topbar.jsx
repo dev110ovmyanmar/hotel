@@ -33,6 +33,7 @@ import { LOCAL_STORAGE_KEYS } from "../../variables/constants";
 import useApiQuery from "../../hooks/useApiQuery";
 import { adminDetails } from "../../api/adminApi";
 import { saveState } from "../../utils/Utils.js";
+import TopBarDropDown from "./TopBarDropDown.jsx";
 
 const { Header } = Layout;
 
@@ -186,7 +187,7 @@ const Topbar = withDirection(function (props) {
         </div>
 
         {/* Right Section */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 hidden lg:flex">
           <Button
             type="primary"
             icon={<PlusOutlined />}
@@ -264,7 +265,7 @@ const Topbar = withDirection(function (props) {
             />
 
             <div className="cursor-pointer">
-              <div className="flex items-center gap-2">
+              <div className="flex items-center">
                 {/* <div className="w-8 h-8 rounded-full  flex items-center justify-center">
                   <UserOutlined />
                 </div> */}
@@ -274,12 +275,23 @@ const Topbar = withDirection(function (props) {
                 <img
                   src={loginAdminDetails?.file}
                   alt="Profile"
-                  className="md:w-8 md:h-8 lg:w-10 lg:h-10 rounded-full object-cover"
+                  className="md:w-7 md:h-7 lg:w-10 lg:h-10 rounded-full object-fit"
                 />
               </div>
             </div>
           </Popover>
         </div>
+
+        <TopBarDropDown 
+          addReservation = {() => navigate("/reservation/create-new-reservation")}
+          darklighmode = {() => dispatch(toggleTheme())}
+          refreshInitData = {handleRefetchInitData}
+          logoutmodal = {handleModalOpen}
+          changePassword={() => handleMenuClick("password")}
+          profileDrawer = {() => handleMenuClick("profile")}
+          refreshing={refreshing}
+
+        />
       </Header>
 
       <Drawer

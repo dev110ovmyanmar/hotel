@@ -14,9 +14,11 @@ const RoomBookedDrawer = ({
     setSelectedData,
     roomBookValues,
     setRoomBookValues,
-    rateQuotes
+    rateQuotes,
+    modalOpen,
+    setModalOpen
+
 }) => {
-    const [modalOpen, setModalOpen] = useState(false);
     const [deleteKey, setDeleteKey] = useState();
 
     const roomConfirmClick = () => {
@@ -25,6 +27,10 @@ const RoomBookedDrawer = ({
     };
 
     const handleDelete = () => {
+        setSelectedData((prev = []) => (
+            prev.filter(item => item.roomTypeUuid !== deleteKey)
+        ));
+
         setRoomBookValues((prev) => {
             const updatedValues = {
                 ...prev,
@@ -33,12 +39,11 @@ const RoomBookedDrawer = ({
                 )
             };
 
-            rateQuotes.mutate(updatedValues);
+            rateQuotes.mutate(updatedValues ? updatedValues : []);
 
             return updatedValues;
         });
 
-        setModalOpen(false);
     };
 
     return (
@@ -112,13 +117,18 @@ const RoomBookedDrawer = ({
                                     <p className="mr-3">{room?.roomType?.name}</p>
                                     <Tag color="blue">{room?.totalRooms} Room</Tag>
                                 </div>
-                                <div>
-                                    <DeleteOutlined className="!text-red-500" onClick={() => {
-                                        setModalOpen(true),
-                                            setDeleteKey(room?.roomType?.uuid)
-                                    }}
-                                    />
-                                </div>
+                                {
+                                    roomBookValues?.rooms.length === 1 ? null :
+                                        <div>
+                                            <DeleteOutlined
+                                                className="!text-red-500"
+                                                onClick={() => {
+                                                    setModalOpen(true),
+                                                        setDeleteKey(room?.roomType?.uuid)
+                                                }}
+                                            />
+                                        </div>
+                                }
                             </div>
 
                             <div className="flex">
@@ -165,6 +175,7 @@ const RoomBookedDrawer = ({
                 open={modalOpen}
                 onCancel={() => setModalOpen(false)}
                 onOk={handleDelete}
+                confirmLoading={rateQuotes?.isPending}
             >
                 Are you sure you want to delete ?
             </Modal>

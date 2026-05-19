@@ -20,6 +20,7 @@ import RoomConfirmFinish from "./RoomConfirmFinish";
 const ReservationList = () => {
 
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
+  const currencyUuid = initData?.property?.currency?.uuid;
 
   const bookedViaOptions = initData?.statuses?.booked_via.map((item) => ({
     label: item.name,
@@ -33,6 +34,7 @@ const ReservationList = () => {
 
   const navigate = useNavigate();
   const [form] = Form.useForm();
+  const [createContactForm] = Form.useForm();
   const [roomBookOpen, setRoomBookOpen] = useState(false);
   const [guestDrawerOpen, setGuestDrawerOpen] = useState(false);
   const [roomConfirm, setRoomConfirm] = useState(false);
@@ -50,6 +52,9 @@ const ReservationList = () => {
 
   const [clickCreateContact, setClickCreateContact] = useState(false);
   const [createContactFinish, setCreateContactFinish] = useState(false);
+
+  const [modalOpen, setModalOpen] = useState(false);
+
 
 
   const defaultFilter = [
@@ -77,6 +82,10 @@ const ReservationList = () => {
       onSuccess: (values) => {
         setRoomBookOpen(true);
         setRoomBookValues(values);
+        setModalOpen(false)
+      },
+      onError: (error) => {
+        setModalOpen(false)
       },
     },
   });
@@ -100,19 +109,19 @@ const ReservationList = () => {
     options: {
       onSuccess: (values) => {
         Toast.success(values);
-        navigate("/reservations/inquery/")
+        navigate("/reservations/inquiry/")
       },
     },
   });
 
   const viewRoomBookedMutate = () => {
-    if (!selectedData.length) {
+    if (!selectedData?.length) {
       Toast.error("Please select at least one room");
       return;
     }
 
     const groupedRooms = Object.values(
-      selectedData.reduce((acc, item) => {
+      selectedData?.reduce((acc, item) => {
         const roomTypeUuid = item.roomTypeUuid;
         if (!acc[roomTypeUuid]) {
           acc[roomTypeUuid] = {
@@ -198,6 +207,9 @@ const ReservationList = () => {
       taxTotal: roomBookValues?.taxTotal,
       discountTotal: roomBookValues?.discountTotal,
       grandTotal: roomBookValues?.grandTotal,
+      currency:{
+        uuid: currencyUuid
+      },
       rooms
 
     };
@@ -207,8 +219,7 @@ const ReservationList = () => {
 
   //total booked rooms per roomType
   const getBookedCount = (roomTypeId) => {
-    return selectedData
-      .filter((item) => item.roomTypeId === roomTypeId)
+    return selectedData?.filter((item) => item.roomTypeId === roomTypeId)
       .reduce((sum, item) => sum + (item.selectedRoomCount || 1), 0);
   };
 
@@ -261,7 +272,7 @@ const ReservationList = () => {
       title: "Rate & Prices",
       dataIndex: "ratePlans",
       align: "center",
-      render: (value,record) => (
+      render: (value, record) => (
         <div className="mb-2">
           <p>{value?.minPrice?.toLocaleString()} MMK</p>
           <p className="!text-gray-400 !text-sm">{value?.name}</p>
@@ -279,11 +290,11 @@ const ReservationList = () => {
     {
       title: "",
       render: (_, record) => {
-        const isBooked = selectedData.some((item) => item.key === record.key);
+        const isBooked = selectedData?.some((item) => item.key === record.key);
 
         return (
           <Button
-            className={getRemainingRooms(record) <= 0 ? "border-gray-100 !text-gray-300" : isBooked? "" : "!border-blue-500 !text-blue-500"}
+            className={getRemainingRooms(record) <= 0 ? "border-gray-100 !text-gray-300" : isBooked ? "" : "!border-blue-500 !text-blue-500"}
             type={isBooked ? "primary" : "default"}
             disabled={!isBooked && getRemainingRooms(record) <= 0} // disable if no rooms left
             onClick={() => {
@@ -345,6 +356,7 @@ const ReservationList = () => {
             setSelectedRooms({});
             setReservationFormValues(null);
             setSearchButtonDisable(false);
+            setClickCreateContact(false);
             // setSelectedSourceType(null);
             form.setFieldsValue({
               filter: defaultFilter,
@@ -354,7 +366,7 @@ const ReservationList = () => {
           }}
         >
           <ReloadOutlined className="!text-blue-500" />
-          <span className="!text-blue-500" >Refresh</span>
+          <span className="max-w-[125px] !text-blue-500" >Refresh</span>
         </Button>
       </div>
 
@@ -372,7 +384,7 @@ const ReservationList = () => {
 
       {roomConfirm ? (
         <>
-          <RoomConfirmFinish 
+          <RoomConfirmFinish
             roomBookValues={roomBookValues}
           />
 
@@ -392,7 +404,10 @@ const ReservationList = () => {
             {!clickCreateContact && (
               <Button
                 type="primary"
-                onClick={() => setGuestDrawerOpen(true)}
+                onClick={() => {
+                  setGuestDrawerOpen(true),
+                  createContactForm.resetFields()
+                }}
                 className="my-4"
               >
                 Add Contact Person <PlusOutlined />
@@ -434,6 +449,7 @@ const ReservationList = () => {
         upsertMutation={upsertMutation}
         createContactFinish={createContactFinish}
         setCreateContactFinish={setCreateContactFinish}
+        createContactForm={createContactForm}
       />
 
       <RoomBookedDrawer
@@ -446,6 +462,8 @@ const ReservationList = () => {
         roomBookValues={roomBookValues}
         setRoomBookValues={setRoomBookValues}
         rateQuotes={rateQuotes}
+        modalOpen={modalOpen}
+        setModalOpen={setModalOpen}
 
       />
     </div>

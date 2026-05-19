@@ -1,21 +1,14 @@
 import React, { useEffect } from "react";
-import {
-  Form,
-  Input,
-  Select,
-  Drawer,
-  Row,
-  Col,
-  DatePicker,
-  Button,
-  InputNumber,
-} from "antd";
-import TextArea from "antd/es/input/TextArea";
+import { Form, Input, Select, Drawer, DatePicker, Button } from "antd";
 import dayjs from "dayjs";
 import FormButtons from "../../../../../../component/FormButtons/FormButtons";
-import { getFormattedDate } from "../../../../../../utils";
+import { useApiMutation } from "../../../../../../hooks/useApiMutation";
+import { availabilitySearch } from "../../../../../../api/reservationSectionApi";
+
+const { RangePicker } = DatePicker;
 
 const RoomInformationForm = ({
+  data,
   mode,
   setMode,
   drawerOpen,
@@ -26,56 +19,110 @@ const RoomInformationForm = ({
   const [form] = Form.useForm();
   const isView = mode === "view";
 
-  useEffect(() => {
-    if (drawerOpen && selectedData) {
-      form.setFieldsValue({
-        ...selectedData,
+  const selectedDates = Form.useWatch("dates", form);
+  const selectedRoomUuid = Form.useWatch("roomTypeUuid", form);
 
-        arrivalDate: selectedData.arrivalDate
-          ? dayjs(selectedData.arrivalDate)
-          : null,
-        departureDate: selectedData.departureDate
-          ? dayjs(selectedData.departureDate)
-          : null,
+  let totalNight = 0;
+  if (selectedDates && selectedDates[0] && selectedDates[1]) {
+    const diff = selectedDates[1].diff(selectedDates[0], "day");
+    totalNight = diff > 0 ? diff : 0;
+  }
+
+  const roomAvailabilitySearchs = useApiMutation({
+    mutationFn: availabilitySearch,
+    invalidateKeys: [["availability-search"]],
+  });
+
+  const availableRoomsData = roomAvailabilitySearchs.data?.rooms || [];
+
+  useEffect(() => {
+    if (drawerOpen && data) {
+      const today = dayjs();
+      const Day = today.format("YYYY-MM-DD");
+
+      const checkinDateObj = data?.actualCheckin
+        ? dayjs(data?.actualCheckin)
+        : null;
+      let finalCheckin = null;
+
+      if (checkinDateObj) {
+        if (checkinDateObj.isBefore(today, "day")) {
+          finalCheckin = Day;
+        } else {
+          finalCheckin = checkinDateObj.format("YYYY-MM-DD");
+        }
+      }
+
+      const finalCheckout = data?.actualCheckout?.[1]
+        ? dayjs(data?.actualCheckout).format("YYYY-MM-DD")
+        : null;
+
+      form.setFieldsValue({
+        dates: [
+          finalCheckin ? dayjs(finalCheckin) : null,
+          finalCheckout ? dayjs(finalCheckout) : null,
+        ],
+        roomTypeUuid: data?.roomType?.uuid || null,
+        ratePlanUuid: data?.roomRate?.uuid || null,
       });
-    } else if (drawerOpen && mode === "add") {
-      form.resetFields();
     }
-  }, [selectedData, drawerOpen, form, mode]);
+  }, [drawerOpen, data, form]);
+
+  useEffect(() => {
+    if (drawerOpen && selectedDates?.[0] && selectedDates?.[1]) {
+      form.setFieldsValue({
+        roomTypeUuid: null,
+        ratePlanUuid: null,
+      });
+
+      const checkin = selectedDates[0].format("YYYY-MM-DD");
+      const checkout = selectedDates[1].format("YYYY-MM-DD");
+
+      const diffNights = selectedDates[1].diff(selectedDates[0], "day");
+      const payloadTotalNight = diffNights > 0 ? diffNights : 0;
+
+      const payload = {
+        filter: {
+          checkinDate: checkin,
+          checkoutDate: checkout,
+        },
+        bookedVia: { uuid: data?.bookedVia?.uuid },
+        sourceType: { uuid: data?.sourceType?.uuid },
+        source: { uuid: data?.source?.uuid },
+        totalNight: payloadTotalNight,
+        reservation: { uuid: data?.uuid },
+      };
+
+      roomAvailabilitySearchs.mutate(payload);
+    }
+  }, [drawerOpen, selectedDates, data]);
+
+  const roomTypeOptions = availableRoomsData.map((item) => ({
+    label: `${item.roomType?.name} (${item.totalRooms} available)`,
+    value: item.roomType?.uuid,
+  }));
+
+  const targetRoomDetails = availableRoomsData.find(
+    (item) => item.roomType?.uuid === selectedRoomUuid,
+  );
+
+  const ratePlanOptions = targetRoomDetails?.ratePlans
+    ? targetRoomDetails.ratePlans.map((rate) => ({
+        label: `${rate.name}`,
+        value: rate.uuid,
+      }))
+    : [];
+
+  const handleRoomTypeChange = () => {
+    form.setFieldsValue({ ratePlanUuid: null });
+  };
 
   const onFinish = (values) => {
     const formattedValues = {
       ...values,
-      arrivalDate: getFormattedDate(values.arrivalDate, false),
-      departureDate: getFormattedDate(values.departureDate, false),
     };
-
-    //  API
-    console.log("Submitted Values:", formattedValues);
-
-    // LocalStorage
-    const existingData = JSON.parse(localStorage.getItem("roomInfo")) || [];
-    if (mode === "add") {
-      localStorage.setItem(
-        "roomInfo",
-        JSON.stringify([
-          ...existingData,
-          { ...formattedValues, id: Date.now() },
-        ]),
-      );
-    } else {
-      const updated = existingData.map((item) =>
-        item.id === selectedData.id
-          ? { ...formattedValues, id: item.id }
-          : item,
-      );
-      localStorage.setItem("roomInfo", JSON.stringify(updated));
-    }
-
-    setDrawerOpen(false);
-    onSuccess();
-    form.resetFields();
   };
+
   return (
     <Drawer
       open={drawerOpen}
@@ -102,75 +149,51 @@ const RoomInformationForm = ({
       }
     >
       <Form form={form} layout="vertical" onFinish={onFinish} disabled={isView}>
-        <div className="grid grid-cols-2 gap-6">
-          <Form.Item label="Arrival Date" name="arrivalDate">
-            <DatePicker className="w-full" disabled={isView} />
+        <div className="flex items-end gap-6 w-full mb-6">
+          <Form.Item
+            label="Stay Duration (Arrival - Departure)"
+            name="dates"
+            className="w-3/4 mb-0"
+          >
+            <RangePicker className="w-full" format="DD/MM/YYYY" />
           </Form.Item>
 
-          <Form.Item label="Departure Date" name="departureDate">
-            <DatePicker className="w-full" disabled={isView} />
-          </Form.Item>
-        </div>
-
-        <div className="grid grid-cols-2 gap-6">
-          <Form.Item label="Old Room Id" name="oldRoomId">
-            <Input readOnly={isView} placeholder="Enter Old Room Id" />
-          </Form.Item>
-          <Form.Item label="Guest" name="guest">
-            <Input readOnly={isView} placeholder="Enter Guest" />
+          <Form.Item className="w-1/5 bg-gray-300 rounded">
+            <Input
+              value={`${totalNight} ${totalNight === 1 ? "Night" : "Nights"}`}
+              disabled
+              className="bg-gray-50 text-black font-medium disabled:text-black text-center h-[32px]"
+            />
           </Form.Item>
         </div>
 
         <div className="grid grid-cols-2 gap-6">
           <Form.Item
-            label="Room Type"
-            name="roomType"
-            rules={[{ required: true }]}
+            label="Room"
+            name="roomTypeUuid"
+            rules={[{ required: true, message: "Please select a room type" }]}
           >
             <Select
-              placeholder="Selected Room Type"
-              options={[
-                {
-                  value: "Deluxe Bangalow Double",
-                  label: "Deluxe Bangalow Double",
-                },
-                { value: "Deluxe Bangalow", label: "Deluxe Bangalow" },
-              ]}
+              placeholder="Select Room Type"
+              options={roomTypeOptions}
+              onChange={handleRoomTypeChange}
+              loading={roomAvailabilitySearchs.isPending}
             />
           </Form.Item>
-          <Form.Item
-            label="New Room"
-            name="newRoom"
-            rules={[{ required: true }]}
-          >
-            <Select
-              placeholder="Selected New Room"
-              options={[
-                { value: "DBD", label: "DBD 1001" },
-                { value: "DB", label: "DB 1001" },
-                { value: "Assign Room", label: "Assign Room" },
-              ]}
-            />
-          </Form.Item>
-        </div>
 
-        <div className="grid grid-cols-2 gap-6">
-          <Form.Item label="Status" name="status">
+          <Form.Item
+            label="Room Rate"
+            name="ratePlanUuid"
+            rules={[{ required: true, message: "Please select a room rate" }]}
+          >
             <Select
-              placeholder="Selected Status"
-              options={[
-                { value: "active", label: "Active" },
-                { value: "inActive", label: "In Active" },
-              ]}
-            />
-          </Form.Item>
-          <Form.Item label="Amount" name="amount">
-            <InputNumber
-              className="!w-full"
-              min={1}
-              readOnly={isView}
-              placeholder="Enter Amount"
-              suffix="MMK"
+              placeholder={
+                selectedRoomUuid
+                  ? "Select Room Rate Plan"
+                  : "Choose Room Type First"
+              }
+              options={ratePlanOptions}
+              disabled={!selectedRoomUuid}
             />
           </Form.Item>
         </div>

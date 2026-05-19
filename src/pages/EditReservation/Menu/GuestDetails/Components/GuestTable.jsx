@@ -54,6 +54,7 @@ const GuestTable = () => {
 
     {
       title: "Action",
+      fixed:"end",
       align: "center",
       render: (_, record) => (
         <Space size="middle">
@@ -67,16 +68,6 @@ const GuestTable = () => {
             />
           </Tooltip>
 
-          <Tooltip title="Edit">
-            <EditOutlined
-              onClick={() => {
-                setSelectedData(record);
-                setMode("edit");
-                setDrawerOpen(true);
-              }}
-            />
-          </Tooltip>
-
           <Tooltip title="File Upload">
             <UploadOutlined
               onClick={() => {
@@ -85,13 +76,6 @@ const GuestTable = () => {
               }}
             />
           </Tooltip>
-
-          {/* <InboxOutlined
-            onClick={() => {
-              setSelectedData(record);
-              setNoteOpen(true);
-            }}
-          /> */}
         </Space>
       ),
     },
@@ -116,11 +100,11 @@ const GuestTable = () => {
         reservationId={selectedData?.id}
       />
 
-      <GuestNoteDrawer
+      {/* <GuestNoteDrawer
         open={noteOpen}
         onClose={() => setNoteOpen(false)}
         reservationId={selectedData?.id}
-      />
+      /> */}
     </div>
   );
 };

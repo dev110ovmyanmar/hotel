@@ -48,5 +48,25 @@ export const updateReservationStatus = async (params) => {
   return data.response;
 }
 
+export const reservationRoomList = async (params) => {
+  const { data } = await apiClient.get("/reservation-rooms", { params });
+  return data.response;
+};
+
+export const reservationRoomAssign = async (params) => {
+  const { data } = await apiClient.patch(`/reservation-room/assign`, params);
+  return data.response;
+}
+
+export const reservationRoomMeta = async (params) => {
+  const { data } = await apiClient.get("reservation-room/meta", {params});
+  return data.response;
+};
+
+export const reservationRoomSearch = async (params) => {
+  const { data } = await apiClient.get("reservation-room/search", {params});
+  return data.response;
+};
+
 
 

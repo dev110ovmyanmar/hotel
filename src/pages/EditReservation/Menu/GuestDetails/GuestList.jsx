@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import ReservationHeader from "../../Components/ReservationHeader";
 import ReservationMenu from "../../Components/ReservationMenu";
-import ReservationListHeader from "../../../../component/ReservationHeader/ReservationListHeader";
 import GuestTable from "./Components/GuestTable";
 import GuestForm from "./Components/GuestForms/GuestForm";
+import ReservationListHeader from "../../../../component/ReservationHeader/ReservationListHeader";
 
 const GuestList = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -24,11 +24,11 @@ const GuestList = () => {
         <ReservationListHeader
           reservationId="123212321"
           onAddreservation={handleAddGuest}
-          addButtonText={"Add Guest"}
+          addButtonText={"Add New Guest"}
         />
       </div>
-
       <GuestTable />
+
       <GuestForm
         drawerOpen={drawerOpen}
         setDrawerOpen={setDrawerOpen}

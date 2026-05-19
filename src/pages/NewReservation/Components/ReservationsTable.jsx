@@ -12,6 +12,8 @@ import {
 import { FaChild } from "react-icons/fa";
 import { IoPeopleSharp } from "react-icons/io5";
 import PriceTag from "../../../component/PriceTag/PriceTag";
+import ReservationStatusColor from "../../../component/ReservationStatusColor/ReservationStatusColor";
+import dayjs from "dayjs";
 
 const ReservationsTable = ({
   data,
@@ -24,10 +26,8 @@ const ReservationsTable = ({
 }) => {
   const navigate = useNavigate();
 
-  const handleMenuClick = (key, uuid) => {
-    if (key === "edit") {
-      navigate(`/reservation/booking-detail`, { state: { bookingId: uuid } });
-    }
+  const handleMenuClick = (uuid) => {
+    navigate(`/reservation/booking-detail`, { state: { bookingId: uuid } });
   };
 
   const columns = [
@@ -39,21 +39,29 @@ const ReservationsTable = ({
       key: "totalRooms",
       align: "center",
     },
-    { title: "Arrival Date", dataIndex: "actualCheckin", key: "actualCheckin" },
+    {
+      title: "Arrival Date",
+      dataIndex: "actualCheckin",
+      key: "actualCheckin",
+      render: (value) => (value ? dayjs(value).format("DD/MM/YYYY") : "-"),
+    },
     {
       title: "Departure Date",
       dataIndex: "actualCheckout",
       key: "actualCheckout",
+      render: (value) => (value ? dayjs(value).format("DD/MM/YYYY") : "-"),
     },
     {
       title: "Booking Date",
       dataIndex: "createdAt",
       key: "createdAt",
+      render: (value) => (value ? dayjs(value).format("DD/MM/YYYY") : "-"),
     },
     {
       title: "Night",
       dataIndex: "totalNight",
       key: "totalNight",
+      width: 70,
     },
     {
       title: "Contact & Guests",
@@ -79,30 +87,39 @@ const ReservationsTable = ({
       title: "Order Status",
       dataIndex: ["reservationStatus", "name"],
       key: "status",
-      render: (status) => <Tag>{status}</Tag>,
+      align: "end",
+      render: (reservationStatus) => (
+        <ReservationStatusColor status={reservationStatus} />
+      ),
     },
     {
       title: "Order Total",
       dataIndex: "grandTotal",
       key: "total",
       align: "end",
-      render: (value) => <PriceTag value={value} />,
+      render: (value) => (
+        <div className="flex items-center gap-1">
+          <PriceTag value={value} />
+          <span className="text-gray-500 font-medium ">MMK</span>
+        </div>
+      ),
     },
     {
       title: "Action",
       key: "action",
+      fixed:"end",
       align: "center",
       render: (_, record) => (
         <div style={{ display: "flex", justifyContent: "center", gap: "8px" }}>
           <Button
             type="text"
             icon={<EditOutlined />}
-            onClick={() => handleMenuClick("edit", record.uuid)}
+            onClick={() => handleMenuClick(record.uuid)}
           />
           <Button
             type="text"
             icon={<PrinterOutlined />}
-            onClick={() => handleMenuClick("print", record.orderId)}
+            onClick={() => handleMenuClick(record.uuid)}
           />
         </div>
       ),
@@ -112,6 +129,8 @@ const ReservationsTable = ({
   return (
     <div>
       <Table
+        tableLayout="fixed"
+        scroll={{ x: 1000 }}
         columns={columns}
         dataSource={data}
         pagination={{

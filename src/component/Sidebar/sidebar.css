@@ -21,6 +21,30 @@
   color: var(--balck) !important;
 }
 
+.dark .ant-menu-item-selected,
+.custom-selected-item {
+  background-color: #afadad !important;
+  color: var(--balck) !important;
+}
+
+.collapsed-menu .ant-menu-submenu-selected>.ant-menu-submenu-title {
+  background-color: rgba(0, 0, 0, 0.4) !important;
+  color: white !important;
+  /* border-radius: 8px; */
+}
+
+.collapsed-menu .ant-menu-submenu-selected .anticon {
+  color: white !important;
+}
+
+.dark .collapsed-menu .ant-menu-submenu-selected>.ant-menu-submenu-title {
+  background-color: #afadad !important;
+}
+
+.dark .collapsed-menu .ant-menu-submenu-selected .anticon {
+  color: white !important;
+}
+
 @media only screen and (max-width: 767px) {
   .ant-layout-sider-collapsed {
     width: 0;

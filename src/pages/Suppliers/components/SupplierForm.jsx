@@ -10,6 +10,7 @@ import { upsertSupplier, getSupplierDetail } from "../../../api/supplierApi";
 import { phoneValidator, emailValidator } from "../../../variables/constants";
 import { PERMISSIONS } from "../../../variables/permission";
 import usePermission from "../../../hooks/usePermission";
+import { validatePhoneNumber } from "../../../utils";
 
 const { TextArea } = Input;
 
@@ -26,7 +27,8 @@ const SupplierForm = ({
 }) => {
     const [form] = Form.useForm();
     const queryClient = useQueryClient();
-
+    const phoneValue = Form.useWatch("phone", form);
+    
     const isView = mode === "view";
     const isEdit = mode === "edit";
     const isAdd = mode === "add";
@@ -121,8 +123,33 @@ const SupplierForm = ({
                         </div>
 
                         <div className="col-span-6">
-                            <Form.Item label="Phone" name="phone" rules={[{ required: true }, { validator: phoneValidator }]}>
-                                <Input readOnly={isView} placeholder="Enter Phone Number" />
+                            <Form.Item
+                                label="Phone"
+                                name="phone"
+                                rules={[
+                                    { required: true },
+                                    {
+                                        validator: validatePhoneNumber
+                                    }
+                                ]}
+                            >
+                                <Input
+                                    readOnly={isView}
+                                    addonBefore="+959"
+                                    onKeyPress={(e) => {
+                                        if (!/[0-9]/.test(e.key)) {
+                                            e.preventDefault();
+                                        }
+                                    }}
+                                    placeholder="Enter Phone Number"
+                                    maxLength={
+                                        phoneValue?.startsWith("09")
+                                            ? 11
+                                            : phoneValue?.startsWith("9")
+                                                ? 10
+                                                : 9
+                                    }
+                                />
                             </Form.Item>
                         </div>
 
