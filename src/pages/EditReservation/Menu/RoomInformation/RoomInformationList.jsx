@@ -26,7 +26,7 @@ const RoomInformationList = () => {
   const [assignRoomOpen, setAssignRoomOpen] = useState(false);
   const [showRoomResults, setShowRoomResults] = useState(false);
 
-  const { data, isLoading } = useApiQuery({
+  const { data, isLoading, refetch } = useApiQuery({
     fetchQueryName: "reservation-room",
     fetchQueryFunction: reservationRoomList,
     params: {
@@ -56,7 +56,11 @@ const RoomInformationList = () => {
         <ReservationListHeader
           reservationId={data?.reservation?.reservationNo}
           onAddreservation={handleAddRoom}
-          addButtonText={"Add New Room"}
+          addButtonText={
+            data?.reservation?.reservationStatus?.code === "confirmed"
+              ? "Add New Room"
+              : null
+          }
         />
       </div>
 
@@ -77,6 +81,7 @@ const RoomInformationList = () => {
         mode={mode}
         selectedData={selectedData}
         setSelectedData={setSelectedData}
+        onSuccess={refetch}
       />
 
       {assignRoomOpen && (

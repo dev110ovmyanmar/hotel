@@ -15,54 +15,107 @@ import {
   CheckOutlined,
   CloseOutlined,
 } from "@ant-design/icons";
+import {
+  reservationNoteCreate,
+  reservationNoteDelete,
+  reservationNoteList,
+} from "../../../../../../api/reservationSectionApi";
+import useApiQuery from "../../../../../../hooks/useApiQuery";
+import { LIMITS } from "../../../../../../variables/constants";
+import { useLocation } from "react-router-dom";
+import { useApiMutation } from "../../../../../../hooks/useApiMutation";
+import Toast from "../../../../../../component/Toast/Toast";
 
 const NoteDrawer = ({ mode, open, onClose, selectedData, onSuccess }) => {
+  const location = useLocation();
+  const uuid = location.state?.bookingId;
   const [form] = Form.useForm();
-  const [dataSource, setDataSource] = useState([]);
+
   const [editingKey, setEditingKey] = useState("");
   const [editValue, setEditValue] = useState("");
+  const [keyword, setKeyword] = useState("");
+  const [page, setPage] = useState(1);
+  const [perPage, setPerPage] = useState(LIMITS.PAGE_SIZE);
 
   const isView = mode === "view";
 
-  useEffect(() => {
-    if (open) {
-      const notes = [].concat(selectedData?.notes || []);
-      setDataSource(
-        notes.map((n, i) => ({
-          id: n.id || `n-${i}`,
-          content: n.content || n,
-        })),
-      );
-    }
-  }, [open, selectedData]);
+  const { data, isLoading, refetch } = useApiQuery({
+    fetchQueryName: "reservation-note",
+    fetchQueryFunction: reservationNoteList,
+    params: {
+      pagination: {
+        page: page,
+        perPage: perPage,
+      },
+      keyword,
+      reservation: { uuid: uuid },
+      reservationRoom: { uuid: selectedData?.uuid },
+    },
+  });
 
-  const updateNotes = (newList) => {
-    setDataSource(newList);
-    onSuccess?.(newList);
+  const reservationNotesCreate = useApiMutation({
+    mutationFn: reservationNoteCreate,
+  });
+
+  const reservationNotesDelete = useApiMutation({
+    mutationFn: reservationNoteDelete,
+    invalidateKeys: [["reservation-note", { uuid: selectedData?.uuid }]],
+  });
+
+  const onFinish = (values) => {
+    const payload = {
+      note: values.noteContent,
+      reservation: { uuid: uuid },
+      reservationRoom: { uuid: selectedData?.uuid },
+    };
+
+    reservationNotesCreate.mutate(payload, {
+      onSuccess: () => {
+        Toast.success("Note Created Successfully!");
+        form.resetFields();
+        refetch?.();
+        onSuccess?.();
+      },
+    });
+  };
+  const editNote = (record) => {
+    const payload = {
+      note: editValue,
+      uuid: record?.uuid,
+      reservation: { uuid },
+      reservationRoom: { uuid: selectedData?.uuid || selectedData?.roomUuid },
+    };
+
+    reservationNotesCreate.mutate(payload, {
+      onSuccess: () => {
+        Toast.success("Note updated successfully!");
+        setEditingKey("");
+        setEditValue("");
+        refetch?.();
+        onSuccess?.();
+      },
+    });
   };
 
-  const onAdd = async () => {
-    const { noteContent } = await form.validateFields();
-    const newNote = { id: Date.now().toString(), content: noteContent };
-    updateNotes([newNote, ...dataSource]);
-    form.resetFields();
-  };
+  const deleteNote = (record) => {
+    const payload = {
+      uuid: record?.uuid,
+    };
 
-  const onDelete = (id) =>
-    updateNotes(dataSource.filter((item) => item.id !== id));
-
-  const onSaveEdit = (id) => {
-    updateNotes(
-      dataSource.map((item) =>
-        item.id === id ? { ...item, content: editValue } : item,
-      ),
-    );
-    setEditingKey("");
+    reservationNotesDelete.mutate(payload, {
+      onSuccess: () => {
+        Toast.success("Note deleted successfully!");
+        refetch?.();
+        onSuccess?.();
+      },
+    });
   };
 
   const columns = [
     {
       title: "Note",
+      dataIndex: "note",
+      key: "note",
       render: (_, record) =>
         record.id === editingKey ? (
           <Input.TextArea
@@ -71,7 +124,7 @@ const NoteDrawer = ({ mode, open, onClose, selectedData, onSuccess }) => {
             autoSize
           />
         ) : (
-          record.content
+          record.note
         ),
     },
     {
@@ -83,25 +136,25 @@ const NoteDrawer = ({ mode, open, onClose, selectedData, onSuccess }) => {
           {record.id === editingKey ? (
             <>
               <CheckOutlined
-                className="text-green-500"
-                onClick={() => onSaveEdit(record.id)}
+                className="text-green-500 cursor-pointer"
+                onClick={() => editNote(record)}
               />
               <CloseOutlined
-                className="text-red-500"
+                className="text-red-500 cursor-pointer"
                 onClick={() => setEditingKey("")}
               />
             </>
           ) : (
             <>
               <EditOutlined
-                className="text-blue-500"
+                className="text-blue-500 cursor-pointer"
                 onClick={() => {
                   setEditingKey(record.id);
-                  setEditValue(record.content);
+                  setEditValue(record.note);
                 }}
               />
-              <Popconfirm title="Delete?" onConfirm={() => onDelete(record.id)}>
-                <DeleteOutlined className="text-red-500" />
+              <Popconfirm title="Delete?" onConfirm={() => deleteNote(record)}>
+                <DeleteOutlined className="text-red-500 cursor-pointer" />
               </Popconfirm>
             </>
           )}
@@ -118,18 +171,25 @@ const NoteDrawer = ({ mode, open, onClose, selectedData, onSuccess }) => {
       width={500}
       extra={
         !isView && (
-          <Button type="primary" onClick={onAdd}>
+          <Button
+            type="primary"
+            htmlType="submit"
+            onClick={() => form.submit()}
+            loading={reservationNotesCreate.isPending}
+          >
             Create
           </Button>
         )
       }
     >
       {!isView && (
-        <Form form={form} layout="vertical">
+        <Form form={form} layout="vertical" onFinish={onFinish}>
           <Form.Item
             label="Note"
             name="noteContent"
-            rules={[{ required: true }]}
+            rules={[
+              { required: true, message: "Please input your note content!" },
+            ]}
           >
             <Input.TextArea placeholder="Add a new note..." />
           </Form.Item>
@@ -137,10 +197,15 @@ const NoteDrawer = ({ mode, open, onClose, selectedData, onSuccess }) => {
       )}
       <Divider>History</Divider>
       <Table
-        dataSource={dataSource}
+        dataSource={data?.data || []}
         columns={columns}
         rowKey="id"
         pagination={false}
+        loading={
+          isLoading ||
+          reservationNotesDelete.isPending ||
+          reservationNotesCreate.isPending
+        }
         size="small"
       />
     </Drawer>
