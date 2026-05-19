@@ -42,14 +42,16 @@ const CreateGuestForm = ({
     fetchQueryName: "reservation-meta",
     fetchQueryFunction: reservationMeta,
   });
-
   const
     guestsOptions =
       reservationMetas?.guests?.map((item) => ({
         label: `${item.name}  ${item.nrcNo ? '(' + item.nrcNo + ')' + " " + '(' + item.phone + ')' : '(' + item.phone + ')'}`,
         value: item.uuid,
-        name: item.name
+        name: item.name,
+        phone: item.phone
       })) || [];
+
+
 
   const [searchText, setSearchText] = useState("");
   const [options, setOptions] = useState(guestsOptions);
@@ -209,9 +211,11 @@ const CreateGuestForm = ({
                   createContactForm.setFieldValue("name", option.name);
                 }}
                 onChange={(value, option) => {
-                  createContactForm.setFieldValue("name", value);
+                  createContactForm.setFieldsValue({
+                    name: value,
+                    phone : option?.phone
+                  });  
                 }}
-
               >
                 <Input />
               </AutoComplete>
