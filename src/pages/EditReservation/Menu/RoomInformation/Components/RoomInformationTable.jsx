@@ -15,6 +15,7 @@ import dayjs from "dayjs";
 import NoteDrawer from "./RoomInformationForms/NoteDrawer";
 import GuestForm from "../../GuestDetails/Components/GuestForms/GuestForm";
 import { EyeOutlined } from "@ant-design/icons";
+import ColorStatusTag from "../../../../../component/ColorStatusTag/ColorStatusTag";
 
 const RoomInformationTable = ({
   data,
@@ -25,7 +26,9 @@ const RoomInformationTable = ({
   changePage,
   changePerPage,
   reservationUuid,
+  refetch,
 }) => {
+  console.log(data, "noteDatas");
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mode, setMode] = useState("add");
   const [selectedData, setSelectedData] = useState(null);
@@ -51,15 +54,24 @@ const RoomInformationTable = ({
       render: (text, record) => {
         const isRoomNull = !text;
 
+        const isConfirmed =
+          reservationUuid?.reservationStatus?.code === "confirmed";
+
+        const isClickable = isRoomNull && isConfirmed;
+
         return (
           <span
             style={{
-              color: isRoomNull ? "#1890ff" : "inherit",
-              cursor: isRoomNull ? "pointer" : "default",
-              textDecoration: isRoomNull ? "underline" : "none",
+              color: isRoomNull
+                ? isConfirmed
+                  ? "#1890ff"
+                  : "#bfbfbf"
+                : "inherit",
+              cursor: isClickable ? "pointer" : "not-allowed",
+              textDecoration: isClickable ? "underline" : "none",
             }}
             onClick={(e) => {
-              if (isRoomNull) {
+              if (isClickable) {
                 e.stopPropagation();
                 setSelectedData(record);
                 setAssignRoomOpen(true);
@@ -90,54 +102,58 @@ const RoomInformationTable = ({
       render: (value) => (value ? dayjs(value).format("DD/MM/YYYY") : "-"),
     },
 
-    { title: "Room Status", dataIndex: "roomStatus", key: "roomStatus" },
+    {
+      title: "Room Status",
+      dataIndex: ["roomStatus", "name"],
+      key: "roomStatus",
+      render: (_, record) => <ColorStatusTag status={record?.roomStatus} />,
+    },
     { title: "Rate Plan", dataIndex: ["ratePlan", "name"], key: "ratePlan" },
     {
       title: "Action",
       fixed: "end",
       align: "center",
-      render: (_, record) => (
-        <Space size="middle">
-          <Tooltip title="View Details">
-            <EyeOutlined
-              className="cursor-pointer"
-              onClick={() => {
-                setSelectedData(record);
-                setMode("view");
-                setDrawerOpen(true);
-              }}
-            />
-          </Tooltip>
-          <Tooltip title="Edit">
-            <EditOutlined
-              className="cursor-pointer"
-              onClick={() => {
-                setSelectedData(record);
-                setMode("edit");
-                setDrawerOpen(true);
-              }}
-            />
-          </Tooltip>
-          <Tooltip title="Move Room">
-            <MdOutlineMeetingRoom
-              style={{ fontSize: "20px", cursor: "pointer" }}
-              onClick={() => {
-                setSelectedData(record);
-                setRoomMoveOpen(true);
-              }}
-            />
-          </Tooltip>
-          <Tooltip title="Notes">
-            <MessageOutlined
-              style={{ fontSize: "18px", cursor: "pointer" }}
-              onClick={() => {
-                setSelectedData(record);
-                setNoteOpen(true);
-              }}
-            />
-          </Tooltip>
-        </Space>
-      ),
+      render: (_, record) => {
+        const isConfirmed =
+          reservationUuid?.reservationStatus?.code === "confirmed";
+
+        return (
+          <Space size="middle">
+            <Tooltip title="View Details">
+              <EyeOutlined
+                className="cursor-pointer"
+                onClick={() => {
+                  setSelectedData(record);
+                  setMode("view");
+                  setDrawerOpen(true);
+                }}
+              />
+            </Tooltip>
+
+            {isConfirmed && (
+              <Tooltip title="Move Room">
+                <MdOutlineMeetingRoom
+                  style={{ fontSize: "20px", cursor: "pointer" }}
+                  onClick={() => {
+                    setSelectedData(record);
+                    setRoomMoveOpen(true);
+                  }}
+                />
+              </Tooltip>
+            )}
+
+            <Tooltip title="Notes">
+              <MessageOutlined
+                style={{ fontSize: "18px", cursor: "pointer" }}
+                onClick={() => {
+                  setSelectedData(record);
+                  setNoteOpen(true);
+                }}
+              />
+            </Tooltip>
+          </Space>
+        );
+      },
     },
   ];
 
@@ -148,7 +164,7 @@ const RoomInformationTable = ({
         scroll={{ x: 1000 }}
         columns={columns}
         dataSource={data}
-        rowKey="id"
+        rowKey="uuid"
         pagination={{
           current: page,
           pageSize: perPage,
@@ -163,6 +179,7 @@ const RoomInformationTable = ({
       />
 
       <RoomInformationForm
+        page={page}
         mode={mode}
         setMode={setMode}
         drawerOpen={drawerOpen}
@@ -188,7 +205,15 @@ const RoomInformationTable = ({
         />
       )}
 
-      <NoteDrawer open={noteOpen} onClose={() => setNoteOpen(false)} />
+      {noteOpen && (
+        <NoteDrawer
+          noteData={data?.data || []}
+          open={noteOpen}
+          onClose={() => setNoteOpen(false)}
+          selectedData={selectedData}
+          setSelectedData={setSelectedData}
+        />
+      )}
     </div>
   );
 };

@@ -148,7 +148,7 @@ const ReservationsGrid = ({
                     className="dark:!bg-[#141414]"
                   >
                     {item.actualCheckout
-                      ? dayjs(item.actualCheckin).format("DD/MM/YYYY")
+                      ? dayjs(item.actualCheckout).format("DD/MM/YYYY")
                       : "-"}
                   </div>
                 </div>
