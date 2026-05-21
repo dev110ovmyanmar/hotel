@@ -8,6 +8,7 @@ import {
   getServiceInventoryMappingDetails,
   upsertServiceInventoryMapping,
 } from "../../../../api/serviceInventoryMappingApi";
+import Toast from "../../../../component/Toast/Toast";
 
 const ItemsForm = ({
   selectedItem,
@@ -67,7 +68,7 @@ const ItemsForm = ({
   });
 
   const { data, isLoading, error } = useApiQuery({
-    fetchQueryName: "item-details",
+    fetchQueryName: "service-inventory-mapping-details",
     fetchQueryFunction: getServiceInventoryMappingDetails,
     params: { uuid: selectedItem?.uuid },
     options: {
@@ -76,7 +77,7 @@ const ItemsForm = ({
   });
 
   useEffect(() => {
-    if (!isAdd && data) {
+    if (!isAdd && data && drawerOpen) {
       form.setFieldsValue({
         ...data,
         serviceInventoryItem: data.serviceInventoryItem?.uuid,
@@ -84,7 +85,7 @@ const ItemsForm = ({
       });
       setSelectedItem(data);
     }
-  }, [data, !isAdd]);
+  }, [data, !isAdd, drawerOpen]);
 
   const onFinish = (values) => {
     if (isAdd) {
@@ -129,7 +130,8 @@ const ItemsForm = ({
         open={drawerOpen}
         onClose={() => {
           setDrawerOpen(false);
-          form.resetFields()
+          form.resetFields();
+          setSelectedItem(null);
         }}
         size={550}
         title={

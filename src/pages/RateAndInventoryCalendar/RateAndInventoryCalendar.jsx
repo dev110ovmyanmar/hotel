@@ -78,7 +78,7 @@ const RateAndInventoryCalendar = () => {
 
     const floorOptions = roomMetaData?.floors?.map((floor) => ({
         value: floor.uuid,
-        label : <span>{floor?.name} ({floor?.floorNo})</span>
+        label: <span>{floor?.name} ({floor?.floorNo})</span>
     }));
 
     const ratePlanOptions = roomMetaData?.rate_plans?.map((ratePlan) => ({
@@ -586,9 +586,9 @@ const RateAndInventoryCalendar = () => {
     if (isLoading && !apiData) {
         return (
             <div className="flex flex-col h-screen bg-white overflow-hidden text-[#333]">
-                <div className="h-0.5 bg-blue-100 w-full">
+                {/* <div className="h-0.5 bg-blue-100 w-full">
                     <div className="h-full bg-blue-500 animate-pulse w-full" />
-                </div>
+                </div> */}
                 <CalendarHeader
                     currentDate={currentDate}
                     onDateChange={setCurrentDate}
@@ -633,11 +633,11 @@ const RateAndInventoryCalendar = () => {
     return (
         <div className="flex flex-col h-screen bg-white overflow-hidden text-[#333]">
             {/* Refetch progress bar */}
-            {isFetching && (
+            {/* {isFetching && (
                 <div className="h-0.5 bg-blue-100 w-full">
                     <div className="h-full bg-blue-500 animate-pulse w-full" />
                 </div>
-            )}
+            )} */}
 
             {/* Header */}
             <CalendarHeader
