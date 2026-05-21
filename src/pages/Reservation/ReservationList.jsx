@@ -20,6 +20,7 @@ import RoomConfirmFinish from "./RoomConfirmFinish";
 const ReservationList = () => {
 
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
+  const currencyUuid = initData?.property?.currency?.uuid;
 
   const bookedViaOptions = initData?.statuses?.booked_via.map((item) => ({
     label: item.name,
@@ -108,19 +109,19 @@ const ReservationList = () => {
     options: {
       onSuccess: (values) => {
         Toast.success(values);
-        navigate("/reservations/inquery/")
+        navigate("/reservations/inquiry/")
       },
     },
   });
 
   const viewRoomBookedMutate = () => {
-    if (!selectedData.length) {
+    if (!selectedData?.length) {
       Toast.error("Please select at least one room");
       return;
     }
 
     const groupedRooms = Object.values(
-      selectedData.reduce((acc, item) => {
+      selectedData?.reduce((acc, item) => {
         const roomTypeUuid = item.roomTypeUuid;
         if (!acc[roomTypeUuid]) {
           acc[roomTypeUuid] = {
@@ -206,6 +207,9 @@ const ReservationList = () => {
       taxTotal: roomBookValues?.taxTotal,
       discountTotal: roomBookValues?.discountTotal,
       grandTotal: roomBookValues?.grandTotal,
+      currency:{
+        uuid: currencyUuid
+      },
       rooms
 
     };
@@ -215,8 +219,7 @@ const ReservationList = () => {
 
   //total booked rooms per roomType
   const getBookedCount = (roomTypeId) => {
-    return selectedData
-      .filter((item) => item.roomTypeId === roomTypeId)
+    return selectedData?.filter((item) => item.roomTypeId === roomTypeId)
       .reduce((sum, item) => sum + (item.selectedRoomCount || 1), 0);
   };
 
@@ -287,7 +290,7 @@ const ReservationList = () => {
     {
       title: "",
       render: (_, record) => {
-        const isBooked = selectedData.some((item) => item.key === record.key);
+        const isBooked = selectedData?.some((item) => item.key === record.key);
 
         return (
           <Button

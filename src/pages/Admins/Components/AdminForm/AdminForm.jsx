@@ -402,6 +402,7 @@ const AdminForm = ({
                       justifyContent: "space-between",
                       alignItems: "center",
                     }}
+                    className="dark:!bg-[#141414] "
                   >
                     <span className="font-bold">Current Permissions</span>
 
@@ -428,6 +429,7 @@ const AdminForm = ({
                       justifyContent: "space-between",
                       alignItems: "center",
                     }}
+                    className="dark:!bg-[#141414] "
                   >
                     <span className="font-bold">Additional Permissions</span>
 

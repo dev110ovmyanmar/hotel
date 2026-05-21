@@ -64,8 +64,8 @@ import { GrUserSettings } from "react-icons/gr";
 import { RiCalendarScheduleLine, RiServiceBellLine } from "react-icons/ri";
 import { BsBuildingFillGear, BsBuildings } from "react-icons/bs";
 import { AiOutlineSolution } from "react-icons/ai";
-
 import NetworkErrorPage from "../NetworkErrorPage/NetworkErrorPage";
+import { Grid } from "antd";
 
 const Dashboard = lazy(() => import("../../pages/Dashboard/Dashboard"));
 const Calendar = lazy(() => import("../../pages/Calendar/Calendar"));
@@ -248,6 +248,11 @@ const ReservationsMenu = lazy(
   () => import("../../pages/NewReservation/Components/ReservationsMenu"),
 );
 
+const ServicePackage = lazy(
+  () => import("../../pages/ServicePackage/ServicePackageList"),
+);
+
+
 export const authRoutes = [
   {
     key: 1,
@@ -277,6 +282,7 @@ export const authRoutes = [
 
   {
     key: 40,
+    id: "/reservations",
     label: "Reservations",
     path: "/reservations/:status",
     icon: <ScheduleOutlined style={{ fontSize: "20px" }} />,
@@ -317,6 +323,7 @@ export const authRoutes = [
 
   {
     key: 4,
+    id: "/rates-availability",
     label: "Rates & Availability",
     isPrivate: false,
     icon: <MdOutlineAutoGraph style={{ fontSize: "20px" }} />,
@@ -386,6 +393,7 @@ export const authRoutes = [
 
   {
     key: 5,
+    id: "/manage-rooms",
     label: "Room Management",
     isPrivate: false,
     icon: <MdViewList style={{ fontSize: "20px" }} />,
@@ -512,6 +520,7 @@ export const authRoutes = [
   // },
   {
     key: 8,
+    id: "/staff-management",
     label: "Staff Management",
     isPrivate: false,
     icon: <GrUserSettings style={{ fontSize: "20px" }} />,
@@ -537,6 +546,7 @@ export const authRoutes = [
   },
   {
     key: 9,
+    id: "/inventory-management",
     label: "Inventory Management",
     isPrivate: false,
     icon: <AuditOutlined style={{ fontSize: "20px" }} />,
@@ -580,6 +590,7 @@ export const authRoutes = [
   },
   {
     key: 10,
+    id: "/access-control",
     label: "Access Control",
     isPrivate: false,
     icon: <SafetyOutlined style={{ fontSize: "20px" }} />,
@@ -646,6 +657,7 @@ export const authRoutes = [
   },
   {
     key: 12,
+    id: "/facility-management",
     label: "Facility Management",
     isPrivate: false,
     icon: <BsBuildingFillGear style={{ fontSize: "20px" }} />,
@@ -684,6 +696,7 @@ export const authRoutes = [
   },
   {
     key: 13,
+    id: "/services-management",
     label: "Services Management",
     isPrivate: false,
     icon: <CustomerServiceOutlined style={{ fontSize: "20px" }} />,
@@ -705,15 +718,15 @@ export const authRoutes = [
         component: <ServiceInventoryListing />,
         permission: PERMISSIONS.SERVICE_INVENTORY_LIST,
       },
-      // {
-      //   key: 13.2,
-      //   label: "Service Orders",
-      //   path: "/services-management/service-orders",
-      //   icon: <DatabaseOutlined style={{ fontSize: "20px" }} />,
-      //   isPrivate: true,
-      //   // component: < />,
-      //   // permission: ".list",
-      // },
+      {
+        key: 13.3,
+        label: "Packages",
+        path: "/services-management/packages",
+        icon: <LuPackageSearch style={{ fontSize: "20px" }} />,
+        isPrivate: true,
+        component: <ServicePackage />,
+        permission: PERMISSIONS.SERVICE_PACKAGE_LIST,
+      },
       // {
       //   key: 13.3,
       //   label: "Service Packages",
@@ -734,6 +747,7 @@ export const authRoutes = [
   },
   {
     key: 14,
+    id: "/f&b-management",
     label: "F&B  Management",
     isPrivate: false,
     icon: <IoRestaurantOutline style={{ fontSize: "20px" }} />,
@@ -827,6 +841,7 @@ export const authRoutes = [
   },
   {
     key: 15,
+    id: "/settings",
     label: "Settings",
     isPrivate: false,
     icon: <SettingOutlined style={{ fontSize: "20px" }} />,
@@ -885,8 +900,8 @@ export const authRoutes = [
   },
   {
     key: 16,
+    id: "/billing-finance",
     label: "Billing & Finance",
-    path: "/billing-finance",
     icon: <WalletOutlined style={{ fontSize: "20px" }} />,
     nested: [
       {
@@ -910,6 +925,7 @@ export const authRoutes = [
   },
   {
     key: 17,
+    id: "/partners",
     label: "Partners",
     icon: <MdGroups3 style={{ fontSize: "20px" }} />,
     nested: [
@@ -998,6 +1014,7 @@ export const authRoutes = [
   // },
   {
     key: 27,
+    id: "/house-keeping",
     label: "House Keeping",
     icon: <GiVacuumCleaner style={{ fontSize: "20px" }} />,
     nested: [
@@ -1046,6 +1063,7 @@ const AuthRoutes = () => {
       _.map(authRoutes, (route) => (route.nested ? route.nested : route)),
     );
   }, []);
+
 
   return (
     <>

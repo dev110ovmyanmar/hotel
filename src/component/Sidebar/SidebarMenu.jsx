@@ -5,13 +5,17 @@ import { authRoutes } from "../Layout/AuthRoutes";
 import { loadState } from "../../utils/Utils";
 import { LOCAL_STORAGE_KEYS } from "../../variables/constants";
 
-const SidebarContent = ({ onClick }) => {
+const SidebarContent = ({
+  onClick,
+  sideBarMenuColor,
+  isCollapsed
+}) => {
   const location = useLocation();
   const navigate = useNavigate();
-
-  const userPermissions = useMemo(() => 
-    loadState(LOCAL_STORAGE_KEYS.initPermissions) || [], 
-  []);
+  console.log(location?.pathname, "INSideBarContant")
+  const userPermissions = useMemo(() =>
+    loadState(LOCAL_STORAGE_KEYS.initPermissions) || [],
+    []);
 
   const handleMenuItemClick = (path) => {
     navigate(path);
@@ -31,7 +35,7 @@ const SidebarContent = ({ onClick }) => {
         return true;
       })
       .map((route) => {
-        const { path, label, icon, nested, key } = route;
+        const { path, label, icon, nested, key, id } = route;
 
         // If there are nested routes, recurse
         if (nested) {
@@ -40,7 +44,8 @@ const SidebarContent = ({ onClick }) => {
           if (children.length === 0) return null;
 
           return {
-            key: key || path,
+            key: id || path,
+            id,
             label,
             icon,
             children,
@@ -49,11 +54,12 @@ const SidebarContent = ({ onClick }) => {
 
         // Standard menu item
         return {
-          key: path,
+          key: id || path,
+          id,
           label,
           icon,
           onClick: () => handleMenuItemClick(path),
-          className: location.pathname === path ? "custom-selected-item" : "",
+          className: location.pathname === path ? "custom-selected-item" : location.pathname === id ? "custom-selected-nested-item" : "",
         };
       })
       .filter(Boolean); // Remove null entries from filtered permissions
@@ -62,11 +68,45 @@ const SidebarContent = ({ onClick }) => {
   // Memoize the items to prevent unnecessary re-renders
   const menuItems = useMemo(() => getMenuItems(authRoutes), [authRoutes, userPermissions, location.pathname]);
 
+  const findParentKey = (items, pathname, parentKey = null) => {
+    for (const item of items) {
+
+      // Match by id
+      if (item.id && pathname.startsWith(item.id)) {
+        return parentKey || item.key;
+      }
+
+      if (item.children) {
+        const found = findParentKey(
+          item.children,
+          pathname,
+          item.key
+        );
+
+        if (found) {
+          return found;
+        }
+      }
+    }
+
+    return null;
+  };
+
+  const selectedKey = isCollapsed
+    ? findParentKey(menuItems, location.pathname)
+    : location.pathname.includes("/reservations")
+      ? "/reservations"
+      : location.pathname;
+
   return (
     <Menu
       mode="inline"
-      selectedKeys={[location.pathname]}
+      selectedKeys={[selectedKey]}
       items={menuItems}
+      className={`
+        ${sideBarMenuColor}
+        ${isCollapsed ? "collapsed-menu" : "expanded-menu"}
+      `}
     />
   );
 };

@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   AutoComplete,
   Button,
@@ -42,40 +42,19 @@ const CreateGuestForm = ({
     fetchQueryName: "reservation-meta",
     fetchQueryFunction: reservationMeta,
   });
-
   const
     guestsOptions =
       reservationMetas?.guests?.map((item) => ({
         label: `${item.name}  ${item.nrcNo ? '(' + item.nrcNo + ')' + " " + '(' + item.phone + ')' : '(' + item.phone + ')'}`,
         value: item.uuid,
-        name: item.name
+        name: item.name,
+        phone: item.phone
       })) || [];
 
+
+
   const [searchText, setSearchText] = useState("");
-  const [options, setOptions] = useState(guestsOptions);
   const [value, setValue] = useState("");
-
-  const handleSelect = (value) => {
-    console.log("Selected", value);
-    setValue(value)
-  };
-
-  const handleKeyDown = (e) => {
-    if (e.key === "Enter") {
-      const inputValue = e.target.value.trim();
-
-      if (!inputValue) return;
-
-      setOptions(prev => [
-        ...prev,
-        {
-          value: inputValue
-        }
-      ]);
-
-      setValue(inputValue)
-    }
-  }
 
   const onClick = () => {
     setCreateContactFinish(true);
@@ -85,10 +64,6 @@ const CreateGuestForm = ({
       //     "name": "f2c7bdf7c2a249e9a4ac28925625d59b",
       //     "phone": "09123456789"
       // }
-      console.log(values, "ValuesOnClick")
-      const selectedGuest = reservationMetas?.guests?.find(
-        (guest) => guest.uuid === values.name
-      );
 
       let payload = {
         title: values.title,
@@ -97,15 +72,16 @@ const CreateGuestForm = ({
           uuid: statusOptions[0]?.value,
         },
       };
-
+      console.log(values, "PayloadExisting");
       // existing guest
-      if (selectedGuest) {
+      if (values.guestUuid) {
         payload = {
           ...payload,
-          uuid: selectedGuest.uuid,
-          name: selectedGuest.name,
+          uuid: values.guestUuid,
+          name: values.name,
         };
       }
+
 
       // new guest
       else {
@@ -158,42 +134,6 @@ const CreateGuestForm = ({
               <Select options={titleOptions} placeholder="Select Title" />
             </Form.Item>
 
-            {/* <Form.Item
-              label="Name"
-              name="name"
-              rules={[{ required: false }]}
-              style={{ width: '80%' }}
-            >
-              <Select
-                mode="combobox"
-                showSearch
-                allowClear
-                placeholder="Select or type guest name"
-                options={guestsOptions}
-                filterOption={(input, option) =>
-                  option?.label
-                    ?.toLowerCase()
-                    .includes(input.toLowerCase())
-                }
-                onSearch={(value) => {
-                  setSearchText(value); //  store typed value
-                }}
-                onChange={(value, option) => {
-                  setSearchText("");
-                  createContactForm.setFieldValue("name", value);
-
-                }}
-
-                onInputKeyDown={(e) => {
-                  if (searchText) {
-                    createContactForm.setFieldValue("name", searchText);
-                  }
-                }}
-
-              />
-
-            </Form.Item> */}
-
             <Form.Item
               label="Name"
               name="name"
@@ -208,18 +148,29 @@ const CreateGuestForm = ({
                     .includes(inputValue.toLowerCase())
                 }
                 onSelect={(value, option) => {
-                  createContactForm.setFieldValue("name", option.name);
+                  createContactForm.setFieldsValue({
+                    name: option.name,
+                    guestUuid: value,
+                  });
                 }}
-                onChange={(value, option) => {
-                  createContactForm.setFieldValue("name", value);
-                }}
+                onChange={(value,option) => {
+                  console.log(value,"ValueOnChange");
 
+                  createContactForm.setFieldsValue({
+                    phone: option.phone,
+                    guestUuid: null
+                  });
+                }}
               >
                 <Input />
               </AutoComplete>
             </Form.Item>
           </Space.Compact>
         </Row>
+
+        <Form.Item name="guestUuid" hidden>
+          <Input />
+        </Form.Item>
 
         <Row gutter={16}>
           <Col span={12}>
@@ -257,7 +208,6 @@ const CreateGuestForm = ({
               label="Secondary Phone Number"
               name="phonetwo"
               rules={[
-                { required: true },
                 {
                   validator: validatePhoneNumber
                 }

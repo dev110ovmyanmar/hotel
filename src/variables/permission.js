@@ -230,8 +230,12 @@ export const PERMISSIONS = {
   ROOM_RESTRICTION_EDIT: "room-restriction.edit",
 
   //Reservation room
-  RESERVATION_ROOM_LIST:"reservation-room.list",
-  RESERVATION_ROOM_VIEW:"reservation-room.create",
-  RESERVATION_ROOM_CREATE:"reservation-room.view",
-  RESERVATION_ROOM_SEARCH:"reservation-room.search",
+  RESERVATION_ROOM_LIST: "reservation-room.list",
+  RESERVATION_ROOM_VIEW: "reservation-room.create",
+  RESERVATION_ROOM_CREATE: "reservation-room.view",
+  RESERVATION_ROOM_SEARCH: "reservation-room.search",
+
+  //Service Packages
+  SERVICE_PACKAGE_LIST: "service-package.list",
 };
+

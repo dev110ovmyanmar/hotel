@@ -40,7 +40,7 @@ const Breadcrumbs = () => {
   return (
     <div className="breadcrumbs">
       {crumbs}
-      <Divider className="custom-divider" />
+      {/* <Divider className="custom-divider" /> */}
     </div>
   );
 };

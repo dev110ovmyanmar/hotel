@@ -8,6 +8,7 @@ import Toast from "../../../component/Toast/Toast";
 import useApiQuery from "../../../hooks/useApiQuery";
 import { useApiMutation } from "../../../hooks/useApiMutation";
 import { upsertGuest, getGuestDetail } from "../../../api/guestApi";
+import { validatePhoneNumber } from "../../../utils";
 
 const { TextArea } = Input;
 
@@ -23,6 +24,7 @@ const GuestForm = ({
 }) => {
   const [form] = Form.useForm();
   const queryClient = useQueryClient();
+  const phoneValue = Form.useWatch("phone", form);
   const [selectedCountryUuid, setSelectedCountryUuid] = useState(null);
 
   const isView = mode === "view";
@@ -219,27 +221,45 @@ const GuestForm = ({
             <div className="col-span-12">
               <Form.Item
                 label="Phone"
-                name="phoneNumber"
+                name="phone"
+                // rules={[
+                //   {
+                //     validator: (_, value) => {
+                //       // approve submit when value is empty
+                //       if (!value) {
+                //         return Promise.resolve();
+                //       }
+
+                //       // Check if contains only digits
+                //       if (!/^\d+$/.test(value)) {
+                //         return Promise.reject(new Error("Phone number must contain only digits"));
+                //       }
+                //       return Promise.resolve();
+                //     },
+                //   },
+                // ]}
                 rules={[
                   {
-                    validator: (_, value) => {
-                      // approve submit when value is empty
-                      if (!value) {
-                        return Promise.resolve();
-                      }
-
-                      // Check if contains only digits
-                      if (!/^\d+$/.test(value)) {
-                        return Promise.reject(new Error("Phone number must contain only digits"));
-                      }
-                      return Promise.resolve();
-                    },
-                  },
+                    validator: validatePhoneNumber
+                  }
                 ]}
               >
                 <Input
                   readOnly={isView}
+                  addonBefore="+959"
+                  onKeyPress={(e) => {
+                    if (!/[0-9]/.test(e.key)) {
+                      e.preventDefault();
+                    }
+                  }}
                   placeholder="Enter Phone Number"
+                  maxLength={
+                    phoneValue?.startsWith("09")
+                      ? 11
+                      : phoneValue?.startsWith("9")
+                        ? 10
+                        : 9
+                  }
                 // onInput={(e) => (e.target.value = e.target.value.replace(/\D/g, ""))}
                 />
               </Form.Item>

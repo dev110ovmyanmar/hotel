@@ -21,7 +21,7 @@ const NetworkErrorPage = () => {
                     width: "100%",
                     height: "100%",
                     background: "white",
-                    zIndex: "1000"
+                    zIndex: "1000000"
                 }}
             >
                 <div className="w-full h-full flex flex-col justify-center items-center">

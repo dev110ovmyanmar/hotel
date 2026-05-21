@@ -82,7 +82,7 @@
   --ant-border-radius: 5px;
 }
 
-.ant-form-item-label > label {
+.ant-form-item-label>label {
   --ant-form-label-font-size: 12px;
   font-weight: 500;
   --ant-form-label-color: #474141;
@@ -166,7 +166,7 @@
   --ant-color-text-disabled: rgba(0, 0, 0, 1);
 }
 
-.ant-checkbox-disabled + span {
+.ant-checkbox-disabled+span {
   --ant-color-text-disabled: rgba(0, 0, 0, 1);
 }
 
@@ -251,12 +251,12 @@ span .ant-upload {
   transition: all 0.3s ease;
 } */
 
-.custom-table-style .ant-table-thead > tr > th {
+.custom-table-style .ant-table-thead>tr>th {
   background-color: #f0f5ff;
   border-bottom: 1px solid #adc6ff;
 }
 
-.custom-table-style .ant-table-tbody > tr > td {
+.custom-table-style .ant-table-tbody>tr>td {
   background-color: #ffffff;
   border-bottom: 1px solid #adc6ff;
 }
@@ -278,36 +278,14 @@ span .ant-upload {
   padding: 8px 25px;
 }
 
-.ant-table-tbody > tr.ant-table-expanded-row {
+.ant-table-tbody>tr.ant-table-expanded-row {
   background-color: #f3f4f6;
 }
 
-:where(.css-dev-only-do-not-override-1t2537o).ant-table-wrapper
-  .ant-table-tbody
-  > tr
-  > th
-  > .ant-table-wrapper:only-child
-  .ant-table,
-:where(.css-dev-only-do-not-override-1t2537o).ant-table-wrapper
-  .ant-table-tbody
-  > tr
-  > td
-  > .ant-table-wrapper:only-child
-  .ant-table,
-:where(.css-dev-only-do-not-override-1t2537o).ant-table-wrapper
-  .ant-table-tbody
-  > tr
-  > th
-  > .ant-table-expanded-row-fixed
-  > .ant-table-wrapper:only-child
-  .ant-table,
-:where(.css-dev-only-do-not-override-1t2537o).ant-table-wrapper
-  .ant-table-tbody
-  > tr
-  > td
-  > .ant-table-expanded-row-fixed
-  > .ant-table-wrapper:only-child
-  .ant-table {
+:where(.css-dev-only-do-not-override-1t2537o).ant-table-wrapper .ant-table-tbody>tr>th>.ant-table-wrapper:only-child .ant-table,
+:where(.css-dev-only-do-not-override-1t2537o).ant-table-wrapper .ant-table-tbody>tr>td>.ant-table-wrapper:only-child .ant-table,
+:where(.css-dev-only-do-not-override-1t2537o).ant-table-wrapper .ant-table-tbody>tr>th>.ant-table-expanded-row-fixed>.ant-table-wrapper:only-child .ant-table,
+:where(.css-dev-only-do-not-override-1t2537o).ant-table-wrapper .ant-table-tbody>tr>td>.ant-table-expanded-row-fixed>.ant-table-wrapper:only-child .ant-table {
   margin-block: 0 !important;
   margin-inline: 0 !important;
   padding: 0 !important;
@@ -357,6 +335,11 @@ span .ant-upload {
   /* Subtle hover color */
 }
 
+.dark .guest-profile-tabs .ant-tabs-tab:hover {
+  background-color: #262626;
+  /* Subtle hover color */
+}
+
 /* Text styling */
 .guest-profile-tabs .ant-tabs-tab-btn {
   font-size: 15px;
@@ -365,9 +348,21 @@ span .ant-upload {
   /* slate-500 */
 }
 
+.dark .guest-profile-tabs .ant-tabs-tab-btn {
+  font-size: 15px;
+  font-weight: 700 !important;
+  color: #ffffff !important;
+  /* slate-500 */
+}
+
 /* Active tab text color */
 .guest-profile-tabs .ant-tabs-tab-active .ant-tabs-tab-btn {
   color: #1e293b !important;
+  /* slate-800 */
+}
+
+.dark .guest-profile-tabs .ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: #ffffff !important;
   /* slate-800 */
 }
 
@@ -384,12 +379,12 @@ span .ant-upload {
 }
 
 /* Dark Mode For Nested Table */
-.dark .custom-table-style .ant-table-thead > tr > th {
+.dark .custom-table-style .ant-table-thead>tr>th {
   background-color: #0f172a;
   border-bottom: 1px solid #9ca8c5;
 }
 
-.dark .custom-table-style .ant-table-tbody > tr > td {
+.dark .custom-table-style .ant-table-tbody>tr>td {
   background-color: #0f172a;
   border-bottom: 1px solid #adc6ff;
 }
@@ -399,19 +394,20 @@ span .ant-upload {
   border-radius: 4px;
 }
 
-.dark .ant-table-tbody > tr.ant-table-expanded-row {
+.dark .ant-table-tbody>tr.ant-table-expanded-row {
   background-color: #0f172a;
 }
 
 /* Global Icon */
 .dark .custom-global {
   color: #000000 !important;
-  z-index: 999;
+  z-index: 888;
   cursor: pointer;
   padding: 10px;
   border-radius: 50%;
   background-color: #ffffff !important;
 }
+
 .custom-table-font .ant-table-cell {
   font-size: 12px;
 }
@@ -429,12 +425,15 @@ span .ant-upload {
   --ant-modal-header-margin: 0px 0px 0px 10px;
   --ant-modal-header-bg: #f2f2f2;
   /* --ant-modal-body-padding: 10px 20px 0px 20px; */
-} /* Top: 20px | Right: 0px | Bottom: 10px | Left: 0px */
+}
+
+/* Top: 20px | Right: 0px | Bottom: 10px | Left: 0px */
 
 /* reservation booking detail */
 .custom-line {
   margin: 8px 0px;
 }
+
 .line-height .css-var-_r_0_ {
   --ant-line-height: 30px;
 }
@@ -554,13 +553,15 @@ span .ant-upload {
 .custom-tabs .ant-tabs-tab:nth-child(1).ant-tabs-tab-active .ant-tabs-tab-btn {
   color: #faad14;
 }
- .custom-tabs:has(.ant-tabs-tab:nth-child(1).ant-tabs-tab-active) {
+
+.custom-tabs:has(.ant-tabs-tab:nth-child(1).ant-tabs-tab-active) {
   --ant-tabs-ink-bar-color: #faad14;
 }
 
 .custom-tabs .ant-tabs-tab:nth-child(2).ant-tabs-tab-active .ant-tabs-tab-btn {
   color: #1890ff;
 }
+
 .custom-tabs:has(.ant-tabs-tab:nth-child(2).ant-tabs-tab-active) {
   --ant-tabs-ink-bar-color: #1890ff;
 }
@@ -568,6 +569,7 @@ span .ant-upload {
 .custom-tabs .ant-tabs-tab:nth-child(3).ant-tabs-tab-active .ant-tabs-tab-btn {
   color: #78c63d;
 }
+
 .custom-tabs:has(.ant-tabs-tab:nth-child(3).ant-tabs-tab-active) {
   --ant-tabs-ink-bar-color: #78c63d;
 }
@@ -575,6 +577,7 @@ span .ant-upload {
 .custom-tabs .ant-tabs-tab:nth-child(4).ant-tabs-tab-active .ant-tabs-tab-btn {
   color: #fa8c16;
 }
+
 .custom-tabs:has(.ant-tabs-tab:nth-child(4).ant-tabs-tab-active) {
   --ant-tabs-ink-bar-color: #fa8c16;
 }
@@ -582,6 +585,7 @@ span .ant-upload {
 .custom-tabs .ant-tabs-tab:nth-child(5).ant-tabs-tab-active .ant-tabs-tab-btn {
   color: #13c2c2;
 }
+
 .custom-tabs:has(.ant-tabs-tab:nth-child(5).ant-tabs-tab-active) {
   --ant-tabs-ink-bar-color: #13c2c2;
 }
@@ -589,6 +593,7 @@ span .ant-upload {
 .custom-tabs .ant-tabs-tab:nth-child(6).ant-tabs-tab-active .ant-tabs-tab-btn {
   color: #ff4d4f;
 }
+
 .custom-tabs:has(.ant-tabs-tab:nth-child(6).ant-tabs-tab-active) {
   --ant-tabs-ink-bar-color: #ff4d4f;
 }
@@ -596,6 +601,7 @@ span .ant-upload {
 .custom-tabs .ant-tabs-tab:nth-child(7).ant-tabs-tab-active .ant-tabs-tab-btn {
   color: #8c8c8c;
 }
+
 .custom-tabs:has(.ant-tabs-tab:nth-child(7).ant-tabs-tab-active) {
   --ant-tabs-ink-bar-color: #8c8c8c;
 }

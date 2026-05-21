@@ -9,6 +9,7 @@ import { LIMITS } from "../../../../../../variables/constants";
 import useApiQuery from "../../../../../../hooks/useApiQuery";
 import { useApiMutation } from "../../../../../../hooks/useApiMutation";
 import Toast from "../../../../../../component/Toast/Toast";
+import ColorStatusTag from "./../../../../../../component/ColorStatusTag/ColorStatusTag";
 
 const GetRoomForm = ({ selectedData, onSelectRoom, onClose, floorUuid }) => {
   const [page] = useState(1);
@@ -31,7 +32,6 @@ const GetRoomForm = ({ selectedData, onSelectRoom, onClose, floorUuid }) => {
       pagination: { page, perPage },
     },
   });
-  console.log(data, "room");
 
   const assignMutation = useApiMutation({
     mutationFn: reservationRoomAssign,
@@ -83,7 +83,7 @@ const GetRoomForm = ({ selectedData, onSelectRoom, onClose, floorUuid }) => {
 
             <div className="flex items-center gap-5">
               <div className="flex flex-col items-center gap-1 mr-40">
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-gray-100 text-gray-600 uppercase">
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-gray-100 text-gray-600 ">
                   {room.status?.name || "Available"}
                 </span>
               </div>
@@ -99,7 +99,7 @@ const GetRoomForm = ({ selectedData, onSelectRoom, onClose, floorUuid }) => {
           </div>
         ))
       ) : (
-        <Empty description="No rooms available for these criteria" />
+        <Empty description="No rooms available" />
       )}
     </div>
   );
