@@ -55,6 +55,8 @@ const UnsettledFolios = ({
             title: "Action",
             name: "action",
             dataIndex: "action",
+            fixed: "end",
+            align: "center",
             render: (_, record) => {
                 const smallStyle = { fontSize: "12px" };
 
@@ -114,34 +116,34 @@ const UnsettledFolios = ({
         {
             key: "1",
             reservationId: "1000",
-            fillioId:"FID1234",
-            fillioLineId:"FLID123456",
+            fillioId: "FID1234",
+            fillioLineId: "FLID123456",
             date: "21/1/2026",
-            guestName:"Liam Johnson Smith",
-            roomNo:"DBD 301",
+            guestName: "Liam Johnson Smith",
+            roomNo: "DBD 301",
             balance: 300000,
         },
         {
             key: "2",
             reservationId: "1000",
-            fillioId:"FID1234",
-            fillioLineId:"FLID123456",
+            fillioId: "FID1234",
+            fillioLineId: "FLID123456",
             date: "21/1/2026",
-            guestName:"Liam Johnson Smith",
-            roomNo:"DBD 302",
+            guestName: "Liam Johnson Smith",
+            roomNo: "DBD 302",
             balance: 300000,
         },
         {
             key: "3",
             reservationId: "1000",
-            fillioId:"FID1234",
-            fillioLineId:"FLID123456",
+            fillioId: "FID1234",
+            fillioLineId: "FLID123456",
             date: "21/1/2026",
-            guestName:"Liam Johnson Smith",
-            roomNo:"DBD 303",
+            guestName: "Liam Johnson Smith",
+            roomNo: "DBD 303",
             balance: 300000,
         },
-        
+
 
 
     ];
