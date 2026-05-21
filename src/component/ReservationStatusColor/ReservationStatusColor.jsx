@@ -50,11 +50,13 @@ const ReservationStatusColor = ({ status }) => {
   return (
     <Tag
       style={{
+        padding: "5px",
         color: color,
         backgroundColor: backgroundColor,
         borderColor: borderColor,
         borderRadius: "5px",
         fontWeight: "500",
+        fontSize: "15px",
         borderStyle: "solid",
         borderWidth: "1px",
       }}
