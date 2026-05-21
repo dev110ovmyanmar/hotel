@@ -8,6 +8,7 @@ import { PERMISSIONS } from "../../../variables/permission";
 import usePermission from "../../../hooks/usePermission";
 import PriceTag from "../../../component/PriceTag/PriceTag";
 import { TableColumns } from "../../../component/TableColumns/TableColumns";
+import ColorStatusTag from "../../../component/ColorStatusTag/ColorStatusTag";
 
 const FacilityPackageTable = ({
   data,
@@ -77,6 +78,13 @@ const FacilityPackageTable = ({
       key: "extraPaxPrice",
       align: "end",
       render: (text) => <PriceTag value={text} />,
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      align: "center",
+      render: (_, record) => <ColorStatusTag status={record?.status} />,
     },
     {
       title: "Action",

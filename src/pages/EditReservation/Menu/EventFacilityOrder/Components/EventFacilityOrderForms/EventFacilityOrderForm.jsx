@@ -18,6 +18,7 @@ import FormButtons from "../../../../../../component/FormButtons/FormButtons";
 import {
   getFormattedDate,
   getFormattedDateTime,
+  validatePhoneNumber,
 } from "../../../../../../utils";
 
 const EventFacilityOrderForm = ({
@@ -28,8 +29,9 @@ const EventFacilityOrderForm = ({
   selectedData,
   onSuccess,
   reservationId,
-}) => {
+}) => { 
   const [form] = Form.useForm();
+  const phoneValue = Form.useWatch("guestPhone",form);
   const [searchOpen, setSearchOpen] = useState(false);
   const isView = mode === "view";
 
@@ -221,8 +223,25 @@ const EventFacilityOrderForm = ({
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="Guest Phone" name="guestPhone">
-                <Input readOnly={isView} placeholder="Enter Guest Phone" />
+              <Form.Item
+                label="Guest Phone"
+                name="guestPhone"
+                rules={[
+                  { validator: validatePhoneNumber }
+
+                ]}
+              >
+                <Input
+                  readOnly={isView}
+                  placeholder="Enter Guest Phone"
+                  maxLength={
+                    phoneValue?.startsWith("09")
+                      ? 11
+                      : phoneValue?.startsWith("9")
+                        ? 10
+                        : 9
+                  }
+                />
               </Form.Item>
             </Col>
           </Row>

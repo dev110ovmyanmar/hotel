@@ -42,8 +42,8 @@ const NightAudit = () => {
                                     <div>
                                         <p className="text-center">The Count-down begins. This alerts the active admin to log out automatically.</p>
 
-                                        <div className="flex justify-center items-center w-full h-full bg-[#FFF1F0] my-5 rounded-sm py-2">
-                                            <MdWarningAmber className="!font-bold !text-[#CF1322] text-xl" />
+                                        <div className="flex justify-center items-center w-full h-full bg-[#FFF1F0] my-5 rounded-sm py-2 sm:p-3">
+                                            <MdWarningAmber className="!font-bold !text-[#CF1322] text-xl " />
                                             <p className="!font-bold !text-[#CF1322] ms-3">All admins are being informed that the Night Audit is going to start. They will be logged out forcefully in 3 minutes.</p>
                                         </div>
 
@@ -68,9 +68,9 @@ const NightAudit = () => {
 
                                         <ActiveAdmins />
 
-                                        <div className="flex justify-center items-center w-full h-full bg-[#FFF1F0] my-5 rounded-sm py-2">
+                                        <div className="flex justify-center items-center w-full h-full bg-[#FFF1F0] my-5 rounded-sm py-2 sm:p-3">
                                             <MdWarningAmber className="!font-bold !text-[#CF1322] text-xl" />
-                                            <p className="!font-bold !text-[#CF1322] ms-3">All admins are being informed that the Night Audit is going to start. They will be logged out forcefully in 3 minutes.</p>
+                                            <p className="!font-bold !text-[#CF1322] ms-3 ">All admins are being informed that the Night Audit is going to start. They will be logged out forcefully in 3 minutes.</p>
                                         </div>
 
                                         <div className="flex justify-center">
