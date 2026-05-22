@@ -145,6 +145,9 @@ export function getNrc({ nrcNo, nrcName, nrcType, nrcPassport }) {
 
 
 export const validatePhoneNumber = (_, value) => {
+  if (!value) {
+    return Promise.resolve();
+  }
 
   if (value.startsWith("09") && value.length !== 11) {
     return Promise.reject(

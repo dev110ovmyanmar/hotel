@@ -59,11 +59,11 @@ const StayHistory = () => {
 
   return (
     <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <h2 className="text-xl font-bold text-slate-800">Stay History</h2>
+      <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100">Stay History</h2>
       
       {historyData.map((section) => (
         <div key={section.year} className="relative">
-          <h3 className="text-lg font-bold text-slate-700 mb-6">{section.year}</h3>
+          <h3 className="text-lg font-bold text-slate-700 dark:text-slate-100 mb-6">{section.year}</h3>
           
           <div className="space-y-12">
             {section.bookings.map((booking, idx) => (
@@ -82,7 +82,7 @@ const StayHistory = () => {
                 <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5 hover:border-blue-300 transition-all">
                   <div className="flex justify-between items-start mb-4">
                     <div className="flex items-center gap-3">
-                      <span className="text-sm font-bold text-slate-800">{booking.dateRange}</span>
+                      <span className="text-sm font-bold text-slate-800 dark:text-slate-100">{booking.dateRange}</span>
                       <span className="text-[10px] bg-slate-100 text-slate-500 px-2 py-0.5 rounded border border-slate-200 font-semibold">
                         {booking.nights}
                       </span>
@@ -93,11 +93,11 @@ const StayHistory = () => {
                   </div>
 
                   <div className="mb-4">
-                    <h4 className="text-lg font-bold text-slate-800 tracking-tight">{booking.roomType}</h4>
+                    <h4 className="text-lg font-bold text-slate-800 dark:text-slate-100 tracking-tight">{booking.roomType}</h4>
                     <p className="text-xs text-slate-400 font-medium">{booking.roomCode}</p>
                   </div>
 
-                  <div className="flex items-center gap-4 text-slate-500 mb-6">
+                  <div className="flex items-center gap-4 text-slate-500 dark:text-slate-100 mb-6">
                     <div className="flex items-center gap-1 text-sm font-bold">
                       <Users size={16} className="text-slate-400" /> {booking.guests}
                     </div>
@@ -108,10 +108,10 @@ const StayHistory = () => {
 
                   <div className="flex justify-between items-center pt-4 border-t border-slate-100">
                     <div className="text-xs text-slate-400 font-medium">
-                      Reservation Id: <span className="text-slate-800 font-bold">{booking.reservationId}</span>
+                      Reservation Id: <span className="text-slate-800 dark:text-slate-100 font-bold">{booking.reservationId}</span>
                     </div>
                     <div className="flex items-center gap-3">
-                      <span className="text-lg font-black text-slate-800">{booking.price}</span>
+                      <span className="text-lg font-black text-slate-800 dark:text-slate-100">{booking.price}</span>
                       <span className={`text-[10px] font-bold px-2 py-1 rounded border ${booking.paymentColor}`}>
                         {booking.paymentStatus}
                       </span>
