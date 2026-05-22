@@ -10,7 +10,7 @@ import ReservationSearchBar from "./ReservationsSearch";
 import { useNavigate, useParams } from "react-router-dom";
 
 const statusColors = {
-  inquery: { color: "#faad14", bg: "#fff7e6", border: "#faad14" },
+  inquiry: { color: "#faad14", bg: "#fff7e6", border: "#faad14" },
   booking: { color: "#1677ff", bg: "#e6f4ff", border: "#1677ff" },
   arrival: { color: "#52c41a", bg: "#f6ffed", border: "#52c41a" },
   departure: { color: "#fa8c16", bg: "#fff2e8", border: "#fa8c16" },
@@ -61,8 +61,8 @@ const ReservationMenu = ({ onStatusChange, onViewChange }) => {
   const items = [
     {
       label: "Inquiry",
-      key: "inquery",
-      count: reservationCounts?.inqueryCount,
+      key: "inquiry",
+      count: reservationCounts?.inquiryCount,
     },
     {
       label: "Booking",
