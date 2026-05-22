@@ -67,7 +67,7 @@ const GuestProfile = () => {
 
   return (
     <>
-      <div className="min-h-screen px-8 py-6 font-sans text-slate-700 bg-slate-50">
+      <div className="min-h-screen px-8 py-6 font-sans text-slate-700 dark:!text-[#D9D9D9] bg-slate-50 dark:bg-[#141414]">
 
         {/* Header Card */}
         <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-6">
@@ -80,7 +80,7 @@ const GuestProfile = () => {
               />
               <div>
                 <div className="flex items-center gap-3 mb-1">
-                  <h1 className="text-2xl font-bold text-slate-800">{guestDetailDatas?.name}</h1>
+                  <h1 className="text-2xl font-bold text-slate-800 dark:!text-[#D9D9D9]">{guestDetailDatas?.name}</h1>
                   <span className="bg-blue-900 text-[#fff] text-xs px-3 py-1 rounded-md flex items-center gap-1">
                     <Star size={12} fill="currentColor" /> Platinum
                   </span>
@@ -109,16 +109,18 @@ const GuestProfile = () => {
               </div>
             </div>
             <button
-              className="flex items-center gap-2 border border-blue-600 text-blue-600 px-4 py-2 rounded-lg hover:bg-blue-50 transition font-medium cursor-pointer"
+              className="flex items-center gap-1 md:gap-2 border border-blue-600 text-blue-600 px-1 md:px-2 lg:px-3 py-1 md:py-2 lg:py-3 rounded-lg hover:bg-blue-50 transition font-medium cursor-pointer"
               onClick={() => setDrawerOpen(true)}
             >
-              <Edit2 size={16} /> Edit Profile
+              {/* <Edit2 size={16} />  */}
+              <Edit2 className="sm:w-2 sm:h-2 md:w-4 md:h-4" /> 
+              <span className="sm:text-xs md:!-md lg:!text-base sm:!p-0 sm:!m-0">Edit Profile</span>
             </button>
           </div>
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <StatCard icon={<Calendar className="text-blue-500" />} label="Total Stays" value="28 Days" />
           <StatCard icon={<DollarSign className="text-green-500" />} label="Total Spent" value="150,000 MMK" />
           <StatCard icon={<Star className="text-blue-900" />} label="Current Tier" value="Platinum" />
@@ -162,8 +164,8 @@ const StatCard = ({ icon, label, value }) => (
   <div className="bg-white p-5 rounded-xl border border-slate-200 flex items-center gap-4 shadow-sm">
     <div className="p-3 bg-slate-50 rounded-lg">{icon}</div>
     <div>
-      <p className="text-xs text-slate-400 uppercase tracking-wider font-semibold">{label}</p>
-      <p className="text-xl font-bold text-slate-800">{value}</p>
+      <p className="text-xs text-slate-400 dark:text-[#C5C5C5] uppercase tracking-wider font-semibold">{label}</p>
+      <p className="text-xl font-bold text-slate-800 dark:text-[#D9D9D9]">{value}</p>
     </div>
   </div>
 );

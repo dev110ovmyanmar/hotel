@@ -12,7 +12,16 @@ import GuestForm from "./GuestForms/GuestForm";
 import NewGuestUploadForm from "./../../../../GuestsListing/Components/NewGuestUploadForm";
 import GuestNoteDrawer from "./GuestForms/GuestNoteDrawer";
 
-const GuestTable = () => {
+const GuestTable = ({
+  data,
+  page,
+  perPage,
+  total,
+  loading,
+  changePage,
+  changePerPage,
+  reservationUuid,
+}) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mode, setMode] = useState("add");
   const [selectedData, setSelectedData] = useState(null);
@@ -20,41 +29,79 @@ const GuestTable = () => {
   const [uploadOpen, setUploadOpen] = useState(false);
   const [noteOpen, setNoteOpen] = useState(false);
 
-  useEffect(() => {
-    const savedGuests = JSON.parse(localStorage.getItem("guests")) || [];
-    setDataSource(savedGuests);
-  }, []);
-
-  const refreshData = () => {
-    const savedGuests = JSON.parse(localStorage.getItem("guests")) || [];
-    setDataSource(savedGuests);
-  };
-
   const columns = [
     { title: "ID", dataIndex: "id", key: "id", width: 70 },
-    { title: "Guest Name", dataIndex: "name", key: "name" },
-    { title: "NRC", dataIndex: "nrc_no", key: "nrc_no" },
     {
-      title: "Passport",
-      dataIndex: "passport",
-      key: "passport",
-    },
-    { title: "Room No", dataIndex: "room_no", key: "room_no" },
-    { title: "Phone Number", dataIndex: "phone_no1", key: "phone_no1" },
-    {
-      title: "Guest",
-      dataIndex: "guest",
-      key: "guest",
+      title: "Guest Name",
+      key: "name",
+      render: (_, record) => record?.guest?.name || record?.name || "-",
     },
     {
-      title: "Nationality",
-      dataIndex: "nationality",
-      key: "nationality",
+      title: "Room",
+      key: "room",
+      dataIndex: ["reservationRoom", "room", "roomNo"],
+      align:"center",
+      render: (roomNo, record) => {
+        const checkinDate = record?.reservationRoom?.checkinDate;
+        const checkoutDate = record?.reservationRoom?.checkoutDate;
+
+        if (!roomNo) return "-";
+
+        return (
+          <div>
+            <div style={{ fontWeight: "500" }}>{roomNo}</div>
+
+            {checkinDate && checkoutDate && (
+              <div
+                style={{ fontSize: "12px", color: "#8c8c8c", marginTop: "2px" }}
+              >
+                ({checkinDate} - {checkoutDate})
+              </div>
+            )}
+          </div>
+        );
+      },
     },
+    {
+      title: "NRC",
+      dataIndex: ["guest", "nrcNo"],
+      key: "nrcNo",
+      render: (text) => (text ? text : "-"),
+    },
+    // {
+    //   title: "Passport",
+    //   dataIndex: ["guest", "passport"],
+    //   key: "passport",
+    //   render: (text) => (text ? text : "-"),
+    // },
+    {
+      title: "Phone Number",
+      dataIndex: ["guest", "phone"],
+      key: "phone",
+      render: (text) => (text ? text : "-"),
+    },
+    {
+      title: "Guest Type",
+      dataIndex: "isPrimary",
+      key: "isPrimary",
+      render: (text) => (
+        <div 
+        // className={text === true ? "text-[#389E0D]" : "text-[#CF1322]"}
+        >
+          {text === true ? "Main Guest" : "Share Guest"}
+        </div>
+      ),
+    },
+    // {
+    //   title: "Nationality",
+    //   dataIndex: ["guest", "nationality"],
+    //   key: "nationality",
+    //   render: (text) => (text ? text : "-"),
+    // },
 
     {
       title: "Action",
-      fixed:"end",
+      fixed: "end",
       align: "center",
       render: (_, record) => (
         <Space size="middle">
@@ -63,6 +110,16 @@ const GuestTable = () => {
               onClick={() => {
                 setSelectedData(record);
                 setMode("view");
+                setDrawerOpen(true);
+              }}
+            />
+          </Tooltip>
+
+          <Tooltip title="Edit Details">
+            <EditOutlined
+              onClick={() => {
+                setSelectedData(record);
+                setMode("edit");
                 setDrawerOpen(true);
               }}
             />
@@ -83,28 +140,43 @@ const GuestTable = () => {
 
   return (
     <div>
-      <Table columns={columns} dataSource={dataSource} rowKey="id" />
-
-      <GuestForm
-        mode={mode}
-        setMode={setMode}
-        drawerOpen={drawerOpen}
-        setDrawerOpen={setDrawerOpen}
-        selectedData={selectedData}
-        onSuccess={refreshData}
+      <Table
+        tableLayout="fixed"
+        scroll={{ x: 1000 }}
+        columns={columns}
+        dataSource={data}
+        rowKey="uuid"
+        pagination={{
+          current: page,
+          pageSize: perPage,
+          total: total,
+          onChange: (page, perPage) => {
+            changePage(page);
+            changePerPage(perPage);
+          },
+          showSizeChanger: true,
+        }}
+        loading={loading}
       />
 
+      {drawerOpen && (
+        <GuestForm
+          page={page}
+          mode={mode}
+          setMode={setMode}
+          guestData={selectedData}
+          drawerOpen={drawerOpen}
+          setDrawerOpen={setDrawerOpen}
+          selectedData={selectedData}
+          setSelectedData={setSelectedData}
+          reservationUuid={reservationUuid}
+        />
+      )}
       <NewGuestUploadForm
         open={uploadOpen}
         onClose={() => setUploadOpen(false)}
         reservationId={selectedData?.id}
       />
-
-      {/* <GuestNoteDrawer
-        open={noteOpen}
-        onClose={() => setNoteOpen(false)}
-        reservationId={selectedData?.id}
-      /> */}
     </div>
   );
 };

@@ -159,7 +159,7 @@ const ColorStatusTag = ({ status }) => {
     out_of_order: "#CF1322",
     out_of_order_bg: "#FFF1F0",
     out_of_order_border: "#FFA39E",
-
+    
     out_of_service: "#333333",
     out_of_service_bg: "#F5F5F5",
     out_of_service_border: "#D9D9D9",
@@ -168,7 +168,7 @@ const ColorStatusTag = ({ status }) => {
     reported_bg: "#FFF1F0",
     reported_border: "#FFA39E",
 
-    inquery: "#faad14",
+    inquiry: "#faad14",
   };
 
   const code = status?.code;

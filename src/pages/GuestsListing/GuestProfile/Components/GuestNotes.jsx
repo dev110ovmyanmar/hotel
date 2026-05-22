@@ -12,8 +12,8 @@ import {
 
 const GuestNotes = () => {
   return (
-    <div className="w-full mx-auto py-6 space-y-6 bg-slate-50">
-      <h2 className="text-xl font-bold text-slate-800 ml-1">Guest Notes</h2>
+    <div className="w-full mx-auto py-6 space-y-6 bg-slate-50 dark:bg-[#141414]">
+      <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100 ml-1">Guest Notes</h2>
 
       {/* --- CREATE NEW NOTE SECTION --- */}
       <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 relative">
@@ -21,7 +21,7 @@ const GuestNotes = () => {
           <X size={20} />
         </button>
 
-        <h3 className="text-lg font-bold text-slate-800 mb-6">Create New Note</h3>
+        <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100 mb-6">Create New Note</h3>
 
         {/* Note Type Selector */}
         <div className="space-y-3 mb-6">
@@ -39,7 +39,7 @@ const GuestNotes = () => {
           <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Note Content</p>
           <textarea 
             placeholder="Enter note details..."
-            className="w-full h-32 p-4 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-100 text-sm"
+            className="w-full h-32 p-4 bg-slate-50 dark:bg-[#141414] border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-100 text-sm"
           />
         </div>
 
@@ -61,8 +61,9 @@ const GuestNotes = () => {
             { label: "Special Request", color: "text-orange-500 bg-orange-50 border-orange-100", icon: <Star size={12} /> }
           ]}
           content="Guest prefers high floor rooms with city view. Allergic to feather pillows - always provide hypoallergenic bedding."
-          meta="House Keeping • Jan 2, 2026 at 9:45 AM"
+          meta="Jan 2, 2026 at 9:45 AM"
           isStarred={true}
+          
         />
 
         {/* General Note */}
@@ -72,7 +73,7 @@ const GuestNotes = () => {
             { label: "General", color: "bg-slate-100 text-slate-700 border-slate-200", icon: <MessageSquare size={12} /> }
           ]}
           content="Guest requested late check-out for the departure on the 28th. Noted in the booking calendar for Housekeeping awareness."
-          meta="House Keeping • Jan 2, 2026 at 9:45 AM"
+          meta="Jan 2, 2026 at 9:45 AM"
           isStarred={false}
         />
 
@@ -83,7 +84,7 @@ const GuestNotes = () => {
             { label: "Complaint", color: "text-red-500 bg-red-50 border-red-100", icon: <AlertCircle size={12} /> }
           ]}
           content="Previously complained about noise from elevator on Floor 3 during Nov stay. Provided complimentary room upgrade and breakfast. Issue resolved satisfactorily."
-          meta="Maintenance Team • Jan 2, 2026 at 9:45 AM"
+          meta="Jan 2, 2026 at 9:45 AM"
           isStarred={false}
         />
 

@@ -24,6 +24,7 @@ import Loader from "../../../../component/Loader/Loader";
 import usePermission from "../../../../hooks/usePermission";
 import { PERMISSIONS } from "../../../../variables/permission";
 import dayjs from "dayjs";
+import Status from "../../../../component/Status/Status";
 
 const FacilityPackageForm = ({
   mode,
@@ -103,6 +104,16 @@ const FacilityPackageForm = ({
       setSelectedData(data);
     }
   }, [data]);
+
+  useEffect(() => {
+    if (isAdd) {
+      form.setFieldsValue({
+        status: {
+          uuid: status?.find((item) => item?.code === "active")?.uuid,
+        },
+      });
+    }
+  })
 
   const handleClose = () => {
     setDrawerOpen(false);
@@ -380,6 +391,8 @@ const FacilityPackageForm = ({
             >
               <Input.TextArea readOnly={isView} placeholder="Enter Remark" />
             </Form.Item>
+
+            <Status isView={isView} statusValue={status} />
           </Form>
         )}
       </Drawer>

@@ -23,7 +23,7 @@ const RatePlanRows = ({ rp, rt, daysMeta, getRateData, handleRestrictionEditOpen
         {/* Rate Plan Name Header */}
         <tr className="bg-[#f0f5ff]">
             <td className="sticky left-0 z-30 bg-[#f0f5ff] border-b border-r border-[#dee2e6] px-4 py-1" colSpan={1}>
-                <div className="text-[12px] font-semibold text-blue-700 pl-2 border-l-2 border-blue-400">
+                <div className="text-[12px] font-semibold text-[#072F60] pl-2 border-l-2 border-[#072F60]">
                     {rp.name}
                 </div>
             </td>

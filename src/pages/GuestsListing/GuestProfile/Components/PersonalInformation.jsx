@@ -23,7 +23,7 @@ const PersonalInformation = ({
 }) => {
   
   return (
-    <div className="grid grid-cols-2 gap-8 items-stretch animate-in fade-in slide-in-from-bottom-2 duration-500">
+    <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-8 items-stretch animate-in fade-in slide-in-from-bottom-2 duration-500">
     <InfoSection title="Basic Information" icon={<User size={18} />}>
       <DataRow label="Full Name" value={personalInfo?.name} />
       <DataRow label="Name Other Language" value={personalInfo?.otherName} />
