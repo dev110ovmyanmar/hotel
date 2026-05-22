@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Layout, Modal } from "antd";
+import { Layout, Modal, Divider } from "antd";
 import Sidebar from "../Sidebar/Sidebar";
 import AuthRoutes from "./AuthRoutes";
 import { Footer } from "antd/es/layout/layout";
@@ -47,7 +47,7 @@ const AuthLayout = () => {
         },
       },
     });
-  };  
+  };
 
   const logout = () => {
     localStorage.clear();
@@ -63,7 +63,7 @@ const AuthLayout = () => {
         <Layout className="flex-row overflow-x-hidden">
           <Sidebar />
           <Layout
-          className="overflow-hidden border-l border-gray-300 shrink-0 w-full md:w-[calc(100% - 80px)]"
+            className="overflow-hidden border-l border-gray-300 shrink-0 w-full md:w-[calc(100% - 80px)]"
             style={{
               height: appHeight,
             }}
@@ -74,6 +74,7 @@ const AuthLayout = () => {
               id="list-root"
             >
               <Breadcrumbs />
+              <Divider className="custom-divider" />
               <AuthRoutes />
             </Content>
             <Footer className="text-center text-md bg-white border-t border-gray-300">

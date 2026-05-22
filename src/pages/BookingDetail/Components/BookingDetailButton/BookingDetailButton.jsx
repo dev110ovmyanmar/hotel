@@ -16,9 +16,9 @@ import {
 
 const BookingDetailButton = ({ data }) => {
   const reservation = data?.reservation;
-  const status = reservation?.reservationStatus?.name?.toUpperCase();
+  const status = reservation?.reservationStatus?.code?.toUpperCase();
   const actions = status_actions[status] || [];
-
+  
   const [form] = Form.useForm();
   const [open, setOpen] = useState(false);
   const [amendOpen, setAmendOpen] = useState(false);

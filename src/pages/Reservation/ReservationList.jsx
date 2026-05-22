@@ -109,7 +109,7 @@ const ReservationList = () => {
     options: {
       onSuccess: (values) => {
         Toast.success(values);
-        navigate("/reservations/inquiry/")
+        navigate("/reservations/all/")
       },
     },
   });

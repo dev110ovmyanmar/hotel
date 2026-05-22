@@ -33,8 +33,8 @@ export const status_actions = {
   PENDING: ["changeStatus", "amendBooking", "addPayment"],
   BOOKED: ["changeStatus", "amendBooking", "addPayment"],
   CONFIRMED: ["changeStatus", "amendBooking", "addPayment", "overtimeCharges"],
-  CANCELLED: ["changeStatus", "amendBooking", "addPayment", "overtimeCharges"],
-  CHECK_IN: [
+  // CANCELLED: ["changeStatus", "amendBooking", "addPayment", "overtimeCharges"],
+  CHECKED_IN: [
     "changeStatus",
     "amendBooking",
     "addPayment",

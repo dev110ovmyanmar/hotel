@@ -248,6 +248,9 @@ const ReservationsMenu = lazy(
   () => import("../../pages/NewReservation/Components/ReservationsMenu"),
 );
 
+const ServicePackage = lazy(
+  () => import("../../pages/ServicePackage/ServicePackageList"),
+);
 
 
 export const authRoutes = [
@@ -255,7 +258,7 @@ export const authRoutes = [
     key: 1,
     path: "/dashboard/",
     label: "Dashboard",
-    icon : <DashboardOutlined style={{ fontSize: "20px"}}   />,
+    icon: <DashboardOutlined style={{ fontSize: "20px" }} />,
     component: <Dashboard />,
     isPrivate: false,
   },
@@ -279,7 +282,7 @@ export const authRoutes = [
 
   {
     key: 40,
-    id:"/reservations",
+    id: "/reservations",
     label: "Reservations",
     path: "/reservations/:status",
     icon: <ScheduleOutlined style={{ fontSize: "20px" }} />,
@@ -320,7 +323,7 @@ export const authRoutes = [
 
   {
     key: 4,
-    id:"/rates-availability",
+    id: "/rates-availability",
     label: "Rates & Availability",
     isPrivate: false,
     icon: <MdOutlineAutoGraph style={{ fontSize: "20px" }} />,
@@ -715,15 +718,15 @@ export const authRoutes = [
         component: <ServiceInventoryListing />,
         permission: PERMISSIONS.SERVICE_INVENTORY_LIST,
       },
-      // {
-      //   key: 13.2,
-      //   label: "Service Orders",
-      //   path: "/services-management/service-orders",
-      //   icon: <DatabaseOutlined style={{ fontSize: "20px" }} />,
-      //   isPrivate: true,
-      //   // component: < />,
-      //   // permission: ".list",
-      // },
+      {
+        key: 13.3,
+        label: "Packages",
+        path: "/services-management/packages",
+        icon: <LuPackageSearch style={{ fontSize: "20px" }} />,
+        isPrivate: true,
+        component: <ServicePackage />,
+        permission: PERMISSIONS.SERVICE_PACKAGE_LIST,
+      },
       // {
       //   key: 13.3,
       //   label: "Service Packages",
