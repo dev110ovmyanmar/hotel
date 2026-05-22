@@ -15,6 +15,7 @@ import {
   availabilitySearch,
   createReservationRoom,
 } from "../../../../../../api/reservationSectionApi";
+import Toast from "../../../../../../component/Toast/Toast";
 
 const { RangePicker } = DatePicker;
 
@@ -234,15 +235,11 @@ const RoomInformationForm = ({
           <span>
             {mode === "view"
               ? "Room Information Details"
-              : mode === "edit"
-                ? "Edit Room Information"
-                : "Create Room Information"}
+              : "Create Room Information"}
           </span>
 
           {isView ? (
-            <Button type="primary" onClick={() => setMode("edit")}>
-              Edit
-            </Button>
+            <Button type="primary"></Button>
           ) : (
             <FormButtons
               onClick={() => form.submit()}

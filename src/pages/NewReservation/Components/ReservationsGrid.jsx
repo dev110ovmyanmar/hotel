@@ -122,7 +122,6 @@ const ReservationsGrid = ({
                     marginBottom: 16,
                     overflow: "hidden",
                   }}
-                  
                 >
                   <div
                     style={{ flex: 1, padding: "8px", background: "#fafafa" }}
@@ -173,8 +172,8 @@ const ReservationsGrid = ({
                     <span style={{ color: "#8c8c8c" }}>Booking Date</span>
                     <span>
                       {item.createdAt
-                      ? dayjs(item.actualCheckin).format("DD/MM/YYYY")
-                      : "-"}
+                        ? dayjs(item.actualCheckin).format("DD/MM/YYYY")
+                        : "-"}
                     </span>
                   </div>
                   <div
