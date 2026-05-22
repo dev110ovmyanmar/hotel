@@ -47,43 +47,91 @@ const RoomInformationTable = ({
       key: "id",
       width: 70,
     },
+    // {
+    //   title: "Room",
+    //   key: "room",
+    //   dataIndex: "room",
+    //   render: (text, record) => {
+    //     const isRoomNull = !text;
+
+    //     const isConfirmed =
+    //       reservationUuid?.reservationStatus?.code === "confirmed";
+
+    //     const isClickable = isRoomNull && isConfirmed;
+
+    //     return (
+    //       <span
+    //         style={{
+    //           color: isRoomNull
+    //             ? isConfirmed
+    //               ? "#1890ff"
+    //               : "#bfbfbf"
+    //             : "inherit",
+    //           cursor: isClickable ? "pointer" : "not-allowed",
+    //           textDecoration: isClickable ? "underline" : "none",
+    //         }}
+    //         onClick={(e) => {
+    //           if (isClickable) {
+    //             e.stopPropagation();
+    //             setSelectedData(record);
+    //             setAssignRoomOpen(true);
+    //           }
+    //         }}
+    //       >
+    //         {text ? text?.roomNo : "Assign Room"}
+    //       </span>
+    //     );
+    //   },
+    // },
     {
       title: "Room",
       key: "room",
       dataIndex: "room",
-      render: (text, record) => {
-        const isRoomNull = !text;
+      render: (room, record) => {
+        // 1. Extract dates directly from the row record level
+        const checkinDate = record?.checkinDate;
+        const checkoutDate = record?.checkoutDate;
 
+        const isRoomNull = !room;
         const isConfirmed =
           reservationUuid?.reservationStatus?.code === "confirmed";
-
         const isClickable = isRoomNull && isConfirmed;
 
         return (
-          <span
-            style={{
-              color: isRoomNull
-                ? isConfirmed
-                  ? "#1890ff"
-                  : "#bfbfbf"
-                : "inherit",
-              cursor: isClickable ? "pointer" : "not-allowed",
-              textDecoration: isClickable ? "underline" : "none",
-            }}
-            onClick={(e) => {
-              if (isClickable) {
-                e.stopPropagation();
-                setSelectedData(record);
-                setAssignRoomOpen(true);
-              }
-            }}
-          >
-            {text ? text?.roomNo : "Assign Room"}
-          </span>
+          <div>
+            <span
+              style={{
+                color: isRoomNull
+                  ? isConfirmed
+                    ? "#1890ff"
+                    : "#bfbfbf"
+                  : "inherit",
+                cursor: isClickable ? "pointer" : "not-allowed",
+                textDecoration: isClickable ? "underline" : "none",
+                fontWeight: isRoomNull ? "normal" : "500",
+              }}
+              onClick={(e) => {
+                if (isClickable) {
+                  e.stopPropagation();
+                  setSelectedData(record);
+                  setAssignRoomOpen(true);
+                }
+              }}
+            >
+              {room ? room.roomNo : "Assign Room"}
+            </span>
+
+            {checkinDate && checkoutDate && (
+              <div
+                style={{ fontSize: "12px", color: "#8c8c8c", marginTop: "2px" }}
+              >
+                ({checkinDate} - {checkoutDate})
+              </div>
+            )}
+          </div>
         );
       },
     },
-
     {
       title: "Name",
       dataIndex: ["roomType", "name"],
@@ -94,19 +142,22 @@ const RoomInformationTable = ({
       dataIndex: "checkinDate",
       key: "checkinDate",
       render: (value) => (value ? dayjs(value).format("DD/MM/YYYY") : "-"),
+      width: 110,
     },
     {
       title: "Departure",
       dataIndex: "checkoutDate",
       key: "checkoutDate",
       render: (value) => (value ? dayjs(value).format("DD/MM/YYYY") : "-"),
+      width: 110,
     },
 
     {
-      title: "Room Status",
+      title: "Status",
       dataIndex: ["roomStatus", "name"],
       key: "roomStatus",
       render: (_, record) => <ColorStatusTag status={record?.roomStatus} />,
+      width: 110,
     },
     { title: "Rate Plan", dataIndex: ["ratePlan", "name"], key: "ratePlan" },
     {
