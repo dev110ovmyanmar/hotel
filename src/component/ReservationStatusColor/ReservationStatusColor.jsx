@@ -33,19 +33,12 @@ const ReservationStatusColor = ({ status }) => {
     unknown_border: "#D9D9D9",
   };
 
-  const rawStatus =
-    status?.code || status?.name || (typeof status === "string" ? status : "");
-
-  const statusCode = rawStatus.toLowerCase().trim().replace(/\s+/g, "-");
-
+  const rawStatus = status?.code || status?.name || (typeof status === "string" ? status : "");
+  const statusCode = rawStatus.toLowerCase().trim().replace(/[\s_]+/g, "-");
   const color = statusColorMap[statusCode] || statusColorMap.unknown;
-  const backgroundColor =
-    statusColorMap[`${statusCode}_bg`] || statusColorMap.unknown_bg;
-  const borderColor =
-    statusColorMap[`${statusCode}_border`] || statusColorMap.unknown_border;
-
-  const displayName =
-    status?.name || (typeof status === "string" ? status : "Unknown");
+  const backgroundColor = statusColorMap[`${statusCode}_bg`] || statusColorMap.unknown_bg;
+  const borderColor = statusColorMap[`${statusCode}_border`] || statusColorMap.unknown_border;
+  const displayName = status?.name || (typeof status === "string" ? status : "Unknown");
 
   return (
     <Tag
