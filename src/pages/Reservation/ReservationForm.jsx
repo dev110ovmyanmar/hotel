@@ -200,9 +200,8 @@ const ReservationForm = ({
                         <Form.Item
                             name="totalNight"
                             label={
-                                <p className="text-gray-100">Nights</p>
+                                <p className="text-gray-100 hidden">Nights</p>
                             }
-                            rules={[{ required: true }]}
                         >
                             <div className="w-[61px] h-[32px] bg-[#fafafa] dark:bg-[#141414] dark:border rounded-md flex flex-col justify-center items-center">
 
