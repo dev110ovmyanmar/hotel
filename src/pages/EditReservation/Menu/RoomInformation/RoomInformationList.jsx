@@ -57,7 +57,9 @@ const RoomInformationList = () => {
           reservationId={data?.reservation?.reservationNo}
           onAddreservation={handleAddRoom}
           addButtonText={
-            data?.reservation?.reservationStatus?.code === "confirmed"
+            ["confirmed", "checked_in"].includes(
+              data?.reservation?.reservationStatus?.code?.toLowerCase(),
+            )
               ? "Add New Room"
               : null
           }

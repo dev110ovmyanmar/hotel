@@ -55,6 +55,11 @@ export const reservationRoomList = async (params) => {
   return data.response;
 };
 
+export const reservationRoomDetails = async (params) => {
+  const { data } = await apiClient.get("/reservation-room", { params });
+  return data.response;
+};
+
 export const reservationRoomAssign = async (params) => {
   const { data } = await apiClient.patch(`/reservation-room/assign`, params);
   return data.response;

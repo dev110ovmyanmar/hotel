@@ -24,7 +24,9 @@ const RoomStatusCard = ({ data }) => {
         title={CustomTitle}
         className="booking-status-card line-height"
         extra={
-          <ReservationStatusColor status={reservation?.reservationStatus?.name} />
+          <ReservationStatusColor
+            status={reservation?.reservationStatus?.name}
+          />
         }
       >
         <Row>
@@ -61,12 +63,12 @@ const RoomStatusCard = ({ data }) => {
 
         <div>
           <Text>Booking Source: </Text>
-          <Text strong>Company</Text>
+          <Text strong>{reservation?.source || "-"}</Text>
         </div>
 
         <div>
           <Text>Source Type: </Text>
-          <Text strong>Company</Text>
+          <Text strong>{reservation?.sourceType?.name}</Text>
         </div>
       </Card>
     </>
