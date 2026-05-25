@@ -72,21 +72,25 @@ const FacilityBookingTable = ({
       title: "Start Time",
       dataIndex: "startTime",
       key: "startTime",
-      render: (text) => <div>{text}</div>,
+      render: (text) => (
+        <div>{text ? dayjs(text, "HH:mm:ss").format("HH:mm") : "-"}</div>
+      ),
     },
     {
       title: "End Time",
       dataIndex: "endTime",
       key: "endTime",
-      render: (text) => <div>{text}</div>,
+      render: (text) => (
+        <div>{text ? dayjs(text, "HH:mm:ss").format("HH:mm") : "-"}</div>
+      ),
     },
     {
       title: "Expected Hours",
       dataIndex: "expectedHours",
       key: "expectedHours",
       render: (_, record) => {
-        const startTime = dayjs(record.startTime,"HH:mm:ss");
-        const endTime = dayjs(record.endTime,"HH:mm:ss");
+        const startTime = dayjs(record.startTime, "HH:mm");
+        const endTime = dayjs(record.endTime, "HH:mm");
 
         const totalSeconds = endTime.diff(startTime, "second");
 
@@ -94,8 +98,8 @@ const FacilityBookingTable = ({
         const minutes = Math.floor((totalSeconds % 3600) / 60);
         const seconds = totalSeconds % 60;
 
-        const text = `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
-        return  <div>{text}</div>;
+        const text = `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
+        return <div>{text}</div>;
 
       },
     },

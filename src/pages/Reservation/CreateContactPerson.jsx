@@ -28,7 +28,8 @@ const CreateGuestForm = ({
   createContactForm
 }) => {
   const phoneValue = Form.useWatch("phone", createContactForm);
-  const secondPhoneValue = Form.useWatch("phonetwo", createContactForm);
+  const secondPhoneValue = Form.useWatch("secondaryphone", createContactForm);
+  const selectedTitle = Form.useWatch("title", createContactForm);
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
 
   const titleOptions = useMemo(() => {
@@ -48,9 +49,15 @@ const CreateGuestForm = ({
         label: `${item.name}  ${item.nrcNo ? '(' + item.nrcNo + ')' + " " + '(' + item.phone + ')' : '(' + item.phone + ')'}`,
         value: item.uuid,
         name: item.name,
-        phone: item.phone
+        phone: item.phone,
+        title: item.title
       })) || [];
 
+  const autocompleteGuestOptions = selectedTitle ?
+    guestsOptions.filter(
+      guest => guest.title === selectedTitle
+    ) :
+    guestsOptions;
 
 
   const [searchText, setSearchText] = useState("");
@@ -72,7 +79,6 @@ const CreateGuestForm = ({
           uuid: statusOptions[0]?.value,
         },
       };
-      console.log(values, "PayloadExisting");
       // existing guest
       if (values.guestUuid) {
         payload = {
@@ -140,7 +146,7 @@ const CreateGuestForm = ({
               style={{ width: "80%" }}
             >
               <AutoComplete
-                options={guestsOptions}
+                options={autocompleteGuestOptions}
                 placeholder="Select or type guest name"
                 filterOption={(inputValue, option) =>
                   option?.label
@@ -149,16 +155,17 @@ const CreateGuestForm = ({
                 }
                 onSelect={(value, option) => {
                   createContactForm.setFieldsValue({
+                    title: option.title,
                     name: option.name,
                     guestUuid: value,
+                    phone: option.phone,
+                    secondaryPhone: option.secondaryPhone
                   });
                 }}
-                onChange={(value,option) => {
-                  console.log(value,"ValueOnChange");
-
+                onChange={(value, option) => {
                   createContactForm.setFieldsValue({
-                    phone: option.phone,
-                    guestUuid: null
+                    name: value,
+                    guestUuid: null,
                   });
                 }}
               >
@@ -206,7 +213,7 @@ const CreateGuestForm = ({
           <Col span={12}>
             <Form.Item
               label="Secondary Phone Number"
-              name="phonetwo"
+              name="secondaryPhone"
               rules={[
                 {
                   validator: validatePhoneNumber
