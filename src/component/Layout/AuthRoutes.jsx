@@ -252,6 +252,10 @@ const ServicePackage = lazy(
   () => import("../../pages/ServicePackage/ServicePackageList"),
 );
 
+const FacilityBookingList = lazy(
+  () => import("../../pages/FacilityBooking/FacilityBookingList")
+)
+
 
 export const authRoutes = [
   {
@@ -307,7 +311,7 @@ export const authRoutes = [
   },
   {
     key: 3.4,
-    path: "/reservation/event-facility-order/",
+    path: "/reservation/event-facility-booking/",
     component: <EventFacilityOrderList />,
   },
   {
@@ -687,6 +691,16 @@ export const authRoutes = [
       //   // component: </>,
       //   // permission: ".list",
       // },
+      {
+        key: 12.3,
+        label: "Booking",
+        path: "/facility-management/booking",
+        icon: <LuPackageSearch style={{ fontSize: "20px" }} />,
+        isPrivate: true,
+        component: <FacilityBookingList />,
+        // permission: PERMISSIONS.FACILITY_PACKAGE_LIST,
+      },
+
     ],
   },
   {

@@ -139,7 +139,8 @@ const ReservationMenu = ({ onStatusChange, onViewChange }) => {
                 <span>
                   {item.label}
                   <Badge
-                    count={item.count}
+                    count={item?.count}
+                    showZero
                     style={{
                       color: colors.color,
                       backgroundColor: colors.bg,

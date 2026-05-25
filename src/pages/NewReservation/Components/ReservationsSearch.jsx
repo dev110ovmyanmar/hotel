@@ -57,7 +57,7 @@ const ReservationSearchBar = ({
         style={{ width: "200px" }}
       />
 
-      <div className="w-110 flex justify-end">
+      {/* <div className="w-110 flex justify-end">
         {setStartDate && setEndDate && (
           <RangePicker
             style={{ width: "250px" }}
@@ -75,7 +75,7 @@ const ReservationSearchBar = ({
             }}
           />
         )}
-      </div>
+      </div> */}
     </div>
   );
 };

@@ -16,6 +16,8 @@ import NoteDrawer from "./RoomInformationForms/NoteDrawer";
 import GuestForm from "../../GuestDetails/Components/GuestForms/GuestForm";
 import { EyeOutlined } from "@ant-design/icons";
 import ColorStatusTag from "../../../../../component/ColorStatusTag/ColorStatusTag";
+import { IoBedOutline } from "react-icons/io5";
+import RoomAmend from "./RoomInformationForms/RoomAmend";
 
 const RoomInformationTable = ({
   data,
@@ -37,6 +39,7 @@ const RoomInformationTable = ({
   const [assignRoomOpen, setAssignRoomOpen] = useState(false);
   const [noteOpen, setNoteOpen] = useState(false);
   const [guestOpen, setGuestOpen] = useState(false);
+  const [roomAmend, setRoomAmend] = useState(false);
 
   console.log(reservationUuid, "reservationUuidtable");
 
@@ -51,11 +54,12 @@ const RoomInformationTable = ({
     //   title: "Room",
     //   key: "room",
     //   dataIndex: "room",
+    //   width: 120,
     //   render: (text, record) => {
     //     const isRoomNull = !text;
 
     //     const isConfirmed =
-    //       reservationUuid?.reservationStatus?.code === "confirmed";
+    //       reservationUuid?.reservationStatus?.code === "confirmed" || "checked_in" || "pending" || "booked";
 
     //     const isClickable = isRoomNull && isConfirmed;
 
@@ -87,51 +91,42 @@ const RoomInformationTable = ({
       title: "Room",
       key: "room",
       dataIndex: "room",
-      render: (room, record) => {
-        // 1. Extract dates directly from the row record level
-        const checkinDate = record?.checkinDate;
-        const checkoutDate = record?.checkoutDate;
+      width: 120,
+      render: (text, record) => {
+        const isRoomNull = !text;
 
-        const isRoomNull = !room;
-        const isConfirmed =
-          reservationUuid?.reservationStatus?.code === "confirmed";
+        const statusCode = reservationUuid?.reservationStatus?.code;
+
+        const validStatuses = ["confirmed", "checked_in", "pending", "booked"];
+        const isConfirmed = validStatuses.includes(statusCode);
+
         const isClickable = isRoomNull && isConfirmed;
 
         return (
-          <div>
-            <span
-              style={{
-                color: isRoomNull
-                  ? isConfirmed
-                    ? "#1890ff"
-                    : "#bfbfbf"
-                  : "inherit",
-                cursor: isClickable ? "pointer" : "not-allowed",
-                textDecoration: isClickable ? "underline" : "none",
-                fontWeight: isRoomNull ? "normal" : "500",
-              }}
-              onClick={(e) => {
-                if (isClickable) {
-                  e.stopPropagation();
-                  setSelectedData(record);
-                  setAssignRoomOpen(true);
-                }
-              }}
-            >
-              {room ? room.roomNo : "Assign Room"}
-            </span>
-
-            {checkinDate && checkoutDate && (
-              <div
-                style={{ fontSize: "12px", color: "#8c8c8c", marginTop: "2px" }}
-              >
-                ({checkinDate} - {checkoutDate})
-              </div>
-            )}
-          </div>
+          <span
+            style={{
+              color: isRoomNull
+                ? isConfirmed
+                  ? "#1890ff"
+                  : "#bfbfbf"
+                : "inherit",
+              cursor: isClickable ? "pointer" : "not-allowed",
+              textDecoration: isClickable ? "underline" : "none",
+            }}
+            onClick={(e) => {
+              if (isClickable) {
+                e.stopPropagation();
+                setSelectedData(record);
+                setAssignRoomOpen(true);
+              }
+            }}
+          >
+            {text ? text?.roomNo : "Assign Room"}
+          </span>
         );
       },
     },
+
     {
       title: "Name",
       dataIndex: ["roomType", "name"],
@@ -165,8 +160,12 @@ const RoomInformationTable = ({
       fixed: "end",
       align: "center",
       render: (_, record) => {
-        const isConfirmed =
-          reservationUuid?.reservationStatus?.code === "confirmed";
+        const statusCode = reservationUuid?.reservationStatus?.code;
+
+        const validStatuses = ["confirmed", "check_in", "checked_in"];
+        const isConfirmed = validStatuses.includes(statusCode);
+        const isCheckin =
+          reservationUuid?.reservationStatus?.code === "checked_in";
 
         return (
           <Space size="middle">
@@ -188,6 +187,18 @@ const RoomInformationTable = ({
                   onClick={() => {
                     setSelectedData(record);
                     setRoomMoveOpen(true);
+                  }}
+                />
+              </Tooltip>
+            )}
+
+            {isCheckin && (
+              <Tooltip title="Room Amend">
+                <IoBedOutline
+                  style={{ fontSize: "18px", cursor: "pointer" }}
+                  onClick={() => {
+                    setSelectedData(record);
+                    setRoomAmend(true);
                   }}
                 />
               </Tooltip>
@@ -261,6 +272,15 @@ const RoomInformationTable = ({
           noteData={data?.data || []}
           open={noteOpen}
           onClose={() => setNoteOpen(false)}
+          selectedData={selectedData}
+          setSelectedData={setSelectedData}
+        />
+      )}
+
+      {roomAmend && (
+        <RoomAmend
+          open={roomAmend}
+          onClose={() => setRoomAmend(false)}
           selectedData={selectedData}
           setSelectedData={setSelectedData}
         />

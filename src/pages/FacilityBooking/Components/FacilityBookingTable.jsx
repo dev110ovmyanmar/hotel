@@ -1,20 +1,19 @@
-import { Dropdown, Space, Table, Button, Tooltip } from "antd";
-import { useState, useEffect } from "react";
-import {
-  MoreOutlined,
-  EyeOutlined,
-  EditOutlined,
-  PlusOutlined,
-  InboxOutlined,
-  UploadOutlined,
-} from "@ant-design/icons";
-import EventFacilityOrderForm from "./EventFacilityOrderForms/EventFacilityOrderForm";
+import { Dropdown, Space, Table, Tag, Button, Drawer } from "antd";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { EditOutlined, EyeOutlined, FolderAddOutlined, MoreOutlined } from "@ant-design/icons";
+import { PERMISSIONS } from './../../../variables/permission';
+import usePermission from './../../../hooks/usePermission';
+import ColorStatusTag from './../../../component/ColorStatusTag/ColorStatusTag';
+import { FaFileContract } from "react-icons/fa";
+import ImageUpload from "../../../component/ImageUpload/ImageUpload";
+import { useApiMutation } from "../../../hooks/useApiMutation";
+import PriceTag from "../../../component/PriceTag/PriceTag";
+import FacilityBookingForm from "./FacilityBookingForm/FacilityBookingForm";
 import dayjs from "dayjs";
-import ColorStatusTag from "../../../../../component/ColorStatusTag/ColorStatusTag";
-import { PERMISSIONS } from "../../../../../variables/permission";
-import usePermission from "../../../../../hooks/usePermission";
 
-const EventFacilityOrderTable = ({
+
+const FacilityBookingTable = ({
   data,
   page,
   perPage,
@@ -24,100 +23,13 @@ const EventFacilityOrderTable = ({
   loading
 }) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [mode, setMode] = useState("add");
-  const [selectedData, setSelectedData] = useState(null);
+  const [mode, setMode] = useState(null);
+  const [selectedData, setSelectedData] = useState({});
+  const [imageDrawerOpen, setImageDrawerOpen] = useState(false);
 
-  // useEffect(() => {
-  //   const savedEvents = JSON.parse(localStorage.getItem("events")) || [];
-  //   setDataSource(savedEvents);
-  // }, []);
-
-  // const refreshData = () => {
-  //   const savedEvents = JSON.parse(localStorage.getItem("events")) || [];
-  //   setDataSource(savedEvents);
-  // };
-
-  // const columns = [
-  //   { title: "Order ID", dataIndex: "id", key: "id" },
-  //   { title: "Event Name", dataIndex: "name", key: "name" },
-  //   { title: "Guest Name", dataIndex: "name", key: "name" },
-  //   {
-  //     title: "Start Date Time",
-  //     key: "startDateTime",
-  //     render: (_, record) => {
-  //       const date = record.startDate
-  //         ? dayjs(record.startDate).format("DD/MM/YYYY")
-  //         : "-";
-  //       const time = record.startTime
-  //         ? dayjs(record.startTime).format("h:mm A")
-  //         : "";
-  //       return (
-  //         <div>
-  //           <div className="font-medium">{date}</div>
-  //           <div className="text-xs text-gray-500">{time}</div>
-  //         </div>
-  //       );
-  //     },
-  //   },
-  //   {
-  //     title: "End Date Time",
-  //     key: "endDateTime",
-  //     render: (_, record) => {
-  //       const date = record.endDate
-  //         ? dayjs(record.endDate).format("DD/MM/YYYY")
-  //         : "-";
-  //       const time = record.endTime
-  //         ? dayjs(record.endTime).format("h:mm A")
-  //         : "";
-  //       return (
-  //         <div>
-  //           <div className="font-medium">{date}</div>
-  //           <div className="text-xs text-gray-500">{time}</div>
-  //         </div>
-  //       );
-  //     },
-  //   },
-  //   {
-  //     title: "Status",
-  //     dataIndex: "status",
-  //     key: "status",
-  //   },
-  //   {
-  //     title: "Guest Name",
-  //     dataIndex: "guestName",
-  //     key: "guestName",
-  //   },
-
-  //   {
-  //     title: "Action",
-  //     fixed:"end",
-  //     align: "center",
-  //     render: (_, record) => (
-  //       <Space size="middle">
-  //         <Tooltip title="View Details">
-  //           <EyeOutlined
-  //             onClick={() => {
-  //               setSelectedData(record);
-  //               setMode("view");
-  //               setDrawerOpen(true);
-  //             }}
-  //           />
-  //         </Tooltip>
-
-  //         <Tooltip title="Edit">
-  //           <EditOutlined
-  //             onClick={() => {
-  //               setSelectedData(record);
-  //               setMode("edit");
-  //               setDrawerOpen(true);
-  //             }}
-  //           />
-  //         </Tooltip>
-  //       </Space>
-  //     ),
-  //   },
-  // ];
   const { hasPermission } = usePermission();
+
+  const navigate = useNavigate();
 
   const columns = [
     {
@@ -160,21 +72,25 @@ const EventFacilityOrderTable = ({
       title: "Start Time",
       dataIndex: "startTime",
       key: "startTime",
-      render: (text) => <div>{text}</div>,
+      render: (text) => (
+        <div>{text ? dayjs(text, "HH:mm:ss").format("HH:mm") : "-"}</div>
+      ),
     },
     {
       title: "End Time",
       dataIndex: "endTime",
       key: "endTime",
-      render: (text) => <div>{text}</div>,
+      render: (text) => (
+        <div>{text ? dayjs(text, "HH:mm:ss").format("HH:mm") : "-"}</div>
+      ),
     },
     {
       title: "Expected Hours",
       dataIndex: "expectedHours",
       key: "expectedHours",
       render: (_, record) => {
-        const startTime = dayjs(record.startTime, "HH:mm:ss");
-        const endTime = dayjs(record.endTime, "HH:mm:ss");
+        const startTime = dayjs(record.startTime, "HH:mm");
+        const endTime = dayjs(record.endTime, "HH:mm");
 
         const totalSeconds = endTime.diff(startTime, "second");
 
@@ -182,7 +98,7 @@ const EventFacilityOrderTable = ({
         const minutes = Math.floor((totalSeconds % 3600) / 60);
         const seconds = totalSeconds % 60;
 
-        const text = `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+        const text = `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
         return <div>{text}</div>;
 
       },
@@ -216,7 +132,7 @@ const EventFacilityOrderTable = ({
             key: "view",
             label: "View",
             icon: <EyeOutlined style={{ fontSize: "12px" }} />,
-            // permission: PERMISSIONS.PARTNER_VIEW,
+            permission: PERMISSIONS.PARTNER_VIEW,
             onClick: () => {
               setDrawerOpen(true);
               setMode("view");
@@ -260,8 +176,9 @@ const EventFacilityOrderTable = ({
     },
   ];
 
+
   return (
-    <div>
+    <div id="scrollId" className="w-full h-[63vh] ">
       <Table
         tableLayout="fixed"
         scroll={{ x: 1000 }}
@@ -281,16 +198,19 @@ const EventFacilityOrderTable = ({
         }}
       />
 
-      <EventFacilityOrderForm
+      <FacilityBookingForm
         mode={mode}
         setMode={setMode}
         drawerOpen={drawerOpen}
         setDrawerOpen={setDrawerOpen}
         selectedData={selectedData}
-        // onSuccess={refreshData}
+        setSelectedData={setSelectedData}
+        page={page}
       />
+
+
     </div>
   );
 };
 
-export default EventFacilityOrderTable;
+export default FacilityBookingTable;

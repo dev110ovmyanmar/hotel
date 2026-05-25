@@ -109,7 +109,7 @@ const ReservationList = () => {
     options: {
       onSuccess: (values) => {
         Toast.success(values);
-        navigate("/reservations/inquiry/")
+        navigate("/reservations/all/")
       },
     },
   });
@@ -207,7 +207,7 @@ const ReservationList = () => {
       taxTotal: roomBookValues?.taxTotal,
       discountTotal: roomBookValues?.discountTotal,
       grandTotal: roomBookValues?.grandTotal,
-      currency:{
+      currency: {
         uuid: currencyUuid
       },
       rooms
@@ -215,7 +215,6 @@ const ReservationList = () => {
     };
     submitReservationMutate.mutate(payload);
   }
-
 
   //total booked rooms per roomType
   const getBookedCount = (roomTypeId) => {
@@ -284,10 +283,6 @@ const ReservationList = () => {
       dataIndex: "adults",
     },
     {
-      title: "Extra Bed",
-      dataIndex: "extraBed",
-    },
-    {
       title: "",
       render: (_, record) => {
         const isBooked = selectedData?.some((item) => item.key === record.key);
@@ -308,6 +303,10 @@ const ReservationList = () => {
 
               setSelectedData((prev) => {
                 if (isBooked) {
+                  setSelectedRooms((prevRooms) => ({
+                    ...prevRooms,
+                    [record.key]: 1,
+                  }));
                   return prev.filter((item) => item.key !== record.key);
                 } else {
                   return [
@@ -406,7 +405,7 @@ const ReservationList = () => {
                 type="primary"
                 onClick={() => {
                   setGuestDrawerOpen(true),
-                  createContactForm.resetFields()
+                    createContactForm.resetFields()
                 }}
                 className="my-4"
               >

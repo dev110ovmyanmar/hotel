@@ -25,11 +25,12 @@ const GuestTable = ({
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mode, setMode] = useState("add");
   const [selectedData, setSelectedData] = useState(null);
-  const [dataSource, setDataSource] = useState([]);
   const [uploadOpen, setUploadOpen] = useState(false);
   const [noteOpen, setNoteOpen] = useState(false);
 
-  const columns = [
+  const statusCode = reservationUuid?.reservationStatus?.code?.toLowerCase();
+
+  const baseColumns = [
     { title: "ID", dataIndex: "id", key: "id", width: 70 },
     {
       title: "Guest Name",
@@ -40,7 +41,7 @@ const GuestTable = ({
       title: "Room",
       key: "room",
       dataIndex: ["reservationRoom", "room", "roomNo"],
-      align:"center",
+      align: "center",
       render: (roomNo, record) => {
         const checkinDate = record?.reservationRoom?.checkinDate;
         const checkoutDate = record?.reservationRoom?.checkoutDate;
@@ -50,7 +51,6 @@ const GuestTable = ({
         return (
           <div>
             <div style={{ fontWeight: "500" }}>{roomNo}</div>
-
             {checkinDate && checkoutDate && (
               <div
                 style={{ fontSize: "12px", color: "#8c8c8c", marginTop: "2px" }}
@@ -68,12 +68,6 @@ const GuestTable = ({
       key: "nrcNo",
       render: (text) => (text ? text : "-"),
     },
-    // {
-    //   title: "Passport",
-    //   dataIndex: ["guest", "passport"],
-    //   key: "passport",
-    //   render: (text) => (text ? text : "-"),
-    // },
     {
       title: "Phone Number",
       dataIndex: ["guest", "phone"],
@@ -85,58 +79,77 @@ const GuestTable = ({
       dataIndex: "isPrimary",
       key: "isPrimary",
       render: (text) => (
-        <div 
-        // className={text === true ? "text-[#389E0D]" : "text-[#CF1322]"}
-        >
-          {text === true ? "Main Guest" : "Share Guest"}
-        </div>
-      ),
-    },
-    // {
-    //   title: "Nationality",
-    //   dataIndex: ["guest", "nationality"],
-    //   key: "nationality",
-    //   render: (text) => (text ? text : "-"),
-    // },
-
-    {
-      title: "Action",
-      fixed: "end",
-      align: "center",
-      render: (_, record) => (
-        <Space size="middle">
-          <Tooltip title="View Details">
-            <EyeOutlined
-              onClick={() => {
-                setSelectedData(record);
-                setMode("view");
-                setDrawerOpen(true);
-              }}
-            />
-          </Tooltip>
-
-          <Tooltip title="Edit Details">
-            <EditOutlined
-              onClick={() => {
-                setSelectedData(record);
-                setMode("edit");
-                setDrawerOpen(true);
-              }}
-            />
-          </Tooltip>
-
-          <Tooltip title="File Upload">
-            <UploadOutlined
-              onClick={() => {
-                setSelectedData(record);
-                setUploadOpen(true);
-              }}
-            />
-          </Tooltip>
-        </Space>
+        <div>{text === true ? "Main Guest" : "Share Guest"}</div>
       ),
     },
   ];
+
+  const actionColumn = {
+    title: "Action",
+    fixed: "end",
+    align: "center",
+    render: (_, record) => {
+      const viewStatus = [
+        "pending",
+        "booked",
+        "confirmed",
+        "checked_in",
+        "checked_out",
+      ];
+      const view = viewStatus.includes(statusCode);
+
+      const editStatus = ["pending", "booked", "confirmed", "checked_in"];
+      const edit = editStatus.includes(statusCode);
+
+      const uploadStatus = ["pending", "booked", "confirmed", "checked_in"];
+      const upload = uploadStatus.includes(statusCode);
+
+      return (
+        <Space size="middle">
+          {view && (
+            <Tooltip title="View Details">
+              <EyeOutlined
+                className="cursor-pointer"
+                onClick={() => {
+                  setSelectedData(record);
+                  setMode("view");
+                  setDrawerOpen(true);
+                }}
+              />
+            </Tooltip>
+          )}
+
+          {edit && (
+            <Tooltip title="Edit Details">
+              <EditOutlined
+                className="cursor-pointer"
+                onClick={() => {
+                  setSelectedData(record);
+                  setMode("edit");
+                  setDrawerOpen(true);
+                }}
+              />
+            </Tooltip>
+          )}
+
+          {upload && (
+            <Tooltip title="File Upload">
+              <UploadOutlined
+                className="cursor-pointer"
+                onClick={() => {
+                  setSelectedData(record);
+                  setUploadOpen(true);
+                }}
+              />
+            </Tooltip>
+          )}
+        </Space>
+      );
+    },
+  };
+
+  const isHiddenStatus = ["cancelled", "no_show"].includes(statusCode);
+  const columns = isHiddenStatus ? baseColumns : [...baseColumns, actionColumn];
 
   return (
     <div>

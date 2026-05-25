@@ -14,6 +14,7 @@ import { useApiMutation } from "../../../../../../hooks/useApiMutation";
 import {
   availabilitySearch,
   createReservationRoom,
+  reservationRoomDetails,
 } from "../../../../../../api/reservationSectionApi";
 import Toast from "../../../../../../component/Toast/Toast";
 
@@ -60,11 +61,39 @@ const RoomInformationForm = ({
     mutationFn: createReservationRoom,
   });
 
+  const reservationRoomsDetails = useApiMutation({
+    mutationFn: reservationRoomDetails,
+    invalidateKeys: [["reservation-room"]],
+  });
+
   const availableRoomsData = roomAvailabilitySearchs.data?.rooms || [];
+
+  // Fetch view details on drawer open
+  useEffect(() => {
+    if (drawerOpen && isView && selectedData?.uuid) {
+      reservationRoomsDetails.mutate({ uuid: selectedData.uuid });
+    }
+  }, [drawerOpen, isView, selectedData]);
+
+  // Populate view mode data
+  useEffect(() => {
+    if (isView && reservationRoomsDetails.data) {
+      const viewData = reservationRoomsDetails.data;
+      form.setFieldsValue({
+        dates: [
+          viewData?.checkinDate ? dayjs(viewData.checkinDate) : null,
+          viewData?.checkoutDate ? dayjs(viewData.checkoutDate) : null,
+        ],
+        roomTypeUuid: viewData?.roomType?.uuid || null,
+        ratePlanId: viewData?.ratePlan?.id || null,
+        totalRooms: viewData?.totalRooms || 1,
+      });
+    }
+  }, [isView, reservationRoomsDetails.data, form]);
 
   // initial  form value
   useEffect(() => {
-    if (drawerOpen && data) {
+    if (drawerOpen && data && !isView) {
       isInitializing.current = true;
 
       const today = dayjs();
@@ -101,11 +130,11 @@ const RoomInformationForm = ({
         isInitializing.current = false;
       }, 100);
     }
-  }, [drawerOpen, data, form]);
+  }, [drawerOpen, data, form, isView]);
 
   // date change / api
   useEffect(() => {
-    if (drawerOpen && selectedDates?.[0] && selectedDates?.[1]) {
+    if (drawerOpen && !isView && selectedDates?.[0] && selectedDates?.[1]) {
       if (!isInitializing.current) {
         form.setFieldsValue({
           roomTypeUuid: null,
@@ -134,7 +163,7 @@ const RoomInformationForm = ({
 
       roomAvailabilitySearchs.mutate(payload);
     }
-  }, [drawerOpen, selectedDates, data]);
+  }, [drawerOpen, selectedDates, data, isView]);
 
   // date boundary filter
   const disabledDate = (current) => {
@@ -162,21 +191,38 @@ const RoomInformationForm = ({
     return isBeforeArrival || isAfterDeparture;
   };
 
-  const roomTypeOptions = availableRoomsData.map((item) => ({
-    label: `${item.roomType?.name} (${item.totalRooms} available)`,
-    value: item.roomType?.uuid,
-  }));
+  const roomTypeOptions =
+    isView && reservationRoomsDetails.data
+      ? [
+          {
+            label: reservationRoomsDetails.data?.roomType?.name,
+            value: reservationRoomsDetails.data?.roomType?.uuid,
+          },
+        ]
+      : availableRoomsData.map((item) => ({
+          label: `${item.roomType?.name} (${item.totalRooms} available)`,
+          value: item.roomType?.uuid,
+        }));
 
   const targetRoomDetails = availableRoomsData.find(
     (item) => item.roomType?.uuid === selectedRoomUuid,
   );
 
-  const ratePlanOptions = targetRoomDetails?.ratePlans
-    ? targetRoomDetails.ratePlans.map((rate) => ({
-        label: `${rate.name}`,
-        value: rate.id,
-      }))
-    : [];
+  const ratePlanOptions =
+    isView && reservationRoomsDetails.data
+      ? [
+          {
+            label:
+              reservationRoomsDetails.data?.ratePlan?.name || "Selected Plan",
+            value: reservationRoomsDetails.data?.ratePlan?.id,
+          },
+        ]
+      : targetRoomDetails?.ratePlans
+        ? targetRoomDetails.ratePlans.map((rate) => ({
+            label: `${rate.name}`,
+            value: rate.id,
+          }))
+        : [];
 
   const handleRoomTypeChange = () => {
     form.setFieldsValue({ ratePlanId: null, totalRooms: 1 });
@@ -239,7 +285,9 @@ const RoomInformationForm = ({
           </span>
 
           {isView ? (
-            <Button type="primary"></Button>
+            <Button className="custom-blue-btn" onClick={handleClose}>
+              Close
+            </Button>
           ) : (
             <FormButtons
               onClick={() => form.submit()}
@@ -287,7 +335,10 @@ const RoomInformationForm = ({
                 placeholder="Select Room Type"
                 options={roomTypeOptions}
                 onChange={handleRoomTypeChange}
-                loading={roomAvailabilitySearchs.isPending}
+                loading={
+                  roomAvailabilitySearchs.isPending ||
+                  reservationRoomsDetails.isPending
+                }
               />
             </Form.Item>
 
@@ -303,7 +354,7 @@ const RoomInformationForm = ({
                     : "Choose Room Type First"
                 }
                 options={ratePlanOptions}
-                disabled={!selectedRoomUuid}
+                disabled={!selectedRoomUuid || isView}
               />
             </Form.Item>
           </div>
@@ -314,21 +365,25 @@ const RoomInformationForm = ({
               name="totalRooms"
               rules={[
                 { required: true, message: "Please input total rooms" },
-                {
-                  type: "number",
-                  max: maxAvailableRooms,
-                  message: `Cannot exceed available rooms (${maxAvailableRooms})`,
-                },
+                ...(!isView
+                  ? [
+                      {
+                        type: "number",
+                        max: maxAvailableRooms,
+                        message: `Cannot exceed available rooms (${maxAvailableRooms})`,
+                      },
+                    ]
+                  : []),
               ]}
             >
               <InputNumber
                 {...sharedProps}
                 min={1}
-                max={maxAvailableRooms}
+                max={isView ? undefined : maxAvailableRooms}
                 placeholder="Quantity"
                 readOnly={isView}
                 style={{ width: "100%" }}
-                disabled={!selectedRoomUuid}
+                disabled={!selectedRoomUuid || isView}
               />
             </Form.Item>
           </div>
