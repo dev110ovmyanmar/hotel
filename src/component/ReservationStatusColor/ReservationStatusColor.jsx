@@ -3,6 +3,7 @@ import { Tag } from "antd";
 import { capitalizeFirstLetter } from "../../utils/Utils";
 
 const ReservationStatusColor = ({ status }) => {
+
   const statusColorMap = {
     pending: "#D4A106",
     pending_bg: "#FDFFE0",
