@@ -127,7 +127,9 @@ const ReservationForm = ({
     };
 
     return (
-        <Card >
+        <Card
+            className="!bg-gradient-to-r from-[#215282] to-[#000B60]"
+        >
             <Form
                 form={form}
                 onFinish={searchSubmit}
@@ -135,7 +137,7 @@ const ReservationForm = ({
                 onValuesChange={() => { setSearchButtonDisable(false) }}
             >
                 <div className="flex justify-between">
-                    <h1 className="text-lg font-bold my-2">Create New Reservation</h1>
+                    <h1 className="text-lg font-bold text-[#ffffff] my-2">Create New Reservation</h1>
                     {
                         afterRoomConfirm ?
                             null
@@ -146,8 +148,13 @@ const ReservationForm = ({
                                     htmlType="submit"
                                     loading={availabilitySearchResults?.isPending}
                                     disabled={searchButtonDisable}
-                                    className="min-w-[125px]"
+                                    className={
+                                        searchButtonDisable
+                                        ? "min-w-[125px] !bg-gray-300 !text-gray-500 !border-gray-300 cursor-not-allowed"
+                                        : "min-w-[125px] !bg-[#FFFFFF] !text-[#000000] !shadow-lg shadow-gray-300/50"
+                                    }
                                 >
+                                    {/* !bg-gradient-to-r from-[#CACDCB] to-[#104171] */}
                                     Search
                                 </Button>
                             </Form.Item>
@@ -156,7 +163,12 @@ const ReservationForm = ({
 
                 <div className="flex flex-wrap gap-x-5">
                     <div className="w-75 flex-auto md:flex-initial">
-                        <Form.Item name="filter" label="Check-in / Check-out Date" rules={[{ required: true, message: "Please Select Date" }]}>
+                        <Form.Item
+                            name="filter"
+                            label={
+                                <p className="text-gray-100">Check-in / Check-out Date</p>
+                            }
+                            rules={[{ required: true, message: "Please Select Date" }]}>
                             <RangePicker
                                 className="!w-full"
                                 format="YYYY-MM-DD HH:mm"
@@ -185,7 +197,13 @@ const ReservationForm = ({
                     </div>
 
                     <div className="flex-initial">
-                        <Form.Item name="totalNight" label="Nights" rules={[{ required: true }]}>
+                        <Form.Item
+                            name="totalNight"
+                            label={
+                                <p className="text-gray-100">Nights</p>
+                            }
+                            rules={[{ required: true }]}
+                        >
                             <div className="w-[61px] h-[32px] bg-[#fafafa] dark:bg-[#141414] dark:border rounded-md flex flex-col justify-center items-center">
 
                                 <p className="text-xs leading-none ">{totalNights}</p>
@@ -198,7 +216,9 @@ const ReservationForm = ({
                     <div className="w-60 md:w-42 lg:w-50 flex-auto md:flex-initial">
                         <Form.Item
                             name="bookedVia"
-                            label="Booking Source"
+                            label={
+                                <p className="text-gray-100">Booking Source</p>
+                            }
                             rules={[{ required: true, message: "Please Select Booking Source" }]}
                             getValueProps={(value) => {
                                 return {
@@ -228,7 +248,9 @@ const ReservationForm = ({
                     <div className="w-60 md:w-42 lg:w-50 flex-auto md:flex-initial">
                         <Form.Item
                             name="sourceType"
-                            label="Source Type"
+                            label={
+                                <p className="text-gray-100">Source Type</p>
+                            }
                             rules={[{ required: true, message: "Please Select Source Type" }]}
                             getValueProps={(value) => {
                                 return {
@@ -262,7 +284,9 @@ const ReservationForm = ({
 
                                 <Form.Item
                                     name="source"
-                                    label="Source Name"
+                                    label={
+                                        <p className="text-gray-100">Source Name</p>
+                                    }
                                     rules={[{ required: true, message: "Please Select Source Name" }]}
                                     getValueProps={(value) => {
                                         return {
@@ -301,11 +325,11 @@ const ReservationForm = ({
                         <div className="flex justify-end">
                             <Form.Item className="block md:hidden mt-4">
                                 <Button
-                                    type="primary"
+                                    // type="primary"
                                     htmlType="submit"
                                     loading={availabilitySearchResults?.isPending}
                                     disabled={searchButtonDisable}
-                                    className="w-full"
+                                    className="w-full !bg-gradient-to-r from-[#000B60] to-[#215282]"
                                 >
                                     Search
                                 </Button>
