@@ -42,7 +42,7 @@ const FacilityBookingForm = ({
   const disabledDate = current => {
     return current < dayjs().startOf('day');
   };
-  const format = "HH:mm:ss";
+  const format = "HH:mm";
 
   const eventTime = Form.useWatch("timeRange", form);
   const startTime = eventTime?.[0];
@@ -57,7 +57,8 @@ const FacilityBookingForm = ({
   const minutes = Math.floor((expectedSeconds % 3600) / 60);
   const seconds = expectedSeconds % 60;
 
-  const formattedExpectedHours = `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+  const frontformattedExpectedHours = `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
+  const formattedExpectedHours = `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:00`;
 
 
   const isView = mode === "view";
@@ -123,13 +124,13 @@ const FacilityBookingForm = ({
         eventDate: dayjs(bookingDetails?.eventDate),
 
         timeRange: [
-          dayjs(bookingDetails?.startTime, "HH:mm:ss"),
-          dayjs(bookingDetails?.endTime, "HH:mm:ss"),
+          dayjs(bookingDetails?.startTime, "HH:mm"),
+          dayjs(bookingDetails?.endTime, "HH:mm"),
         ],
 
         expectedHours: dayjs(
           bookingDetails?.expectedHours,
-          "HH:mm:ss"
+          "HH:mm"
         ),
         status: {
           uuid: bookingDetails?.status?.uuid,
@@ -323,7 +324,7 @@ const FacilityBookingForm = ({
                 label="Expected Hours"
                 required
               >
-                <Input value={formattedExpectedHours} readOnly />
+                <Input value={frontformattedExpectedHours} readOnly />
               </Form.Item>
             </Col>
           </Row>
