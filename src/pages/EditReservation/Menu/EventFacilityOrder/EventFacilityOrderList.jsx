@@ -24,8 +24,6 @@ const EventFacilityOrderList = () => {
 
   const location = useLocation();
   const bookingId = location.state?.bookingId;
-  
-  // console.log(selectedData,"selectedDAta")
 
   const { data, isLoading, error } = useApiQuery({
     fetchQueryName: "facility-booking-list",
@@ -38,10 +36,9 @@ const EventFacilityOrderList = () => {
       reservation: {
         uuid: bookingId
       },
-      // keyword,
-      // status: normalStatus,
     },
   });
+
 
   const handleAddEvent = () => {
     setSelectedData(null);
@@ -55,7 +52,7 @@ const EventFacilityOrderList = () => {
       <ReservationMenu/>
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
         <ReservationListHeader
-          reservationId={bookingId}
+          reservationId="Id-123456789"
           onAddreservation={handleAddEvent}
           addButtonText={"Add Facility"}
         />
