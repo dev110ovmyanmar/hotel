@@ -284,10 +284,6 @@ const ReservationList = () => {
       dataIndex: "adults",
     },
     {
-      title: "Extra Bed",
-      dataIndex: "extraBed",
-    },
-    {
       title: "",
       render: (_, record) => {
         const isBooked = selectedData?.some((item) => item.key === record.key);

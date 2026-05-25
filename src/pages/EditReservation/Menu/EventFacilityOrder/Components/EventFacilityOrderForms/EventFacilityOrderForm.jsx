@@ -427,7 +427,7 @@ const EventFacilityOrderForm = ({
             name="expectedPax"
             rules={[{ required: true, message: "Expected Pax is Required" }]}
           >
-            <TextArea readOnly={isView} placeholder="Enter Expected Hours" />
+            <Input readOnly={isView} placeholder="Enter Expected Pax" />
           </Form.Item>
 
           <Status isView={isView} statusValue={initDataStatus} />
