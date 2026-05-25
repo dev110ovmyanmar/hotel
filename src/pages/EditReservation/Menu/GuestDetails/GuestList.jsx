@@ -9,6 +9,7 @@ import ReservationListHeader from "../../../../component/ReservationHeader/Reser
 import { reservationGuestList } from "../../../../api/reservationSectionApi";
 import useApiQuery from "../../../../hooks/useApiQuery";
 import { LIMITS } from "../../../../variables/constants";
+import GuestUploadDrawer from "./Components/GuestForms/GuestUploadDrawer";
 
 const GuestList = () => {
   const location = useLocation();
@@ -22,6 +23,7 @@ const GuestList = () => {
   const [keyword, setKeyword] = useState("");
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(LIMITS.PAGE_SIZE);
+  const [uploadDrawerOpen, setUploadDrawerOpen] = useState(false);
 
   useEffect(() => {
     setPage(1);
@@ -49,6 +51,8 @@ const GuestList = () => {
   const guestList = data?.data ?? [];
   const reservationInfo = data?.reservation ?? null;
 
+  console.log(reservationInfo, "form");
+
   return (
     <div className="w-full px-6 py-2">
       <ReservationHeader data={data ?? {}} />
@@ -58,7 +62,13 @@ const GuestList = () => {
         <ReservationListHeader
           reservationId={reservationInfo?.reservationNo}
           onAddreservation={handleAddGuest}
-          addButtonText="Add New Guest"
+          addButtonText={
+            ["pending", "confirmed", "booked", "checked_in"].includes(
+              data?.reservation?.reservationStatus?.code?.toLowerCase(),
+            )
+              ? "Add New Guest"
+              : null
+          }
           onSearch={setKeyword}
         />
       </div>
@@ -86,6 +96,14 @@ const GuestList = () => {
           reservationUuid={reservationInfo}
         />
       )}
+
+      <GuestUploadDrawer
+        drawerOpen={uploadDrawerOpen}
+        setDrawerOpen={() => setUploadDrawerOpen(false)}
+        selectedRow={selectedData}
+        setSelectedRow={setSelectedData}
+        reservationUuid={reservationInfo}
+      />
     </div>
   );
 };

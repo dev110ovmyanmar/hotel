@@ -133,15 +133,18 @@ const CreateGuestForm = ({
         <Row gutter={16}>
           <Space.Compact style={{ width: '100%' }}>
             <Form.Item
-              label="Title"
+              label="Full Name"
               name="title"
               style={{ width: '20%' }}
+              required
             >
               <Select options={titleOptions} placeholder="Select Title" />
             </Form.Item>
 
             <Form.Item
-              label="Name"
+              label={
+                <p className="hidden">Name</p>
+              }
               name="name"
               style={{ width: "80%" }}
             >

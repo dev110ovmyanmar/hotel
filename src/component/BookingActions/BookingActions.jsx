@@ -27,20 +27,50 @@ export const button_config = {
   printInvoice: {
     label: "Print Invoice",
   },
+  ncillaryService: {
+    label: "Ancillary Service",
+  },
 };
 
 export const status_actions = {
-  PENDING: ["changeStatus", "amendBooking", "addPayment"],
-  BOOKED: ["changeStatus", "amendBooking", "addPayment"],
-  CONFIRMED: ["changeStatus", "amendBooking", "addPayment", "overtimeCharges"],
-  // CANCELLED: ["changeStatus", "amendBooking", "addPayment", "overtimeCharges"],
-  CHECKED_IN: [
+  PENDING: [
+    "changeStatus", 
+    "amendBooking", 
+    "addPayment", 
+    "ancillaryService"
+  ],
+  BOOKED: [
+    "changeStatus", 
+    "amendBooking", 
+    "addPayment", 
+    "ancillaryService"
+  ],
+  CONFIRMED: [
     "changeStatus",
     "amendBooking",
     "addPayment",
     "overtimeCharges",
     "addRefund",
-    "roomMove",
+    "ancillaryService",
+  ],
+  CHECKED_IN: [
+    "changeStatus",
+    "amendStay",
+    "addPayment",
+    "overtimeCharges",
+    "addRefund",
     "printInvoice",
+  ],
+  CHECKED_OUT: [
+    "addRefund", 
+    "printInvoice"
+  ],
+  CANCELLED: [
+    "overtimeCharges", 
+    "addRefund"
+  ],
+  NO_SHOW: [
+    "overtimeCharges", 
+    "addRefund"
   ],
 };

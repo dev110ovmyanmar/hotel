@@ -25,14 +25,14 @@ const ReservationHeader = ({ data }) => {
 
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mt-1">
         <div className="flex flex-wrap items-center gap-x-5 gap-y-3 text-gray-600 text-sm">
-          <div className="flex items-center gap-2 bg-gray-50 px-3 py-1 rounded-lg border border-gray-100/80">
+          <div className="flex items-center gap-2  px-3 py-1 rounded-lg  ">
             <IoPeopleSharp className="text-blue-500 text-base" />
             <span className="font-medium text-gray-700">
               {reservation?.adults || 0} Adults
             </span>
           </div>
 
-          <div className="flex items-center gap-2 bg-gray-50 px-3 py-1 rounded-lg border border-gray-100/80">
+          <div className="flex items-center gap-2  px-3 py-1 rounded-lg  ">
             <FaChild className="text-pink-500 text-base" />
             <span className="font-medium text-gray-700">
               {reservation?.children || 0} Children
@@ -41,7 +41,7 @@ const ReservationHeader = ({ data }) => {
 
           <div className="hidden sm:block text-gray-300">|</div>
 
-          <div className="flex items-center gap-2 bg-gray-50 px-3 py-1 rounded-lg border border-gray-100/80">
+          <div className="flex items-center gap-2  px-3 py-1 rounded-lg  ">
             <MdOutlineMeetingRoom className="text-emerald-500 text-lg" />
             <span className="font-medium text-gray-700">
               {reservation?.totalRooms || 0}{" "}

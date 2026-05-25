@@ -182,7 +182,7 @@ const GuestForm = ({
   const rooms =
     reservationRoom?.rooms?.map((room) => ({
       value: room?.uuid,
-      label: `${room?.room?.roomNo} (${room?.checkinDate}) - (${room?.checkoutDate}) `,
+      label: `${room?.room?.roomNo} (${room?.checkinDate} - ${room?.checkoutDate}) `,
     })) || [];
 
   const createReservationGuest = useApiMutation({
@@ -321,11 +321,11 @@ const GuestForm = ({
         layout="vertical"
         onFinish={onFinish}
         disabled={isView}
-        initialValues={{ isAdult: 1, status: activeStatusUuid }}
+        initialValues={{ isAdult: 1, status: activeStatusUuid, isPrimary:1 }}
       >
         <Form.Item
           name="isAdult"
-          label="Guest Type"
+          label="Select Guest Type"
           className="mb-4"
           rules={[
             { required: true, message: "Please select guest age grouping" },
