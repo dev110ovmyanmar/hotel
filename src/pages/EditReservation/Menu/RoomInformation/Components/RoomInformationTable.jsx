@@ -50,43 +50,7 @@ const RoomInformationTable = ({
       key: "id",
       width: 70,
     },
-    // {
-    //   title: "Room",
-    //   key: "room",
-    //   dataIndex: "room",
-    //   width: 120,
-    //   render: (text, record) => {
-    //     const isRoomNull = !text;
-
-    //     const isConfirmed =
-    //       reservationUuid?.reservationStatus?.code === "confirmed" || "checked_in" || "pending" || "booked";
-
-    //     const isClickable = isRoomNull && isConfirmed;
-
-    //     return (
-    //       <span
-    //         style={{
-    //           color: isRoomNull
-    //             ? isConfirmed
-    //               ? "#1890ff"
-    //               : "#bfbfbf"
-    //             : "inherit",
-    //           cursor: isClickable ? "pointer" : "not-allowed",
-    //           textDecoration: isClickable ? "underline" : "none",
-    //         }}
-    //         onClick={(e) => {
-    //           if (isClickable) {
-    //             e.stopPropagation();
-    //             setSelectedData(record);
-    //             setAssignRoomOpen(true);
-    //           }
-    //         }}
-    //       >
-    //         {text ? text?.roomNo : "Assign Room"}
-    //       </span>
-    //     );
-    //   },
-    // },
+    
     {
       title: "Room",
       key: "room",
