@@ -9,8 +9,8 @@ import {
   UploadOutlined,
 } from "@ant-design/icons";
 import GuestForm from "./GuestForms/GuestForm";
-import NewGuestUploadForm from "./../../../../GuestsListing/Components/NewGuestUploadForm";
-import GuestNoteDrawer from "./GuestForms/GuestNoteDrawer";
+import dayjs from "dayjs";
+import GuestUploadDrawer from "./GuestForms/GuestUploadDrawer";
 
 const GuestTable = ({
   data,
@@ -46,16 +46,23 @@ const GuestTable = ({
         const checkinDate = record?.reservationRoom?.checkinDate;
         const checkoutDate = record?.reservationRoom?.checkoutDate;
 
+        const formattedCheckin = checkinDate
+          ? dayjs(checkinDate).format("DD/MM/YYYY")
+          : "";
+        const formattedCheckout = checkoutDate
+          ? dayjs(checkoutDate).format("DD/MM/YYYY")
+          : "";
+
         if (!roomNo) return "-";
 
         return (
           <div>
             <div style={{ fontWeight: "500" }}>{roomNo}</div>
-            {checkinDate && checkoutDate && (
+            {formattedCheckin && formattedCheckout && (
               <div
                 style={{ fontSize: "12px", color: "#8c8c8c", marginTop: "2px" }}
               >
-                ({checkinDate} - {checkoutDate})
+                ({formattedCheckin} - {formattedCheckout})
               </div>
             )}
           </div>
@@ -86,8 +93,6 @@ const GuestTable = ({
 
   const actionColumn = {
     title: "Action",
-    fixed: "end",
-    align: "center",
     render: (_, record) => {
       const viewStatus = [
         "pending",
@@ -102,7 +107,7 @@ const GuestTable = ({
       const edit = editStatus.includes(statusCode);
 
       const uploadStatus = ["pending", "booked", "confirmed", "checked_in"];
-      const upload = uploadStatus.includes(statusCode);
+      const upload = uploadStatus.includes(statusCode) && record.guest !== null;
 
       return (
         <Space size="middle">
@@ -185,11 +190,19 @@ const GuestTable = ({
           reservationUuid={reservationUuid}
         />
       )}
-      <NewGuestUploadForm
-        open={uploadOpen}
-        onClose={() => setUploadOpen(false)}
-        reservationId={selectedData?.id}
-      />
+
+      {uploadOpen && (
+        <GuestUploadDrawer
+          page={page}
+          mode={mode}
+          setMode={setMode}
+          open={uploadOpen}
+          onClose={() => setUploadOpen(false)}
+          setDrawerOpen={setDrawerOpen}
+          selectedRow={selectedData}
+          setSelectedRow={setSelectedData}
+        />
+      )}
     </div>
   );
 };

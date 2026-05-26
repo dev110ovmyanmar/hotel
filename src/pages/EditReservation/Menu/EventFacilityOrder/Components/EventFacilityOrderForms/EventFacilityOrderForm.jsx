@@ -49,11 +49,11 @@ const EventFacilityOrderForm = ({
   ])?.statuses;
   const initDataStatus = initData?.status;
 
-  const dateFormat = "YYYY-MM-DD";
+  const dateFormat = "DD-MM-YYYY";
   const disabledDate = current => {
     return current < dayjs().startOf('day');
   };
-  const format = "HH:mm:ss";
+  const format = "HH:mm";
 
   const eventTime = Form.useWatch("timeRange", form);
   const startTime = eventTime?.[0];
@@ -68,6 +68,7 @@ const EventFacilityOrderForm = ({
   const minutes = Math.floor((expectedSeconds % 3600) / 60);
   const seconds = expectedSeconds % 60;
 
+  const frontformattedExpectedHours = `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
   const formattedExpectedHours = `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
 
   const { data: facilityMetaData } = useApiQuery({
@@ -80,14 +81,14 @@ const EventFacilityOrderForm = ({
     value: item?.uuid,
   }));
 
-  const createFacilityBooing = useApiMutation({
+  const createFacilityBookings = useApiMutation({
     mutationFn: createFacilityBooking,
     invalidateKeys: [["facility-booking-list"]],
     // shouldInvalidate: isEdit ? true : page === 1,
   });
 
   useEffect(() => {
-    if (drawerOpen && selectedData) {
+    if (drawerOpen && selectedData ) {
       form.setFieldsValue({
         ...selectedData,
         eventOrderDate: selectedData.eventOrderDate
@@ -125,29 +126,7 @@ const EventFacilityOrderForm = ({
       }
     };
 
-    createFacilityBooing.mutate(modifiedValues)
-    //  API
-    // console.log("Submitted Values:", formattedValues);
-
-    // // LocalStorage
-    // const existingData = JSON.parse(localStorage.getItem("events")) || [];
-    // if (mode === "add") {
-    //   localStorage.setItem(
-    //     "events",
-    //     JSON.stringify([
-    //       ...existingData,
-    //       { ...formattedValues, id: Date.now() },
-    //     ]),
-    //   );
-    // } else {
-    //   const updated = existingData.map((item) =>
-    //     item.id === selectedData.id
-    //       ? { ...formattedValues, id: item.id }
-    //       : item,
-    //   );
-    //   localStorage.setItem("events", JSON.stringify(updated));
-    // }
-
+    createFacilityBookings.mutate(modifiedValues)
     setDrawerOpen(false);
     onSuccess();
   };
@@ -162,17 +141,17 @@ const EventFacilityOrderForm = ({
           <div className="flex justify-between items-center">
             <span>
               {isView
-                ? "s Details"
+                ? "Facility Order Details"
                 : mode === "edit"
-                  ? "Edit Order"
-                  : "Create Order"}
+                  ? "Edit Facility Order"
+                  : "Create Facility Order"}
             </span>
             {isView ? (
               <Button type="primary" onClick={() => setMode("edit")}>
                 Edit
               </Button>
             ) : (
-              <FormButtons onClick={() => form.submit()} mode={mode} />
+              <FormButtons onClick={() => form.submit()} mode={mode} isPending={createFacilityBookings?.isPending}/>
             )}
           </div>
         }
@@ -194,11 +173,11 @@ const EventFacilityOrderForm = ({
           </div>
 
           <Form.Item
-            label="Guest Name"
+            label="Name"
             name="guestName"
             rules={[{ required: true, message: "Facility Booking Name is Required" }]}
           >
-            <Input readOnly={isView} placeholder="Enter FacilityBooking Name" />
+            <Input readOnly={isView} placeholder="Enter Name" />
           </Form.Item>
 
           <Form.Item
@@ -286,7 +265,7 @@ const EventFacilityOrderForm = ({
                 label="Expected Hours"
                 required
               >
-                <Input value={formattedExpectedHours} readOnly />
+                <Input value={frontformattedExpectedHours} readOnly />
               </Form.Item>
             </Col>
           </Row>

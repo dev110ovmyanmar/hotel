@@ -60,6 +60,9 @@
   max-width: 1200px;
   margin: 10px 0 20px 0;
   font-size: 14px;
+
+  padding: 0 15px;
+
 }
 
 .breadcrumbs .crumb:after {
@@ -599,11 +602,11 @@ span .ant-upload {
 }
 
 .custom-tabs .ant-tabs-tab:nth-child(7).ant-tabs-tab-active .ant-tabs-tab-btn {
-  color: #8c8c8c;
+  color: #0712a6;
 }
 
 .custom-tabs:has(.ant-tabs-tab:nth-child(7).ant-tabs-tab-active) {
-  --ant-tabs-ink-bar-color: #8c8c8c;
+  --ant-tabs-ink-bar-color: #0712a6;
 }
 
 .ant-tabs-nav-more {

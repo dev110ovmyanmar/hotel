@@ -82,7 +82,7 @@ const CalendarHeader = ({
 
             {/* Actions */}
             <div className="flex items-center gap-3">
-                <Input
+                {/* <Input
                     prefix={<SearchOutlined />}
                     placeholder="Enter keyword"
                     className="w-64"
@@ -90,7 +90,7 @@ const CalendarHeader = ({
                     onChange={(e) => setLocalKeyword(e.target.value)}
                     onPressEnter={() => onKeywordChange(localKeyword)}
                     disabled={disabled}
-                />
+                /> */}
                 <Button type="primary" onClick={() => onDateChange(dayjs())}>
                     Today
                 </Button>

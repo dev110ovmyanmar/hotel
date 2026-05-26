@@ -63,7 +63,7 @@ const RoomTypeGroup = ({
                 className="bg-[#fcfcfc] cursor-pointer hover:bg-gray-100 h-10"
                 onClick={onToggle}
             >
-                <td className="sticky left-0 z-40 bg-[#fcfcfc] border-r border-[#dee2e6] p-3 font-bold" style={{ borderTop: '3px solid #6b7280' }}>
+                <td className="sticky left-0 z-40 bg-[#fcfcfc] border-r border-[#dee2e6] p-3 font-bold bg-gray-300" style={{ borderTop: '3px solid #6b7280' }}>
                     <div className="flex justify-between items-center">
                         <span className="text-[13px] truncate">{rt.name}</span>
                         {isExpanded ? (
