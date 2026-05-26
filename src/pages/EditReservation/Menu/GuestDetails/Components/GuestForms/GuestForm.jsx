@@ -321,7 +321,7 @@ const GuestForm = ({
         layout="vertical"
         onFinish={onFinish}
         disabled={isView}
-        initialValues={{ isAdult: 1, status: activeStatusUuid, isPrimary:1 }}
+        initialValues={{ isAdult: 1, status: activeStatusUuid, isPrimary: 1 }}
       >
         <Form.Item
           name="isAdult"
@@ -638,7 +638,7 @@ const GuestForm = ({
                 <Form.Item label="Country" name="country">
                   <Select
                     options={countryOptions}
-                    disabled={isView} 
+                    disabled={isView}
                     onChange={(val) => {
                       setSelectedCountryUuid(val);
                       form.setFieldValue("city", null);

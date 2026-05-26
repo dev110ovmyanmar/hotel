@@ -21,7 +21,6 @@ const AssignRoomForm = ({
   onSuccess,
   reservationUuid,
 }) => {
- 
   const uuid = reservationUuid?.uuid;
 
   const [form] = Form.useForm();
@@ -124,16 +123,17 @@ const AssignRoomForm = ({
                   />
                 </Form.Item>
 
-                <div className="flex flex-col items-center justify-center bg-gray-200 rounded px-3 h-[32px] min-w-[65px] border border-gray-300">
-                  <span className="text-[12px] font-bold leading-none">
+                <div className="flex flex-col items-center justify-center bg-gray-300 rounded px-3 h-[32px] min-w-[120px] border border-gray-300">
+                  <span className="font-medium text-black disabled:text-black text-center leading-none">
                     {calculateNights()}{" "}
-                    <span className="text-[10px] text-gray-600 font-normal">
+                    <span className="font-medium text-black disabled:text-black text-center">
                       {calculateNights() === 1 ? "Night" : "Nights"}
                     </span>
                   </span>
                 </div>
               </div>
             </Form.Item>
+           
 
             <div className="grid grid-cols-2 gap-6">
               <Form.Item label="Room" name={["roomType", "name"]}>

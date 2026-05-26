@@ -6,7 +6,7 @@ import FoodBeverageOrder from "../FolioOperationsForms/FoodBeverageOrder.JSX";
 import AddNewServiceOrderForm from "../FolioOperationsForms/AddNewServiceOrderForm";
 import AddNewFacilityOrderForm from "../FolioOperationsForms/AddNewFacilityOrderForm";
 import AddPaymentForm from "../../../../../BookingDetail/Components/BookingDetailForms/AddPaymentForm";
-import FolioOperationsTable from "../FolioOperationsTable";
+
 
 const FolioOperationsButtons = ({ reservationId }) => {
   const [form] = Form.useForm();
@@ -99,11 +99,7 @@ const FolioOperationsButtons = ({ reservationId }) => {
         onClose={() => setPaymentOpen(false)}
         reservationId={reservationId}
       />
-      <FolioOperationsTable
-        open={folioOpen}
-        onClose={() => setFolioOpen(false)}
-        reservationId={reservationId}
-      />
+
     </div>
   );
 };

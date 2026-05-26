@@ -177,7 +177,7 @@ const EventFacilityOrderForm = ({
           </div>
         }
       >
-        {/* <Form
+        <Form
           form={form}
           layout="vertical"
           onFinish={onFinish}
@@ -193,7 +193,119 @@ const EventFacilityOrderForm = ({
             </Button>
           </div>
 
+          <Form.Item
+            label="Guest Name"
+            name="guestName"
+            rules={[{ required: true, message: "Facility Booking Name is Required" }]}
+          >
+            <Input readOnly={isView} placeholder="Enter FacilityBooking Name" />
+          </Form.Item>
+
+          <Form.Item
+            label="Phone"
+            name="guestPhone"
+            rules={[
+              { required: true },
+              { validator: validatePhoneNumber }
+            ]}
+          >
+            <Input
+              addonBefore="+959"
+              readOnly={isView}
+              placeholder="Enter Phone"
+              onKeyPress={(e) => {
+                if (!/[0-9]/.test(e.key)) {
+                  e.preventDefault();
+                }
+              }}
+              maxLength={
+                phoneValue?.startsWith("09")
+                  ? 11
+                  : phoneValue?.startsWith("9")
+                    ? 10
+                    : 9
+              }
+            />
+          </Form.Item>
+
+          <Form.Item
+            label="Event Name"
+            name="eventName"
+            rules={[{ required: true, message: "Event Name is Required" }]}
+          >
+            <Input readOnly={isView} placeholder="Enter Event Name" />
+          </Form.Item>
+
+          <Form.Item
+            label="Facility Package"
+            name="facilityPackage"
+            rules={[{ required: true, message: "Facility Package is Required" }]}
+          >
+            <Select options={facilityPackages} readOnly={isView} placeholder="Select Event Name" />
+          </Form.Item>
+
+
+          {/* <Form.Item
+            label="Total Price"
+            name="totalPrice"
+            rules={[
+              { required: true },
+            ]}
+          >
+            <Input readOnly={isView} placeholder="Enter Total Price" />
+          </Form.Item> */}
+
+          <Form.Item
+            label="Event Date"
+            name="eventDate"
+            rules={[{ required: true, message: "Event Date is Required" }]}
+          >
+            <DatePicker
+              format={dateFormat}
+              disabledDate={disabledDate}
+              style={{ width: "100%" }}
+            />
+          </Form.Item>
+
           <Row gutter={16}>
+            <Col span={12}>
+              <Form.Item
+                label="Time Range"
+                name="timeRange"
+                rules={[{ required: true, message: "Time Range is Required" }]}
+              >
+                <RangePicker
+                  format={format}
+
+                />
+              </Form.Item>
+            </Col>
+
+            <Col span={12}>
+              <Form.Item
+                label="Expected Hours"
+                required
+              >
+                <Input value={formattedExpectedHours} readOnly />
+              </Form.Item>
+            </Col>
+          </Row>
+
+          <Form.Item
+            label="Expected Pax"
+            name="expectedPax"
+            rules={[{ required: true, message: "Expected Pax is Required" }]}
+          >
+            <Input readOnly={isView} placeholder="Enter Expected Pax" />
+          </Form.Item>
+
+          <Status isView={isView} statusValue={initDataStatus} />
+
+          <Form.Item label="Remark" name="remark">
+            <TextArea readOnly={isView} placeholder="Enter Remark" />
+          </Form.Item>
+
+          {/* <Row gutter={16}>
             <Col span={12}>
               <Form.Item label="Event Order Date" name="eventOrderDate">
                 <DatePicker className="w-full" disabled={isView} />
@@ -314,130 +426,10 @@ const EventFacilityOrderForm = ({
 
           <Form.Item label="Remarks" name="remarks">
             <TextArea rows={3} placeholder="Enter Remarks..." />
-          </Form.Item>
-        </Form> */}
-
-        <Form
-          form={form}
-          layout="vertical"
-          validateTrigger="onSubmit"
-          onFinish={onFinish}
-          disabled={isView}
-        >
-          <Form.Item
-            label="Guest Name"
-            name="guestName"
-            rules={[{ required: true, message: "Facility Booking Name is Required" }]}
-          >
-            <Input readOnly={isView} placeholder="Enter FacilityBooking Name" />
-          </Form.Item>
-
-          <Form.Item
-            label="Phone"
-            name="guestPhone"
-            rules={[
-              { required: true },
-              { validator: validatePhoneNumber }
-            ]}
-          >
-            <Input
-              addonBefore="+959"
-              readOnly={isView}
-              placeholder="Enter Phone"
-              onKeyPress={(e) => {
-                if (!/[0-9]/.test(e.key)) {
-                  e.preventDefault();
-                }
-              }}
-              maxLength={
-                phoneValue?.startsWith("09")
-                  ? 11
-                  : phoneValue?.startsWith("9")
-                    ? 10
-                    : 9
-              }
-            />
-          </Form.Item>
-
-          <Form.Item
-            label="Event Name"
-            name="eventName"
-            rules={[{ required: true, message: "Event Name is Required" }]}
-          >
-            <Input readOnly={isView} placeholder="Enter Event Name" />
-          </Form.Item>
-
-          <Form.Item
-            label="Facility Package"
-            name="facilityPackage"
-            rules={[{ required: true, message: "Facility Package is Required" }]}
-          >
-            <Select options={facilityPackages} readOnly={isView} placeholder="Select Event Name" />
-          </Form.Item>
-
-
-          {/* <Form.Item
-            label="Total Price"
-            name="totalPrice"
-            rules={[
-              { required: true },
-            ]}
-          >
-            <Input readOnly={isView} placeholder="Enter Total Price" />
           </Form.Item> */}
-
-          <Form.Item
-            label="Event Date"
-            name="eventDate"
-            rules={[{ required: true, message: "Event Date is Required" }]}
-          >
-            <DatePicker
-              format={dateFormat}
-              disabledDate={disabledDate}
-              style={{ width: "100%" }}
-            />
-          </Form.Item>
-
-          <Row gutter={16}>
-            <Col span={12}>
-              <Form.Item
-                label="Time Range"
-                name="timeRange"
-                rules={[{ required: true, message: "Time Range is Required" }]}
-              >
-                <RangePicker
-                  format={format}
-
-                />
-              </Form.Item>
-            </Col>
-
-            <Col span={12}>
-              <Form.Item
-                label="Expected Hours"
-                required
-              >
-                <Input value={formattedExpectedHours} readOnly />
-              </Form.Item>
-            </Col>
-          </Row>
-
-          <Form.Item
-            label="Expected Pax"
-            name="expectedPax"
-            rules={[{ required: true, message: "Expected Pax is Required" }]}
-          >
-            <Input readOnly={isView} placeholder="Enter Expected Pax" />
-          </Form.Item>
-
-          <Status isView={isView} statusValue={initDataStatus} />
-
-          <Form.Item label="Remark" name="remark">
-            <TextArea readOnly={isView} placeholder="Enter Remark" />
-          </Form.Item>
-
-
         </Form>
+
+
       </Drawer>
 
       <SearchEventFacilityOrderForm

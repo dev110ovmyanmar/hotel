@@ -66,7 +66,7 @@ const RoomRateForm = ({
 
   const upsertRoomRates = useApiMutation({
     mutationFn: upsertRoomRate,
-    invalidateKeys: [["room-rates"]],
+    invalidateKeys: [["room-rates"], ["ratePlan"]],
     shouldInvalidate: isEdit ? true : page === 1
   });
 
