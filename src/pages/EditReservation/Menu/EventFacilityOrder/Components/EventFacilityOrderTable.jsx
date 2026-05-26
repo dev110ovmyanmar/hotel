@@ -160,13 +160,13 @@ const EventFacilityOrderTable = ({
       title: "Start Time",
       dataIndex: "startTime",
       key: "startTime",
-      render: (text) => <div>{text}</div>,
+      render: (text) => <div>{text ? dayjs(text,"HH:mm").format("HH:mm") : "-"}</div>,
     },
     {
       title: "End Time",
       dataIndex: "endTime",
       key: "endTime",
-      render: (text) => <div>{text}</div>,
+      render: (text) => <div>{text ? dayjs(text,"HH:mm").format("HH:mm") : "-"}</div>,
     },
     {
       title: "Expected Hours",
@@ -182,7 +182,7 @@ const EventFacilityOrderTable = ({
         const minutes = Math.floor((totalSeconds % 3600) / 60);
         const seconds = totalSeconds % 60;
 
-        const text = `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+        const text = `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
         return <div>{text}</div>;
 
       },
@@ -227,7 +227,7 @@ const EventFacilityOrderTable = ({
             key: "edit",
             label: "Edit",
             icon: <EditOutlined style={{ fontSize: "12px" }} />,
-            permission: PERMISSIONS.PARTNER_EDIT,
+            // permission: PERMISSIONS.PARTNER_EDIT,
             onClick: () => {
               setDrawerOpen(true);
               setMode("edit");
@@ -243,7 +243,7 @@ const EventFacilityOrderTable = ({
           onClick: action.onClick,
           label: (
             <Space size={4} style={smallStyle}
-            // onClick={action.onClick}
+            onClick={action.onClick}
             >
               {action.icon}
               <span style={{ fontSize: "14px" }}>{action.label}</span>

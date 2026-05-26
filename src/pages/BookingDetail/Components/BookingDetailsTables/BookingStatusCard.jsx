@@ -63,7 +63,7 @@ const RoomStatusCard = ({ data }) => {
 
         <div>
           <Text>Booking Source: </Text>
-          <Text strong>{reservation?.source || "-"}</Text>
+          <Text strong>{reservation?.source?.name || "-"}</Text>
         </div>
 
         <div>

@@ -6,18 +6,66 @@ import FolioOperationsButtons from "./Components/FolioOperationsButtons/FolioOpe
 import FolioOperationsTable from "./Components/FolioOperationsTable";
 import FolioOperationsForm from "./Components/FolioOperationsForms/FolioOperationsForm";
 import { Card, Divider, Modal } from "antd";
+import useApiQuery from "../../../../hooks/useApiQuery";
+import { getFolioList, createFolio } from "../../../../api/folioApi";
+import { LIMITS } from "../../../../variables/constants";
+import { useLocation } from "react-router-dom";
+import { useApiMutation } from "../../../../hooks/useApiMutation";
 
 const FolioOperationsList = () => {
+  const [keyword, setKeyword] = useState("");
+  const [page, setPage] = useState(1);
+  const [perPage, setPerPage] = useState(LIMITS.PAGE_SIZE);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mode, setMode] = useState("add");
   const [selectedData, setSelectedData] = useState(null);
   const [isTableVisible, setIsTableVisible] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
 
+  const location = useLocation();
+  const uuid = location.state?.bookingId;
+
+  const { data: folioList, isLoading, error } = useApiQuery({
+    fetchQueryName: "folios",
+    fetchQueryFunction: getFolioList,
+    params: {
+      pagination: {
+        page: page,
+        perPage: perPage,
+      },
+      keyword,
+      reservation: {
+        uuid: uuid,
+      },
+    },
+  });
+
+  const isFolioEmpty = folioList?.data?.length === 0;
+  const isFolioLineIsEmpty = folioList?.data?.every(
+    (folio) => !folio.folioLines || folio.folioLines.length === 0
+  );
+
+  const createFolioMutation = useApiMutation({
+    mutationFn: createFolio,
+    invalidateKeys: [["folios"]],
+    shouldInvalidate: page === 1
+  });
+
   const handleAddFolioOperations = () => {
     setSelectedData(null);
     setMode("add");
     setModalOpen(true);
+  };
+
+  const handleCreateFolio = () => {
+    createFolioMutation.mutate(
+      { reservation: { uuid: uuid } },
+      {
+        onSuccess: () => {
+          setModalOpen(false);
+        },
+      }
+    );
   };
 
   return (
@@ -26,28 +74,37 @@ const FolioOperationsList = () => {
       <ReservationMenu />
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
         <ReservationListHeader
-          reservationId="123212321"
+          reservationId={folioList?.reservation?.reservationNo}
           onAddreservation={handleAddFolioOperations}
-          addButtonText={"Add Folio Operations"}
+          addButtonText={!isFolioEmpty ? "Add Folio Operations" : ""}
+
         />
       </div>
 
       <FolioOperationsButtons />
 
-      {/* <FolioOperationsTable /> */}
+      <FolioOperationsTable
+        setSelectedData={setSelectedData}
+        setMode={setMode}
+        setDrawerOpen={setDrawerOpen}
+        dataSource={folioList?.data}
+        onCreateFolio={handleAddFolioOperations}
+        isFolioLineIsEmpty={isFolioLineIsEmpty}
+      />
 
       <Modal
-        title="
-        Create New Folio"
+        title="Create New Folio"
         open={modalOpen}
         onCancel={() => setModalOpen(false)}
+        onOk={handleCreateFolio}
         okText="Create Folio"
+        confirmLoading={createFolioMutation.isPending}
         closable={false}
         centered
         className="custom-ant-modal"
       >
         <p className="ml-5 mt-5">
-          Do you want to create a new Folio for Reservation Id: 1234567890?
+          Do you want to create a new Folio for Reservation Id: <strong>{folioList?.reservation?.reservationNo}</strong>
         </p>
         <Divider />
       </Modal>

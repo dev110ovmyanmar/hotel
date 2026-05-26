@@ -1,8 +1,10 @@
-import { ArrowRightOutlined, DeleteOutlined } from "@ant-design/icons";
+import { ArrowRightOutlined, DeleteOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
 import { Button, Card, Divider, Drawer, Modal, Tag } from "antd";
 import dayjs from "dayjs";
 import { useState } from "react";
+import { FaMoon } from "react-icons/fa";
 import { MdOutlineEscalatorWarning, MdPeopleOutline } from "react-icons/md";
+import RoomModalBox from "./RoomModalBox";
 
 
 const RoomBookedDrawer = ({
@@ -20,6 +22,7 @@ const RoomBookedDrawer = ({
 
 }) => {
     const [deleteKey, setDeleteKey] = useState();
+    const [roomModalBoxOpen, setRoomModalBoxOpen] = useState(false);
 
     const roomConfirmClick = () => {
         setRoomConfirm(true);
@@ -45,6 +48,12 @@ const RoomBookedDrawer = ({
         });
 
     };
+
+    // console.log(dayjs(roomBookValues?.filter.checkoutDate).format("YYYY-MM-DD"),"RoomBookValueFilterCheckInDate")
+
+    const checkInDate = dayjs(roomBookValues?.filter.checkinDate).startOf("day");
+    const checkOutDate = dayjs(roomBookValues?.filter.checkoutDate).startOf("day");
+    const totalNights = checkOutDate.diff(checkInDate, "day");
 
     return (
         <Drawer
@@ -93,8 +102,12 @@ const RoomBookedDrawer = ({
                     <p>{roomBookValues?.filter.checkinDate}</p>
                 </div>
 
-                <div>
-                    <ArrowRightOutlined />
+                <div className="flex items-center gap-2 bg-indigo-50 text-indigo-700 px-3 py-1.5 rounded-lg border border-indigo-100 ml-auto sm:ml-0">
+                    <FaMoon className="text-xs" />
+                    <span className="text-xs font-bold whitespace-nowrap">
+                        {totalNights}
+                        {totalNights === 1 ? " Night" : " Nights"}
+                    </span>
                 </div>
 
                 <div>
@@ -115,7 +128,14 @@ const RoomBookedDrawer = ({
                             <div className="flex justify-between">
                                 <div className="flex">
                                     <p className="mr-3">{room?.roomType?.name}</p>
-                                    <Tag color="blue">{room?.totalRooms} Room</Tag>
+                                    <Tag color="blue">
+                                        {room?.totalRooms} Room
+                                        <ExclamationCircleOutlined 
+                                            className="!text-[#0973e7] !text-sm ms-3 cursor-pointer"
+                                            onClick={()=>setRoomModalBoxOpen(true)}
+                                        />
+                                    </Tag>
+                                    
                                 </div>
                                 {
                                     roomBookValues?.rooms.length === 1 ? null :
@@ -162,15 +182,19 @@ const RoomBookedDrawer = ({
                                 <p className="font-bold">{room?.taxTotal.toLocaleString()} MMK</p>
                             </div>
 
-
-
                         </Card>
 
                     ))
                 }
             </div>
 
+            {/* Infomration  */}
+            <RoomModalBox 
+                roomModalBoxOpen = {roomModalBoxOpen}
+                setRoomModalBoxOpen = {setRoomModalBoxOpen}
+            />
 
+            {/* Delete */}
             <Modal
                 open={modalOpen}
                 onCancel={() => setModalOpen(false)}
