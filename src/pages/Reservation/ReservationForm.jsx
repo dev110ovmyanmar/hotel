@@ -5,6 +5,7 @@ import dayjs from "dayjs";
 import { availabilitySearch, reservationMeta } from "../../api/reservationSectionApi";
 import { useEffect, useState } from "react";
 import { useApiMutation } from "../../hooks/useApiMutation";
+import { FaMoon } from "react-icons/fa";
 
 const { RangePicker } = DatePicker;
 
@@ -19,7 +20,8 @@ const ReservationForm = ({
     defaultFilter,
     bookedViaOptions,
     sourceTypeOptions,
-
+    setSearchReservation,
+    setSelectedData
 }) => {
 
     const dateRange = Form.useWatch("filter", form);
@@ -32,12 +34,12 @@ const ReservationForm = ({
         fetchQueryFunction: reservationMeta,
     });
 
-    const agenciesOptions = reservationMetas?.agencies.map((item) => ({
+    let agenciesOptions = reservationMetas?.agencies.map((item) => ({
         label: item.name,
         value: item.uuid,
     })) || [];
 
-    const companyOptions = reservationMetas?.companies.map((item) => ({
+    let companyOptions = reservationMetas?.companies.map((item) => ({
         label: item.name,
         value: item.uuid,
     })) || [];
@@ -83,6 +85,10 @@ const ReservationForm = ({
 
     const handleChange = (value, option) => {
         setSelectedSourceType(option?.label);
+
+        form.setFieldsValue({
+            source: undefined,
+        });
     };
 
     // Added this useEffect to update selectedSourceType when sourceTypeValue changes
@@ -134,7 +140,11 @@ const ReservationForm = ({
                 form={form}
                 onFinish={searchSubmit}
                 layout="vertical"
-                onValuesChange={() => { setSearchButtonDisable(false) }}
+                onValuesChange={() => {
+                    setSearchButtonDisable(false);
+                    setSearchReservation(false);
+                    setSelectedData([]);
+                }}
             >
                 <div className="flex justify-between">
                     <h1 className="text-lg font-bold text-[#ffffff] my-2">Create New Reservation</h1>
@@ -150,8 +160,8 @@ const ReservationForm = ({
                                     disabled={searchButtonDisable}
                                     className={
                                         searchButtonDisable
-                                        ? "min-w-[125px] !bg-gray-300 !text-gray-500 !border-gray-300 cursor-not-allowed"
-                                        : "min-w-[125px] !bg-[#FFFFFF] !text-[#000000] !shadow-lg shadow-gray-300/50"
+                                            ? "min-w-[125px] !bg-gray-200 !text-gray-300 !border-gray-400 cursor-not-allowed"
+                                            : "min-w-[125px] !bg-[#FFFFFF] !text-[#000000] !shadow-lg shadow-gray-300/50"
                                     }
                                 >
                                     {/* !bg-gradient-to-r from-[#CACDCB] to-[#104171] */}
@@ -203,11 +213,12 @@ const ReservationForm = ({
                                 <p className="text-gray-100 hidden">Nights</p>
                             }
                         >
-                            <div className="w-[61px] h-[32px] bg-[#fafafa] dark:bg-[#141414] dark:border rounded-md flex flex-col justify-center items-center">
-
-                                <p className="text-xs leading-none ">{totalNights}</p>
-                                <p className="text-xs leading-none">Nights</p>
-
+                            <div className="flex items-center gap-2 bg-indigo-50 text-indigo-700 px-3 py-1.5 rounded-lg border border-indigo-100 ml-auto sm:ml-0">
+                                <FaMoon className="text-xs" />
+                                <span className="text-xs font-bold whitespace-nowrap">
+                                    {totalNights}
+                                    {totalNights === 1 ? " Night" : " Nights"}
+                                </span>
                             </div>
                         </Form.Item>
                     </div>

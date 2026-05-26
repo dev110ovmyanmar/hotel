@@ -41,7 +41,6 @@ const ReservationList = () => {
   const [guestInfoTable, setGuestInfoTable] = useState(false);
   const [searchReservation, setSearchReservation] = useState(false);
   const [searchButtonDisable, setSearchButtonDisable] = useState(false);
-
   const [storeData, setStoreData] = useState(null);
 
   const [selectedData, setSelectedData] = useState([]);
@@ -379,6 +378,8 @@ const ReservationList = () => {
         defaultFilter={defaultFilter}
         bookedViaOptions={bookedViaOptions}
         sourceTypeOptions={sourceTypeOptions}
+        setSearchReservation={setSearchReservation}
+        setSelectedData={setSelectedData}
       />
 
       {roomConfirm ? (
