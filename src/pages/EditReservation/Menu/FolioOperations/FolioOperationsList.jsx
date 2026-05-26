@@ -76,7 +76,7 @@ const FolioOperationsList = () => {
         <ReservationListHeader
           reservationId={folioList?.reservation?.reservationNo}
           onAddreservation={handleAddFolioOperations}
-          addButtonText={!isFolioEmpty ? "Add Folio Operations" : ""}
+          addButtonText={!isFolioEmpty ? "Split New Folio" : ""}
 
         />
       </div>

@@ -57,6 +57,7 @@ const ServiceForm = ({
     invalidateKeys: [["services"]],
   });
 
+
   const { data, isLoading, error } = useApiQuery({
     fetchQueryName: "service-details",
     fetchQueryFunction: getServiceDetails,
@@ -81,7 +82,7 @@ const ServiceForm = ({
 
   const handleClose = () => {
     setDrawerOpen(false);
-    setSelectedData(null);
+    // setSelectedData(null);
     form.resetFields();
   };
 
