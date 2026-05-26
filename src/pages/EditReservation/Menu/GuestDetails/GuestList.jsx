@@ -1,14 +1,46 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
+import { Form } from "antd";
 import ReservationHeader from "../../Components/ReservationHeader";
 import ReservationMenu from "../../Components/ReservationMenu";
 import GuestTable from "./Components/GuestTable";
 import GuestForm from "./Components/GuestForms/GuestForm";
 import ReservationListHeader from "../../../../component/ReservationHeader/ReservationListHeader";
+import { reservationGuestList } from "../../../../api/reservationSectionApi";
+import useApiQuery from "../../../../hooks/useApiQuery";
+import { LIMITS } from "../../../../variables/constants";
+import GuestUploadDrawer from "./Components/GuestForms/GuestUploadDrawer";
 
 const GuestList = () => {
+  const location = useLocation();
+  const uuid = location.state?.bookingId;
+  const [form] = Form.useForm();
+
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mode, setMode] = useState("add");
   const [selectedData, setSelectedData] = useState(null);
+
+  const [keyword, setKeyword] = useState("");
+  const [page, setPage] = useState(1);
+  const [perPage, setPerPage] = useState(LIMITS.PAGE_SIZE);
+  const [uploadDrawerOpen, setUploadDrawerOpen] = useState(false);
+
+  useEffect(() => {
+    setPage(1);
+  }, [keyword]);
+
+  const { data, isLoading, refetch } = useApiQuery({
+    fetchQueryName: "reservation-guest",
+    fetchQueryFunction: reservationGuestList,
+    params: {
+      pagination: {
+        page,
+        perPage,
+      },
+      keyword,
+      reservation: { uuid },
+    },
+  });
 
   const handleAddGuest = () => {
     setSelectedData(null);
@@ -16,23 +48,61 @@ const GuestList = () => {
     setDrawerOpen(true);
   };
 
+  const guestList = data?.data ?? [];
+  const reservationInfo = data?.reservation ?? null;
+
+  console.log(reservationInfo, "form");
+
   return (
     <div className="w-full px-6 py-2">
-      <ReservationHeader />
+      <ReservationHeader data={data ?? {}} />
       <ReservationMenu />
+
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
         <ReservationListHeader
-          reservationId="123212321"
+          reservationId={reservationInfo?.reservationNo}
           onAddreservation={handleAddGuest}
-          addButtonText={"Add New Guest"}
+          addButtonText={
+            ["pending", "confirmed", "booked", "checked_in"].includes(
+              data?.reservation?.reservationStatus?.code?.toLowerCase(),
+            )
+              ? "Add New Guest"
+              : null
+          }
+          onSearch={setKeyword}
         />
       </div>
-      <GuestTable />
 
-      <GuestForm
-        drawerOpen={drawerOpen}
-        setDrawerOpen={setDrawerOpen}
-        mode={mode}
+      <GuestTable
+        data={data?.data || []}
+        page={data?.pagination.currentPage}
+        perPage={data?.pagination.perPage}
+        total={data?.pagination?.total}
+        changePage={(page) => setPage(page)}
+        changePerPage={(perPage) => setPerPage(perPage)}
+        loading={isLoading}
+        reservationUuid={reservationInfo}
+      />
+
+      {drawerOpen && (
+        <GuestForm
+          form={form}
+          mode={mode}
+          onSuccess={refetch}
+          drawerOpen={drawerOpen}
+          setDrawerOpen={setDrawerOpen}
+          selectedData={selectedData}
+          setSelectedData={setSelectedData}
+          reservationUuid={reservationInfo}
+        />
+      )}
+
+      <GuestUploadDrawer
+        drawerOpen={uploadDrawerOpen}
+        setDrawerOpen={() => setUploadDrawerOpen(false)}
+        selectedRow={selectedData}
+        setSelectedRow={setSelectedData}
+        reservationUuid={reservationInfo}
       />
     </div>
   );

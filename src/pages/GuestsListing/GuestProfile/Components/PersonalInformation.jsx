@@ -25,18 +25,18 @@ const PersonalInformation = ({
   return (
     <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-8 items-stretch animate-in fade-in slide-in-from-bottom-2 duration-500">
     <InfoSection title="Basic Information" icon={<User size={18} />}>
-      <DataRow label="Full Name" value={personalInfo?.name} />
-      <DataRow label="Name Other Language" value={personalInfo?.otherName} />
-      <DataRow label="Phone No 1" value={personalInfo?.phone} />
+      <DataRow label="Full Name" value={personalInfo?.name ? personalInfo?.name : "-" } />
+      <DataRow label="Name Other Language" value={personalInfo?.otherName? personalInfo?.otherName : "-"} />
+      <DataRow label="Phone No 1" value={personalInfo?.phone? personalInfo?.phone : "-"} />
       <DataRow label="Phone No 2" value="+1 (555) 123-4567" />
       <DataRow label="Email" value={personalInfo?.email} />
-      <DataRow label="Gender" value={personalInfo?.gender?.name} />
-      <DataRow label="Date of Birth" value={personalInfo?.dob} />
-      <DataRow label="Nationality" value={personalInfo?.nationality} />
+      <DataRow label="Gender" value={personalInfo?.gender?.name? personalInfo?.gender?.name : "-"} />
+      <DataRow label="Date of Birth" value={personalInfo?.dob ? personalInfo?.dob : "-"} />
+      <DataRow label="Nationality" value={personalInfo?.nationality ? personalInfo?.nationality : "-"} />
       <DataRow label="Father Name" value="U Tin Lin" />
       <DataRow label="ID Type" value="NRC" />
-      <DataRow label="ID Number" value={personalInfo?.nrcNo}/>
-      <DataRow label="Passport Number" value={personalInfo?.passport} />
+      <DataRow label="ID Number" value={personalInfo?.nrcNo ? personalInfo?.nrcNo : "-"}/>
+      <DataRow label="Passport Number" value={personalInfo?.passport ? personalInfo?.passport : "-" } />
     </InfoSection>
 
     {/* <InfoSection title="Identification" icon={<CreditCard size={18} />}>
@@ -48,11 +48,11 @@ const PersonalInformation = ({
     </InfoSection> */}
 
     <InfoSection title="Address" icon={<MapPin size={18} />}>
-      <DataRow label="Address" value={personalInfo?.address} />
-      <DataRow label="City" value={personalInfo?.city?.name} />
+      <DataRow label="Address" value={personalInfo?.address ? personalInfo?.address : "-"} />
+      <DataRow label="City" value={personalInfo?.city?.name ? personalInfo?.city?.name : "-"} />
       <DataRow label="State" value="MM" />
       <DataRow label="ZIP Code" value="10022" />
-      <DataRow label="Country" value={personalInfo?.country?.name} />
+      <DataRow label="Country" value={personalInfo?.country?.name ? personalInfo?.country?.name : "-"} />
     </InfoSection>
 
     <InfoSection title="Emergency Contact" icon={<Asterisk size={18} />}>

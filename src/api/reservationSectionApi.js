@@ -55,6 +55,11 @@ export const reservationRoomList = async (params) => {
   return data.response;
 };
 
+export const reservationRoomDetails = async (params) => {
+  const { data } = await apiClient.get("/reservation-room", { params });
+  return data.response;
+};
+
 export const reservationRoomAssign = async (params) => {
   const { data } = await apiClient.patch(`/reservation-room/assign`, params);
   return data.response;
@@ -75,6 +80,7 @@ export const createReservationRoom = async (params) => {
   return data.response;
 };
 
+// Reservation-note api
 export const reservationNoteList = async (params) => {
   const { data } = await apiClient.get("reservation-notes", { params });
   return data.response;
@@ -90,4 +96,18 @@ export const reservationNoteDelete = async (params) => {
   return data.response;
 }
 
+// Reservation-guest api
+export const reservationGuestList = async (params) => {
+  const { data } = await apiClient.get("reservation/guests", { params });
+  return data.response;
+};
 
+export const reservationGuestUpsert = async (params) => {
+  const { data } = await apiClient.post(`/reservation/guest/upsert`, params);
+  return data.response;
+};
+
+export const reservationGuestDetails = async (params) => {
+  const { data } = await apiClient.get("reservation/guest", { params });
+  return data.response;
+};

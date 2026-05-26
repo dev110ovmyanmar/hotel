@@ -97,13 +97,34 @@ const GuestProfile = () => {
                 </div>
                 <div className="flex flex-col gap-1">
                   <div className="flex items-center gap-2 text-sm text-slate-500">
-                    <Phone size={14} /> {guestDetailDatas?.phone}
+                    {guestDetailDatas?.phone ?
+                      <>
+                        <Phone size={14} />
+                        {guestDetailDatas?.phone}
+                      </>
+                      : null}
                   </div>
                   <div className="flex items-center gap-2 text-sm text-slate-500">
-                    <Mail size={14} /> {guestDetailDatas?.email}
+                    {
+                      guestDetailDatas?.email ?
+                        <>
+                          <Mail size={14} />
+                          {guestDetailDatas?.email}
+                        </>
+                        :
+                        null
+                    }
                   </div>
                   <div className="flex items-center gap-2 text-sm text-slate-500">
-                    <MapPin size={14} /> {guestDetailDatas?.address}
+                    {
+                      guestDetailDatas?.address ?
+                        <>
+                          <MapPin size={14} />
+                          {guestDetailDatas?.address}
+                        </>
+                        :
+                        null
+                    }
                   </div>
                 </div>
               </div>
@@ -113,7 +134,7 @@ const GuestProfile = () => {
               onClick={() => setDrawerOpen(true)}
             >
               {/* <Edit2 size={16} />  */}
-              <Edit2 className="sm:w-2 sm:h-2 md:w-4 md:h-4" /> 
+              <Edit2 className="sm:w-2 sm:h-2 md:w-4 md:h-4" />
               <span className="sm:text-xs md:!-md lg:!text-base sm:!p-0 sm:!m-0">Edit Profile</span>
             </button>
           </div>
@@ -152,7 +173,7 @@ const GuestProfile = () => {
         drawerOpen={drawerOpen}
         setDrawerOpen={setDrawerOpen}
         selectedRow={guestDetailDatas}
-        
+
       />
 
     </>

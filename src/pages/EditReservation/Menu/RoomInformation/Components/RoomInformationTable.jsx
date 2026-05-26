@@ -16,6 +16,8 @@ import NoteDrawer from "./RoomInformationForms/NoteDrawer";
 import GuestForm from "../../GuestDetails/Components/GuestForms/GuestForm";
 import { EyeOutlined } from "@ant-design/icons";
 import ColorStatusTag from "../../../../../component/ColorStatusTag/ColorStatusTag";
+import { IoBedOutline } from "react-icons/io5";
+import RoomAmend from "./RoomInformationForms/RoomAmend";
 
 const RoomInformationTable = ({
   data,
@@ -37,6 +39,7 @@ const RoomInformationTable = ({
   const [assignRoomOpen, setAssignRoomOpen] = useState(false);
   const [noteOpen, setNoteOpen] = useState(false);
   const [guestOpen, setGuestOpen] = useState(false);
+  const [roomAmend, setRoomAmend] = useState(false);
 
   console.log(reservationUuid, "reservationUuidtable");
 
@@ -47,15 +50,55 @@ const RoomInformationTable = ({
       key: "id",
       width: 70,
     },
+    // {
+    //   title: "Room",
+    //   key: "room",
+    //   dataIndex: "room",
+    //   width: 120,
+    //   render: (text, record) => {
+    //     const isRoomNull = !text;
+
+    //     const isConfirmed =
+    //       reservationUuid?.reservationStatus?.code === "confirmed" || "checked_in" || "pending" || "booked";
+
+    //     const isClickable = isRoomNull && isConfirmed;
+
+    //     return (
+    //       <span
+    //         style={{
+    //           color: isRoomNull
+    //             ? isConfirmed
+    //               ? "#1890ff"
+    //               : "#bfbfbf"
+    //             : "inherit",
+    //           cursor: isClickable ? "pointer" : "not-allowed",
+    //           textDecoration: isClickable ? "underline" : "none",
+    //         }}
+    //         onClick={(e) => {
+    //           if (isClickable) {
+    //             e.stopPropagation();
+    //             setSelectedData(record);
+    //             setAssignRoomOpen(true);
+    //           }
+    //         }}
+    //       >
+    //         {text ? text?.roomNo : "Assign Room"}
+    //       </span>
+    //     );
+    //   },
+    // },
     {
       title: "Room",
       key: "room",
       dataIndex: "room",
+      width: 120,
       render: (text, record) => {
         const isRoomNull = !text;
 
-        const isConfirmed =
-          reservationUuid?.reservationStatus?.code === "confirmed";
+        const statusCode = reservationUuid?.reservationStatus?.code;
+
+        const validStatuses = ["confirmed", "checked_in", "pending", "booked"];
+        const isConfirmed = validStatuses.includes(statusCode);
 
         const isClickable = isRoomNull && isConfirmed;
 
@@ -94,19 +137,22 @@ const RoomInformationTable = ({
       dataIndex: "checkinDate",
       key: "checkinDate",
       render: (value) => (value ? dayjs(value).format("DD/MM/YYYY") : "-"),
+      width: 110,
     },
     {
       title: "Departure",
       dataIndex: "checkoutDate",
       key: "checkoutDate",
       render: (value) => (value ? dayjs(value).format("DD/MM/YYYY") : "-"),
+      width: 110,
     },
 
     {
-      title: "Room Status",
+      title: "Status",
       dataIndex: ["roomStatus", "name"],
       key: "roomStatus",
       render: (_, record) => <ColorStatusTag status={record?.roomStatus} />,
+      width: 110,
     },
     { title: "Rate Plan", dataIndex: ["ratePlan", "name"], key: "ratePlan" },
     {
@@ -114,8 +160,12 @@ const RoomInformationTable = ({
       fixed: "end",
       align: "center",
       render: (_, record) => {
-        const isConfirmed =
-          reservationUuid?.reservationStatus?.code === "confirmed";
+        const statusCode = reservationUuid?.reservationStatus?.code;
+
+        const validStatuses = ["confirmed", "check_in", "checked_in"];
+        const isConfirmed = validStatuses.includes(statusCode);
+        const isCheckin =
+          reservationUuid?.reservationStatus?.code === "checked_in";
 
         return (
           <Space size="middle">
@@ -137,6 +187,18 @@ const RoomInformationTable = ({
                   onClick={() => {
                     setSelectedData(record);
                     setRoomMoveOpen(true);
+                  }}
+                />
+              </Tooltip>
+            )}
+
+            {isCheckin && (
+              <Tooltip title="Room Amend">
+                <IoBedOutline
+                  style={{ fontSize: "18px", cursor: "pointer" }}
+                  onClick={() => {
+                    setSelectedData(record);
+                    setRoomAmend(true);
                   }}
                 />
               </Tooltip>
@@ -210,6 +272,15 @@ const RoomInformationTable = ({
           noteData={data?.data || []}
           open={noteOpen}
           onClose={() => setNoteOpen(false)}
+          selectedData={selectedData}
+          setSelectedData={setSelectedData}
+        />
+      )}
+
+      {roomAmend && (
+        <RoomAmend
+          open={roomAmend}
+          onClose={() => setRoomAmend(false)}
           selectedData={selectedData}
           setSelectedData={setSelectedData}
         />

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Spin, Empty } from "antd";
+import { Button, Spin, Empty, Tag } from "antd";
 import dayjs from "dayjs";
 import {
   reservationRoomAssign,
@@ -14,6 +14,14 @@ import ColorStatusTag from "./../../../../../../component/ColorStatusTag/ColorSt
 const GetRoomForm = ({ selectedData, onSelectRoom, onClose, floorUuid }) => {
   const [page] = useState(1);
   const [perPage] = useState(LIMITS.PAGE_SIZE);
+
+  const statusColorMap = {
+    Available: "success", // Green
+    Occupied: "error", // Red
+    Dirty: "warning", // Orange/Yellow
+    Maintenance: "default", // Gray
+    out_of_order: "orange",
+  };
 
   const { data, isLoading } = useApiQuery({
     fetchQueryName: "reservationRoom",
@@ -84,7 +92,12 @@ const GetRoomForm = ({ selectedData, onSelectRoom, onClose, floorUuid }) => {
             <div className="flex items-center gap-5">
               <div className="flex flex-col items-center gap-1 mr-40">
                 <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-gray-100 text-gray-600 ">
-                  {room.status?.name || "Available"}
+                  <Tag
+                    color={statusColorMap[room.status?.name] || "default"}
+                    className="text-[10px] font-bold px-2 py-0.5 rounded"
+                  >
+                    {room.status?.name}
+                  </Tag>
                 </span>
               </div>
 

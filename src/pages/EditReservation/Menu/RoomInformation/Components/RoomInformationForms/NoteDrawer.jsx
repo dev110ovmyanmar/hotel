@@ -195,19 +195,25 @@ const NoteDrawer = ({ mode, open, onClose, selectedData, onSuccess }) => {
           </Form.Item>
         </Form>
       )}
-      <Divider>History</Divider>
-      <Table
-        dataSource={data?.data || []}
-        columns={columns}
-        rowKey="id"
-        pagination={false}
-        loading={
-          isLoading ||
-          reservationNotesDelete.isPending ||
-          reservationNotesCreate.isPending
-        }
-        size="small"
-      />
+
+      {data?.data && data.data.length > 0 && (
+        <>
+          <Divider>History</Divider>
+
+          <Table
+            dataSource={data.data}
+            columns={columns}
+            rowKey="id"
+            pagination={false}
+            loading={
+              isLoading ||
+              reservationNotesDelete.isPending ||
+              reservationNotesCreate.isPending
+            }
+            size="small"
+          />
+        </>
+      )}
     </Drawer>
   );
 };

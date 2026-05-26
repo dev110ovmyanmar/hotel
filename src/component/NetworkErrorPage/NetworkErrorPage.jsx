@@ -25,7 +25,7 @@ const NetworkErrorPage = () => {
                 }}
             >
                 <div className="w-full h-full flex flex-col justify-center items-center">
-                    <p className="text-2xl mb-5">Oops! Something Went Wrong. Please Try Again ... </p>
+                    <p className="text-2xl text-gray-900 mb-5">Oops! Something Went Wrong. Please Try Again ... </p>
                     <Button onClick={handleReload} type="primary" >Try Again</Button>
                 </div>
 

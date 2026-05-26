@@ -31,36 +31,41 @@ const ReservationsTable = ({
   };
 
   const columns = [
-    { title: "Order Id", dataIndex: "id", key: "id" },
+    { title: "Id", dataIndex: "id", key: "id" ,width:70},
     { title: "Guest Name", dataIndex: ["guest", "name"], key: "guestName" },
     {
-      title: "Rooms",
+      title: "Room",
       dataIndex: "totalRooms",
       key: "totalRooms",
       align: "center",
+      width:80
     },
     {
-      title: "Arrival Date",
+      title: "Arrival",
       dataIndex: "actualCheckin",
       key: "actualCheckin",
+      align: "center",
       render: (value) => (value ? dayjs(value).format("DD/MM/YYYY") : "-"),
     },
     {
-      title: "Departure Date",
+      title: "Departure",
       dataIndex: "actualCheckout",
       key: "actualCheckout",
+      align: "center",
       render: (value) => (value ? dayjs(value).format("DD/MM/YYYY") : "-"),
     },
     {
       title: "Booking Date",
       dataIndex: "createdAt",
       key: "createdAt",
+      align: "center",
       render: (value) => (value ? dayjs(value).format("DD/MM/YYYY") : "-"),
     },
     {
       title: "Night",
       dataIndex: "totalNight",
       key: "totalNight",
+      align: "center",
       width: 70,
     },
     {
@@ -87,7 +92,7 @@ const ReservationsTable = ({
       title: "Order Status",
       dataIndex: ["reservationStatus", "name"],
       key: "status",
-      align: "end",
+      align: "center",
       render: (reservationStatus) => (
         <ReservationStatusColor status={reservationStatus} />
       ),

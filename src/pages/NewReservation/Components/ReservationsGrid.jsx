@@ -122,7 +122,6 @@ const ReservationsGrid = ({
                     marginBottom: 16,
                     overflow: "hidden",
                   }}
-                  
                 >
                   <div
                     style={{ flex: 1, padding: "8px", background: "#fafafa" }}
@@ -138,10 +137,11 @@ const ReservationsGrid = ({
                       padding: "8px",
                       borderLeft: "1px solid #f0f0f0",
                       borderRight: "1px solid #f0f0f0",
+                      backgroundColor: "#e2e2e2",
                     }}
                     className="dark:!bg-[#333333]"
                   >
-                    {item.totalNight}
+                    {`${item.totalNight} ${item.totalNight === 1 ? "Night" : "Nights"}`}
                   </div>
                   <div
                     style={{ flex: 1, padding: "8px", background: "#fafafa" }}
@@ -173,8 +173,8 @@ const ReservationsGrid = ({
                     <span style={{ color: "#8c8c8c" }}>Booking Date</span>
                     <span>
                       {item.createdAt
-                      ? dayjs(item.actualCheckin).format("DD/MM/YYYY")
-                      : "-"}
+                        ? dayjs(item.actualCheckin).format("DD/MM/YYYY")
+                        : "-"}
                     </span>
                   </div>
                   <div
