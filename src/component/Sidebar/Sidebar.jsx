@@ -48,7 +48,7 @@ export default function Sidebar({
         backgroundColor: "black"
       }}
     >
-      <div className='w-[100%] h-[63px] bg-secondary bg-opacity-30 flex items-center justify-center overflow-hidden'>
+      <div className='w-[100%] h-[70px] bg-secondary bg-opacity-30 flex items-center justify-center overflow-hidden'>
         {
           isCollapsed ?
             <div className='text-2xl sm:text-md text-center text-blue-500 border-3 border-blue-500 px-4 py-2 sm:px-3 sm:py-1 rounded-full shadow-lg'>
