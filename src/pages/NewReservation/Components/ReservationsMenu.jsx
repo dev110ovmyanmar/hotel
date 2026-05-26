@@ -16,7 +16,7 @@ const statusColors = {
   departure: { color: "#fa8c16", bg: "#fff2e8", border: "#fa8c16" },
   "in-house": { color: "#13c2c2", bg: "#e6fffb", border: "#13c2c2" },
   cancelled: { color: "#ff4d4f", bg: "#fff1f0", border: "#ff4d4f" },
-  all: { color: "#373434", bg: "#f5f5f5", border: "#373434" },
+  all: { color: "#0712a6", bg: "#c6defd", border: "#0712a6" },
 };
 
 const ReservationMenu = ({ onStatusChange, onViewChange }) => {
