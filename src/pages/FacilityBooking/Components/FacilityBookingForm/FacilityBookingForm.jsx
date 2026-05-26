@@ -38,7 +38,7 @@ const FacilityBookingForm = ({
 }) => {
   const [form] = Form.useForm();
   const phoneValue = Form.useWatch("guestPhone", form);
-  const dateFormat = "YYYY-MM-DD";
+  const dateFormat = "DD-MM-YYYY";
   const disabledDate = current => {
     return current < dayjs().startOf('day');
   };
