@@ -18,7 +18,7 @@ const BookingDetailButton = ({ data }) => {
   const reservation = data?.reservation;
   const status = reservation?.reservationStatus?.code?.toUpperCase();
   const actions = status_actions[status] || [];
-  
+
   const [form] = Form.useForm();
   const [open, setOpen] = useState(false);
   const [amendOpen, setAmendOpen] = useState(false);
@@ -63,7 +63,11 @@ const BookingDetailButton = ({ data }) => {
   return (
     <div>
       <div className="text-sm mb-6 mt-1.5">
-        Reservation id:<strong> {reservation?.reservationNo}</strong>
+        Reservation id:
+        <strong className="text-[#286399] ">
+          {" "}
+          {reservation?.reservationNo}
+        </strong>
       </div>
 
       <div className="flex gap-2">
