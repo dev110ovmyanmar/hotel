@@ -38,21 +38,6 @@ const MenuItemTable = ({
       dataIndex: "name",
       key: "name",
     },
-
-    {
-      title: "Price (MMK)",
-      dataIndex: "price",
-      key: "price",
-      align: "end",
-      render: (price) => <PriceTag value={price} />,
-    },
-    {
-      title: "Cost (MMK)",
-      dataIndex: "cost",
-      key: "cost",
-      align: "end",
-      render: (price) => <PriceTag value={price} />,
-    },
     {
       title: "Is Taxable",
       dataIndex: "isTaxable",
@@ -73,6 +58,20 @@ const MenuItemTable = ({
       key: "menuCategory",
     },
     {
+      title: "Price (MMK)",
+      dataIndex: "price",
+      key: "price",
+      align: "end",
+      render: (price) => <PriceTag value={price} />,
+    },
+    {
+      title: "Cost (MMK)",
+      dataIndex: "cost",
+      key: "cost",
+      align: "end",
+      render: (price) => <PriceTag value={price} />,
+    },
+    {
       title: "Status",
       dataIndex: "status",
       key: "status",
@@ -81,8 +80,8 @@ const MenuItemTable = ({
     },
     {
       title: "Action",
-      fixed:"end",
-      align:"center",
+      fixed: "end",
+      align: "center",
       render: (_, record) => {
         const smallStyle = { fontSize: "12px" };
 
