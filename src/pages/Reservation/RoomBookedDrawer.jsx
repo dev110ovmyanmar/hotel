@@ -22,7 +22,13 @@ const RoomBookedDrawer = ({
 
 }) => {
     const [deleteKey, setDeleteKey] = useState();
+    const [priceKey, setPriceKey] = useState();
+    const [rateKey, setRateKey] = useState();
     const [roomModalBoxOpen, setRoomModalBoxOpen] = useState(false);
+
+    console.log(roomBookValues,
+        "RoomBookedValue"
+    )
 
     const roomConfirmClick = () => {
         setRoomConfirm(true);
@@ -128,14 +134,21 @@ const RoomBookedDrawer = ({
                             <div className="flex justify-between">
                                 <div className="flex">
                                     <p className="mr-3">{room?.roomType?.name}</p>
-                                    <Tag color="blue">
-                                        {room?.totalRooms} Room
-                                        <ExclamationCircleOutlined 
-                                            className="!text-[#0973e7] !text-sm ms-3 cursor-pointer"
-                                            onClick={()=>setRoomModalBoxOpen(true)}
-                                        />
-                                    </Tag>
-                                    
+                                    <Tag color="blue">{room?.totalRooms} Room</Tag>
+                                    {
+                                        room?.ratePlans.map(rate => (
+                                            <div className="bg-blue-100 px-2 ms-2">
+                                                <ExclamationCircleOutlined
+                                                    className="!text-[#2973e7] !text-sm cursor-pointer"
+                                                    onClick={() => {
+                                                        setRoomModalBoxOpen(true);
+                                                        setPriceKey(room?.roomType?.uuid);
+                                                        setRateKey(rate?.uuid)
+                                                    }}
+                                                />
+                                            </div>
+                                        ))
+                                    }
                                 </div>
                                 {
                                     roomBookValues?.rooms.length === 1 ? null :
@@ -143,8 +156,9 @@ const RoomBookedDrawer = ({
                                             <DeleteOutlined
                                                 className="!text-red-500"
                                                 onClick={() => {
-                                                    setModalOpen(true),
-                                                        setDeleteKey(room?.roomType?.uuid)
+                                                    setModalOpen(true);
+                                                    setDeleteKey(room?.roomType?.uuid)
+
                                                 }}
                                             />
                                         </div>
@@ -189,9 +203,13 @@ const RoomBookedDrawer = ({
             </div>
 
             {/* Infomration  */}
-            <RoomModalBox 
-                roomModalBoxOpen = {roomModalBoxOpen}
-                setRoomModalBoxOpen = {setRoomModalBoxOpen}
+            <RoomModalBox
+                roomModalBoxOpen={roomModalBoxOpen}
+                setRoomModalBoxOpen={setRoomModalBoxOpen}
+                rateQuotes={rateQuotes}
+                priceKey={priceKey}
+                rateKey={rateKey}
+
             />
 
             {/* Delete */}
