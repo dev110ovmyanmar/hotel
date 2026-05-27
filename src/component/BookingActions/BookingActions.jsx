@@ -27,31 +27,26 @@ export const button_config = {
   printInvoice: {
     label: "Print Invoice",
   },
-  ncillaryService: {
-    label: "Ancillary Service",
+  addNote: {
+    label: "Add Note",
+    icon: <PlusOutlined style={{ fontSize: "12px" }} />,
+  },
+
+  ChargeNoshowFee: {
+    label: "Charge No-show Fee",
   },
 };
 
 export const status_actions = {
-  PENDING: [
-    "changeStatus", 
-    "amendBooking", 
-    "addPayment", 
-    "ancillaryService"
-  ],
-  BOOKED: [
-    "changeStatus", 
-    "amendBooking", 
-    "addPayment", 
-    "ancillaryService"
-  ],
+  PENDING: ["changeStatus", "amendBooking", "addPayment"],
+  BOOKED: ["changeStatus", "amendBooking", "addPayment", "addNote"],
   CONFIRMED: [
     "changeStatus",
     "amendBooking",
     "addPayment",
     "overtimeCharges",
     "addRefund",
-    "ancillaryService",
+    "addNote",
   ],
   CHECKED_IN: [
     "changeStatus",
@@ -60,17 +55,9 @@ export const status_actions = {
     "overtimeCharges",
     "addRefund",
     "printInvoice",
+    "addNote",
   ],
-  CHECKED_OUT: [
-    "addRefund", 
-    "printInvoice"
-  ],
-  CANCELLED: [
-    "overtimeCharges", 
-    "addRefund"
-  ],
-  NO_SHOW: [
-    "overtimeCharges", 
-    "addRefund"
-  ],
+  CHECKED_OUT: ["addRefund", "printInvoice", "addNote"],
+  CANCELLED: ["overtimeCharges", "addRefund", "addNote"],
+  NO_SHOW: ["overtimeCharges", "addRefund", "ChargeNoshowFee", "addNote"],
 };
