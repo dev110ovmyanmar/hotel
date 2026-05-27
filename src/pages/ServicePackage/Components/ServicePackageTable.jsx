@@ -40,12 +40,6 @@ const ServicePackageTable = ({
             key: "name",
         },
         {
-            title: "Base Price (MMK)",
-            dataIndex: "basePrice",
-            key: "basePrice",
-            render: (text) => <PriceTag value={text} />,
-        },
-        {
             title: "Property",
             dataIndex: ["property", "name"],
             key: "property",
@@ -59,6 +53,12 @@ const ServicePackageTable = ({
             title: "Description",
             dataIndex: "description",
             key: "description",
+        },
+        {
+            title: "Base Price (MMK)",
+            dataIndex: "basePrice",
+            key: "basePrice",
+            render: (text) => <PriceTag value={text} />,
         },
         {
             title: "Action",
