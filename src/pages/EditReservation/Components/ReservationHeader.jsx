@@ -101,7 +101,7 @@ const ReservationHeader = ({ data }) => {
 
           <div className="hidden md:block text-gray-300">|</div>
 
-          <div className=" mt-[-12px] flex items-center gap-2 bg-indigo-50 text-indigo-700 px-2 py-1 rounded-lg border border-indigo-100 ml-auto sm:ml-0">
+          <div className="flex items-center gap-2 bg-indigo-50 text-indigo-700 px-3 py-1.5 rounded-lg border border-indigo-100 ml-auto sm:ml-0">
             <FaMoon className="text-xs" />
             <span className="text-xs font-bold whitespace-nowrap">
               {reservation?.totalNight || 0}{" "}

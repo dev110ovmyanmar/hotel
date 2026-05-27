@@ -238,6 +238,7 @@ const ReservationsGrid = ({
           current={page}
           total={total}
           pageSize={perPage}
+          pageSizeOptions={["12", "24", "36", "48"]}
           onChange={(page, perPage) => {
             changePage(page);
             changePerPage(perPage);
