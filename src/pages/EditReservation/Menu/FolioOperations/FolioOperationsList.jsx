@@ -76,7 +76,7 @@ const FolioOperationsList = () => {
         <ReservationListHeader
           reservationId={folioList?.reservation?.reservationNo}
           onAddreservation={handleAddFolioOperations}
-          addButtonText={!isFolioEmpty ? "Add Folio Operations" : ""}
+          addButtonText={!isFolioEmpty ? "Split New Folio" : ""}
 
         />
       </div>
@@ -104,7 +104,9 @@ const FolioOperationsList = () => {
         className="custom-ant-modal"
       >
         <p className="ml-5 mt-5">
-          Do you want to create a new Folio for Reservation Id: <strong>{folioList?.reservation?.reservationNo}</strong>
+          {/* Do you want to create a new Folio for Reservation Id: <strong>{folioList?.reservation?.reservationNo}</strong>
+           */}
+          Are you sure you want to split into a new folio?
         </p>
         <Divider />
       </Modal>

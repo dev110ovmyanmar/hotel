@@ -574,7 +574,7 @@ const RateAndInventoryCalendar = () => {
     /** Select options for filter popover come from metadata */
 
     const handleFiltersChange = useCallback(
-        (partial) => setFilters((prev) => ({ ...prev, ...partial })),
+        (newFilters) => setFilters((prev) => ({ ...prev, ...newFilters })),
         []
     );
     const handleResetFilters = useCallback(

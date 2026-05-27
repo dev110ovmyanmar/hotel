@@ -30,23 +30,6 @@ export default function useServiceInventoryColumns(onEdit, onView) {
       width: 110,
     },
     {
-      title: "Purchase Price (MMK)",
-      dataIndex: "unitCost",
-      key: "unitCost",
-      width: 120,
-      render: (cost) => <PriceTag value={cost} />
-    },
-    {
-      title: "Selling Price (MMK)",
-      dataIndex: "unitPrice",
-      key: "unitPrice",
-      // align: "right",
-      width: 110,
-      render: (price) => (
-        <PriceTag value={price} />
-      ),
-    },
-    {
       title: "Stock",
       dataIndex: "stockQuantity",
       key: "stockQuantity",
@@ -82,14 +65,31 @@ export default function useServiceInventoryColumns(onEdit, onView) {
         <div className={free === true ? "text-[#389E0D]" : "text-[#CF1322]"}>
           {free === true ? "True" : "False"}
         </div>
-      ),   
+      ),
+    },
+    {
+      title: "Purchase Price (MMK)",
+      dataIndex: "unitCost",
+      key: "unitCost",
+      width: 120,
+      render: (cost) => <PriceTag value={cost} />
+    },
+    {
+      title: "Selling Price (MMK)",
+      dataIndex: "unitPrice",
+      key: "unitPrice",
+      // align: "right",
+      width: 110,
+      render: (price) => (
+        <PriceTag value={price} />
+      ),
     },
     {
       title: "Actions",
       key: "actions",
       width: 80,
       fixed: "right",
-      align:"center",
+      align: "center",
       render: (_, record) => {
         const actions = [
           {

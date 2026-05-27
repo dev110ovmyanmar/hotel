@@ -51,6 +51,11 @@ const FAndBInventoryTable = ({
       key: "unit",
     },
     {
+      title: "Reorder Level",
+      dataIndex: "reorderLevel",
+      key: "reorderLevel",
+    },
+    {
       title: "Purchase Price (MMK)",
       dataIndex: "unitCost",
       key: "unitCost",
@@ -63,11 +68,6 @@ const FAndBInventoryTable = ({
       render: (text) => <PriceTag value={text} />,
     },
     {
-      title: "Reorder Level",
-      dataIndex: "reorderLevel",
-      key: "reorderLevel",
-    },
-    {
       title: "Status",
       dataIndex: ["status", "name"],
       key: "status",
@@ -75,8 +75,8 @@ const FAndBInventoryTable = ({
     },
     {
       title: "Action",
-      fixed:"end",
-      align:"center",
+      fixed: "end",
+      align: "center",
       render: (_, record) => {
         const smallStyle = { fontSize: "12px" };
 
@@ -130,10 +130,10 @@ const FAndBInventoryTable = ({
   ];
 
   const expandColumns = [
-    { title: "ID", dataIndex: "id", key: "id" ,align:"center"},
-    { title: "Menu Item", dataIndex: ["menuItem", "name"], key: "name" , align:"center"},
-    { title: "Quantity", dataIndex: "quantityPerItem", key: "quantityPerItem" , align:"center"},
-    { title: "Unit", dataIndex: ["unit", "name"], key: "unit" , align:"center"},
+    { title: "ID", dataIndex: "id", key: "id", align: "center" },
+    { title: "Menu Item", dataIndex: ["menuItem", "name"], key: "name", align: "center" },
+    { title: "Quantity", dataIndex: "quantityPerItem", key: "quantityPerItem", align: "center" },
+    { title: "Unit", dataIndex: ["unit", "name"], key: "unit", align: "center" },
   ];
 
   const expandedRowRender = (record) => {
@@ -158,9 +158,9 @@ const FAndBInventoryTable = ({
         tableLayout="fixed"
         scroll={{ x: 1000 }}
         columns={columns}
-        expandable={{ 
+        expandable={{
           expandedRowRender,
-          rowExpandable:(record)=> record?.menuInventoryMappings.length > 0
+          rowExpandable: (record) => record?.menuInventoryMappings.length > 0
         }}
         dataSource={data}
         loading={loading}

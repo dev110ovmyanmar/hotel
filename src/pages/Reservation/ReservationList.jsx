@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Button, Card, Divider, Form, Select, Table, Tag } from "antd";
-import { PlusOutlined, ReloadOutlined } from "@ant-design/icons";
+import { ExclamationCircleOutlined, PlusOutlined, ReloadOutlined } from "@ant-design/icons";
 import RoomBookedDrawer from "./RoomBookedDrawer";
 import CreateContactPerson from "./CreateContactPerson";
 import { MdOutlineEscalatorWarning, MdPeopleOutline } from "react-icons/md";
@@ -16,6 +16,7 @@ import store from "../../app/store";
 import { queryClient } from "../../app/queryClient";
 import RoomDetailsTable from "./RoomDetailsTable";
 import RoomConfirmFinish from "./RoomConfirmFinish";
+import RoomModalBox from "./RoomModalBox";
 
 const ReservationList = () => {
 
@@ -41,7 +42,6 @@ const ReservationList = () => {
   const [guestInfoTable, setGuestInfoTable] = useState(false);
   const [searchReservation, setSearchReservation] = useState(false);
   const [searchButtonDisable, setSearchButtonDisable] = useState(false);
-
   const [storeData, setStoreData] = useState(null);
 
   const [selectedData, setSelectedData] = useState([]);
@@ -55,6 +55,9 @@ const ReservationList = () => {
 
   const [modalOpen, setModalOpen] = useState(false);
 
+  const [roomModalBoxOpen, setRoomModalBoxOpen] = useState(false);
+  const [priceKey, setPriceKey] = useState();
+  const [rateKey,setRateKey] = useState();
 
 
   const defaultFilter = [
@@ -271,12 +274,27 @@ const ReservationList = () => {
       title: "Rate & Prices",
       dataIndex: "ratePlans",
       align: "center",
-      render: (value, record) => (
-        <div className="mb-2">
-          <p>{value?.minPrice?.toLocaleString()} MMK</p>
-          <p className="!text-gray-400 !text-sm">{value?.name}</p>
-        </div>
-      ),
+      render: (value, record) => {
+        return (
+          <div className="mb-2">
+            <div className="flex justify-center">
+              <p>{value?.minPrice?.toLocaleString()} MMK</p>
+              <div className={getRemainingRooms(record) <= 0 ? "bg-gray-300 px-2 ms-2" : "bg-blue-100 px-2 ms-2"}>
+                <ExclamationCircleOutlined
+                  className={getRemainingRooms(record) <= 0 ? "!text-gray-500 !text-sm cursor-pointer" : "!text-[#2973e7] !text-sm cursor-pointer"}
+                  onClick={() => {
+                    setRoomModalBoxOpen(true);
+                    setPriceKey(record?.roomTypeUuid);
+                    setRateKey(record?.rateUuid)
+                  }}
+                />
+              </div>
+            </div>
+            <p className="!text-gray-400 !text-sm">{value?.name}</p>
+          </div>
+        )
+      }
+      ,
     },
     {
       title: "Adult",
@@ -334,6 +352,7 @@ const ReservationList = () => {
       roomType: room.roomType.name,
       roomTypeId: room.roomType.id, //important for counting booked rooms
       totalRooms: room.totalRooms,
+      rateUuid: rate.uuid,
       ratePlans: rate,
       adults: room.adults,
       extraBed: room.extraBed,
@@ -379,6 +398,8 @@ const ReservationList = () => {
         defaultFilter={defaultFilter}
         bookedViaOptions={bookedViaOptions}
         sourceTypeOptions={sourceTypeOptions}
+        setSearchReservation={setSearchReservation}
+        setSelectedData={setSelectedData}
       />
 
       {roomConfirm ? (
@@ -464,6 +485,14 @@ const ReservationList = () => {
         modalOpen={modalOpen}
         setModalOpen={setModalOpen}
 
+      />
+
+      <RoomModalBox
+        roomModalBoxOpen={roomModalBoxOpen}
+        setRoomModalBoxOpen={setRoomModalBoxOpen}
+        rateQuotes={availabilitySearchs}
+        priceKey={priceKey}
+        rateKey={rateKey}
       />
     </div>
   );

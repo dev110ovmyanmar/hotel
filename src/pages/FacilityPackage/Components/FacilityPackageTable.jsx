@@ -50,12 +50,6 @@ const FacilityPackageTable = ({
       key: "pricingType",
     },
     {
-      title: "Base Price (MMK)",
-      dataIndex: "basePrice",
-      key: "basePrice",
-      render: (text) => <PriceTag value={text} />,
-    },
-    {
       title: "Included Hours",
       dataIndex: "includedHours",
       key: "includedHours",
@@ -80,6 +74,12 @@ const FacilityPackageTable = ({
       render: (text) => <PriceTag value={text} />,
     },
     {
+      title: "Base Price (MMK)",
+      dataIndex: "basePrice",
+      key: "basePrice",
+      render: (text) => <PriceTag value={text} />,
+    },
+    {
       title: "Status",
       dataIndex: "status",
       key: "status",
@@ -88,8 +88,8 @@ const FacilityPackageTable = ({
     },
     {
       title: "Action",
-      fixed:"end",
-      align:"center",
+      fixed: "end",
+      align: "center",
       render: (_, record) => {
         const smallStyle = { fontSize: "12px" };
 
