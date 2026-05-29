@@ -82,7 +82,6 @@ const ReservationForm = ({
 
         availabilitySearchResults.mutate(modifiedValues);
     };
-
     const handleChange = (value, option) => {
         setSelectedSourceType(option?.label);
 
@@ -147,7 +146,7 @@ const ReservationForm = ({
                 }}
             >
                 <div className="flex justify-between">
-                    <h1 className="text-lg font-bold text-[#ffffff] my-2">Create New Reservation</h1>
+                    <h1 className="text-lg font-bold text-[#ffffff] my-2">New Reservation</h1>
                     {
                         afterRoomConfirm ?
                             null
