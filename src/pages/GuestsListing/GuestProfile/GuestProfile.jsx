@@ -93,7 +93,7 @@ const GuestProfile = () => {
                 </div>
                 <p className="text-sm text-slate-500 mb-2">Guest Id: GST0410PQCP</p>
                 <div className="flex items-center gap-2 text-sm mb-3">
-                  <Cake size={14} /> 26 years old
+                  <Cake size={14} /> 26 
                 </div>
                 <div className="flex flex-col gap-1">
                   <div className="flex items-center gap-2 text-sm text-slate-500">

@@ -11,10 +11,10 @@ const ReservationHeader = ({ data }) => {
   if (!reservation) return null;
 
   return (
-    <div className="w-full bg-white border border-gray-100 shadow-sm rounded-xl p-2 md:py-2 md:px-5">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-100 ">
-        <div className="flex flex-wrap items-center gap-3 mb-3">
-          <h1 className="text-xl font-bold text-gray-800 tracking-tight">
+    <div className="w-full !bg-gradient-to-r from-[#215282] to-[#000B60]  rounded-lg p-2 md:py-8 md:px-5 mb-3">
+      <div>
+        <div className="flex  items-center gap-3 mb-3">
+          <h1 className="text-xl font-bold text-[#ffffff] tracking-tight capitalize">
             {reservation?.guest?.name || "Unknown Guest"}
           </h1>
           <ReservationStatusColor
@@ -23,86 +23,86 @@ const ReservationHeader = ({ data }) => {
         </div>
       </div>
 
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mt-1">
-        <div className="flex flex-wrap items-center gap-x-5 gap-y-3 text-gray-600 text-sm">
-          <div className="flex items-center gap-2  px-3 py-1 rounded-lg  ">
-            <IoPeopleSharp className="text-blue-500 text-base" />
-            <span className="font-medium text-gray-700">
+      <div className="flex flex-wrap lg:flex-nowrap items-center justify-between gap-5 mt-2 w-full">
+        <div className="flex flex-wrap items-center gap-x-5 gap-y-3 text-gray-600 text-sm shrink-0">
+          <div className="flex items-center gap-2 py-1 rounded-lg mt-2.5">
+            <IoPeopleSharp className="text-blue-300 text-base" />
+            <span className="text-[10px] md:text-[10px] lg:text-[13px] lg:font-medium text-[#ffffff]">
               {reservation?.adults || 0} Adults
             </span>
           </div>
 
-          <div className="flex items-center gap-2  px-3 py-1 rounded-lg  ">
+          <div className="flex items-center gap-2 py-1 rounded-lg mt-2.5">
             <FaChild className="text-pink-500 text-base" />
-            <span className="font-medium text-gray-700">
+            <span className="text-[10px] md:text-[10px] lg:text-[13px] font-medium text-[#ffffff]">
               {reservation?.children || 0} Children
             </span>
           </div>
 
-          <div className="hidden sm:block text-gray-300">|</div>
+          <div className="hidden sm:block text-[#ffffff] mt-2.5">|</div>
 
-          <div className="flex items-center gap-2  px-3 py-1 rounded-lg  ">
-            <MdOutlineMeetingRoom className="text-emerald-500 text-lg" />
-            <span className="font-medium text-gray-700">
+          <div className="flex items-center gap-2 py-1 rounded-lg mt-2.5">
+            <MdOutlineMeetingRoom className="text-emerald-300 text-lg" />
+            <span className="text-[10px] md:text-[10px] lg:text-[13px] font-medium text-[#ffffff]">
               {reservation?.totalRooms || 0}{" "}
               {reservation?.totalRooms === 1 ? "Room" : "Rooms"}
             </span>
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-4 sm:gap-6  w-full lg:w-auto">
+        <div className="flex flex-wrap lg:flex-nowrap items-center gap-4 sm:gap-6 w-full lg:w-auto shrink-0">
           <div className="flex items-center gap-2.5">
-            <div className="p-1.5 bg-emerald-50 text-emerald-600 rounded-md border border-emerald-100">
-              <FaCalendarAlt className="text-xs" />
+            <div className="text-emerald-400">
+              <FaCalendarAlt className="text-base mt-1.5" />
             </div>
             <div className="flex flex-col">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 leading-tight">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 leading-none mb-0.5">
                 Arrival
               </span>
-              <div className="flex items-center gap-2 mt-0.5">
-                <span className="font-semibold text-gray-800 text-sm">
+              <div className="flex items-center gap-2">
+                <span className="text-[#ffffff] text-sm whitespace-nowrap">
                   {reservation?.actualCheckin
                     ? dayjs(reservation.actualCheckin).format("DD MMM YYYY")
                     : "—"}
                 </span>
                 {reservation?.actualCheckin && (
-                  <span className="bg-white border border-gray-200 text-gray-500 rounded px-1.5 py-0.5 text-[11px] font-mono shadow-3xs">
-                    {dayjs(reservation.actualCheckin).format("h:mm A")}
+                  <span className="text-gray-300 text-[11px] font-mono whitespace-nowrap">
+                    ( {dayjs(reservation.actualCheckin).format("h:mm A")} )
                   </span>
                 )}
               </div>
             </div>
           </div>
 
-          <div className="hidden sm:block text-gray-200">/</div>
+          <div className="hidden sm:block text-gray-200 mt-2">/</div>
 
           <div className="flex items-center gap-2.5">
-            <div className="p-1.5 bg-amber-50 text-amber-600 rounded-md border border-amber-100">
-              <FaCalendarAlt className="text-xs" />
+            <div className="text-amber-200">
+              <FaCalendarAlt className="text-base mt-1.5" />
             </div>
             <div className="flex flex-col">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 leading-tight">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 leading-none mb-0.5">
                 Departure
               </span>
-              <div className="flex items-center gap-2 mt-0.5">
-                <span className="font-semibold text-gray-800 text-sm">
+              <div className="flex items-center gap-2">
+                <span className="text-[#ffffff] text-sm whitespace-nowrap">
                   {reservation?.actualCheckout
                     ? dayjs(reservation.actualCheckout).format("DD MMM YYYY")
                     : "—"}
                 </span>
                 {reservation?.actualCheckout && (
-                  <span className="bg-white border border-gray-200 text-gray-500 rounded px-1.5 py-0.5 text-[11px] font-mono shadow-3xs">
-                    {dayjs(reservation.actualCheckout).format("h:mm A")}
+                  <span className="text-gray-300 text-[11px] font-mono whitespace-nowrap">
+                    ( {dayjs(reservation.actualCheckout).format("h:mm A")} )
                   </span>
                 )}
               </div>
             </div>
           </div>
 
-          <div className="hidden md:block text-gray-300">|</div>
+          <div className="hidden md:block text-gray-300 mt-2">|</div>
 
-          <div className="flex items-center gap-2 bg-indigo-50 text-indigo-700 px-3 py-1.5 rounded-lg border border-indigo-100 ml-auto sm:ml-0">
-            <FaMoon className="text-xs" />
+          <div className="flex items-center gap-2 text-[#ffffff] py-1.5 ml-auto sm:ml-0 mt-2">
+            <FaMoon className="text-xs text-[#ffffff]" />
             <span className="text-xs font-bold whitespace-nowrap">
               {reservation?.totalNight || 0}{" "}
               {reservation?.totalNight === 1 ? "Night" : "Nights"}

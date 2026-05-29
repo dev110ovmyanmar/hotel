@@ -31,7 +31,7 @@ const ReservationMenu = ({ onStatusChange, onViewChange }) => {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [page, setPage] = useState(1);
-  const [perPage, setPerPage] = useState(LIMITS.PAGE_SIZE);
+  const [perPage, setPerPage] = useState(12);
 
   useEffect(() => {
     if (!routeStatus || routeStatus === ":status") {

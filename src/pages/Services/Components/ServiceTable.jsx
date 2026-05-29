@@ -40,12 +40,6 @@ const ServiceTable = ({
       key: "name",
     },
     {
-      title: "Price (MMK)",
-      dataIndex: "basePrice",
-      key: "basePrice",
-      render: (text) => <PriceTag value={text} />,
-    },
-    {
       title: "Property",
       dataIndex: ["property", "name"],
       key: "property",
@@ -61,6 +55,12 @@ const ServiceTable = ({
       key: "serviceType",
     },
     {
+      title: "Price (MMK)",
+      dataIndex: "basePrice",
+      key: "basePrice",
+      render: (text) => <PriceTag value={text} />,
+    },
+    {
       title: "Status",
       dataIndex: ["status", "name"],
       key: "status",
@@ -68,8 +68,8 @@ const ServiceTable = ({
     },
     {
       title: "Action",
-      fixed:"end",
-      align:"center",
+      fixed: "end",
+      align: "center",
       render: (_, record) => {
         const smallStyle = { fontSize: "12px" };
 
@@ -123,7 +123,7 @@ const ServiceTable = ({
   ];
 
   const expandColumns = [
-    { title: "ID", dataIndex: "id", key: "id" , align:"center" },
+    { title: "ID", dataIndex: "id", key: "id", align: "center" },
     {
       title: "Item Name",
       dataIndex: ["serviceInventoryItem", "name"],

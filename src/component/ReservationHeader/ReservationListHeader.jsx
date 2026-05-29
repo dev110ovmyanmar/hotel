@@ -11,7 +11,8 @@ const ReservationListHeader = ({
   return (
     <div className="flex flex-row justify-between items-center w-full gap-2">
       <span>
-        Reservation id: <strong>{reservationId}</strong>
+        Reservation id:{" "}
+        <strong className="text-[#286399] ">{reservationId}</strong>
       </span>
 
       {addButtonText && (

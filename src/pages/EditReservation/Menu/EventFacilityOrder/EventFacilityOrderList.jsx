@@ -9,7 +9,6 @@ import { LIMITS } from "../../../../variables/constants";
 import { useLocation } from "react-router-dom";
 import ReservationMenu from "../../Components/ReservationMenu.jsx";
 
-
 const EventFacilityOrderList = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mode, setMode] = useState("add");
@@ -19,6 +18,7 @@ const EventFacilityOrderList = () => {
   const [status, setStatus] = useState("all");
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(LIMITS.PAGE_SIZE);
+  const [searchOpen, setSearchOpen] = useState(false);
 
   const normalStatus = status === "all" ? null : status;
 
@@ -34,11 +34,10 @@ const EventFacilityOrderList = () => {
         perPage: perPage,
       },
       reservation: {
-        uuid: bookingId
+        uuid: bookingId,
       },
     },
   });
-
 
   const handleAddEvent = () => {
     setSelectedData(null);
@@ -48,11 +47,11 @@ const EventFacilityOrderList = () => {
 
   return (
     <div className="w-full px-6 py-2">
-      <ReservationHeader />
-      <ReservationMenu/>
+      <ReservationHeader data={data || {}} />
+      <ReservationMenu data={data} />
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
         <ReservationListHeader
-          reservationId="Id-123456789"
+          reservationId={data?.reservation?.reservationNo}
           onAddreservation={handleAddEvent}
           addButtonText={"Add Facility"}
         />
@@ -72,7 +71,10 @@ const EventFacilityOrderList = () => {
         drawerOpen={drawerOpen}
         setDrawerOpen={setDrawerOpen}
         mode={mode}
-        reservationId={bookingId}
+        reservationId={data?.reservation?.uuid}
+        searchOpen={searchOpen}
+        setSearchOpen={setSearchOpen}
+
       />
     </div>
   );
