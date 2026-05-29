@@ -137,7 +137,7 @@ const RoomBookedDrawer = ({
                                     <Tag color="blue">{room?.totalRooms} Room</Tag>
                                     {
                                         room?.ratePlans.map(rate => (
-                                            <div className="bg-blue-100 px-2 ms-2">
+                                            <div className="px-2 ms-2">
                                                 <ExclamationCircleOutlined
                                                     className="!text-[#2973e7] !text-sm cursor-pointer"
                                                     onClick={() => {

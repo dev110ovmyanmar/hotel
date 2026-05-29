@@ -24,7 +24,7 @@ import { facilityMeta } from "../../../../../../api/facilityPackageApi";
 import useApiQuery from "../../../../../../hooks/useApiQuery";
 import Status from "../../../../../../component/Status/Status";
 import { queryClient } from "../../../../../../app/queryClient";
-import { createFacilityBooking } from "../../../../../../api/booking";
+import { createFacilityBooking, editFacilityBooking, facilityBookingDetails } from "../../../../../../api/booking";
 import { useApiMutation } from "../../../../../../hooks/useApiMutation";
 
 const { RangePicker } = TimePicker;
@@ -37,11 +37,16 @@ const EventFacilityOrderForm = ({
   selectedData,
   onSuccess,
   reservationId,
+  searchOpen,
+  setSearchOpen,
+  refetchFacilityList,
 }) => {
   const [form] = Form.useForm();
   const phoneValue = Form.useWatch("guestPhone", form);
-  const [searchOpen, setSearchOpen] = useState(false);
+
   const isView = mode === "view";
+  const isEdit = mode === "edit";
+  const isAdd = mode === "add";
 
   const initData = queryClient.getQueryData([
     "initData",
@@ -87,29 +92,60 @@ const EventFacilityOrderForm = ({
     // shouldInvalidate: isEdit ? true : page === 1,
   });
 
+  const editFacilityBookings = useApiMutation({
+    mutationFn: editFacilityBooking,
+    invalidateKeys: [["facility-booking-list"]],
+    // shouldInvalidate: isEdit ? true : page === 1,
+  });
+
+  const { data: bookingDetails, isPending, error } = useApiQuery({
+    fetchQueryName: "facility-booking-details",
+    fetchQueryFunction: facilityBookingDetails,
+    params: {
+      uuid: selectedData?.uuid,
+    },
+    options: {
+      enabled: !!selectedData?.uuid,
+    },
+  });
+
   useEffect(() => {
-    if (drawerOpen && selectedData ) {
-      form.setFieldsValue({
-        ...selectedData,
-        eventOrderDate: selectedData.eventOrderDate
-          ? dayjs(selectedData.eventOrderDate)
-          : null,
-        eventOrderTime: selectedData.eventOrderTime
-          ? dayjs(selectedData.eventOrderTime)
-          : null,
-        startDate: selectedData.startDate
-          ? dayjs(selectedData.startDate)
-          : null,
-        startTime: selectedData.startTime
-          ? dayjs(selectedData.startTime)
-          : null,
-        endDate: selectedData.endDate ? dayjs(selectedData.endDate) : null,
-        endTime: selectedData.endTime ? dayjs(selectedData.endTime) : null,
-      });
-    } else if (drawerOpen && mode === "add") {
+    if (isAdd) {
       form.resetFields();
     }
-  }, [selectedData, drawerOpen, form, mode]);
+
+    if (isAdd && initDataStatus) {
+      form.setFieldsValue({
+        status: {
+          uuid: initDataStatus?.find((item) => item?.code === "active")?.uuid,
+        },
+      });
+    }
+
+    const FacilityBookingFormDataView = isView || isEdit;
+    if (FacilityBookingFormDataView && bookingDetails) {
+      form.setFieldsValue({
+        ...bookingDetails,
+
+        facilityPackage: bookingDetails?.facilityPackage?.uuid,
+
+        eventDate: dayjs(bookingDetails?.eventDate),
+
+        timeRange: [
+          dayjs(bookingDetails?.startTime, "HH:mm"),
+          dayjs(bookingDetails?.endTime, "HH:mm"),
+        ],
+
+        expectedHours: dayjs(
+          bookingDetails?.expectedHours,
+          "HH:mm"
+        ),
+        status: {
+          uuid: bookingDetails?.status?.uuid,
+        },
+      });
+    }
+  }, [bookingDetails, isEdit, isAdd]);
 
   const onFinish = (values) => {
     const modifiedValues = {
@@ -123,10 +159,31 @@ const EventFacilityOrderForm = ({
       },
       reservation: {
         uuid: reservationId
-      }
+      },
+      uuid: isEdit ? bookingDetails?.uuid : null
     };
 
-    createFacilityBookings.mutate(modifiedValues)
+    if (isAdd) {
+      createFacilityBookings.mutate(modifiedValues, {
+        onSuccess: () => {
+          form.resetFields();
+          setPage(1);
+          setDrawerOpen(false);
+          handleClose();
+          Toast.success("Facility Booking Created Successfully!");
+        },
+      })
+    }
+
+    if (isEdit) {
+      editFacilityBookings.mutate(modifiedValues, {
+        onSuccess: () => {
+          setDrawerOpen(false);
+          handleClose();
+          Toast.success("FacilityBooking Updated Successfully!");
+        },
+      });
+    }
     setDrawerOpen(false);
     onSuccess();
   };
@@ -151,7 +208,7 @@ const EventFacilityOrderForm = ({
                 Edit
               </Button>
             ) : (
-              <FormButtons onClick={() => form.submit()} mode={mode} isPending={createFacilityBookings?.isPending}/>
+              <FormButtons onClick={() => form.submit()} mode={mode} isPending={createFacilityBookings?.isPending} />
             )}
           </div>
         }
@@ -411,11 +468,15 @@ const EventFacilityOrderForm = ({
 
       </Drawer>
 
-      <SearchEventFacilityOrderForm
-        open={searchOpen}
-        onClose={() => setSearchOpen(false)}
-        reservationId={reservationId}
-      />
+      {searchOpen && (
+        <SearchEventFacilityOrderForm
+          open={searchOpen}
+          onClose={() => setSearchOpen(false)}
+          reservationId={reservationId}
+          setDrawerOpen={setDrawerOpen}
+          facilityPackagesOptions={facilityPackages}
+        />)
+      }
     </>
   );
 };

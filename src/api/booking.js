@@ -32,3 +32,21 @@ export const facilityBookingDetails = async (params) => {
 
     return data.response;
 }
+
+export const facilityBookingSearch = async (params) => {
+    const {data} = await apiClient.get(
+        `/facility-booking/search`,
+        {params}
+    );
+
+    return data.response;
+}
+
+export const facilityBookingAttach = async (params) => {
+    const {data} = await apiClient.patch(
+        `/facility-booking/attach`,
+        {params}
+    );
+
+    return data.response;
+}
