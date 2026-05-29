@@ -50,7 +50,9 @@ const ReservationsGrid = ({
           <Col xs={24} sm={12} lg={8} key={item.id}>
             <Card
               title={
-                <span style={{ fontWeight: 600 }}>{item?.guest?.name}</span>
+                <span style={{ fontWeight: 600, textTransform: "capitalize" }}>
+                  {item?.guest?.name}
+                </span>
               }
               extra={
                 <Dropdown

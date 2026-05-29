@@ -3,7 +3,7 @@ import { Tabs } from "antd";
 import { useNavigate, useLocation } from "react-router-dom";
 
 const ReservationMenu = ({ data }) => {
-  console.log(data, "data");
+
   const navigate = useNavigate();
   const location = useLocation();
   const bookingId = location?.state?.bookingId;

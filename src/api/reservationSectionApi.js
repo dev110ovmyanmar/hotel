@@ -111,3 +111,20 @@ export const reservationGuestDetails = async (params) => {
   const { data } = await apiClient.get("reservation/guest", { params });
   return data.response;
 };
+
+// service-order
+export const serviceOrderList = async (params) => {
+  const { data } = await apiClient.get("service-orders", { params });
+  return data.response;
+};
+
+export const serviceOrderDetails = async (params) => {
+  const { data } = await apiClient.get("service-order", { params });
+  return data.response;
+};
+
+export const serviceOrderCreate = async (params) => {
+  const { data } = await apiClient.post(`service-order/create`, params);
+  return data.response;
+};
+
