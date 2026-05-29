@@ -19,27 +19,107 @@ import {
 } from "antd";
 import FormItem from "antd/es/form/FormItem";
 import TextArea from "antd/es/input/TextArea";
+import {
+  reservationRoomMeta,
+  serviceOrderCreate,
+} from "../../../../../../api/reservationSectionApi";
+import { useApiMutation } from "../../../../../../hooks/useApiMutation";
+import useApiQuery from "../../../../../../hooks/useApiQuery";
+import { queryClient } from "../../../../../../app/queryClient";
 const { Text } = Typography;
 
-const onChange = (value) => {
-  console.log("changed", value);
-};
+const AddNewServiceOrderForm = ({
+  mode,
+  serviceData,
+  folioUuid,
+  open,
+  onClose,
+  page,
+  setPage,
+}) => {
+  console.log(folioUuid, "serviceDatas");
 
-const AddNewServiceOrderForm = ({ open, onClose, reservationId }) => {
+  const uuid = serviceData?.uuid;
+
   const [form] = Form.useForm();
+  const isView = mode === "view";
+  const isAdd = mode === "add";
+  const isEdit = mode === "edit";
+
   const [searchOpen, setSearchOpen] = useState(false);
 
-  const handleSubmit = (values) => {
-    console.log("Searching with:", values);
-  };
+  const initData = queryClient.getQueryData(["initData", "authenticated"]);
+
+  // const currencies = initData?.currencies?.map((currency) => ({
+  //   value: currency.uuid,
+  //   label: currency.code,
+  // }));
+
+  const orderStatus = initData?.statuses?.order_status?.map((status) => ({
+    value: status.uuid,
+    label: status.name,
+  }));
+
+  const { data: reservationRoom } = useApiQuery({
+    fetchQueryName: "service-order",
+    fetchQueryFunction: reservationRoomMeta,
+    params: {
+      reservation: {
+        uuid: uuid,
+      },
+    },
+  });
+
+  const rooms =
+    reservationRoom?.rooms?.map((room) => ({
+      value: room?.uuid,
+      label: `${room?.room?.roomNo} (${room?.checkinDate} - ${room?.checkoutDate}) `,
+    })) || [];
+
+  const createServiceOrder = useApiMutation({
+    mutationFn: serviceOrderCreate,
+    invalidateKeys: [["service-order"]],
+    // shouldInvalidate: page === 1,
+  });
 
   const sharedProps = {
     mode: "spinner",
     min: 1,
     max: 10,
     defaultValue: 1,
-    onChange,
     style: { width: 150 },
+  };
+
+  const handleSubmit = async (values) => {
+    const payload = {
+      ...values,
+      reservation: { uuid },
+      room: {
+        uuid: values.roomNo,
+      },
+      folio: {
+        uuid: Array.isArray(folioUuid) ? folioUuid[0]?.uuid : folioUuid?.uuid,
+      },
+      currency: {
+        uuid: Array.isArray(folioUuid)
+          ? folioUuid[0]?.currency?.uuid
+          : folioUuid?.currency?.uuid,
+      },
+
+      orderStatus: { uuid: values.order_status },
+      // uuid: isEdit ? guestData?.uuid || data?.uuid : null,
+    };
+    const mutation = isAdd && createServiceOrder;
+
+    createServiceOrder.mutate(payload, {
+      onSuccess: () => {
+        form.resetFields();
+        handleClose();
+        // setDrawerOpen(false);
+        setPage(1);
+        Toast.success("Room Created Successfully!");
+      },
+    });
   };
 
   return (
@@ -48,7 +128,7 @@ const AddNewServiceOrderForm = ({ open, onClose, reservationId }) => {
       onClose={onClose}
       size={550}
       destroyOnClose
-       initialValues={{
+      initialValues={{
         quantity: 1,
       }}
       title={
@@ -59,7 +139,6 @@ const AddNewServiceOrderForm = ({ open, onClose, reservationId }) => {
           </Button>
         </div>
       }
-     
     >
       <Form layout="vertical" form={form} onFinish={handleSubmit}>
         <div className="grid grid-cols-2 gap-4">
@@ -71,15 +150,11 @@ const AddNewServiceOrderForm = ({ open, onClose, reservationId }) => {
           </Form.Item>
         </div>
         <Form.Item label="Room No" name="roomNo" rules={[{ required: true }]}>
-          <Input />
+          <Select placeholder="Select a Room" options={rooms} />
         </Form.Item>
 
         <div className="grid grid-cols-2 gap-4">
-          <Form.Item
-            label="Select Service"
-            name="selectService"
-            rules={[{ required: true }]}
-          >
+          <Form.Item label="Select Service" name="selectService">
             <Select
               placeholder="Select Select Service"
               style={{ width: "100%" }}
@@ -101,6 +176,19 @@ const AddNewServiceOrderForm = ({ open, onClose, reservationId }) => {
             />
           </Form.Item>
         </div>
+
+        <Form.Item
+          label="Exchange Rate "
+          name="exchangeRate "
+          rules={[{ required: true }]}
+        >
+          <InputNumber
+            className="!w-full"
+            min={0}
+            placeholder="Enter Exchange Rate "
+          />
+        </Form.Item>
+
         <div className="grid grid-cols-2 gap-6">
           <Form.Item
             label="Quantity"
@@ -129,6 +217,19 @@ const AddNewServiceOrderForm = ({ open, onClose, reservationId }) => {
         </div>
 
         <Form.Item
+          label="Unit Cost"
+          name="unitCost "
+          rules={[{ required: true }]}
+        >
+          <InputNumber
+            className="!w-full"
+            min={0}
+            placeholder="Enter Unit Cost"
+            suffix="MMK"
+          />
+        </Form.Item>
+
+        <Form.Item
           label="Sub Total"
           name="subTotal"
           rules={[{ required: true }]}
@@ -153,7 +254,11 @@ const AddNewServiceOrderForm = ({ open, onClose, reservationId }) => {
             />
           </Form.Item>
 
-          <Form.Item label="Tax Amount" name="taxAmount">
+          <Form.Item
+            label="Tax Amount"
+            name="taxAmount"
+            rules={[{ required: true }]}
+          >
             <InputNumber
               className="!w-full"
               min={0}
@@ -162,6 +267,35 @@ const AddNewServiceOrderForm = ({ open, onClose, reservationId }) => {
             />
           </Form.Item>
         </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          {" "}
+          <Form.Item
+            label="Service Charge Amount "
+            name="serviceChargeAmount "
+            rules={[{ required: true }]}
+          >
+            <InputNumber
+              className="!w-full"
+              min={0}
+              placeholder="Enter Total Amount"
+              suffix="MMK"
+            />
+          </Form.Item>
+          <Form.Item
+            label="Discount Amount"
+            name="discountAmount "
+            rules={[{ required: true }]}
+          >
+            <InputNumber
+              className="!w-full"
+              min={0}
+              placeholder="Enter Discount Amount"
+              suffix="MMK"
+            />
+          </Form.Item>
+        </div>
+
         <Form.Item
           label="Total Amount"
           name="totalAmount"
@@ -175,15 +309,30 @@ const AddNewServiceOrderForm = ({ open, onClose, reservationId }) => {
           />
         </Form.Item>
 
-        <Form.Item label="Status" name="status" rules={[{ required: true }]}>
-          <Select
-            placeholder="Select Status"
-            style={{ width: "100%" }}
-            options={[
-              { value: "Active", label: "Active" },
-              { value: "Inactive", label: "Inactive" },
-            ]}
-          />
+        <Form.Item
+          label="Order Status"
+          name="order_status"
+          rules={[{ required: true }]}
+          getValueProps={(value) => ({
+            value: isView
+              ? orderStatus.find((item) => item.value === value)?.label
+              : value,
+          })}
+        >
+          {isView ? (
+            <Input readOnly={isView} />
+          ) : (
+            <Select
+              showSearch={{
+                filterOption: (input, option) =>
+                  (option?.label ?? "")
+                    .toLowerCase()
+                    .includes(input.toLowerCase()),
+              }}
+              options={orderStatus}
+              placeholder="Select Order Status"
+            />
+          )}
         </Form.Item>
       </Form>
     </Drawer>

@@ -7,8 +7,7 @@ import AddNewServiceOrderForm from "../FolioOperationsForms/AddNewServiceOrderFo
 import AddNewFacilityOrderForm from "../FolioOperationsForms/AddNewFacilityOrderForm";
 import AddPaymentForm from "../../../../../BookingDetail/Components/BookingDetailForms/AddPaymentForm";
 
-
-const FolioOperationsButtons = ({ reservationId }) => {
+const FolioOperationsButtons = ({ data, folioUuid, reservationId }) => {
   const [form] = Form.useForm();
   const [open, setOpen] = useState(false);
   const [serviceOpen, setServiceOpen] = useState(false);
@@ -59,7 +58,7 @@ const FolioOperationsButtons = ({ reservationId }) => {
         <Button
           className="custom-blue-btn"
           onClick={() => setPaymentOpen(true)}
-          icon={<PlusOutlined style={{ fontSize: '12px' }}/>}
+          icon={<PlusOutlined style={{ fontSize: "12px" }} />}
         >
           Add Payment
         </Button>
@@ -84,22 +83,28 @@ const FolioOperationsButtons = ({ reservationId }) => {
         onClose={() => setOpen(false)}
         reservationId={reservationId}
       />
-      <AddNewServiceOrderForm
-        open={serviceOpen}
-        onClose={() => setServiceOpen(false)}
-        reservationId={reservationId}
-      />
+
+      {serviceOpen && (
+        <AddNewServiceOrderForm
+          serviceData={data || []}
+          open={serviceOpen}
+          onClose={() => setServiceOpen(false)}
+          reservationId={reservationId}
+          folioUuid={folioUuid?.data || []}
+        />
+      )}
+
       <AddNewFacilityOrderForm
         open={facilityOpen}
         onClose={() => setFacilityOpen(false)}
         reservationId={reservationId}
       />
+
       <AddPaymentForm
         open={paymentOpen}
         onClose={() => setPaymentOpen(false)}
         reservationId={reservationId}
       />
-
     </div>
   );
 };
