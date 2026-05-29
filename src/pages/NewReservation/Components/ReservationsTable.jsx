@@ -31,14 +31,23 @@ const ReservationsTable = ({
   };
 
   const columns = [
-    { title: "Id", dataIndex: "id", key: "id" ,width:70},
-    { title: "Guest Name", dataIndex: ["guest", "name"], key: "guestName" },
+    { title: "Id", dataIndex: "id", key: "id", width: 70 },
+    {
+      title: "Guest Name",
+      dataIndex: ["guest", "name"],
+      key: "guestName",
+      render: (text) => (
+        <span style={{textTransform: "capitalize" }}>
+          {text || ""}
+        </span>
+      ),
+    },
     {
       title: "Room",
       dataIndex: "totalRooms",
       key: "totalRooms",
       align: "center",
-      width:80
+      width: 80,
     },
     {
       title: "Arrival",
@@ -112,7 +121,7 @@ const ReservationsTable = ({
     {
       title: "Action",
       key: "action",
-      fixed:"end",
+      fixed: "end",
       align: "center",
       render: (_, record) => (
         <div style={{ display: "flex", justifyContent: "center", gap: "8px" }}>

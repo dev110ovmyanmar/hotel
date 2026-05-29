@@ -47,7 +47,7 @@ const EventFacilityOrderList = () => {
   return (
     <div className="w-full px-6 py-2">
       <ReservationHeader data={data || {}} />
-      <ReservationMenu />
+      <ReservationMenu  data={data}/>
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
         <ReservationListHeader
           reservationId={data?.reservation?.reservationNo}
