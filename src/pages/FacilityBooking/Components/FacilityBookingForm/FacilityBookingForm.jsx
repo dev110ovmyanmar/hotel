@@ -250,25 +250,19 @@ const FacilityBookingForm = ({
             name="guestPhone"
             rules={[
               { required: true },
-              { validator: validatePhoneNumber }
+              
             ]}
           >
             <Input
-              addonBefore="+959"
               readOnly={isView}
               placeholder="Enter Phone"
               onKeyPress={(e) => {
-                if (!/[0-9]/.test(e.key)) {
+                if (!/[0-9]/.test(e.key) &&
+                  !(e.key === "+" && value.length === 0)
+                ) {
                   e.preventDefault();
                 }
               }}
-              maxLength={
-                phoneValue?.startsWith("09")
-                  ? 11
-                  : phoneValue?.startsWith("9")
-                    ? 10
-                    : 9
-              }
             />
           </Form.Item>
 
