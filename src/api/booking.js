@@ -45,7 +45,7 @@ export const facilityBookingSearch = async (params) => {
 export const facilityBookingAttach = async (params) => {
     const {data} = await apiClient.patch(
         `/facility-booking/attach`,
-        {params}
+        params
     );
 
     return data.response;

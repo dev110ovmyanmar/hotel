@@ -18,6 +18,7 @@ import { facilityBookingAttach, facilityBookingSearch, fetchFacilityBooking } fr
 import ColorStatusTag from "../../../../../../component/ColorStatusTag/ColorStatusTag";
 import SearchByModal from "../SearchByModal";
 import { useApiMutation } from "../../../../../../hooks/useApiMutation";
+import Toast from "../../../../../../component/Toast/Toast";
 
 const SearchEventFacilityOrderForm = ({
   open,
@@ -25,7 +26,7 @@ const SearchEventFacilityOrderForm = ({
   reservationId,
   setDrawerOpen,
   reservationData,
-  facilityPackagesOptions
+  facilityPackagesOptions,
 }) => {
   const [form] = Form.useForm();
   const [showTable, setShowTable] = useState(false);
@@ -40,7 +41,7 @@ const SearchEventFacilityOrderForm = ({
 
   const [isSearched, setIsSearched] = useState(false);
 
-  const { data: bookingSearch, isPending, error } = useApiQuery({
+  const { data: bookingSearch, isPending: bookingSearchPending } = useApiQuery({
     fetchQueryName: searchValues?.eventDate ? ["facility-booking-search", searchValues] : ["facility-booking-search"],
     fetchQueryFunction: () => {
       if (!searchValues?.eventDate) return null;
@@ -56,7 +57,6 @@ const SearchEventFacilityOrderForm = ({
   }, [bookingSearch])
 
   const onFinish = (values) => {
-    console.log(values, "ValuesONFinish")
     const modifiedValues = {
       ...values,
       startTime: values?.startTime?.format("HH:mm:ss"),
@@ -171,8 +171,7 @@ const SearchEventFacilityOrderForm = ({
             <Button
               type="primary"
               size="small"
-              onClick={(_, record) => {
-                console.log(record,"REcordOnClick")
+              onClick={() => {
                 setOpenSearchModal(true);
                 setReservationIdList({
                   ...record,
@@ -182,7 +181,6 @@ const SearchEventFacilityOrderForm = ({
                 });
                 setSelectedBooking({
                   facilityBookingUuid: record.uuid,
-                  reservationUuid: reservationIdList?.reservation?.uuid
                 });
               }
               }
@@ -202,24 +200,28 @@ const SearchEventFacilityOrderForm = ({
     // shouldInvalidate: isEdit ? true : page === 1,
   });
 
-  console.log(selectedBooking, "SelectedBooking")
+  console.log(reservationId, "reservationUuid")
 
   const handleOk = () => {
-    // await refetchFacilityList?.();
-    // if(isSearched || selectedBooking){
-    facilityBookingAttachs.mutate({
-      reservation: {
-        uuid: selectedBooking?.reservationUuid
-      },
-      facilityBooking: {
-        uuid: selectedBooking?.facilityBookingUuid
-      }
-    })
-    // };
+    if (selectedBooking) {
 
-    // setOpenSearchModal(false);
-    // setDrawerOpen(false);
-    // onClose(false);
+      const modifiedValues = {
+        reservation: {
+          uuid: reservationId
+        },
+        facilityBooking: {
+          uuid: selectedBooking?.facilityBookingUuid
+        }
+      };
+      facilityBookingAttachs.mutate(modifiedValues, {
+        onSuccess: () => {
+          Toast.success("Facility Booking Attached Successfully!");
+          setOpenSearchModal(false);
+          setDrawerOpen(false);
+          onClose(false);
+        }
+      })
+    };
   };
 
   return (
@@ -295,6 +297,7 @@ const SearchEventFacilityOrderForm = ({
         open={openSearchModal}
         onCancel={() => setOpenSearchModal(false)}
         onOk={handleOk}
+        confirmLoading={facilityBookingAttachs.isPending}
       />
     </Drawer>
   );
