@@ -129,6 +129,15 @@ const CreateGuestForm = ({
         </div>
       }
     >
+      <div className="flex justify-end">
+        <Button
+          onClick={() => {
+            createContactForm.resetFields()
+          }}
+        >
+          Refresh
+        </Button>
+      </div>
       <Form layout="vertical" form={createContactForm}>
         <Row gutter={16}>
           <Space.Compact style={{ width: '100%' }}>
@@ -189,26 +198,20 @@ const CreateGuestForm = ({
               name="phone"
               rules={[
                 { required: true },
-                {
-                  validator: validatePhoneNumber
-                }
+                // {
+                //   validator: validatePhoneNumber
+                // }
               ]}
             >
               <Input
-                addonBefore="+959"
                 onKeyPress={(e) => {
-                  if (!/[0-9]/.test(e.key)) {
+                  if (!/[0-9]/.test(e.key) &&
+                    !(e.key === "+" && value.length === 0)
+                  ) {
                     e.preventDefault();
                   }
                 }}
                 placeholder="Enter Phone Number"
-                maxLength={
-                  phoneValue?.startsWith("09")
-                    ? 11
-                    : phoneValue?.startsWith("9")
-                      ? 10
-                      : 9
-                }
               />
             </Form.Item>
           </Col>
@@ -217,27 +220,22 @@ const CreateGuestForm = ({
             <Form.Item
               label="Secondary Phone Number"
               name="secondaryPhone"
-              rules={[
-                {
-                  validator: validatePhoneNumber
-                }
-              ]}
+              // rules={[
+              //   {
+              //     validator: validatePhoneNumber
+              //   }
+              // ]}
             >
               <Input
-                addonBefore="+959"
                 onKeyPress={(e) => {
-                  if (!/[0-9]/.test(e.key)) {
+                  if (!/[0-9]/.test(e.key) &&
+                    !(e.key === "+" && value.length === 0)
+                  ) {
                     e.preventDefault();
                   }
                 }}
                 placeholder="Enter Phone Number"
-                maxLength={
-                  secondPhoneValue?.startsWith("09")
-                    ? 11
-                    : secondPhoneValue?.startsWith("9")
-                      ? 10
-                      : 9
-                }
+                
               />
             </Form.Item>
           </Col>

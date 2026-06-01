@@ -222,45 +222,17 @@ const GuestForm = ({
               <Form.Item
                 label="Phone"
                 name="phone"
-                // rules={[
-                //   {
-                //     validator: (_, value) => {
-                //       // approve submit when value is empty
-                //       if (!value) {
-                //         return Promise.resolve();
-                //       }
-
-                //       // Check if contains only digits
-                //       if (!/^\d+$/.test(value)) {
-                //         return Promise.reject(new Error("Phone number must contain only digits"));
-                //       }
-                //       return Promise.resolve();
-                //     },
-                //   },
-                // ]}
-                rules={[
-                  {
-                    validator: validatePhoneNumber
-                  }
-                ]}
               >
                 <Input
                   readOnly={isView}
-                  addonBefore="+959"
                   onKeyPress={(e) => {
-                    if (!/[0-9]/.test(e.key)) {
+                    if (!/[0-9]/.test(e.key) &&
+                      !(e.key === "+" && value.length === 0)
+                    ) {
                       e.preventDefault();
                     }
                   }}
-                  placeholder="Enter Phone Number"
-                  maxLength={
-                    phoneValue?.startsWith("09")
-                      ? 11
-                      : phoneValue?.startsWith("9")
-                        ? 10
-                        : 9
-                  }
-                // onInput={(e) => (e.target.value = e.target.value.replace(/\D/g, ""))}
+                  placeholder="Enter Phone Number"                  
                 />
               </Form.Item>
             </div>

@@ -159,7 +159,7 @@ const ReservationForm = ({
                                     disabled={searchButtonDisable}
                                     className={
                                         searchButtonDisable
-                                            ? "min-w-[125px] !bg-gray-200 !text-gray-300 !border-gray-400 cursor-not-allowed"
+                                            ? "min-w-[125px] !bg-gray-200 !text-gray-400 !border-gray-400 cursor-not-allowed"
                                             : "min-w-[125px] !bg-[#FFFFFF] !text-[#000000] !shadow-lg shadow-gray-300/50"
                                     }
                                 >
