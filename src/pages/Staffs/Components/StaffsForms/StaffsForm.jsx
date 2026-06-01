@@ -35,7 +35,7 @@ const StaffsForm = ({
 }) => {
   const [form] = Form.useForm();
   const phoneValue = Form.useWatch("phone", form);
-  
+
   const isView = mode === "view";
   const isEdit = mode === "edit";
   const isAdd = mode === "add";
@@ -401,21 +401,20 @@ const StaffsForm = ({
             <Form.Item
               label="Phone"
               name="phone"
-              rules={[
-                { validator: validatePhoneNumber }
-              ]}
+              // rules={[
+              //   { validator: validatePhoneNumber }
+              // ]}
             >
               <Input
+                onKeyPress={(e) => {
+                  if (!/[0-9]/.test(e.key) &&
+                    !(e.key === "+" && value.length === 0)
+                  ) {
+                    e.preventDefault();
+                  }
+                }}
                 readOnly={isView}
-                addonBefore="+959"
                 placeholder="Enter Phone Number"
-                maxLength={
-                  phoneValue?.startsWith("09")
-                    ? 11
-                    : phoneValue?.startsWith("9")
-                      ? 10
-                      : 9
-                }
               />
             </Form.Item>
 

@@ -43,6 +43,7 @@ const EventFacilityOrderForm = ({
 }) => {
   const [form] = Form.useForm();
   const phoneValue = Form.useWatch("guestPhone", form);
+  const facilityPackageForm = Form.useWatch("facilityPackage", form);
 
   const isView = mode === "view";
   const isEdit = mode === "edit";
@@ -69,12 +70,12 @@ const EventFacilityOrderForm = ({
       ? endTime.diff(startTime, "second")
       : null;
 
-  const hours = Math.floor(expectedSeconds / 3600);
-  const minutes = Math.floor((expectedSeconds % 3600) / 60);
-  const seconds = expectedSeconds % 60;
+  // const hours = Math.floor(expectedSeconds / 3600);
+  // const minutes = Math.floor((expectedSeconds % 3600) / 60);
+  // const seconds = expectedSeconds % 60;
 
-  const frontformattedExpectedHours = `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
-  const formattedExpectedHours = `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+  // const frontformattedExpectedHours = `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
+  // const formattedExpectedHours = `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
 
   const { data: facilityMetaData } = useApiQuery({
     fetchQueryName: "facilityMetaData",
@@ -84,6 +85,8 @@ const EventFacilityOrderForm = ({
   const facilityPackages = facilityMetaData?.facility_packages?.map((item) => ({
     label: item?.name,
     value: item?.uuid,
+    expectedPax: item?.includedPax,
+    expectedHours: item?.includedHours
   }));
 
   const createFacilityBookings = useApiMutation({
@@ -147,13 +150,41 @@ const EventFacilityOrderForm = ({
     }
   }, [bookingDetails, isEdit, isAdd]);
 
+  useEffect(() => {
+    if (eventTime?.[0] && eventTime?.[1]) {
+      const startTime = eventTime[0];
+      const endTime = eventTime[1];
+
+      const expectedSeconds = endTime.diff(startTime, "second");
+
+      const hours = Math.floor(expectedSeconds / 3600);
+      const minutes = Math.floor((expectedSeconds % 3600) / 60);
+      const seconds = expectedSeconds % 60;
+
+      const uiFormat =
+        `${String(hours).padStart(2, "0")}:` +
+        `${String(minutes).padStart(2, "0")}`;
+
+      const formattedExpectedHours =
+        `${String(hours).padStart(2, "0")}:` +
+        `${String(minutes).padStart(2, "0")}:` +
+        `${String(seconds).padStart(2, "0")}`;
+
+      form.setFieldsValue({
+        expectedHours: uiFormat,
+        expectedHoursBackend: formattedExpectedHours
+      });
+    }
+  }, [eventTime]);
+
   const onFinish = (values) => {
     const modifiedValues = {
       ...values,
       eventDate: values?.eventDate.format("YYYY-MM-DD"),
       startTime: values.timeRange[0].format("HH:mm:ss"),
       endTime: values.timeRange[1].format("HH:mm:ss"),
-      expectedHours: formattedExpectedHours,
+      // expectedHours: formattedExpectedHours,
+      expectedHours: values?.expectedHoursBackend,
       facilityPackage: {
         uuid: values.facilityPackage
       },
@@ -242,25 +273,19 @@ const EventFacilityOrderForm = ({
             name="guestPhone"
             rules={[
               { required: true },
-              { validator: validatePhoneNumber }
+              
             ]}
           >
             <Input
-              addonBefore="+959"
               readOnly={isView}
               placeholder="Enter Phone"
               onKeyPress={(e) => {
-                if (!/[0-9]/.test(e.key)) {
+                if (!/[0-9]/.test(e.key) &&
+                  !(e.key === "+" && value.length === 0)
+                ) {
                   e.preventDefault();
                 }
               }}
-              maxLength={
-                phoneValue?.startsWith("09")
-                  ? 11
-                  : phoneValue?.startsWith("9")
-                    ? 10
-                    : 9
-              }
             />
           </Form.Item>
 
@@ -276,8 +301,23 @@ const EventFacilityOrderForm = ({
             label="Facility Package"
             name="facilityPackage"
             rules={[{ required: true, message: "Facility Package is Required" }]}
+
           >
-            <Select options={facilityPackages} readOnly={isView} placeholder="Select Event Name" />
+            <Select
+              options={facilityPackages}
+              readOnly={isView}
+              placeholder="Select Event Name"
+              onSelect={(value) => {
+                const selectedPackage = facilityPackages.find(
+                  (item) => item.value === value
+                );
+
+                form.setFieldsValue({
+                  expectedHours: selectedPackage?.expectedHours?.slice(0, 5),
+                  expectedPax: selectedPackage?.expectedPax,
+                });
+              }}
+            />
           </Form.Item>
 
 
@@ -320,11 +360,22 @@ const EventFacilityOrderForm = ({
             <Col span={12}>
               <Form.Item
                 label="Expected Hours"
+                name="expectedHours"
                 required
               >
-                <Input value={frontformattedExpectedHours} readOnly />
+                <Input readOnly />
+                {/* value={frontformattedExpectedHours}  */}
               </Form.Item>
             </Col>
+
+            <Form.Item
+              label="Expected Hours"
+              name="expectedHoursBackend"
+              hidden
+            >
+              <Input readOnly />
+              {/* value={frontformattedExpectedHours}  */}
+            </Form.Item>
           </Row>
 
           <Form.Item
