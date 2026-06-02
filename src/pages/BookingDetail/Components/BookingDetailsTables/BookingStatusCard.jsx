@@ -44,8 +44,8 @@ const RoomStatusCard = ({ data }) => {
         <Row>
           <Col span={8}>
             <div style={{ display: "flex", alignItems: "center", gap: "2px" }}>
-              <IoPeopleSharp /> <h1>{reservation?.adults}</h1>
-              <FaChild /> <h1>{reservation?.children}</h1>
+              <IoPeopleSharp className="text-blue-500"/> <h1>{reservation?.adults}</h1>
+              <FaChild className="text-pink-500"/> <h1>{reservation?.children}</h1>
             </div>
           </Col>
           <Col span={8}>

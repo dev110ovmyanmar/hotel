@@ -175,23 +175,23 @@ const RoomInformationTable = ({
                 },
               ]
             : []),
-          ...(isCheckin
-            ? [
-                {
-                  key: "amend",
-                  label: "Room Amend",
-                  icon: <IoBedOutline style={{ fontSize: "16px" }} />,
-                  onClick: () => {
-                    setSelectedData(record);
-                    setRoomAmend(true);
-                  },
-                },
-              ]
-            : []),
+          // ...(isCheckin
+          //   ? [
+          //       {
+          //         key: "amend",
+          //         label: "Room Amend",
+          //         icon: <IoBedOutline style={{ fontSize: "16px" }} />,
+          //         onClick: () => {
+          //           setSelectedData(record);
+          //           setRoomAmend(true);
+          //         },
+          //       },
+          //     ]
+          //   : []),
           { type: "divider" },
           {
             key: "modify_group",
-            label: "Modify Reservation",
+            label: "Amend Reservation",
             icon: <EditOutlined />,
             children: [
               {
