@@ -13,6 +13,7 @@ import {
   button_config,
   status_actions,
 } from "./../../../../component/BookingActions/BookingActions";
+import ReservationNoteForm from "../BookingDetailForms/ReservationNoteForm";
 
 const BookingDetailButton = ({ data }) => {
   const reservation = data?.reservation;
@@ -27,6 +28,7 @@ const BookingDetailButton = ({ data }) => {
   const [roomMoveOpen, setRoomMoveOpen] = useState(false);
   const [amendStayOpen, setAmendStayOpen] = useState(false);
   const [addPaymentOpen, setAddPaymentOpen] = useState(false);
+  const [noteOpen, setNoteOpen] = useState(false);
 
   const handleAction = (key) => {
     switch (key) {
@@ -56,6 +58,10 @@ const BookingDetailButton = ({ data }) => {
 
       case "printInvoice":
         setOpen.print();
+        break;
+
+      case "addNote":
+        setNoteOpen(true);
         break;
     }
   };
@@ -130,6 +136,14 @@ const BookingDetailButton = ({ data }) => {
         onClose={() => setRoomMoveOpen(false)}
         reservationId={data?.reservationNo}
       />
+
+      {noteOpen && (
+        <ReservationNoteForm
+          open={noteOpen}
+          onClose={() => setNoteOpen(false)}
+          reservationId={data?.reservationNo}
+        />
+      )}
     </div>
   );
 };

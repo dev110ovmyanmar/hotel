@@ -6,19 +6,11 @@ import {
   DatePicker,
   InputNumber,
   Button,
-  Space,
-  Row,
-  Col,
   TimePicker,
   Select,
-  Card,
   Typography,
-  Tag,
-  Radio,
-  Table,
 } from "antd";
-import FormItem from "antd/es/form/FormItem";
-import TextArea from "antd/es/input/TextArea";
+import dayjs from "dayjs";
 import {
   reservationRoomMeta,
   serviceOrderCreate,
@@ -26,6 +18,7 @@ import {
 import { useApiMutation } from "../../../../../../hooks/useApiMutation";
 import useApiQuery from "../../../../../../hooks/useApiQuery";
 import { queryClient } from "../../../../../../app/queryClient";
+
 const { Text } = Typography;
 
 const AddNewServiceOrderForm = ({
@@ -37,8 +30,6 @@ const AddNewServiceOrderForm = ({
   page,
   setPage,
 }) => {
-  console.log(folioUuid, "serviceDatas");
-
   const uuid = serviceData?.uuid;
 
   const [form] = Form.useForm();
@@ -49,11 +40,7 @@ const AddNewServiceOrderForm = ({
   const [searchOpen, setSearchOpen] = useState(false);
 
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
-
-  // const currencies = initData?.currencies?.map((currency) => ({
-  //   value: currency.uuid,
-  //   label: currency.code,
-  // }));
+  const selectedServiceUuid = Form.useWatch("selectService", form);
 
   const orderStatus = initData?.statuses?.order_status?.map((status) => ({
     value: status.uuid,
@@ -76,48 +63,74 @@ const AddNewServiceOrderForm = ({
       label: `${room?.room?.roomNo} (${room?.checkinDate} - ${room?.checkoutDate}) `,
     })) || [];
 
+  const services =
+    reservationRoom?.services?.map((service) => ({
+      value: service?.uuid,
+      label: service?.name,
+    })) || [];
+
+  const currentServiceObj = reservationRoom?.services?.find(
+    (service) => service.uuid === selectedServiceUuid,
+  );
+
+  const servicePackages =
+    currentServiceObj?.servicePackages?.map((servicePackage) => ({
+      value: servicePackage?.uuid,
+      label: servicePackage?.name,
+    })) || [];
+
   const createServiceOrder = useApiMutation({
     mutationFn: serviceOrderCreate,
-    invalidateKeys: [["service-order"]],
-    // shouldInvalidate: page === 1,
+    invalidateKeys: [["folios"]],
   });
 
   const sharedProps = {
     mode: "spinner",
     min: 1,
     max: 10,
-    defaultValue: 1,
     style: { width: 150 },
+  };
+
+  const handleClose = () => {
+    form.resetFields();
+    if (onClose) {
+      onClose();
+    }
   };
 
   const handleSubmit = async (values) => {
     const payload = {
       ...values,
+      serviceOrderDate: values.serviceOrderDate
+        ? values.serviceOrderDate.format("DD-MM-YYYY")
+        : null,
+      serviceOrderTime: values.serviceOrderTime
+        ? values.serviceOrderTime.format("HH:mm")
+        : null,
+
       reservation: { uuid },
-      room: {
+      reservationRoom: {
         uuid: values.roomNo,
       },
-      folio: {
-        uuid: Array.isArray(folioUuid) ? folioUuid[0]?.uuid : folioUuid?.uuid,
-      },
-      currency: {
-        uuid: Array.isArray(folioUuid)
-          ? folioUuid[0]?.currency?.uuid
-          : folioUuid?.currency?.uuid,
-      },
+      service: values.selectService
+        ? {
+            uuid: values.selectService,
+          }
+        : null,
+      servicePackage: values.servicePackage
+        ? {
+            uuid: values.servicePackage,
+          }
+        : null,
 
-      orderStatus: { uuid: values.order_status },
-      // uuid: isEdit ? guestData?.uuid || data?.uuid : null,
+      quantity: parseInt(values.quantity, 10),
     };
-    const mutation = isAdd && createServiceOrder;
 
     createServiceOrder.mutate(payload, {
       onSuccess: () => {
-        form.resetFields();
+        console.log("Service Order Created Successfully!");
         handleClose();
-        // setDrawerOpen(false);
-        setPage(1);
-        Toast.success("Room Created Successfully!");
+        if (setPage) setPage(1);
       },
     });
   };
@@ -128,81 +141,100 @@ const AddNewServiceOrderForm = ({
       onClose={onClose}
       size={550}
       destroyOnClose
-      initialValues={{
-        quantity: 1,
-      }}
       title={
         <div className="flex justify-between items-center">
           <span>Add New Service Order</span>
-          <Button type="primary" onClick={() => form.submit()}>
+          <Button
+            type="primary"
+            onClick={() => form.submit()}
+            loading={createServiceOrder.isLoading}
+          >
             Create
           </Button>
         </div>
       }
     >
-      <Form layout="vertical" form={form} onFinish={handleSubmit}>
-        <div className="grid grid-cols-2 gap-4">
+      <Form
+        layout="vertical"
+        form={form}
+        onFinish={handleSubmit}
+        initialValues={{
+          quantity: 1,
+          serviceOrderDate: dayjs(),
+          serviceOrderTime: dayjs(),
+        }}
+      >
+        {/* <div className="grid grid-cols-2 gap-4">
           <Form.Item label="Service Order Date" name="serviceOrderDate">
             <DatePicker className="w-full" />
           </Form.Item>
-          <Form.Item label="Service Order Time" name="ServiceOrderTime">
+          <Form.Item label="Service Order Time" name="serviceOrderTime">
             <TimePicker className="w-full" format="h:mm A" />
           </Form.Item>
-        </div>
-        <Form.Item label="Room No" name="roomNo" rules={[{ required: true }]}>
+        </div> */}
+        <Form.Item label="Room No" name="roomNo">
           <Select placeholder="Select a Room" options={rooms} />
         </Form.Item>
 
         <div className="grid grid-cols-2 gap-4">
-          <Form.Item label="Select Service" name="selectService">
+          <Form.Item
+            label="Select Service"
+            name="selectService"
+            rules={[{ required: true }]}
+          >
             <Select
-              placeholder="Select Select Service"
-              style={{ width: "100%" }}
-              options={[
-                { value: "aa", label: "aa" },
-                { value: "bb", label: "bb" },
-              ]}
+              showSearch
+              options={services}
+              placeholder="Select Order Service"
+              onChange={() => form.setFieldValue("servicePackage", undefined)}
+              filterOption={(input, option) =>
+                (option?.label ?? "")
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
+              }
             />
           </Form.Item>
 
-          <Form.Item label="Service Package" name="servicePackage">
-            <Select
-              placeholder="Select Service Package"
-              style={{ width: "100%" }}
-              options={[
-                { value: "aa", label: "aa" },
-                { value: "bb", label: "bb" },
-              ]}
-            />
+          <Form.Item
+            label="Service Package"
+            name="servicePackage"
+            getValueProps={(value) => ({
+              value: isView
+                ? servicePackages?.find((item) => item.value === value)?.label
+                : value,
+            })}
+          >
+            {isView ? (
+              <Input readOnly={isView} />
+            ) : (
+              <Select
+                showSearch
+                filterOption={(input, option) =>
+                  (option?.label ?? "")
+                    .toLowerCase()
+                    .includes(input.toLowerCase())
+                }
+                options={servicePackages}
+                placeholder="Select Order Service Package"
+                disabled={!selectedServiceUuid || isView}
+              />
+            )}
           </Form.Item>
         </div>
 
         <Form.Item
-          label="Exchange Rate "
-          name="exchangeRate "
+          label="Quantity"
+          name="quantity"
           rules={[{ required: true }]}
         >
           <InputNumber
-            className="!w-full"
-            min={0}
-            placeholder="Enter Exchange Rate "
+            {...sharedProps}
+            placeholder="Outlined"
+            style={{ width: "100%" }}
           />
         </Form.Item>
 
-        <div className="grid grid-cols-2 gap-6">
-          <Form.Item
-            label="Quantity"
-            name="quantity"
-            rules={[{ required: true }]}
-          >
-            <InputNumber
-              {...sharedProps}
-              placeholder="Outlined"
-              style={{ width: "100%" }}
-            />
-          </Form.Item>
-
-          <Form.Item
+        {/* <Form.Item
             label="Unit Price"
             name="unitPrice"
             rules={[{ required: true }]}
@@ -213,12 +245,11 @@ const AddNewServiceOrderForm = ({
               placeholder="Enter Unit Price"
               suffix="MMK"
             />
-          </Form.Item>
-        </div>
+          </Form.Item> */}
 
-        <Form.Item
+        {/* <Form.Item
           label="Unit Cost"
-          name="unitCost "
+          name="unitCost"
           rules={[{ required: true }]}
         >
           <InputNumber
@@ -227,9 +258,9 @@ const AddNewServiceOrderForm = ({
             placeholder="Enter Unit Cost"
             suffix="MMK"
           />
-        </Form.Item>
+        </Form.Item> */}
 
-        <Form.Item
+        {/* <Form.Item
           label="Sub Total"
           name="subTotal"
           rules={[{ required: true }]}
@@ -240,9 +271,9 @@ const AddNewServiceOrderForm = ({
             placeholder="Enter Sub Total"
             suffix="MMK"
           />
-        </Form.Item>
+        </Form.Item> */}
 
-        <div className="grid grid-cols-2 gap-4">
+        {/* <div className="grid grid-cols-2 gap-4">
           <Form.Item label="Select Tax" name="selectTax">
             <Select
               placeholder="Select Tax"
@@ -266,13 +297,12 @@ const AddNewServiceOrderForm = ({
               suffix="MMK"
             />
           </Form.Item>
-        </div>
+        </div> */}
 
-        <div className="grid grid-cols-2 gap-4">
-          {" "}
+        {/* <div className="grid grid-cols-2 gap-4">
           <Form.Item
-            label="Service Charge Amount "
-            name="serviceChargeAmount "
+            label="Service Charge Amount"
+            name="serviceChargeAmount"
             rules={[{ required: true }]}
           >
             <InputNumber
@@ -284,7 +314,7 @@ const AddNewServiceOrderForm = ({
           </Form.Item>
           <Form.Item
             label="Discount Amount"
-            name="discountAmount "
+            name="discountAmount"
             rules={[{ required: true }]}
           >
             <InputNumber
@@ -294,9 +324,9 @@ const AddNewServiceOrderForm = ({
               suffix="MMK"
             />
           </Form.Item>
-        </div>
+        </div> */}
 
-        <Form.Item
+        {/* <Form.Item
           label="Total Amount"
           name="totalAmount"
           rules={[{ required: true }]}
@@ -307,15 +337,15 @@ const AddNewServiceOrderForm = ({
             placeholder="Enter Total Amount"
             suffix="MMK"
           />
-        </Form.Item>
+        </Form.Item> */}
 
-        <Form.Item
+        {/* <Form.Item
           label="Order Status"
           name="order_status"
           rules={[{ required: true }]}
           getValueProps={(value) => ({
             value: isView
-              ? orderStatus.find((item) => item.value === value)?.label
+              ? orderStatus?.find((item) => item.value === value)?.label
               : value,
           })}
         >
@@ -323,17 +353,17 @@ const AddNewServiceOrderForm = ({
             <Input readOnly={isView} />
           ) : (
             <Select
-              showSearch={{
-                filterOption: (input, option) =>
-                  (option?.label ?? "")
-                    .toLowerCase()
-                    .includes(input.toLowerCase()),
-              }}
+              showSearch
+              filterOption={(input, option) =>
+                (option?.label ?? "")
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
+              }
               options={orderStatus}
               placeholder="Select Order Status"
             />
           )}
-        </Form.Item>
+        </Form.Item> */}
       </Form>
     </Drawer>
   );

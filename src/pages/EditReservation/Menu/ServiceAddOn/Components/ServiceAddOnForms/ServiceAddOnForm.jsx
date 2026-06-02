@@ -1,270 +1,213 @@
-import React, { useEffect, useState } from "react";
-import {
-  Form,
-  Input,
-  Select,
-  Drawer,
-  Row,
-  Col,
-  DatePicker,
-  Button,
-  TimePicker,
-  InputNumber,
-} from "antd";
-import TextArea from "antd/es/input/TextArea";
-import dayjs from "dayjs";
-import FormItem from "antd/es/form/FormItem";
-import FormButtons from "../../../../../../component/FormButtons/FormButtons";
-import { truncate } from "lodash";
-import {
-  getFormattedDate,
-  getFormattedDateTime,
-} from "../../../../../../utils";
+import React, { useEffect } from "react";
+import { Drawer, Form, Input, InputNumber, Button, Select } from "antd";
 
-const onChange = (value) => {
-  console.log("changed", value);
-};
+import useApiQuery from "../../../../../../hooks/useApiQuery";
+import { useApiMutation } from "../../../../../../hooks/useApiMutation";
+import {
+  reservationRoomMeta,
+  serviceOrderCreate,
+  serviceOrderDetails,
+} from "../../../../../../api/reservationSectionApi";
+import FormButtons from "../../../../../../component/FormButtons/FormButtons";
 
 const ServiceAddOnForm = ({
   mode,
   setMode,
-  drawerOpen,
-  setDrawerOpen,
-  selectedData,
-  onSuccess,
+  serviceData,
   open,
   onClose,
-  reservationId,
+  onSuccess,
 }) => {
-  const [form] = Form.useForm();
   const isView = mode === "view";
+  const isAdd = mode === "add";
+  const isEdit = mode === "edit";
 
-  const [searchOpen, setSearchOpen] = useState(false);
+  const reservationUuid = isAdd
+    ? serviceData?.uuid
+    : serviceData?.reservation?.uuid || serviceData?.reservationUuid;
+  const serviceOrderUuid = isAdd ? null : serviceData?.uuid;
+
+  const [form] = Form.useForm();
+  const selectedServiceUuid = Form.useWatch("selectService", form);
+
+  const { data: reservationRoom } = useApiQuery({
+    fetchQueryName: "service-order",
+    fetchQueryFunction: reservationRoomMeta,
+    params: {
+      reservation: {
+        uuid: reservationUuid,
+      },
+    },
+    options: { enabled: !!reservationUuid },
+  });
+
+  const { data: orderDetails } = useApiQuery({
+    fetchQueryName: "service-orders",
+    fetchQueryFunction: serviceOrderDetails,
+    params: { uuid: serviceOrderUuid },
+    options: { enabled: !!serviceOrderUuid && !isAdd },
+  });
+
+  const createServiceOrder = useApiMutation({
+    mutationFn: serviceOrderCreate,
+    invalidateKeys: [["service-order"]],
+  });
+
+  const rooms =
+    reservationRoom?.rooms?.map((room) => ({
+      value: room?.uuid,
+      label: `${room?.room?.roomNo} (${room?.checkinDate} - ${room?.checkoutDate})`,
+    })) || [];
+
+  const services =
+    reservationRoom?.services?.map((service) => ({
+      value: service?.uuid,
+      label: service?.name,
+    })) || [];
+
+  const currentServiceObj = reservationRoom?.services?.find(
+    (service) => service.uuid === selectedServiceUuid,
+  );
+
+  const servicePackages =
+    currentServiceObj?.servicePackages?.map((pkg) => ({
+      value: pkg?.uuid,
+      label: pkg?.name,
+    })) || [];
 
   useEffect(() => {
-    if (drawerOpen && selectedData) {
+    if (orderDetails && (isView || isEdit)) {
       form.setFieldsValue({
-        ...selectedData,
-        serviceOrderDate: selectedData.serviceOrderDate
-          ? dayjs(selectedData.serviceOrderDate)
-          : null,
-        serviceOrderTime: selectedData.serviceOrderTime
-          ? dayjs(selectedData.serviceOrderTime)
-          : null,
+        roomNo: orderDetails?.reservationRoom?.uuid,
+        selectService: orderDetails?.service?.uuid,
+        servicePackage: orderDetails?.servicePackage?.uuid,
+        quantity: orderDetails?.quantity || 1,
       });
-    } else if (drawerOpen && mode === "add") {
-      form.resetFields();
     }
-  }, [selectedData, drawerOpen, form, mode]);
-
-  const onFinish = (values) => {
-    const formattedValues = {
-      ...values,
-      serviceOrderDate: getFormattedDate(values.serviceOrderDate, false),
-      serviceOrderTime: getFormattedDateTime(values.serviceOrderTime, false),
-    };
-
-    console.log("Submitted Values:", formattedValues);
-
-    const existingData = JSON.parse(localStorage.getItem("services")) || [];
-    if (mode === "add") {
-      localStorage.setItem(
-        "services",
-        JSON.stringify([
-          ...existingData,
-          { ...formattedValues, id: Date.now() },
-        ]),
-      );
-    } else {
-      const updated = existingData.map((item) =>
-        item.id === selectedData.id
-          ? { ...formattedValues, id: item.id }
-          : item,
-      );
-      localStorage.setItem("services", JSON.stringify(updated));
-    }
-
-    setDrawerOpen(false);
-    onSuccess();
-  };
+  }, [orderDetails, isView, isEdit, form]);
 
   const sharedProps = {
     mode: "spinner",
     min: 1,
     max: 10,
-    defaultValue: 1,
-    onChange,
     style: { width: 150 },
   };
 
+  const handleClose = () => {
+    form.resetFields();
+    if (onClose) onClose();
+  };
+
+  const handleSubmit = async (values) => {
+    const payload = {
+      ...values,
+      reservation: { uuid: reservationUuid },
+      reservationRoom: values.roomNo ? { uuid: values.roomNo } : null,
+      service: values.selectService ? { uuid: values.selectService } : null,
+      servicePackage: values.servicePackage
+        ? { uuid: values.servicePackage }
+        : null,
+      quantity: parseInt(values.quantity, 10) || 1,
+    };
+
+    createServiceOrder.mutate(payload, {
+      onSuccess: () => {
+        handleClose();
+        if (onSuccess) onSuccess();
+      },
+    });
+  };
+
   return (
-    <>
-      <Drawer
-        open={drawerOpen}
-        onClose={() => setDrawerOpen(false)}
-        size={650}
-        title={
-          <div className="flex justify-between items-center">
-            <span>
-              {mode === "view"
-                ? "Service Add On Details"
-                : mode === "edit"
-                  ? "Edit Service Add On"
-                  : "Create Service Add On"}
-            </span>
-
-            {isView ? (
-              <Button type="primary" onClick={() => setMode("edit")}>
-                Edit
-              </Button>
-            ) : (
-              <FormButtons onClick={() => form.submit()} mode={mode} />
-            )}
-          </div>
-        }
+    <Drawer
+      destroyOnClose
+      size={500}
+      open={open}
+      onClose={handleClose}
+      title={
+        <div className="flex justify-between items-center">
+          <span>
+            {isView
+              ? "Service Details"
+              : isEdit
+                ? "Edit Service"
+                : "Add Service"}
+          </span>
+          {isView ? (
+            <Button type="primary" onClick={() => setMode("edit")}>
+              Edit
+            </Button>
+          ) : (
+            <FormButtons
+              onClick={() => form.submit()}
+              isPending={createServiceOrder.isPending}
+              mode={mode}
+            />
+          )}
+        </div>
+      }
+    >
+      <Form
+        layout="vertical"
+        form={form}
+        onFinish={handleSubmit}
+        disabled={isView}
+        initialValues={{
+          quantity: 1,
+        }}
       >
-        <Form
-          form={form}
-          layout="vertical"
-          onFinish={onFinish}
-          disabled={isView}
-          initialValues={{
-            quantity: 1,
-          }}
-        >
-          <div className="grid grid-cols-2 gap-4">
-            <Form.Item label="Service Order Date" name="serviceOrderDate">
-              <DatePicker className="w-full" />
-            </Form.Item>
+        <Form.Item label="Room No" name="roomNo">
+          <Select placeholder="Select a Room" options={rooms} allowClear />
+        </Form.Item>
 
-            <Form.Item
-              label="Service Order Time"
-              name="serviceOrderTime"
-              className="flex-1"
-            >
-              <TimePicker className="w-full" format="h:mm A" />
-            </Form.Item>
-          </div>
-
-          <FormItem label="Room No" name="roomNo" rules={[{ required: true }]}>
-            <Input />
-          </FormItem>
-          <div className="grid grid-cols-2 gap-4">
-            <Form.Item
-              label="Select Service"
-              name="selectService"
-              rules={[{ required: true }]}
-            >
-              <Select
-                placeholder="Select Service"
-                style={{ width: "100%" }}
-                options={[
-                  { value: "aa", label: "aa" },
-                  { value: "bb", label: "bb" },
-                ]}
-              />
-            </Form.Item>
-            <Form.Item label="Select Package" name="selectPackage">
-              <Select
-                placeholder="Select Package"
-                style={{ width: "100%" }}
-                options={[
-                  { value: "aa", label: "aa" },
-                  { value: "bb", label: "bb" },
-                ]}
-              />
-            </Form.Item>
-          </div>
-
-          <div className="grid grid-cols-2 gap-6">
-            <Form.Item
-              label="Quantity"
-              name="quantity"
-              rules={[{ required: true }]}
-            >
-              <InputNumber
-                {...sharedProps}
-                placeholder="Outlined"
-                readOnly={isView}
-                style={{ width: "100%" }}
-              />
-            </Form.Item>
-
-            <Form.Item
-              label="Unit Price"
-              name="unitPrice"
-              rules={[{ required: true }]}
-            >
-              <InputNumber
-                className="!w-full"
-                min={0}
-                placeholder="Enter Unit Price"
-                suffix="MMK"
-              />
-            </Form.Item>
-          </div>
-
+        <div className="grid grid-cols-2 gap-4">
           <Form.Item
-            label="Sub Total"
-            name="subTotal"
-            rules={[{ required: true }]}
+            label="Select Service"
+            name="selectService"
+            rules={[{ required: true, message: "Please select a service" }]}
           >
-            <InputNumber
-              className="!w-full"
-              min={0}
-              placeholder="Enter Sub Total"
-              suffix="MMK"
-            />
-          </Form.Item>
-
-          <div className="grid grid-cols-2 gap-4">
-            <Form.Item label="Select Tax" name="selectTax">
-              <Select
-                placeholder="Select Tax"
-                style={{ width: "100%" }}
-                options={[
-                  { value: "aa", label: "aa" },
-                  { value: "bb", label: "bb" },
-                ]}
-              />
-            </Form.Item>
-
-            <Form.Item label="Tax Amount" name="taxAmount">
-              <InputNumber
-                className="!w-full"
-                min={0}
-                placeholder="Enter Total tax"
-                suffix="MMK"
-              />
-            </Form.Item>
-          </div>
-
-          <Form.Item
-            label="Total Amount"
-            name="totalAmount"
-            rules={[{ required: true }]}
-          >
-            <InputNumber
-              className="!w-full"
-              min={0}
-              placeholder="Enter Total Amount"
-              suffix="MMK"
-            />
-          </Form.Item>
-
-          <Form.Item label="Status" name="status" rules={[{ required: true }]}>
             <Select
-              placeholder="Select Status"
-              style={{ width: "100%" }}
-              options={[
-                { value: "Active", label: "Active" },
-                { value: "Inactive", label: "Inactive" },
-              ]}
+              showSearch
+              options={services}
+              placeholder="Select Order Service"
+              onChange={() => form.setFieldValue("servicePackage", undefined)}
+              filterOption={(input, option) =>
+                (option?.label ?? "")
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
+              }
             />
           </Form.Item>
-        </Form>
-      </Drawer>
-    </>
+
+          <Form.Item label="Service Package" name="servicePackage">
+            <Select
+              showSearch
+              options={servicePackages}
+              placeholder="Select Package"
+              disabled={isView || !selectedServiceUuid}
+              filterOption={(input, option) =>
+                (option?.label ?? "")
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
+              }
+              allowClear
+            />
+          </Form.Item>
+        </div>
+
+        <Form.Item
+          label="Quantity"
+          name="quantity"
+          rules={[{ required: true }]}
+        >
+          <InputNumber
+            {...sharedProps}
+            placeholder="Outlined"
+            style={{ width: "100%" }}
+          />
+        </Form.Item>
+      </Form>
+    </Drawer>
   );
 };
 

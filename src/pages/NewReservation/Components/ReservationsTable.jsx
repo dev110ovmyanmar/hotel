@@ -37,9 +37,7 @@ const ReservationsTable = ({
       dataIndex: ["guest", "name"],
       key: "guestName",
       render: (text) => (
-        <span style={{textTransform: "capitalize" }}>
-          {text || ""}
-        </span>
+        <span style={{ textTransform: "capitalize" }}>{text || ""}</span>
       ),
     },
     {
@@ -88,10 +86,10 @@ const ReservationsTable = ({
 
           <div className="flex items-center gap-3 text-gray-500">
             <span className="flex items-center gap-1">
-              <IoPeopleSharp /> {record?.adults}
+              <IoPeopleSharp className="text-blue-500" /> {record?.adults}
             </span>
             <span className="flex items-center gap-1">
-              <FaChild /> {record?.children}
+              <FaChild className="text-pink-500" /> {record?.children}
             </span>
           </div>
         </div>
@@ -112,9 +110,9 @@ const ReservationsTable = ({
       key: "total",
       align: "end",
       render: (value) => (
-        <div className="flex items-center gap-1">
+        <div className="flex justify-end items-center gap-1">
           <PriceTag value={value} />
-          <span className="text-gray-500 font-medium ">MMK</span>
+          <span className="text-gray-500 font-medium">MMK</span>
         </div>
       ),
     },

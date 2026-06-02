@@ -3,7 +3,6 @@ import { Tabs } from "antd";
 import { useNavigate, useLocation } from "react-router-dom";
 
 const ReservationMenu = ({ data }) => {
-
   const navigate = useNavigate();
   const location = useLocation();
   const bookingId = location?.state?.bookingId;
@@ -18,8 +17,9 @@ const ReservationMenu = ({ data }) => {
     { label: "Room Information", key: "room-information" },
     { label: "Guest Details", key: "guest-details" },
     { label: "Event Facility Booking", key: "event-facility-booking" },
-    { label: "Folio Operations", key: "folio-operations" },
     { label: "Service Add On", key: "service-add-on" },
+    { label: "Service Order", key: "service-order" },
+    { label: "Folio Operations", key: "folio-operations" },
   ];
 
   const rawCode = data?.reservation?.reservationStatus?.code || "";
@@ -27,9 +27,21 @@ const ReservationMenu = ({ data }) => {
   console.log(statusCode, "statusCode");
 
   const fullAccessStatuses = ["pending", "booked", "confirmed", "cancelled"];
-  const restrictedStatuses = ["no_show", "checked_out", "checked_in"];
+  const restrictedStatuses = ["no_show", "checked_out"]; // Removed 'checked_in' from here
 
   const filteredTabs = allTabs.filter((tab) => {
+    if (statusCode === "checked_in") {
+      const allowedKeys = [
+        "booking-detail",
+        "room-information",
+        "guest-details",
+        "event-facility-booking",
+        "service-order",
+        "folio-operations",
+      ];
+      return allowedKeys.includes(tab.key);
+    }
+
     if (restrictedStatuses.includes(statusCode)) {
       const allowedKeys = [
         "booking-detail",
@@ -50,6 +62,7 @@ const ReservationMenu = ({ data }) => {
       ];
       return allowedKeys.includes(tab.key);
     }
+
     return true;
   });
 

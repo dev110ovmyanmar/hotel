@@ -128,3 +128,10 @@ export const serviceOrderCreate = async (params) => {
   return data.response;
 };
 
+export const updateServiceOrder = async (params) => {
+  const { data } = await apiClient.put
+    ("/service-order/update",
+      params
+    );
+  return data.response;
+};
