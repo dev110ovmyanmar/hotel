@@ -24,8 +24,9 @@ import { facilityMeta } from "../../../../../../api/facilityPackageApi";
 import useApiQuery from "../../../../../../hooks/useApiQuery";
 import Status from "../../../../../../component/Status/Status";
 import { queryClient } from "../../../../../../app/queryClient";
-import { createFacilityBooking } from "../../../../../../api/booking";
+import { createFacilityBooking, editFacilityBooking, facilityBookingDetails } from "../../../../../../api/booking";
 import { useApiMutation } from "../../../../../../hooks/useApiMutation";
+import Toast from "../../../../../../component/Toast/Toast";
 
 const { RangePicker } = TimePicker;
 
@@ -37,11 +38,17 @@ const EventFacilityOrderForm = ({
   selectedData,
   onSuccess,
   reservationId,
+  searchOpen,
+  setSearchOpen,
+  refetchFacilityList,
 }) => {
   const [form] = Form.useForm();
   const phoneValue = Form.useWatch("guestPhone", form);
-  const [searchOpen, setSearchOpen] = useState(false);
+  const facilityPackageForm = Form.useWatch("facilityPackage", form);
+
   const isView = mode === "view";
+  const isEdit = mode === "edit";
+  const isAdd = mode === "add";
 
   const initData = queryClient.getQueryData([
     "initData",
@@ -64,12 +71,12 @@ const EventFacilityOrderForm = ({
       ? endTime.diff(startTime, "second")
       : null;
 
-  const hours = Math.floor(expectedSeconds / 3600);
-  const minutes = Math.floor((expectedSeconds % 3600) / 60);
-  const seconds = expectedSeconds % 60;
+  // const hours = Math.floor(expectedSeconds / 3600);
+  // const minutes = Math.floor((expectedSeconds % 3600) / 60);
+  // const seconds = expectedSeconds % 60;
 
-  const frontformattedExpectedHours = `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
-  const formattedExpectedHours = `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+  // const frontformattedExpectedHours = `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
+  // const formattedExpectedHours = `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
 
   const { data: facilityMetaData } = useApiQuery({
     fetchQueryName: "facilityMetaData",
@@ -79,6 +86,9 @@ const EventFacilityOrderForm = ({
   const facilityPackages = facilityMetaData?.facility_packages?.map((item) => ({
     label: item?.name,
     value: item?.uuid,
+    expectedPax: item?.includedPax,
+    expectedHours: item?.includedHours,
+
   }));
 
   const createFacilityBookings = useApiMutation({
@@ -87,29 +97,90 @@ const EventFacilityOrderForm = ({
     // shouldInvalidate: isEdit ? true : page === 1,
   });
 
+  const editFacilityBookings = useApiMutation({
+    mutationFn: editFacilityBooking,
+    invalidateKeys: [["facility-booking-list"]],
+    // shouldInvalidate: isEdit ? true : page === 1,
+  });
+
+  const { data: bookingDetails, isPending, error } = useApiQuery({
+    fetchQueryName: "facility-booking-details",
+    fetchQueryFunction: facilityBookingDetails,
+    params: {
+      uuid: selectedData?.uuid,
+    },
+    options: {
+      enabled: !!selectedData?.uuid,
+    },
+  });
+
   useEffect(() => {
-    if (drawerOpen && selectedData ) {
-      form.setFieldsValue({
-        ...selectedData,
-        eventOrderDate: selectedData.eventOrderDate
-          ? dayjs(selectedData.eventOrderDate)
-          : null,
-        eventOrderTime: selectedData.eventOrderTime
-          ? dayjs(selectedData.eventOrderTime)
-          : null,
-        startDate: selectedData.startDate
-          ? dayjs(selectedData.startDate)
-          : null,
-        startTime: selectedData.startTime
-          ? dayjs(selectedData.startTime)
-          : null,
-        endDate: selectedData.endDate ? dayjs(selectedData.endDate) : null,
-        endTime: selectedData.endTime ? dayjs(selectedData.endTime) : null,
-      });
-    } else if (drawerOpen && mode === "add") {
+    if (isAdd) {
       form.resetFields();
     }
-  }, [selectedData, drawerOpen, form, mode]);
+
+    if (isAdd && initDataStatus) {
+      form.setFieldsValue({
+        status: {
+          uuid: initDataStatus?.find((item) => item?.code === "active")?.uuid,
+        },
+      });
+    }
+
+    const FacilityBookingFormDataView = isView || isEdit;
+    if (FacilityBookingFormDataView && bookingDetails) {
+      form.setFieldsValue({
+        ...bookingDetails,
+
+        facilityPackage: bookingDetails?.facilityPackage?.uuid,
+
+        eventDate: dayjs(bookingDetails?.eventDate),
+
+        timeRange: [
+          dayjs(bookingDetails?.startTime, "HH:mm"),
+          dayjs(bookingDetails?.endTime, "HH:mm"),
+        ],
+
+        expectedHours: dayjs(
+          bookingDetails?.expectedHours,
+          "HH:mm"
+        ),
+        reservation: {
+          uuid: bookingDetails?.reservation?.uuid,
+        },
+        status: {
+          uuid: bookingDetails?.status?.uuid,
+        },
+      });
+    }
+  }, [bookingDetails, isEdit, isAdd]);
+
+  useEffect(() => {
+    if (eventTime?.[0] && eventTime?.[1]) {
+      const startTime = eventTime[0];
+      const endTime = eventTime[1];
+
+      const expectedSeconds = endTime.diff(startTime, "second");
+
+      const hours = Math.floor(expectedSeconds / 3600);
+      const minutes = Math.floor((expectedSeconds % 3600) / 60);
+      const seconds = expectedSeconds % 60;
+
+      const uiFormat =
+        `${String(hours).padStart(2, "0")}:` +
+        `${String(minutes).padStart(2, "0")}`;
+
+      const formattedExpectedHours =
+        `${String(hours).padStart(2, "0")}:` +
+        `${String(minutes).padStart(2, "0")}:` +
+        `${String(seconds).padStart(2, "0")}`;
+
+      form.setFieldsValue({
+        expectedHours: uiFormat,
+        expectedHoursBackend: formattedExpectedHours
+      });
+    }
+  }, [eventTime]);
 
   const onFinish = (values) => {
     const modifiedValues = {
@@ -117,16 +188,36 @@ const EventFacilityOrderForm = ({
       eventDate: values?.eventDate.format("YYYY-MM-DD"),
       startTime: values.timeRange[0].format("HH:mm:ss"),
       endTime: values.timeRange[1].format("HH:mm:ss"),
-      expectedHours: formattedExpectedHours,
+      expectedHours: values?.expectedHoursBackend,
       facilityPackage: {
         uuid: values.facilityPackage
       },
       reservation: {
-        uuid: reservationId
-      }
+        uuid: isEdit ? bookingDetails?.reservation?.uuid : reservationId
+      },
+      uuid: isEdit ? bookingDetails?.uuid : null
     };
 
-    createFacilityBookings.mutate(modifiedValues)
+    if (isAdd) {
+      createFacilityBookings.mutate(modifiedValues, {
+        onSuccess: () => {
+          form.resetFields();
+          setPage(1);
+          Toast.success("Facility Booking Created Successfully!");
+          setDrawerOpen(false);
+        },
+      })
+    }
+
+
+    if (isEdit) {
+      editFacilityBookings.mutate(modifiedValues, {
+        onSuccess: () => {
+          Toast.success("FacilityBooking Updated Successfully!");
+          setDrawerOpen(false);
+        },
+      });
+    }
     setDrawerOpen(false);
     onSuccess();
   };
@@ -151,7 +242,7 @@ const EventFacilityOrderForm = ({
                 Edit
               </Button>
             ) : (
-              <FormButtons onClick={() => form.submit()} mode={mode} isPending={createFacilityBookings?.isPending}/>
+              <FormButtons onClick={() => form.submit()} mode={mode} isPending={isEdit ? editFacilityBookings?.isPending : createFacilityBookings?.isPending} />
             )}
           </div>
         }
@@ -163,14 +254,18 @@ const EventFacilityOrderForm = ({
           disabled={isView}
           initialValues={{ status: "Active" }}
         >
-          <div className="flex justify-end mb-4">
-            <Button
-              onClick={() => setSearchOpen(true)}
-              className="custom-blue-btn"
-            >
-              Search By
-            </Button>
-          </div>
+          {
+            isAdd && (
+              <div className="flex justify-end mb-4">
+                <Button
+                  onClick={() => setSearchOpen(true)}
+                  className="custom-blue-btn"
+                >
+                  Search By
+                </Button>
+              </div>
+            )
+          }
 
           <Form.Item
             label="Name"
@@ -185,25 +280,19 @@ const EventFacilityOrderForm = ({
             name="guestPhone"
             rules={[
               { required: true },
-              { validator: validatePhoneNumber }
+
             ]}
           >
             <Input
-              addonBefore="+959"
               readOnly={isView}
               placeholder="Enter Phone"
               onKeyPress={(e) => {
-                if (!/[0-9]/.test(e.key)) {
+                if (!/[0-9]/.test(e.key) &&
+                  !(e.key === "+" && value.length === 0)
+                ) {
                   e.preventDefault();
                 }
               }}
-              maxLength={
-                phoneValue?.startsWith("09")
-                  ? 11
-                  : phoneValue?.startsWith("9")
-                    ? 10
-                    : 9
-              }
             />
           </Form.Item>
 
@@ -219,8 +308,23 @@ const EventFacilityOrderForm = ({
             label="Facility Package"
             name="facilityPackage"
             rules={[{ required: true, message: "Facility Package is Required" }]}
+
           >
-            <Select options={facilityPackages} readOnly={isView} placeholder="Select Event Name" />
+            <Select
+              options={facilityPackages}
+              readOnly={isView}
+              placeholder="Select Event Name"
+              onSelect={(value) => {
+                const selectedPackage = facilityPackages.find(
+                  (item) => item.value === value
+                );
+
+                form.setFieldsValue({
+                  expectedHours: selectedPackage?.expectedHours?.slice(0, 5),
+                  expectedPax: selectedPackage?.expectedPax,
+                });
+              }}
+            />
           </Form.Item>
 
 
@@ -263,11 +367,22 @@ const EventFacilityOrderForm = ({
             <Col span={12}>
               <Form.Item
                 label="Expected Hours"
+                name="expectedHours"
                 required
               >
-                <Input value={frontformattedExpectedHours} readOnly />
+                <Input readOnly />
+                {/* value={frontformattedExpectedHours}  */}
               </Form.Item>
             </Col>
+
+            <Form.Item
+              label="Expected Hours"
+              name="expectedHoursBackend"
+              hidden
+            >
+              <Input readOnly />
+              {/* value={frontformattedExpectedHours}  */}
+            </Form.Item>
           </Row>
 
           <Form.Item
@@ -411,11 +526,16 @@ const EventFacilityOrderForm = ({
 
       </Drawer>
 
-      <SearchEventFacilityOrderForm
-        open={searchOpen}
-        onClose={() => setSearchOpen(false)}
-        reservationId={reservationId}
-      />
+      {searchOpen && (
+        <SearchEventFacilityOrderForm
+          open={searchOpen}
+          onClose={() => setSearchOpen(false)}
+          reservationId={reservationId}
+          setDrawerOpen={setDrawerOpen}
+          facilityPackagesOptions={facilityPackages}
+
+        />)
+      }
     </>
   );
 };

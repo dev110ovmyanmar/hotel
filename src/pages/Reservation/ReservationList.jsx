@@ -279,7 +279,7 @@ const ReservationList = () => {
           <div className="mb-2">
             <div className="flex justify-center">
               <p>{value?.minPrice?.toLocaleString()} MMK</p>
-              <div className={getRemainingRooms(record) <= 0 ? "bg-gray-300 px-2 ms-2" : "bg-blue-100 px-2 ms-2"}>
+              <div className="px-2 ms-2">
                 <ExclamationCircleOutlined
                   className={getRemainingRooms(record) <= 0 ? "!text-gray-500 !text-sm cursor-pointer" : "!text-[#2973e7] !text-sm cursor-pointer"}
                   onClick={() => {

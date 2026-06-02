@@ -501,32 +501,32 @@ const GuestForm = ({
 
             <Row gutter={16}>
               <Col span={12}>
-                <Form.Item
-                  label="Primary Phone"
-                  name="phone"
-                  rules={[{ validator: validatePhoneNumber }]}
-                >
+                <Form.Item label="Primary Phone" name="phone">
                   <Input
-                    addonBefore="+959"
                     onKeyPress={(e) => {
-                      if (!/[0-9]/.test(e.key)) e.preventDefault();
+                      if (
+                        !/[0-9]/.test(e.key) &&
+                        !(e.key === "+" && value.length === 0)
+                      ) {
+                        e.preventDefault();
+                      }
                     }}
-                    maxLength={10}
+                    placeholder="Enter Phone Number"
                   />
                 </Form.Item>
               </Col>
               <Col span={12}>
-                <Form.Item
-                  label="Secondary Phone"
-                  name="secondaryPhone"
-                  rules={[{ validator: validatePhoneNumber }]}
-                >
+                <Form.Item label="Secondary Phone" name="secondaryPhone">
                   <Input
-                    addonBefore="+959"
                     onKeyPress={(e) => {
-                      if (!/[0-9]/.test(e.key)) e.preventDefault();
+                      if (
+                        !/[0-9]/.test(e.key) &&
+                        !(e.key === "+" && value.length === 0)
+                      ) {
+                        e.preventDefault();
+                      }
                     }}
-                    maxLength={10}
+                    placeholder="Enter Phone Number"
                   />
                 </Form.Item>
               </Col>

@@ -100,7 +100,8 @@ const ReservationsGrid = ({
                         gap: "6px",
                       }}
                     >
-                      <IoPeopleSharp /> {item.adults}
+                      <IoPeopleSharp className="text-blue-500 " />{" "}
+                      {item.adults}
                     </span>
                     <span
                       style={{
@@ -109,7 +110,7 @@ const ReservationsGrid = ({
                         gap: "6px",
                       }}
                     >
-                      <FaChild /> {item.children}
+                      <FaChild className="text-pink-500" /> {item.children}
                     </span>
                   </Space>
                 </div>

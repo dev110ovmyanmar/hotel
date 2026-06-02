@@ -1,108 +1,80 @@
-import { Dropdown, Space, Table, Button, Tooltip } from "antd";
-import { useState, useEffect } from "react";
-import {
-  MoreOutlined,
-  EyeOutlined,
-  EditOutlined,
-  PlusOutlined,
-  InboxOutlined,
-  UploadOutlined,
-} from "@ant-design/icons";
+import { Space, Table, Tooltip } from "antd";
+import { useState } from "react";
+import { EyeOutlined, EditOutlined } from "@ant-design/icons";
 import ServiceAddOnForm from "./ServiceAddOnForms/ServiceAddOnForm";
 import PriceTag from "../../../../../component/PriceTag/PriceTag";
 import dayjs from "dayjs";
 
-const ServiceAddOnTable = () => {
-  const [drawerOpen, setDrawerOpen] = useState(false);
+const ServiceAddOnTable = ({ data }) => {
   const [mode, setMode] = useState("add");
   const [selectedData, setSelectedData] = useState(null);
-  const [dataSource, setDataSource] = useState([]);
+  const [serviceOpen, setServiceOpen] = useState(false);
 
-  useEffect(() => {
-    const savedServices = JSON.parse(localStorage.getItem("services")) || [];
-    setDataSource(savedServices);
-  }, []);
-
-  const refreshData = () => {
-    const savedServices = JSON.parse(localStorage.getItem("services")) || [];
-    setDataSource(savedServices);
-  };
-
-  const handleAdd = () => {
-    setMode("add");
-    setSelectedData(null);
-    setDrawerOpen(true);
-  };
+  const tableDataSource = Array.isArray(data)
+    ? data
+    : data?.serviceOrders || [];
 
   const columns = [
-    { title: "ID", dataIndex: "id", key: "id", width: 70 },
     {
-      title: "Service Name",
-      dataIndex: "selectService",
-      key: "nselectServiceame",
+      title: "ID",
+      dataIndex: "id",
+      key: "id",
+      width: 70,
     },
-
-    {
-      title: "Start Date Time",
-      key: "startDateTime",
-      render: (_, record) => {
-        const date = record.serviceOrderDate
-          ? dayjs(record.serviceOrderDate).format("DD-MM-YYYY")
-          : "-";
-        const time = record.serviceOrderTime
-          ? dayjs(record.serviceOrderTime).format("h:mm A")
-          : "";
-        return (
-          <div>
-            <div className="font-medium">{date}</div>
-            <div className="text-xs text-gray-500">{time}</div>
-          </div>
-        );
-      },
-    },
-
     {
       title: "Room No",
-      dataIndex: "roomNo",
+      dataIndex: ["reservationRoom", "room", "roomNo"],
       key: "roomNo",
     },
+    {
+      title: "Service Name",
+      dataIndex: ["service", "name"],
+      key: "serviceName",
+    },
+    {
+      title: "Service Package",
+      dataIndex: ["servicePackage", "name"],
+      key: "servicePackage",
+    },
 
-    { title: "Qty Unit", dataIndex: "quantity", key: "quantity" },
+    {
+      title: "Qty Unit",
+      dataIndex: "quantity",
+      key: "quantity",
+    },
     {
       title: "Price (MMK)",
       dataIndex: "basePrice",
       key: "basePrice",
       render: (text) => <PriceTag value={text} />,
-      width: "80",
+      width: 100,
       align: "right",
     },
     {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
-    },
-    {
       title: "Action",
-      fixed:"end",
+      key: "action",
+      fixed: "end",
       align: "center",
       render: (_, record) => (
         <Space size="middle">
           <Tooltip title="View Details">
             <EyeOutlined
+              className="cursor-pointer text-blue-500 hover:text-blue-700"
               onClick={() => {
                 setSelectedData(record);
                 setMode("view");
-                setDrawerOpen(true);
+                setServiceOpen(true);
               }}
             />
           </Tooltip>
 
           <Tooltip title="Edit">
             <EditOutlined
+              className="cursor-pointer text-amber-500 hover:text-amber-700"
               onClick={() => {
                 setSelectedData(record);
                 setMode("edit");
-                setDrawerOpen(true);
+                setServiceOpen(true);
               }}
             />
           </Tooltip>
@@ -113,16 +85,17 @@ const ServiceAddOnTable = () => {
 
   return (
     <div>
-      <Table columns={columns} dataSource={dataSource} rowKey="id" />
+      <Table columns={columns} dataSource={tableDataSource} rowKey="uuid" />
 
-      <ServiceAddOnForm
-        mode={mode}
-        setMode={setMode}
-        drawerOpen={drawerOpen}
-        setDrawerOpen={setDrawerOpen}
-        selectedData={selectedData}
-        onSuccess={refreshData}
-      />
+      {serviceOpen && (
+        <ServiceAddOnForm
+          mode={mode}
+          setMode={setMode}
+          serviceData={selectedData}
+          open={serviceOpen}
+          onClose={() => setServiceOpen(false)}
+        />
+      )}
     </div>
   );
 };

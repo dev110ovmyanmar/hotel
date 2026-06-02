@@ -8,7 +8,6 @@ import {
   PlusOutlined,
 } from "@ant-design/icons";
 
-// Renders the word "Folio" with a yellow highlight followed by the rest of the title
 const FolioTitle = ({ rest }) => (
   <span>
     <span
@@ -46,21 +45,7 @@ const FolioOperationsTable = ({
         </Space>
       ),
     },
-    {
-      key: "edit",
-      label: (
-        <Space size={4} onClick={() => {
-          if (setSelectedData && setMode && setDrawerOpen) {
-            setSelectedData(record);
-            setMode("edit");
-            setDrawerOpen(true);
-          }
-        }}>
-          <EditOutlined style={{ fontSize: "12px" }} />
-          <span style={{ fontSize: "14px" }}>Edit</span>
-        </Space>
-      ),
-    },
+ 
     {
       key: "move",
       label: (
@@ -75,7 +60,6 @@ const FolioOperationsTable = ({
     },
   ];
 
-  // Sub-table columns for folioLines
   const lineColumns = [
     {
       title: <FolioTitle rest=" No" />,

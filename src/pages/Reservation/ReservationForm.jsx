@@ -82,7 +82,6 @@ const ReservationForm = ({
 
         availabilitySearchResults.mutate(modifiedValues);
     };
-
     const handleChange = (value, option) => {
         setSelectedSourceType(option?.label);
 
@@ -147,7 +146,7 @@ const ReservationForm = ({
                 }}
             >
                 <div className="flex justify-between">
-                    <h1 className="text-lg font-bold text-[#ffffff] my-2">Create New Reservation</h1>
+                    <h1 className="text-lg font-bold text-[#ffffff] my-2">New Reservation</h1>
                     {
                         afterRoomConfirm ?
                             null
@@ -160,7 +159,7 @@ const ReservationForm = ({
                                     disabled={searchButtonDisable}
                                     className={
                                         searchButtonDisable
-                                            ? "min-w-[125px] !bg-gray-200 !text-gray-300 !border-gray-400 cursor-not-allowed"
+                                            ? "min-w-[125px] !bg-gray-200 !text-gray-400 !border-gray-400 cursor-not-allowed"
                                             : "min-w-[125px] !bg-[#FFFFFF] !text-[#000000] !shadow-lg shadow-gray-300/50"
                                     }
                                 >

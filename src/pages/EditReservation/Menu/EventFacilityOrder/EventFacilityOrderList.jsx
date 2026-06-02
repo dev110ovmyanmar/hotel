@@ -18,6 +18,7 @@ const EventFacilityOrderList = () => {
   const [status, setStatus] = useState("all");
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(LIMITS.PAGE_SIZE);
+  const [searchOpen, setSearchOpen] = useState(false);
 
   const normalStatus = status === "all" ? null : status;
 
@@ -47,7 +48,7 @@ const EventFacilityOrderList = () => {
   return (
     <div className="w-full px-6 py-2">
       <ReservationHeader data={data || {}} />
-      <ReservationMenu  data={data}/>
+      <ReservationMenu data={data} />
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
         <ReservationListHeader
           reservationId={data?.reservation?.reservationNo}
@@ -70,7 +71,10 @@ const EventFacilityOrderList = () => {
         drawerOpen={drawerOpen}
         setDrawerOpen={setDrawerOpen}
         mode={mode}
-        reservationId={bookingId}
+        reservationId={data?.reservation?.uuid}
+        searchOpen={searchOpen}
+        setSearchOpen={setSearchOpen}
+
       />
     </div>
   );
