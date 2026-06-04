@@ -9,10 +9,21 @@ const RoomModalBox = ({
     priceKey,
     rateKey
 }) => {
-    console.log(rateKey, "rateKey")
+    const room = rateQuotes?.data?.rooms?.find(
+        room => room?.roomType?.uuid === priceKey
+    );
+
+    const ratePlan = room?.ratePlans?.find(
+        ratePlan => ratePlan?.uuid === rateKey
+    );
     return (
         <Modal
-            title="Pricing by Date"
+            title={
+                <>
+                    <p className="!text-md">{room?.roomType?.name}</p>
+                    <p className="!text-xs !text-gray-400">{ratePlan?.name}</p>
+                </>
+            }
             open={roomModalBoxOpen}
             onCancel={() => setRoomModalBoxOpen(false)}
             footer={null}
