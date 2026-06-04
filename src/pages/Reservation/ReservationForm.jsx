@@ -179,7 +179,6 @@ const ReservationForm = ({
                             }
                             rules={[{ required: true, message: "Please Select Date" }]}>
                             <RangePicker
-                                className="!w-full"
                                 format="YYYY-MM-DD HH:mm"
                                 disabledDate={disabledDate}
                                 onChange={(dates) => {
@@ -200,6 +199,7 @@ const ReservationForm = ({
                                     });
                                 }}
                                 disabled={afterRoomConfirm}
+                                className={afterRoomConfirm? "!w-full !bg-gray-100":"!w-full"}
 
                             />
                         </Form.Item>

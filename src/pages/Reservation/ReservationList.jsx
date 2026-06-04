@@ -363,7 +363,7 @@ const ReservationList = () => {
 
   return (
     <div className="w-full px-6">
-      <div className="flex justify-end mb-3">
+      <div className="flex justify-end mb-3 p-2">
         <Button
           className="!border-blue-500"
           onClick={() => {
@@ -384,7 +384,7 @@ const ReservationList = () => {
           }}
         >
           <ReloadOutlined className="!text-blue-500" />
-          <span className="max-w-[125px] !text-blue-500" >Refresh</span>
+          <span className="!text-blue-500" >Refresh Current Page</span>
         </Button>
       </div>
 

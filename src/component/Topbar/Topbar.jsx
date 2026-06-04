@@ -211,7 +211,7 @@ const Topbar = withDirection(function (props) {
             type="text"
             icon={
               theme === "light" ? (
-                <MoonOutlined style={{ fontSize: 20, marginTop: 30 }} />
+                <MoonOutlined style={{ fontSize: 20 }} />
               ) : (
                 <SunOutlined style={{ fontSize: 20 }} />
               )
@@ -223,7 +223,7 @@ const Topbar = withDirection(function (props) {
           <Button
             type="text"
             loading={refreshing}
-            icon={<ReloadOutlined style={{ fontSize: 18, marginTop: 30 }} />}
+            icon={<ReloadOutlined style={{ fontSize: 18}} />}
             className="bg-gray-200 hover:bg-gray-300 text-gray-700"
             onClick={handleRefetchInitData}
           />
