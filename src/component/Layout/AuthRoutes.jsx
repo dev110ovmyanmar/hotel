@@ -324,6 +324,11 @@ export const authRoutes = [
     path: "/reservation/service-add-on/",
     component: <AddOnServiceList />,
   },
+   {
+    key: 3.6,
+    path: "/reservation/service-order/",
+    component: <AddOnServiceList />,
+  },
 
   {
     key: 4,

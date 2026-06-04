@@ -22,20 +22,27 @@ const RoomConfirmFinish = ({
                             {/* <MdOutlineEscalatorWarning className="ml-3" />
                                 <span className="ml-1 text-xs">{i.child}</span> */}
 
-                            <div className="text-lg text-gray-400 mx-2">|</div>
-                            <div className="!text-md ml-1 mt-1">{i.extraBed} Extra Bed</div>
+                            {/* <div className="text-lg text-gray-400 mx-2">|</div> */}
+                            {/* <div className="!text-md ml-1 mt-1">{i.extraBed} Extra Bed</div> */}
                         </div>
 
                         <Divider />
 
                         {
                             i?.ratePlans?.map((rate) =>
-                                <div className="flex justify-between">
+                                <div className="flex justify-between py-1">
                                     <p>{rate?.name}</p>
                                     <p className="font-bold">{rate?.totalPrice?.toLocaleString()} MMK</p>
                                 </div>
                             )
                         }
+
+                        <Divider/>
+                        
+                        <div className="flex justify-between mt-5">
+                            <p>Incentive</p>
+                            <p className="font-bold">{i?.incentiveTotal.toLocaleString()} MMK</p>
+                        </div>
 
                         <div className="flex justify-between">
                             <p>Tax</p>

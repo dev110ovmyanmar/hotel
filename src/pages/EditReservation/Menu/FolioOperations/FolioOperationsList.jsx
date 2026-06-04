@@ -146,7 +146,6 @@ import { getFolioList, createFolio } from "../../../../api/folioApi";
 import { LIMITS } from "../../../../variables/constants";
 import { useLocation } from "react-router-dom";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
-import { serviceOrderList } from "../../../../api/reservationSectionApi";
 import AddNewServiceOrderForm from "./Components/FolioOperationsForms/AddNewServiceOrderForm";
 
 const FolioOperationsList = () => {
@@ -183,22 +182,22 @@ const FolioOperationsList = () => {
   });
 
   // FIX 2: Syntax is data: serviceData to avoid using the name 'data' twice
-  const { data: serviceData, refetch } = useApiQuery({
-    fetchQueryName: "service-order",
-    fetchQueryFunction: serviceOrderList,
-    params: {
-      pagination: {
-        page,
-        perPage,
-      },
-      keyword,
-      reservation: { uuid },
-    },
-  });
+  // const { data: serviceData, refetch } = useApiQuery({
+  //   fetchQueryName: "service-order",
+  //   fetchQueryFunction: serviceOrderList,
+  //   params: {
+  //     pagination: {
+  //       page,
+  //       perPage,
+  //     },
+  //     keyword,
+  //     reservation: { uuid },
+  //   },
+  // });
 
   // Safe to log here now that variables are properly initialized
   console.log(folioList, "folioList");
-  console.log(serviceData, "serviceData");
+  // console.log(serviceData, "serviceData");
 
   const isFolioEmpty = folioList?.data?.length === 0;
   const isFolioLineIsEmpty = folioList?.data?.every(
