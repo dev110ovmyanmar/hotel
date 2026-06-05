@@ -20,11 +20,11 @@ import Loader from "../../component/Loader/Loader";
 const BookingDetailList = () => {
   const location = useLocation();
   const uuid = location.state?.bookingId;
-
+  
   const { data, isLoading } = useApiQuery({
     fetchQueryName: "reservation-details",
     fetchQueryFunction: reservationDetails,
-    params: { uuid },
+    params: { reservationRoom:{uuid:uuid} },
     options: { enabled: !!uuid },
   });
 

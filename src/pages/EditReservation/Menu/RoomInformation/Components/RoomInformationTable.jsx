@@ -38,7 +38,7 @@ const RoomInformationTable = ({
   reservationUuid,
   refetch,
 }) => {
-  console.log(data, "noteDatas");
+  console.log(reservationUuid,"reservationUuid")
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mode, setMode] = useState("add");
   const [selectedData, setSelectedData] = useState(null);
@@ -48,8 +48,6 @@ const RoomInformationTable = ({
   const [noteOpen, setNoteOpen] = useState(false);
   const [guestOpen, setGuestOpen] = useState(false);
   const [roomAmend, setRoomAmend] = useState(false);
-
-  console.log(reservationUuid, "reservationUuidtable");
 
   const columns = [
     {
@@ -67,7 +65,7 @@ const RoomInformationTable = ({
       render: (text, record) => {
         const isRoomNull = !text;
 
-        const statusCode = reservationUuid?.reservationStatus?.code;
+        const statusCode = reservationUuid?.reservationRoom?.roomStatus?.code;
 
         const validStatuses = ["confirmed", "checked_in"];
         const isConfirmed = validStatuses.includes(statusCode);
@@ -162,19 +160,19 @@ const RoomInformationTable = ({
               setNoteOpen(true);
             },
           },
-          ...(isConfirmed
-            ? [
-                {
-                  key: "move",
-                  label: "Move Room",
-                  icon: <MdOutlineMeetingRoom style={{ fontSize: "16px" }} />,
-                  onClick: () => {
-                    setSelectedData(record);
-                    setRoomMoveOpen(true);
-                  },
-                },
-              ]
-            : []),
+          // ...(isConfirmed
+          //   ? [
+          //       {
+          //         key: "move",
+          //         label: "Move Room",
+          //         icon: <MdOutlineMeetingRoom style={{ fontSize: "16px" }} />,
+          //         onClick: () => {
+          //           setSelectedData(record);
+          //           setRoomMoveOpen(true);
+          //         },
+          //       },
+          //     ]
+          //   : []),
           // ...(isCheckin
           //   ? [
           //       {
@@ -229,7 +227,10 @@ const RoomInformationTable = ({
                     key: "room_move",
                     label: "Change Room",
                     icon: <MdOutlineMeetingRoom />,
-                    onClick: () => handleAction("room_move"),
+                    onClick: () => {
+                      setSelectedData(record);
+                      setRoomMoveOpen(true);
+                    },
                   },
                   {
                     key: "room_upgrade",

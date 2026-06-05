@@ -39,6 +39,7 @@ export const reservationList = async (params) => {
 };
 
 export const reservationDetails = async (params) => {
+  console.log(params,"params")
   const { data } = await apiClient.get("/reservation", { params });
   return data.response;
 };
@@ -129,9 +130,27 @@ export const serviceOrderCreate = async (params) => {
 };
 
 export const updateServiceOrder = async (params) => {
-  const { data } = await apiClient.put
-    ("/service-order/update",
-      params
-    );
+  const { data } = await apiClient.put("/service-order/update", params);
+  return data.response;
+};
+
+// reservation service add on
+export const serviceAddonList = async (params) => {
+  const { data } = await apiClient.get("reservations-addons", { params });
+  return data.response;
+};
+
+export const serviceAddonDetails = async (params) => {
+  const { data } = await apiClient.get("reservations-addon", { params });
+  return data.response;
+};
+
+export const serviceAddonCreate = async (params) => {
+  const { data } = await apiClient.post(`reservations-addon/create`, params);
+  return data.response;
+};
+
+export const updateServiceAddon = async (params) => {
+  const { data } = await apiClient.put("/reservations-addon/update", params);
   return data.response;
 };
