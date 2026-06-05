@@ -1,11 +1,11 @@
 import { Space, Table, Tooltip } from "antd";
 import { useState } from "react";
 import { EyeOutlined, EditOutlined } from "@ant-design/icons";
-import ServiceOrderForm from "./ServiceAddOnForms/ServiceAddOnForm";
 import PriceTag from "../../../../../component/PriceTag/PriceTag";
 import dayjs from "dayjs";
+import ServiceOrderForm from "./ServiceOrderForms/ServiceOrderForm";
 
-const ServiceAddOnTable = ({ data }) => {
+const ServiceOrderTable = ({ data }) => {
   const [mode, setMode] = useState("add");
   const [selectedData, setSelectedData] = useState(null);
   const [serviceOpen, setServiceOpen] = useState(false);
@@ -100,4 +100,4 @@ const ServiceAddOnTable = ({ data }) => {
   );
 };
 
-export default ServiceAddOnTable;
+export default ServiceOrderTable;

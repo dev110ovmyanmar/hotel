@@ -17,7 +17,7 @@ import {
   EditOutlined,
   PrinterOutlined,
 } from "@ant-design/icons";
-import { FaChild } from "react-icons/fa";
+import { FaChild, FaMoon } from "react-icons/fa";
 import { IoPeopleSharp } from "react-icons/io5";
 import PriceTag from "../../../component/PriceTag/PriceTag";
 import ReservationStatusColor from "./../../../component/ReservationStatusColor/ReservationStatusColor";
@@ -33,8 +33,10 @@ const ReservationsGrid = ({
 }) => {
   const navigate = useNavigate();
 
-  const handleMenuClick = (uuid) => {
-    navigate(`/reservation/booking-detail`, { state: { bookingId: uuid } });
+  const handleMenuClick = (item) => {
+    navigate(`/reservation/booking-detail`, {
+      state: { bookingId: item?.uuid },
+    });
   };
 
   if (!data || data.length === 0) {
@@ -62,13 +64,17 @@ const ReservationsGrid = ({
                         key: "edit",
                         label: "Edit",
                         icon: <EditOutlined />,
-                        onClick: () => handleMenuClick(item.uuid),
+                        onClick: () => handleMenuClick(item),
                       },
-                      {
-                        key: "print",
-                        label: "Print",
-                        icon: <PrinterOutlined />,
-                      },
+                      ...(item?.reservationStatus?.code !== "pending"
+                        ? [
+                            {
+                              key: "print",
+                              label: "Print",
+                              icon: <PrinterOutlined />,
+                            },
+                          ]
+                        : []),
                     ],
                   }}
                   trigger={["click"]}
@@ -80,7 +86,7 @@ const ReservationsGrid = ({
               {/* Info Row */}
               <div
                 className="cursor-pointer"
-                onClick={() => handleMenuClick(item.uuid)}
+                onClick={() => handleMenuClick(item)}
               >
                 <div style={{ marginBottom: 12 }}>
                   <Space size="middle" style={{ color: "#555" }}>
@@ -100,8 +106,7 @@ const ReservationsGrid = ({
                         gap: "6px",
                       }}
                     >
-                      <IoPeopleSharp className="text-blue-500 " />{" "}
-                      {item.adults}
+                      <IoPeopleSharp className="text-blue-500 " /> {item.adults}
                     </span>
                     <span
                       style={{
@@ -130,11 +135,11 @@ const ReservationsGrid = ({
                     style={{ flex: 1, padding: "8px", background: "#fafafa" }}
                     className="dark:!bg-[#141414]"
                   >
-                    {item.actualCheckin
-                      ? dayjs(item.actualCheckin).format("DD/MM/YYYY")
+                    {item.checkinDate
+                      ? dayjs(item.checkinDate).format("DD/MM/YYYY")
                       : "-"}
                   </div>
-                  <div
+                  {/* <div
                     style={{
                       flex: 1,
                       padding: "8px",
@@ -143,15 +148,23 @@ const ReservationsGrid = ({
                       backgroundColor: "#e2e2e2",
                     }}
                     className="dark:!bg-[#333333]"
+                    
                   >
-                    {`${item.totalNight} ${item.totalNight === 1 ? "Night" : "Nights"}`}
+                 <span><FaMoon/> {`${item.totalNight} ${item.totalNight === 1 ? "Night" : "Nights"}`}</span>  
+                  </div> */}
+                  <div className="flex items-center gap-2 bg-indigo-50 text-indigo-700 px-3 py-1.5 rounded-lg border border-indigo-100 ml-auto sm:ml-0">
+                    <FaMoon className="text-xs" />
+                    <span className="text-xs font-bold whitespace-nowrap">
+                      {`${item.totalNight} ${item.totalNight === 1 ? "Night" : "Nights"}`}
+                    </span>
                   </div>
+
                   <div
                     style={{ flex: 1, padding: "8px", background: "#fafafa" }}
                     className="dark:!bg-[#141414]"
                   >
-                    {item.actualCheckout
-                      ? dayjs(item.actualCheckout).format("DD/MM/YYYY")
+                    {item.checkoutDate
+                      ? dayjs(item.checkoutDate).format("DD/MM/YYYY")
                       : "-"}
                   </div>
                 </div>
@@ -176,7 +189,7 @@ const ReservationsGrid = ({
                     <span style={{ color: "#8c8c8c" }}>Booking Date</span>
                     <span>
                       {item.createdAt
-                        ? dayjs(item.actualCheckin).format("DD/MM/YYYY")
+                        ? dayjs(item.createdAt).format("DD/MM/YYYY")
                         : "-"}
                     </span>
                   </div>
@@ -193,7 +206,7 @@ const ReservationsGrid = ({
                       Status
                     </span>
 
-                    <ReservationStatusColor status={item?.reservationStatus} />
+                    <ReservationStatusColor status={item?.roomStatus} />
                   </div>
 
                   <hr
@@ -232,7 +245,8 @@ const ReservationsGrid = ({
 
       <div
         style={{
-          marginTop: "24px",
+          marginTop: "20px",
+          marginBottom: "20px",
           display: "flex",
           justifyContent: "flex-end",
         }}

@@ -5,7 +5,7 @@ import { DollarCircleOutlined, PhoneOutlined } from "@ant-design/icons";
 const { Text, Title } = Typography;
 
 const ContactPersonCard = ({data}) => {
-  const reservation = data?.reservation;
+  const reservation = data?.reservationRoom;
   const CustomTitle = (
     <Space>
       <div className="contact-icon-box">

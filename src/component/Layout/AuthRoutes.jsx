@@ -256,7 +256,9 @@ const FacilityBookingList = lazy(
   () => import("../../pages/FacilityBooking/FacilityBookingList")
 )
 
+const ServiceOrderList = lazy(()=>import("../../pages/EditReservation/Menu/ServiceOrder/ServiceOrderList"))
 
+const Email =lazy(()=> import("../../pages/Email/Email"))
 export const authRoutes = [
   {
     key: 1,
@@ -327,7 +329,7 @@ export const authRoutes = [
    {
     key: 3.6,
     path: "/reservation/service-order/",
-    component: <AddOnServiceList />,
+    component: <ServiceOrderList />,
   },
 
   {
@@ -1072,6 +1074,14 @@ export const authRoutes = [
     label: "Rate and Inventory Calendar",
     path: "/rate-and-inventory-calendar",
     component: <RateAndInventoryCalendar />,
+    icon: <CalendarOutlined style={{ fontSize: "20px" }} />,
+  },
+
+   {
+    key: 30,
+    label: "Email",
+    path: "/email",
+    component: <Email />,
     icon: <CalendarOutlined style={{ fontSize: "20px" }} />,
   },
 ];
