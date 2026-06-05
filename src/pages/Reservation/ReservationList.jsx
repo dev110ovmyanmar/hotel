@@ -176,6 +176,7 @@ const ReservationList = () => {
       },
 
       subTotal: room.subTotal,
+      incentiveTotal: room.incentiveTotal,
       taxTotal: room.taxTotal,
       discountTotal: room.discountTotal,
       grandTotal: room.grandTotal,
@@ -207,6 +208,7 @@ const ReservationList = () => {
         uuid: contactPersonInfo?.uuid
       },
       subTotal: roomBookValues?.subTotal,
+      incentiveTotal: roomBookValues.incentiveTotal,
       taxTotal: roomBookValues?.taxTotal,
       discountTotal: roomBookValues?.discountTotal,
       grandTotal: roomBookValues?.grandTotal,
@@ -363,7 +365,7 @@ const ReservationList = () => {
 
   return (
     <div className="w-full px-6">
-      <div className="flex justify-end mb-3">
+      <div className="flex justify-end mb-3 p-2">
         <Button
           className="!border-blue-500"
           onClick={() => {
@@ -384,7 +386,7 @@ const ReservationList = () => {
           }}
         >
           <ReloadOutlined className="!text-blue-500" />
-          <span className="max-w-[125px] !text-blue-500" >Refresh</span>
+          <span className="!text-blue-500" >Refresh Current Page</span>
         </Button>
       </div>
 

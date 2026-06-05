@@ -170,7 +170,7 @@ const ReservationForm = ({
                     }
                 </div>
 
-                <div className="flex flex-wrap gap-x-5">
+                <div className="flex flex-wrap gap-x-2">
                     <div className="w-75 flex-auto md:flex-initial">
                         <Form.Item
                             name="filter"
@@ -179,7 +179,6 @@ const ReservationForm = ({
                             }
                             rules={[{ required: true, message: "Please Select Date" }]}>
                             <RangePicker
-                                className="!w-full"
                                 format="YYYY-MM-DD HH:mm"
                                 disabledDate={disabledDate}
                                 onChange={(dates) => {
@@ -200,6 +199,7 @@ const ReservationForm = ({
                                     });
                                 }}
                                 disabled={afterRoomConfirm}
+                                className={afterRoomConfirm ? "!w-full !bg-gray-100" : "!w-full"}
 
                             />
                         </Form.Item>
@@ -222,7 +222,39 @@ const ReservationForm = ({
                         </Form.Item>
                     </div>
 
-                    <div className="w-60 md:w-42 lg:w-50 flex-auto md:flex-initial">
+                    {/* <div className="w-50 md:w-42 lg:w-40 flex-auto md:flex-initial">
+                        <Form.Item
+                            name="bookedVia"
+                            label={
+                                <p className="text-gray-100">Booking Source</p>
+                            }
+                            rules={[{ required: true, message: "Please Select Booking Source" }]}
+                            getValueProps={(value) => {
+                                return {
+                                    value: afterRoomConfirm ?
+                                        bookedViaOptions?.find(item => item.value === value)?.label :
+                                        value
+                                }
+                            }}
+                        >
+
+                            {
+                                afterRoomConfirm ?
+                                    <Input
+                                        readOnly={afterRoomConfirm}
+                                    // className="w-[100%] "
+                                    /> :
+                                    <Select
+                                        options={bookedViaOptions}
+                                        // className="w-[100%] "
+                                        placeholder="Select Booked Via"
+                                    >
+                                    </Select>
+                            }
+                        </Form.Item>
+                    </div> */}
+
+                    <div className="w-50 md:w-42 lg:w-40 flex-auto md:flex-initial">
                         <Form.Item
                             name="bookedVia"
                             label={
@@ -254,7 +286,7 @@ const ReservationForm = ({
                         </Form.Item>
                     </div>
 
-                    <div className="w-60 md:w-42 lg:w-50 flex-auto md:flex-initial">
+                    <div className="w-50 md:w-42 lg:w-40 flex-auto md:flex-initial">
                         <Form.Item
                             name="sourceType"
                             label={
@@ -286,7 +318,7 @@ const ReservationForm = ({
 
                     </div>
 
-                    <div className="w-60 md:w-42 lg:w-50 flex-auto md:flex-initial">
+                    <div className="w-50 md:w-42 lg:w-40 flex-auto md:flex-initial">
                         {
                             (selectedSourceType === "Agency" ||
                                 selectedSourceType === "Company") && (

@@ -16,6 +16,7 @@ import { useApiMutation } from "../../hooks/useApiMutation";
 import { upsertGuest } from "../../api/guestApi";
 import { queryClient } from "../../app/queryClient";
 import { validatePhoneNumber } from "../../utils";
+import { ReloadOutlined } from "@ant-design/icons";
 
 const CreateGuestForm = ({
   guestDrawerOpen,
@@ -131,13 +132,16 @@ const CreateGuestForm = ({
     >
       <div className="flex justify-end">
         <Button
+          className="!border-blue-500"
           onClick={() => {
             createContactForm.resetFields()
           }}
         >
-          Refresh
+          <ReloadOutlined className="!text-blue-500" />
+          <span className="!text-blue-500" >Refresh Input Field</span>
         </Button>
       </div>
+
       <Form layout="vertical" form={createContactForm}>
         <Row gutter={16}>
           <Space.Compact style={{ width: '100%' }}>
@@ -145,7 +149,7 @@ const CreateGuestForm = ({
               label="Full Name"
               name="title"
               style={{ width: '20%' }}
-              required
+              rules={[{required:true, message:"This is required"}]}
             >
               <Select options={titleOptions} placeholder="Select Title" />
             </Form.Item>
@@ -155,6 +159,7 @@ const CreateGuestForm = ({
                 <p className="hidden">Name</p>
               }
               name="name"
+              rules={[{required:true, message:"Name is required"}]}
               style={{ width: "80%" }}
             >
               <AutoComplete
@@ -197,10 +202,8 @@ const CreateGuestForm = ({
               label="Phone Number"
               name="phone"
               rules={[
-                { required: true },
-                // {
-                //   validator: validatePhoneNumber
-                // }
+                { required: true , message: "Phone number is required." },
+                
               ]}
             >
               <Input
@@ -220,11 +223,11 @@ const CreateGuestForm = ({
             <Form.Item
               label="Secondary Phone Number"
               name="secondaryPhone"
-              // rules={[
-              //   {
-              //     validator: validatePhoneNumber
-              //   }
-              // ]}
+            // rules={[
+            //   {
+            //     validator: validatePhoneNumber
+            //   }
+            // ]}
             >
               <Input
                 onKeyPress={(e) => {
@@ -235,7 +238,7 @@ const CreateGuestForm = ({
                   }
                 }}
                 placeholder="Enter Phone Number"
-                
+
               />
             </Form.Item>
           </Col>

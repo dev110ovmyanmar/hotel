@@ -1,18 +1,17 @@
 import React, { useEffect } from "react";
 import { Drawer, Form, Input, InputNumber, Button, Select } from "antd";
+
 import useApiQuery from "../../../../../../hooks/useApiQuery";
 import { useApiMutation } from "../../../../../../hooks/useApiMutation";
 import {
   reservationRoomMeta,
-  serviceAddonCreate,
-  serviceAddonDetails,
-  updateServiceAddon,
+  serviceOrderCreate,
+  serviceOrderDetails,
+  updateServiceOrder,
 } from "../../../../../../api/reservationSectionApi";
 import FormButtons from "../../../../../../component/FormButtons/FormButtons";
-import TextArea from "antd/es/input/TextArea";
-import { queryClient } from "./../../../../../../app/queryClient";
 
-const ServiceAddOnForm = ({
+const ServiceOrderForm = ({
   mode,
   setMode,
   serviceData,
@@ -31,15 +30,9 @@ const ServiceAddOnForm = ({
 
   const [form] = Form.useForm();
   const selectedServiceUuid = Form.useWatch("selectService", form);
-  const initData = queryClient.getQueryData(["initData", "authenticated"]);
-
-  const addonStatus = initData?.statuses?.addon_status?.map((status) => ({
-    value: status.uuid,
-    label: status.name,
-  }));
 
   const { data: reservationRoom } = useApiQuery({
-    // fetchQueryName: "service-addon",
+    // fetchQueryName: "service-order",
     fetchQueryFunction: reservationRoomMeta,
     params: {
       reservation: {
@@ -50,20 +43,20 @@ const ServiceAddOnForm = ({
   });
 
   const { data: orderDetails } = useApiQuery({
-    fetchQueryName: "service-addons",
-    fetchQueryFunction: serviceAddonDetails,
+    fetchQueryName: "service-orders",
+    fetchQueryFunction: serviceOrderDetails,
     params: { uuid: serviceOrderUuid },
     options: { enabled: !!serviceOrderUuid && !isAdd },
   });
 
   const createServiceOrder = useApiMutation({
-    mutationFn: serviceAddonCreate,
-    // invalidateKeys: [["service-addon"]],
+    mutationFn: serviceOrderCreate,
+    // invalidateKeys: [["service-order"]],
   });
 
-  const updateAddon = useApiMutation({
-    mutationFn: updateServiceAddon,
-    invalidateKeys: [["service-addon"]],
+  const updateServiceOrders = useApiMutation({
+    mutationFn: updateServiceOrder,
+    invalidateKeys: [["service-order"]],
   });
 
   const rooms =
@@ -95,8 +88,6 @@ const ServiceAddOnForm = ({
         selectService: orderDetails?.service?.uuid,
         servicePackage: orderDetails?.servicePackage?.uuid,
         quantity: orderDetails?.quantity || 1,
-        note: orderDetails?.note,
-        status: orderDetails?.addonStatus?.uuid,
       });
     }
   }, [orderDetails, isView, isEdit, form]);
@@ -124,8 +115,6 @@ const ServiceAddOnForm = ({
           ? { uuid: values.servicePackage }
           : null,
         quantity: parseInt(values.quantity, 10) || 1,
-        note: values.note,
-        addonStatus: { uuid: values?.status },
       };
 
       createServiceOrder.mutate(createValues, {
@@ -134,7 +123,7 @@ const ServiceAddOnForm = ({
           handleClose();
           if (onSuccess) onSuccess();
           setPage(1);
-          Toast.success("Service Add on Created Successfully!");
+          Toast.success("Service Order Created Successfully!");
         },
       });
     }
@@ -149,11 +138,14 @@ const ServiceAddOnForm = ({
           ? { uuid: values.servicePackage }
           : null,
         quantity: parseInt(values.quantity, 10) || 1,
-        note: values.note,
-        addonStatus: { uuid: values?.status },
+
+        // CRITICAL FIX: Pass the current status object back to the API
+        orderStatus: orderDetails?.orderStatus
+          ? { uuid: orderDetails.orderStatus.uuid }
+          : null,
       };
 
-      updateAddon.mutate(editValues, {
+      updateServiceOrders.mutate(editValues, {
         onSuccess: () => {
           handleClose();
           if (onSuccess) onSuccess();
@@ -162,6 +154,7 @@ const ServiceAddOnForm = ({
       });
     }
   };
+
   return (
     <Drawer
       destroyOnClose
@@ -184,7 +177,7 @@ const ServiceAddOnForm = ({
           ) : (
             <FormButtons
               onClick={() => form.submit()}
-              isPending={createServiceOrder.isPending || updateAddon.isPending}
+              isPending={createServiceOrder.isPending}
               mode={mode}
             />
           )}
@@ -209,33 +202,53 @@ const ServiceAddOnForm = ({
             label="Select Service"
             name="selectService"
             rules={[{ required: true, message: "Please select a service" }]}
+            getValueProps={(value) => ({
+              value: isView
+                ? services.find((item) => item.value === value)?.label
+                : value,
+            })}
           >
-            <Select
-              showSearch
-              options={services}
-              placeholder="Select Order Service"
-              onChange={() => form.setFieldValue("servicePackage", undefined)}
-              filterOption={(input, option) =>
-                (option?.label ?? "")
-                  .toLowerCase()
-                  .includes(input.toLowerCase())
-              }
-            />
+            {isView ? (
+              <Input readOnly={isView} />
+            ) : (
+              <Select
+                showSearch={{
+                  filterOption: (input, option) =>
+                    (option?.label ?? "")
+                      .toLowerCase()
+                      .includes(input.toLowerCase()),
+                }}
+                options={services}
+                placeholder="Select Service"
+                onChange={() => form.setFieldValue("servicePackage", undefined)}
+              />
+            )}
           </Form.Item>
 
-          <Form.Item label="Service Package" name="servicePackage">
-            <Select
-              showSearch
-              options={servicePackages}
-              placeholder="Select Package"
-              disabled={isView || !selectedServiceUuid}
-              filterOption={(input, option) =>
-                (option?.label ?? "")
-                  .toLowerCase()
-                  .includes(input.toLowerCase())
-              }
-              allowClear
-            />
+          <Form.Item
+            label="Service Package"
+            name="servicePackage"
+            getValueProps={(value) => ({
+              value: isView
+                ? servicePackages.find((item) => item.value === value)?.label
+                : value,
+            })}
+          >
+            {isView ? (
+              <Input readOnly={isView} />
+            ) : (
+              <Select
+                showSearch={{
+                  filterOption: (input, option) =>
+                    (option?.label ?? "")
+                      .toLowerCase()
+                      .includes(input.toLowerCase()),
+                }}
+                options={servicePackages}
+                placeholder="Select Service"
+                disabled={isView || !selectedServiceUuid}
+              />
+            )}
           </Form.Item>
         </div>
 
@@ -250,30 +263,9 @@ const ServiceAddOnForm = ({
             style={{ width: "100%" }}
           />
         </Form.Item>
-
-        <Form.Item label="Note" name="note">
-          <TextArea />
-        </Form.Item>
-
-        <Form.Item
-          label="Add On Status"
-          name="status"
-          rules={[
-            { required: true, message: "Please select an add on status" },
-          ]}
-        >
-          <Select
-            showSearch
-            filterOption={(input, option) =>
-              (option?.label ?? "").toLowerCase().includes(input.toLowerCase())
-            }
-            options={addonStatus}
-            placeholder="Select Add On Status"
-          />
-        </Form.Item>
       </Form>
     </Drawer>
   );
 };
 
-export default ServiceAddOnForm;
+export default ServiceOrderForm;

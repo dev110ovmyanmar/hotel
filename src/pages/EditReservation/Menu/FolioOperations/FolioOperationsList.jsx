@@ -175,7 +175,7 @@ const FolioOperationsList = () => {
         perPage: perPage,
       },
       keyword,
-      reservation: {
+      reservationRoom: {
         uuid: uuid,
       },
     },
@@ -233,7 +233,7 @@ const FolioOperationsList = () => {
       <ReservationMenu data={folioList} />
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
         <ReservationListHeader
-          reservationId={folioList?.reservation?.reservationNo}
+          reservationId={data?.reservation?.reservationNo}
           onAddreservation={handleAddFolioOperations}
           addButtonText={!isFolioEmpty ? "Split New Folio" : ""}
         />

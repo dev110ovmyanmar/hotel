@@ -8,7 +8,7 @@ import ReservationStatusColor from "../../../../component/ReservationStatusColor
 const { Text } = Typography;
 
 const RoomStatusCard = ({ data }) => {
-  const reservation = data?.reservation;
+  const reservation = data?.reservationRoom;
   const CustomTitle = (
     <Space>
       <div className="booking-icon-box">
@@ -44,8 +44,10 @@ const RoomStatusCard = ({ data }) => {
         <Row>
           <Col span={8}>
             <div style={{ display: "flex", alignItems: "center", gap: "2px" }}>
-              <IoPeopleSharp className="text-blue-500"/> <h1>{reservation?.adults}</h1>
-              <FaChild className="text-pink-500"/> <h1>{reservation?.children}</h1>
+              <IoPeopleSharp className="text-blue-500" />{" "}
+              <h1>{reservation?.adults}</h1>
+              <FaChild className="text-pink-500" />{" "}
+              <h1>{reservation?.children}</h1>
             </div>
           </Col>
           <Col span={8}>
@@ -58,7 +60,7 @@ const RoomStatusCard = ({ data }) => {
 
         <div className="mt-5">
           <Text>Booking Date: </Text>
-          <Text>10/11/2026 12:00 AM</Text>
+          <Text>{reservation?.updatedAt}</Text>
         </div>
 
         <div>

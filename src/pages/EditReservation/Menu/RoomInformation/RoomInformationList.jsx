@@ -35,7 +35,7 @@ const RoomInformationList = () => {
         perPage: perPage,
       },
       keyword,
-      reservation: {
+      reservationRoom: {
         uuid: uuid,
       },
     },
@@ -46,19 +46,18 @@ const RoomInformationList = () => {
     setMode("add");
     setDrawerOpen(true);
   };
-
   return (
     <div className="w-full px-6 py-2">
       <ReservationHeader data={data || {}} />
 
-      <ReservationMenu data={data}/>
+      <ReservationMenu data={data} />
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
         <ReservationListHeader
           reservationId={data?.reservation?.reservationNo}
           onAddreservation={handleAddRoom}
           addButtonText={
             ["confirmed", "checked_in"].includes(
-              data?.reservation?.reservationStatus?.code?.toLowerCase(),
+              data?.reservationRoom?.roomStatus?.code?.toLowerCase(),
             )
               ? "Add New Room"
               : null
@@ -74,7 +73,7 @@ const RoomInformationList = () => {
         changePage={setPage}
         changePerPage={setPerPage}
         loading={isLoading}
-        reservationUuid={data?.reservation || []}
+        reservationUuid={data || []}
       />
       <RoomInformationForm
         data={data?.reservation || []}
@@ -93,7 +92,7 @@ const RoomInformationList = () => {
           onClose={() => setAssignRoomOpen(false)}
           selectedData={selectedData}
           setSelectedData={setSelectedData}
-          reservationUuid={data?.reservation || []}
+          reservationUuid={data || []}
         />
       )}
 

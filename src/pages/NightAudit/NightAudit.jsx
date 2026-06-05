@@ -10,6 +10,7 @@ import NightAuditPosting from "./NightAuditPosting";
 import CreateNewDay from "./CreateNewDay";
 import ConfirmModal from "./ConfirmModal";
 import ReactTimer from "../../component/ReactTimer/ReactTimer";
+import dayjs from "dayjs";
 
 const NightAudit = () => {
     const [forceLogout, setForceLogout] = useState(false);
@@ -18,6 +19,7 @@ const NightAudit = () => {
     const [step, setStep] = useState("startNightAudit");
     const [currentValue, setCurrentValue] = useState(0);
     const [finishCountDown, setFinishCountDown] = useState(false);
+    const todayDate = dayjs().format("DD-MM-YYYY");
 
     return (
         <div className="w-full px-6 py-2">
@@ -32,7 +34,8 @@ const NightAudit = () => {
                         <Card
                             title={
                                 <div className="text-center w-full">
-                                    Perform Night Audit for 21/12/2025
+                                    Perform Night Audit for  
+                                    <span className="ms-1">{todayDate}</span>
                                 </div>
                             }
 

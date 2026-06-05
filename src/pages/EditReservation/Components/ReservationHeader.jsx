@@ -6,7 +6,7 @@ import dayjs from "dayjs";
 import ReservationStatusColor from "../../../component/ReservationStatusColor/ReservationStatusColor";
 
 const ReservationHeader = ({ data }) => {
-  const reservation = data?.reservation;
+  const reservation = data?.reservationRoom;
 
   if (!reservation) return null;
 
@@ -17,9 +17,7 @@ const ReservationHeader = ({ data }) => {
           <h1 className="text-xl font-bold text-[#ffffff] tracking-tight capitalize">
             {reservation?.guest?.name || "Unknown Guest"}
           </h1>
-          <ReservationStatusColor
-            status={reservation?.reservationStatus?.name}
-          />
+          <ReservationStatusColor status={reservation?.roomStatus?.name} />
         </div>
       </div>
 
@@ -61,13 +59,13 @@ const ReservationHeader = ({ data }) => {
               </span>
               <div className="flex items-center gap-2">
                 <span className="text-[#ffffff] text-sm whitespace-nowrap">
-                  {reservation?.actualCheckin
-                    ? dayjs(reservation.actualCheckin).format("DD MMM YYYY")
+                  {reservation?.checkinDate
+                    ? dayjs(reservation.checkinDate).format("DD MMM YYYY")
                     : "—"}
                 </span>
-                {reservation?.actualCheckin && (
+                {reservation?.checkinDate && (
                   <span className="text-gray-300 text-[11px] font-mono whitespace-nowrap">
-                    ( {dayjs(reservation.actualCheckin).format("h:mm A")} )
+                    ( {dayjs(reservation.checkinDate).format("h:mm A")} )
                   </span>
                 )}
               </div>
@@ -86,13 +84,13 @@ const ReservationHeader = ({ data }) => {
               </span>
               <div className="flex items-center gap-2">
                 <span className="text-[#ffffff] text-sm whitespace-nowrap">
-                  {reservation?.actualCheckout
-                    ? dayjs(reservation.actualCheckout).format("DD MMM YYYY")
+                  {reservation?.checkoutDate
+                    ? dayjs(reservation.checkoutDate).format("DD MMM YYYY")
                     : "—"}
                 </span>
-                {reservation?.actualCheckout && (
+                {reservation?.checkoutDate && (
                   <span className="text-gray-300 text-[11px] font-mono whitespace-nowrap">
-                    ( {dayjs(reservation.actualCheckout).format("h:mm A")} )
+                    ( {dayjs(reservation.checkoutDate).format("h:mm A")} )
                   </span>
                 )}
               </div>

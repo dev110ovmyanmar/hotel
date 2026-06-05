@@ -16,8 +16,8 @@ import {
 import ReservationNoteForm from "../BookingDetailForms/ReservationNoteForm";
 
 const BookingDetailButton = ({ data }) => {
-  const reservation = data?.reservation;
-  const status = reservation?.reservationStatus?.code?.toUpperCase();
+  const reservation = data?.reservationRoom;
+  const status = reservation?.roomStatus?.code?.toUpperCase();
   const actions = status_actions[status] || [];
 
   const [form] = Form.useForm();
@@ -72,7 +72,7 @@ const BookingDetailButton = ({ data }) => {
         Reservation id:
         <strong className="text-[#286399] ">
           {" "}
-          {reservation?.reservationNo}
+          {reservation?.reservation?.reservationNo}
         </strong>
       </div>
 
