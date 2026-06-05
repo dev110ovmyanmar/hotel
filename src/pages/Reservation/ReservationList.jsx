@@ -176,6 +176,7 @@ const ReservationList = () => {
       },
 
       subTotal: room.subTotal,
+      incentiveTotal: room.incentiveTotal,
       taxTotal: room.taxTotal,
       discountTotal: room.discountTotal,
       grandTotal: room.grandTotal,
@@ -207,6 +208,7 @@ const ReservationList = () => {
         uuid: contactPersonInfo?.uuid
       },
       subTotal: roomBookValues?.subTotal,
+      incentiveTotal: roomBookValues.incentiveTotal,
       taxTotal: roomBookValues?.taxTotal,
       discountTotal: roomBookValues?.discountTotal,
       grandTotal: roomBookValues?.grandTotal,
