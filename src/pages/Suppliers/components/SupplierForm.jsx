@@ -28,7 +28,7 @@ const SupplierForm = ({
     const [form] = Form.useForm();
     const queryClient = useQueryClient();
     const phoneValue = Form.useWatch("phone", form);
-    
+
     const isView = mode === "view";
     const isEdit = mode === "edit";
     const isAdd = mode === "add";
@@ -128,27 +128,21 @@ const SupplierForm = ({
                                 name="phone"
                                 rules={[
                                     { required: true },
-                                    {
-                                        validator: validatePhoneNumber
-                                    }
+                                    // {
+                                    //     validator: validatePhoneNumber
+                                    // }
                                 ]}
                             >
                                 <Input
                                     readOnly={isView}
-                                    addonBefore="+959"
                                     onKeyPress={(e) => {
-                                        if (!/[0-9]/.test(e.key)) {
+                                        if (!/[0-9]/.test(e.key) &&
+                                            !(e.key === "+" && value.length === 0)
+                                        ) {
                                             e.preventDefault();
                                         }
                                     }}
                                     placeholder="Enter Phone Number"
-                                    maxLength={
-                                        phoneValue?.startsWith("09")
-                                            ? 11
-                                            : phoneValue?.startsWith("9")
-                                                ? 10
-                                                : 9
-                                    }
                                 />
                             </Form.Item>
                         </div>

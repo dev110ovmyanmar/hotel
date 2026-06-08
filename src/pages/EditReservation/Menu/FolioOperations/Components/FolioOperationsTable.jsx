@@ -1,14 +1,9 @@
-import React, { useState } from "react";
-import { Button, Divider, Dropdown, Modal, Radio, Space, Table } from "antd";
-import {
-  EyeOutlined,
-  EditOutlined,
-  UploadOutlined,
-  MoreOutlined,
-  PlusOutlined,
-} from "@ant-design/icons";
+import React, { useState, useEffect } from "react";
+import { Button, Divider, Modal, Radio, Space, Table } from "antd";
+import { SwapOutlined, InfoCircleOutlined, FolderOpenOutlined, PrinterOutlined } from "@ant-design/icons";
+import dayjs from "dayjs";
 
-// Renders the word "Folio" with a yellow highlight followed by the rest of the title
+
 const FolioTitle = ({ rest }) => (
   <span>
     <span
@@ -19,113 +14,147 @@ const FolioTitle = ({ rest }) => (
   </span>
 );
 
+const SubFolioTable = ({ record, lineColumns, onMoveTo, isTransferring }) => {
+  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+
+  const lines = record.folioLines || [];
+
+  useEffect(() => {
+    setSelectedRowKeys([]);
+  }, [lines]);
+
+  const rowSelection = {
+    selectedRowKeys,
+    onChange: (selectedKeys) => {
+      setSelectedRowKeys(selectedKeys);
+    },
+  };
+
+  return (
+    <div>
+      <Table
+        className="nested-folio-table [&_.ant-table-cell]:!border [&_.ant-table-cell]:!border-blue-300 [&_.ant-table-thead>tr>th]:!bg-[#F0F5FF]"
+        rowSelection={rowSelection}
+        columns={lineColumns}
+        dataSource={lines}
+        rowKey="id"
+        pagination={false}
+        size="small"
+        style={{ marginTop: "16px", marginBottom: "16px" }}
+        bordered
+      />
+      <div style={{
+        display: "flex",
+        justifyContent: "end",
+        alignItems: "center",
+        gap: "10px",
+        padding: "8px",
+        borderTop: "1px solid #e8e8e8",
+      }}>
+        <Button onClick={() => setSelectedRowKeys([])}>Cancel</Button>
+        <Button
+          type="primary"
+          disabled={selectedRowKeys.length === 0 || isTransferring}
+          onClick={() => onMoveTo(record, selectedRowKeys)}
+        >
+          Move To
+        </Button>
+      </div>
+    </div>
+  );
+};
+
 const FolioOperationsTable = ({
   dataSource,
-  setSelectedData,
-  setMode,
-  setDrawerOpen,
-  onCreateFolio,
-  isFolioLineIsEmpty
+  isFolioLineIsEmpty,
+  onTransferLines,
+  isTransferring,
+  onPrintFolio
 }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedFolio, setSelectedFolio] = useState(null);
+  const [selectedLineIds, setSelectedLineIds] = useState([]);
+  const [targetFolioUuid, setTargetFolioUuid] = useState(null);
 
-  const getActionItems = (record) => [
-    {
-      key: "view",
-      label: (
-        <Space size={4} onClick={() => {
-          if (setSelectedData && setMode && setDrawerOpen) {
-            setSelectedData(record);
-            setMode("view");
-            setDrawerOpen(true);
-          }
-        }}>
-          <EyeOutlined style={{ fontSize: "12px" }} />
-          <span style={{ fontSize: "14px" }}>View</span>
-        </Space>
-      ),
-    },
-    {
-      key: "edit",
-      label: (
-        <Space size={4} onClick={() => {
-          if (setSelectedData && setMode && setDrawerOpen) {
-            setSelectedData(record);
-            setMode("edit");
-            setDrawerOpen(true);
-          }
-        }}>
-          <EditOutlined style={{ fontSize: "12px" }} />
-          <span style={{ fontSize: "14px" }}>Edit</span>
-        </Space>
-      ),
-    },
-    {
-      key: "move",
-      label: (
-        <Space size={4} onClick={() => {
-          setSelectedFolio(record);
-          setModalOpen(true);
-        }}>
-          <UploadOutlined style={{ fontSize: "12px" }} />
-          <span style={{ fontSize: "14px" }}>Move To</span>
-        </Space>
-      ),
-    },
-  ];
-
-  // Sub-table columns for folioLines
   const lineColumns = [
     {
-      title: <FolioTitle rest=" No" />,
-      key: "folioNo",
-      render: (_, record) => record.folioNo || "-",
-      width: 160,
-    },
-    {
-      title: <FolioTitle rest=" Id" />,
-      key: "folioLineId",
-      render: (_, record) => record.id || "-",
-      width: 100,
-    },
-    {
       title: "Date",
-      key: "date",
-      render: (_, record) => record.transactionDate || record.createdAt || "-",
+      dataIndex: "postedAt", // Best practice to include dataIndex for Antd columns
+      key: "postedAt",
+      render: (_, record) => record.postedAt ? dayjs(record.postedAt).format("YYYY-MM-DD") : "-",
     },
     {
-      title: "Particulars",
-      key: "particulars",
-      render: (_, record) => record.description || record.name || "-",
+      title: "Source ID",
+      dataIndex: "sourceId", // Fixed: camelCase to match JSON
+      key: "sourceId",
+      render: (_, record) => record.sourceId || "-",
     },
     {
-      title: "Type",
-      key: "type",
-      render: (_, record) => record.type?.name || record.itemType || "-",
+      title: "Source Type",
+      dataIndex: "sourceType", // Fixed: camelCase to match JSON
+      key: "sourceType",
+      render: (_, record) => record.sourceType || "-",
     },
     {
-      title: "Ref.Id",
-      key: "refId",
-      render: (_, record) => record.referenceId || "-",
+      title: "Remark",
+      dataIndex: "remark",
+      key: "remark",
+      render: (_, record) => record.remark || "-",
     },
     {
-      title: "Amount",
-      key: "amount",
+      title: "Description",
+      dataIndex: "descriptionSnapshot", // Fixed: 'description' is null, 'descriptionSnapshot' contains the text
+      key: "descriptionSnapshot",
+      render: (_, record) => record.descriptionSnapshot || record.description || "-",
+    },
+    {
+      title: "Quantity",
+      dataIndex: "quantity",
+      key: "quantity",
+      align: "right",
+      render: (_, record) =>
+        record.quantity !== undefined && record.quantity !== null
+          ? record.quantity
+          : "-",
+    },
+    {
+      title: "Unit Price",
+      dataIndex: "unitPrice",
+      key: "unitPrice",
       align: "right",
       render: (_, record) => {
-        const val = record.amount ?? record.grandTotal;
+        const val = record.unitPrice;
+        const currency = record.currency?.code || "MMK"; // Dynamically fall back to MMK
         return val !== undefined && val !== null
-          ? `${Number(val).toLocaleString()} MMK`
+          ? `${Number(val).toLocaleString()} ${currency}`
           : "-";
       },
     },
     {
-      title: "Action",
-      key: "action",
-      align: "center",
-      width: 70,
-      render: () => null,
+      title: "Tax Amount",
+      dataIndex: "taxTotal", // Fixed: key is 'taxTotal' in JSON
+      key: "taxTotal",
+      align: "right",
+      render: (_, record) => {
+        const val = record.taxTotal;
+        const currency = record.currency?.code || "MMK";
+        return val !== undefined && val !== null
+          ? `${Number(val).toLocaleString()} ${currency}`
+          : "-";
+      },
+    },
+    {
+      title: "Total Amount",
+      dataIndex: "grandTotal", // Fixed: key is 'grandTotal' in JSON
+      key: "grandTotal",
+      align: "right",
+      render: (_, record) => {
+        const val = record.grandTotal;
+        const currency = record.currency?.code || "MMK";
+        return val !== undefined && val !== null
+          ? `${Number(val).toLocaleString()} ${currency}`
+          : "-";
+      },
     },
   ];
 
@@ -137,30 +166,14 @@ const FolioOperationsTable = ({
       width: 200,
     },
     {
-      title: <FolioTitle rest=" Id" />,
-      key: "folioId",
-      width: 100,
-      render: (_, record) => record.id ?? "-",
-    },
-    {
       title: "Date",
       key: "date",
-      render: (_, record) => record.openedAt || "-",
+      render: (_, record) => record.openedAt ? dayjs(record.openedAt).format("YYYY-MM-DD") : "-",
     },
     {
-      title: "Particulars",
-      key: "particulars",
-      render: (_, record) => record.folioBusinessType?.name || "-",
-    },
-    {
-      title: "Type",
+      title: "Owner Type",
       key: "type",
       render: (_, record) => record.folioOwnerType?.name || "-",
-    },
-    {
-      title: "Ref.Id",
-      key: "refId",
-      render: (_, record) => record.reservation?.reservationNo || "-",
     },
     {
       title: "Amount",
@@ -176,31 +189,51 @@ const FolioOperationsTable = ({
     {
       title: "Action",
       key: "action",
-      align: "center",
-      width: 70,
-      render: (_, record) => (
-        <Dropdown menu={{ items: getActionItems(record) }} trigger={["click"]}>
-          <MoreOutlined style={{ fontSize: "18px", cursor: "pointer" }} />
-        </Dropdown>
-      ),
-    },
+      render: (_, record) => {
+        return (
+          <Button onClick={() => onPrintFolio && onPrintFolio(record)}>
+            <PrinterOutlined />
+          </Button>
+        )
+      }
+    }
   ];
 
   // Expandable: render folioLines as a nested table
   const expandedRowRender = (record) => {
-    const lines = record.folioLines || [];
     return (
-      <Table
-        className="nested-folio-table [&_.ant-table-cell]:!border [&_.ant-table-cell]:!border-blue-300 [&_.ant-table-thead>tr>th]:!bg-[#F0F5FF]"
-        columns={lineColumns}
-        dataSource={lines}
-        rowKey={(r, i) => r.id ?? i}
-        pagination={false}
-        size="small"
-        style={{ marginTop: "16px", marginBottom: "16px" }}
-        bordered
+      <SubFolioTable
+        record={record}
+        lineColumns={lineColumns}
+        isTransferring={isTransferring}
+        onMoveTo={(sourceFolio, lineIds) => {
+          setSelectedFolio(sourceFolio);
+          setSelectedLineIds(lineIds);
+          setTargetFolioUuid(null);
+          setModalOpen(true);
+        }}
       />
     );
+  };
+
+  const handleTransferSubmit = () => {
+    if (!selectedFolio || !targetFolioUuid || selectedLineIds.length === 0) {
+      return;
+    }
+    if (onTransferLines) {
+      onTransferLines(
+        {
+          destinationFolioUuid: targetFolioUuid,
+          folioLineIds: selectedLineIds,
+        },
+        () => {
+          setModalOpen(false);
+          setSelectedFolio(null);
+          setSelectedLineIds([]);
+          setTargetFolioUuid(null);
+        }
+      );
+    }
   };
 
   return (
@@ -221,52 +254,100 @@ const FolioOperationsTable = ({
           bordered={false}
           size="middle"
           className="custom-folio-table"
-          expandable={!isFolioLineIsEmpty && {
+          expandable={{
             expandedRowRender,
+            rowExpandable: (record) => record.folioLines && record.folioLines.length > 0,
           }}
-        // locale={{
-        //   emptyText: (
-        //     <div style={{ padding: "32px 0", textAlign: "center" }}>
-        //       <div style={{ marginBottom: "16px", color: "#8c8c8c" }}>No Folio Operations found</div>
-        //       <Button
-        //         type="primary"
-        //         icon={<PlusOutlined />}
-        //         onClick={onCreateFolio}
-        //         className="custom-blue-btn"
-        //       >
-        //         Create Folio
-        //       </Button>
-        //     </div>
-        //   )
-        // }}
         />
       </div>
 
       <Modal
-        title="File Move To"
+        title={
+          <div className="flex items-center gap-2 pb-3 border-b border-gray-100">
+            <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-blue-50 text-blue-600">
+              <SwapOutlined className="text-lg animate-pulse" />
+            </div>
+            <div>
+              <h3 className="text-base font-semibold text-gray-800 leading-none m-0">Transfer Folio Lines</h3>
+              <p className="text-xs text-gray-500 font-normal mt-1">Move selected line items to another folio</p>
+            </div>
+          </div>
+        }
         open={modalOpen}
         onCancel={() => {
           setModalOpen(false);
           setSelectedFolio(null);
+          setSelectedLineIds([]);
+          setTargetFolioUuid(null);
         }}
-        closable={false}
+        closable={true}
+        onOk={handleTransferSubmit}
+        confirmLoading={isTransferring}
+        okButtonProps={{
+          disabled: !targetFolioUuid,
+          className: "bg-blue-600 hover:bg-blue-700 border-none font-medium px-5 rounded-lg"
+        }}
+        cancelButtonProps={{
+          className: "rounded-lg border-gray-200 hover:text-blue-600 hover:border-blue-500"
+        }}
         okText="Submit"
         centered
-        width={400}
+        width={420}
         className="custom-ant-modal"
       >
-        <div className="ml-5 mt-5">
-          <Radio.Group>
-            <Space direction="vertical">
-              {dataSource?.map((folio) => (
-                <Radio key={folio.id} value={folio.folioNo}>
-                  {folio.folioNo}
-                </Radio>
-              ))}
-            </Space>
-          </Radio.Group>
+        <div className="py-4">
+          {/* Info Banner */}
+          <div className="bg-blue-50/60 border border-blue-100 rounded-xl p-3 mb-4 flex items-start gap-2.5 mx-2">
+            <InfoCircleOutlined className="text-blue-500 mt-0.5 text-sm flex-shrink-0" />
+            <div className="text-xs text-blue-800 leading-relaxed">
+              Moving <strong className="text-blue-900">{selectedLineIds.length}</strong> selected line item{selectedLineIds.length !== 1 ? 's' : ''} from <strong className="text-blue-900">{selectedFolio?.folioNo}</strong>.
+            </div>
+          </div>
+
+          <div className="mb-2 text-xs font-semibold text-gray-500 tracking-wider mx-2">
+            Select Target Folio
+          </div>
+
+          {/* Card Selection List */}
+          <div className="max-h-[280px] overflow-y-auto pr-1 py-1 flex flex-col gap-2.5 custom-scrollbar">
+            {dataSource
+              ?.filter((folio) => !selectedFolio || folio.id !== selectedFolio.id)
+              ?.map((folio) => {
+                const isSelected = targetFolioUuid === folio.uuid;
+                const currency = folio.currency?.code || "MMK";
+                const amountText = folio.grandTotal !== undefined
+                  ? `${Number(folio.grandTotal).toLocaleString()} ${currency}`
+                  : "-";
+
+                return (
+                  <div
+                    key={folio.id}
+                    onClick={() => setTargetFolioUuid(folio.uuid)}
+                    className={`
+                      group relative flex items-center justify-between p-3 rounded-xl border transition-all duration-200 cursor-pointer mx-2
+                      ${isSelected
+                        ? 'border-blue-500 bg-blue-50/40 shadow-sm ring-1 ring-blue-500'
+                        : 'border-gray-200 hover:border-blue-300 hover:bg-gray-50/50'
+                      }
+                    `}
+                  >
+                    <div className="flex items-center gap-3">
+                      <Radio
+                        checked={isSelected}
+                        value={folio.uuid}
+                        className="m-0 pointer-events-none"
+                      />
+                      <div className="flex flex-col">
+                        <span className="font-semibold text-sm text-gray-800 group-hover:text-blue-600 transition-colors">
+                          {folio.folioNo}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+          </div>
         </div>
-        <Divider />
       </Modal>
     </>
   );

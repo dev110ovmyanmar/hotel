@@ -1,22 +1,30 @@
-import { Dropdown, Space, Table, Button, Tooltip, Divider } from "antd";
 import { useState, useEffect } from "react";
+import { Dropdown, Space, Table, Button, Tooltip, Divider } from "antd";
+import dayjs from "dayjs";
 import {
   MoreOutlined,
-  EditOutlined,
   PlusOutlined,
   UploadOutlined,
   MessageOutlined,
+  EyeOutlined,
+  EditOutlined,
+  CalendarOutlined,
+  ArrowUpOutlined,
+  ArrowDownOutlined,
+  MinusOutlined,
+  DollarOutlined,
+  UserOutlined,
 } from "@ant-design/icons";
+
 import { MdOutlineMeetingRoom } from "react-icons/md";
+import { IoBedOutline, IoOptionsSharp } from "react-icons/io5";
+
 import RoomInformationForm from "./RoomInformationForms/RoomInformationForm";
 import RoomMoveDrawer from "./RoomInformationForms/RoomMoveDrawer";
 import AssignRoomForm from "./RoomInformationForms/AssignRoomForm";
-import dayjs from "dayjs";
 import NoteDrawer from "./RoomInformationForms/NoteDrawer";
 import GuestForm from "../../GuestDetails/Components/GuestForms/GuestForm";
-import { EyeOutlined } from "@ant-design/icons";
 import ColorStatusTag from "../../../../../component/ColorStatusTag/ColorStatusTag";
-import { IoBedOutline } from "react-icons/io5";
 import RoomAmend from "./RoomInformationForms/RoomAmend";
 
 const RoomInformationTable = ({
@@ -30,7 +38,7 @@ const RoomInformationTable = ({
   reservationUuid,
   refetch,
 }) => {
-  console.log(data, "noteDatas");
+  console.log(reservationUuid,"reservationUuid")
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mode, setMode] = useState("add");
   const [selectedData, setSelectedData] = useState(null);
@@ -41,8 +49,6 @@ const RoomInformationTable = ({
   const [guestOpen, setGuestOpen] = useState(false);
   const [roomAmend, setRoomAmend] = useState(false);
 
-  console.log(reservationUuid, "reservationUuidtable");
-
   const columns = [
     {
       title: "ID",
@@ -50,7 +56,7 @@ const RoomInformationTable = ({
       key: "id",
       width: 70,
     },
-    
+
     {
       title: "Room",
       key: "room",
@@ -59,9 +65,9 @@ const RoomInformationTable = ({
       render: (text, record) => {
         const isRoomNull = !text;
 
-        const statusCode = reservationUuid?.reservationStatus?.code;
+        const statusCode = reservationUuid?.reservationRoom?.roomStatus?.code;
 
-        const validStatuses = ["confirmed", "checked_in", "pending", "booked"];
+        const validStatuses = ["confirmed", "checked_in"];
         const isConfirmed = validStatuses.includes(statusCode);
 
         const isClickable = isRoomNull && isConfirmed;
@@ -119,65 +125,194 @@ const RoomInformationTable = ({
       width: 110,
     },
     { title: "Rate Plan", dataIndex: ["ratePlan", "name"], key: "ratePlan" },
+
     {
       title: "Action",
-      fixed: "end",
-      align: "center",
+      width: 80,
       render: (_, record) => {
         const statusCode = reservationUuid?.reservationStatus?.code;
-
         const validStatuses = ["confirmed", "check_in", "checked_in"];
         const isConfirmed = validStatuses.includes(statusCode);
-        const isCheckin =
-          reservationUuid?.reservationStatus?.code === "checked_in";
+        const isCheckin = statusCode === "checked_in";
+
+        const handleAction = (key) => {
+          setSelectedData(record);
+          console.log(`Clicked: ${key}`);
+        };
+
+        const menuItems = [
+          {
+            key: "view",
+            label: "View Details",
+            icon: <EyeOutlined />,
+            onClick: () => {
+              setSelectedData(record);
+              setMode("view");
+              setDrawerOpen(true);
+            },
+          },
+          {
+            key: "notes",
+            label: "Notes",
+            icon: <MessageOutlined />,
+            onClick: () => {
+              setSelectedData(record);
+              setNoteOpen(true);
+            },
+          },
+          // ...(isConfirmed
+          //   ? [
+          //       {
+          //         key: "move",
+          //         label: "Move Room",
+          //         icon: <MdOutlineMeetingRoom style={{ fontSize: "16px" }} />,
+          //         onClick: () => {
+          //           setSelectedData(record);
+          //           setRoomMoveOpen(true);
+          //         },
+          //       },
+          //     ]
+          //   : []),
+          // ...(isCheckin
+          //   ? [
+          //       {
+          //         key: "amend",
+          //         label: "Room Amend",
+          //         icon: <IoBedOutline style={{ fontSize: "16px" }} />,
+          //         onClick: () => {
+          //           setSelectedData(record);
+          //           setRoomAmend(true);
+          //         },
+          //       },
+          //     ]
+          //   : []),
+          { type: "divider" },
+          {
+            key: "modify_group",
+            label: "Amend Reservation",
+            icon: <EditOutlined />,
+            children: [
+              {
+                key: "col_date",
+                type: "group",
+                label: "DATE CHANGES",
+                children: [
+                  {
+                    key: "date_change",
+                    label: "Change CI/CO Dates",
+                    icon: <CalendarOutlined />,
+                    onClick: () => handleAction("date_change"),
+                  },
+                  {
+                    key: "stay_extension",
+                    label: "Extend Stay",
+                    icon: <PlusOutlined />,
+                    onClick: () => handleAction("stay_extension"),
+                  },
+                  {
+                    key: "stay_reduction",
+                    label: "Shorten Stay",
+                    icon: <MinusOutlined />,
+                    onClick: () => handleAction("stay_reduction"),
+                  },
+                ],
+              },
+              { type: "divider" },
+              {
+                key: "col_room",
+                type: "group",
+                label: "ROOM CHANGES",
+                children: [
+                  {
+                    key: "room_move",
+                    label: "Change Room",
+                    icon: <MdOutlineMeetingRoom />,
+                    onClick: () => {
+                      setSelectedData(record);
+                      setRoomMoveOpen(true);
+                    },
+                  },
+                  {
+                    key: "room_upgrade",
+                    label: "Upgrade Room",
+                    icon: <ArrowUpOutlined />,
+                    onClick: () => handleAction("room_upgrade"),
+                  },
+                  {
+                    key: "room_downgraden",
+                    label: "Downgrade Room",
+                    icon: <ArrowDownOutlined />,
+                    onClick: () => handleAction("room_downgraden"),
+                  },
+                  {
+                    key: "add_room",
+                    label: "Add Room",
+                    icon: <PlusOutlined />,
+                    onClick: () => handleAction("add_room"),
+                  },
+                  {
+                    key: "remove_room",
+                    label: "Remove Room",
+                    icon: <MinusOutlined />,
+                    onClick: () => handleAction("remove_room"),
+                  },
+                ],
+              },
+              { type: "divider" },
+              {
+                key: "col_rate",
+                type: "group",
+                label: "RATE / PRICE CHANGES",
+                children: [
+                  {
+                    key: "rate_change",
+                    label: "Update Rates",
+                    icon: <DollarOutlined />,
+                    onClick: () => handleAction("rate_change"),
+                  },
+                ],
+              },
+              { type: "divider" },
+              {
+                key: "col_guest",
+                type: "group",
+                label: "GUEST / OCCUPANCY",
+                children: [
+                  {
+                    key: "occupancy_change",
+                    label: "Update Room Guests",
+                    icon: <UserOutlined />,
+                    onClick: () => handleAction("occupancy_change"),
+                  },
+                  {
+                    key: "extra_bed_add",
+                    label: "Add Extra Bed",
+                    icon: <PlusOutlined />,
+                    onClick: () => handleAction("extra_bed_add"),
+                  },
+                  {
+                    key: "extra_bed_remove",
+                    label: "Remove Extra Bed",
+                    icon: <MinusOutlined />,
+                    onClick: () => handleAction("extra_bed_remove"),
+                  },
+                ],
+              },
+            ],
+          },
+        ];
 
         return (
-          <Space size="middle">
-            <Tooltip title="View Details">
-              <EyeOutlined
-                className="cursor-pointer"
-                onClick={() => {
-                  setSelectedData(record);
-                  setMode("view");
-                  setDrawerOpen(true);
-                }}
-              />
-            </Tooltip>
-
-            {isConfirmed && (
-              <Tooltip title="Move Room">
-                <MdOutlineMeetingRoom
-                  style={{ fontSize: "20px", cursor: "pointer" }}
-                  onClick={() => {
-                    setSelectedData(record);
-                    setRoomMoveOpen(true);
-                  }}
-                />
-              </Tooltip>
-            )}
-
-            {isCheckin && (
-              <Tooltip title="Room Amend">
-                <IoBedOutline
-                  style={{ fontSize: "18px", cursor: "pointer" }}
-                  onClick={() => {
-                    setSelectedData(record);
-                    setRoomAmend(true);
-                  }}
-                />
-              </Tooltip>
-            )}
-
-            <Tooltip title="Notes">
-              <MessageOutlined
-                style={{ fontSize: "18px", cursor: "pointer" }}
-                onClick={() => {
-                  setSelectedData(record);
-                  setNoteOpen(true);
-                }}
-              />
-            </Tooltip>
-          </Space>
+          <Dropdown
+            menu={{ items: menuItems, style: { minWidth: "200px" } }}
+            trigger={["click"]}
+            placement="bottomRight"
+          >
+            <IoOptionsSharp
+              className="cursor-pointer"
+              style={{ fontSize: "30px", padding: "4px" }}
+            />
+          </Dropdown>
         );
       },
     },

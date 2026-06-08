@@ -15,21 +15,22 @@ import {
   CheckOutlined,
   CloseOutlined,
 } from "@ant-design/icons";
-import {
-  reservationNoteCreate,
-  reservationNoteDelete,
-  reservationNoteList,
-} from "../../../../../../api/reservationSectionApi";
-import useApiQuery from "../../../../../../hooks/useApiQuery";
-import { LIMITS } from "../../../../../../variables/constants";
+import { reservationNoteCreate, reservationNoteDelete, reservationNoteList } from "../../../../api/reservationSectionApi";
+import { useApiMutation } from "../../../../hooks/useApiMutation";
+import Toast from "../../../../component/Toast/Toast";
 import { useLocation } from "react-router-dom";
-import { useApiMutation } from "../../../../../../hooks/useApiMutation";
-import Toast from "../../../../../../component/Toast/Toast";
+import { LIMITS } from "../../../../variables/constants";
+import useApiQuery from "../../../../hooks/useApiQuery";
 
-const NoteDrawer = ({ mode, open, onClose, selectedData, onSuccess }) => {
+const ReservationNoteForm = ({
+  mode,
+  open,
+  onClose,
+  selectedData,
+  onSuccess,
+}) => {
   const location = useLocation();
   const uuid = location.state?.bookingId;
-  // const uuid =location.state?.
   const [form] = Form.useForm();
 
   const [editingKey, setEditingKey] = useState("");
@@ -49,8 +50,7 @@ const NoteDrawer = ({ mode, open, onClose, selectedData, onSuccess }) => {
         perPage: perPage,
       },
       keyword,
-      // reservation: { uuid: uuid },
-      reservationRoom: { uuid: selectedData?.uuid },
+      reservation: { uuid: uuid },
     },
   });
 
@@ -66,8 +66,7 @@ const NoteDrawer = ({ mode, open, onClose, selectedData, onSuccess }) => {
   const onFinish = (values) => {
     const payload = {
       note: values.noteContent,
-      // reservation: { uuid: uuid },
-      reservationRoom: { uuid: selectedData?.uuid },
+      reservation: { uuid: uuid },
     };
 
     reservationNotesCreate.mutate(payload, {
@@ -83,8 +82,7 @@ const NoteDrawer = ({ mode, open, onClose, selectedData, onSuccess }) => {
     const payload = {
       note: editValue,
       uuid: record?.uuid,
-      // reservation: { uuid },
-      reservationRoom: { uuid: selectedData?.uuid || selectedData?.roomUuid },
+      reservation: { uuid },
     };
 
     reservationNotesCreate.mutate(payload, {
@@ -169,7 +167,7 @@ const NoteDrawer = ({ mode, open, onClose, selectedData, onSuccess }) => {
       open={open}
       onClose={onClose}
       title="Room Notes"
-      width={500}
+      size={500}
       extra={
         !isView && (
           <Button
@@ -219,4 +217,4 @@ const NoteDrawer = ({ mode, open, onClose, selectedData, onSuccess }) => {
   );
 };
 
-export default NoteDrawer;
+export default ReservationNoteForm;

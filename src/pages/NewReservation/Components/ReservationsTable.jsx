@@ -26,31 +26,43 @@ const ReservationsTable = ({
 }) => {
   const navigate = useNavigate();
 
-  const handleMenuClick = (uuid) => {
-    navigate(`/reservation/booking-detail`, { state: { bookingId: uuid } });
+  // const handleMenuClick = (uuid) => {
+  //   navigate(`/reservation/booking-detail`, { state: { bookingId: uuid } });
+  // };
+  const handleMenuClick = (item) => {
+    navigate(`/reservation/booking-detail`, {
+      state: { bookingId: item?.uuid },
+    });
   };
 
   const columns = [
-    { title: "Id", dataIndex: "id", key: "id" ,width:70},
-    { title: "Guest Name", dataIndex: ["guest", "name"], key: "guestName" },
+    { title: "Id", dataIndex: "id", key: "id", width: 70 },
+    {
+      title: "Guest Name",
+      dataIndex: ["guest", "name"],
+      key: "guestName",
+      render: (text) => (
+        <span style={{ textTransform: "capitalize" }}>{text || ""}</span>
+      ),
+    },
     {
       title: "Room",
-      dataIndex: "totalRooms",
-      key: "totalRooms",
+      dataIndex: ["room" ,"roomNo"],
+      key: ["room" ,"roomNo"],
       align: "center",
-      width:80
+      width: 80,
     },
     {
       title: "Arrival",
-      dataIndex: "actualCheckin",
-      key: "actualCheckin",
+      dataIndex: "checkinDate",
+      key: "checkinDate",
       align: "center",
       render: (value) => (value ? dayjs(value).format("DD/MM/YYYY") : "-"),
     },
     {
       title: "Departure",
-      dataIndex: "actualCheckout",
-      key: "actualCheckout",
+      dataIndex: "checkoutDate",
+      key: "checkoutDate",
       align: "center",
       render: (value) => (value ? dayjs(value).format("DD/MM/YYYY") : "-"),
     },
@@ -79,10 +91,10 @@ const ReservationsTable = ({
 
           <div className="flex items-center gap-3 text-gray-500">
             <span className="flex items-center gap-1">
-              <IoPeopleSharp /> {record?.adults}
+              <IoPeopleSharp className="text-blue-500" /> {record?.adults}
             </span>
             <span className="flex items-center gap-1">
-              <FaChild /> {record?.children}
+              <FaChild className="text-pink-500" /> {record?.children}
             </span>
           </div>
         </div>
@@ -90,11 +102,11 @@ const ReservationsTable = ({
     },
     {
       title: "Order Status",
-      dataIndex: ["reservationStatus", "name"],
+      dataIndex: ["roomStatus", "name"],
       key: "status",
       align: "center",
-      render: (reservationStatus) => (
-        <ReservationStatusColor status={reservationStatus} />
+      render: (roomStatus) => (
+        <ReservationStatusColor status={roomStatus} />
       ),
     },
     {
@@ -103,23 +115,23 @@ const ReservationsTable = ({
       key: "total",
       align: "end",
       render: (value) => (
-        <div className="flex items-center gap-1">
+        <div className="flex justify-end items-center gap-1">
           <PriceTag value={value} />
-          <span className="text-gray-500 font-medium ">MMK</span>
+          <span className="text-gray-500 font-medium">MMK</span>
         </div>
       ),
     },
     {
       title: "Action",
       key: "action",
-      fixed:"end",
+      fixed: "end",
       align: "center",
       render: (_, record) => (
         <div style={{ display: "flex", justifyContent: "center", gap: "8px" }}>
           <Button
             type="text"
             icon={<EditOutlined />}
-            onClick={() => handleMenuClick(record.uuid)}
+            onClick={() => handleMenuClick(record)}
           />
           <Button
             type="text"

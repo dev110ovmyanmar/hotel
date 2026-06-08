@@ -38,7 +38,7 @@ const GuestList = () => {
         perPage,
       },
       keyword,
-      reservation: { uuid },
+      reservationRoom: { uuid },
     },
   });
 
@@ -53,11 +53,11 @@ const GuestList = () => {
   return (
     <div className="w-full px-6 py-2">
       <ReservationHeader data={data ?? {}} />
-      <ReservationMenu />
+      <ReservationMenu data={data}/>
 
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
         <ReservationListHeader
-          reservationId={reservationInfo?.reservationNo}
+          reservationId={data?.reservation?.reservationNo}
           onAddreservation={handleAddGuest}
           addButtonText={
             ["pending", "confirmed", "booked", "checked_in"].includes(

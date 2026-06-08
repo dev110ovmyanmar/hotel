@@ -22,7 +22,13 @@ const RoomBookedDrawer = ({
 
 }) => {
     const [deleteKey, setDeleteKey] = useState();
+    const [priceKey, setPriceKey] = useState();
+    const [rateKey, setRateKey] = useState();
     const [roomModalBoxOpen, setRoomModalBoxOpen] = useState(false);
+
+    console.log(roomBookValues,
+        "RoomBookedValue"
+    )
 
     const roomConfirmClick = () => {
         setRoomConfirm(true);
@@ -70,14 +76,21 @@ const RoomBookedDrawer = ({
             onClose={() => setRoomBookOpen(false)}
             footer={
                 <>
-                    <div className="flex gap-4 py-3">
+                    <div className="flex gap-4 py-2">
                         <div className="ml-2">SubTotal</div>
                         <div className="flex flex-1 !justify-end">
                             <div className="!text-md !font-bold">{roomBookValues?.subTotal.toLocaleString()} MMK</div>
                         </div>
                     </div>
 
-                    <div className="flex gap-4 py-3">
+                    <div className="flex gap-4 py-2">
+                        <div className="ml-2">Incentive Total</div>
+                        <div className="flex flex-1 !justify-end">
+                            <div className="!text-md !font-bold">{roomBookValues?.incentiveTotal.toLocaleString()} MMK</div>
+                        </div>
+                    </div>
+
+                    <div className="flex gap-4 py-2">
                         <div className="ml-2">Tax Total</div>
                         <div className="flex flex-1 !justify-end">
                             <div className="!text-md !font-bold">{roomBookValues?.taxTotal.toLocaleString()} MMK</div>
@@ -86,7 +99,7 @@ const RoomBookedDrawer = ({
 
                     <Divider />
 
-                    <div className="flex gap-4 py-3">
+                    <div className="flex gap-4 py-2">
                         <div className="!text-xl font-bold ml-2">Grand Total</div>
                         <div className="flex flex-1 !justify-end">
                             <div className="!text-md !font-bold">{roomBookValues?.grandTotal.toLocaleString()} MMK</div>
@@ -98,8 +111,8 @@ const RoomBookedDrawer = ({
         >
             <div className="flex justify-between">
                 <div>
-                    <p>Check In Date</p>
-                    <p>{roomBookValues?.filter.checkinDate}</p>
+                    <p>Check-in</p>
+                    <p className="font-bold">{dayjs(roomBookValues?.filter.checkinDate).format("DD-MM-YYYY")}</p>
                 </div>
 
                 <div className="flex items-center gap-2 bg-indigo-50 text-indigo-700 px-3 py-1.5 rounded-lg border border-indigo-100 ml-auto sm:ml-0">
@@ -111,8 +124,8 @@ const RoomBookedDrawer = ({
                 </div>
 
                 <div>
-                    <p>Check Out Date</p>
-                    <p>{roomBookValues?.filter.checkoutDate}</p>
+                    <p>Check-out</p>
+                    <p className="font-bold">{dayjs(roomBookValues?.filter.checkinDate).format("DD-MM-YYYY")}</p>
                 </div>
 
             </div>
@@ -125,59 +138,99 @@ const RoomBookedDrawer = ({
                 {
                     roomBookValues?.rooms?.map((room) => (
                         <Card className="!shadow-xl">
-                            <div className="flex justify-between">
-                                <div className="flex">
-                                    <p className="mr-3">{room?.roomType?.name}</p>
-                                    <Tag color="blue">
-                                        {room?.totalRooms} Room
-                                        <ExclamationCircleOutlined 
-                                            className="!text-[#0973e7] !text-sm ms-3 cursor-pointer"
-                                            onClick={()=>setRoomModalBoxOpen(true)}
-                                        />
-                                    </Tag>
-                                    
-                                </div>
-                                {
-                                    roomBookValues?.rooms.length === 1 ? null :
-                                        <div>
-                                            <DeleteOutlined
-                                                className="!text-red-500"
-                                                onClick={() => {
-                                                    setModalOpen(true),
+                            <div className="bg-[#e6f4ff] p-4 mb-4">
+                                <div className="flex justify-between">
+                                    <div className="flex">
+                                        <p className="mr-3 text-[#5758d9] font-bold">{room?.roomType?.name}</p>
+                                        <Tag color="purple">{room?.totalRooms} Room</Tag>
+                                    </div>
+                                    {
+                                        roomBookValues?.rooms.length === 1 ? null :
+                                            <div>
+                                                <DeleteOutlined
+                                                    className="!text-red-500"
+                                                    onClick={() => {
+                                                        setModalOpen(true);
                                                         setDeleteKey(room?.roomType?.uuid)
-                                                }}
-                                            />
-                                        </div>
-                                }
-                            </div>
 
-                            <div className="flex">
-                                <div className="flex mr-2">
-                                    <MdPeopleOutline fontSize={19} className="mt-1" />
-                                    <span className="text-md ml-2 mt-1 ">{room?.adults}</span>
+                                                    }}
+                                                />
+                                            </div>
+                                    }
                                 </div>
-                                {/* <div className="flex">
+
+                                <div className="flex">
+                                    <div className="flex mr-2">
+                                        <MdPeopleOutline fontSize={19} className="mt-1" />
+                                        <span className="text-md ml-2 mt-1 ">
+                                            {room?.adults + " x " + room?.totalRooms}
+                                            <span> Room</span>
+                                        </span>
+                                    </div>
+                                    {/* <div className="flex">
                                     <MdOutlineEscalatorWarning />
                                     <span className="text-xs ml-1">{i?.child}</span>
                                 </div> */}
 
-                                <div className="text-lg text-gray-400 mx-2">|</div>
+                                    {/* <div className="text-lg text-gray-400 mx-2">|</div> */}
 
-                                <div className="!text-md ml-1 mt-1">{room?.extraBed} Extra Bed</div>
+                                    {/* <div className="!text-md ml-1 mt-1">{room?.extraBed} Extra Bed</div> */}
+                                </div>
                             </div>
 
-                            <Divider />
+                            {/* <Divider
+                                style={{
+                                    margin: "3px 0"
+
+                                }}
+                            /> */}
 
                             {
                                 room?.ratePlans?.map((rate) =>
-                                    <div className="flex justify-between">
-                                        <p>{rate?.name}</p>
-                                        <p className="font-bold">{rate?.totalPrice?.toLocaleString()} MMK</p>
+                                    <div>
+                                        <div className="flex justify-between mt-1 p-2">
+                                            <div className="flex justify-between w-[40%]">
+                                                <p>{rate?.name}</p>
+                                                <div>
+                                                    <ExclamationCircleOutlined
+                                                        className="!text-[#2973e7] !text-sm cursor-pointer"
+                                                        onClick={() => {
+                                                            setRoomModalBoxOpen(true);
+                                                            setPriceKey(room?.roomType?.uuid);
+                                                            setRateKey(rate?.uuid)
+                                                        }}
+                                                    />
+                                                </div>
+                                            </div>
+                                            <p className="font-bold">{rate?.totalPrice?.toLocaleString()} MMK</p>
+
+                                        </div>
+                                        {/* {
+                                            room?.ratePlans?.length !== 1 &&
+                                            <Divider
+                                                style={{
+                                                    margin: "3px 0"
+
+                                                }}
+                                            />
+                                        } */}
                                     </div>
                                 )
                             }
 
-                            <div className="flex justify-between">
+                            <Divider
+                                style={{
+                                    margin: "3px 0"
+
+                                }}
+                            />
+
+                            <div className="flex justify-between mt-4 p-2 ">
+                                <p>Incentive</p>
+                                <p className="font-bold">{room?.incentiveTotal.toLocaleString()} MMK</p>
+                            </div>
+
+                            <div className="flex justify-between p-2 ">
                                 <p>Tax</p>
                                 <p className="font-bold">{room?.taxTotal.toLocaleString()} MMK</p>
                             </div>
@@ -189,9 +242,13 @@ const RoomBookedDrawer = ({
             </div>
 
             {/* Infomration  */}
-            <RoomModalBox 
-                roomModalBoxOpen = {roomModalBoxOpen}
-                setRoomModalBoxOpen = {setRoomModalBoxOpen}
+            <RoomModalBox
+                roomModalBoxOpen={roomModalBoxOpen}
+                setRoomModalBoxOpen={setRoomModalBoxOpen}
+                rateQuotes={rateQuotes}
+                priceKey={priceKey}
+                rateKey={rateKey}
+
             />
 
             {/* Delete */}

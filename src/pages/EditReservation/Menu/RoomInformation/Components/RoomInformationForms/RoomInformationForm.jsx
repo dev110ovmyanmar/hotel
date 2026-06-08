@@ -112,9 +112,21 @@ const RoomInformationForm = ({
         }
       }
 
-      const finalCheckout = data?.actualCheckout?.[1]
-        ? dayjs(data?.actualCheckout).format("YYYY-MM-DD")
+      // const finalCheckout = data?.actualCheckout?.[1]
+      //   ? dayjs(data?.actualCheckout).format("YYYY-MM-DD")
+      //   : null;
+      const checkoutDateObj = data?.actualCheckout
+        ? dayjs(data?.actualCheckout)
         : null;
+      let finalCheckout = null;
+
+      if (checkoutDateObj) {
+        if (checkoutDateObj.isBefore(today, "day")) {
+          finalCheckout = Day;
+        } else {
+          finalCheckout = checkoutDateObj.format("YYYY-MM-DD");
+        }
+      }
 
       form.setFieldsValue({
         dates: [
@@ -178,17 +190,10 @@ const RoomInformationForm = ({
       arrivalLimit = today;
     }
 
-    const departureLimit = data.actualCheckout
-      ? dayjs(data.actualCheckout).endOf("day")
-      : null;
-
     //date disable
     const isBeforeArrival = current.isBefore(arrivalLimit, "day");
-    const isAfterDeparture = departureLimit
-      ? current.isAfter(departureLimit, "day")
-      : false;
 
-    return isBeforeArrival || isAfterDeparture;
+    return isBeforeArrival;
   };
 
   const roomTypeOptions =

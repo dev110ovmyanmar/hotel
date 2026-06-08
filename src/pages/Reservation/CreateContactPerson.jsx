@@ -16,6 +16,7 @@ import { useApiMutation } from "../../hooks/useApiMutation";
 import { upsertGuest } from "../../api/guestApi";
 import { queryClient } from "../../app/queryClient";
 import { validatePhoneNumber } from "../../utils";
+import { ReloadOutlined } from "@ant-design/icons";
 
 const CreateGuestForm = ({
   guestDrawerOpen,
@@ -129,6 +130,18 @@ const CreateGuestForm = ({
         </div>
       }
     >
+      <div className="flex justify-end">
+        <Button
+          className="!border-blue-500"
+          onClick={() => {
+            createContactForm.resetFields()
+          }}
+        >
+          <ReloadOutlined className="!text-blue-500" />
+          <span className="!text-blue-500" >Refresh Input Field</span>
+        </Button>
+      </div>
+
       <Form layout="vertical" form={createContactForm}>
         <Row gutter={16}>
           <Space.Compact style={{ width: '100%' }}>
@@ -136,7 +149,7 @@ const CreateGuestForm = ({
               label="Full Name"
               name="title"
               style={{ width: '20%' }}
-              required
+              rules={[{required:true, message:"This is required"}]}
             >
               <Select options={titleOptions} placeholder="Select Title" />
             </Form.Item>
@@ -146,6 +159,7 @@ const CreateGuestForm = ({
                 <p className="hidden">Name</p>
               }
               name="name"
+              rules={[{required:true, message:"Name is required"}]}
               style={{ width: "80%" }}
             >
               <AutoComplete
@@ -188,27 +202,19 @@ const CreateGuestForm = ({
               label="Phone Number"
               name="phone"
               rules={[
-                { required: true },
-                {
-                  validator: validatePhoneNumber
-                }
+                { required: true , message: "Phone number is required." },
+                
               ]}
             >
               <Input
-                addonBefore="+959"
                 onKeyPress={(e) => {
-                  if (!/[0-9]/.test(e.key)) {
+                  if (!/[0-9]/.test(e.key) &&
+                    !(e.key === "+" && value.length === 0)
+                  ) {
                     e.preventDefault();
                   }
                 }}
                 placeholder="Enter Phone Number"
-                maxLength={
-                  phoneValue?.startsWith("09")
-                    ? 11
-                    : phoneValue?.startsWith("9")
-                      ? 10
-                      : 9
-                }
               />
             </Form.Item>
           </Col>
@@ -217,27 +223,22 @@ const CreateGuestForm = ({
             <Form.Item
               label="Secondary Phone Number"
               name="secondaryPhone"
-              rules={[
-                {
-                  validator: validatePhoneNumber
-                }
-              ]}
+            // rules={[
+            //   {
+            //     validator: validatePhoneNumber
+            //   }
+            // ]}
             >
               <Input
-                addonBefore="+959"
                 onKeyPress={(e) => {
-                  if (!/[0-9]/.test(e.key)) {
+                  if (!/[0-9]/.test(e.key) &&
+                    !(e.key === "+" && value.length === 0)
+                  ) {
                     e.preventDefault();
                   }
                 }}
                 placeholder="Enter Phone Number"
-                maxLength={
-                  secondPhoneValue?.startsWith("09")
-                    ? 11
-                    : secondPhoneValue?.startsWith("9")
-                      ? 10
-                      : 9
-                }
+
               />
             </Form.Item>
           </Col>

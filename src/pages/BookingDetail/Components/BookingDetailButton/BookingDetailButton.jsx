@@ -13,12 +13,13 @@ import {
   button_config,
   status_actions,
 } from "./../../../../component/BookingActions/BookingActions";
+import ReservationNoteForm from "../BookingDetailForms/ReservationNoteForm";
 
 const BookingDetailButton = ({ data }) => {
-  const reservation = data?.reservation;
-  const status = reservation?.reservationStatus?.code?.toUpperCase();
+  const reservation = data?.reservationRoom;
+  const status = reservation?.roomStatus?.code?.toUpperCase();
   const actions = status_actions[status] || [];
-  
+
   const [form] = Form.useForm();
   const [open, setOpen] = useState(false);
   const [amendOpen, setAmendOpen] = useState(false);
@@ -27,6 +28,7 @@ const BookingDetailButton = ({ data }) => {
   const [roomMoveOpen, setRoomMoveOpen] = useState(false);
   const [amendStayOpen, setAmendStayOpen] = useState(false);
   const [addPaymentOpen, setAddPaymentOpen] = useState(false);
+  const [noteOpen, setNoteOpen] = useState(false);
 
   const handleAction = (key) => {
     switch (key) {
@@ -57,13 +59,21 @@ const BookingDetailButton = ({ data }) => {
       case "printInvoice":
         setOpen.print();
         break;
+
+      case "addNote":
+        setNoteOpen(true);
+        break;
     }
   };
 
   return (
     <div>
       <div className="text-sm mb-6 mt-1.5">
-        Reservation id:<strong> {reservation?.reservationNo}</strong>
+        Reservation id:
+        <strong className="text-[#286399] ">
+          {" "}
+          {reservation?.reservation?.reservationNo}
+        </strong>
       </div>
 
       <div className="flex gap-2">
@@ -126,6 +136,14 @@ const BookingDetailButton = ({ data }) => {
         onClose={() => setRoomMoveOpen(false)}
         reservationId={data?.reservationNo}
       />
+
+      {noteOpen && (
+        <ReservationNoteForm
+          open={noteOpen}
+          onClose={() => setNoteOpen(false)}
+          reservationId={data?.reservationNo}
+        />
+      )}
     </div>
   );
 };

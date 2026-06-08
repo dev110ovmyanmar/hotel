@@ -81,13 +81,13 @@ const FacilityBookingForm = ({
     value: item?.uuid,
   }))
 
-  const createFacilityBooing = useApiMutation({
+  const createFacilityBookings = useApiMutation({
     mutationFn: createFacilityBooking,
     invalidateKeys: [["facility-booking-list"]],
     // shouldInvalidate: isEdit ? true : page === 1,
   });
 
-  const editFacilityBooing = useApiMutation({
+  const editFacilityBookings = useApiMutation({
     mutationFn: editFacilityBooking,
     invalidateKeys: [["facility-booking-list"]],
     // shouldInvalidate: isEdit ? true : page === 1,
@@ -121,6 +121,9 @@ const FacilityBookingForm = ({
     if (FacilityBookingFormDataView && bookingDetails) {
       form.setFieldsValue({
         ...bookingDetails,
+
+        facilityPackage: bookingDetails?.facilityPackage?.uuid,
+
         eventDate: dayjs(bookingDetails?.eventDate),
 
         timeRange: [
@@ -159,7 +162,7 @@ const FacilityBookingForm = ({
     };
 
     if (isAdd) {
-      createFacilityBooing.mutate(modifiedValues, {
+      createFacilityBookings.mutate(modifiedValues, {
         onSuccess: () => {
           form.resetFields();
           setPage(1);
@@ -177,10 +180,13 @@ const FacilityBookingForm = ({
         startTime: values.timeRange[0].format("HH:mm:ss"),
         endTime: values.timeRange[1].format("HH:mm:ss"),
         expectedHours: formattedExpectedHours,
-        uuid: selectedData?.uuid,
+        facilityPackage: {
+          uuid: values?.facilityPackage
+        },
+        uuid: bookingDetails?.uuid
       };
 
-      editFacilityBooing.mutate(editValues, {
+      editFacilityBookings.mutate(editValues, {
         onSuccess: () => {
           setDrawerOpen(false);
           handleClose();
@@ -244,25 +250,19 @@ const FacilityBookingForm = ({
             name="guestPhone"
             rules={[
               { required: true },
-              { validator: validatePhoneNumber }
+              
             ]}
           >
             <Input
-              addonBefore="+959"
               readOnly={isView}
               placeholder="Enter Phone"
               onKeyPress={(e) => {
-                if (!/[0-9]/.test(e.key)) {
+                if (!/[0-9]/.test(e.key) &&
+                  !(e.key === "+" && value.length === 0)
+                ) {
                   e.preventDefault();
                 }
               }}
-              maxLength={
-                phoneValue?.startsWith("09")
-                  ? 11
-                  : phoneValue?.startsWith("9")
-                    ? 10
-                    : 9
-              }
             />
           </Form.Item>
 
