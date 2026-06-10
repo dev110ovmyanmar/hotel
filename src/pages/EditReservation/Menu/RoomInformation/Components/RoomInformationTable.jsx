@@ -31,6 +31,7 @@ import { queryClient } from "../../../../../app/queryClient";
 // import DateChangeModal from "./RoomAmendmentModals/DateChangeModals";
 import StayExtensionModal from "./RoomAmendmentModals/StayExtensionModal";
 import StayReductionModal from "./RoomAmendmentModals/StayReductionModal";
+import GuestForm from "../../GuestDetails/Components/GuestForms/GuestForm";
 // import UpdateRateModal from "./RoomAmendmentModals/UpdateRateModal";
 
 const RoomInformationTable = ({
@@ -44,7 +45,9 @@ const RoomInformationTable = ({
   reservationUuid,
   // stayExtensionUuid,
 }) => {
+  console.log(reservationUuid,"uuid")
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [guestOpen, setGuestOpen] = useState(false);
   const [mode, setMode] = useState("add");
   const [selectedData, setSelectedData] = useState(null);
   const [roomMoveOpen, setRoomMoveOpen] = useState(false);
@@ -57,10 +60,14 @@ const RoomInformationTable = ({
 
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
   const amendmentType = initData?.statuses?.amendment_type;
-  const stayExtension = amendmentType?.find((item) => item.code === "stay_extension");
+  const stayExtension = amendmentType?.find(
+    (item) => item.code === "stay_extension",
+  );
   const stayExtensionUuid = stayExtension?.uuid;
 
-  const stayReduction = amendmentType?.find((item) => item.code === "stay_reduction");
+  const stayReduction = amendmentType?.find(
+    (item) => item.code === "stay_reduction",
+  );
   const stayReductionUuid = stayReduction?.uuid;
 
   const rateChange = amendmentType?.find((item) => item.code === "rate_change");
@@ -90,15 +97,22 @@ const RoomInformationTable = ({
       width: 120,
       render: (text, record) => {
         const isRoomNull = !text;
-        const statusCode = reservationUuid?.reservationRoom?.roomStatus?.code;
-        const validStatuses = ["confirmed", "checked_in"];
-        const isConfirmed = validStatuses.includes(statusCode);
-        const isClickable = isRoomNull && isConfirmed;
+
+        const statusCode = record?.roomStatus?.code;
+
+        const validStatuses = ["confirmed", "checked-in"];
+        const isValidStatus = validStatuses.includes(statusCode);
+
+        const isClickable = isRoomNull && isValidStatus;
 
         return (
           <span
             style={{
-              color: isRoomNull ? (isConfirmed ? "#1890ff" : "#bfbfbf") : "inherit",
+              color: isRoomNull
+                ? isValidStatus
+                  ? "#1890ff"
+                  : "#bfbfbf"
+                : "inherit",
               cursor: isClickable ? "pointer" : "not-allowed",
               textDecoration: isClickable ? "underline" : "none",
             }}
@@ -124,14 +138,14 @@ const RoomInformationTable = ({
       title: "Arrival",
       dataIndex: "checkinDate",
       key: "checkinDate",
-      render: (value) => (value ? dayjs(value).format("DD/MM/YYYY") : "-"),
+      render: (value) => (value ? dayjs(value).format("YYYY-MM-DD") : "-"),
       width: 110,
     },
     {
       title: "Departure",
       dataIndex: "checkoutDate",
       key: "checkoutDate",
-      render: (value) => (value ? dayjs(value).format("DD/MM/YYYY") : "-"),
+      render: (value) => (value ? dayjs(value).format("YYYY-MM-DD") : "-"),
       width: 110,
     },
     {
@@ -183,17 +197,17 @@ const RoomInformationTable = ({
                     icon: <CalendarOutlined />,
                     onClick: () => handleAction("date_change", record),
                   },
-                  ...(record?.isExtend !== false || record?.roomStatus?.code === "checked_in"
+                  ...(record?.isExtend !== false ||
+                  record?.roomStatus?.code === "checked_in"
                     ? [
-                      {
-                        key: "stay_extension",
-                        label: "Extend Stay",
-                        icon: <PlusOutlined />,
-                        onClick: () => handleAction("stay_extension", record),
-                      },
-                    ]
-                    : []
-                  ),
+                        {
+                          key: "stay_extension",
+                          label: "Extend Stay",
+                          icon: <PlusOutlined />,
+                          onClick: () => handleAction("stay_extension", record),
+                        },
+                      ]
+                    : []),
                   {
                     key: "stay_reduction",
                     label: "Shorten Stay",
@@ -267,7 +281,8 @@ const RoomInformationTable = ({
                     key: "occupancy_change",
                     label: "Update Room Guests",
                     icon: <UserOutlined />,
-                    onClick: () => handleAction("occupancy_change", record),
+                    // onClick: () => handleAction("occupancy_change", record),
+                    onClick: () => setGuestOpen(true),
                   },
                   {
                     key: "extra_bed_add",
@@ -311,6 +326,10 @@ const RoomInformationTable = ({
         columns={columns}
         dataSource={data}
         rowKey="uuid"
+        rowClassName={(record) => {
+          const targetUuid = reservationUuid?.reservationRoom?.uuid;
+          return record?.uuid === targetUuid ? "active-reservation-row" : "";
+        }}
         pagination={{
           current: page,
           pageSize: perPage,
@@ -371,6 +390,16 @@ const RoomInformationTable = ({
         />
       )}
 
+      {guestOpen && (
+        <GuestForm
+          drawerOpen={guestOpen}
+          setDrawerOpen={setGuestOpen}
+          selectedData={selectedData}
+          setSelectedData={setSelectedData}
+          reservationUuid={reservationUuid?.reservation}
+        />
+      )}
+
       {/* ============================================================== */}
       {/* Dynamic Conditional Mount Layer - Fast Local Record Binding    */}
       {/* ============================================================== */}
@@ -383,29 +412,24 @@ const RoomInformationTable = ({
         />
       )} */}
 
+      {activeModal === "stay_extension" && selectedData && (
+        <StayExtensionModal
+          isOpen={true}
+          onClose={closeModal}
+          record={selectedData}
+          // refetch={refetch}
+          stayExtensionUuid={stayExtensionUuid}
+        />
+      )}
 
-      {
-        activeModal === "stay_extension" && selectedData && (
-          <StayExtensionModal
-            isOpen={true}
-            onClose={closeModal}
-            record={selectedData}
-            // refetch={refetch}
-            stayExtensionUuid={stayExtensionUuid}
-          />
-        )
-      }
-
-      {
-        activeModal === "stay_reduction" && selectedData && (
-          <StayReductionModal
-            isOpen={true}
-            onClose={closeModal}
-            record={selectedData}
-            stayReductionUuid={stayReductionUuid}
-          />
-        )
-      }
+      {activeModal === "stay_reduction" && selectedData && (
+        <StayReductionModal
+          isOpen={true}
+          onClose={closeModal}
+          record={selectedData}
+          stayReductionUuid={stayReductionUuid}
+        />
+      )}
 
       {/* {
         activeModal === "rate_change" && selectedData && (
