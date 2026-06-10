@@ -10,6 +10,8 @@ import useApiQuery from "../../../../hooks/useApiQuery";
 import { useLocation } from "react-router-dom";
 import { LIMITS } from "../../../../variables/constants";
 import AssignRoomForm from "./Components/RoomInformationForms/AssignRoomForm";
+import { Button } from "antd";
+import ChangeStatusForm from "../../../BookingDetail/Components/BookingDetailForms/ChangeStatusForm";
 
 const RoomInformationList = () => {
   const location = useLocation();
@@ -25,6 +27,7 @@ const RoomInformationList = () => {
   const [perPage, setPerPage] = useState(LIMITS.PAGE_SIZE);
   const [assignRoomOpen, setAssignRoomOpen] = useState(false);
   const [showRoomResults, setShowRoomResults] = useState(false);
+  const [open, setOpen] = useState(false);
 
   const { data, isLoading, refetch } = useApiQuery({
     fetchQueryName: "reservation-room",
@@ -64,6 +67,16 @@ const RoomInformationList = () => {
           }
         />
       </div>
+      <Button className="custom-blue-btn mb-2" onClick={()=>setOpen(true)}> Change Status</Button>
+
+      {open && (
+        <ChangeStatusForm
+          open={open}
+          onClose={() => setOpen(false)}
+          reservationId={data?.reservationNo}
+          reservationDetails={data}
+        />
+      )}
 
       <RoomInformationTable
         data={data?.data || []}

@@ -13,13 +13,13 @@ const ReservationMenu = ({ data }) => {
   };
 
   const allTabs = [
-    { label: "Booking Details", key: "booking-detail" },
     { label: "Room Information", key: "room-information" },
     { label: "Guest Details", key: "guest-details" },
     { label: "Event Facility Booking", key: "event-facility-booking" },
     { label: "Service Add On", key: "service-add-on" },
     { label: "Service Order", key: "service-order" },
     { label: "Folio Operations", key: "folio-operations" },
+    { label: "Booking Details", key: "booking-detail" },
   ];
 
   const rawCode = data?.reservation?.reservationStatus?.code || "";

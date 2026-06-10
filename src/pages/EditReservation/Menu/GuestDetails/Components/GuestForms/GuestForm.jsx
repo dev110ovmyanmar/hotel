@@ -169,21 +169,21 @@ const GuestForm = ({
 
   const [options, setOptions] = useState(guestsOptions);
 
-  const { data: reservationRoom } = useApiQuery({
-    fetchQueryName: "reservationRoom",
-    fetchQueryFunction: reservationRoomMeta,
-    params: {
-      reservation: {
-        uuid: uuid,
-      },
-    },
-  });
+  // const { data: reservationRoom } = useApiQuery({
+  //   fetchQueryName: "reservationRoom",
+  //   fetchQueryFunction: reservationRoomMeta,
+  //   params: {
+  //     reservation: {
+  //       uuid: uuid,
+  //     },
+  //   },
+  // });
 
-  const rooms =
-    reservationRoom?.rooms?.map((room) => ({
-      value: room?.uuid,
-      label: `${room?.room?.roomNo} (${room?.checkinDate} - ${room?.checkoutDate}) `,
-    })) || [];
+  // const rooms =
+  //   reservationRoom?.rooms?.map((room) => ({
+  //     value: room?.uuid,
+  //     label: `${room?.room?.roomNo} (${room?.checkinDate} - ${room?.checkoutDate}) `,
+  //   })) || [];
 
   const createReservationGuest = useApiMutation({
     mutationFn: reservationGuestUpsert,
@@ -383,7 +383,7 @@ const GuestForm = ({
           </Radio.Group>
         </Form.Item>
 
-        <Form.Item
+        {/* <Form.Item
           label="Assign Room"
           name="reservationRoomuuid"
           getValueProps={(value) => ({
@@ -406,7 +406,7 @@ const GuestForm = ({
               placeholder="Select Floor"
             />
           )}
-        </Form.Item>
+        </Form.Item> */}
 
         <Form.Item
           label="Full Name"

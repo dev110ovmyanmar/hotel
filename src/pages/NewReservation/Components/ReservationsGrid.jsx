@@ -34,7 +34,7 @@ const ReservationsGrid = ({
   const navigate = useNavigate();
 
   const handleMenuClick = (item) => {
-    navigate(`/reservation/booking-detail`, {
+    navigate(`/reservation/room-information`, {
       state: { bookingId: item?.uuid },
     });
   };
@@ -136,22 +136,10 @@ const ReservationsGrid = ({
                     className="dark:!bg-[#141414]"
                   >
                     {item.checkinDate
-                      ? dayjs(item.checkinDate).format("DD/MM/YYYY")
+                      ? dayjs(item.checkinDate).format("YYYY-MM-DD")
                       : "-"}
                   </div>
-                  {/* <div
-                    style={{
-                      flex: 1,
-                      padding: "8px",
-                      borderLeft: "1px solid #f0f0f0",
-                      borderRight: "1px solid #f0f0f0",
-                      backgroundColor: "#e2e2e2",
-                    }}
-                    className="dark:!bg-[#333333]"
-                    
-                  >
-                 <span><FaMoon/> {`${item.totalNight} ${item.totalNight === 1 ? "Night" : "Nights"}`}</span>  
-                  </div> */}
+
                   <div className="flex items-center gap-2 bg-indigo-50 text-indigo-700 px-3 py-1.5 rounded-lg border border-indigo-100 ml-auto sm:ml-0">
                     <FaMoon className="text-xs" />
                     <span className="text-xs font-bold whitespace-nowrap">
@@ -164,7 +152,7 @@ const ReservationsGrid = ({
                     className="dark:!bg-[#141414]"
                   >
                     {item.checkoutDate
-                      ? dayjs(item.checkoutDate).format("DD/MM/YYYY")
+                      ? dayjs(item.checkoutDate).format("YYYY-MM-DD")
                       : "-"}
                   </div>
                 </div>
@@ -180,8 +168,8 @@ const ReservationsGrid = ({
                   <div
                     style={{ display: "flex", justifyContent: "space-between" }}
                   >
-                    <span style={{ color: "#8c8c8c" }}>Order Id</span>
-                    <span>{item.id}</span>
+                    <span style={{ color: "#8c8c8c" }}>Res No:</span>
+                    <span>{item?.reservation?.reservationNo}</span>
                   </div>
                   <div
                     style={{ display: "flex", justifyContent: "space-between" }}
@@ -196,8 +184,8 @@ const ReservationsGrid = ({
                   <div
                     style={{ display: "flex", justifyContent: "space-between" }}
                   >
-                    <span style={{ color: "#8c8c8c" }}>Rooms</span>
-                    <span>{item.totalRooms}</span>
+                    <span style={{ color: "#8c8c8c" }}>Room No</span>
+                    <span>{item?.room?.roomNo}</span>
                   </div>
                   <div
                     style={{ display: "flex", justifyContent: "space-between" }}
