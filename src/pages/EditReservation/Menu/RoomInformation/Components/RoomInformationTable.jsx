@@ -1,10 +1,8 @@
-import { useState, useEffect } from "react";
-import { Dropdown, Space, Table, Button, Tooltip, Divider } from "antd";
+import { useState } from "react";
+import { Dropdown, Table } from "antd";
 import dayjs from "dayjs";
 import {
-  MoreOutlined,
   PlusOutlined,
-  UploadOutlined,
   MessageOutlined,
   EyeOutlined,
   EditOutlined,
@@ -14,18 +12,26 @@ import {
   MinusOutlined,
   DollarOutlined,
   UserOutlined,
+  ConsoleSqlOutlined,
 } from "@ant-design/icons";
 
 import { MdOutlineMeetingRoom } from "react-icons/md";
-import { IoBedOutline, IoOptionsSharp } from "react-icons/io5";
+import { IoOptionsSharp } from "react-icons/io5";
 
 import RoomInformationForm from "./RoomInformationForms/RoomInformationForm";
 import RoomMoveDrawer from "./RoomInformationForms/RoomMoveDrawer";
 import AssignRoomForm from "./RoomInformationForms/AssignRoomForm";
 import NoteDrawer from "./RoomInformationForms/NoteDrawer";
-import GuestForm from "../../GuestDetails/Components/GuestForms/GuestForm";
 import ColorStatusTag from "../../../../../component/ColorStatusTag/ColorStatusTag";
 import RoomAmend from "./RoomInformationForms/RoomAmend";
+
+import { queryClient } from "../../../../../app/queryClient";
+
+// Split Modal Component Import
+// import DateChangeModal from "./RoomAmendmentModals/DateChangeModals";
+import StayExtensionModal from "./RoomAmendmentModals/StayExtensionModal";
+import StayReductionModal from "./RoomAmendmentModals/StayReductionModal";
+// import UpdateRateModal from "./RoomAmendmentModals/UpdateRateModal";
 
 const RoomInformationTable = ({
   data,
@@ -36,18 +42,39 @@ const RoomInformationTable = ({
   changePage,
   changePerPage,
   reservationUuid,
-  refetch,
+  // stayExtensionUuid,
 }) => {
-  console.log(reservationUuid,"reservationUuid")
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mode, setMode] = useState("add");
   const [selectedData, setSelectedData] = useState(null);
-  const [dataSource, setDataSource] = useState([]);
   const [roomMoveOpen, setRoomMoveOpen] = useState(false);
   const [assignRoomOpen, setAssignRoomOpen] = useState(false);
   const [noteOpen, setNoteOpen] = useState(false);
-  const [guestOpen, setGuestOpen] = useState(false);
   const [roomAmend, setRoomAmend] = useState(false);
+
+  // Unified State Engine for Split Modals
+  const [activeModal, setActiveModal] = useState(null);
+
+  const initData = queryClient.getQueryData(["initData", "authenticated"]);
+  const amendmentType = initData?.statuses?.amendment_type;
+  const stayExtension = amendmentType?.find((item) => item.code === "stay_extension");
+  const stayExtensionUuid = stayExtension?.uuid;
+
+  const stayReduction = amendmentType?.find((item) => item.code === "stay_reduction");
+  const stayReductionUuid = stayReduction?.uuid;
+
+  const rateChange = amendmentType?.find((item) => item.code === "rate_change");
+  const rateChangeUuid = rateChange?.uuid;
+
+  // Core Orchestration Handler - Direct Pass
+  const handleAction = (key, record) => {
+    setSelectedData(record);
+    setActiveModal(key);
+  };
+
+  const closeModal = () => {
+    setActiveModal(null);
+  };
 
   const columns = [
     {
@@ -56,7 +83,6 @@ const RoomInformationTable = ({
       key: "id",
       width: 70,
     },
-
     {
       title: "Room",
       key: "room",
@@ -64,22 +90,15 @@ const RoomInformationTable = ({
       width: 120,
       render: (text, record) => {
         const isRoomNull = !text;
-
         const statusCode = reservationUuid?.reservationRoom?.roomStatus?.code;
-
         const validStatuses = ["confirmed", "checked_in"];
         const isConfirmed = validStatuses.includes(statusCode);
-
         const isClickable = isRoomNull && isConfirmed;
 
         return (
           <span
             style={{
-              color: isRoomNull
-                ? isConfirmed
-                  ? "#1890ff"
-                  : "#bfbfbf"
-                : "inherit",
+              color: isRoomNull ? (isConfirmed ? "#1890ff" : "#bfbfbf") : "inherit",
               cursor: isClickable ? "pointer" : "not-allowed",
               textDecoration: isClickable ? "underline" : "none",
             }}
@@ -96,7 +115,6 @@ const RoomInformationTable = ({
         );
       },
     },
-
     {
       title: "Name",
       dataIndex: ["roomType", "name"],
@@ -116,7 +134,6 @@ const RoomInformationTable = ({
       render: (value) => (value ? dayjs(value).format("DD/MM/YYYY") : "-"),
       width: 110,
     },
-
     {
       title: "Status",
       dataIndex: ["roomStatus", "name"],
@@ -125,21 +142,10 @@ const RoomInformationTable = ({
       width: 110,
     },
     { title: "Rate Plan", dataIndex: ["ratePlan", "name"], key: "ratePlan" },
-
     {
       title: "Action",
       width: 80,
       render: (_, record) => {
-        const statusCode = reservationUuid?.reservationStatus?.code;
-        const validStatuses = ["confirmed", "check_in", "checked_in"];
-        const isConfirmed = validStatuses.includes(statusCode);
-        const isCheckin = statusCode === "checked_in";
-
-        const handleAction = (key) => {
-          setSelectedData(record);
-          console.log(`Clicked: ${key}`);
-        };
-
         const menuItems = [
           {
             key: "view",
@@ -160,32 +166,6 @@ const RoomInformationTable = ({
               setNoteOpen(true);
             },
           },
-          // ...(isConfirmed
-          //   ? [
-          //       {
-          //         key: "move",
-          //         label: "Move Room",
-          //         icon: <MdOutlineMeetingRoom style={{ fontSize: "16px" }} />,
-          //         onClick: () => {
-          //           setSelectedData(record);
-          //           setRoomMoveOpen(true);
-          //         },
-          //       },
-          //     ]
-          //   : []),
-          // ...(isCheckin
-          //   ? [
-          //       {
-          //         key: "amend",
-          //         label: "Room Amend",
-          //         icon: <IoBedOutline style={{ fontSize: "16px" }} />,
-          //         onClick: () => {
-          //           setSelectedData(record);
-          //           setRoomAmend(true);
-          //         },
-          //       },
-          //     ]
-          //   : []),
           { type: "divider" },
           {
             key: "modify_group",
@@ -201,19 +181,24 @@ const RoomInformationTable = ({
                     key: "date_change",
                     label: "Change CI/CO Dates",
                     icon: <CalendarOutlined />,
-                    onClick: () => handleAction("date_change"),
+                    onClick: () => handleAction("date_change", record),
                   },
-                  {
-                    key: "stay_extension",
-                    label: "Extend Stay",
-                    icon: <PlusOutlined />,
-                    onClick: () => handleAction("stay_extension"),
-                  },
+                  ...(record?.isExtend !== false || record?.roomStatus?.code === "checked_in"
+                    ? [
+                      {
+                        key: "stay_extension",
+                        label: "Extend Stay",
+                        icon: <PlusOutlined />,
+                        onClick: () => handleAction("stay_extension", record),
+                      },
+                    ]
+                    : []
+                  ),
                   {
                     key: "stay_reduction",
                     label: "Shorten Stay",
                     icon: <MinusOutlined />,
-                    onClick: () => handleAction("stay_reduction"),
+                    onClick: () => handleAction("stay_reduction", record),
                   },
                 ],
               },
@@ -236,25 +221,25 @@ const RoomInformationTable = ({
                     key: "room_upgrade",
                     label: "Upgrade Room",
                     icon: <ArrowUpOutlined />,
-                    onClick: () => handleAction("room_upgrade"),
+                    onClick: () => handleAction("room_upgrade", record),
                   },
                   {
                     key: "room_downgraden",
                     label: "Downgrade Room",
                     icon: <ArrowDownOutlined />,
-                    onClick: () => handleAction("room_downgraden"),
+                    onClick: () => handleAction("room_downgraden", record),
                   },
                   {
                     key: "add_room",
                     label: "Add Room",
                     icon: <PlusOutlined />,
-                    onClick: () => handleAction("add_room"),
+                    onClick: () => handleAction("add_room", record),
                   },
                   {
                     key: "remove_room",
                     label: "Remove Room",
                     icon: <MinusOutlined />,
-                    onClick: () => handleAction("remove_room"),
+                    onClick: () => handleAction("remove_room", record),
                   },
                 ],
               },
@@ -268,7 +253,7 @@ const RoomInformationTable = ({
                     key: "rate_change",
                     label: "Update Rates",
                     icon: <DollarOutlined />,
-                    onClick: () => handleAction("rate_change"),
+                    onClick: () => handleAction("rate_change", record),
                   },
                 ],
               },
@@ -282,19 +267,19 @@ const RoomInformationTable = ({
                     key: "occupancy_change",
                     label: "Update Room Guests",
                     icon: <UserOutlined />,
-                    onClick: () => handleAction("occupancy_change"),
+                    onClick: () => handleAction("occupancy_change", record),
                   },
                   {
                     key: "extra_bed_add",
                     label: "Add Extra Bed",
                     icon: <PlusOutlined />,
-                    onClick: () => handleAction("extra_bed_add"),
+                    onClick: () => handleAction("extra_bed_add", record),
                   },
                   {
                     key: "extra_bed_remove",
                     label: "Remove Extra Bed",
                     icon: <MinusOutlined />,
-                    onClick: () => handleAction("extra_bed_remove"),
+                    onClick: () => handleAction("extra_bed_remove", record),
                   },
                 ],
               },
@@ -339,6 +324,7 @@ const RoomInformationTable = ({
         loading={loading}
       />
 
+      {/* Legacy Forms & Drawers */}
       <RoomInformationForm
         page={page}
         mode={mode}
@@ -384,6 +370,54 @@ const RoomInformationTable = ({
           setSelectedData={setSelectedData}
         />
       )}
+
+      {/* ============================================================== */}
+      {/* Dynamic Conditional Mount Layer - Fast Local Record Binding    */}
+      {/* ============================================================== */}
+      {/* {activeModal === "date_change" && selectedData && (
+        <DateChangeModal
+          isOpen={true}
+          onClose={closeModal}
+          record={selectedData} // Direct row object mapping
+          refetch={refetch}
+        />
+      )} */}
+
+
+      {
+        activeModal === "stay_extension" && selectedData && (
+          <StayExtensionModal
+            isOpen={true}
+            onClose={closeModal}
+            record={selectedData}
+            // refetch={refetch}
+            stayExtensionUuid={stayExtensionUuid}
+          />
+        )
+      }
+
+      {
+        activeModal === "stay_reduction" && selectedData && (
+          <StayReductionModal
+            isOpen={true}
+            onClose={closeModal}
+            record={selectedData}
+            stayReductionUuid={stayReductionUuid}
+          />
+        )
+      }
+
+      {/* {
+        activeModal === "rate_change" && selectedData && (
+          <UpdateRateModal
+            isOpen={true}
+            onClose={closeModal}
+            record={selectedData}
+            record={mockRecord}
+            rateChangeUuid={rateChangeUuid}
+          />
+        )
+      } */}
     </div>
   );
 };
