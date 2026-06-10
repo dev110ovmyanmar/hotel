@@ -38,7 +38,7 @@ const GuestList = () => {
         perPage,
       },
       keyword,
-      reservation: { uuid },
+      reservationRoom: { uuid },
     },
   });
 
@@ -57,7 +57,7 @@ const GuestList = () => {
 
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
         <ReservationListHeader
-          reservationId={reservationInfo?.reservationNo}
+          reservationId={data?.reservation?.reservationNo}
           onAddreservation={handleAddGuest}
           addButtonText={
             ["pending", "confirmed", "booked", "checked_in"].includes(

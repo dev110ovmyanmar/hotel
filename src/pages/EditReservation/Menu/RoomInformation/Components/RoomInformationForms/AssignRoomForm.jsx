@@ -21,7 +21,8 @@ const AssignRoomForm = ({
   onSuccess,
   reservationUuid,
 }) => {
-  const uuid = reservationUuid?.uuid;
+  console.log(reservationUuid, "uuid");
+  const uuid = reservationUuid?.reservation?.uuid;
 
   const [form] = Form.useForm();
   const isView = mode === "view";
@@ -133,7 +134,6 @@ const AssignRoomForm = ({
                 </div>
               </div>
             </Form.Item>
-           
 
             <div className="grid grid-cols-2 gap-6">
               <Form.Item label="Room" name={["roomType", "name"]}>

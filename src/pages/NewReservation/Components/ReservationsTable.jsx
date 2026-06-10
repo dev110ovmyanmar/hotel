@@ -26,8 +26,13 @@ const ReservationsTable = ({
 }) => {
   const navigate = useNavigate();
 
-  const handleMenuClick = (uuid) => {
-    navigate(`/reservation/booking-detail`, { state: { bookingId: uuid } });
+  // const handleMenuClick = (uuid) => {
+  //   navigate(`/reservation/booking-detail`, { state: { bookingId: uuid } });
+  // };
+  const handleMenuClick = (item) => {
+    navigate(`/reservation/booking-detail`, {
+      state: { bookingId: item?.uuid },
+    });
   };
 
   const columns = [
@@ -42,31 +47,31 @@ const ReservationsTable = ({
     },
     {
       title: "Room",
-      dataIndex: "totalRooms",
-      key: "totalRooms",
+      dataIndex: ["room" ,"roomNo"],
+      key: ["room" ,"roomNo"],
       align: "center",
       width: 80,
     },
     {
       title: "Arrival",
-      dataIndex: "actualCheckin",
-      key: "actualCheckin",
+      dataIndex: "checkinDate",
+      key: "checkinDate",
       align: "center",
-      render: (value) => (value ? dayjs(value).format("DD/MM/YYYY") : "-"),
+      render: (value) => (value ? dayjs(value).format("YYYY-MM-DD") : "-"),
     },
     {
       title: "Departure",
-      dataIndex: "actualCheckout",
-      key: "actualCheckout",
+      dataIndex: "checkoutDate",
+      key: "checkoutDate",
       align: "center",
-      render: (value) => (value ? dayjs(value).format("DD/MM/YYYY") : "-"),
+      render: (value) => (value ? dayjs(value).format("YYYY-MM-DD") : "-"),
     },
     {
       title: "Booking Date",
       dataIndex: "createdAt",
       key: "createdAt",
       align: "center",
-      render: (value) => (value ? dayjs(value).format("DD/MM/YYYY") : "-"),
+      render: (value) => (value ? dayjs(value).format("YYYY-MM-DD") : "-"),
     },
     {
       title: "Night",
@@ -97,11 +102,11 @@ const ReservationsTable = ({
     },
     {
       title: "Order Status",
-      dataIndex: ["reservationStatus", "name"],
+      dataIndex: ["roomStatus", "name"],
       key: "status",
       align: "center",
-      render: (reservationStatus) => (
-        <ReservationStatusColor status={reservationStatus} />
+      render: (roomStatus) => (
+        <ReservationStatusColor status={roomStatus} />
       ),
     },
     {
@@ -126,7 +131,7 @@ const ReservationsTable = ({
           <Button
             type="text"
             icon={<EditOutlined />}
-            onClick={() => handleMenuClick(record.uuid)}
+            onClick={() => handleMenuClick(record)}
           />
           <Button
             type="text"

@@ -33,7 +33,7 @@ const EventFacilityOrderList = () => {
         page: page,
         perPage: perPage,
       },
-      reservation: {
+      reservationRoom: {
         uuid: bookingId,
       },
     },

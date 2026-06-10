@@ -4,15 +4,12 @@ import ReservationHeader from "../../Components/ReservationHeader";
 import ReservationMenu from "../../Components/ReservationMenu";
 import ReservationListHeader from "../../../../component/ReservationHeader/ReservationListHeader";
 import { useApiQuery } from "./../../../../hooks/useApiQuery";
-import {
-  serviceAddonList,
-  serviceOrderList,
-} from "../../../../api/reservationSectionApi";
+import { serviceOrderList } from "../../../../api/reservationSectionApi";
 import { LIMITS } from "../../../../variables/constants";
-import ServiceAddOnForm from "./Components/ServiceAddOnForms/ServiceAddOnForm";
-import ServiceAddOnTable from "./Components/ServiceAddOnTable";
+import ServiceOrderTable from "./Components/ServiceOrderTable";
+import ServiceOrderForm from "./Components/ServiceOrderForms/ServiceOrderForm";
 
-const ServiceAddOnList = () => {
+const ServiceOrderList = () => {
   const location = useLocation();
   const uuid = location.state?.bookingId;
 
@@ -24,17 +21,16 @@ const ServiceAddOnList = () => {
   const [perPage, setPerPage] = useState(LIMITS.PAGE_SIZE);
 
   const { data, refetch } = useApiQuery({
-    fetchQueryName: "service-addon",
-    fetchQueryFunction: serviceAddonList,
+    fetchQueryName: "service-order",
+    fetchQueryFunction: serviceOrderList,
     params: {
       pagination: { page, perPage },
       keyword,
       reservationRoom: { uuid },
     },
   });
-  console.log(data,"aa")
 
-  const handleServiceAddon = () => {
+  const handleAddService = () => {
     setSelectedData(null);
     setMode("add");
     setDrawerOpen(true);
@@ -48,12 +44,12 @@ const ServiceAddOnList = () => {
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
         <ReservationListHeader
           reservationId={data?.reservation?.reservationNo}
-          onAddreservation={handleServiceAddon}
+          onAddreservation={handleAddService}
           addButtonText="Add Service"
         />
       </div>
 
-      <ServiceAddOnTable
+      <ServiceOrderTable
         data={data?.data || []}
         onView={(row) => {
           setSelectedData(row);
@@ -68,7 +64,7 @@ const ServiceAddOnList = () => {
       />
 
       {drawerOpen && (
-        <ServiceAddOnForm
+        <ServiceOrderForm
           serviceData={mode === "add" ? data?.reservation : selectedData}
           mode={mode}
           setMode={setMode}
@@ -84,4 +80,4 @@ const ServiceAddOnList = () => {
   );
 };
 
-export default ServiceAddOnList;
+export default ServiceOrderList;

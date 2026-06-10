@@ -5,14 +5,6 @@ export const getFolioList = async (params) => {
     return data.response;
 };
 
-export const reservationMeta = async (params) => {
-    const { data } = await apiClient.get(
-        `/reservation/meta`,
-        { params }
-    );
-    return data.response;
-};
-
 export const getFolioDetail = async (params) => {
     const { data } = await apiClient.get("/folio", { params });
     return data.response;
@@ -29,3 +21,9 @@ export const folioUpload = async (params) => {
     });
     return data.response;
 };
+
+export const transferFolioLines = async (params) => {
+    const { data } = await apiClient.patch("/folio/transfer-lines", params);
+    return data.response;
+};
+

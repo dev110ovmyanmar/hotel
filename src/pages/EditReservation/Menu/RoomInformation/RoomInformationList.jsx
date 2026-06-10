@@ -10,6 +10,8 @@ import useApiQuery from "../../../../hooks/useApiQuery";
 import { useLocation } from "react-router-dom";
 import { LIMITS } from "../../../../variables/constants";
 import AssignRoomForm from "./Components/RoomInformationForms/AssignRoomForm";
+import { Button } from "antd";
+import ChangeStatusForm from "../../../BookingDetail/Components/BookingDetailForms/ChangeStatusForm";
 
 const RoomInformationList = () => {
   const location = useLocation();
@@ -25,6 +27,7 @@ const RoomInformationList = () => {
   const [perPage, setPerPage] = useState(LIMITS.PAGE_SIZE);
   const [assignRoomOpen, setAssignRoomOpen] = useState(false);
   const [showRoomResults, setShowRoomResults] = useState(false);
+  const [open, setOpen] = useState(false);
 
   const { data, isLoading, refetch } = useApiQuery({
     fetchQueryName: "reservation-room",
@@ -35,7 +38,7 @@ const RoomInformationList = () => {
         perPage: perPage,
       },
       keyword,
-      reservation: {
+      reservationRoom: {
         uuid: uuid,
       },
     },
@@ -46,25 +49,34 @@ const RoomInformationList = () => {
     setMode("add");
     setDrawerOpen(true);
   };
-
   return (
     <div className="w-full px-6 py-2">
       <ReservationHeader data={data || {}} />
 
-      <ReservationMenu data={data}/>
+      <ReservationMenu data={data} />
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
         <ReservationListHeader
           reservationId={data?.reservation?.reservationNo}
           onAddreservation={handleAddRoom}
           addButtonText={
             ["confirmed", "checked_in"].includes(
-              data?.reservation?.reservationStatus?.code?.toLowerCase(),
+              data?.reservationRoom?.roomStatus?.code?.toLowerCase(),
             )
               ? "Add New Room"
               : null
           }
         />
       </div>
+      <Button className="custom-blue-btn mb-2" onClick={()=>setOpen(true)}> Change Status</Button>
+
+      {open && (
+        <ChangeStatusForm
+          open={open}
+          onClose={() => setOpen(false)}
+          reservationId={data?.reservationNo}
+          reservationDetails={data}
+        />
+      )}
 
       <RoomInformationTable
         data={data?.data || []}
@@ -74,7 +86,7 @@ const RoomInformationList = () => {
         changePage={setPage}
         changePerPage={setPerPage}
         loading={isLoading}
-        reservationUuid={data?.reservation || []}
+        reservationUuid={data || []}
       />
       <RoomInformationForm
         data={data?.reservation || []}
@@ -93,7 +105,7 @@ const RoomInformationList = () => {
           onClose={() => setAssignRoomOpen(false)}
           selectedData={selectedData}
           setSelectedData={setSelectedData}
-          reservationUuid={data?.reservation || []}
+          reservationUuid={data || []}
         />
       )}
 
