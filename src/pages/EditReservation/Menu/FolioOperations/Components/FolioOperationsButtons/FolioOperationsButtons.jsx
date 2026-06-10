@@ -7,13 +7,15 @@ import AddNewServiceOrderForm from "../FolioOperationsForms/AddNewServiceOrderFo
 import AddNewFacilityOrderForm from "../FolioOperationsForms/AddNewFacilityOrderForm";
 import AddPaymentForm from "../../../../../BookingDetail/Components/BookingDetailForms/AddPaymentForm";
 
-const FolioOperationsButtons = ({ data, folioUuid, reservationId }) => {
+const FolioOperationsButtons = ({ data, folioUuid, reservationId, onPrintAllFolios }) => {
   const [form] = Form.useForm();
   const [open, setOpen] = useState(false);
   const [serviceOpen, setServiceOpen] = useState(false);
   const [facilityOpen, setFacilityOpen] = useState(false);
   const [paymentOpen, setPaymentOpen] = useState(false);
   const [folioOpen, setFolioOpen] = useState(false);
+
+  const foliosList = folioUuid?.data || [];
 
   const addOrder = [
     {
@@ -63,7 +65,12 @@ const FolioOperationsButtons = ({ data, folioUuid, reservationId }) => {
           Add Payment
         </Button>
 
-        <Button className="custom-blue-btn" icon={<IoPrintOutline />}>
+        <Button
+          className="custom-blue-btn"
+          icon={<IoPrintOutline />}
+          disabled={foliosList.length === 0}
+          onClick={onPrintAllFolios}
+        >
           Print Invoice
         </Button>
 

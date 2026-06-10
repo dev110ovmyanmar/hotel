@@ -17,6 +17,7 @@ import {
   reservationRoomDetails,
 } from "../../../../../../api/reservationSectionApi";
 import Toast from "../../../../../../component/Toast/Toast";
+import { FaMoon } from "react-icons/fa";
 
 const { RangePicker } = DatePicker;
 
@@ -112,9 +113,6 @@ const RoomInformationForm = ({
         }
       }
 
-      // const finalCheckout = data?.actualCheckout?.[1]
-      //   ? dayjs(data?.actualCheckout).format("YYYY-MM-DD")
-      //   : null;
       const checkoutDateObj = data?.actualCheckout
         ? dayjs(data?.actualCheckout)
         : null;
@@ -304,7 +302,7 @@ const RoomInformationForm = ({
       }
     >
       <Form form={form} layout="vertical" onFinish={onFinish} disabled={isView}>
-        <div className="border border-gray-200 rounded px-4 py-2">
+        {/* <div className="border border-gray-200 rounded px-4 py-2"> */}
           <div className="flex items-end gap-6 w-full ">
             <Form.Item
               label="Stay Duration (Arrival - Departure)"
@@ -316,17 +314,18 @@ const RoomInformationForm = ({
             >
               <RangePicker
                 className="w-full"
-                format="DD/MM/YYYY"
+                format="YYYY-MM-DD"
                 disabledDate={disabledDate}
               />
             </Form.Item>
 
-            <Form.Item className="w-1/5 mb-0 bg-gray-300 rounded">
-              <Input
-                value={`${totalNight} ${totalNight === 1 ? "Night" : "Nights"}`}
-                disabled
-                className="bg-gray-50 text-black font-medium disabled:text-black text-center h-[32px]"
-              />
+            <Form.Item className="w-1/5 mb-0 bg-gray-200 rounded">
+              <div className="flex items-center gap-2 px-2 py-1.5 ml-3">
+                <FaMoon className="text-xs" />
+                <span className="text-xs font-bold whitespace-nowrap">
+                  {`${totalNight} ${totalNight === 1 ? "Night" : "Nights"}`}
+                </span>
+              </div>
             </Form.Item>
           </div>
 
@@ -392,7 +391,7 @@ const RoomInformationForm = ({
               />
             </Form.Item>
           </div>
-        </div>
+        {/* </div> */}
       </Form>
     </Drawer>
   );
