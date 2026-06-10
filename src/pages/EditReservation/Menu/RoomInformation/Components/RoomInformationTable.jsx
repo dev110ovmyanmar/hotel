@@ -32,6 +32,7 @@ import { queryClient } from "../../../../../app/queryClient";
 import StayExtensionModal from "./RoomAmendmentModals/StayExtensionModal";
 import StayReductionModal from "./RoomAmendmentModals/StayReductionModal";
 import GuestForm from "../../GuestDetails/Components/GuestForms/GuestForm";
+import RoomMoveModal from "./RoomAmendmentModals/RoomMoveModal";
 // import UpdateRateModal from "./RoomAmendmentModals/UpdateRateModal";
 
 const RoomInformationTable = ({
@@ -45,7 +46,7 @@ const RoomInformationTable = ({
   reservationUuid,
   // stayExtensionUuid,
 }) => {
-  console.log(reservationUuid,"uuid")
+  console.log(reservationUuid, "uuid")
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [guestOpen, setGuestOpen] = useState(false);
   const [mode, setMode] = useState("add");
@@ -72,6 +73,10 @@ const RoomInformationTable = ({
 
   const rateChange = amendmentType?.find((item) => item.code === "rate_change");
   const rateChangeUuid = rateChange?.uuid;
+
+  const roomMove = amendmentType?.find((item) => item.code === "room_move");
+  console.log(roomMove, "RoomMOveINRoom")
+  const roomMoveUuid = roomMove?.uuid;
 
   // Core Orchestration Handler - Direct Pass
   const handleAction = (key, record) => {
@@ -198,15 +203,15 @@ const RoomInformationTable = ({
                     onClick: () => handleAction("date_change", record),
                   },
                   ...(record?.isExtend !== false ||
-                  record?.roomStatus?.code === "checked_in"
+                    record?.roomStatus?.code === "checked_in"
                     ? [
-                        {
-                          key: "stay_extension",
-                          label: "Extend Stay",
-                          icon: <PlusOutlined />,
-                          onClick: () => handleAction("stay_extension", record),
-                        },
-                      ]
+                      {
+                        key: "stay_extension",
+                        label: "Extend Stay",
+                        icon: <PlusOutlined />,
+                        onClick: () => handleAction("stay_extension", record),
+                      },
+                    ]
                     : []),
                   {
                     key: "stay_reduction",
@@ -226,8 +231,11 @@ const RoomInformationTable = ({
                     key: "room_move",
                     label: "Change Room",
                     icon: <MdOutlineMeetingRoom />,
+                    className: record?.roomStatus?.code === "checked_in" && record?.room !== null
+                      ? "!text-black"
+                      : "!text-gray-300 !cursor-not-allowed !pointer-events-none",
                     onClick: () => {
-                      setSelectedData(record);
+                      handleAction("room_move", record);
                       setRoomMoveOpen(true);
                     },
                   },
@@ -353,12 +361,12 @@ const RoomInformationTable = ({
         selectedData={selectedData}
       />
 
-      <RoomMoveDrawer
+      {/* <RoomMoveDrawer
         open={roomMoveOpen}
         selectedData={selectedData}
         onClose={() => setRoomMoveOpen(false)}
         reservationId={selectedData?.id}
-      />
+      /> */}
 
       {assignRoomOpen && (
         <AssignRoomForm
@@ -442,6 +450,16 @@ const RoomInformationTable = ({
           />
         )
       } */}
+
+      {
+        selectedData &&
+        <RoomMoveModal
+          isOpen={roomMoveOpen}
+          onClose={() => setRoomMoveOpen(false)}
+          record={selectedData}
+          roomMoveUuid={roomMoveUuid}
+        />
+      }
     </div>
   );
 };
