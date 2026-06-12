@@ -46,7 +46,6 @@ const RoomInformationTable = ({
   reservationUuid,
   // stayExtensionUuid,
 }) => {
-  console.log(reservationUuid, "uuid")
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [guestOpen, setGuestOpen] = useState(false);
   const [mode, setMode] = useState("add");
@@ -56,7 +55,6 @@ const RoomInformationTable = ({
   const [noteOpen, setNoteOpen] = useState(false);
   const [roomAmend, setRoomAmend] = useState(false);
 
-  // Unified State Engine for Split Modals
   const [activeModal, setActiveModal] = useState(null);
 
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
@@ -75,10 +73,9 @@ const RoomInformationTable = ({
   const rateChangeUuid = rateChange?.uuid;
 
   const roomMove = amendmentType?.find((item) => item.code === "room_move");
-  console.log(roomMove, "RoomMOveINRoom")
+
   const roomMoveUuid = roomMove?.uuid;
 
-  // Core Orchestration Handler - Direct Pass
   const handleAction = (key, record) => {
     setSelectedData(record);
     setActiveModal(key);
@@ -203,15 +200,15 @@ const RoomInformationTable = ({
                     onClick: () => handleAction("date_change", record),
                   },
                   ...(record?.isExtend !== false ||
-                    record?.roomStatus?.code === "checked_in"
+                  record?.roomStatus?.code === "checked_in"
                     ? [
-                      {
-                        key: "stay_extension",
-                        label: "Extend Stay",
-                        icon: <PlusOutlined />,
-                        onClick: () => handleAction("stay_extension", record),
-                      },
-                    ]
+                        {
+                          key: "stay_extension",
+                          label: "Extend Stay",
+                          icon: <PlusOutlined />,
+                          onClick: () => handleAction("stay_extension", record),
+                        },
+                      ]
                     : []),
                   {
                     key: "stay_reduction",
@@ -231,9 +228,11 @@ const RoomInformationTable = ({
                     key: "room_move",
                     label: "Change Room",
                     icon: <MdOutlineMeetingRoom />,
-                    className: record?.roomStatus?.code === "checked_in" && record?.room !== null
-                      ? "!text-black"
-                      : "!text-gray-300 !cursor-not-allowed !pointer-events-none",
+                    className:
+                      record?.roomStatus?.code === "checked_in" &&
+                      record?.room !== null
+                        ? "!text-black"
+                        : "!text-gray-300 !cursor-not-allowed !pointer-events-none",
                     onClick: () => {
                       handleAction("room_move", record);
                       setRoomMoveOpen(true);
@@ -289,7 +288,6 @@ const RoomInformationTable = ({
                     key: "occupancy_change",
                     label: "Update Room Guests",
                     icon: <UserOutlined />,
-                    // onClick: () => handleAction("occupancy_change", record),
                     onClick: () => setGuestOpen(true),
                   },
                   {
@@ -451,15 +449,14 @@ const RoomInformationTable = ({
         )
       } */}
 
-      {
-        selectedData &&
+      {selectedData && (
         <RoomMoveModal
           isOpen={roomMoveOpen}
           onClose={() => setRoomMoveOpen(false)}
           record={selectedData}
           roomMoveUuid={roomMoveUuid}
         />
-      }
+      )}
     </div>
   );
 };
