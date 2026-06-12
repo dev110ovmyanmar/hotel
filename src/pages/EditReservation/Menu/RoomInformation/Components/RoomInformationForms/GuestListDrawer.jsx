@@ -20,9 +20,11 @@ const GuestListDrawer = ({
   reservationUuid,
   reservationRoomUuid,
   selectedData,
+  setSelectedData
 }) => {
   const uuid = reservationRoomUuid?.uuid;
   const [page, setPage] = useState(1);
+  const [mode, setMode] = useState("add");
   const [perPage, setPerPage] = useState(LIMITS.PAGE_SIZE);
   const [keyword, setKeyword] = useState("");
   const [showActiveOnly, setShowActiveOnly] = useState(true);
@@ -38,10 +40,10 @@ const GuestListDrawer = ({
       keyword,
       // reservation: { uuid },
       reservationRoom: { uuid: selectedData?.uuid },
-      status:showActiveOnly,
+      status: showActiveOnly,
     },
   });
- 
+
   const columns = [
     {
       title: "Name",
@@ -80,6 +82,7 @@ const GuestListDrawer = ({
               type="text"
               icon={<EyeOutlined />}
               onClick={() => handleView(record)}
+             
             />
           </Tooltip>
           <Tooltip title="Edit Guest">
@@ -102,8 +105,7 @@ const GuestListDrawer = ({
       onClose={setDrawerOpen}
       open={drawerOpen}
     >
-      <div
-      >
+      <div>
         <Table columns={columns} dataSource={data?.data} pagination={false} />
       </div>
     </Drawer>
