@@ -21,7 +21,7 @@ const ChangeStatusForm = ({ reservationDetails, open, onClose }) => {
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
 
   const { data } = useApiQuery({
-    fetchQueryName: "reservation-room",
+    // fetchQueryName: "reservation-room",
     fetchQueryFunction: reservationRoomList,
     params: {
       reservationRoom: {
