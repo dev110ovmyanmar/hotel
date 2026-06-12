@@ -32,6 +32,7 @@ import { queryClient } from "../../../../../app/queryClient";
 import StayExtensionModal from "./RoomAmendmentModals/StayExtensionModal";
 import StayReductionModal from "./RoomAmendmentModals/StayReductionModal";
 import GuestForm from "../../GuestDetails/Components/GuestForms/GuestForm";
+import RoomMoveModal from "./RoomAmendmentModals/RoomMoveModal";
 // import UpdateRateModal from "./RoomAmendmentModals/UpdateRateModal";
 
 const RoomInformationTable = ({
@@ -45,7 +46,6 @@ const RoomInformationTable = ({
   reservationUuid,
   // stayExtensionUuid,
 }) => {
-  console.log(reservationUuid,"uuid")
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [guestOpen, setGuestOpen] = useState(false);
   const [mode, setMode] = useState("add");
@@ -55,7 +55,6 @@ const RoomInformationTable = ({
   const [noteOpen, setNoteOpen] = useState(false);
   const [roomAmend, setRoomAmend] = useState(false);
 
-  // Unified State Engine for Split Modals
   const [activeModal, setActiveModal] = useState(null);
 
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
@@ -73,7 +72,10 @@ const RoomInformationTable = ({
   const rateChange = amendmentType?.find((item) => item.code === "rate_change");
   const rateChangeUuid = rateChange?.uuid;
 
-  // Core Orchestration Handler - Direct Pass
+  const roomMove = amendmentType?.find((item) => item.code === "room_move");
+
+  const roomMoveUuid = roomMove?.uuid;
+
   const handleAction = (key, record) => {
     setSelectedData(record);
     setActiveModal(key);
@@ -226,8 +228,13 @@ const RoomInformationTable = ({
                     key: "room_move",
                     label: "Change Room",
                     icon: <MdOutlineMeetingRoom />,
+                    className:
+                      record?.roomStatus?.code === "checked_in" &&
+                      record?.room !== null
+                        ? "!text-black"
+                        : "!text-gray-300 !cursor-not-allowed !pointer-events-none",
                     onClick: () => {
-                      setSelectedData(record);
+                      handleAction("room_move", record);
                       setRoomMoveOpen(true);
                     },
                   },
@@ -281,7 +288,6 @@ const RoomInformationTable = ({
                     key: "occupancy_change",
                     label: "Update Room Guests",
                     icon: <UserOutlined />,
-                    // onClick: () => handleAction("occupancy_change", record),
                     onClick: () => setGuestOpen(true),
                   },
                   {
@@ -353,12 +359,12 @@ const RoomInformationTable = ({
         selectedData={selectedData}
       />
 
-      <RoomMoveDrawer
+      {/* <RoomMoveDrawer
         open={roomMoveOpen}
         selectedData={selectedData}
         onClose={() => setRoomMoveOpen(false)}
         reservationId={selectedData?.id}
-      />
+      /> */}
 
       {assignRoomOpen && (
         <AssignRoomForm
@@ -442,6 +448,15 @@ const RoomInformationTable = ({
           />
         )
       } */}
+
+      {selectedData && (
+        <RoomMoveModal
+          isOpen={roomMoveOpen}
+          onClose={() => setRoomMoveOpen(false)}
+          record={selectedData}
+          roomMoveUuid={roomMoveUuid}
+        />
+      )}
     </div>
   );
 };

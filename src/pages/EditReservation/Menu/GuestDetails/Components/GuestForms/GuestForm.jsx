@@ -41,7 +41,9 @@ const GuestForm = ({
   setSelectedData,
   onSuccess,
   reservationUuid,
+  roomuuid,
 }) => {
+
   const uuid = reservationUuid?.uuid;
   const [form] = Form.useForm();
   const { hasPermission } = usePermission();
@@ -169,22 +171,6 @@ const GuestForm = ({
 
   const [options, setOptions] = useState(guestsOptions);
 
-  // const { data: reservationRoom } = useApiQuery({
-  //   fetchQueryName: "reservationRoom",
-  //   fetchQueryFunction: reservationRoomMeta,
-  //   params: {
-  //     reservation: {
-  //       uuid: uuid,
-  //     },
-  //   },
-  // });
-
-  // const rooms =
-  //   reservationRoom?.rooms?.map((room) => ({
-  //     value: room?.uuid,
-  //     label: `${room?.room?.roomNo} (${room?.checkinDate} - ${room?.checkoutDate}) `,
-  //   })) || [];
-
   const createReservationGuest = useApiMutation({
     mutationFn: reservationGuestUpsert,
     invalidateKeys: [["reservation-guest"]],
@@ -257,7 +243,7 @@ const GuestForm = ({
     const payload = {
       ...values,
       reservation: { uuid },
-      reservationRoom: { uuid: values.reservationRoomuuid },
+      reservationRoom: { uuid: roomuuid },
       dob: values.dob?.format("YYYY-MM-DD"),
       nrcNo: formattedNrc ?? null,
       gender: values.gender ? { uuid: values.gender } : null,
@@ -322,6 +308,19 @@ const GuestForm = ({
         onFinish={onFinish}
         disabled={isView}
         initialValues={{ isAdult: 1, status: activeStatusUuid, isPrimary: 1 }}
+        onValuesChange={(changedValues) => {
+          if (changedValues.hasOwnProperty("isAdult")) {
+            const nextGuestType = changedValues.isAdult;
+            form.resetFields();
+            form.setFieldsValue({
+              isAdult: nextGuestType,
+              status: activeStatusUuid,
+              isPrimary: 1,
+            });
+            setSelectedCountryUuid(null);
+            setSelectedGuestProfileUuid(null);
+          }
+        }}
       >
         <Form.Item
           name="isAdult"
@@ -383,31 +382,6 @@ const GuestForm = ({
           </Radio.Group>
         </Form.Item>
 
-        {/* <Form.Item
-          label="Assign Room"
-          name="reservationRoomuuid"
-          getValueProps={(value) => ({
-            value: isView
-              ? rooms.find((item) => item.value === value)?.label
-              : value,
-          })}
-        >
-          {isView ? (
-            <Input readOnly={isView} />
-          ) : (
-            <Select
-              showSearch={{
-                filterOption: (input, option) =>
-                  (option?.label ?? "")
-                    .toLowerCase()
-                    .includes(input.toLowerCase()),
-              }}
-              options={rooms}
-              placeholder="Select Floor"
-            />
-          )}
-        </Form.Item> */}
-
         <Form.Item
           label="Full Name"
           required={guestAgeType === 1}
@@ -435,8 +409,12 @@ const GuestForm = ({
               rules={[{ required: true, message: "Name is required" }]}
             >
               <AutoComplete
-                options={guestsOptions}
-                placeholder="Select or type guest name"
+                options={guestAgeType === 1 ? guestsOptions : []}
+                placeholder={
+                  guestAgeType === 1
+                    ? "Select or type guest name"
+                    : "Type child name"
+                }
                 style={{ width: guestAgeType === 1 ? "75%" : "100%" }}
                 filterOption={(inputValue, option) =>
                   option?.label
@@ -506,7 +484,7 @@ const GuestForm = ({
                     onKeyPress={(e) => {
                       if (
                         !/[0-9]/.test(e.key) &&
-                        !(e.key === "+" && value.length === 0)
+                        !(e.key === "+" && e.currentTarget.value.length === 0)
                       ) {
                         e.preventDefault();
                       }
@@ -521,7 +499,7 @@ const GuestForm = ({
                     onKeyPress={(e) => {
                       if (
                         !/[0-9]/.test(e.key) &&
-                        !(e.key === "+" && value.length === 0)
+                        !(e.key === "+" && e.currentTarget.value.length === 0)
                       ) {
                         e.preventDefault();
                       }
@@ -575,7 +553,7 @@ const GuestForm = ({
                       className="w-full"
                       showSearch
                       disabled={!watchedSrNo}
-                      placeholder="Select Twonship"
+                      placeholder="Select Township"
                     />
                   )}
                 </Form.Item>
@@ -670,7 +648,6 @@ const GuestForm = ({
           </>
         )}
 
-        {/* commom */}
         <Form.Item
           label="Gender"
           name="gender"
