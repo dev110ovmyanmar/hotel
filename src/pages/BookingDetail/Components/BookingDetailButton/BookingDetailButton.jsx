@@ -1,5 +1,3 @@
-import { PlusOutlined } from "@ant-design/icons";
-import { IoPrintOutline } from "react-icons/io5";
 import React, { useState } from "react";
 import { Button, Drawer, Form, Select } from "antd";
 import AmendBookingForm from "../BookingDetailForms/AmendBookingForm";
@@ -8,17 +6,39 @@ import OvertimeChargeForm from "../BookingDetailForms/OvertimeChargeForm";
 import AddReundForm from "../BookingDetailForms/AddRefundForm";
 import RoomMoveForm from "../BookingDetailForms/RoomMoveForm";
 import AmendStayForm from "../BookingDetailForms/AmendStayForm";
-import AddPaymentForm from "../BookingDetailForms/AddPaymentForm";
+import AddDepoistForm from "../BookingDetailForms/AddDepoistForm";
 import {
   button_config,
   status_actions,
 } from "./../../../../component/BookingActions/BookingActions";
 import ReservationNoteForm from "../BookingDetailForms/ReservationNoteForm";
+import { reservationMeta } from "../../../../api/reservationSectionApi";
+import useApiQuery from "../../../../hooks/useApiQuery";
+import { queryClient } from "../../../../app/queryClient";
 
 const BookingDetailButton = ({ data }) => {
   const reservation = data?.reservationRoom;
   const status = reservation?.roomStatus?.code?.toUpperCase();
   const actions = status_actions[status] || [];
+
+  const { data: reservationMetaData } = useApiQuery({
+    fetchQueryName: "reservation-meta",
+    fetchQueryFunction: reservationMeta,
+    params: {
+      uuid: data?.reservation?.uuid
+    }
+  })
+
+  const initData = queryClient.getQueryData(["initData", "authenticated"]);
+
+  const providerTypes = initData?.statuses.provider_type;
+
+  const paymentMethods = reservationMetaData?.payment_methods || [];
+  const guests = reservationMetaData?.guests || [];
+  const folios = reservationMetaData?.folios || [];
+  const paymentStatuses = initData?.statuses?.payment_status;
+  const paymentCompletedStatus = paymentStatuses.find((item) => item?.code == "completed");
+  console.log('paymentCompletedStatus', paymentCompletedStatus);
 
   const [form] = Form.useForm();
   const [open, setOpen] = useState(false);
@@ -40,7 +60,7 @@ const BookingDetailButton = ({ data }) => {
         setAmendOpen(true);
         break;
 
-      case "addPayment":
+      case "addDeposit":
         setAddPaymentOpen(true);
         break;
 
@@ -109,16 +129,24 @@ const BookingDetailButton = ({ data }) => {
         reservationId={data?.reservationNo}
       />
 
-      <AddPaymentForm
+      <AddDepoistForm
         open={addPaymentOpen}
         onClose={() => setAddPaymentOpen(false)}
-        reservationId={data?.reservationNo}
+        bookingDetails={data}
+        providerTypes={providerTypes}
+        paymentMethodsData={paymentMethods}
+        paymentCompletedStatus={paymentCompletedStatus}
+        guests={guests}
       />
 
       <AddReundForm
         open={refundOpen}
         onClose={() => setRefundOpen(false)}
-        reservationId={data?.reservationNo}
+        bookingDetails={data}
+        providerTypes={providerTypes}
+        paymentMethodsData={paymentMethods}
+        paymentCompletedStatus={paymentCompletedStatus}
+        guests={guests}
       />
 
       <AmendStayForm
