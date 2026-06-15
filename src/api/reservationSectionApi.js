@@ -39,7 +39,7 @@ export const reservationList = async (params) => {
 };
 
 export const reservationDetails = async (params) => {
-  console.log(params,"params")
+  console.log(params, "params")
   const { data } = await apiClient.get("/reservation", { params });
   return data.response;
 };
@@ -154,3 +154,16 @@ export const updateServiceAddon = async (params) => {
   const { data } = await apiClient.put("/reservations-addon/update", params);
   return data.response;
 };
+
+// Folio-Payment/Deposit
+export const createFolioPaymentDeposit = async (params) => {
+  const { data } = await apiClient.post("folio-payment/deposit", params);
+  return data.response;
+}
+
+// Folio-Payment/Refund
+export const createFolioPaymentRefund = async (params) => {
+  const { data } = await apiClient.post("folio-payment/refund", params);
+  return data.response;
+}
+
