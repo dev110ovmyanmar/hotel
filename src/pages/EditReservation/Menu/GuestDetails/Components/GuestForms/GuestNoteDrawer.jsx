@@ -32,7 +32,6 @@ const GuestNoteDrawer = ({
   }, [open, selectedData, form]);
 
   const onFinish = (values) => {
-    console.log("Saving Guest Notes:", values.guestNotes);
     onClose();
     if (onSuccess) onSuccess();
   };

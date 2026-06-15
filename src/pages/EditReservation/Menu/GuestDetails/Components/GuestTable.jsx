@@ -28,7 +28,9 @@ const GuestTable = ({
   const [uploadOpen, setUploadOpen] = useState(false);
   const [noteOpen, setNoteOpen] = useState(false);
 
-  const statusCode = reservationUuid?.reservationStatus?.code?.toLowerCase();
+  const statusCode = Array.isArray(reservationUuid)
+    ? reservationUuid[0]?.reservationRoom?.roomStatus?.code?.toLowerCase()
+    : undefined;
 
   const baseColumns = [
     { title: "ID", dataIndex: "id", key: "id", width: 70 },
@@ -47,10 +49,10 @@ const GuestTable = ({
         const checkoutDate = record?.reservationRoom?.checkoutDate;
 
         const formattedCheckin = checkinDate
-          ? dayjs(checkinDate).format("DD/MM/YYYY")
+          ? dayjs(checkinDate).format("YYYY-MM-DD")
           : "";
         const formattedCheckout = checkoutDate
-          ? dayjs(checkoutDate).format("DD/MM/YYYY")
+          ? dayjs(checkoutDate).format("YYYY-MM-DD")
           : "";
 
         if (!roomNo) return "-";

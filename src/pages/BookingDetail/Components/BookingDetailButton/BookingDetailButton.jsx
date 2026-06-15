@@ -94,12 +94,14 @@ const BookingDetailButton = ({ data }) => {
         })}
       </div>
 
-      <ChangeStatusForm
-        open={open}
-        onClose={() => setOpen(false)}
-        reservationId={data?.reservationNo}
-        reservationDetails={data}
-      />
+      {open && (
+        <ChangeStatusForm
+          open={open}
+          onClose={() => setOpen(false)}
+          reservationId={data?.reservationNo}
+          reservationDetails={data}
+        />
+      )}
 
       <AmendBookingForm
         open={amendOpen}

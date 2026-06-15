@@ -38,6 +38,7 @@ const GuestList = () => {
         perPage,
       },
       keyword,
+      // reservation: { uuid },
       reservationRoom: { uuid },
     },
   });
@@ -53,19 +54,13 @@ const GuestList = () => {
   return (
     <div className="w-full px-6 py-2">
       <ReservationHeader data={data ?? {}} />
-      <ReservationMenu data={data}/>
+      <ReservationMenu data={data} />
 
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
         <ReservationListHeader
           reservationId={data?.reservation?.reservationNo}
           onAddreservation={handleAddGuest}
-          addButtonText={
-            ["pending", "confirmed", "booked", "checked_in"].includes(
-              data?.reservation?.reservationStatus?.code?.toLowerCase(),
-            )
-              ? "Add New Guest"
-              : null
-          }
+          addButtonText={null}
           onSearch={setKeyword}
         />
       </div>
@@ -78,7 +73,7 @@ const GuestList = () => {
         changePage={(page) => setPage(page)}
         changePerPage={(perPage) => setPerPage(perPage)}
         loading={isLoading}
-        reservationUuid={reservationInfo}
+        reservationUuid={data?.data}
       />
 
       {drawerOpen && (
