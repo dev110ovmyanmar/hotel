@@ -1,0 +1,184 @@
+import React, { useState } from 'react';
+import { Modal, DatePicker, Form, Input, Descriptions, Badge, Button, Divider } from 'antd';
+import dayjs from 'dayjs';
+import { ArrowRightOutlined, CheckCircleOutlined } from '@ant-design/icons';
+
+export default function DateChangeModal({
+    isOpen,
+    onClose,
+    record,
+}) {
+    const [form] = Form.useForm();
+
+    // Control screen state: 'form' or 'summary'
+    const [currentStep, setCurrentStep] = useState('form');
+    const [pendingValues, setPendingValues] = useState(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    // Deep parsing row record metadata structures
+    const reservationNo = record?.reservation?.reservationNo || `ID-${record?.id}`;
+    const guestName = record?.guest?.name || record?.reservation?.guest?.name || 'Unknown Guest';
+
+    // Original Values parsed safely into dayjs instances
+    const originalCheckin = record?.checkinDate ? dayjs(record.checkinDate) : dayjs();
+    const originalCheckout = record?.checkoutDate ? dayjs(record.checkoutDate) : dayjs();
+    const originalReason = record?.reservation?.reason;
+
+    // Fallback calculation directly uses the item's baseline night state
+    const originalNights = record?.totalNight ?? originalCheckout.diff(originalCheckin, 'day');
+
+    // Step 1: Validate form entry and generate the summary preview
+    const handleProceedToSummary = async () => {
+        try {
+            const values = await form.validateFields();
+            setPendingValues(values);
+            setCurrentStep('summary');
+        } catch (err) {
+            console.error("Validation failed:", err);
+        }
+    };
+
+    // Step 2: Final API Save Execution
+    const handleFinalCommit = async () => {
+        setIsSubmitting(true);
+        try {
+            // Structuring final API request body values
+            const payload = {
+                room_uuid: record?.uuid,
+                reservation_uuid: record?.reservation?.uuid,
+                checkin_date: pendingValues.checkin.format('YYYY-MM-DD'),
+                checkout_date: pendingValues.checkout.format('YYYY-MM-DD'),
+                reason: pendingValues.reason
+            };
+
+            // Clean up states and exit
+            handleCloseReset();
+        } catch (error) {
+            console.error("API error applying changes:", error);
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    const handleCloseReset = () => {
+        form.resetFields();
+        setCurrentStep('form');
+        setPendingValues(null);
+        onClose();
+    };
+
+    // Calculate new stats if values exist
+    const newNights = pendingValues
+        ? pendingValues.checkout.diff(pendingValues.checkin, 'day')
+        : 0;
+
+    return (
+        <Modal
+            title={
+                currentStep === 'form'
+                    ? "Modify Stay Schedules"
+                    : <span><CheckCircleOutlined style={{ color: '#52c41a' }} /> Review Summary of Changes</span>
+            }
+            open={isOpen}
+            onCancel={handleCloseReset}
+            destroyOnClose
+            width={currentStep === 'form' ? 520 : 650}
+            footer={
+                currentStep === 'form' ? [
+                    <Button key="back" onClick={handleCloseReset}>Cancel</Button>,
+                    <Button key="submit" type="primary" onClick={handleProceedToSummary}>Review Changes</Button>
+                ] : [
+                    <Button key="back-to-form" disabled={isSubmitting} onClick={() => setCurrentStep('form')}>Modify Selection</Button>,
+                    <Button key="confirm" type="primary" loading={isSubmitting} onClick={handleFinalCommit}>Confirm & Save Changes</Button>
+                ]
+            }
+        >
+            {/* Context header string linked to your JSON payload structure */}
+            <div style={{ marginBottom: 16, color: '#64748b', fontSize: '13px', fontWeight: 500 }}>
+                {reservationNo} — <span style={{ color: '#1e293b' }}>{guestName}</span>
+            </div>
+
+            <Divider style={{ margin: '12px 0' }} />
+
+            {/* --- STEP 1: DURATION SELECTION FORM --- */}
+            {currentStep === 'form' && (
+                <Form
+                    form={form}
+                    layout="vertical"
+                    initialValues={{
+                        checkin: originalCheckin,
+                        checkout: originalCheckout,
+                        reason: originalReason,
+                    }}
+                >
+                    <div style={{ display: 'flex', gap: '16px' }}>
+                        <Form.Item name="checkin" label="New Check-In Date" style={{ flex: 1 }} rules={[{ required: true, message: 'Select check-in' }]}>
+                            <DatePicker style={{ width: '100%' }} format="DD/MM/YYYY" />
+                        </Form.Item>
+
+                        <Form.Item name="checkout" label="New Check-Out Date" style={{ flex: 1 }} rules={[{ required: true, message: 'Select check-out' }]}>
+                            <DatePicker style={{ width: '100%' }} format="DD/MM/YYYY" />
+                        </Form.Item>
+                    </div>
+
+                    <Form.Item name="reason" label="Reason For Schedule Disruption" rules={[{ required: true, message: 'Please provide an audit trail reason.' }]}>
+                        <Input.TextArea placeholder="Provide detailed explanation for tracking logs..." rows={3} />
+                    </Form.Item>
+                </Form>
+            )}
+
+            {/* --- STEP 2: METRIC COMPARISON SUMMARY --- */}
+            {currentStep === 'summary' && pendingValues && (
+                <div className="summary-container" style={{ animation: 'fadeIn 0.2s ease-in-out' }}>
+                    <p style={{ color: '#475569', marginBottom: '20px' }}>
+                        Please confirm the adjustments below before applying changes to the dynamic room ledger grid.
+                    </p>
+
+                    <Descriptions title="Timeline Matrix Adjustments" bordered column={1} size="small">
+                        <Descriptions.Item label="Check-In Window">
+                            <span style={{ color: '#94a3b8', textDecoration: 'line-through' }}>
+                                {originalCheckin.format('DD MMM YYYY')}
+                            </span>
+                            <ArrowRightOutlined style={{ margin: '0 10px', color: '#1677ff' }} />
+                            <strong style={{ color: '#1e293b' }}>
+                                {pendingValues.checkin.format('DD MMM YYYY')}
+                            </strong>
+                        </Descriptions.Item>
+
+                        <Descriptions.Item label="Check-Out Window">
+                            <span style={{ color: '#94a3b8', textDecoration: 'line-through' }}>
+                                {originalCheckout.format('DD MMM YYYY')}
+                            </span>
+                            <ArrowRightOutlined style={{ margin: '0 10px', color: '#1677ff' }} />
+                            <strong style={{ color: '#1e293b' }}>
+                                {pendingValues.checkout.format('DD MMM YYYY')}
+                            </strong>
+                        </Descriptions.Item>
+
+                        <Descriptions.Item label="Total Night Allocations">
+                            <Badge count={`${originalNights} Nights`} color="#94a3b8" />
+                            <ArrowRightOutlined style={{ margin: '0 10px', color: '#1677ff' }} />
+                            <Badge
+                                count={`${newNights} Nights`}
+                                color={newNights !== originalNights ? "#edf2f7" : "#cbd5e1"}
+                                style={{
+                                    color: newNights > originalNights ? '#52c41a' : newNights < originalNights ? '#f5222d' : '#1e293b',
+                                    fontWeight: 'bold'
+                                }}
+                            />
+                            <span style={{ fontSize: '12px', marginLeft: '10px', color: '#64748b' }}>
+                                ({newNights - originalNights >= 0 ? `+${newNights - originalNights}` : `${newNights - originalNights}`} Nights variance)
+                            </span>
+                        </Descriptions.Item>
+
+                        <Descriptions.Item label="Audit System Notes">
+                            <span style={{ fontStyle: 'italic', color: '#475569' }}>
+                                "{pendingValues.reason}"
+                            </span>
+                        </Descriptions.Item>
+                    </Descriptions>
+                </div>
+            )}
+        </Modal>
+    );
+}
