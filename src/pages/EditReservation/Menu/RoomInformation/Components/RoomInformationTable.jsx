@@ -28,12 +28,12 @@
 // import { queryClient } from "../../../../../app/queryClient";
 
 // // Split Modal Component Import
-// // import DateChangeModal from "./RoomAmendmentModals/DateChangeModals";
+// import DateChangeModal from "./RoomAmendmentModals/DateChangeModals";
 // import StayExtensionModal from "./RoomAmendmentModals/StayExtensionModal";
 // import StayReductionModal from "./RoomAmendmentModals/StayReductionModal";
 // import GuestForm from "../../GuestDetails/Components/GuestForms/GuestForm";
 // import RoomMoveModal from "./RoomAmendmentModals/RoomMoveModal";
-// // import UpdateRateModal from "./RoomAmendmentModals/UpdateRateModal";
+// import UpdateRateModal from "./RoomAmendmentModals/UpdateRateModal";
 // import { BsPeople } from "react-icons/bs";
 // import GuestListDrawer from "./RoomInformationForms/GuestListDrawer";
 
@@ -231,15 +231,15 @@
 //                     onClick: () => handleAction("date_change", record),
 //                   },
 //                   ...(record?.isExtend !== false ||
-//                   record?.roomStatus?.code === "checked_in"
+//                     record?.roomStatus?.code === "checked_in"
 //                     ? [
-//                         {
-//                           key: "stay_extension",
-//                           label: "Extend Stay",
-//                           icon: <PlusOutlined />,
-//                           onClick: () => handleAction("stay_extension", record),
-//                         },
-//                       ]
+//                       {
+//                         key: "stay_extension",
+//                         label: "Extend Stay",
+//                         icon: <PlusOutlined />,
+//                         onClick: () => handleAction("stay_extension", record),
+//                       },
+//                     ]
 //                     : []),
 //                   {
 //                     key: "stay_reduction",
@@ -261,7 +261,7 @@
 //                     icon: <MdOutlineMeetingRoom />,
 //                     className:
 //                       record?.roomStatus?.code === "checked_in" &&
-//                       record?.room !== null
+//                         record?.room !== null
 //                         ? "!text-black"
 //                         : "!text-gray-300 !cursor-not-allowed !pointer-events-none",
 //                     onClick: () => {
@@ -451,14 +451,14 @@
 //       {/* ============================================================== */}
 //       {/* Dynamic Conditional Mount Layer - Fast Local Record Binding    */}
 //       {/* ============================================================== */}
-//       {/* {activeModal === "date_change" && selectedData && (
+//       {activeModal === "date_change" && selectedData && (
 //         <DateChangeModal
 //           isOpen={true}
 //           onClose={closeModal}
 //           record={selectedData} // Direct row object mapping
 //           refetch={refetch}
 //         />
-//       )} */}
+//       )}
 
 //       {activeModal === "stay_extension" && selectedData && (
 //         <StayExtensionModal
@@ -479,17 +479,17 @@
 //         />
 //       )}
 
-//       {/* {
+//       {
 //         activeModal === "rate_change" && selectedData && (
 //           <UpdateRateModal
 //             isOpen={true}
 //             onClose={closeModal}
 //             record={selectedData}
-//             record={mockRecord}
+//             // record={mockRecord}
 //             rateChangeUuid={rateChangeUuid}
 //           />
 //         )
-//       } */}
+//       }
 
 //       {selectedData && (
 //         <RoomMoveModal
@@ -504,6 +504,7 @@
 // };
 
 // export default RoomInformationTable;
+
 import { useState } from "react";
 import { Dropdown, Table } from "antd";
 import dayjs from "dayjs";
@@ -534,7 +535,7 @@ import RoomAmend from "./RoomInformationForms/RoomAmend";
 import { queryClient } from "../../../../../app/queryClient";
 
 // Split Modal Component Import
-// import DateChangeModal from "./RoomAmendmentModals/DateChangeModals";
+import DateChangeModal from "./RoomAmendmentModals/DateChangeModals";
 import StayExtensionModal from "./RoomAmendmentModals/StayExtensionModal";
 import StayReductionModal from "./RoomAmendmentModals/StayReductionModal";
 import GuestForm from "../../GuestDetails/Components/GuestForms/GuestForm";
@@ -542,7 +543,8 @@ import { BsPeople, BsPeopleFill } from "react-icons/bs";
 import GuestListDrawer from "./RoomInformationForms/GuestListDrawer";
 import RoomMoveModal from "./RoomAmendmentModals/RoomMoveModal";
 
-// import UpdateRateModal from "./RoomAmendmentModals/UpdateRateModal";
+import UpdateRateModal from "./RoomAmendmentModals/UpdateRateModal";
+import AddExtraBedModal from "./RoomAmendmentModals/AddExtraBedModal";
 
 const RoomInformationTable = ({
   data,
@@ -553,7 +555,6 @@ const RoomInformationTable = ({
   changePage,
   changePerPage,
   reservationUuid,
-  // stayExtensionUuid,
 }) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [guestOpen, setGuestOpen] = useState(false);
@@ -584,8 +585,10 @@ const RoomInformationTable = ({
   const rateChangeUuid = rateChange?.uuid;
 
   const roomMove = amendmentType?.find((item) => item.code === "room_move");
-
   const roomMoveUuid = roomMove?.uuid;
+
+  const extraBed = amendmentType?.find((item) => item.code === "extra_bed_add")
+  const extraBedAmendmentUuid = extraBed?.uuid;
 
   const handleAction = (key, record) => {
     setSelectedData(record);
@@ -742,15 +745,15 @@ const RoomInformationTable = ({
                     onClick: () => handleAction("date_change", record),
                   },
                   ...(record?.isExtend !== false ||
-                  record?.roomStatus?.code === "checked_in"
+                    record?.roomStatus?.code === "checked_in"
                     ? [
-                        {
-                          key: "stay_extension",
-                          label: "Extend Stay",
-                          icon: <PlusOutlined />,
-                          onClick: () => handleAction("stay_extension", record),
-                        },
-                      ]
+                      {
+                        key: "stay_extension",
+                        label: "Extend Stay",
+                        icon: <PlusOutlined />,
+                        onClick: () => handleAction("stay_extension", record),
+                      },
+                    ]
                     : []),
                   {
                     key: "stay_reduction",
@@ -772,7 +775,7 @@ const RoomInformationTable = ({
                     icon: <MdOutlineMeetingRoom />,
                     className:
                       record?.roomStatus?.code === "checked_in" &&
-                      record?.room !== null
+                        record?.room !== null
                         ? "!text-black"
                         : "!text-gray-300 !cursor-not-allowed !pointer-events-none",
                     onClick: () => {
@@ -964,14 +967,14 @@ const RoomInformationTable = ({
       {/* ============================================================== */}
       {/* Dynamic Conditional Mount Layer - Fast Local Record Binding    */}
       {/* ============================================================== */}
-      {/* {activeModal === "date_change" && selectedData && (
+      {activeModal === "date_change" && selectedData && (
         <DateChangeModal
           isOpen={true}
           onClose={closeModal}
           record={selectedData} // Direct row object mapping
           refetch={refetch}
         />
-      )} */}
+      )}
 
       {activeModal === "stay_extension" && selectedData && (
         <StayExtensionModal
@@ -992,17 +995,17 @@ const RoomInformationTable = ({
         />
       )}
 
-      {/* {
+      {
         activeModal === "rate_change" && selectedData && (
           <UpdateRateModal
             isOpen={true}
             onClose={closeModal}
             record={selectedData}
-            record={mockRecord}
+            // record={mockRecord}
             rateChangeUuid={rateChangeUuid}
           />
         )
-      } */}
+      }
       {selectedData && (
         <RoomMoveModal
           isOpen={roomMoveOpen}
@@ -1011,6 +1014,17 @@ const RoomInformationTable = ({
           roomMoveUuid={roomMoveUuid}
         />
       )}
+
+      {
+        selectedData && (
+          <AddExtraBedModal
+            isOpen={true}
+            onClose={closeModal}
+            record={selectedData}
+            extraBedAmendmentUuid={extraBedAmendmentUuid}
+          />
+        )
+      }
     </div>
   );
 };
