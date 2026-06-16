@@ -43,7 +43,6 @@ const GuestForm = ({
   reservationUuid,
   roomuuid,
 }) => {
-
   const uuid = reservationUuid?.uuid;
   const [form] = Form.useForm();
   const { hasPermission } = usePermission();
@@ -280,9 +279,9 @@ const GuestForm = ({
       onClose={handleClose}
       width={600}
       title={
-        <div className="flex justify-between items-center w-full pr-4">
+        <div className="flex justify-between items-center w-full">
           <span className="text-lg font-semibold">
-            {isView ? "Guest Details" : isEdit ? "Edit Guest" : "Create Guest"}
+            {isView ? "Guest Details" : isAdd ? "Create Guest" : "Edit Guest"}
           </span>
 
           {isView ? (

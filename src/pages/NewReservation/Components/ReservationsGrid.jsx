@@ -17,8 +17,8 @@ import {
   EditOutlined,
   PrinterOutlined,
 } from "@ant-design/icons";
-import { FaChild, FaMoon } from "react-icons/fa";
-import { IoPeopleSharp } from "react-icons/io5";
+import { FaChild, FaGift, FaMoon } from "react-icons/fa";
+import { IoCalendarOutline, IoPeopleSharp } from "react-icons/io5";
 import PriceTag from "../../../component/PriceTag/PriceTag";
 import ReservationStatusColor from "./../../../component/ReservationStatusColor/ReservationStatusColor";
 import dayjs from "dayjs";
@@ -51,8 +51,9 @@ const ReservationsGrid = ({
         {data.map((item) => (
           <Col xs={24} sm={12} lg={8} key={item.id}>
             <Card
+              className="custom-blue-header"
               title={
-                <span style={{ fontWeight: 600, textTransform: "capitalize" }}>
+                <span className="font-semibold capitalize text-[#ffffff]">
                   {item?.guest?.name}
                 </span>
               }
@@ -79,7 +80,14 @@ const ReservationsGrid = ({
                   }}
                   trigger={["click"]}
                 >
-                  <Button type="text" icon={<MoreOutlined />} />
+                  <Button
+                    type="text"
+                    icon={
+                      <MoreOutlined
+                        style={{ color: "#ffffff", fontSize: "25px" }}
+                      />
+                    }
+                  />
                 </Dropdown>
               }
             >
@@ -97,7 +105,7 @@ const ReservationsGrid = ({
                         gap: "6px",
                       }}
                     >
-                      <PhoneOutlined /> {item?.guest?.phone}
+                      <IoCalendarOutline /> {item?.ratePlan?.name}
                     </span>
                     <span
                       style={{
@@ -171,27 +179,30 @@ const ReservationsGrid = ({
                     <span style={{ color: "#8c8c8c" }}>Res No:</span>
                     <span>{item?.reservation?.reservationNo}</span>
                   </div>
+
                   <div
                     style={{ display: "flex", justifyContent: "space-between" }}
                   >
-                    <span style={{ color: "#8c8c8c" }}>Booking Date</span>
-                    <span>
-                      {item.createdAt
-                        ? dayjs(item.createdAt).format("DD/MM/YYYY")
-                        : "-"}
-                    </span>
+                    <span style={{ color: "#8c8c8c" }}>Room Type:</span>
+                    <span>{item?.roomType?.name}</span>
                   </div>
                   <div
                     style={{ display: "flex", justifyContent: "space-between" }}
                   >
-                    <span style={{ color: "#8c8c8c" }}>Room No</span>
+                    <span style={{ color: "#8c8c8c" }}>Room No:</span>
                     <span>{item?.room?.roomNo}</span>
                   </div>
                   <div
                     style={{ display: "flex", justifyContent: "space-between" }}
                   >
+                    <span style={{ color: "#8c8c8c" }}>Contact No:</span>
+                    <span>{item?.guest?.phone}</span>
+                  </div>
+                  <div
+                    style={{ display: "flex", justifyContent: "space-between" }}
+                  >
                     <span style={{ color: "#8c8c8c", borderRadius: "5px" }}>
-                      Status
+                      Status:
                     </span>
 
                     <ReservationStatusColor status={item?.roomStatus} />
