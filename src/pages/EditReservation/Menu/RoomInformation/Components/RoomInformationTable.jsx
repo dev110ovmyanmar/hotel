@@ -53,7 +53,7 @@ const RoomInformationTable = ({
   const [assignRoomOpen, setAssignRoomOpen] = useState(false);
   const [noteOpen, setNoteOpen] = useState(false);
   const [roomAmend, setRoomAmend] = useState(false);
-  const [guestFormMode, setGuestFormMode] = useState("add"); 
+  const [guestFormMode, setGuestFormMode] = useState("add");
   const [selectedGuestData, setSelectedGuestData] = useState(null); // This is the Guest dat
   const [uploadOpen, setUploadOpen] = useState(false);
   const [selectedUploadRow, setSelectedUploadRow] = useState(null);
@@ -107,17 +107,17 @@ const RoomInformationTable = ({
         const isRoomNull = !text;
 
         const statusCode = record?.roomStatus?.code;
+        const validStatuses = ["confirmed", "checked_in"];
 
-        const validStatuses = ["confirmed", "checked-in"];
         const isValidStatus = validStatuses.includes(statusCode);
-
-        const isClickable = isRoomNull && isValidStatus;
+        const isClickable =
+          isRoomNull && isValidStatus && record?.amendStatus;
 
         return (
           <span
             style={{
               color: isRoomNull
-                ? isValidStatus
+                ? isClickable
                   ? "#1890ff"
                   : "#bfbfbf"
                 : "inherit",
@@ -169,11 +169,9 @@ const RoomInformationTable = ({
       title: "Action",
       width: 80,
       render: (_, record) => {
-        // Safe check for the status code from record
         const rawCode = record?.roomStatus?.code || "";
         const statusCode = rawCode.toLowerCase().replace("-", "_");
 
-        // Disable action if status is cancelled or no show
         const isDisabled =
           statusCode === "cancelled" || statusCode === "no_show";
 
@@ -183,7 +181,7 @@ const RoomInformationTable = ({
               style={{
                 fontSize: "30px",
                 padding: "4px",
-                color: "#bfbfbf", // Greyed-out look
+                color: "#bfbfbf",
                 cursor: "not-allowed",
               }}
             />
@@ -219,134 +217,140 @@ const RoomInformationTable = ({
               setGuestListOpen(true);
             },
           },
-          { type: "divider" },
-          {
-            key: "modify_group",
-            label: "Amend Reservation",
-            icon: <EditOutlined />,
-            children: [
-              {
-                key: "col_date",
-                type: "group",
-                label: "DATE CHANGES",
-                children: [
-                  {
-                    key: "date_change",
-                    label: "Change CI/CO Dates",
-                    icon: <CalendarOutlined />,
-                    onClick: () => handleAction("date_change", record),
-                  },
-                  ...(record?.isExtend !== false ||
-                  record?.roomStatus?.code === "checked_in"
-                    ? [
-                        {
-                          key: "stay_extension",
-                          label: "Extend Stay",
-                          icon: <PlusOutlined />,
-                          onClick: () => handleAction("stay_extension", record),
-                        },
-                      ]
-                    : []),
-                  {
-                    key: "stay_reduction",
-                    label: "Shorten Stay",
-                    icon: <MinusOutlined />,
-                    onClick: () => handleAction("stay_reduction", record),
-                  },
-                ],
-              },
-              { type: "divider" },
-              {
-                key: "col_room",
-                type: "group",
-                label: "ROOM CHANGES",
-                children: [
-                  {
-                    key: "room_move",
-                    label: "Change Room",
-                    icon: <MdOutlineMeetingRoom />,
-                    className:
-                      record?.roomStatus?.code === "checked_in" &&
-                      record?.room !== null
-                        ? "!text-black"
-                        : "!text-gray-300 !cursor-not-allowed !pointer-events-none",
-                    onClick: () => {
-                      handleAction("room_move", record);
-                      setRoomMoveOpen(true);
-                    },
-                  },
-                  {
-                    key: "room_upgrade",
-                    label: "Upgrade Room",
-                    icon: <ArrowUpOutlined />,
-                    onClick: () => handleAction("room_upgrade", record),
-                  },
-                  {
-                    key: "room_downgraden",
-                    label: "Downgrade Room",
-                    icon: <ArrowDownOutlined />,
-                    onClick: () => handleAction("room_downgraden", record),
-                  },
-                  {
-                    key: "add_room",
-                    label: "Add Room",
-                    icon: <PlusOutlined />,
-                    onClick: () => handleAction("add_room", record),
-                  },
-                  {
-                    key: "remove_room",
-                    label: "Remove Room",
-                    icon: <MinusOutlined />,
-                    onClick: () => handleAction("remove_room", record),
-                  },
-                ],
-              },
-              { type: "divider" },
-              {
-                key: "col_rate",
-                type: "group",
-                label: "RATE / PRICE CHANGES",
-                children: [
-                  {
-                    key: "rate_change",
-                    label: "Update Rates",
-                    icon: <DollarOutlined />,
-                    onClick: () => handleAction("rate_change", record),
-                  },
-                ],
-              },
-              { type: "divider" },
-              {
-                key: "col_guest",
-                type: "group",
-                label: "GUEST / OCCUPANCY",
-                children: [
-                  {
-                    key: "occupancy_change",
-                    label: "Update Room Guests",
-                    icon: <UserOutlined />,
-                    onClick: () => {
-                      setSelectedData(record);
-                      setGuestOpen(true);
-                    },
-                  },
-                  {
-                    key: "extra_bed_add",
-                    label: "Add Extra Bed",
-                    icon: <PlusOutlined />,
-                    onClick: () => handleAction("extra_bed_add", record),
-                  },
-                  {
-                    key: "extra_bed_remove",
-                    label: "Remove Extra Bed",
-                    icon: <MinusOutlined />,
-                    onClick: () => handleAction("extra_bed_remove", record),
-                  },
-                ],
-              },
-            ],
-          },
         ];
+
+        if (record?.amendStatus) {
+          menuItems.push(
+            { type: "divider" },
+            {
+              key: "modify_group",
+              label: "Amend Reservation",
+              icon: <EditOutlined />,
+              children: [
+                {
+                  key: "col_date",
+                  type: "group",
+                  label: "DATE CHANGES",
+                  children: [
+                    {
+                      key: "date_change",
+                      label: "Change CI/CO Dates",
+                      icon: <CalendarOutlined />,
+                      onClick: () => handleAction("date_change", record),
+                    },
+                    ...(record?.isExtend !== false ||
+                    record?.roomStatus?.code === "checked_in"
+                      ? [
+                          {
+                            key: "stay_extension",
+                            label: "Extend Stay",
+                            icon: <PlusOutlined />,
+                            onClick: () =>
+                              handleAction("stay_extension", record),
+                          },
+                        ]
+                      : []),
+                    {
+                      key: "stay_reduction",
+                      label: "Shorten Stay",
+                      icon: <MinusOutlined />,
+                      onClick: () => handleAction("stay_reduction", record),
+                    },
+                  ],
+                },
+                { type: "divider" },
+                {
+                  key: "col_room",
+                  type: "group",
+                  label: "ROOM CHANGES",
+                  children: [
+                    {
+                      key: "room_move",
+                      label: "Change Room",
+                      icon: <MdOutlineMeetingRoom />,
+                      className:
+                        record?.roomStatus?.code === "checked_in" &&
+                        record?.room !== null
+                          ? "!text-black"
+                          : "!text-gray-300 !cursor-not-allowed !pointer-events-none",
+                      onClick: () => {
+                        handleAction("room_move", record);
+                        setRoomMoveOpen(true);
+                      },
+                    },
+                    {
+                      key: "room_upgrade",
+                      label: "Upgrade Room",
+                      icon: <ArrowUpOutlined />,
+                      onClick: () => handleAction("room_upgrade", record),
+                    },
+                    {
+                      key: "room_downgraden",
+                      label: "Downgrade Room",
+                      icon: <ArrowDownOutlined />,
+                      onClick: () => handleAction("room_downgraden", record),
+                    },
+                    {
+                      key: "add_room",
+                      label: "Add Room",
+                      icon: <PlusOutlined />,
+                      onClick: () => handleAction("add_room", record),
+                    },
+                    {
+                      key: "remove_room",
+                      label: "Remove Room",
+                      icon: <MinusOutlined />,
+                      onClick: () => handleAction("remove_room", record),
+                    },
+                  ],
+                },
+                { type: "divider" },
+                {
+                  key: "col_rate",
+                  type: "group",
+                  label: "RATE / PRICE CHANGES",
+                  children: [
+                    {
+                      key: "rate_change",
+                      label: "Update Rates",
+                      icon: <DollarOutlined />,
+                      onClick: () => handleAction("rate_change", record),
+                    },
+                  ],
+                },
+                { type: "divider" },
+                {
+                  key: "col_guest",
+                  type: "group",
+                  label: "GUEST / OCCUPANCY",
+                  children: [
+                    {
+                      key: "occupancy_change",
+                      label: "Update Room Guests",
+                      icon: <UserOutlined />,
+                      onClick: () => {
+                        setSelectedData(record);
+                        setGuestOpen(true);
+                      },
+                    },
+                    {
+                      key: "extra_bed_add",
+                      label: "Add Extra Bed",
+                      icon: <PlusOutlined />,
+                      onClick: () => handleAction("extra_bed_add", record),
+                    },
+                    {
+                      key: "extra_bed_remove",
+                      label: "Remove Extra Bed",
+                      icon: <MinusOutlined />,
+                      onClick: () => handleAction("extra_bed_remove", record),
+                    },
+                  ],
+                },
+              ],
+            },
+          );
+        }
 
         return (
           <Dropdown
@@ -363,7 +367,6 @@ const RoomInformationTable = ({
       },
     },
   ];
-
   return (
     <div>
       <Table

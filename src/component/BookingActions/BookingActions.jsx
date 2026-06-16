@@ -19,9 +19,7 @@ export const button_config = {
     label: "Add Refund",
     icon: <PlusOutlined style={{ fontSize: "12px" }} />,
   },
-  amendStay: {
-    label: "Amend Stay",
-  },
+
   overtimeCharges: {
     label: "Overtime Charges",
   },
@@ -46,7 +44,6 @@ export const status_actions = {
   BOOKED: ["addNote"],
   CONFIRMED: ["overtimeCharges", "addRefund", "addNote", "addDeposit"],
   CHECKED_IN: [
-    "amendStay",
     "addPayment",
     "overtimeCharges",
     "addRefund",
