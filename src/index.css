@@ -198,6 +198,9 @@
   --ant-color-text-disabled: #000000;
   --ant-border-radius-lg: 5px;
 }
+.css-var-_r_0_.room-select {
+  --ant-line-width: 2px;
+}
 
 .ant-input-number-outlined {
   --ant-border-radius: 5px;
@@ -678,4 +681,13 @@ span .ant-upload {
 
 .active-reservation-row:hover td {
   background-color: #dbe8cd !important;
+}
+
+/* Your global.css or component.scss file */
+.ant-card.custom-blue-header {
+  --ant-card-header-bg: linear-gradient(
+    135deg,
+    #215282 0%,
+    #000b60 100%
+  ) !important;
 }

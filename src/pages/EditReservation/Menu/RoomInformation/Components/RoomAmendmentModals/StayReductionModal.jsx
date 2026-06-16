@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Modal, Form, Input, Descriptions, Button, Divider, Space } from 'antd';
 import dayjs from 'dayjs';
-import { ArrowRightOutlined, CheckCircleOutlined, PlusOutlined, MinusOutlined } from '@ant-design/icons';
+import { ArrowRightOutlined, CheckCircleOutlined, PlusOutlined, MinusOutlined, WarningOutlined } from '@ant-design/icons';
 import { createRoomAmendment } from '../../../../../../api/roomAmendmentApi';
 import { useApiMutation } from '../../../../../../hooks/useApiMutation';
 import Toast from '../../../../../../component/Toast/Toast';
@@ -10,7 +10,7 @@ export default function StayReductionModal({
     isOpen,
     onClose,
     record,
-    stayReductionUuid // Expecting the reduction configuration UUID here
+    stayReductionUuid
 }) {
     const [form] = Form.useForm();
 
@@ -32,10 +32,10 @@ export default function StayReductionModal({
     const originalCheckin = record?.checkinDate ? dayjs(record.checkinDate) : "";
     const originalCheckout = record?.checkoutDate ? dayjs(record.checkoutDate) : "";
 
-    // Fallback limit configuration to ensure we don't reduce the stay to <= 0 days
-    // const maxDaysToSubtract = record?.totalDates;
+    // Safely parse maxReduction to a number (fallback to 0 if undefined)
+    const maxReduction = record?.maxReduce !== undefined ? Number(record.maxReduce) : 0;
 
-    // Compute live mathematical timeline subtractions
+    // Compute live mathematical timeline subtractions safely
     const newCheckoutDate = originalCheckout.isValid() ? originalCheckout.subtract(daysToSubtract, 'day') : dayjs();
 
     // Step 1: Force field validation before pushing to screen state matrix
@@ -94,7 +94,7 @@ export default function StayReductionModal({
             title={
                 currentStep === 'form'
                     ? "Shorten Guest Stay Duration"
-                    : <span><CheckCircleOutlined style={{ color: '#faad14' }} /> Review Stay Reduction Summary</span>
+                    : <span className="flex items-center gap-2"><CheckCircleOutlined className="text-amber-500" /> Review Stay Reduction Summary</span>
             }
             open={isOpen}
             onCancel={handleCloseReset}
@@ -102,7 +102,15 @@ export default function StayReductionModal({
             footer={
                 currentStep === 'form' ? [
                     <Button key="back" onClick={handleCloseReset}>Cancel</Button>,
-                    <Button key="submit" type="primary" danger onClick={handleProceedToSummary}>Review Summary</Button>
+                    <Button
+                        key="submit"
+                        type="primary"
+                        danger
+                        onClick={handleProceedToSummary}
+                        disabled={maxReduction <= 0} // Blocks moving forward if reduction limit is 0
+                    >
+                        Review Summary
+                    </Button>
                 ] : [
                     <Button key="back-to-form" disabled={isSubmitting} onClick={() => setCurrentStep('form')}>Modify Reduction</Button>,
                     <Button key="confirm" type="primary" danger loading={isSubmitting} onClick={handleFinalCommit}>Confirm Reduction</Button>
@@ -110,83 +118,114 @@ export default function StayReductionModal({
             }
         >
             {/* Context Target Ribbon Header */}
-            <div style={{ marginBottom: 16, color: '#64748b', fontSize: '13px', fontWeight: 500 }}>
-                {reservationNo} — <span style={{ color: '#1e293b' }}>{guestName}</span>
+            <div className="mb-4 text-slate-500 text-sm font-medium">
+                {reservationNo} — <span className="text-slate-800">{guestName}</span>
             </div>
 
-            <Divider style={{ margin: '12px 0' }} />
+            <Divider className="my-3" />
 
             {/* --- STEP 1: INCREMENTOR INTERFACE --- */}
             {currentStep === 'form' && (
                 <Form form={form} layout="vertical">
-                    <div style={{ background: '#f8fafc', padding: '16px', borderRadius: '8px', marginBottom: '20px' }}>
-                        <label style={{ display: 'block', fontSize: '13px', fontWeight: 500, color: '#475569', marginBottom: '8px' }}>
-                            Reduce Stay Duration By
-                        </label>
 
-                        <Space size="middle" style={{ display: 'flex', alignItems: 'center' }}>
-                            <Button
-                                shape="circle"
-                                icon={<MinusOutlined />}
-                                onClick={() => setDaysToSubtract(prev => Math.max(1, prev - 1))}
-                                disabled={daysToSubtract <= 1}
-                            />
-                            <span style={{ fontSize: '20px', fontWeight: 'bold', minWidth: '30px', textAlign: 'center', display: 'inline-block' }}>
-                                {daysToSubtract}
-                            </span>
-
-                            <Button
-                                shape="circle"
-                                icon={<PlusOutlined />}
-                                onClick={() => setDaysToSubtract(prev => prev + 1)}
-                            />
-                            <span style={{ fontSize: '14px', color: '#64748b', fontWeight: 500 }}>
-                                Day(s) Less
-                            </span>
-                        </Space>
-
-                        <div style={{ marginTop: '16px', borderTop: '1px dashed #cbd5e1', paddingTop: '12px' }}>
-                            <div style={{ fontSize: '12px', color: '#64748b' }}>
-                                Current Checkout <strong>{originalCheckout.isValid() ? originalCheckout.format('DD MMM YYYY') : '-'}</strong>
-                            </div>
-                            <div style={{ fontSize: '13px', color: '#ff4d4f', marginTop: '4px' }}>
-                                New Checkout <strong>{newCheckoutDate.isValid() ? newCheckoutDate.format('DD MMM YYYY') : '-'}</strong>
+                    {/* HIGHLIGHT WARNING BANNER: Visible only when maxReduction is zero */}
+                    {maxReduction === 0 ? (
+                        <div className="bg-red-50 border border-red-200 p-4 rounded-lg mb-5 flex gap-3 items-start">
+                            <WarningOutlined className="text-red-500 text-base mt-0.5" />
+                            <div>
+                                <div className="font-semibold text-red-600 text-sm mb-0.5">
+                                    Reduction Limit Reached (0 Days Allowed)
+                                </div>
+                                <div className="text-xs text-neutral-500 leading-relaxed">
+                                    This stay cannot be shortened further because the maximum reduction allocation for this room is currently zero. This occurs when the reservation is already at its minimum required length of stay or checking out early is restricted.
+                                </div>
                             </div>
                         </div>
+                    ) : (
+                        // Standard Interactive Decrementer
+                        <div className="bg-slate-50 p-4 rounded-lg mb-5">
+                            <div className="flex justify-between items-center mb-2">
+                                <label className="block text-sm font-medium text-slate-600">
+                                    Reduce Stay Duration By
+                                </label>
+                                {/* MAX REDUCTION BADGE */}
+                                <span className="bg-amber-50 text-amber-700 text-xs font-semibold px-2.5 py-0.5 rounded-full border border-amber-100">
+                                    Max Reduction: {maxReduction} Day(s)
+                                </span>
+                            </div>
+
+                            <Space size="middle" className="flex items-center">
+                                <Button
+                                    shape="circle"
+                                    icon={<MinusOutlined />}
+                                    onClick={() => setDaysToSubtract(prev => Math.max(1, prev - 1))}
+                                    disabled={daysToSubtract <= 1}
+                                />
+                                <span className="text-xl font-bold min-w-[30px] text-center inline-block">
+                                    {daysToSubtract}
+                                </span>
+
+                                <Button
+                                    shape="circle"
+                                    icon={<PlusOutlined />}
+                                    onClick={() => setDaysToSubtract(prev => prev + 1)}
+                                    disabled={daysToSubtract >= maxReduction}
+                                />
+                                <span className="text-sm text-slate-500 font-medium">
+                                    Day(s) Less
+                                </span>
+                            </Space>
+                        </div>
+                    )}
+
+                    {/* Timeline Data Footer */}
+                    <div className="bg-slate-50 p-3 px-4 rounded-lg mb-5 border border-slate-200">
+                        <div className="text-xs text-slate-500">
+                            Current Checkout <strong className="text-slate-700">{originalCheckout.isValid() ? originalCheckout.format('DD MMM YYYY') : '-'}</strong>
+                        </div>
+                        {maxReduction !== 0 && (
+                            <div className="text-sm text-red-600 mt-1">
+                                New Checkout <strong className="text-red-700">{newCheckoutDate.isValid() ? newCheckoutDate.format('DD MMM YYYY') : '-'}</strong>
+                            </div>
+                        )}
                     </div>
 
                     <Form.Item
                         name="reason"
                         label="Reason for Stay Reduction"
-                        rules={[{ required: true, message: 'Please input a reason for stay reduction.' }]}
+                        rules={[{ required: maxReduction > 0, message: 'Please input a reason for stay reduction.' }]}
                     >
-                        <Input.TextArea placeholder="Provide business justification for early checkout / stay reduction..." rows={3} />
+                        <Input.TextArea
+                            placeholder={maxReduction === 0 ? "Stay reduction is currently unavailable." : "Provide business justification for early checkout / stay reduction..."}
+                            rows={3}
+                            disabled={maxReduction === 0}
+                        />
                     </Form.Item>
                 </Form>
             )}
 
             {/* --- STEP 2: METRIC COMPARISON SUMMARY --- */}
             {currentStep === 'summary' && pendingValues && (
-                <div style={{ animation: 'fadeIn 0.2s ease-in-out' }}>
+                <div className="animate-fadeIn">
                     <Descriptions title="" bordered column={1} size="small">
                         <Descriptions.Item label="Checkout Changes">
-                            <span style={{ color: '#94a3b8', textDecoration: 'line-through' }}>
+                            <span className="text-slate-400 line-through">
                                 {originalCheckout.isValid() ? originalCheckout.format('DD MMM YYYY') : '-'}
                             </span>
-                            <ArrowRightOutlined style={{ margin: '0 10px', color: '#ff4d4f' }} />
-                            <strong style={{ color: '#1e293b' }}>
+                            <ArrowRightOutlined className="mx-2.5 text-red-500" />
+                            <strong className="text-slate-800">
                                 {newCheckoutDate.isValid() ? newCheckoutDate.format('DD MMM YYYY') : '-'}
                             </strong>
                         </Descriptions.Item>
 
                         <Descriptions.Item label="Reduced Days">
-                            <span style={{ fontSize: '15px', marginLeft: '10px', color: '#ff4d4f', fontWeight: 500 }}>
+                            <span className="text-sm ml-2.5 text-red-500 font-medium">
                                 -{daysToSubtract} Day(s)
                             </span>
                         </Descriptions.Item>
 
                         <Descriptions.Item label="Reason">
-                            <span style={{ color: '#475569' }}>
+                            <span className="text-slate-600">
                                 {pendingValues?.reason}
                             </span>
                         </Descriptions.Item>

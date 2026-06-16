@@ -1,38 +1,134 @@
-import React, { useState } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import {
   Drawer,
   Form,
   Input,
-  InputNumber,
+  Row,
+  Col,
   Select,
-  Upload,
+  Radio,
+  Typography,
+  Card,
+  Divider,
+  Segmented,
 } from "antd";
 import FormButtons from "../../../../component/FormButtons/FormButtons";
-import FormItem from "antd/es/form/FormItem";
-import TextArea from "antd/es/input/TextArea";
-import { PlusOutlined } from "@ant-design/icons";
+import { useApiMutation } from "../../../../hooks/useApiMutation";
+import { createFolioPaymentRefund } from "../../../../api/reservationSectionApi";
+import Toast from "../../../../component/Toast/Toast";
 
-const AddReundForm = ({ open, onClose, reservationId }) => {
+const { Title, Text } = Typography;
+
+// Color Configuration Map for Segmented Tabs
+const CHANNEL_COLORS = {
+  all: { bg: "#f1f5f9", text: "#475569" },      // Slate
+  cash: { bg: "#dcfce7", text: "#15803d" },     // Emerald Green
+  card: { bg: "#dbeafe", text: "#1d4ed8" },     // Blue
+  wallet: { bg: "#fae8ff", text: "#a21caf" },   // Fuchsia/Purple
+  bank: { bg: "#fef9c3", text: "#a16207" },     // Yellow/Gold
+  ota: { bg: "#ffedd5", text: "#c2410c" },      // Orange
+};
+
+const AddRefundForm = ({
+  open,
+  onClose,
+  bookingDetails,
+  paymentMethodsData,
+  providerTypes,
+  guests,
+}) => {
   const [form] = Form.useForm();
-  const [imageUrl, setImageUrl] = useState();
 
-  const paymentMethod = Form.useWatch("paymentMethod", form);
+  // Track selected category filter by UUID state
+  const [selectedProviderUuid, setSelectedProviderUuid] = useState("all");
+
+  const selectedMethod = Form.useWatch("paymentMethod", form);
+
+  // Clear selections when form closes
+  useEffect(() => {
+    if (!open) {
+      setSelectedProviderUuid("all");
+    }
+  }, [open]);
+
+  // --- Transform providerTypes into Ant Design Segmented options ---
+  const segmentedOptions = useMemo(() => {
+    const baseOptions = Array.isArray(providerTypes)
+      ? providerTypes.map((type) => {
+        const normalizedName = type.name?.toLowerCase() || "";
+        const colorConfig = CHANNEL_COLORS[normalizedName];
+
+        return {
+          label: (
+            <span style={{ color: colorConfig ? colorConfig.text : "inherit", fontWeight: 500 }}>
+              {type.name}
+            </span>
+          ),
+          value: type.uuid,
+          style: colorConfig ? { backgroundColor: colorConfig.bg } : {},
+        };
+      })
+      : [];
+
+    return [
+      {
+        label: <span style={{ color: CHANNEL_COLORS.all.text, fontWeight: 500 }}>All Types</span>,
+        value: "all",
+        style: { backgroundColor: CHANNEL_COLORS.all.bg }
+      },
+      ...baseOptions
+    ];
+  }, [providerTypes]);
+
+  // --- Transform guests array into Select dropdown options ---
+  const guestOptions = useMemo(() => {
+    const guestsArray = Array.isArray(guests) ? guests : [];
+    return guestsArray.map((guest) => {
+      const titlePrefix = guest.title ? `${guest.title} ` : "";
+      const phoneSuffix = guest.phone ? ` (${guest.phone})` : "";
+
+      return {
+        label: `${titlePrefix}${guest.name}${phoneSuffix}`,
+        value: guest.uuid,
+      };
+    });
+  }, [guests]);
+
+  const methodsArray = Array.isArray(paymentMethodsData) ? paymentMethodsData : [];
+
+  const filteredMethods = useMemo(() => {
+    return methodsArray.filter((method) => {
+      if (selectedProviderUuid === "all") return true;
+      return method.type?.uuid === selectedProviderUuid;
+    });
+  }, [methodsArray, selectedProviderUuid]);
+
+  const { mutate: createFolioRefund } = useApiMutation({
+    mutationFn: createFolioPaymentRefund,
+    invalidateKeys: [["reservation-details"]],
+    options: {
+      onSuccess: () => {
+        Toast.success("Refund added successfully");
+        onClose();
+        form.resetFields();
+        setSelectedProviderUuid("all");
+      },
+      onError: () => {
+        Toast.error("Refund addition failed");
+      }
+    },
+  });
 
   const onFinish = (values) => {
-    console.log("Amend Booking Data:", {
-      reservationId,
-      ...values,
-    });
-    onClose();
-    form.resetFields();
+    const payload = {
+      reservation: { uuid: bookingDetails?.reservation?.uuid },
+      guest: { uuid: values.guest },
+      folio: { uuid: bookingDetails?.reservation?.parentFolio?.uuid },
+      paymentMethod: { uuid: values.paymentMethod },
+      amount: values.amount,
+    };
+    createFolioRefund(payload);
   };
-
-  const uploadButton = (
-    <button style={{ border: 0, background: "none" }} type="button">
-      <PlusOutlined />
-      <div style={{ marginTop: 8 }}>Upload</div>
-    </button>
-  );
 
   return (
     <Drawer
@@ -42,105 +138,134 @@ const AddReundForm = ({ open, onClose, reservationId }) => {
       destroyOnClose
       title={
         <div className="flex justify-between items-center">
-          <span>Add Refund</span>
+          <span className="font-semibold text-lg">Add Refund</span>
           <FormButtons onClick={() => form.submit()} />
         </div>
       }
     >
-      <Form layout="vertical" form={form} onFinish={onFinish}>
-        <div className="grid grid-cols-2 gap-4">
-          <Form.Item
-            label="Booking Total"
-            name="bookingTotal"
-            className="flex-1"
-          >
-            <InputNumber
-              className="!w-full"
-              min={1}
-              placeholder="Enter Base Price"
-              suffix="MMK"
-            />
-          </Form.Item>
-
-          <Form.Item
-            label="Payment Method"
-            name="paymentMethod"
-            className="flex-1"
-          >
-            <Select
-              placeholder="Select Payment Method"
-              style={{ width: "100%" }}
-              options={[
-                { value: "Cash", label: "Cash" },
-                { value: "Digital", label: "Digital" },
-              ]}
-            />
-          </Form.Item>
+      <Form
+        form={form}
+        layout="vertical"
+        onFinish={onFinish}
+      >
+        {/* --- FOLIO HEADER BAR --- */}
+        <div className="flex items-center justify-between bg-slate-50 border border-slate-200 rounded-xl p-3 mb-6">
+          <span className="text-slate-600 font-medium text-sm">Folio No</span>
+          <span className="text-slate-800 font-semibold text-base bg-white px-3 py-1 rounded-md shadow-sm border border-slate-100">
+            {bookingDetails?.reservation?.parentFolio?.folioNo || "N/A"}
+          </span>
         </div>
 
-    
-        {paymentMethod !== "Cash" && (
-          <div className="grid grid-cols-2 gap-4">
-            <Form.Item label="Bank" name="bank">
-              <Select
-                placeholder="Select Bank"
-                style={{ width: "100%" }}
-                options={[
-                  { value: "KBZ", label: "KBZ" },
-                  { value: "AYA", label: "AYA" },
-                  { value: "CB", label: "CB" },
-                ]}
-              />
-            </Form.Item>
+        {/* --- METHOD TITLE LABEL --- */}
+        <div className="flex items-center !mb-3">
+          <Title level={5} className="!mb-0 text-slate-700">Select Refund Method</Title>
+          <span className="text-red-500 ml-1 mt-1 font-bold">*</span>
+        </div>
 
-            <Form.Item label="Bank A/C" name="bankA/C" className="flex-1">
-              <Input className="w-full" placeholder="Enter Bank Account" />
+        {/* --- PROVIDER TYPES FILTER TABS --- */}
+        <div className="mb-5">
+          <Segmented
+            block
+            options={segmentedOptions}
+            value={selectedProviderUuid}
+            onChange={(value) => {
+              setSelectedProviderUuid(value);
+
+              // Direct synchronization check without rendering lifecycle delays
+              const liveFiltered = methodsArray.filter(m => value === "all" || m.type?.uuid === value);
+              const currentSelection = form.getFieldValue("paymentMethod");
+
+              if (!liveFiltered.some(m => m.uuid === currentSelection)) {
+                form.setFieldsValue({ paymentMethod: undefined });
+              }
+            }}
+            className="p-1 rounded-lg bg-slate-50/50 border border-slate-100"
+          />
+        </div>
+
+        {/* --- UNIFIED PAYMENT METHODS GRID --- */}
+        {filteredMethods.length > 0 ? (
+          <div className="mb-6">
+            <Form.Item name="paymentMethod" rules={[{ required: true, message: "Please select a refund method" }]}>
+              <Radio.Group className="w-full">
+                <Row gutter={[12, 12]}>
+                  {filteredMethods.map((method) => (
+                    <Col span={6} key={method.uuid}>
+                      <Card
+                        hoverable
+                        onClick={() => {
+                          form.setFieldsValue({ paymentMethod: method.uuid });
+                          form.validateFields(["paymentMethod"]);
+                        }}
+                        className={`text-center rounded-lg relative transition-all duration-200 cursor-pointer ${selectedMethod === method.uuid
+                          ? "border-2 border-blue-500 shadow-sm bg-blue-50/10"
+                          : "border border-slate-200 hover:border-slate-300"
+                          }`}
+                        bodyStyle={{ padding: "12px 6px" }}
+                      >
+                        <div className="flex justify-center items-center w-full h-8 mb-2">
+                          <img
+                            src={method.file}
+                            alt={method.name}
+                            className="h-7 w-auto object-contain rounded"
+                          />
+                        </div>
+                        <Text strong className="text-[11px] block truncate text-slate-700">
+                          {method.name}
+                        </Text>
+                        <Radio
+                          value={method.uuid}
+                          className="absolute top-1 right-1 m-0 raw-radio-adjust"
+                          checked={selectedMethod === method.uuid}
+                        />
+                      </Card>
+                    </Col>
+                  ))}
+                </Row>
+              </Radio.Group>
             </Form.Item>
+          </div>
+        ) : (
+          <div className="text-center py-6 text-slate-400 bg-slate-50 rounded-lg mb-6 border border-dashed border-slate-200">
+            No refund methods configuration available for this type.
           </div>
         )}
 
-        <Form.Item label="Refund Amount" name="refundAmount">
-          <InputNumber
-            min={1}
-            placeholder="Enter Base Price"
-            suffix="MMK"
-            style={{ width: 240 }}
-          />
-        </Form.Item>
+        <Divider className="my-5" />
 
-        <FormItem label="Comment" name="comment">
-          <TextArea />
-        </FormItem>
-
-        <FormItem
-          label={
-            <span className="text-[15px] font-semibold">
-              Upload Refund Form
-            </span>
-          }
-        >
-          <Upload
-            name="avatar"
-            listType="picture-card"
-            className="avatar-uploader"
-            showUploadList={false}
-            action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload"
-          >
-            {imageUrl ? (
-              <img
-                draggable={false}
-                src={imageUrl}
-                alt="avatar"
-                style={{ width: "100%" }}
+        {/* --- REQUIRED PAYLOAD PARAMETERS ROW --- */}
+        <Row gutter={16}>
+          <Col span={12}>
+            <Form.Item
+              label={<span className="text-slate-600 font-medium">Guest</span>}
+              name="guest"
+              rules={[{ required: true, message: "Please select a guest" }]}
+            >
+              <Select
+                showSearch
+                placeholder="Select a guest"
+                options={guestOptions}
+                className="w-full rounded"
               />
-            ) : (
-              uploadButton
-            )}
-          </Upload>
-        </FormItem>
+            </Form.Item>
+          </Col>
+          <Col span={12}>
+            <Form.Item
+              label={<span className="text-slate-600 font-medium">Amount</span>}
+              name="amount"
+              rules={[{ required: true, message: "Amount required" }]}
+            >
+              <Input
+                placeholder="0.00"
+                type="number"
+                className="rounded w-full"
+              />
+            </Form.Item>
+          </Col>
+        </Row>
       </Form>
     </Drawer>
   );
 };
 
-export default AddReundForm;
+export default AddRefundForm;

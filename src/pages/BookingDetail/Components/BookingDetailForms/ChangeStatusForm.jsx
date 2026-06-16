@@ -17,7 +17,7 @@ const ChangeStatusForm = ({ reservationDetails, open, onClose }) => {
   const uuid = location.state?.bookingId;
 
   const selectedStatusUuid = Form.useWatch("changeBookingStatusTo", form);
-
+  const selectedRooms = Form.useWatch("reservationRooms", form) || [];
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
 
   const { data } = useApiQuery({
@@ -184,6 +184,23 @@ const ChangeStatusForm = ({ reservationDetails, open, onClose }) => {
     });
   };
 
+  const isAllSelected =
+    roomOptions.length > 0 && selectedRooms.length === roomOptions.length;
+  const isIndeterminate =
+    selectedRooms.length > 0 && selectedRooms.length < roomOptions.length;
+
+  const handleSelectAllChange = (e) => {
+    form.setFieldsValue({
+      reservationRooms: e.target.checked
+        ? roomOptions.map((opt) => opt.value)
+        : [],
+    });
+  };
+
+  useEffect(() => {
+    form.setFieldsValue({ reservationRooms: [] });
+  }, [selectedStatusUuid, form]);
+
   return (
     <Drawer
       open={open}
@@ -215,7 +232,7 @@ const ChangeStatusForm = ({ reservationDetails, open, onClose }) => {
           rules={[{ required: true, message: "Please select a status" }]}
         >
           <Select
-            allowClear
+            // allowClear
             showSearch
             className="w-full"
             placeholder="Select a reservation status..."
@@ -236,29 +253,40 @@ const ChangeStatusForm = ({ reservationDetails, open, onClose }) => {
             )}
           />
         </Form.Item>
-
+       
         {shouldShowRoomSelection && (
-          <Form.Item
-            label={<span>Select Room to Update</span>}
-            name="reservationRooms"
-            rules={[
-              { required: true, message: "Please select at least one room" },
-            ]}
-          >
-            <Checkbox.Group
-              options={roomOptions}
-              className="flex flex-col gap-2"
-            />
-          </Form.Item>
+          <div className="mb-4">
+            <Form.Item
+              label={
+                <div className="flex">
+                  <span className="text-slate-800">Select Room to Update</span>
+                  <div className="text-slate-800 ml-50 font-medium">
+                    <Checkbox
+                      className="room-select"
+                      indeterminate={isIndeterminate}
+                      onChange={handleSelectAllChange}
+                      checked={isAllSelected}
+                    >
+                      Select All
+                    </Checkbox>
+                  </div>
+                </div>
+              }
+              name="reservationRooms"
+              rules={[
+                { required: true, message: "Please select at least one room" },
+              ]}
+            >
+              <Checkbox.Group
+                options={roomOptions}
+                className="flex flex-col gap-2 w-full "
+              />
+            </Form.Item>
+          </div>
         )}
 
         {isCancelledSelected && (
-          <Form.Item
-            label={
-              <span className="font-bold text-md">Cancellation Reason</span>
-            }
-            name="reason"
-          >
+          <Form.Item label={<span>Cancellation Reason</span>} name="reason">
             <Input.TextArea
               rows={3}
               placeholder="Please provide a reason for cancelling this reservation..."

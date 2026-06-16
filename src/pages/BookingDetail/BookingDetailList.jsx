@@ -20,11 +20,11 @@ import Loader from "../../component/Loader/Loader";
 const BookingDetailList = () => {
   const location = useLocation();
   const uuid = location.state?.bookingId;
-  
+
   const { data, isLoading } = useApiQuery({
     fetchQueryName: "reservation-details",
     fetchQueryFunction: reservationDetails,
-    params: { reservationRoom:{uuid:uuid} },
+    params: { reservationRoom: { uuid: uuid } },
     options: { enabled: !!uuid },
   });
 
@@ -42,7 +42,8 @@ const BookingDetailList = () => {
 
       <ReservationMenu data={data || {}} />
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
-        <BookingDetailButton data={data || {}} />
+        <BookingDetailButton data={data || {}}
+        />
       </div>
 
       <Row gutter={[16, 16]}>

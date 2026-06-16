@@ -35,10 +35,6 @@ import { hasIn } from "lodash";
 import { deleteImageUpload } from "../../../../api/deleteImageApi";
 import { queryClient } from "../../../../app/queryClient";
 
-const onChange = (value) => {
-  console.log("changed", value);
-};
-
 const RoomTypeForm = ({
   mode,
   setMode,
@@ -72,7 +68,6 @@ const RoomTypeForm = ({
     min: 1,
     max: 10,
     defaultValue: 1,
-    onChange,
     style: { width: 150 },
   };
 
@@ -81,7 +76,6 @@ const RoomTypeForm = ({
     min: 0,
     max: 10,
     defaultValue: 0,
-    onChange,
     style: { width: 150 },
   };
 
@@ -102,6 +96,7 @@ const RoomTypeForm = ({
   //   label: rate.name,
   // }));
   // Change 'ratePlan' to 'ratePlans'
+  
   const ratePlans = ratePlanMetaData?.rate_plans?.map((rate) => ({
     value: rate.uuid,
     label: rate.name,
@@ -291,6 +286,7 @@ const RoomTypeForm = ({
               maxAdults: 1,
               maxOccupancy: 1,
               totalRooms: 1,
+              rank: 1,
             }}
           >
             <Row gutter={24}>
@@ -367,7 +363,6 @@ const RoomTypeForm = ({
             </div>
 
             <div className="grid grid-cols-2 gap-6">
-
               <Form.Item
                 label="Total Rooms"
                 name="totalRooms"
@@ -383,21 +378,34 @@ const RoomTypeForm = ({
 
               <Form.Item label="Room Size" name="areaSize">
                 <Input readOnly={isView} placeholder="Enter Room Size" />
-                {/* <InputNumber
-                  {...sharedProps}
-                  disabled={isView}
-                  style={{ width: "100%" }}
-                  placeholder="Enter Room Size"
-                /> */}
               </Form.Item>
             </div>
 
-            <Form.Item label="Description" name="description">
-              <TextArea
-                readOnly={isView}
-                placeholder="Enter Room Description"
-              />
-            </Form.Item>
+            <Row gutter={24}>
+              <Col span={16}>
+                <Form.Item label="Description" name="description">
+                  <TextArea
+                    rows="1"
+                    readOnly={isView}
+                    placeholder="Enter Room Description"
+                  />
+                </Form.Item>
+              </Col>
+              <Col span={8}>
+                <Form.Item
+                  label="Rank"
+                  name="rank"
+                  rules={[{ required: true }]}
+                >
+                  <InputNumber
+                    {...sharedProps}
+                    disabled={isView}
+                    style={{ width: "100%" }}
+                    placeholder="Enter Rank"
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
 
             <Form.Item
               label="Status"

@@ -11,6 +11,10 @@ export const button_config = {
     label: "Add Payment",
     icon: <PlusOutlined style={{ fontSize: "12px" }} />,
   },
+  addDeposit: {
+    label: "Add Deposit",
+    icon: <PlusOutlined style={{ fontSize: "12px" }} />,
+  },
   addRefund: {
     label: "Add Refund",
     icon: <PlusOutlined style={{ fontSize: "12px" }} />,
@@ -38,9 +42,9 @@ export const button_config = {
 };
 
 export const status_actions = {
-  PENDING: ["addPayment"],
-  BOOKED: ["addPayment", "addNote"],
-  CONFIRMED: ["addPayment", "overtimeCharges", "addRefund", "addNote"],
+  PENDING: [],
+  BOOKED: ["addNote"],
+  CONFIRMED: ["overtimeCharges", "addRefund", "addNote", "addDeposit"],
   CHECKED_IN: [
     "amendStay",
     "addPayment",
