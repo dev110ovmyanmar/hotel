@@ -15,11 +15,11 @@ const GetRoomForm = ({ selectedData, onSelectRoom, onClose, floorUuid }) => {
   const [perPage] = useState(LIMITS.PAGE_SIZE);
 
   const statusColorMap = {
-    Available: "text-green-600 bg-green-100 text-xs p-1 px-2 rounded border border-green-300",
-    Occupied: "text-orange-600 bg-orange-100 text-xs p-1 px-2 rounded border border-orange-300",
-    Dirty: "text-yellow-600 bg-yellow-100 text-xs p-1 px-2 rounded border border-yellow-300",
-    Maintenance: "text-blue-600 bg-blue-100 text-xs p-1 px-2 rounded border border-blue-300 ",
-    "Out of Order": "text-gray-600 bg-gray-100 text-xs p-1 px-2 rounded border border-gray-300 ",
+    Available: "text-[#389E0D] bg-[#F6FFED] text-xs p-1 px-2 rounded border border-[#B7EB8F]",
+    Occupied: "text-[#0958D9] bg-[#E6F4FF] text-xs p-1 px-2 rounded border border-[#91CAFF]",
+    Dirty: "text-[#D4A106] bg-[#FDFFE0] text-xs p-1 px-2 rounded border border-[#F4E34F]",
+    Maintenance: "text-[#CF1322] bg-[#FFF1F0] text-xs p-1 px-2 rounded border border-[#FFA39E]",
+    "Out of Order": "text-[#CF1322] bg-[#FFF1F0] text-xs p-1 px-2 rounded border border-[#FFA39E]",
   };
 
   const { data, isLoading } = useApiQuery({
