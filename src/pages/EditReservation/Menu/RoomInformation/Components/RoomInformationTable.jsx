@@ -111,8 +111,7 @@ const RoomInformationTable = ({
 
         const isValidStatus = validStatuses.includes(statusCode);
         const isClickable =
-          isRoomNull && isValidStatus && record?.amendStatus;
-
+          isRoomNull && isValidStatus && !record?.expiredStatus;
         return (
           <span
             style={{
