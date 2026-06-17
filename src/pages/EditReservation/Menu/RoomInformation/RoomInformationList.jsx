@@ -58,13 +58,14 @@ const RoomInformationList = () => {
         <ReservationListHeader
           reservationId={data?.reservation?.reservationNo}
           onAddreservation={handleAddRoom}
-          addButtonText={
-            ["confirmed", "checked_in"].includes(
-              data?.reservationRoom?.roomStatus?.code?.toLowerCase(),
-            )
-              ? "Add New Room"
-              : null
-          }
+          // addButtonText={
+          //   ["confirmed", "checked_in"].includes(
+          //     data?.reservationRoom?.roomStatus?.code?.toLowerCase(),
+          //   )
+          //     ? "Add New Room"
+          //     : null
+          // }
+           addButtonText={"Add New Room"}
         />
       </div>
       <Button className="custom-blue-btn mb-2" onClick={()=>setOpen(true)}> Change Status</Button>

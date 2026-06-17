@@ -5,7 +5,7 @@ import { Button, Drawer, Dropdown, Form, Select } from "antd";
 import FoodBeverageOrder from "../FolioOperationsForms/FoodBeverageOrder.JSX";
 import AddNewServiceOrderForm from "../FolioOperationsForms/AddNewServiceOrderForm";
 import AddNewFacilityOrderForm from "../FolioOperationsForms/AddNewFacilityOrderForm";
-import AddDepositForm from "../../../../../BookingDetail/Components/BookingDetailForms/AddDepoistForm";
+import AddPaymentForm from "../../../../../BookingDetail/Components/BookingDetailForms/AddPaymentForm";
 
 const FolioOperationsButtons = ({ data, folioUuid, reservationId, onPrintAllFolios }) => {
   const [form] = Form.useForm();
@@ -16,6 +16,7 @@ const FolioOperationsButtons = ({ data, folioUuid, reservationId, onPrintAllFoli
   const [folioOpen, setFolioOpen] = useState(false);
 
   const foliosList = folioUuid?.data || [];
+  console.log("FolioList", foliosList);
 
   const addOrder = [
     {
@@ -62,7 +63,7 @@ const FolioOperationsButtons = ({ data, folioUuid, reservationId, onPrintAllFoli
           onClick={() => setPaymentOpen(true)}
           icon={<PlusOutlined style={{ fontSize: "12px" }} />}
         >
-          Add Deposit
+          Add Payment
         </Button>
 
         <Button
@@ -107,7 +108,7 @@ const FolioOperationsButtons = ({ data, folioUuid, reservationId, onPrintAllFoli
         reservationId={reservationId}
       />
 
-      <AddDepositForm
+      <AddPaymentForm
         open={paymentOpen}
         onClose={() => setPaymentOpen(false)}
         reservationId={reservationId}

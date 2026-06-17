@@ -150,7 +150,7 @@ const AddDepoistForm = ({
       destroyOnHidden
       title={
         <div className="flex justify-between items-center">
-          <span className="font-semibold text-lg">Add Deposit</span>
+          <span>Add Deposit</span>
           <FormButtons onClick={() => form.submit()} />
         </div>
       }
@@ -246,7 +246,6 @@ const AddDepoistForm = ({
             <Form.Item
               label={<span className="text-slate-600 font-medium">Guest</span>}
               name="guest"
-              rules={[{ required: true, message: "Please select a guest" }]}
             >
               <Select
                 showSearch
@@ -316,7 +315,7 @@ const AddDepoistForm = ({
         </Form.Item>
 
         {/* --- ATTACHMENT SLIPS --- */}
-        <Form.Item label={<strong className="text-slate-700">Payment Transfer Slips Upload</strong>} name="upload">
+        <Form.Item label="Payment Transfer Slips Upload" name="upload">
           <Upload listType="picture-card" beforeUpload={() => false}>
             <div>
               <PlusOutlined />

@@ -66,13 +66,7 @@ const ReservationsTable = ({
       align: "center",
       render: (value) => (value ? dayjs(value).format("YYYY-MM-DD") : "-"),
     },
-    {
-      title: "Booking Date",
-      dataIndex: "createdAt",
-      key: "createdAt",
-      align: "center",
-      render: (value) => (value ? dayjs(value).format("YYYY-MM-DD") : "-"),
-    },
+    
     {
       title: "Night",
       dataIndex: "totalNight",
