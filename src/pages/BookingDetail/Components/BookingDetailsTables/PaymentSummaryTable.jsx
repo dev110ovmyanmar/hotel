@@ -1,91 +1,77 @@
-import { EditOutlined, EyeOutlined, MoreOutlined } from "@ant-design/icons";
-import { Card, Dropdown, Space, Table, Typography } from "antd";
-import { IoCalendarClearOutline, IoCardOutline } from "react-icons/io5";
+import React, { useState } from "react";
+import { Card, Space, Table, Typography, Tag } from "antd";
+import { IoCardOutline } from "react-icons/io5";
+import FolioPaymentDetailModal from "../BookingDetailModals/FolioPaymentDetailModal";
 
 const { Text } = Typography;
 
 const columns = [
   {
-    title: "Transition Id",
-    dataIndex: "transitionId",
-    key: "transitionId",
-    width: 100,
-  },
-  {
-    title: "Folio Id",
-    dataIndex: "folioId",
-    key: "folioId",
+    title: "Id",
+    dataIndex: "id",
+    key: "id",
+    width: 140,
+    render: (id, record) => (
+      <span
+        className="clickable-id"
+        style={{ color: "#1677ff", cursor: "pointer", fontWeight: 500 }}
+        onClick={() => record._onIdClick?.(record.uuid)} // Passes the unique item row uuid upstream
+      >
+        {id}
+      </span>
+    )
   },
   {
     title: "Date",
-    dataIndex: "updatedAt",
-    key: "updatedAt",
+    dataIndex: "paymentDate",
+    key: "paymentDate",
   },
   {
-    title: "Pay By",
-    dataIndex: "payBy",
-    key: "payBy",
+    title: "Method",
+    dataIndex: ["paymentMethod", "name"],
+    key: "paymentMethod",
   },
   {
     title: "Amount",
     dataIndex: "amount",
     key: "amount",
+    render: (value, record) => {
+      const symbol = record.currency?.symbol || "";
+      return <strong>{symbol} {value?.toLocaleString()}</strong>;
+    },
   },
   {
-    title: "Action",
-    fixed:"end",
-    render: (_, record) => {
-      const smallStyle = { fontSize: "12px" };
-
-      const actions = [
-        {
-          key: "view",
-          label: "View",
-          icon: <EyeOutlined style={{ fontSize: "12px" }} />,
-          // permission: PERMISSIONS.,
-          onClick: () => {
-            setDrawerOpen(true);
-            setMode("view");
-            setSelectedData(record);
-          },
-        },
-        {
-          key: "edit",
-          label: "Edit",
-          icon: <EditOutlined style={{ fontSize: "12px" }} />,
-          // permission: PERMISSIONS.,
-          onClick: () => {
-            setDrawerOpen(true);
-            setMode("edit");
-            setSelectedData(record);
-          },
-        },
-      ];
-
-      const items = actions
-        .filter(
-          (action) => !action.permission || hasPermission(action.permission),
-        )
-        .map((action) => ({
-          key: action.key,
-          label: (
-            <Space size={4} style={smallStyle} onClick={action.onClick}>
-              {action.icon}
-              <span style={{ fontSize: "14px" }}>{action.label}</span>
-            </Space>
-          ),
-        }));
-
-      return (
-        <Dropdown menu={{ items }} trigger={["click"]}>
-          <MoreOutlined style={{ fontSize: "16px" }} />
-        </Dropdown>
-      );
+    title: "Status",
+    dataIndex: ["paymentStatus", "name"],
+    key: "status",
+    render: (status, record) => {
+      const code = record.paymentStatus?.code;
+      const color = code === "completed" ? "success" : "default";
+      return <Tag color={color}>{status}</Tag>;
     },
   },
 ];
 
 const PaymentSummaryTable = ({ data }) => {
+  // Localized Modal state configuration handlers
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedDataUuid, setSelectedDataUuid] = useState(null);
+
+  // Safely extract the clean array from your wrapped object structure { data: Array(9) }
+  const rawDataArray = data?.data && Array.isArray(data.data) ? data.data : [];
+
+  // Fired when the interactive Id column row item gets selected
+  const handleIdClick = (uuid) => {
+    setSelectedDataUuid(uuid);
+    setIsModalOpen(true);
+  };
+
+  // Bind click trigger method to each data object item reference
+  const tableData = rawDataArray.map(item => ({
+    ...item,
+    _onIdClick: handleIdClick
+  }));
+
   const CustomTitle = (
     <Space>
       <div className="payment-icon-box">
@@ -94,13 +80,24 @@ const PaymentSummaryTable = ({ data }) => {
       <Text>Payment Summary</Text>
     </Space>
   );
+
   return (
     <Card title={CustomTitle} className="payment-card">
       <Table
         columns={columns}
-        dataSource={data}
+        dataSource={tableData}
+        rowKey="uuid"
         size="small"
         pagination={false}
+      />
+
+      <FolioPaymentDetailModal
+        isOpen={isModalOpen}
+        onClose={() => {
+          setIsModalOpen(false);
+          setSelectedDataUuid(null);
+        }}
+        selectedDataUuid={selectedDataUuid}
       />
     </Card>
   );

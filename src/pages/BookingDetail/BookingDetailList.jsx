@@ -14,7 +14,7 @@ import BookingStatusCard from "./Components/BookingDetailsTables/BookingStatusCa
 import ContactPersonCard from "./Components/BookingDetailsTables/ContactPersonTable";
 import { useLocation } from "react-router-dom";
 import useApiQuery from "../../hooks/useApiQuery";
-import { reservationDetails } from "../../api/reservationSectionApi";
+import { folioPaymentList, reservationDetails } from "../../api/reservationSectionApi";
 import Loader from "../../component/Loader/Loader";
 
 const BookingDetailList = () => {
@@ -27,6 +27,11 @@ const BookingDetailList = () => {
     params: { reservationRoom: { uuid: uuid } },
     options: { enabled: !!uuid },
   });
+
+  const { data: folioPaymentListing } = useApiQuery({
+    fetchQueryName: "folio-payments",
+    fetchQueryFunction: folioPaymentList,
+  })
 
   if (isLoading) {
     return (
@@ -51,7 +56,7 @@ const BookingDetailList = () => {
         <Col xs={24} lg={16}>
           <Row gutter={[0, 16]}>
             <Col span={24}>
-              <PaymentSummaryTable />
+              <PaymentSummaryTable data={folioPaymentListing || []} />
             </Col>
             <Col span={24}>
               <RoomStatusTable />
