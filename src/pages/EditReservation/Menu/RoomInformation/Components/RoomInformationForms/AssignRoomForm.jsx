@@ -8,6 +8,7 @@ import {
 } from "../../../../../../api/reservationSectionApi";
 import useApiQuery from "../../../../../../hooks/useApiQuery";
 import { useLocation } from "react-router-dom";
+import { FaMoon } from "react-icons/fa";
 
 const { RangePicker } = DatePicker;
 
@@ -21,16 +22,14 @@ const AssignRoomForm = ({
   onSuccess,
   reservationUuid,
 }) => {
-  console.log(reservationUuid, "uuid");
   const uuid = reservationUuid?.reservation?.uuid;
-
   const [form] = Form.useForm();
   const isView = mode === "view";
   const isAdd = mode === "add";
   const [showRoomResults, setShowRoomResults] = useState(false);
+  const [searchKey, setSearchKey] = useState(0);
 
   const handleRoomSelection = (room) => {
-    console.log(room, "Roomselected");
     setSelectedData({ ...selectedData, roomNo: room.roomNo });
   };
 
@@ -38,12 +37,8 @@ const AssignRoomForm = ({
     fetchQueryName: "reservationRoom",
     fetchQueryFunction: reservationRoomMeta,
     params: {
-      reservation: {
-        uuid: uuid,
-      },
-      reservationRoom: {
-        uuid: selectedData?.uuid,
-      },
+      reservation: { uuid: uuid },
+      reservationRoom: { uuid: selectedData?.uuid },
     },
   });
 
@@ -77,30 +72,34 @@ const AssignRoomForm = ({
     }
   }, [selectedData, open, form]);
 
-  // date boundary filter
   const disabledDate = (current) => {
     if (!current || !selectedData) return false;
-
     const today = dayjs().startOf("day");
-
     let arrivalLimit = selectedData.checkinDate
       ? dayjs(selectedData.checkinDate).startOf("day")
       : today;
-
     if (arrivalLimit.isBefore(today, "day")) {
       arrivalLimit = today;
     }
-
     const departureLimit = selectedData.checkoutDate
       ? dayjs(selectedData.checkoutDate).endOf("day")
       : null;
-
     const isBeforeArrival = current.isBefore(arrivalLimit, "day");
     const isAfterDeparture = departureLimit
       ? current.isAfter(departureLimit, "day")
       : false;
-
     return isBeforeArrival || isAfterDeparture;
+  };
+
+  const handleSearch = () => {
+    setShowRoomResults(true);
+    setSearchKey(Date.now());
+  };
+
+  const handleFormValuesChange = (changedValues) => {
+    if ("floorUuid" in changedValues || "dates" in changedValues) {
+      setShowRoomResults(false);
+    }
   };
 
   return (
@@ -113,7 +112,12 @@ const AssignRoomForm = ({
     >
       <div className="flex flex-col gap-6">
         <div className="border border-gray-200 rounded px-4 py-2">
-          <Form form={form} layout="vertical" disabled={isView}>
+          <Form
+            form={form}
+            layout="vertical"
+            disabled={isView}
+            onValuesChange={handleFormValuesChange}
+          >
             <Form.Item label="Stay Duration (Check-in - Check-out)">
               <div className="flex items-center gap-3">
                 <Form.Item name="dates" noStyle>
@@ -124,12 +128,11 @@ const AssignRoomForm = ({
                   />
                 </Form.Item>
 
-                <div className="flex flex-col items-center justify-center bg-gray-300 rounded px-3 h-[32px] min-w-[120px] border border-gray-300">
-                  <span className="font-medium text-black disabled:text-black text-center leading-none">
+                <div className="flex items-center justify-center gap-1.5 bg-gray-200 rounded px-3 h-[32px] min-w-[100px] ">
+                  <FaMoon className=" text-xs" />
+                  <span className="font-bold text-black text-center text-xs">
                     {calculateNights()}{" "}
-                    <span className="font-medium text-black disabled:text-black text-center">
-                      {calculateNights() === 1 ? "Night" : "Nights"}
-                    </span>
+                    {calculateNights() === 1 ? "Night" : "Nights"}
                   </span>
                 </div>
               </div>
@@ -167,7 +170,7 @@ const AssignRoomForm = ({
             </div>
 
             <div className="flex justify-end mt-4">
-              <Button type="primary" onClick={() => setShowRoomResults(true)}>
+              <Button type="primary" onClick={handleSearch}>
                 Search
               </Button>
             </div>
@@ -178,6 +181,7 @@ const AssignRoomForm = ({
           <div className="mt-4">
             <Divider orientation="left">Available Rooms</Divider>
             <GetRoomForm
+              key={searchKey}
               open={showRoomResults}
               onClose={onClose}
               selectedData={selectedData}

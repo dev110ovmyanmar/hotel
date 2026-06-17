@@ -14,19 +14,24 @@ import BookingStatusCard from "./Components/BookingDetailsTables/BookingStatusCa
 import ContactPersonCard from "./Components/BookingDetailsTables/ContactPersonTable";
 import { useLocation } from "react-router-dom";
 import useApiQuery from "../../hooks/useApiQuery";
-import { reservationDetails } from "../../api/reservationSectionApi";
+import { folioPaymentList, reservationDetails } from "../../api/reservationSectionApi";
 import Loader from "../../component/Loader/Loader";
 
 const BookingDetailList = () => {
   const location = useLocation();
   const uuid = location.state?.bookingId;
-  
+
   const { data, isLoading } = useApiQuery({
     fetchQueryName: "reservation-details",
     fetchQueryFunction: reservationDetails,
-    params: { reservationRoom:{uuid:uuid} },
+    params: { reservationRoom: { uuid: uuid } },
     options: { enabled: !!uuid },
   });
+
+  const { data: folioPaymentListing } = useApiQuery({
+    fetchQueryName: "folio-payments",
+    fetchQueryFunction: folioPaymentList,
+  })
 
   if (isLoading) {
     return (
@@ -42,7 +47,8 @@ const BookingDetailList = () => {
 
       <ReservationMenu data={data || {}} />
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
-        <BookingDetailButton data={data || {}} />
+        <BookingDetailButton data={data || {}}
+        />
       </div>
 
       <Row gutter={[16, 16]}>
@@ -50,7 +56,7 @@ const BookingDetailList = () => {
         <Col xs={24} lg={16}>
           <Row gutter={[0, 16]}>
             <Col span={24}>
-              <PaymentSummaryTable />
+              <PaymentSummaryTable data={folioPaymentListing || []} />
             </Col>
             <Col span={24}>
               <RoomStatusTable />

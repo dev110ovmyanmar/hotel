@@ -3,21 +3,27 @@ import {
   Drawer,
   Form,
   Input,
+  DatePicker,
+  Button,
   Row,
   Col,
   Select,
   Radio,
   Typography,
   Card,
+  Upload,
   Divider,
   Segmented,
 } from "antd";
 import FormButtons from "../../../../component/FormButtons/FormButtons";
+import { PlusOutlined } from "@ant-design/icons";
+import { createFolioPaymentDeposit } from "../../../../api/reservationSectionApi";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
-import { createFolioPaymentRefund } from "../../../../api/reservationSectionApi";
 import Toast from "../../../../component/Toast/Toast";
 
 const { Title, Text } = Typography;
+const { Option } = Select;
+const { TextArea } = Input;
 
 // Color Configuration Map for Segmented Tabs
 const CHANNEL_COLORS = {
@@ -29,11 +35,12 @@ const CHANNEL_COLORS = {
   ota: { bg: "#ffedd5", text: "#c2410c" },      // Orange
 };
 
-const AddRefundForm = ({
+const AddDepoistForm = ({
   open,
   onClose,
   bookingDetails,
   paymentMethodsData,
+  paymentCompletedStatus,
   providerTypes,
   guests,
 }) => {
@@ -44,12 +51,14 @@ const AddRefundForm = ({
 
   const selectedMethod = Form.useWatch("paymentMethod", form);
 
-  // Clear selections when form closes
+  // --- AUTOMATICALLY FILL AND SELECT COMPLETED STATUS IN UI ---
   useEffect(() => {
-    if (!open) {
-      setSelectedProviderUuid("all");
+    if (open && paymentCompletedStatus?.uuid) {
+      form.setFieldsValue({
+        paymentStatus: paymentCompletedStatus.uuid,
+      });
     }
-  }, [open]);
+  }, [open, paymentCompletedStatus, form]);
 
   // --- Transform providerTypes into Ant Design Segmented options ---
   const segmentedOptions = useMemo(() => {
@@ -94,27 +103,18 @@ const AddRefundForm = ({
     });
   }, [guests]);
 
-  const methodsArray = Array.isArray(paymentMethodsData) ? paymentMethodsData : [];
-
-  const filteredMethods = useMemo(() => {
-    return methodsArray.filter((method) => {
-      if (selectedProviderUuid === "all") return true;
-      return method.type?.uuid === selectedProviderUuid;
-    });
-  }, [methodsArray, selectedProviderUuid]);
-
-  const { mutate: createFolioRefund } = useApiMutation({
-    mutationFn: createFolioPaymentRefund,
+  const { mutate: createFolioPayment } = useApiMutation({
+    mutationFn: createFolioPaymentDeposit,
     invalidateKeys: [["reservation-details"]],
     options: {
       onSuccess: () => {
-        Toast.success("Refund added successfully");
+        Toast.success("Deposit added successfully");
         onClose();
         form.resetFields();
         setSelectedProviderUuid("all");
       },
-      onError: () => {
-        Toast.error("Refund addition failed");
+      onError: (error) => {
+        Toast.error("Deposit added fail");
       }
     },
   });
@@ -125,20 +125,32 @@ const AddRefundForm = ({
       guest: { uuid: values.guest },
       folio: { uuid: bookingDetails?.reservation?.parentFolio?.uuid },
       paymentMethod: { uuid: values.paymentMethod },
+      paymentStatus: { uuid: values.paymentStatus },
       amount: values.amount,
+      transactionNo: values.transactionNo,
+      externalReference: values.externalReference,
+      remarks: values.remark,
+      paymentDate: values.paymentDate ? values.paymentDate.format("YYYY-MM-DD HH:mm:ss") : undefined,
     };
-    createFolioRefund(payload);
+    createFolioPayment(payload);
   };
+
+  const methodsArray = Array.isArray(paymentMethodsData) ? paymentMethodsData : [];
+
+  const filteredMethods = methodsArray.filter((method) => {
+    if (selectedProviderUuid === "all") return true;
+    return method.type?.uuid === selectedProviderUuid;
+  });
 
   return (
     <Drawer
       open={open}
       onClose={onClose}
       size={550}
-      destroyOnClose
+      destroyOnHidden
       title={
         <div className="flex justify-between items-center">
-          <span className="font-semibold text-lg">Add Refund</span>
+          <span>Add Deposit</span>
           <FormButtons onClick={() => form.submit()} />
         </div>
       }
@@ -147,18 +159,16 @@ const AddRefundForm = ({
         form={form}
         layout="vertical"
         onFinish={onFinish}
+        initialValues={{ paymentType: "full" }}
       >
-        {/* --- FOLIO HEADER BAR --- */}
         <div className="flex items-center justify-between bg-slate-50 border border-slate-200 rounded-xl p-3 mb-6">
           <span className="text-slate-600 font-medium text-sm">Folio No</span>
           <span className="text-slate-800 font-semibold text-base bg-white px-3 py-1 rounded-md shadow-sm border border-slate-100">
             {bookingDetails?.reservation?.parentFolio?.folioNo || "N/A"}
           </span>
         </div>
-
-        {/* --- METHOD TITLE LABEL --- */}
         <div className="flex items-center !mb-3">
-          <Title level={5} className="!mb-0 text-slate-700">Select Refund Method</Title>
+          <Title level={5} className="!mb-0 text-slate-700">Select Payment Method</Title>
           <span className="text-red-500 ml-1 mt-1 font-bold">*</span>
         </div>
 
@@ -170,13 +180,10 @@ const AddRefundForm = ({
             value={selectedProviderUuid}
             onChange={(value) => {
               setSelectedProviderUuid(value);
-
-              // Direct synchronization check without rendering lifecycle delays
-              const liveFiltered = methodsArray.filter(m => value === "all" || m.type?.uuid === value);
               const currentSelection = form.getFieldValue("paymentMethod");
-
-              if (!liveFiltered.some(m => m.uuid === currentSelection)) {
-                form.setFieldsValue({ paymentMethod: undefined });
+              const choiceStillVisible = filteredMethods.some(m => m.uuid === currentSelection);
+              if (!choiceStillVisible) {
+                form.setFieldValue("paymentMethod", undefined);
               }
             }}
             className="p-1 rounded-lg bg-slate-50/50 border border-slate-100"
@@ -186,7 +193,7 @@ const AddRefundForm = ({
         {/* --- UNIFIED PAYMENT METHODS GRID --- */}
         {filteredMethods.length > 0 ? (
           <div className="mb-6">
-            <Form.Item name="paymentMethod" rules={[{ required: true, message: "Please select a refund method" }]}>
+            <Form.Item name="paymentMethod" rules={[{ required: true, message: "Please select a payment method" }]}>
               <Radio.Group className="w-full">
                 <Row gutter={[12, 12]}>
                   {filteredMethods.map((method) => (
@@ -194,7 +201,7 @@ const AddRefundForm = ({
                       <Card
                         hoverable
                         onClick={() => {
-                          form.setFieldsValue({ paymentMethod: method.uuid });
+                          form.setFieldValue("paymentMethod", method.uuid);
                           form.validateFields(["paymentMethod"]);
                         }}
                         className={`text-center rounded-lg relative transition-all duration-200 cursor-pointer ${selectedMethod === method.uuid
@@ -227,19 +234,18 @@ const AddRefundForm = ({
           </div>
         ) : (
           <div className="text-center py-6 text-slate-400 bg-slate-50 rounded-lg mb-6 border border-dashed border-slate-200">
-            No refund methods configuration available for this type.
+            No payment methods configuration available for this type.
           </div>
         )}
 
         <Divider className="my-5" />
 
-        {/* --- REQUIRED PAYLOAD PARAMETERS ROW --- */}
+        {/* --- GUEST & STATUS ROW --- */}
         <Row gutter={16}>
           <Col span={12}>
             <Form.Item
               label={<span className="text-slate-600 font-medium">Guest</span>}
               name="guest"
-              rules={[{ required: true, message: "Please select a guest" }]}
             >
               <Select
                 showSearch
@@ -251,10 +257,30 @@ const AddRefundForm = ({
           </Col>
           <Col span={12}>
             <Form.Item
-              label={<span className="text-slate-600 font-medium">Amount</span>}
-              name="amount"
-              rules={[{ required: true, message: "Amount required" }]}
+              label={<span className="text-slate-600 font-medium">Status</span>}
+              name="paymentStatus"
+              rules={[{ required: true, message: "Required" }]}
             >
+              <Select placeholder="Select status" className="w-full rounded">
+                {paymentCompletedStatus?.uuid && (
+                  <Option value={paymentCompletedStatus.uuid}>
+                    <div className="flex items-center gap-2">
+                      <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
+                      <span className="text-slate-700 font-medium">
+                        {paymentCompletedStatus.name}
+                      </span>
+                    </div>
+                  </Option>
+                )}
+              </Select>
+            </Form.Item>
+          </Col>
+        </Row>
+
+        {/* --- AMOUNT & PAYMENT DATE ROW --- */}
+        <Row gutter={16}>
+          <Col span={12}>
+            <Form.Item label={<span className="text-slate-600 font-medium">Amount</span>} name="amount" rules={[{ required: true, message: "Amount required" }]}>
               <Input
                 placeholder="0.00"
                 type="number"
@@ -262,10 +288,44 @@ const AddRefundForm = ({
               />
             </Form.Item>
           </Col>
+          <Col span={12}>
+            <Form.Item label={<span className="text-slate-600 font-medium">Payment Date</span>} name="paymentDate">
+              <DatePicker className="w-full rounded" showTime format="YYYY-MM-DD HH:mm:ss" />
+            </Form.Item>
+          </Col>
         </Row>
+
+        {/* --- TRANSACTION NO & EXTERNAL REFERENCE --- */}
+        <Row gutter={16}>
+          <Col span={12}>
+            <Form.Item label={<span className="text-slate-600 font-medium">Transaction No</span>} name="transactionNo">
+              <Input placeholder="Enter Transaction Number" className="rounded" />
+            </Form.Item>
+          </Col>
+          <Col span={12}>
+            <Form.Item label={<span className="text-slate-600 font-medium">External Reference</span>} name="externalReference">
+              <Input placeholder="Enter External Reference" className="rounded" />
+            </Form.Item>
+          </Col>
+        </Row>
+
+        {/* --- REMARK FIELD --- */}
+        <Form.Item label={<span className="text-slate-600 font-medium">Remark</span>} name="remark">
+          <TextArea rows={3} placeholder="Add operational adjustments or audit notes here..." className="rounded" />
+        </Form.Item>
+
+        {/* --- ATTACHMENT SLIPS --- */}
+        <Form.Item label="Payment Transfer Slips Upload" name="upload">
+          <Upload listType="picture-card" beforeUpload={() => false}>
+            <div>
+              <PlusOutlined />
+              <div className="mt-2 text-xs text-slate-500">Upload</div>
+            </div>
+          </Upload>
+        </Form.Item>
       </Form>
     </Drawer>
   );
 };
 
-export default AddRefundForm;
+export default AddDepoistForm;

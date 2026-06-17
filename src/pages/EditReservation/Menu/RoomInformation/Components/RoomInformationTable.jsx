@@ -14,29 +14,34 @@ import {
   UserOutlined,
   ConsoleSqlOutlined,
 } from "@ant-design/icons";
-
 import { MdOutlineMeetingRoom } from "react-icons/md";
 import { IoOptionsSharp } from "react-icons/io5";
-
 import RoomInformationForm from "./RoomInformationForms/RoomInformationForm";
 import RoomMoveDrawer from "./RoomInformationForms/RoomMoveDrawer";
 import AssignRoomForm from "./RoomInformationForms/AssignRoomForm";
 import NoteDrawer from "./RoomInformationForms/NoteDrawer";
 import ColorStatusTag from "../../../../../component/ColorStatusTag/ColorStatusTag";
 import RoomAmend from "./RoomInformationForms/RoomAmend";
-
 import { queryClient } from "../../../../../app/queryClient";
-
-// Split Modal Component Import
-// import DateChangeModal from "./RoomAmendmentModals/DateChangeModals";
+import DateChangeModal from "./RoomAmendmentModals/DateChangeModals";
 import StayExtensionModal from "./RoomAmendmentModals/StayExtensionModal";
 import StayReductionModal from "./RoomAmendmentModals/StayReductionModal";
 import GuestForm from "../../GuestDetails/Components/GuestForms/GuestForm";
+import { BsPeople, BsPeopleFill } from "react-icons/bs";
+import GuestListDrawer from "./RoomInformationForms/GuestListDrawer";
 import RoomMoveModal from "./RoomAmendmentModals/RoomMoveModal";
-// import UpdateRateModal from "./RoomAmendmentModals/UpdateRateModal";
+import GuestUploadDrawer from "../../GuestDetails/Components/GuestForms/GuestUploadDrawer";
+import UpdateRateModal from "./RoomAmendmentModals/UpdateRateModal";
+import AddExtraBedModal from "./RoomAmendmentModals/AddExtraBedModal";
+import RoomUpgradeModal from "./RoomAmendmentModals/RoomUpgradeModal";
+import { useApiMutation } from "../../../../../hooks/useApiMutation";
+import { availabilitySearch } from "../../../../../api/reservationSectionApi";
+import Toast from "../../../../../component/Toast/Toast";
+
 
 const RoomInformationTable = ({
   data,
+  reservation,
   page,
   perPage,
   total,
@@ -44,17 +49,22 @@ const RoomInformationTable = ({
   changePage,
   changePerPage,
   reservationUuid,
-  // stayExtensionUuid,
 }) => {
-  console.log(reservationUuid, "uuid")
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [guestOpen, setGuestOpen] = useState(false);
-  const [mode, setMode] = useState("add");
+  const [guestListOpen, setGuestListOpen] = useState(false);
+  const [mode, setMode] = useState(null);
   const [selectedData, setSelectedData] = useState(null);
   const [roomMoveOpen, setRoomMoveOpen] = useState(false);
   const [assignRoomOpen, setAssignRoomOpen] = useState(false);
   const [noteOpen, setNoteOpen] = useState(false);
   const [roomAmend, setRoomAmend] = useState(false);
+  const [guestFormMode, setGuestFormMode] = useState("add");
+  const [selectedGuestData, setSelectedGuestData] = useState(null); // This is the Guest dat
+  const [uploadOpen, setUploadOpen] = useState(false);
+  const [selectedUploadRow, setSelectedUploadRow] = useState(null);
+  const [roomUpgrade, setRoomUpgrade] = useState(false);
+
 
   // Unified State Engine for Split Modals
   const [activeModal, setActiveModal] = useState(null);
@@ -75,13 +85,69 @@ const RoomInformationTable = ({
   const rateChangeUuid = rateChange?.uuid;
 
   const roomMove = amendmentType?.find((item) => item.code === "room_move");
-  console.log(roomMove, "RoomMOveINRoom")
   const roomMoveUuid = roomMove?.uuid;
 
-  // Core Orchestration Handler - Direct Pass
+  const extraBed = amendmentType?.find((item) => item.code === "extra_bed_add");
+  const extraBedAmendmentUuid = extraBed?.uuid;
+
+  const roomUpgrades = amendmentType?.find((item) => item.code === "room_upgrade")
+  const roomUpgradeUuid = roomUpgrades?.uuid;
+
+  const availabilitySearchs = useApiMutation({
+    mutationFn: availabilitySearch,
+    invalidateKeys: [["availability-search"]],
+    // enabled: !!selectedData?.reservation?.uuid
+  });
+
+  console.log(availabilitySearchs, "AvailabilitySearchs")
+
+
+
+
   const handleAction = (key, record) => {
     setSelectedData(record);
     setActiveModal(key);
+
+
+    console.log(record, "RecordInHandleAction");
+
+    // 1. Keep them as objects, not formatted strings
+    const checkinDate = dayjs().startOf('day');
+    const checkoutDate = dayjs(record?.checkoutDate).startOf('day');
+
+    // 2. Perform the diff directly on the objects
+    // 'day' is the unit of measurement, 'true' returns a float (if partial days exist)
+    const totalNights = checkoutDate.diff(checkinDate, 'day', true);
+
+    console.log(totalNights, "totalNights");
+
+    const checkinDatePayload = dayjs().format("YYYY-MM-DD");
+    const checkoutDatePayload = dayjs(record?.checkoutDate).format("YYYY-MM-DD");
+
+    const ranks = record?.roomType?.rank;
+
+    // const uuid = record?.reservation?.uuid;
+
+    console.log(record, "RecordSelectedDataInformationTable")
+    const modifiedValues = {
+      reservation: {
+        uuid: reservation?.uuid
+      },
+      filter: {
+        checkinDate: checkinDatePayload,
+        checkoutDate: checkoutDatePayload
+      },
+      totalNight: totalNights,
+      rank: ranks,
+      amendmentType : {
+        code : "room_upgrade"
+      }
+
+    };
+
+    availabilitySearchs.mutate(modifiedValues)
+
+
   };
 
   const closeModal = () => {
@@ -104,17 +170,17 @@ const RoomInformationTable = ({
         const isRoomNull = !text;
 
         const statusCode = record?.roomStatus?.code;
+        const validStatuses = ["confirmed", "checked_in"];
 
-        const validStatuses = ["confirmed", "checked-in"];
         const isValidStatus = validStatuses.includes(statusCode);
-
-        const isClickable = isRoomNull && isValidStatus;
+        const isClickable =
+          isRoomNull && isValidStatus && !record?.expiredStatus;
 
         return (
           <span
             style={{
               color: isRoomNull
-                ? isValidStatus
+                ? isClickable
                   ? "#1890ff"
                   : "#bfbfbf"
                 : "inherit",
@@ -161,10 +227,30 @@ const RoomInformationTable = ({
       width: 110,
     },
     { title: "Rate Plan", dataIndex: ["ratePlan", "name"], key: "ratePlan" },
+
     {
       title: "Action",
       width: 80,
       render: (_, record) => {
+        const rawCode = record?.roomStatus?.code || "";
+        const statusCode = rawCode.toLowerCase().replace("-", "_");
+
+        const isDisabled =
+          statusCode === "cancelled" || statusCode === "no_show";
+
+        if (isDisabled) {
+          return (
+            <IoOptionsSharp
+              style={{
+                fontSize: "30px",
+                padding: "4px",
+                color: "#bfbfbf",
+                cursor: "not-allowed",
+              }}
+            />
+          );
+        }
+
         const menuItems = [
           {
             key: "view",
@@ -185,130 +271,152 @@ const RoomInformationTable = ({
               setNoteOpen(true);
             },
           },
-          { type: "divider" },
           {
-            key: "modify_group",
-            label: "Amend Reservation",
-            icon: <EditOutlined />,
-            children: [
-              {
-                key: "col_date",
-                type: "group",
-                label: "DATE CHANGES",
-                children: [
-                  {
-                    key: "date_change",
-                    label: "Change CI/CO Dates",
-                    icon: <CalendarOutlined />,
-                    onClick: () => handleAction("date_change", record),
-                  },
-                  ...(record?.isExtend !== false ||
-                    record?.roomStatus?.code === "checked_in"
-                    ? [
-                      {
-                        key: "stay_extension",
-                        label: "Extend Stay",
-                        icon: <PlusOutlined />,
-                        onClick: () => handleAction("stay_extension", record),
-                      },
-                    ]
-                    : []),
-                  {
-                    key: "stay_reduction",
-                    label: "Shorten Stay",
-                    icon: <MinusOutlined />,
-                    onClick: () => handleAction("stay_reduction", record),
-                  },
-                ],
-              },
-              { type: "divider" },
-              {
-                key: "col_room",
-                type: "group",
-                label: "ROOM CHANGES",
-                children: [
-                  {
-                    key: "room_move",
-                    label: "Change Room",
-                    icon: <MdOutlineMeetingRoom />,
-                    className: record?.roomStatus?.code === "checked_in" && record?.room !== null
-                      ? "!text-black"
-                      : "!text-gray-300 !cursor-not-allowed !pointer-events-none",
-                    onClick: () => {
-                      handleAction("room_move", record);
-                      setRoomMoveOpen(true);
-                    },
-                  },
-                  {
-                    key: "room_upgrade",
-                    label: "Upgrade Room",
-                    icon: <ArrowUpOutlined />,
-                    onClick: () => handleAction("room_upgrade", record),
-                  },
-                  {
-                    key: "room_downgraden",
-                    label: "Downgrade Room",
-                    icon: <ArrowDownOutlined />,
-                    onClick: () => handleAction("room_downgraden", record),
-                  },
-                  {
-                    key: "add_room",
-                    label: "Add Room",
-                    icon: <PlusOutlined />,
-                    onClick: () => handleAction("add_room", record),
-                  },
-                  {
-                    key: "remove_room",
-                    label: "Remove Room",
-                    icon: <MinusOutlined />,
-                    onClick: () => handleAction("remove_room", record),
-                  },
-                ],
-              },
-              { type: "divider" },
-              {
-                key: "col_rate",
-                type: "group",
-                label: "RATE / PRICE CHANGES",
-                children: [
-                  {
-                    key: "rate_change",
-                    label: "Update Rates",
-                    icon: <DollarOutlined />,
-                    onClick: () => handleAction("rate_change", record),
-                  },
-                ],
-              },
-              { type: "divider" },
-              {
-                key: "col_guest",
-                type: "group",
-                label: "GUEST / OCCUPANCY",
-                children: [
-                  {
-                    key: "occupancy_change",
-                    label: "Update Room Guests",
-                    icon: <UserOutlined />,
-                    // onClick: () => handleAction("occupancy_change", record),
-                    onClick: () => setGuestOpen(true),
-                  },
-                  {
-                    key: "extra_bed_add",
-                    label: "Add Extra Bed",
-                    icon: <PlusOutlined />,
-                    onClick: () => handleAction("extra_bed_add", record),
-                  },
-                  {
-                    key: "extra_bed_remove",
-                    label: "Remove Extra Bed",
-                    icon: <MinusOutlined />,
-                    onClick: () => handleAction("extra_bed_remove", record),
-                  },
-                ],
-              },
-            ],
+            key: "guestList",
+            label: "Guest List",
+            icon: <BsPeople />,
+            onClick: () => {
+              setSelectedData(record);
+              setGuestListOpen(true);
+            },
           },
         ];
+
+        if (record?.amendStatus) {
+          menuItems.push(
+            { type: "divider" },
+            {
+              key: "modify_group",
+              label: "Amend Reservation",
+              icon: <EditOutlined />,
+              children: [
+                {
+                  key: "col_date",
+                  type: "group",
+                  label: "DATE CHANGES",
+                  children: [
+                    {
+                      key: "date_change",
+                      label: "Change CI/CO Dates",
+                      icon: <CalendarOutlined />,
+                      onClick: () => handleAction("date_change", record),
+                    },
+                    ...(record?.isExtend !== false ||
+                      record?.roomStatus?.code === "checked_in"
+                      ? [
+                        {
+                          key: "stay_extension",
+                          label: "Extend Stay",
+                          icon: <PlusOutlined />,
+                          onClick: () =>
+                            handleAction("stay_extension", record),
+                        },
+                      ]
+                      : []),
+                    {
+                      key: "stay_reduction",
+                      label: "Shorten Stay",
+                      icon: <MinusOutlined />,
+                      onClick: () => handleAction("stay_reduction", record),
+                    },
+                  ],
+                },
+                { type: "divider" },
+                {
+                  key: "col_room",
+                  type: "group",
+                  label: "ROOM CHANGES",
+                  children: [
+                    {
+                      key: "room_move",
+                      label: "Change Room",
+                      icon: <MdOutlineMeetingRoom />,
+                      // className:
+                      //   record?.roomStatus?.code === "checked_in" &&
+                      //     record?.room !== null
+                      //     ? "!text-black"
+                      //     : "!text-gray-300 !cursor-not-allowed !pointer-events-none",
+                      onClick: () => {
+                        handleAction("room_move", record);
+                        setRoomMoveOpen(true);
+                      },
+                    },
+                    {
+                      key: "room_upgrade",
+                      label: "Upgrade Room",
+                      icon: <ArrowUpOutlined />,
+                      onClick: () => {
+                        handleAction("room_upgrade", record),
+                          setRoomUpgrade(true)
+                      },
+                    },
+                    {
+                      key: "room_downgraden",
+                      label: "Downgrade Room",
+                      icon: <ArrowDownOutlined />,
+                      onClick: () => handleAction("room_downgraden", record),
+                    },
+                    {
+                      key: "add_room",
+                      label: "Add Room",
+                      icon: <PlusOutlined />,
+                      onClick: () => handleAction("add_room", record),
+                    },
+                    {
+                      key: "remove_room",
+                      label: "Remove Room",
+                      icon: <MinusOutlined />,
+                      onClick: () => handleAction("remove_room", record),
+                    },
+                  ],
+                },
+                { type: "divider" },
+                {
+                  key: "col_rate",
+                  type: "group",
+                  label: "RATE / PRICE CHANGES",
+                  children: [
+                    {
+                      key: "rate_change",
+                      label: "Update Rates",
+                      icon: <DollarOutlined />,
+                      onClick: () => handleAction("rate_change", record),
+                    },
+                  ],
+                },
+                { type: "divider" },
+                {
+                  key: "col_guest",
+                  type: "group",
+                  label: "GUEST / OCCUPANCY",
+                  children: [
+                    {
+                      key: "occupancy_change",
+                      label: "Update Room Guests",
+                      icon: <UserOutlined />,
+                      onClick: () => {
+                        setSelectedData(record);
+                        setGuestOpen(true);
+                      },
+                    },
+                    {
+                      key: "extra_bed_add",
+                      label: "Add Extra Bed",
+                      icon: <PlusOutlined />,
+                      onClick: () => handleAction("extra_bed_add", record),
+                    },
+                    {
+                      key: "extra_bed_remove",
+                      label: "Remove Extra Bed",
+                      icon: <MinusOutlined />,
+                      onClick: () => handleAction("extra_bed_remove", record),
+                    },
+                  ],
+                },
+              ],
+            },
+          );
+        }
 
         return (
           <Dropdown
@@ -325,7 +433,6 @@ const RoomInformationTable = ({
       },
     },
   ];
-
   return (
     <div>
       <Table
@@ -351,7 +458,6 @@ const RoomInformationTable = ({
         loading={loading}
       />
 
-      {/* Legacy Forms & Drawers */}
       <RoomInformationForm
         page={page}
         mode={mode}
@@ -402,23 +508,50 @@ const RoomInformationTable = ({
         <GuestForm
           drawerOpen={guestOpen}
           setDrawerOpen={setGuestOpen}
+          mode={guestFormMode}
+          setMode={setGuestFormMode}
+          guestData={selectedGuestData}
+          setSelectedData={setSelectedGuestData}
+          reservationUuid={reservationUuid?.reservation}
+          roomuuid={selectedData?.uuid}
+        />
+      )}
+      {guestListOpen && (
+        <GuestListDrawer
+          drawerOpen={guestListOpen}
+          setDrawerOpen={setGuestListOpen}
           selectedData={selectedData}
           setSelectedData={setSelectedData}
-          reservationUuid={reservationUuid?.reservation}
+          setGuestOpen={setGuestOpen}
+          setGuestFormMode={setGuestFormMode}
+          setSelectedGuestData={setSelectedGuestData}
+          setUploadOpen={setUploadOpen}
+          setSelectedUploadRow={setSelectedUploadRow}
+        />
+      )}
+
+      {uploadOpen && (
+        <GuestUploadDrawer
+          open={uploadOpen}
+          onClose={() => {
+            setUploadOpen(false);
+            setSelectedUploadRow(null);
+          }}
+          selectedRow={selectedUploadRow}
         />
       )}
 
       {/* ============================================================== */}
       {/* Dynamic Conditional Mount Layer - Fast Local Record Binding    */}
       {/* ============================================================== */}
-      {/* {activeModal === "date_change" && selectedData && (
+      {activeModal === "date_change" && selectedData && (
         <DateChangeModal
           isOpen={true}
           onClose={closeModal}
           record={selectedData} // Direct row object mapping
           refetch={refetch}
         />
-      )} */}
+      )}
 
       {activeModal === "stay_extension" && selectedData && (
         <StayExtensionModal
@@ -439,27 +572,44 @@ const RoomInformationTable = ({
         />
       )}
 
-      {/* {
-        activeModal === "rate_change" && selectedData && (
-          <UpdateRateModal
-            isOpen={true}
-            onClose={closeModal}
-            record={selectedData}
-            record={mockRecord}
-            rateChangeUuid={rateChangeUuid}
-          />
-        )
-      } */}
-
-      {
-        selectedData &&
+      {activeModal === "rate_change" && selectedData && (
+        <UpdateRateModal
+          isOpen={true}
+          onClose={closeModal}
+          record={selectedData}
+          // record={mockRecord}
+          rateChangeUuid={rateChangeUuid}
+        />
+      )}
+      {selectedData && (
         <RoomMoveModal
           isOpen={roomMoveOpen}
           onClose={() => setRoomMoveOpen(false)}
           record={selectedData}
           roomMoveUuid={roomMoveUuid}
         />
-      }
+      )}
+
+      {activeModal === "extra_bed_add" && selectedData && (
+        <AddExtraBedModal
+          isOpen={true}
+          onClose={closeModal}
+          record={selectedData}
+          extraBedAmendmentUuid={extraBedAmendmentUuid}
+        />
+      )}
+
+      <RoomUpgradeModal
+        isOpen={roomUpgrade}
+        onClose={() => setRoomUpgrade(false)}
+        record={selectedData}
+        roomUpgradeUuid={roomUpgradeUuid}
+        roomList={availabilitySearchs?.data}
+        availabilitySearchsPendings={availabilitySearchs?.isPending}
+      />
+
+
+
     </div>
   );
 };

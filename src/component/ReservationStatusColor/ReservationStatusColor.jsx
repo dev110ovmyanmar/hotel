@@ -50,7 +50,7 @@ const ReservationStatusColor = ({ status }) => {
         borderColor: borderColor,
         borderRadius: "5px",
         fontWeight: "500",
-        fontSize: "15px",
+        fontSize: "12px",
         borderStyle: "solid",
         borderWidth: "1px",
       }}

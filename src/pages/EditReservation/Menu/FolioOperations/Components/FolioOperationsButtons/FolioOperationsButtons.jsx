@@ -16,6 +16,7 @@ const FolioOperationsButtons = ({ data, folioUuid, reservationId, onPrintAllFoli
   const [folioOpen, setFolioOpen] = useState(false);
 
   const foliosList = folioUuid?.data || [];
+  console.log("FolioList", foliosList);
 
   const addOrder = [
     {

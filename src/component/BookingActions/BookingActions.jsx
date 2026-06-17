@@ -11,13 +11,15 @@ export const button_config = {
     label: "Add Payment",
     icon: <PlusOutlined style={{ fontSize: "12px" }} />,
   },
+  addDeposit: {
+    label: "Add Deposit",
+    icon: <PlusOutlined style={{ fontSize: "12px" }} />,
+  },
   addRefund: {
     label: "Add Refund",
     icon: <PlusOutlined style={{ fontSize: "12px" }} />,
   },
-  amendStay: {
-    label: "Amend Stay",
-  },
+
   overtimeCharges: {
     label: "Overtime Charges",
   },
@@ -38,26 +40,17 @@ export const button_config = {
 };
 
 export const status_actions = {
-  PENDING: ["changeStatus", "amendBooking", "addPayment"],
-  BOOKED: ["changeStatus", "amendBooking", "addPayment", "addNote"],
-  CONFIRMED: [
-    "changeStatus",
-    "amendBooking",
-    "addPayment",
-    "overtimeCharges",
-    "addRefund",
-    "addNote",
-  ],
+  PENDING: [],
+  BOOKED: ["addNote"],
+  CONFIRMED: ["overtimeCharges", "addRefund", "addNote", "addDeposit"],
   CHECKED_IN: [
-    "changeStatus",
-    "amendStay",
     "addPayment",
     "overtimeCharges",
     "addRefund",
     "printInvoice",
     "addNote",
   ],
-  CHECKED_OUT: ["changeStatus","addRefund", "printInvoice", "addNote"],
-  CANCELLED: ["changeStatus","overtimeCharges", "addRefund", "addNote"],
-  NO_SHOW: ["changeStatus","overtimeCharges", "addRefund", "ChargeNoshowFee", "addNote"],
+  CHECKED_OUT: ["addRefund", "printInvoice", "addNote"],
+  CANCELLED: ["overtimeCharges", "addRefund", "addNote"],
+  NO_SHOW: ["overtimeCharges", "addRefund", "ChargeNoshowFee", "addNote"],
 };
