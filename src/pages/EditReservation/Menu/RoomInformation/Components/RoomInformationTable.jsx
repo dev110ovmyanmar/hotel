@@ -33,9 +33,15 @@ import RoomMoveModal from "./RoomAmendmentModals/RoomMoveModal";
 import GuestUploadDrawer from "../../GuestDetails/Components/GuestForms/GuestUploadDrawer";
 import UpdateRateModal from "./RoomAmendmentModals/UpdateRateModal";
 import AddExtraBedModal from "./RoomAmendmentModals/AddExtraBedModal";
+import RoomUpgradeModal from "./RoomAmendmentModals/RoomUpgradeModal";
+import { useApiMutation } from "../../../../../hooks/useApiMutation";
+import { availabilitySearch } from "../../../../../api/reservationSectionApi";
+import Toast from "../../../../../component/Toast/Toast";
+
 
 const RoomInformationTable = ({
   data,
+  reservation,
   page,
   perPage,
   total,
@@ -57,6 +63,8 @@ const RoomInformationTable = ({
   const [selectedGuestData, setSelectedGuestData] = useState(null); // This is the Guest dat
   const [uploadOpen, setUploadOpen] = useState(false);
   const [selectedUploadRow, setSelectedUploadRow] = useState(null);
+  const [roomUpgrade, setRoomUpgrade] = useState(false);
+
 
   // Unified State Engine for Split Modals
   const [activeModal, setActiveModal] = useState(null);
@@ -82,9 +90,64 @@ const RoomInformationTable = ({
   const extraBed = amendmentType?.find((item) => item.code === "extra_bed_add");
   const extraBedAmendmentUuid = extraBed?.uuid;
 
+  const roomUpgrades = amendmentType?.find((item) => item.code === "room_upgrade")
+  const roomUpgradeUuid = roomUpgrades?.uuid;
+
+  const availabilitySearchs = useApiMutation({
+    mutationFn: availabilitySearch,
+    invalidateKeys: [["availability-search"]],
+    // enabled: !!selectedData?.reservation?.uuid
+  });
+
+  console.log(availabilitySearchs, "AvailabilitySearchs")
+
+
+
+
   const handleAction = (key, record) => {
     setSelectedData(record);
     setActiveModal(key);
+
+
+    console.log(record, "RecordInHandleAction");
+
+    // 1. Keep them as objects, not formatted strings
+    const checkinDate = dayjs().startOf('day');
+    const checkoutDate = dayjs(record?.checkoutDate).startOf('day');
+
+    // 2. Perform the diff directly on the objects
+    // 'day' is the unit of measurement, 'true' returns a float (if partial days exist)
+    const totalNights = checkoutDate.diff(checkinDate, 'day', true);
+
+    console.log(totalNights, "totalNights");
+
+    const checkinDatePayload = dayjs().format("YYYY-MM-DD");
+    const checkoutDatePayload = dayjs(record?.checkoutDate).format("YYYY-MM-DD");
+
+    const ranks = record?.roomType?.rank;
+
+    // const uuid = record?.reservation?.uuid;
+
+    console.log(record, "RecordSelectedDataInformationTable")
+    const modifiedValues = {
+      reservation: {
+        uuid: reservation?.uuid
+      },
+      filter: {
+        checkinDate: checkinDatePayload,
+        checkoutDate: checkoutDatePayload
+      },
+      totalNight: totalNights,
+      rank: ranks,
+      amendmentType : {
+        code : "room_upgrade"
+      }
+
+    };
+
+    availabilitySearchs.mutate(modifiedValues)
+
+
   };
 
   const closeModal = () => {
@@ -112,6 +175,7 @@ const RoomInformationTable = ({
         const isValidStatus = validStatuses.includes(statusCode);
         const isClickable =
           isRoomNull && isValidStatus && !record?.expiredStatus;
+
         return (
           <span
             style={{
@@ -238,16 +302,16 @@ const RoomInformationTable = ({
                       onClick: () => handleAction("date_change", record),
                     },
                     ...(record?.isExtend !== false ||
-                    record?.roomStatus?.code === "checked_in"
+                      record?.roomStatus?.code === "checked_in"
                       ? [
-                          {
-                            key: "stay_extension",
-                            label: "Extend Stay",
-                            icon: <PlusOutlined />,
-                            onClick: () =>
-                              handleAction("stay_extension", record),
-                          },
-                        ]
+                        {
+                          key: "stay_extension",
+                          label: "Extend Stay",
+                          icon: <PlusOutlined />,
+                          onClick: () =>
+                            handleAction("stay_extension", record),
+                        },
+                      ]
                       : []),
                     {
                       key: "stay_reduction",
@@ -267,11 +331,11 @@ const RoomInformationTable = ({
                       key: "room_move",
                       label: "Change Room",
                       icon: <MdOutlineMeetingRoom />,
-                      className:
-                        record?.roomStatus?.code === "checked_in" &&
-                        record?.room !== null
-                          ? "!text-black"
-                          : "!text-gray-300 !cursor-not-allowed !pointer-events-none",
+                      // className:
+                      //   record?.roomStatus?.code === "checked_in" &&
+                      //     record?.room !== null
+                      //     ? "!text-black"
+                      //     : "!text-gray-300 !cursor-not-allowed !pointer-events-none",
                       onClick: () => {
                         handleAction("room_move", record);
                         setRoomMoveOpen(true);
@@ -281,7 +345,10 @@ const RoomInformationTable = ({
                       key: "room_upgrade",
                       label: "Upgrade Room",
                       icon: <ArrowUpOutlined />,
-                      onClick: () => handleAction("room_upgrade", record),
+                      onClick: () => {
+                        handleAction("room_upgrade", record),
+                          setRoomUpgrade(true)
+                      },
                     },
                     {
                       key: "room_downgraden",
@@ -400,12 +467,12 @@ const RoomInformationTable = ({
         selectedData={selectedData}
       />
 
-      <RoomMoveDrawer
+      {/* <RoomMoveDrawer
         open={roomMoveOpen}
         selectedData={selectedData}
         onClose={() => setRoomMoveOpen(false)}
         reservationId={selectedData?.id}
-      />
+      /> */}
 
       {assignRoomOpen && (
         <AssignRoomForm
@@ -531,6 +598,18 @@ const RoomInformationTable = ({
           extraBedAmendmentUuid={extraBedAmendmentUuid}
         />
       )}
+
+      <RoomUpgradeModal
+        isOpen={roomUpgrade}
+        onClose={() => setRoomUpgrade(false)}
+        record={selectedData}
+        roomUpgradeUuid={roomUpgradeUuid}
+        roomList={availabilitySearchs?.data}
+        availabilitySearchsPendings={availabilitySearchs?.isPending}
+      />
+
+
+
     </div>
   );
 };
