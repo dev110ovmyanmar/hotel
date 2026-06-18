@@ -95,7 +95,7 @@ const BookingDetailButton = ({ data }) => {
   return (
     <div>
       <div className="text-sm mb-6 mt-1.5">
-        Reservation id:
+        Reservation No:
         <strong className="text-[#286399] ">
           {" "}
           {reservation?.reservation?.reservationNo}

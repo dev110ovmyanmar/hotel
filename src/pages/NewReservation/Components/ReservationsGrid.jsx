@@ -34,7 +34,7 @@ const ReservationsGrid = ({
   const navigate = useNavigate();
 
   const handleMenuClick = (item) => {
-    navigate(`/reservation/room-information`, {
+    navigate(`/reservations/room-information`, {
       state: { bookingId: item?.uuid },
     });
   };
