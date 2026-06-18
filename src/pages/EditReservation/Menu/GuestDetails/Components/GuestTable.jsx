@@ -190,6 +190,7 @@ const GuestTable = ({
           selectedData={selectedData}
           setSelectedData={setSelectedData}
           reservationUuid={reservationUuid}
+          roomuuid={selectedData?.reservationRoom?.uuid}
         />
       )}
 

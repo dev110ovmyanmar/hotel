@@ -39,7 +39,6 @@ import { availabilitySearch } from "../../../../../api/reservationSectionApi";
 import Toast from "../../../../../component/Toast/Toast";
 import RoomDowngradeModal from "./RoomAmendmentModals/RoomDowngradeModal";
 
-
 const RoomInformationTable = ({
   data,
   reservation,
@@ -68,7 +67,6 @@ const RoomInformationTable = ({
   const [roomDowngrade, setRoomDowngrade] = useState(false);
   const [ratePlanUuid, setRatePlanUuid] = useState();
 
-
   // Unified State Engine for Split Modals
   const [activeModal, setActiveModal] = useState(null);
 
@@ -93,10 +91,14 @@ const RoomInformationTable = ({
   const extraBed = amendmentType?.find((item) => item.code === "extra_bed_add");
   const extraBedAmendmentUuid = extraBed?.uuid;
 
-  const roomUpgrades = amendmentType?.find((item) => item.code === "room_upgrade")
+  const roomUpgrades = amendmentType?.find(
+    (item) => item.code === "room_upgrade",
+  );
   const roomUpgradeUuid = roomUpgrades?.uuid;
 
-  const roomDowngrades = amendmentType?.find((item) => item.code === "room_downgrade")
+  const roomDowngrades = amendmentType?.find(
+    (item) => item.code === "room_downgrade",
+  );
   const roomDowngradeUuid = roomDowngrades?.uuid;
 
   const availabilitySearchs = useApiMutation({
@@ -105,55 +107,49 @@ const RoomInformationTable = ({
     // enabled: !!selectedData?.reservation?.uuid
   });
 
-  console.log(availabilitySearchs, "AvailabilitySearchs")
-
-
-
+  console.log(availabilitySearchs, "AvailabilitySearchs");
 
   const handleAction = (key, record) => {
     setSelectedData(record);
     setActiveModal(key);
 
-
     console.log(record, "RecordInHandleAction");
 
     // 1. Keep them as objects, not formatted strings
-    const checkinDate = dayjs().startOf('day');
-    const checkoutDate = dayjs(record?.checkoutDate).startOf('day');
+    const checkinDate = dayjs().startOf("day");
+    const checkoutDate = dayjs(record?.checkoutDate).startOf("day");
 
     // 2. Perform the diff directly on the objects
     // 'day' is the unit of measurement, 'true' returns a float (if partial days exist)
-    const totalNights = checkoutDate.diff(checkinDate, 'day', true);
+    const totalNights = checkoutDate.diff(checkinDate, "day", true);
 
     console.log(totalNights, "totalNights");
 
     const checkinDatePayload = dayjs().format("YYYY-MM-DD");
-    const checkoutDatePayload = dayjs(record?.checkoutDate).format("YYYY-MM-DD");
+    const checkoutDatePayload = dayjs(record?.checkoutDate).format(
+      "YYYY-MM-DD",
+    );
 
     const ranks = record?.roomType?.rank;
 
-
     const modifiedValues = {
       reservation: {
-        uuid: reservation?.uuid
+        uuid: reservation?.uuid,
       },
       filter: {
         checkinDate: checkinDatePayload,
-        checkoutDate: checkoutDatePayload
+        checkoutDate: checkoutDatePayload,
       },
       totalNight: totalNights,
       rank: ranks,
       amendmentType: {
-        code: key === "room_downgrade" ? "room_downgrade" : "room_upgrade"
-      }
-
+        code: key === "room_downgrade" ? "room_downgrade" : "room_upgrade",
+      },
     };
 
-    console.log(modifiedValues, "modifiedValues")
+    console.log(modifiedValues, "modifiedValues");
 
-    availabilitySearchs.mutate(modifiedValues)
-
-
+    availabilitySearchs.mutate(modifiedValues);
   };
 
   const closeModal = () => {
@@ -308,16 +304,16 @@ const RoomInformationTable = ({
                       onClick: () => handleAction("date_change", record),
                     },
                     ...(record?.isExtend !== false ||
-                      record?.roomStatus?.code === "checked_in"
+                    record?.roomStatus?.code === "checked_in"
                       ? [
-                        {
-                          key: "stay_extension",
-                          label: "Extend Stay",
-                          icon: <PlusOutlined />,
-                          onClick: () =>
-                            handleAction("stay_extension", record),
-                        },
-                      ]
+                          {
+                            key: "stay_extension",
+                            label: "Extend Stay",
+                            icon: <PlusOutlined />,
+                            onClick: () =>
+                              handleAction("stay_extension", record),
+                          },
+                        ]
                       : []),
                     {
                       key: "stay_reduction",
@@ -352,10 +348,9 @@ const RoomInformationTable = ({
                       label: "Upgrade Room",
                       icon: <ArrowUpOutlined />,
                       onClick: () => {
-                        handleAction("room_upgrade", record),
+                        (handleAction("room_upgrade", record),
                           setRoomUpgrade(true),
-                          setRatePlanUuid(record?.ratePlan.uuid)
-
+                          setRatePlanUuid(record?.ratePlan.uuid));
                       },
                     },
                     {
@@ -363,10 +358,10 @@ const RoomInformationTable = ({
                       label: "Downgrade Room",
                       icon: <ArrowDownOutlined />,
                       onClick: () => {
-                        handleAction("room_downgrade", record),
+                        (handleAction("room_downgrade", record),
                           setRoomDowngrade(true),
-                          setRatePlanUuid(record?.ratePlan.uuid)
-                      }
+                          setRatePlanUuid(record?.ratePlan.uuid));
+                      },
                     },
                     {
                       key: "add_room",
@@ -525,7 +520,6 @@ const RoomInformationTable = ({
           guestData={selectedGuestData}
           setSelectedData={setSelectedGuestData}
           reservationUuid={reservationUuid?.reservation}
-          roomuuid={selectedData?.uuid}
         />
       )}
       {guestListOpen && (
@@ -630,8 +624,6 @@ const RoomInformationTable = ({
         availabilitySearchsPendings={availabilitySearchs?.isPending}
         ratePlanUuid={ratePlanUuid}
       />
-
-
     </div>
   );
 };
