@@ -37,6 +37,7 @@ import RoomUpgradeModal from "./RoomAmendmentModals/RoomUpgradeModal";
 import { useApiMutation } from "../../../../../hooks/useApiMutation";
 import { availabilitySearch } from "../../../../../api/reservationSectionApi";
 import Toast from "../../../../../component/Toast/Toast";
+import RoomDowngradeModal from "./RoomAmendmentModals/RoomDowngradeModal";
 
 
 const RoomInformationTable = ({
@@ -64,6 +65,8 @@ const RoomInformationTable = ({
   const [uploadOpen, setUploadOpen] = useState(false);
   const [selectedUploadRow, setSelectedUploadRow] = useState(null);
   const [roomUpgrade, setRoomUpgrade] = useState(false);
+  const [roomDowngrade, setRoomDowngrade] = useState(false);
+  const [ratePlanUuid, setRatePlanUuid] = useState();
 
 
   // Unified State Engine for Split Modals
@@ -92,6 +95,9 @@ const RoomInformationTable = ({
 
   const roomUpgrades = amendmentType?.find((item) => item.code === "room_upgrade")
   const roomUpgradeUuid = roomUpgrades?.uuid;
+
+  const roomDowngrades = amendmentType?.find((item) => item.code === "room_downgrade")
+  const roomDowngradeUuid = roomDowngrades?.uuid;
 
   const availabilitySearchs = useApiMutation({
     mutationFn: availabilitySearch,
@@ -126,9 +132,7 @@ const RoomInformationTable = ({
 
     const ranks = record?.roomType?.rank;
 
-    // const uuid = record?.reservation?.uuid;
 
-    console.log(record, "RecordSelectedDataInformationTable")
     const modifiedValues = {
       reservation: {
         uuid: reservation?.uuid
@@ -139,11 +143,13 @@ const RoomInformationTable = ({
       },
       totalNight: totalNights,
       rank: ranks,
-      amendmentType : {
-        code : "room_upgrade"
+      amendmentType: {
+        code: key === "room_downgrade" ? "room_downgrade" : "room_upgrade"
       }
 
     };
+
+    console.log(modifiedValues, "modifiedValues")
 
     availabilitySearchs.mutate(modifiedValues)
 
@@ -347,14 +353,20 @@ const RoomInformationTable = ({
                       icon: <ArrowUpOutlined />,
                       onClick: () => {
                         handleAction("room_upgrade", record),
-                          setRoomUpgrade(true)
+                          setRoomUpgrade(true),
+                          setRatePlanUuid(record?.ratePlan.uuid)
+
                       },
                     },
                     {
-                      key: "room_downgraden",
+                      key: "room_downgrade",
                       label: "Downgrade Room",
                       icon: <ArrowDownOutlined />,
-                      onClick: () => handleAction("room_downgraden", record),
+                      onClick: () => {
+                        handleAction("room_downgrade", record),
+                          setRoomDowngrade(true),
+                          setRatePlanUuid(record?.ratePlan.uuid)
+                      }
                     },
                     {
                       key: "add_room",
@@ -606,8 +618,18 @@ const RoomInformationTable = ({
         roomUpgradeUuid={roomUpgradeUuid}
         roomList={availabilitySearchs?.data}
         availabilitySearchsPendings={availabilitySearchs?.isPending}
+        ratePlanUuid={ratePlanUuid}
       />
 
+      <RoomDowngradeModal
+        isOpen={roomDowngrade}
+        onClose={() => setRoomDowngrade(false)}
+        record={selectedData}
+        roomDowngradeUuid={roomDowngradeUuid}
+        roomList={availabilitySearchs?.data}
+        availabilitySearchsPendings={availabilitySearchs?.isPending}
+        ratePlanUuid={ratePlanUuid}
+      />
 
 
     </div>
