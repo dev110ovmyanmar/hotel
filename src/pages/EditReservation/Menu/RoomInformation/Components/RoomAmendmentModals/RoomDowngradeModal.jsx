@@ -4,15 +4,15 @@ import { DoubleRightOutlined, InfoCircleOutlined, WalletOutlined } from '@ant-de
 import { createRoomAmendment } from '../../../../../../api/roomAmendmentApi';
 import { useApiMutation } from '../../../../../../hooks/useApiMutation';
 import Toast from '../../../../../../component/Toast/Toast';
-import RoomUpgradeReview from './RoomUpgradeReview';
+import RoomDowngradeReview from './RoomDowngradeReview';
 
 const { Text, Title } = Typography;
 
-export default function RoomUpgradeModal({
+export default function RoomDowngradeModal({
     isOpen,
     onClose,
     record,
-    roomUpgradeUuid,
+    roomDowngradeUuid,
     roomList,
     availabilitySearchsPendings,
     ratePlanUuid
@@ -23,7 +23,7 @@ export default function RoomUpgradeModal({
     const [selectedRoomTypeName, setSelectedRoomTypeName] = useState({});
     console.log(selectedRoomTypeName, "selectedRoomTypeName")
     const [reviewData, setReviewData] = useState(null);
-    const [checkSelectedRoom, setCheckSelectedRoom] = useState(false);
+
 
     console.log(reviewData, "ReviewData")
     // API Mutation engine handling state invalidation
@@ -54,7 +54,7 @@ export default function RoomUpgradeModal({
             console.log(reviewData, "ReviewData")
 
             const payload = {
-                amendmentType: { uuid: roomUpgradeUuid },
+                amendmentType: { uuid: roomDowngradeUuid },
                 reservationRoom: { uuid: record?.uuid },
                 room: { uuid: reviewData.roomUuid?.value },
                 roomType: { uuid: reviewData?.roomType },
@@ -149,7 +149,6 @@ export default function RoomUpgradeModal({
                 key="review"
                 type="primary"
                 onClick={handleReview}
-                disabled={!checkSelectedRoom}
             >
                 Review
             </Button>,
@@ -172,12 +171,13 @@ export default function RoomUpgradeModal({
         ];
     }
 
+
     return (
         <Modal
             title={
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <div style={{ width: '4px', height: '18px', background: '#1677ff', borderRadius: '2px' }} />
-                    <span style={{ fontWeight: 600 }}>Room Amendment — Upgrade Room</span>
+                    <span style={{ fontWeight: 600 }}>Room Amendment — Downgrade Room</span>
                 </div>
             }
             open={isOpen}
@@ -234,7 +234,6 @@ export default function RoomUpgradeModal({
                                                             console.log(room, "RoomInSearch")
                                                             setSelectedRoom(room.roomType.uuid);
                                                             setSelectedRoomTypeName(room.roomType);
-                                                            setCheckSelectedRoom(true);
                                                             form.setFieldsValue({
                                                                 roomType: room?.roomType?.uuid
                                                             });
@@ -246,7 +245,6 @@ export default function RoomUpgradeModal({
                                                                     },
                                                                 });
                                                             }
-
                                                         }}
                                                         style={{
                                                             height: 80,
@@ -333,7 +331,7 @@ export default function RoomUpgradeModal({
                                                 initialValue={false}
                                             >
                                                 <Checkbox>
-                                                    If checked, the room will be upgraded with the new price and facilities.
+                                                    If checked, the room will be downgrad with the new price and facilities.
                                                 </Checkbox>
                                             </Form.Item>
                                         </>
@@ -343,12 +341,12 @@ export default function RoomUpgradeModal({
                             </>
                         ) : (
                             <div className="text-center py-8">
-                                <Text type="secondary">There are no rooms available to upgrade.</Text>
+                                <Text type="secondary">There are no rooms available to downgrade.</Text>
                             </div>
                         )
                     )
                         : (
-                            <RoomUpgradeReview
+                            <RoomDowngradeReview
                                 record={record}
                                 selectedRoomTypeName={selectedRoomTypeName}
                                 reviewData={reviewData}
