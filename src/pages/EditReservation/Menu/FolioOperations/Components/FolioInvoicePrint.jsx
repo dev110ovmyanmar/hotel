@@ -99,8 +99,25 @@ const FolioInvoicePrint = React.forwardRef(({ folios, folio, reservation, proper
         <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
 
+        @media screen {
+          #native-print-container {
+            display: none !important;
+          }
+        }
+
         @media print {
           @page { size: A4 portrait; margin: 10mm 14mm; }
+          body > *:not(#native-print-container) {
+            display: none !important;
+          }
+          #native-print-container {
+            display: block !important;
+            position: static !important;
+            width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            background: white !important;
+          }
           .folio-page-break { page-break-before: always; }
           table { border-collapse: collapse !important; width: 100% !important; }
           * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }

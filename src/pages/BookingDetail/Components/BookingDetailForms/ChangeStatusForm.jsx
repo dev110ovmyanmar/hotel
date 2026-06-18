@@ -21,7 +21,6 @@ const ChangeStatusForm = ({ reservationDetails, open, onClose }) => {
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
 
   const { data } = useApiQuery({
-    // fetchQueryName: "reservation-room",
     fetchQueryFunction: reservationRoomList,
     params: {
       reservationRoom: {
@@ -86,8 +85,8 @@ const ChangeStatusForm = ({ reservationDetails, open, onClose }) => {
     const statusColorMap = {
       booked: "text-[#0958D9] bg-[#E6F4FF] text-xs p-1 rounded ",
       confirmed: "text-[#389E0D] bg-[#F6FFED] text-xs p-1 rounded",
-      "checked-in": "text-[#08979C] bg-[#E6FFFB] text-xs p-1 rounded",
-      "checked-out": "text-[#FF8D28] bg-[#FFF4F1] text-xs p-1 rounded",
+      "checked_in": "text-[#08979C] bg-[#E6FFFB] text-xs p-1 rounded",
+      "checked_out": "text-[#FF8D28] bg-[#FFF4F1] text-xs p-1 rounded",
       "no-show": "text-gray-800 bg-gray-100 text-xs p-1 rounded",
       cancelled: "text-red-600 bg-red-100 text-xs p-1 rounded",
     };

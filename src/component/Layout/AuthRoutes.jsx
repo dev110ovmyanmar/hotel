@@ -253,10 +253,13 @@ const ServicePackage = lazy(
 );
 
 const FacilityBookingList = lazy(
-  () => import("../../pages/FacilityBooking/FacilityBookingList")
-)
+  () => import("../../pages/FacilityBooking/FacilityBookingList"),
+);
 
-const ServiceOrderList = lazy(() => import("../../pages/EditReservation/Menu/ServiceOrder/ServiceOrderList"))
+const ServiceOrderList = lazy(
+  () =>
+    import("../../pages/EditReservation/Menu/ServiceOrder/ServiceOrderList"),
+);
 
 // const Email =lazy(()=> import("../../pages/Email/Email"))
 export const authRoutes = [
@@ -298,37 +301,37 @@ export const authRoutes = [
 
   {
     key: 3.1,
-    path: "/reservation/booking-detail/",
+    path: "/reservations/booking-detail/",
     component: <BookingDetail />,
   },
   {
     key: 3.2,
-    path: "/reservation/guest-details/",
+    path: "/reservations/guest-details/",
     component: <GuestDetails />,
   },
   {
     key: 3.3,
-    path: "/reservation/room-information/",
+    path: "/reservations/room-information/",
     component: <RoomInformation />,
   },
   {
     key: 3.4,
-    path: "/reservation/event-facility-booking/",
+    path: "/reservations/event-facility-booking/",
     component: <EventFacilityOrderList />,
   },
   {
     key: 3.5,
-    path: "/reservation/folio-operations/",
+    path: "/reservations/folio-operations/",
     component: <FolioOperations />,
   },
   {
     key: 3.6,
-    path: "/reservation/service-add-on/",
+    path: "/reservations/service-add-on/",
     component: <AddOnServiceList />,
   },
   {
     key: 3.6,
-    path: "/reservation/service-order/",
+    path: "/reservations/service-order/",
     component: <ServiceOrderList />,
   },
 
@@ -707,7 +710,6 @@ export const authRoutes = [
         component: <FacilityBookingList />,
         // permission: PERMISSIONS.FACILITY_PACKAGE_LIST,
       },
-
     ],
   },
   {
@@ -1092,7 +1094,6 @@ const AuthRoutes = () => {
       _.map(authRoutes, (route) => (route.nested ? route.nested : route)),
     );
   }, []);
-
 
   return (
     <>

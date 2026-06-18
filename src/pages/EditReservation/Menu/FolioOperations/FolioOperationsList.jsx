@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
-import { useReactToPrint } from "react-to-print";
+import { createPortal } from "react-dom";
 import ReservationHeader from "../../Components/ReservationHeader";
 import ReservationMenu from "../../Components/ReservationMenu";
 import ReservationListHeader from "../../../../component/ReservationHeader/ReservationListHeader";
@@ -48,9 +48,6 @@ const FolioOperationsList = () => {
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
   const propertyFiles = initData?.property?.propertyFiles;
   const propretyImage = propertyFiles?.find((file) => file?.name === "email_photo")?.file;
-
-  // Structural Ref to attach to the printable component wrapper
-  const printComponentRef = useRef(null);
 
   const location = useLocation();
   const reservationRoomUuid = location.state?.bookingId;
@@ -114,22 +111,20 @@ const FolioOperationsList = () => {
     );
   };
 
-  // Setup the print handler function using the hook
-  const handlePrintTrigger = useReactToPrint({
-    contentRef: printComponentRef,
-    documentTitle: `Invoice_${printTarget?.reservation?.reservationNo || "Receipt"}`,
-    onAfterPrint: () => {
-      // Clear print payload once user finishes with print interaction window
-      setPrintTarget(null);
-    }
-  });
-
   // Watcher forces print trigger execution once state mounts element into DOM
   useEffect(() => {
-    if (printTarget && printComponentRef.current) {
-      handlePrintTrigger();
+    if (printTarget) {
+      const originalTitle = document.title;
+      document.title = `Invoice_${printTarget?.reservation?.reservationNo || "Receipt"}`;
+
+      // Wait for DOM updates, then trigger native print
+      setTimeout(() => {
+        window.print();
+        setPrintTarget(null);
+        document.title = originalTitle;
+      }, 100);
     }
-  }, [printTarget, handlePrintTrigger]);
+  }, [printTarget]);
 
   const handlePrintAll = useCallback(() => {
     if (!folioList?.data || folioList.data.length === 0) return;
@@ -174,18 +169,18 @@ const FolioOperationsList = () => {
         onPrintFolio={(folio) => setPrintTarget({ folio, reservation: folioList?.reservation })}
       />
 
-      {/* Renders template inside a screen-hidden wrapper sandbox container */}
-      {printTarget && (
-        <div style={{ display: "none" }}>
+      {/* Renders template outside the main DOM tree to prevent layout interference */}
+      {printTarget && createPortal(
+        <div id="native-print-container">
           <FolioInvoicePrint
-            ref={printComponentRef}
             folios={printTarget.folios}
             folio={printTarget.folio}
             adminName={adminName}
             reservation={printTarget.reservation}
             propertyImage={propretyImage}
           />
-        </div>
+        </div>,
+        document.body
       )}
 
       <Modal

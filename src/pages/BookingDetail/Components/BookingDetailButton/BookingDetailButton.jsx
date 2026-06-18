@@ -7,6 +7,7 @@ import AddReundForm from "../BookingDetailForms/AddRefundForm";
 import RoomMoveForm from "../BookingDetailForms/RoomMoveForm";
 import AmendStayForm from "../BookingDetailForms/AmendStayForm";
 import AddDepoistForm from "../BookingDetailForms/AddDepoistForm";
+import AddPaymentForm from "../BookingDetailForms/AddPaymentForm";
 import {
   button_config,
   status_actions,
@@ -48,6 +49,7 @@ const BookingDetailButton = ({ data }) => {
   const [roomMoveOpen, setRoomMoveOpen] = useState(false);
   const [amendStayOpen, setAmendStayOpen] = useState(false);
   const [addPaymentOpen, setAddPaymentOpen] = useState(false);
+  const [addDepositOpen, setAddDepositOpen] = useState(false);
   const [noteOpen, setNoteOpen] = useState(false);
 
   const handleAction = (key) => {
@@ -61,11 +63,15 @@ const BookingDetailButton = ({ data }) => {
         break;
 
       case "addDeposit":
-        setAddPaymentOpen(true);
+        setAddDepositOpen(true);
         break;
 
       case "addRefund":
         setRefundOpen(true);
+        break;
+
+      case "addPayment":
+        setAddPaymentOpen(true);
         break;
 
       case "overtimeCharges":
@@ -89,7 +95,7 @@ const BookingDetailButton = ({ data }) => {
   return (
     <div>
       <div className="text-sm mb-6 mt-1.5">
-        Reservation id:
+        Reservation No:
         <strong className="text-[#286399] ">
           {" "}
           {reservation?.reservation?.reservationNo}
@@ -130,8 +136,8 @@ const BookingDetailButton = ({ data }) => {
       />
 
       <AddDepoistForm
-        open={addPaymentOpen}
-        onClose={() => setAddPaymentOpen(false)}
+        open={addDepositOpen}
+        onClose={() => setAddDepositOpen(false)}
         bookingDetails={data}
         providerTypes={providerTypes}
         paymentMethodsData={paymentMethods}
@@ -142,6 +148,16 @@ const BookingDetailButton = ({ data }) => {
       <AddReundForm
         open={refundOpen}
         onClose={() => setRefundOpen(false)}
+        bookingDetails={data}
+        providerTypes={providerTypes}
+        paymentMethodsData={paymentMethods}
+        paymentCompletedStatus={paymentCompletedStatus}
+        guests={guests}
+      />
+
+      <AddPaymentForm
+        open={addPaymentOpen}
+        onClose={() => setAddPaymentOpen(false)}
         bookingDetails={data}
         providerTypes={providerTypes}
         paymentMethodsData={paymentMethods}

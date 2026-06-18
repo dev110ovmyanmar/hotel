@@ -167,3 +167,20 @@ export const createFolioPaymentRefund = async (params) => {
   return data.response;
 }
 
+// Folio-Payment/AddPayment
+export const createFolioAddPayment = async (params) => {
+  const { data } = await apiClient.post("folio-payment/payment", params);
+  return data.response;
+}
+
+// Folio-Payments-List
+export const folioPaymentList = async (params) => {
+  const { data } = await apiClient.get("folio-payments", { params });
+  return data.response;
+}
+
+// Folio-Payment-Detail
+export const folioPaymentDetails = async (params) => {
+  const { data } = await apiClient.get("folio-payment", { params });
+  return data.response;
+}

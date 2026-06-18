@@ -9,7 +9,7 @@ const ReservationMenu = ({ data }) => {
   const activeKey = location.pathname.split("/").pop();
 
   const onChange = (key) => {
-    navigate(`/reservation/${key}`, { state: { bookingId } });
+    navigate(`/reservations/${key}`, { state: { bookingId } });
   };
 
   const allTabs = [
@@ -47,6 +47,7 @@ const ReservationMenu = ({ data }) => {
         "booking-detail",
         "room-information",
         "guest-details",
+        "service-order",
         "folio-operations",
       ];
       return allowedKeys.includes(tab.key);
@@ -57,6 +58,7 @@ const ReservationMenu = ({ data }) => {
         "booking-detail",
         "room-information",
         "guest-details",
+        "service-order",
         "event-facility-booking",
         "service-add-on",
       ];
