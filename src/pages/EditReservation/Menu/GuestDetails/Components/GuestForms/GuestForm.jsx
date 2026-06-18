@@ -249,9 +249,7 @@ const GuestForm = ({
       city: values.city ? { uuid: values.city } : null,
       country: values.country ? { uuid: values.country } : null,
       status: values.status ? { uuid: values.status } : null,
-
       uuid: isEdit ? guestData?.uuid || data?.uuid : null,
-
       guest:
         selectedGuestProfileUuid || data?.guest?.uuid
           ? { uuid: selectedGuestProfileUuid || data?.guest?.uuid }

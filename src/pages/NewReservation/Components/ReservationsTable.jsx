@@ -30,7 +30,7 @@ const ReservationsTable = ({
   //   navigate(`/reservation/booking-detail`, { state: { bookingId: uuid } });
   // };
   const handleMenuClick = (item) => {
-    navigate(`/reservation/booking-detail`, {
+    navigate(`/reservations/booking-detail`, {
       state: { bookingId: item?.uuid },
     });
   };
