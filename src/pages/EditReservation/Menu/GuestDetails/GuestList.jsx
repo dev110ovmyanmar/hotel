@@ -43,14 +43,10 @@ const GuestList = () => {
     },
   });
 
-  const handleAddGuest = () => {
-    setSelectedData(null);
-    setMode("add");
-    setDrawerOpen(true);
-  };
+
 
   const reservationInfo = data?.reservation ?? null;
-
+console.log (selectedData?.uuid,"selectedDataUuid")
   return (
     <div className="w-full px-6 py-2">
       <ReservationHeader data={data ?? {}} />
@@ -59,7 +55,7 @@ const GuestList = () => {
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
         <ReservationListHeader
           reservationId={data?.reservation?.reservationNo}
-          onAddreservation={handleAddGuest}
+          // onAddreservation={handleAddGuest}
           addButtonText={null}
           onSearch={setKeyword}
         />
@@ -86,6 +82,7 @@ const GuestList = () => {
           selectedData={selectedData}
           setSelectedData={setSelectedData}
           reservationUuid={reservationInfo}
+          roomuuid={selectedData?.uuid}
         />
       )}
     </div>
