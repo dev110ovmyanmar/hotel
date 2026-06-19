@@ -23,13 +23,13 @@ const RoomStatusCard = ({ data }) => {
       <Card
         title={CustomTitle}
         className="booking-status-card line-height"
-        extra={
-          <ReservationStatusColor
-            status={data?.reservation?.reservationStatus?.name}
-          />
-        }
+        // extra={
+        //   <ReservationStatusColor
+        //     status={data?.reservation?.reservationStatus?.name}
+        //   />
+        // }
       >
-        <Row>
+        {/* <Row>
           <Col span={8}>
             <Text strong>Total Person</Text>
           </Col>
@@ -39,26 +39,38 @@ const RoomStatusCard = ({ data }) => {
           <Col span={8}>
             <Text strong>Extra Bed</Text>
           </Col>
-        </Row>
+        </Row> */}
 
-        <Row>
+        {/* <Row>
           <Col span={8}>
             <div style={{ display: "flex", alignItems: "center", gap: "2px" }}>
               <IoPeopleSharp className="text-blue-500" />{" "}
               <h1>{reservation?.adults}</h1>
-              <FaChild className="text-pink-500" />{" "}
-              <h1>{reservation?.children}</h1>
+              {reservation?.children && (
+                <>
+                  <FaChild className="text-pink-500" />
+                  <h1>{reservation.children}</h1>
+                </>
+              )}
             </div>
           </Col>
           <Col span={8}>
-            <Text>{reservation?.totalNight}</Text>
+            <Text>
+              {reservation?.totalNight}{" "}
+              {reservation?.totalNight === 1 ? "Night" : "Nights"}
+            </Text>
           </Col>
-          <Col span={8}>
-            <Text>{reservation?.totalRooms}</Text>
-          </Col>
-        </Row>
 
-        <div className="mt-5">
+          <Col span={8}>
+            <Text>
+              {reservation?.roomType?.maxExtraBed
+                ? reservation.roomType.maxExtraBed
+                : "-"}
+            </Text>
+          </Col>
+        </Row> */}
+
+        <div>
           <Text>Booking Date: </Text>
           <Text>{reservation?.updatedAt}</Text>
         </div>

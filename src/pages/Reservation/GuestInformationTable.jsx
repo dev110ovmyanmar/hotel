@@ -4,10 +4,7 @@ import { PERMISSIONS } from "../../variables/permission";
 
 
 const GuestInformationTable = ({
-    guestInfoTable,
-    setGuestInfoTable,
     contactPersonInfo,
-    setContactPersonInfo
 }) => {
 
     const columns = [
@@ -22,9 +19,16 @@ const GuestInformationTable = ({
             dataIndex: "phone",
             key: "phone",
             render: (text) => <div>{(text?.length === 10 && text?.startsWith("9"))  ? `+95 ${text}` : (text?.length === 11 && text?.startsWith("09"))? `+95 ${text.slice(1)}`: `+959 ${text}`}</div>
-        }
+        },
+        contactPersonInfo?.secondaryPhone && 
+        {
+            title: "Secondary Phone",
+            dataIndex: "secondaryPhone",
+            key: "secondaryPhone",
+            render: (text) => <div>{(text?.length === 10 && text?.startsWith("9"))  ? `+95 ${text}` : (text?.length === 11 && text?.startsWith("09"))? `+95 ${text.slice(1)}`: `+959 ${text}`}</div>
+        },
 
-    ];
+    ].filter(Boolean);
 
     return (
         <Table
