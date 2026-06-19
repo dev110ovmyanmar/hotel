@@ -64,7 +64,7 @@ export default function RoomUpgradeModal({
 
             createRoomAmendmentMutation.mutate(payload, {
                 onSuccess: () => {
-                    Toast.success("successfully.");
+                    Toast.success("Room is upgraded successfully.");
                     handleCloseReset();
                     setSelectedRoom();
                     setToReviewPage();
@@ -166,6 +166,7 @@ export default function RoomUpgradeModal({
                 key="confirm"
                 type="primary"
                 onClick={handleSubmit}
+                loading={createRoomAmendmentMutation.isPending}
             >
                 Confirm
             </Button>,

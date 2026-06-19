@@ -64,7 +64,7 @@ export default function RoomDowngradeModal({
 
             createRoomAmendmentMutation.mutate(payload, {
                 onSuccess: () => {
-                    Toast.success("successfully.");
+                    Toast.success("Room is downgraded successfully.");
                     handleCloseReset();
                     setSelectedRoom();
                     setToReviewPage();
@@ -165,6 +165,7 @@ export default function RoomDowngradeModal({
                 key="confirm"
                 type="primary"
                 onClick={handleSubmit}
+                loading={createRoomAmendmentMutation.isPending}
             >
                 Confirm
             </Button>,

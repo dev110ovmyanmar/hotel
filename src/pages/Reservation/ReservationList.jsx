@@ -415,11 +415,7 @@ const ReservationList = () => {
 
             {guestInfoTable && (
               <GuestInformationTable
-                guestInfoTable={guestInfoTable}
-                setGuestInfoTable={setGuestInfoTable}
                 contactPersonInfo={contactPersonInfo}
-                setContactPersonInfo={setContactPersonInfo}
-
               />
             )}
 
@@ -444,6 +440,7 @@ const ReservationList = () => {
                 className="!my-5 !px-10"
                 type="primary"
                 onClick={submitReservation}
+                loading={submitReservationMutate?.isPending}
               >
                 Submit
               </Button>
