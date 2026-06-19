@@ -103,19 +103,15 @@ const AddPaymentForm = ({
         });
     }, [guests]);
 
-    const { mutate: createFolioPayment } = useApiMutation({
+    const { mutate: createFolioPayment, isPending } = useApiMutation({
         mutationFn: createFolioAddPayment,
         invalidateKeys: [["reservation-details"]],
         options: {
             onSuccess: () => {
-                Toast.success("Payment added successfully");
                 onClose();
                 form.resetFields();
                 setSelectedProviderUuid("all");
             },
-            onError: (error) => {
-                Toast.error("Deposit added fail");
-            }
         },
     });
 
@@ -147,11 +143,26 @@ const AddPaymentForm = ({
             open={open}
             onClose={onClose}
             size={550}
-            destroyOnHidden
+            afterOpenChange={(open) => {
+                if (open) {
+                    form.resetFields();
+                    form.setFieldsValue({
+                        paymentStatus: paymentCompletedStatus.uuid,
+                    });
+                }
+            }}
             title={
                 <div className="flex justify-between items-center">
                     <span className="font-semibold text-lg">Add Payment</span>
-                    <FormButtons onClick={() => form.submit()} />
+                    <Button
+                        type="primary"
+                        onClick={() => {
+                            form.submit();
+                        }}
+                        loading={isPending}
+                    >
+                        Create
+                    </Button>
                 </div>
             }
         >
@@ -249,7 +260,10 @@ const AddPaymentForm = ({
                             rules={[{ required: true, message: "Please select a guest" }]}
                         >
                             <Select
-                                showSearch
+                                showSearch={{
+                                    filterOption: (input, option) =>
+                                        (option?.label ?? '').toLowerCase().includes(input.toLowerCase()),
+                                }}
                                 placeholder="Select a guest"
                                 options={guestOptions}
                                 className="w-full rounded"
@@ -316,14 +330,14 @@ const AddPaymentForm = ({
                 </Form.Item>
 
                 {/* --- ATTACHMENT SLIPS --- */}
-                <Form.Item label={<strong className="text-slate-700">Payment Transfer Slips Upload</strong>} name="upload">
+                {/* <Form.Item label={<strong className="text-slate-700">Payment Transfer Slips Upload</strong>} name="upload">
                     <Upload listType="picture-card" beforeUpload={() => false}>
                         <div>
                             <PlusOutlined />
                             <div className="mt-2 text-xs text-slate-500">Upload</div>
                         </div>
                     </Upload>
-                </Form.Item>
+                </Form.Item> */}
             </Form>
         </Drawer>
     );

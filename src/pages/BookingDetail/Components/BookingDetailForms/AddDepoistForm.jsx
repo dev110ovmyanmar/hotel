@@ -103,18 +103,14 @@ const AddDepoistForm = ({
     });
   }, [guests]);
 
-  const { mutate: createFolioPayment } = useApiMutation({
+  const { mutate: createFolioPayment, isPending } = useApiMutation({
     mutationFn: createFolioPaymentDeposit,
     invalidateKeys: [["reservation-details"]],
     options: {
       onSuccess: () => {
-        Toast.success("Deposit added successfully");
         onClose();
         form.resetFields();
         setSelectedProviderUuid("all");
-      },
-      onError: (error) => {
-        Toast.error("Deposit added fail");
       }
     },
   });
@@ -148,10 +144,26 @@ const AddDepoistForm = ({
       onClose={onClose}
       size={550}
       destroyOnHidden
+      afterOpenChange={(open) => {
+        if (open) {
+          form.resetFields();
+          form.setFieldsValue({
+            paymentStatus: paymentCompletedStatus.uuid,
+          });
+        }
+      }}
       title={
         <div className="flex justify-between items-center">
           <span>Add Deposit</span>
-          <FormButtons onClick={() => form.submit()} />
+          <Button
+            type="primary"
+            onClick={() => {
+              form.submit();
+            }}
+            loading={isPending}
+          >
+            Create
+          </Button>
         </div>
       }
     >
@@ -248,7 +260,10 @@ const AddDepoistForm = ({
               name="guest"
             >
               <Select
-                showSearch
+                showSearch={{
+                  filterOption: (input, option) =>
+                    (option?.label ?? '').toLowerCase().includes(input.toLowerCase()),
+                }}
                 placeholder="Select a guest"
                 options={guestOptions}
                 className="w-full rounded"
@@ -315,14 +330,14 @@ const AddDepoistForm = ({
         </Form.Item>
 
         {/* --- ATTACHMENT SLIPS --- */}
-        <Form.Item label="Payment Transfer Slips Upload" name="upload">
+        {/* <Form.Item label="Payment Transfer Slips Upload" name="upload">
           <Upload listType="picture-card" beforeUpload={() => false}>
             <div>
               <PlusOutlined />
               <div className="mt-2 text-xs text-slate-500">Upload</div>
             </div>
           </Upload>
-        </Form.Item>
+        </Form.Item> */}
       </Form>
     </Drawer>
   );

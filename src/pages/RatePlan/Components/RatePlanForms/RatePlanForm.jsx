@@ -10,12 +10,15 @@ import {
   Checkbox,
   Switch,
   InputNumber,
+  Tooltip,
+  Divider
 } from "antd";
 import Toast from "../../../../component/Toast/Toast";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
 import useApiQuery from "../../../../hooks/useApiQuery";
 import FormButton from "../../../../component/FormButtons/FormButtons";
 import TextArea from "antd/es/input/TextArea";
+import { InfoCircleOutlined } from "@ant-design/icons";
 import { queryClient } from "../../../../app/queryClient";
 import {
   createRatePlan,
@@ -467,8 +470,13 @@ const RatePlanForm = ({
             <Form.Item
               label="Is Default"
               name="isDefault"
-              initialValue={0}
+              valuePropName="checked"
+              initialValue={false}
               rules={[{ required: true, message: "Please select Is Default!" }]}
+              tooltip={{
+                title: "If no date-specific base rate exists, default room type pricing is used.",
+                icon: <InfoCircleOutlined style={{ color: "#1677ff" }} />,
+              }}
             >
               <Switch
                 disabled={isView || isDisableDefault}
@@ -477,44 +485,68 @@ const RatePlanForm = ({
               />
             </Form.Item>
 
-            {roomTypes?.map(
-              (roomType) =>
-                isAdd && (
-                  <Row
-                    key={roomType?.value}
-                    align="middle"
-                    style={{ marginBottom: 16 }}
-                  >
-                    <Col span={1}>
-                      <span className="text-red-500">*</span>
-                    </Col>
-                    <Col span={9}>
-                      <span style={{ fontWeight: 500 }}>{roomType?.label}</span>
-                    </Col>
+            {
+              isAdd &&
 
-                    <Col span={1} style={{ textAlign: "center" }}>
-                      :
-                    </Col>
+              <div className="border-2 px-4  py-4 rounded mb-2">
+                {
+                  isAdd && (
+                    <div className="mb-3">
+                      <div className="mb-2">
+                        <span className="text-gray-900 text-[16px] font-semibold">
+                          Let's map room types to this rate plan
+                        </span>
+                      </div>
 
-                    <Col span={13}>
-                      <Form.Item
-                        name={roomType?.value}
-                        noStyle
-                        rules={[
-                          { required: true, message: "Rate is required!" },
-                        ]}
+                      <div>
+                        <span className="text-gray-900 text-[15px] italic">
+                          Map the following rate plans
+                        </span>
+                      </div>
+                    </div>
+                  )
+                }
+
+                {roomTypes?.map(
+                  (roomType) =>
+                    isAdd && (
+                      <Row
+                        key={roomType?.value}
+                        align="middle"
+                        style={{ marginBottom: 16 }}
                       >
-                        <InputNumber
-                          min={0}
-                          style={{ width: "100%" }}
-                          placeholder="Enter Rate"
-                          suffix="MMK"
-                        />
-                      </Form.Item>
-                    </Col>
-                  </Row>
-                ),
-            )}
+                        <Col span={1}>
+                          <span className="text-red-500">*</span>
+                        </Col>
+                        <Col span={9}>
+                          <span style={{ fontWeight: 500 }}>{roomType?.label}</span>
+                        </Col>
+
+                        <Col span={1} style={{ textAlign: "center" }}>
+                          :
+                        </Col>
+
+                        <Col span={13}>
+                          <Form.Item
+                            name={roomType?.value}
+                            noStyle
+                            rules={[
+                              { required: true, message: "Rate is required!" },
+                            ]}
+                          >
+                            <InputNumber
+                              min={0}
+                              style={{ width: "100%" }}
+                              placeholder="Enter Rate"
+                              suffix="MMK"
+                            />
+                          </Form.Item>
+                        </Col>
+                      </Row>
+                    ),
+                )}
+              </div>
+            }
           </Form>
         )}
       </Drawer>
