@@ -56,9 +56,13 @@ const GuestListDrawer = ({
 
   const columns = [
     {
-      title: "Name",
-      key: "name",
-      render: (_, record) => record?.guest?.name || record?.name || "-",
+      title: "Guest Name",
+      key: "guestName",
+      render: (_, record) => {
+        const title = record?.guest?.title || record?.title || "";
+        const name = record?.guest?.name || record?.name || "";
+        return title || name ? `${title} ${name}`.trim() : "-";
+      },
     },
     {
       title: "NRC",
