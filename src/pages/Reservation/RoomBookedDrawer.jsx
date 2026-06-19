@@ -125,7 +125,7 @@ const RoomBookedDrawer = ({
 
                 <div>
                     <p>Check-out</p>
-                    <p className="font-bold">{dayjs(roomBookValues?.filter.checkinDate).format("DD-MM-YYYY")}</p>
+                    <p className="font-bold">{dayjs(roomBookValues?.filter.checkoutDate).format("DD-MM-YYYY")}</p>
                 </div>
 
             </div>
