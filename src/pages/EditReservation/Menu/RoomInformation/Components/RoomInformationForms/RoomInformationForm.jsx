@@ -331,7 +331,7 @@ const RoomInformationForm = ({
 
           <div className="grid grid-cols-2 gap-6">
             <Form.Item
-              label="Room"
+              label="Room Type"
               name="roomTypeUuid"
               rules={[{ required: true, message: "Please select a room type" }]}
             >

@@ -393,7 +393,7 @@ const RoomTypeForm = ({
               </Col>
               <Col span={8}>
                 <Form.Item
-                  label="Rank"
+                  label="Luxury Level"
                   name="rank"
                   rules={[{ required: true }]}
                 >

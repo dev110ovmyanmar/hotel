@@ -46,15 +46,27 @@ const RoomStatusCard = ({ data }) => {
             <div style={{ display: "flex", alignItems: "center", gap: "2px" }}>
               <IoPeopleSharp className="text-blue-500" />{" "}
               <h1>{reservation?.adults}</h1>
-              <FaChild className="text-pink-500" />{" "}
-              <h1>{reservation?.children}</h1>
+              {reservation?.children && (
+                <>
+                  <FaChild className="text-pink-500" />
+                  <h1>{reservation.children}</h1>
+                </>
+              )}
             </div>
           </Col>
           <Col span={8}>
-            <Text>{reservation?.totalNight}</Text>
+            <Text>
+              {reservation?.totalNight}{" "}
+              {reservation?.totalNight === 1 ? "Night" : "Nights"}
+            </Text>
           </Col>
+
           <Col span={8}>
-            <Text>{reservation?.totalRooms}</Text>
+            <Text>
+              {reservation?.roomType?.maxExtraBed
+                ? reservation.roomType.maxExtraBed
+                : "-"}
+            </Text>
           </Col>
         </Row>
 
