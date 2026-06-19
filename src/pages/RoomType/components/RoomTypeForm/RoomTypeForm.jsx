@@ -11,6 +11,7 @@ import {
   Tag,
   InputNumber,
   Select,
+  Divider
 } from "antd";
 import Toast from "../../../../component/Toast/Toast";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
@@ -66,7 +67,7 @@ const RoomTypeForm = ({
   const sharedProps = {
     mode: "spinner",
     min: 1,
-    max: 10,
+    max: 15,
     defaultValue: 1,
     style: { width: 150 },
   };
@@ -91,12 +92,6 @@ const RoomTypeForm = ({
     fetchQueryFunction: ratePlanMeta,
   });
 
-  // const ratePlan = ratePlanMetaData?.rate_plans?.map((rate) => ({
-  //   value: rate.uuid,
-  //   label: rate.name,
-  // }));
-  // Change 'ratePlan' to 'ratePlans'
-  
   const ratePlans = ratePlanMetaData?.rate_plans?.map((rate) => ({
     value: rate.uuid,
     label: rate.name,
@@ -159,7 +154,6 @@ const RoomTypeForm = ({
       ...values,
       basePrice: 0,
       status: { uuid: values.status },
-      // ratePlans: formattedRatePlans,
     };
 
     if (isEdit) {
@@ -310,6 +304,25 @@ const RoomTypeForm = ({
               </Col>
             </Row>
 
+            <div className="grid grid-cols-2 gap-6">
+              <Form.Item label="Room Size" name="areaSize">
+                <Input readOnly={isView} placeholder="Enter Room Size" />
+              </Form.Item>
+
+              <Form.Item
+                label="Luxury Level"
+                name="rank"
+                rules={[{ required: true }]}
+              >
+                <InputNumber
+                  {...sharedProps}
+                  readOnly={isView}
+                  style={{ width: "100%" }}
+                  placeholder="Enter Rank"
+                />
+              </Form.Item>
+            </div>
+
             <Form.Item name="basePrice" hidden>
               <InputNumber readOnly={isView} />
             </Form.Item>
@@ -382,26 +395,12 @@ const RoomTypeForm = ({
             </div>
 
             <Row gutter={24}>
-              <Col span={16}>
+              <Col span={24}>
                 <Form.Item label="Description" name="description">
                   <TextArea
-                    rows="1"
+                    rows={3}
                     readOnly={isView}
                     placeholder="Enter Room Description"
-                  />
-                </Form.Item>
-              </Col>
-              <Col span={8}>
-                <Form.Item
-                  label="Luxury Level"
-                  name="rank"
-                  rules={[{ required: true }]}
-                >
-                  <InputNumber
-                    {...sharedProps}
-                    disabled={isView}
-                    style={{ width: "100%" }}
-                    placeholder="Enter Rank"
                   />
                 </Form.Item>
               </Col>
@@ -433,44 +432,67 @@ const RoomTypeForm = ({
               )}
             </Form.Item>
 
-            {ratePlans?.map(
-              (ratePlan) =>
-                isAdd && (
-                  <Row
-                    key={ratePlan?.value}
-                    align="middle"
-                    style={{ marginBottom: 16 }}
-                  >
-                    <Col span={1}>
-                      <span className="text-red-500">*</span>
-                    </Col>
-                    <Col span={9}>
-                      <span style={{ fontWeight: 500 }}>{ratePlan?.label}</span>
-                    </Col>
+            {
+              isAdd &&
+              <div className="border-2 px-4  py-4 rounded mb-2">
+                {
+                  isAdd && (
+                    <div className="mb-3">
+                      <div className="mb-2">
+                        <span className="text-gray-900 text-[16px] font-semibold">
+                          Let's map room types to this rate plan
+                        </span>
+                      </div>
 
-                    <Col span={1} style={{ textAlign: "center" }}>
-                      :
-                    </Col>
+                      <div>
+                        <span className="text-gray-900 text-[15px] italic">
+                          Map the following rate plans
+                        </span>
+                      </div>
+                    </div>
+                  )
+                }
 
-                    <Col span={13}>
-                      <Form.Item
-                        name={ratePlan?.value}
-                        noStyle
-                        rules={[
-                          { required: true, message: "Rate is required!" },
-                        ]}
+                {ratePlans?.map(
+                  (ratePlan) =>
+                    isAdd && (
+                      <Row
+                        key={ratePlan?.value}
+                        align="middle"
+                        style={{ marginBottom: 16 }}
                       >
-                        <InputNumber
-                          min={0}
-                          style={{ width: "100%" }}
-                          placeholder="Enter Rate"
-                          suffix="MMK"
-                        />
-                      </Form.Item>
-                    </Col>
-                  </Row>
-                ),
-            )}
+                        <Col span={1}>
+                          <span className="text-red-500">*</span>
+                        </Col>
+                        <Col span={9}>
+                          <span style={{ fontWeight: 500 }}>{ratePlan?.label}</span>
+                        </Col>
+
+                        <Col span={1} style={{ textAlign: "center" }}>
+                          :
+                        </Col>
+
+                        <Col span={13}>
+                          <Form.Item
+                            name={ratePlan?.value}
+                            noStyle
+                            rules={[
+                              { required: true, message: "Rate is required!" },
+                            ]}
+                          >
+                            <InputNumber
+                              min={0}
+                              style={{ width: "100%" }}
+                              placeholder="Enter Rate"
+                              suffix="MMK"
+                            />
+                          </Form.Item>
+                        </Col>
+                      </Row>
+                    ),
+                )}
+              </div>
+            }
 
             {!isAdd && (
               <Card className="mt-5 shadow-sm  border border-gray-100 bg-gray-100!">

@@ -42,11 +42,10 @@ export const button_config = {
 export const status_actions = {
   PENDING: [],
   BOOKED: ["addNote"],
-  CONFIRMED: ["overtimeCharges", "addRefund", "addNote", "addDeposit"],
+  CONFIRMED: ["overtimeCharges", "addNote", "addDeposit"],
   CHECKED_IN: [
     "addPayment",
     "overtimeCharges",
-    "addRefund",
     "printInvoice",
     "addNote",
   ],
