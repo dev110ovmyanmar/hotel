@@ -36,8 +36,12 @@ const GuestTable = ({
     { title: "ID", dataIndex: "id", key: "id", width: 70 },
     {
       title: "Guest Name",
-      key: "name",
-      render: (_, record) => record?.guest?.name || record?.name || "-",
+      key: "guestName",
+      render: (_, record) => {
+        const title = record?.guest?.title || record?.title || "";
+        const name = record?.guest?.name || record?.name || "";
+        return title || name ? `${title} ${name}`.trim() : "-";
+      },
     },
     {
       title: "Room",
@@ -190,6 +194,7 @@ const GuestTable = ({
           selectedData={selectedData}
           setSelectedData={setSelectedData}
           reservationUuid={reservationUuid}
+          roomuuid={selectedData?.reservationRoom?.uuid}
         />
       )}
 

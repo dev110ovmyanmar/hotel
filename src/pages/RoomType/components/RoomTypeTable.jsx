@@ -69,13 +69,12 @@ const RoomTypeTable = ({
       width: 130,
       align: "center",
     },
-    // {
-    //   title: "Price (MMK)",
-    //   dataIndex: "basePrice",
-    //   key: "basePrice",
-    //   render: (text) => <PriceTag value={text} />,
-    //   align: "end",
-    // },
+    {
+      title: "Luxury Level",
+      dataIndex: "rank",
+      key: "rank",
+      align: "center",
+    },
     {
       title: "Status",
       dataIndex: "status",
@@ -85,8 +84,8 @@ const RoomTypeTable = ({
     ,
     {
       title: "Action",
-      fixed:"end",
-      align:"center",
+      fixed: "end",
+      align: "center",
       render: (_, record) => {
         const smallStyle = { fontSize: "12px" };
 

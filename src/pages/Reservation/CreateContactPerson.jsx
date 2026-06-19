@@ -76,6 +76,7 @@ const CreateGuestForm = ({
       let payload = {
         title: values.title,
         phone: values.phone,
+        secondaryPhone : values?.secondaryPhone,
         status: {
           uuid: statusOptions[0]?.value,
         },

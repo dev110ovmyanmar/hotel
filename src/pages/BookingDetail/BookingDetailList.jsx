@@ -62,11 +62,12 @@ const BookingDetailList = () => {
               <RoomStatusTable />
             </Col>
             <Col span={24}>
-              <EventFacility />
-            </Col>
-            <Col span={24}>
               <ServiceAddOn />
             </Col>
+            <Col span={24}>
+              <EventFacility />
+            </Col>
+
             <Col span={24}>
               <FoodBeverageOrder />
             </Col>

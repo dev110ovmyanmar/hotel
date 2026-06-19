@@ -26,17 +26,22 @@ const ReservationsTable = ({
 }) => {
   const navigate = useNavigate();
 
-  // const handleMenuClick = (uuid) => {
-  //   navigate(`/reservation/booking-detail`, { state: { bookingId: uuid } });
-  // };
   const handleMenuClick = (item) => {
-    navigate(`/reservation/booking-detail`, {
+    navigate(`/reservations/room-information`, {
       state: { bookingId: item?.uuid },
     });
   };
 
   const columns = [
     { title: "Id", dataIndex: "id", key: "id", width: 70 },
+    {
+      title: "Res No:",
+      dataIndex: ["reservation", "reservationNo"],
+      key: "reservationNo",
+      align: "center",
+      width: 140,
+      render: (text) => <span className="text-indigo-700">{text}</span>,
+    },
     {
       title: "Guest Name",
       dataIndex: ["guest", "name"],
@@ -45,34 +50,48 @@ const ReservationsTable = ({
         <span style={{ textTransform: "capitalize" }}>{text || ""}</span>
       ),
     },
+
     {
       title: "Room",
-      dataIndex: ["room" ,"roomNo"],
-      key: ["room" ,"roomNo"],
+      dataIndex: ["room", "roomNo"],
+      key: ["room", "roomNo"],
       align: "center",
       width: 80,
     },
     {
-      title: "Arrival",
-      dataIndex: "checkinDate",
-      key: "checkinDate",
+      title: "Rate Plan",
+      dataIndex: ["ratePlan", "name"],
+      key: ["ratePlan"],
       align: "center",
-      render: (value) => (value ? dayjs(value).format("YYYY-MM-DD") : "-"),
     },
+
     {
-      title: "Departure",
-      dataIndex: "checkoutDate",
-      key: "checkoutDate",
+      title: "Stay Period",
       align: "center",
-      render: (value) => (value ? dayjs(value).format("YYYY-MM-DD") : "-"),
+      render: (_, record) => {
+        const arrival = record.checkinDate
+          ? dayjs(record.checkinDate).format("YYYY-MM-DD")
+          : "-";
+        const departure = record.checkoutDate
+          ? dayjs(record.checkoutDate).format("YYYY-MM-DD")
+          : "-";
+
+        return (
+          <div className="flex flex-col items-center justify-center text-sm gap-0.5">
+            <span className="text-gray-700">{arrival}</span>
+            <span className="text-xs text-gray-400 font-light">to</span>
+            <span className="text-gray-700">{departure}</span>
+          </div>
+        );
+      },
     },
-    
+
     {
       title: "Night",
       dataIndex: "totalNight",
       key: "totalNight",
       align: "center",
-      width: 70,
+      width: 68,
     },
     {
       title: "Contact & Guests",
@@ -87,21 +106,23 @@ const ReservationsTable = ({
             <span className="flex items-center gap-1">
               <IoPeopleSharp className="text-blue-500" /> {record?.adults}
             </span>
-            <span className="flex items-center gap-1">
-              <FaChild className="text-pink-500" /> {record?.children}
-            </span>
+
+            {record?.children && (
+              <span className="flex items-center gap-1">
+                <FaChild className="text-pink-500" /> {record.children}
+              </span>
+            )}
           </div>
         </div>
       ),
     },
     {
-      title: "Order Status",
+      title: "Status",
       dataIndex: ["roomStatus", "name"],
       key: "status",
       align: "center",
-      render: (roomStatus) => (
-        <ReservationStatusColor status={roomStatus} />
-      ),
+      width: 90,
+      render: (roomStatus) => <ReservationStatusColor status={roomStatus} />,
     },
     {
       title: "Order Total",
@@ -120,6 +141,7 @@ const ReservationsTable = ({
       key: "action",
       fixed: "end",
       align: "center",
+      width: 100,
       render: (_, record) => (
         <div style={{ display: "flex", justifyContent: "center", gap: "8px" }}>
           <Button

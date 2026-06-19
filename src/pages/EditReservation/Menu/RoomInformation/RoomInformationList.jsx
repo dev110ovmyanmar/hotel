@@ -81,6 +81,7 @@ const RoomInformationList = () => {
 
       <RoomInformationTable
         data={data?.data || []}
+        reservation={data?.reservation}
         page={page}
         perPage={perPage}
         total={data?.pagination?.total}
