@@ -105,7 +105,8 @@ const ReservationsGrid = ({
                         gap: "6px",
                       }}
                     >
-                      <IoCalendarOutline /> {item?.ratePlan?.name}
+                      <IoCalendarOutline className="text-indigo-700" />{" "}
+                      {item?.ratePlan?.name}
                     </span>
                     <span
                       style={{
@@ -116,15 +117,18 @@ const ReservationsGrid = ({
                     >
                       <IoPeopleSharp className="text-blue-500 " /> {item.adults}
                     </span>
-                    <span
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "6px",
-                      }}
-                    >
-                      <FaChild className="text-pink-500" /> {item.children}
-                    </span>
+
+                    {item.children && (
+                      <span
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "6px",
+                        }}
+                      >
+                        <FaChild className="text-pink-500" /> {item.children}
+                      </span>
+                    )}
                   </Space>
                 </div>
 
@@ -177,7 +181,9 @@ const ReservationsGrid = ({
                     style={{ display: "flex", justifyContent: "space-between" }}
                   >
                     <span style={{ color: "#8c8c8c" }}>Res No:</span>
-                    <span>{item?.reservation?.reservationNo}</span>
+                    <span className="font-bold text-indigo-700">
+                      {item?.reservation?.reservationNo}
+                    </span>
                   </div>
 
                   <div

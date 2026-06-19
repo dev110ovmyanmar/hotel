@@ -48,6 +48,13 @@ const RoomTypeTable = ({
       width: 80,
     },
     {
+      title: "Luxury Level",
+      dataIndex: "rank",
+      key: "rank",
+      width: 130,
+      align: "center",
+    },
+    {
       title: "Total Rooms",
       dataIndex: "totalRooms",
       key: "totalRooms",
@@ -69,6 +76,7 @@ const RoomTypeTable = ({
       width: 130,
       align: "center",
     },
+
     // {
     //   title: "Price (MMK)",
     //   dataIndex: "basePrice",
@@ -81,12 +89,11 @@ const RoomTypeTable = ({
       dataIndex: "status",
       key: "status",
       render: (status) => <ColorStatusTag status={status} />,
-    }
-    ,
+    },
     {
       title: "Action",
-      fixed:"end",
-      align:"center",
+      fixed: "end",
+      align: "center",
       render: (_, record) => {
         const smallStyle = { fontSize: "12px" };
 
