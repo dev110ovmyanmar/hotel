@@ -85,24 +85,30 @@ const PaymentSummaryTable = ({ data }) => {
   );
 
   return (
-    <Card title={CustomTitle} className="payment-card">
-      <Table
-        columns={columns}
-        dataSource={data}
-        rowKey="uuid"
-        size="small"
-        pagination={false}
-      />
+    <>
+      {
+        data?.length !== 0 && (
+          <Card title={CustomTitle} className="payment-card">
+            <Table
+              columns={columns}
+              dataSource={data}
+              rowKey="uuid"
+              size="small"
+              pagination={false}
+            />
 
-      <FolioPaymentDetailModal
-        isOpen={isModalOpen}
-        onClose={() => {
-          setIsModalOpen(false);
-          setSelectedDataUuid(null);
-        }}
-        selectedDataUuid={selectedDataUuid}
-      />
-    </Card>
+            <FolioPaymentDetailModal
+              isOpen={isModalOpen}
+              onClose={() => {
+                setIsModalOpen(false);
+                setSelectedDataUuid(null);
+              }}
+              selectedDataUuid={selectedDataUuid}
+            />
+          </Card>
+        )
+      }
+    </>
   );
 };
 
