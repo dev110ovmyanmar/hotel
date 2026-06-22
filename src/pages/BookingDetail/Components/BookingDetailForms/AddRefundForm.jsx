@@ -11,11 +11,12 @@ import {
   Card,
   Divider,
   Segmented,
+  Button
 } from "antd";
 import FormButtons from "../../../../component/FormButtons/FormButtons";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
 import { createFolioPaymentRefund } from "../../../../api/reservationSectionApi";
-import Toast from "../../../../component/Toast/Toast";
+
 
 const { Title, Text } = Typography;
 
@@ -38,6 +39,9 @@ const AddRefundForm = ({
   guests,
 }) => {
   const [form] = Form.useForm();
+
+  console.log("BookingDetails", bookingDetails?.reservation?.depositStatus);
+  const depositStatus = bookingDetails?.reservation?.depositStatus;
 
   // Track selected category filter by UUID state
   const [selectedProviderUuid, setSelectedProviderUuid] = useState("all");
@@ -103,19 +107,15 @@ const AddRefundForm = ({
     });
   }, [methodsArray, selectedProviderUuid]);
 
-  const { mutate: createFolioRefund } = useApiMutation({
+  const { mutate: createFolioRefund, isPending } = useApiMutation({
     mutationFn: createFolioPaymentRefund,
     invalidateKeys: [["reservation-details"]],
     options: {
       onSuccess: () => {
-        Toast.success("Refund added successfully");
         onClose();
         form.resetFields();
         setSelectedProviderUuid("all");
       },
-      onError: () => {
-        Toast.error("Refund addition failed");
-      }
     },
   });
 
@@ -135,135 +135,159 @@ const AddRefundForm = ({
       open={open}
       onClose={onClose}
       size={550}
-      destroyOnClose
+      afterOpenChange={(open) => {
+        if (open) {
+          form.resetFields();
+        }
+      }}
       title={
         <div className="flex justify-between items-center">
           <span className="font-semibold text-lg">Add Refund</span>
-          <FormButtons onClick={() => form.submit()} />
+          <Button
+            type="primary"
+            onClick={() => {
+              form.submit();
+            }}
+            loading={isPending}
+            disabled={depositStatus === false}
+          >
+            Create
+          </Button>
         </div>
       }
     >
-      <Form
-        form={form}
-        layout="vertical"
-        onFinish={onFinish}
-      >
-        {/* --- FOLIO HEADER BAR --- */}
-        <div className="flex items-center justify-between bg-slate-50 border border-slate-200 rounded-xl p-3 mb-6">
-          <span className="text-slate-600 font-medium text-sm">Folio No</span>
-          <span className="text-slate-800 font-semibold text-base bg-white px-3 py-1 rounded-md shadow-sm border border-slate-100">
-            {bookingDetails?.reservation?.parentFolio?.folioNo || "N/A"}
-          </span>
-        </div>
-
-        {/* --- METHOD TITLE LABEL --- */}
-        <div className="flex items-center !mb-3">
-          <Title level={5} className="!mb-0 text-slate-700">Select Refund Method</Title>
-          <span className="text-red-500 ml-1 mt-1 font-bold">*</span>
-        </div>
-
-        {/* --- PROVIDER TYPES FILTER TABS --- */}
-        <div className="mb-5">
-          <Segmented
-            block
-            options={segmentedOptions}
-            value={selectedProviderUuid}
-            onChange={(value) => {
-              setSelectedProviderUuid(value);
-
-              // Direct synchronization check without rendering lifecycle delays
-              const liveFiltered = methodsArray.filter(m => value === "all" || m.type?.uuid === value);
-              const currentSelection = form.getFieldValue("paymentMethod");
-
-              if (!liveFiltered.some(m => m.uuid === currentSelection)) {
-                form.setFieldsValue({ paymentMethod: undefined });
-              }
-            }}
-            className="p-1 rounded-lg bg-slate-50/50 border border-slate-100"
-          />
-        </div>
-
-        {/* --- UNIFIED PAYMENT METHODS GRID --- */}
-        {filteredMethods.length > 0 ? (
-          <div className="mb-6">
-            <Form.Item name="paymentMethod" rules={[{ required: true, message: "Please select a refund method" }]}>
-              <Radio.Group className="w-full">
-                <Row gutter={[12, 12]}>
-                  {filteredMethods.map((method) => (
-                    <Col span={6} key={method.uuid}>
-                      <Card
-                        hoverable
-                        onClick={() => {
-                          form.setFieldsValue({ paymentMethod: method.uuid });
-                          form.validateFields(["paymentMethod"]);
-                        }}
-                        className={`text-center rounded-lg relative transition-all duration-200 cursor-pointer ${selectedMethod === method.uuid
-                          ? "border-2 border-blue-500 shadow-sm bg-blue-50/10"
-                          : "border border-slate-200 hover:border-slate-300"
-                          }`}
-                        bodyStyle={{ padding: "12px 6px" }}
-                      >
-                        <div className="flex justify-center items-center w-full h-8 mb-2">
-                          <img
-                            src={method.file}
-                            alt={method.name}
-                            className="h-7 w-auto object-contain rounded"
-                          />
-                        </div>
-                        <Text strong className="text-[11px] block truncate text-slate-700">
-                          {method.name}
-                        </Text>
-                        <Radio
-                          value={method.uuid}
-                          className="absolute top-1 right-1 m-0 raw-radio-adjust"
-                          checked={selectedMethod === method.uuid}
-                        />
-                      </Card>
-                    </Col>
-                  ))}
-                </Row>
-              </Radio.Group>
-            </Form.Item>
+      {
+        depositStatus === false ? (
+          <div className="flex justify-center items-center h-full">
+            <Text
+              className="border-2 border-red-500 px-6 py-2 rounded-md !text-red-500"
+            >
+              No Deposit Found
+            </Text>
           </div>
         ) : (
-          <div className="text-center py-6 text-slate-400 bg-slate-50 rounded-lg mb-6 border border-dashed border-slate-200">
-            No refund methods configuration available for this type.
-          </div>
-        )}
+          <Form
+            form={form}
+            layout="vertical"
+            onFinish={onFinish}
+          >
+            {/* --- FOLIO HEADER BAR --- */}
+            <div className="flex items-center justify-between bg-slate-50 border border-slate-200 rounded-xl p-3 mb-6">
+              <span className="text-slate-600 font-medium text-sm">Folio No</span>
+              <span className="text-slate-800 font-semibold text-base bg-white px-3 py-1 rounded-md shadow-sm border border-slate-100">
+                {bookingDetails?.reservation?.parentFolio?.folioNo || "N/A"}
+              </span>
+            </div>
 
-        <Divider className="my-5" />
+            {/* --- METHOD TITLE LABEL --- */}
+            <div className="flex items-center !mb-3">
+              <Title level={5} className="!mb-0 text-slate-700">Select Refund Method</Title>
+              <span className="text-red-500 ml-1 mt-1 font-bold">*</span>
+            </div>
 
-        {/* --- REQUIRED PAYLOAD PARAMETERS ROW --- */}
-        <Row gutter={16}>
-          <Col span={12}>
-            <Form.Item
-              label={<span className="text-slate-600 font-medium">Guest</span>}
-              name="guest"
-              rules={[{ required: true, message: "Please select a guest" }]}
-            >
-              <Select
-                showSearch
-                placeholder="Select a guest"
-                options={guestOptions}
-                className="w-full rounded"
+            {/* --- PROVIDER TYPES FILTER TABS --- */}
+            <div className="mb-5">
+              <Segmented
+                block
+                options={segmentedOptions}
+                value={selectedProviderUuid}
+                onChange={(value) => {
+                  setSelectedProviderUuid(value);
+
+                  // Direct synchronization check without rendering lifecycle delays
+                  const liveFiltered = methodsArray.filter(m => value === "all" || m.type?.uuid === value);
+                  const currentSelection = form.getFieldValue("paymentMethod");
+
+                  if (!liveFiltered.some(m => m.uuid === currentSelection)) {
+                    form.setFieldsValue({ paymentMethod: undefined });
+                  }
+                }}
+                className="p-1 rounded-lg bg-slate-50/50 border border-slate-100"
               />
-            </Form.Item>
-          </Col>
-          <Col span={12}>
-            <Form.Item
-              label={<span className="text-slate-600 font-medium">Amount</span>}
-              name="amount"
-              rules={[{ required: true, message: "Amount required" }]}
-            >
-              <Input
-                placeholder="0.00"
-                type="number"
-                className="rounded w-full"
-              />
-            </Form.Item>
-          </Col>
-        </Row>
-      </Form>
+            </div>
+
+            {/* --- UNIFIED PAYMENT METHODS GRID --- */}
+            {filteredMethods.length > 0 ? (
+              <div className="mb-6">
+                <Form.Item name="paymentMethod" rules={[{ required: true, message: "Please select a refund method" }]}>
+                  <Radio.Group className="w-full">
+                    <Row gutter={[12, 12]}>
+                      {filteredMethods.map((method) => (
+                        <Col span={6} key={method.uuid}>
+                          <Card
+                            hoverable
+                            onClick={() => {
+                              form.setFieldsValue({ paymentMethod: method.uuid });
+                              form.validateFields(["paymentMethod"]);
+                            }}
+                            className={`text-center rounded-lg relative transition-all duration-200 cursor-pointer ${selectedMethod === method.uuid
+                              ? "border-2 border-blue-500 shadow-sm bg-blue-50/10"
+                              : "border border-slate-200 hover:border-slate-300"
+                              }`}
+                            bodyStyle={{ padding: "12px 6px" }}
+                          >
+                            <div className="flex justify-center items-center w-full h-8 mb-2">
+                              <img
+                                src={method.file}
+                                alt={method.name}
+                                className="h-7 w-auto object-contain rounded"
+                              />
+                            </div>
+                            <Text strong className="text-[11px] block truncate text-slate-700">
+                              {method.name}
+                            </Text>
+                            <Radio
+                              value={method.uuid}
+                              className="absolute top-1 right-1 m-0 raw-radio-adjust"
+                              checked={selectedMethod === method.uuid}
+                            />
+                          </Card>
+                        </Col>
+                      ))}
+                    </Row>
+                  </Radio.Group>
+                </Form.Item>
+              </div>
+            ) : (
+              <div className="text-center py-6 text-slate-400 bg-slate-50 rounded-lg mb-6 border border-dashed border-slate-200">
+                No refund methods configuration available for this type.
+              </div>
+            )}
+
+            <Divider className="my-5" />
+
+            {/* --- REQUIRED PAYLOAD PARAMETERS ROW --- */}
+            <Row gutter={16}>
+              <Col span={12}>
+                <Form.Item
+                  label={<span className="text-slate-600 font-medium">Guest</span>}
+                  name="guest"
+                >
+                  <Select
+                    showSearch
+                    placeholder="Select a guest"
+                    options={guestOptions}
+                    className="w-full rounded"
+                  />
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item
+                  label={<span className="text-slate-600 font-medium">Amount</span>}
+                  name="amount"
+                  rules={[{ required: true, message: "Amount required" }]}
+                >
+                  <Input
+                    placeholder="0.00"
+                    type="number"
+                    className="rounded w-full"
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
+          </Form>
+        )
+      }
     </Drawer>
   );
 };

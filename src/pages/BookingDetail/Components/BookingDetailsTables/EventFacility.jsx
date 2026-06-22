@@ -1,10 +1,10 @@
 import React from "react";
-import { Row, Col, Typography, Card, Space } from "antd";
+import { Row, Col, Typography, Card, Space, Table } from "antd";
 import { IoCalendarClearOutline } from "react-icons/io5";
 
 const { Text } = Typography;
 
-const EventFacility = () => {
+const EventFacility = ({ data }) => {
   const CustomTitle = (
     <Space>
       <div className="event-icon-box">
@@ -13,33 +13,34 @@ const EventFacility = () => {
       <Text>Event Facility</Text>
     </Space>
   );
+
+  const columns = [
+    {
+      title: "Facility Package",
+      dataIndex: ["facilityPackage", "name"],
+      key: "facilityPackage",
+    },
+    {
+      title: "Event Name",
+      dataIndex: "eventName",
+      key: "eventName",
+      align: "center",
+    },
+    {
+      title: "Guest Name",
+      dataIndex: "guestName",
+      key: "guestName",
+    },
+  ];
   return (
     <>
       <Card title={CustomTitle} className="event-card line-height">
-        <Row style={{ marginBottom: 8 }}>
-          <Col span={8}>
-            <Text strong>Date</Text>
-          </Col>
-          <Col span={8}>
-            <Text strong>Start - End Time</Text>
-          </Col>
-          <Col span={8}>
-            <Text strong>Event Name</Text>
-          </Col>
-        </Row>
-
-        {/* Data Row */}
-        <Row>
-          <Col span={8}>
-            <Text>12/11/2026</Text>
-          </Col>
-          <Col span={8}>
-            <Text>4:00 PM - 6:00 PM</Text>
-          </Col>
-          <Col span={8}>
-            <Text>Wedding</Text>
-          </Col>
-        </Row>
+        <Table
+          columns={columns}
+          dataSource={data}
+          size="small"
+          pagination={false}
+        />
       </Card>
     </>
   );
