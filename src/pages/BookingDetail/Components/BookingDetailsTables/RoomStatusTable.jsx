@@ -6,7 +6,7 @@ const { Text } = Typography;
 const columns = [
   {
     title: "Room Type",
-    dataIndex: ["roomType","name"],
+    dataIndex: ["roomType", "name"],
     key: "roomType",
   },
   // {
@@ -17,13 +17,13 @@ const columns = [
   // },
   {
     title: "Room",
-    dataIndex: ["room","roomNo"],
+    dataIndex: ["room", "roomNo"],
     key: "room",
     align: "center",
   },
   {
     title: "Room Status",
-    dataIndex: ["roomStatus","name"],
+    dataIndex: ["roomStatus", "name"],
     key: "roomStatus",
     render: (status) => {
       let color = "default";
@@ -42,7 +42,7 @@ const columns = [
   },
 ];
 
-const RoomStatusTable = ({data}) => {
+const RoomStatusTable = ({ data }) => {
   const CustomTitle = (
     <Space>
       <div className="room-icon-box">
@@ -52,18 +52,24 @@ const RoomStatusTable = ({data}) => {
     </Space>
   );
   return (
-    <Card
-      title={CustomTitle}
-      className="room-card"
-      extra={<Tag color="blue">Reserved - 2 Rooms</Tag>}
-    >
-      <Table
-        columns={columns}
-        dataSource={data}
-        size="small"
-        pagination={false}
-      />
-    </Card>
+    <>
+      {
+        data?.length !== 0 && (
+          <Card
+            title={CustomTitle}
+            className="room-card"
+            extra={<Tag color="blue">Reserved - 2 Rooms</Tag>}
+          >
+            <Table
+              columns={columns}
+              dataSource={data}
+              size="small"
+              pagination={false}
+            />
+          </Card>
+        )
+      }
+    </>
   );
 };
 

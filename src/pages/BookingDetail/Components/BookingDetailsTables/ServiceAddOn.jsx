@@ -35,7 +35,7 @@ const ServiceAddOn = ({ data }) => {
 
   return (
     <>
-      {data && (
+      {data?.length !== 0 && (
         <Card title={CustomTitle} className="service-card line-height">
           <Table
             columns={columns}

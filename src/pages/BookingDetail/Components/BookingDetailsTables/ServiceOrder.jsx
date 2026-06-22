@@ -4,7 +4,7 @@ import { PlusOutlined } from "@ant-design/icons";
 
 const { Text } = Typography;
 
-const ServiceOrder = ({data}) => {
+const ServiceOrder = ({ data }) => {
   const CustomTitle = (
     <Space>
       <div className="service-order-icon-box">
@@ -34,21 +34,25 @@ const ServiceOrder = ({data}) => {
     },
     {
       title: "Guest",
-      dataIndex: ["reservationRoom","guest", "name"],
+      dataIndex: ["reservationRoom", "guest", "name"],
       key: "guest",
     },
   ];
 
   return (
     <>
-      <Card title={CustomTitle} className="service-card line-height">
-        <Table
-          columns={columns}
-          dataSource={data}
-          size="small"
-          pagination={false}
-        />
-      </Card>
+      {
+        data?.length !== 0 && (
+          <Card title={CustomTitle} className="service-card line-height">
+            <Table
+              columns={columns}
+              dataSource={data}
+              size="small"
+              pagination={false}
+            />
+          </Card>
+        )
+      }
     </>
   );
 };
