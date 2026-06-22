@@ -16,6 +16,7 @@ import { useLocation } from "react-router-dom";
 import useApiQuery from "../../hooks/useApiQuery";
 import { folioPaymentList, reservationDetails } from "../../api/reservationSectionApi";
 import Loader from "../../component/Loader/Loader";
+import ServiceOrder from "./Components/BookingDetailsTables/ServiceOrder";
 
 const BookingDetailList = () => {
   const location = useLocation();
@@ -28,10 +29,10 @@ const BookingDetailList = () => {
     options: { enabled: !!uuid },
   });
 
-  const { data: folioPaymentListing } = useApiQuery({
-    fetchQueryName: "folio-payments",
-    fetchQueryFunction: folioPaymentList,
-  })
+  // const { data: folioPaymentListing } = useApiQuery({
+  //   fetchQueryName: "folio-payments",
+  //   fetchQueryFunction: folioPaymentList,
+  // })
 
   if (isLoading) {
     return (
@@ -56,16 +57,19 @@ const BookingDetailList = () => {
         <Col xs={24} lg={16}>
           <Row gutter={[0, 16]}>
             <Col span={24}>
-              <PaymentSummaryTable data={folioPaymentListing || []} />
+              <PaymentSummaryTable data={data?.reservation?.folioPayments} />
             </Col>
             <Col span={24}>
-              <RoomStatusTable />
+              <RoomStatusTable data={data?.reservation?.reservationRooms} />
             </Col>
             <Col span={24}>
-              <ServiceAddOn />
+              <ServiceAddOn data={data?.reservation?.reservationAddOns}/>
             </Col>
             <Col span={24}>
-              <EventFacility />
+              <ServiceOrder data={data?.reservation?.serviceOrders}/>
+            </Col>
+            <Col span={24}>
+              <EventFacility data={data?.reservation?.facilityBookings} />
             </Col>
 
             <Col span={24}>
@@ -78,7 +82,7 @@ const BookingDetailList = () => {
         <Col xs={24} lg={8}>
           <Row gutter={[0, 16]}>
             <Col span={24}>
-              <SummaryCard data={data || {}} />
+              <SummaryCard data={data?.reservation || {}} />
             </Col>
             <Col span={24}>
               <BookingStatusCard data={data || {}} />

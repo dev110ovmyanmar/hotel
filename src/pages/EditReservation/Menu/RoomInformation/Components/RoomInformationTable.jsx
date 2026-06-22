@@ -147,9 +147,9 @@ const RoomInformationTable = ({
       },
     };
 
-    console.log(modifiedValues, "modifiedValues");
-
-    availabilitySearchs.mutate(modifiedValues);
+    if (["room_upgrade", "room_downgrade"].includes(key)) {
+      availabilitySearchs.mutate(modifiedValues);
+    }
   };
 
   const closeModal = () => {
@@ -304,16 +304,16 @@ const RoomInformationTable = ({
                       onClick: () => handleAction("date_change", record),
                     },
                     ...(record?.isExtend !== false ||
-                    record?.roomStatus?.code === "checked_in"
+                      record?.roomStatus?.code === "checked_in"
                       ? [
-                          {
-                            key: "stay_extension",
-                            label: "Extend Stay",
-                            icon: <PlusOutlined />,
-                            onClick: () =>
-                              handleAction("stay_extension", record),
-                          },
-                        ]
+                        {
+                          key: "stay_extension",
+                          label: "Extend Stay",
+                          icon: <PlusOutlined />,
+                          onClick: () =>
+                            handleAction("stay_extension", record),
+                        },
+                      ]
                       : []),
                     {
                       key: "stay_reduction",
