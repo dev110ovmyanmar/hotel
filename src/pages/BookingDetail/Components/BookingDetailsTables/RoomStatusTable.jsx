@@ -6,24 +6,24 @@ const { Text } = Typography;
 const columns = [
   {
     title: "Room Type",
-    dataIndex: "roomType",
+    dataIndex: ["roomType","name"],
     key: "roomType",
   },
-  {
-    title: "No",
-    dataIndex: "no",
-    key: "no",
-    align: "center",
-  },
+  // {
+  //   title: "No",
+  //   dataIndex: "no",
+  //   key: "no",
+  //   align: "center",
+  // },
   {
     title: "Room",
-    dataIndex: "room",
+    dataIndex: ["room","roomNo"],
     key: "room",
     align: "center",
   },
   {
     title: "Room Status",
-    dataIndex: "roomStatus",
+    dataIndex: ["roomStatus","name"],
     key: "roomStatus",
     render: (status) => {
       let color = "default";
@@ -41,24 +41,8 @@ const columns = [
     },
   },
 ];
-const data = [
-  {
-    key: 1,
-    roomType: "Delux Bangalow Double",
-    no: 3,
-    room: "103",
-    roomStatus: "block",
-  },
-  {
-    key: 2,
-    roomType: "Delux Bangalow",
-    no: 2,
-    room: "103",
-    roomStatus: "Cleaning",
-  },
-];
 
-const RoomStatusTable = () => {
+const RoomStatusTable = ({data}) => {
   const CustomTitle = (
     <Space>
       <div className="room-icon-box">

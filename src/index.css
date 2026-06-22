@@ -516,6 +516,14 @@ span .ant-upload {
   display: flex;
 }
 
+.service-order-icon-box {
+  background-color: #f3c363;
+  border: 1px solid #c39626;
+  border-radius: 6px;
+  padding: 4px;
+  display: flex;
+}
+
 .service-card .ant-card-head {
   border-left: 4px solid #28e1c8;
   padding-left: 12px;
