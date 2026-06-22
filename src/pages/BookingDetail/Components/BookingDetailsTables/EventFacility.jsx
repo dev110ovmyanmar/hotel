@@ -34,14 +34,18 @@ const EventFacility = ({ data }) => {
   ];
   return (
     <>
-      <Card title={CustomTitle} className="event-card line-height">
-        <Table
-          columns={columns}
-          dataSource={data}
-          size="small"
-          pagination={false}
-        />
-      </Card>
+      {
+        data.length !== 0 && (
+          <Card title={CustomTitle} className="event-card line-height">
+            <Table
+              columns={columns}
+              dataSource={data}
+              size="small"
+              pagination={false}
+            />
+          </Card>
+        )
+      }
     </>
   );
 };
