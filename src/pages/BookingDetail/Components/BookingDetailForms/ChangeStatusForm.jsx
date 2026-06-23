@@ -9,12 +9,13 @@ import {
 } from "../../../../api/reservationSectionApi";
 import dayjs from "dayjs";
 import { useApiQuery } from "./../../../../hooks/useApiQuery";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 const ChangeStatusForm = ({ reservationDetails, open, onClose }) => {
   const [form] = Form.useForm();
-  const location = useLocation();
-  const uuid = location.state?.bookingId;
+  const navigate = useNavigate();
+  const { bookingId } = useParams();
+  const uuid = bookingId; 
 
   const selectedStatusUuid = Form.useWatch("changeBookingStatusTo", form);
   const selectedRooms = Form.useWatch("reservationRooms", form) || [];
