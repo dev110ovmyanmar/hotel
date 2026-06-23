@@ -62,12 +62,6 @@ const AgencyTable = ({
       render: (text) => <div>{text ? text : "-"}</div>,
     },
     {
-      title: "Address",
-      dataIndex: "address",
-      key: "address",
-      render: (text) => <div>{text}</div>,
-    },
-    {
       title: "Charge Value",
       dataIndex: "chargeValue",
       key: "chargeValue",
