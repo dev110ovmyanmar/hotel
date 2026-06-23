@@ -23,13 +23,13 @@ const RoomStatusCard = ({ data }) => {
       <Card
         title={CustomTitle}
         className="booking-status-card line-height"
-        extra={
-          <ReservationStatusColor
-            status={data?.reservation?.reservationStatus?.name}
-          />
-        }
+        // extra={
+        //   <ReservationStatusColor
+        //     status={data?.reservation?.reservationStatus?.name}
+        //   />
+        // }
       >
-        <Row>
+        {/* <Row>
           <Col span={8}>
             <Text strong>Total Person</Text>
           </Col>
@@ -39,9 +39,9 @@ const RoomStatusCard = ({ data }) => {
           <Col span={8}>
             <Text strong>Extra Bed</Text>
           </Col>
-        </Row>
+        </Row> */}
 
-        <Row>
+        {/* <Row>
           <Col span={8}>
             <div style={{ display: "flex", alignItems: "center", gap: "2px" }}>
               <IoPeopleSharp className="text-blue-500" />{" "}
@@ -68,9 +68,9 @@ const RoomStatusCard = ({ data }) => {
                 : "-"}
             </Text>
           </Col>
-        </Row>
+        </Row> */}
 
-        <div className="mt-5">
+        <div>
           <Text>Booking Date: </Text>
           <Text>{reservation?.updatedAt}</Text>
         </div>

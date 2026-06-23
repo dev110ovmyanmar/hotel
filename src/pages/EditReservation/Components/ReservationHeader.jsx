@@ -2,6 +2,8 @@ import React from "react";
 import { FaChild, FaCalendarAlt, FaMoon } from "react-icons/fa";
 import { IoPeopleSharp } from "react-icons/io5";
 import { MdOutlineMeetingRoom } from "react-icons/md";
+import { BiMoneyWithdraw } from "react-icons/bi";
+import { MdArrowDownward } from "react-icons/md";
 import dayjs from "dayjs";
 import ReservationStatusColor from "../../../component/ReservationStatusColor/ReservationStatusColor";
 
@@ -11,7 +13,7 @@ const ReservationHeader = ({ data }) => {
   if (!reservation) return null;
 
   return (
-    <div className="w-full !bg-gradient-to-r from-[#215282] to-[#000B60]  rounded-lg p-2 md:py-8 md:px-5 mb-3">
+    <div className="w-full !bg-gradient-to-r from-[#215282] to-[#000B60]  rounded p-2 md:py-8 md:px-5 mb-3">
       <div>
         <div className="flex  items-center gap-3 mb-3">
           <h1 className="text-xl font-bold text-[#ffffff] tracking-tight capitalize">
@@ -44,6 +46,22 @@ const ReservationHeader = ({ data }) => {
             <span className="text-[10px] md:text-[10px] lg:text-[13px] font-medium text-[#ffffff]">
               {reservation?.totalRooms || 0}{" "}
               {reservation?.totalRooms === 1 ? "Room" : "Rooms"}
+            </span>
+          </div>
+
+          <div className="flex items-center gap-2 py-1 rounded-lg mt-2.5">
+            <span className="text-[10px] md:text-[10px] lg:text-[13px] font-medium">
+              {data?.reservation?.depositStatus === true ? (
+                <div className="flex items-center gap-2">
+                  <BiMoneyWithdraw size={16} className="text-emerald-300" />
+                  <div className="text-[#ffffff]">Deposit Paid</div>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <BiMoneyWithdraw size={16} className="text-red-300" />
+                  <div className="text-[#ffffff]">Deposit Unpaid</div>
+                </div>
+              )}
             </span>
           </div>
         </div>

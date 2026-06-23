@@ -45,7 +45,7 @@ export default function RoomMoveModal({
     const [selectRoomUuid, setSelectRoomUuid] = useState();
 
     const handleOk = () => {
-        console.log("Here")
+
         const payload = {
             amendmentType: {
                 uuid: roomMoveUuid
@@ -94,6 +94,7 @@ export default function RoomMoveModal({
                         closable={{ 'aria-label': 'Custom Close Button' }}
                         open={isOpen}
                         onOk={handleOk}
+                        confirmLoading={createRoomAmendmentMutation?.isPending}
                         onCancel={() => {
                             if (selectRoomToMove) {
                                 setSelectRoomToMove(false);

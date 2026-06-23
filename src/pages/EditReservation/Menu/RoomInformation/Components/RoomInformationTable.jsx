@@ -38,6 +38,7 @@ import { useApiMutation } from "../../../../../hooks/useApiMutation";
 import { availabilitySearch } from "../../../../../api/reservationSectionApi";
 import Toast from "../../../../../component/Toast/Toast";
 import RoomDowngradeModal from "./RoomAmendmentModals/RoomDowngradeModal";
+import PriceTag from "../../../../../component/PriceTag/PriceTag";
 
 const RoomInformationTable = ({
   data,
@@ -147,9 +148,9 @@ const RoomInformationTable = ({
       },
     };
 
-    console.log(modifiedValues, "modifiedValues");
-
-    availabilitySearchs.mutate(modifiedValues);
+    if (["room_upgrade", "room_downgrade"].includes(key)) {
+      availabilitySearchs.mutate(modifiedValues);
+    }
   };
 
   const closeModal = () => {
@@ -176,7 +177,10 @@ const RoomInformationTable = ({
 
         const isValidStatus = validStatuses.includes(statusCode);
         const isClickable =
-          isRoomNull && isValidStatus && !record?.expiredStatus;
+          record?.assignStatus === true && !record?.expiredStatus;
+
+        const shouldHighlightRoom =
+          !isRoomNull && record?.assignStatus === true;
 
         return (
           <span
@@ -185,12 +189,16 @@ const RoomInformationTable = ({
                 ? isClickable
                   ? "#1890ff"
                   : "#bfbfbf"
-                : "inherit",
-              cursor: isClickable ? "pointer" : "not-allowed",
-              textDecoration: isClickable ? "underline" : "none",
+                : shouldHighlightRoom
+                  ? "#1890ff"
+                  : "inherit",
+              cursor:
+                isClickable || shouldHighlightRoom ? "pointer" : "not-allowed",
+              textDecoration:
+                isClickable || shouldHighlightRoom ? "underline" : "none",
             }}
             onClick={(e) => {
-              if (isClickable) {
+              if (isClickable || shouldHighlightRoom) {
                 e.stopPropagation();
                 setSelectedData(record);
                 setAssignRoomOpen(true);
@@ -203,22 +211,35 @@ const RoomInformationTable = ({
       },
     },
     {
-      title: "Name",
+      title: "Room Type",
       dataIndex: ["roomType", "name"],
       key: "name",
     },
     {
-      title: "Arrival",
+      title: "Check In",
       dataIndex: "checkinDate",
       key: "checkinDate",
       render: (value) => (value ? dayjs(value).format("YYYY-MM-DD") : "-"),
       width: 110,
     },
     {
-      title: "Departure",
+      title: "Check Out",
       dataIndex: "checkoutDate",
       key: "checkoutDate",
       render: (value) => (value ? dayjs(value).format("YYYY-MM-DD") : "-"),
+      width: 110,
+    },
+    {
+      title: "Total Charges",
+      dataIndex: "grandTotal",
+      align:"center",
+      key: "grandTotal",
+       render: (value) => (
+        <div className="flex justify-end items-center gap-1">
+          <PriceTag value={value} />
+          <span className="text-gray-500 font-medium">MMK</span>
+        </div>
+      ),
       width: 110,
     },
     {
