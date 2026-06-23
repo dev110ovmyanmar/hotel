@@ -6,7 +6,7 @@ import EventFacilityOrderForm from "./Components/EventFacilityOrderForms/EventFa
 import useApiQuery from "../../../../hooks/useApiQuery";
 import { fetchFacilityBooking } from "../../../../api/booking";
 import { LIMITS } from "../../../../variables/constants";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import ReservationMenu from "../../Components/ReservationMenu.jsx";
 
 const EventFacilityOrderList = () => {
@@ -22,8 +22,23 @@ const EventFacilityOrderList = () => {
 
   const normalStatus = status === "all" ? null : status;
 
-  const location = useLocation();
-  const bookingId = location.state?.bookingId;
+  const navigate = useNavigate();
+  const { bookingId } = useParams();
+  const uuid = bookingId; // assigned directly to your uuid variable
+
+  // ROUTING GUARD: Kick out unassigned, empty, or partial/mangled IDs instantly
+  useEffect(() => {
+    const cleanId = bookingId ? bookingId.trim() : "";
+
+    if (
+      !cleanId ||
+      cleanId === "" ||
+      cleanId === ":bookingId" ||
+      cleanId.length < 32 // Checks if the user chopped or deleted characters from the ID
+    ) {
+      navigate('/404', { replace: true });
+    }
+  }, [bookingId, navigate]);
 
   const { data, isLoading, error } = useApiQuery({
     fetchQueryName: "facility-booking-list",
@@ -34,10 +49,17 @@ const EventFacilityOrderList = () => {
         perPage: perPage,
       },
       reservationRoom: {
-        uuid: bookingId,
+        uuid: uuid,
       },
     },
   });
+
+  useEffect(() => {
+    if (bookingId && data?.reservation?.reservationNo) {
+      sessionStorage.setItem(`breadcrumb_${bookingId}`, data.reservation.reservationNo);
+      window.dispatchEvent(new Event("breadcrumb_updated"));
+    }
+  }, [data, bookingId]);
 
   const handleAddEvent = () => {
     setSelectedData(null);

@@ -1,9 +1,16 @@
 import { Divider } from "antd";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 
 const Breadcrumbs = () => {
   const location = useLocation();
+  const [update, setUpdate] = useState(0);
+
+  useEffect(() => {
+    const handleUpdate = () => setUpdate((prev) => prev + 1);
+    window.addEventListener("breadcrumb_updated", handleUpdate);
+    return () => window.removeEventListener("breadcrumb_updated", handleUpdate);
+  }, []);
 
   let currentLink = "";
 
@@ -13,9 +20,17 @@ const Breadcrumbs = () => {
     .map((crumb, index, array) => {
       currentLink += `/${crumb}`;
 
-      const displayName = crumb
+      let displayName = crumb
         .replace(/[-_]/g, " ")
         .replace(/\b\w/g, (char) => char.toUpperCase());
+
+      // Replace UUIDs with cached Reservation ID if available
+      if (crumb.length >= 32) {
+        const storedName = sessionStorage.getItem(`breadcrumb_${crumb}`);
+        if (storedName) {
+          displayName = storedName;
+        }
+      }
 
       return (
         <span key={currentLink}>

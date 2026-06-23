@@ -1,10 +1,10 @@
 import React from "react";
-import { Row, Col, Typography, Space, Card } from "antd";
+import { Row, Col, Typography, Space, Card, Table } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 
 const { Text } = Typography;
 
-const ServiceAddOn = () => {
+const ServiceAddOn = ({ data }) => {
   const CustomTitle = (
     <Space>
       <div className="service-icon-box">
@@ -14,41 +14,39 @@ const ServiceAddOn = () => {
     </Space>
   );
 
+  const columns = [
+    {
+      title: "Service",
+      dataIndex: ["service", "name"],
+      key: "service",
+    },
+    {
+      title: "Add On Status",
+      dataIndex: ["addonStatus", "name"],
+      key: "addonStatus",
+      align: "center",
+    },
+    {
+      title: "Guest",
+      dataIndex: ["reservationRoom", "guest", "name"],
+      key: "guest",
+    },
+  ];
+
   return (
     <>
-      <Card title={CustomTitle} className="service-card line-height">
-        {/* Header Row */}
-        <Row style={{ marginBottom: 8 }}>
-          <Col span={6}>
-            <Text strong>Service Name</Text>
-          </Col>
-          <Col span={7}>
-            <Text strong>Start - End Time</Text>
-          </Col>
-          <Col span={5}>
-            <Text strong>Qty Unit</Text>
-          </Col>
-          <Col span={6}>
-            <Text strong>Room</Text>
-          </Col>
-        </Row>
-
-        {/* Data Row */}
-        <Row>
-          <Col span={6}>
-            <Text>12/11/2026</Text>
-          </Col>
-          <Col span={7}>
-            <Text>4:00 PM - 6:00 PM</Text>
-          </Col>
-          <Col span={5}>
-            <Text>4:00 PM</Text>
-          </Col>
-          <Col span={6}>
-            <Text>DBD - 1001</Text>
-          </Col>
-        </Row>
-      </Card>
+      {data?.length !== 0 && (
+        <Card title={CustomTitle} className="service-card line-height">
+          <Table
+            columns={columns}
+            dataSource={data?.filter(
+              item => item?.addonStatus?.code !== "completed"
+            )}
+            size="small"
+            pagination={false}
+          />
+        </Card>
+      )}
     </>
   );
 };

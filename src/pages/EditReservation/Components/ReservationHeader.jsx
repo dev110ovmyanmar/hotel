@@ -13,7 +13,7 @@ const ReservationHeader = ({ data }) => {
   if (!reservation) return null;
 
   return (
-    <div className="w-full !bg-gradient-to-r from-[#215282] to-[#000B60]  rounded-lg p-2 md:py-8 md:px-5 mb-3">
+    <div className="w-full !bg-gradient-to-r from-[#215282] to-[#000B60]  rounded p-2 md:py-8 md:px-5 mb-3">
       <div>
         <div className="flex  items-center gap-3 mb-3">
           <h1 className="text-xl font-bold text-[#ffffff] tracking-tight capitalize">
@@ -53,12 +53,12 @@ const ReservationHeader = ({ data }) => {
             <span className="text-[10px] md:text-[10px] lg:text-[13px] font-medium">
               {data?.reservation?.depositStatus === true ? (
                 <div className="flex items-center gap-2">
-                  <BiMoneyWithdraw size={24} className="text-emerald-300" />
+                  <BiMoneyWithdraw size={16} className="text-emerald-300" />
                   <div className="text-[#ffffff]">Deposit Paid</div>
                 </div>
               ) : (
                 <div className="flex items-center gap-2">
-                  <BiMoneyWithdraw size={24} className="text-red-300" />
+                  <BiMoneyWithdraw size={16} className="text-red-300" />
                   <div className="text-[#ffffff]">Deposit Unpaid</div>
                 </div>
               )}
