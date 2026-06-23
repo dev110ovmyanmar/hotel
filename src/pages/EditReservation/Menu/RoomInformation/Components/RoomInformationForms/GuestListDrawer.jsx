@@ -128,7 +128,6 @@ const GuestListDrawer = ({
       extra={
         <Button
           type="primary"
-          icon={<PlusOutlined />}
           onClick={() => {
             setSelectedGuestData(null);
             setGuestFormMode("add");

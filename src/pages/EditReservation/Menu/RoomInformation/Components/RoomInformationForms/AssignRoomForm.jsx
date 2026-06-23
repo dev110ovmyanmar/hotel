@@ -1,5 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { Form, Input, Drawer, Button, DatePicker, Select, Divider } from "antd";
+import {
+  Form,
+  Input,
+  Drawer,
+  Button,
+  DatePicker,
+  Select,
+  Divider,
+  Alert,
+  Tag,
+} from "antd";
 import dayjs from "dayjs";
 import GetRoomForm from "./GetRoomForm";
 import {
@@ -29,6 +39,8 @@ const AssignRoomForm = ({
   const [showRoomResults, setShowRoomResults] = useState(false);
   const [searchKey, setSearchKey] = useState(0);
 
+  const currentRoomNo = selectedData?.roomNo || selectedData?.room?.roomNo;
+
   const handleRoomSelection = (room) => {
     setSelectedData({ ...selectedData, roomNo: room.roomNo });
   };
@@ -51,10 +63,15 @@ const AssignRoomForm = ({
   const dates = Form.useWatch("dates", form);
 
   const calculateNights = () => {
-    if (dates && dates[0] && dates[1]) {
-      const diff = dayjs(dates[1]).diff(dayjs(dates[0]), "day");
+    const [checkIn, checkOut] = dates || [];
+
+    if (checkIn && checkOut) {
+      const diff = dayjs(checkOut)
+        .startOf("day")
+        .diff(dayjs(checkIn).startOf("day"), "day");
       return diff > 0 ? diff : 0;
     }
+
     return 0;
   };
 
@@ -107,7 +124,7 @@ const AssignRoomForm = ({
       open={open}
       onClose={onClose}
       size={650}
-      title="Assign Room"
+      title={currentRoomNo ? "Change Assigned Room" : "Assign Room"}
       destroyOnClose
     >
       <div className="flex flex-col gap-6">
@@ -139,7 +156,7 @@ const AssignRoomForm = ({
             </Form.Item>
 
             <div className="grid grid-cols-2 gap-6">
-              <Form.Item label="Room" name={["roomType", "name"]}>
+              <Form.Item label="Room Type" name={["roomType", "name"]}>
                 <Input disabled />
               </Form.Item>
 
@@ -177,8 +194,22 @@ const AssignRoomForm = ({
           </Form>
         </div>
 
+        {currentRoomNo && (
+          <Alert
+            message={
+              <span>
+                Currently assigned to Room:
+                <Tag color="blue" className="font-bold text-lg ml-1">
+                  {currentRoomNo}
+                </Tag>
+              </span>
+            }
+            type="info"
+            showIcon
+          />
+        )}
         {showRoomResults && (
-          <div className="mt-4">
+          <div>
             <Divider orientation="left">Available Rooms</Divider>
             <GetRoomForm
               key={searchKey}
