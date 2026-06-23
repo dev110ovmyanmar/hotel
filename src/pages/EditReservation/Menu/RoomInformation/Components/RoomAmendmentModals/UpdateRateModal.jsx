@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Form, InputNumber, Button, Divider, Input, Row, Col, DatePicker, Descriptions } from 'antd';
+import { Modal, Form, InputNumber, Button, Divider, Input, Descriptions } from 'antd';
 import dayjs from 'dayjs';
-import { CheckCircleOutlined, ArrowRightOutlined, PlusOutlined, DeleteOutlined, DollarOutlined } from '@ant-design/icons';
+import { CheckCircleOutlined, ArrowRightOutlined } from '@ant-design/icons';
 import { createRoomAmendment } from '../../../../../../api/roomAmendmentApi';
 import { useApiMutation } from '../../../../../../hooks/useApiMutation';
-import Toast from '../../../../../../component/Toast/Toast';
 
 export default function UpdateRateModal({
     isOpen,
@@ -31,12 +30,6 @@ export default function UpdateRateModal({
     // Establish strict date boundaries from API record
     const boundsStart = record?.checkinDate ? dayjs(record.checkinDate) : null;
     const boundsEnd = record?.checkoutDate ? dayjs(record.checkoutDate) : null;
-
-    // Blocks dates outside check-in and check-out window
-    const disabledDateSetting = (current) => {
-        if (!boundsStart || !boundsEnd || !current) return false;
-        return current.isBefore(boundsStart, 'day') || current.isAfter(boundsEnd, 'day');
-    };
 
     // EFFECT: Map incoming API array data directly into Form.List initial items
     useEffect(() => {
@@ -90,19 +83,13 @@ export default function UpdateRateModal({
 
             createRoomAmendmentMutation.mutate(payload, {
                 onSuccess: async () => {
-                    Toast.success("Daily Rates Updated Successfully");
                     handleCloseReset();
-                },
-                onError: (error) => {
-                    console.error("API error updating ledger rates:", error);
-                    Toast.error("Failed to update rates.");
                 },
                 onSettled: () => {
                     setIsSubmitting(false);
                 }
             });
         } catch (error) {
-            console.error("Unexpected error executing mutation:", error);
             setIsSubmitting(false);
         }
     };
@@ -119,7 +106,7 @@ export default function UpdateRateModal({
             title={
                 currentStep === 'form'
                     ? "Modify Daily Room Rates"
-                    : <span><CheckCircleOutlined style={{ color: '#1677ff' }} /> Review Updated Rates Summary</span>
+                    : <span className="flex items-center gap-1.5"><CheckCircleOutlined className="text-blue-500" /> Review Updated Rates Summary</span>
             }
             open={isOpen}
             onCancel={handleCloseReset}
@@ -136,90 +123,77 @@ export default function UpdateRateModal({
             }
         >
             {/* Header Identity Information */}
-            <div style={{ marginBottom: 4, color: '#64748b', fontSize: '13px', fontWeight: 500 }}>
-                {reservationNo} — <span style={{ color: '#1e293b' }}>{guestName}</span>
+            <div className="mb-1 text-slate-500 text-xs font-medium">
+                {reservationNo} — <span className="text-slate-800">{guestName}</span>
             </div>
 
             {/* Context window visual helper */}
             {boundsStart && boundsEnd && (
-                <div style={{ fontSize: '12px', color: '#0284c7', background: '#e0f2fe', display: 'inline-block', padding: '2px 8px', borderRadius: '4px', fontWeight: 500 }}>
+                <div className="text-xs text-sky-600 bg-sky-100 inline-block px-2 py-0.5 rounded font-medium">
                     Valid Booking Windows: {boundsStart.format('DD MMM YYYY')} – {boundsEnd.format('DD MMM YYYY')}
                 </div>
             )}
 
-            <Divider style={{ margin: '12px 0' }} />
+            <Divider className="my-3" />
 
             {/* --- STEP 1: DYNAMIC INPUT UPDATE INTERFACE --- */}
             {currentStep === 'form' && (
                 <Form form={form} layout="vertical">
 
                     <Form.List name="rates">
-                        {(fields, { add, remove }) => (
+                        {(fields) => (
                             <>
-                                <Row gutter={16} style={{ marginBottom: '8px' }}>
-                                    <Col span={11}><span style={{ fontSize: '12px', fontWeight: 600, color: '#475569' }}>TARGET DATE</span></Col>
-                                    <Col span={11}><span style={{ fontSize: '12px', fontWeight: 600, color: '#475569' }}>NIGHTLY RATE (MMK)</span></Col>
-                                    <Col span={2}></Col>
-                                </Row>
+                                <div className="grid grid-cols-12 gap-4 mb-2">
+                                    <div className="col-span-6">
+                                        <span className="text-xs font-semibold text-slate-600">TARGET DATE</span>
+                                    </div>
+                                    <div className="col-span-6">
+                                        <span className="text-xs font-semibold text-slate-600">NIGHTLY RATE (MMK)</span>
+                                    </div>
+                                </div>
 
-                                <div style={{ maxHeight: '280px', overflowY: 'auto', marginBottom: '16px', paddingRight: '4px' }}>
+                                <div className="max-h-[280px] overflow-y-auto mb-4 pr-1">
                                     {fields.map(({ key, name, ...restField }) => (
-                                        <Row key={key} gutter={16} align="middle" style={{ marginBottom: '12px', background: '#f8fafc', padding: '12px 8px', borderRadius: '6px' }}>
+                                        <div key={key} className="grid grid-cols-12 gap-4 items-center mb-3 bg-slate-50 p-3 rounded-md">
 
                                             {/* DYNAMIC EDITABLE DATE PICKER (PRE-FILLED) */}
-                                            <Col span={11}>
+                                            <div className="col-span-6">
                                                 <Form.Item
                                                     {...restField}
                                                     name={[name, 'date']}
-                                                    rules={[{ required: true, message: 'Select Date' }]}
-                                                    style={{ margin: 0 }}
+                                                    className="m-0"
+                                                    getValueProps={(value) => ({
+                                                        value: value ? value.format('YYYY-MM-DD') : ''
+                                                    })}
                                                 >
-                                                    <DatePicker
-                                                        style={{ width: '100%' }}
-                                                        format="YYYY-MM-DD"
-                                                        disabledDate={disabledDateSetting}
+                                                    <Input
+                                                        readOnly
+                                                        className="w-full border-none bg-transparent pointer-events-none font-medium text-slate-700 shadow-none focus:shadow-none"
                                                     />
                                                 </Form.Item>
-                                            </Col>
+                                            </div>
 
                                             {/* DYNAMIC EDITABLE RATE PRICE INPUT (PRE-FILLED) */}
-                                            <Col span={11}>
+                                            <div className="col-span-6">
                                                 <Form.Item
                                                     {...restField}
                                                     name={[name, 'price']}
                                                     rules={[{ required: true, message: 'Enter Price' }]}
-                                                    style={{ margin: 0 }}
+                                                    className="m-0"
                                                 >
                                                     <InputNumber
-                                                        style={{ width: '100%' }}
+                                                        className="!w-full"
                                                         placeholder="Rate Amount"
                                                         formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                                                         parser={value => value.replace(/\s?|(,*)/g, '')}
                                                         min={0}
-                                                        addonBefore={<DollarOutlined style={{ fontSize: '11px' }} />}
+                                                        addonBefore={<span className="text-xs font-semibold text-slate-500">MMK</span>}
                                                     />
                                                 </Form.Item>
-                                            </Col>
-
-                                            {/* DELETE ROW */}
-                                            <Col span={2} style={{ textAlign: 'center' }}>
-                                                <Button
-                                                    type="text"
-                                                    danger
-                                                    icon={<DeleteOutlined />}
-                                                    onClick={() => remove(name)}
-                                                    disabled={fields.length === 1}
-                                                />
-                                            </Col>
-                                        </Row>
+                                            </div>
+                                        </div>
                                     ))}
                                 </div>
-
-                                {/* <Form.Item>
-                                    <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
-                                        Add Extra Date Adjustment Row
-                                    </Button>
-                                </Form.Item> */}
                             </>
                         )}
                     </Form.List>
@@ -236,34 +210,69 @@ export default function UpdateRateModal({
 
             {/* --- STEP 2: POST PAYLOAD SUMMARY REVIEW --- */}
             {currentStep === 'summary' && pendingValues && (
-                <div style={{ animation: 'fadeIn 0.2s ease-in-out' }}>
-                    <p style={{ color: '#475569', marginBottom: '12px' }}>
-                        Please verify your modified schedule below before saving.
+                <div className="animate-[fadeIn_0.2s_ease-in-out]">
+                    <p className="text-slate-600 mb-3">
+                        Please verify your modified schedule below before saving. Highlighted lines indicate changed prices.
                     </p>
 
-                    <div style={{ maxHeight: '220px', overflowY: 'auto', marginBottom: '16px', border: '1px solid #e2e8f0', borderRadius: '6px' }}>
-                        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
-                            <thead style={{ background: '#f1f5f9', textAlign: 'left', position: 'sticky', top: 0 }}>
+                    <div className="max-h-[220px] overflow-y-auto mb-4 border border-slate-200 rounded-md">
+                        <table className="w-full border-collapse text-xs">
+                            <thead className="bg-slate-100 text-left sticky top-0 z-10">
                                 <tr>
-                                    <th style={{ padding: '10px' }}>Target Date</th>
-                                    <th style={{ padding: '10px' }}>Status Execution</th>
-                                    <th style={{ padding: '10px' }}>Updated Price</th>
+                                    <th className="p-2.5">Target Date</th>
+                                    <th className="p-2.5">Status Execution</th>
+                                    <th className="p-2.5">Price Summary (MMK)</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {pendingValues.rates.map((item, index) => (
-                                    <tr key={index} style={{ borderBottom: '1px solid #e2e8f0' }}>
-                                        <td style={{ padding: '10px', fontWeight: 500 }}>
-                                            {dayjs(item.date).format('DD MMM YYYY')}
-                                        </td>
-                                        <td style={{ padding: '10px', color: '#52c41a', fontSize: '12px' }}>
-                                            <ArrowRightOutlined style={{ marginRight: '6px' }} /> Push Rate State
-                                        </td>
-                                        <td style={{ padding: '10px', fontWeight: 600, color: '#1e293b' }}>
-                                            MMK {parseFloat(item.price).toLocaleString()}
-                                        </td>
-                                    </tr>
-                                ))}
+                                {pendingValues.rates.map((item, index) => {
+                                    const formattedDate = dayjs(item.date).format('YYYY-MM-DD');
+
+                                    // Match against the original values fed into the component
+                                    const originalRateObj = record?.rates?.find(
+                                        orig => dayjs(orig?.date).format('YYYY-MM-DD') === formattedDate
+                                    );
+
+                                    const originalPrice = originalRateObj ? parseFloat(originalRateObj.price) : null;
+                                    const currentPrice = parseFloat(item.price);
+                                    const isChanged = originalPrice !== null && originalPrice !== currentPrice;
+
+                                    return (
+                                        <tr
+                                            key={index}
+                                            className={`border-b border-slate-200 last:border-b-0 transition-colors ${isChanged ? 'bg-amber-50 hover:bg-amber-100/70' : 'hover:bg-slate-50'
+                                                }`}
+                                        >
+                                            <td className="p-2.5 font-medium text-slate-700">
+                                                {dayjs(item.date).format('DD MMM YYYY')}
+                                            </td>
+                                            <td className="p-2.5 text-xs">
+                                                {isChanged ? (
+                                                    <span className="text-amber-600 font-medium">Rate Adjusted</span>
+                                                ) : (
+                                                    <span className="text-slate-400">Unchanged</span>
+                                                )}
+                                            </td>
+                                            <td className="p-2.5">
+                                                {isChanged ? (
+                                                    <div className="flex items-center gap-2">
+                                                        <span className="text-slate-400 line-through">
+                                                            {originalPrice.toLocaleString()}
+                                                        </span>
+                                                        <ArrowRightOutlined className="text-amber-500 text-[10px]" />
+                                                        <span className="font-semibold text-slate-900">
+                                                            {currentPrice.toLocaleString()}
+                                                        </span>
+                                                    </div>
+                                                ) : (
+                                                    <span className="text-slate-600">
+                                                        {currentPrice.toLocaleString()}
+                                                    </span>
+                                                )}
+                                            </td>
+                                        </tr>
+                                    );
+                                })}
                             </tbody>
                         </table>
                     </div>
@@ -273,7 +282,7 @@ export default function UpdateRateModal({
                             <strong>{pendingValues.rates.length} Schedules Set</strong>
                         </Descriptions.Item>
                         <Descriptions.Item label="Audit System Notes">
-                            <span style={{ fontStyle: 'italic', color: '#475569' }}>
+                            <span className="italic text-slate-600">
                                 "{pendingValues?.reason}"
                             </span>
                         </Descriptions.Item>
