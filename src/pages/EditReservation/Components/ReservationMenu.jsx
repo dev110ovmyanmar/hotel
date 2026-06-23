@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { Tabs } from "antd";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, useParams } from "react-router-dom";
 
 const ALL_TABS = [
   { label: "Room Information", key: "room-information" },
@@ -18,12 +18,14 @@ const EXTENDED_TABS = [...BASIC_TABS, "guest-details", "event-facility-booking",
 const ReservationMenu = ({ data }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  
-  const bookingId = location?.state?.bookingId;
+  const { bookingId } = useParams();
+
   const activeKey = location.pathname.split("/").pop();
 
   const onChange = (key) => {
-    navigate(`/reservations/${key}`, { state: { bookingId } });
+    if (bookingId) {
+      navigate(`/reservations/${bookingId}/${key}`);
+    }
   };
 
   const rawCode = data?.reservationRoom?.roomStatus?.code || "";

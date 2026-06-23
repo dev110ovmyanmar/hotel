@@ -50,7 +50,7 @@ const RoomInformationTable = ({
   changePage,
   changePerPage,
   reservationUuid,
-}) => {
+  }) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [guestOpen, setGuestOpen] = useState(false);
   const [guestListOpen, setGuestListOpen] = useState(false);

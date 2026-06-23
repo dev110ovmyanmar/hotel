@@ -82,7 +82,7 @@ const ServiceForm = ({
 
   const handleClose = () => {
     setDrawerOpen(false);
-    // setSelectedData(null);
+    setSelectedData(null);
     form.resetFields();
   };
 
@@ -175,7 +175,6 @@ const ServiceForm = ({
           <Form
             form={form}
             layout="vertical"
-            style={{ width: "100%" }}
             onFinish={onFinish}
           >
             <Form.Item

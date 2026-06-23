@@ -40,11 +40,6 @@ const ServiceTable = ({
       key: "name",
     },
     {
-      title: "Property",
-      dataIndex: ["property", "name"],
-      key: "property",
-    },
-    {
       title: "Billing Type",
       dataIndex: ["billingType", "name"],
       key: "billingType",
@@ -136,7 +131,12 @@ const ServiceTable = ({
       key: "quantityPerService",
       align: "center",
     },
-    { title: "Unit", dataIndex: ["unit", "name"], key: "unit", align: "center" },
+    {
+      title: "Unit",
+      dataIndex: ["unit", "name"],
+      key: "unit",
+      align: "center",
+    },
     {
       title: "Action",
       align: "center",
@@ -181,7 +181,6 @@ const ServiceTable = ({
     },
   ];
 
-
   const expandedRowRender = (record) => {
     return (
       <div className="nested-table-container">
@@ -201,19 +200,17 @@ const ServiceTable = ({
           </Button>
         </div>
 
-        {
-          record?.serviceInventoryMappings <= 0 ? null :
-            <Table
-              // className="custom-table-style"
-              className="[&_.ant-table-cell]:!border [&_.ant-table-cell]:!border-blue-300 [&_.ant-table-thead>tr>th]:!bg-[#F0F5FF]"
-              columns={expandColumns}
-              dataSource={record.serviceInventoryMappings || []}
-              rowKey="uuid"
-              pagination={false}
-              size="small"
-            />
-        }
-
+        {record?.serviceInventoryMappings <= 0 ? null : (
+          <Table
+            // className="custom-table-style"
+            className="[&_.ant-table-cell]:!border [&_.ant-table-cell]:!border-blue-300 [&_.ant-table-thead>tr>th]:!bg-[#F0F5FF]"
+            columns={expandColumns}
+            dataSource={record.serviceInventoryMappings || []}
+            rowKey="uuid"
+            pagination={false}
+            size="small"
+          />
+        )}
       </div>
     );
   };

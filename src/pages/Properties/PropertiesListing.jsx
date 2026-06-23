@@ -108,7 +108,7 @@ const PropertiesListing = () => {
     setCurrentMode("edit");
   };
 
-  const showCreateButton = properties ? false : true;
+  const showCreateButton = properties?.length > 0 ? false : true;
 
   return (
     <div className="w-full px-6 py-2">
