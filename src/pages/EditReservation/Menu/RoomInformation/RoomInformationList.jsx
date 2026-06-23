@@ -7,14 +7,18 @@ import RoomInformationTable from "./Components/RoomInformationTable";
 import RoomInformationForm from "./Components/RoomInformationForms/RoomInformationForm";
 import { reservationRoomList } from "../../../../api/reservationSectionApi";
 import useApiQuery from "../../../../hooks/useApiQuery";
-import { useLocation, useParams, useNavigate, Navigate } from "react-router-dom";
+import {
+  useLocation,
+  useParams,
+  useNavigate,
+  Navigate,
+} from "react-router-dom";
 import { LIMITS } from "../../../../variables/constants";
 import AssignRoomForm from "./Components/RoomInformationForms/AssignRoomForm";
 import { Button } from "antd";
 import ChangeStatusForm from "../../../BookingDetail/Components/BookingDetailForms/ChangeStatusForm";
 
 const RoomInformationList = () => {
-
   const navigate = useNavigate();
   const { bookingId } = useParams();
   const uuid = bookingId; // assigned directly to your uuid variable
@@ -29,10 +33,9 @@ const RoomInformationList = () => {
       cleanId === ":bookingId" ||
       cleanId.length < 32
     ) {
-      navigate('/404', { replace: true });
+      navigate("/404", { replace: true });
     }
   }, [bookingId, navigate]);
-
 
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mode, setMode] = useState("add");
@@ -46,7 +49,7 @@ const RoomInformationList = () => {
   const [showRoomResults, setShowRoomResults] = useState(false);
   const [open, setOpen] = useState(false);
 
-  const { data, isLoading } = useApiQuery({
+  const { data, isLoading, refetch } = useApiQuery({
     fetchQueryName: "reservation-room",
     fetchQueryFunction: reservationRoomList,
     params: {
@@ -66,11 +69,13 @@ const RoomInformationList = () => {
 
   useEffect(() => {
     if (bookingId && data?.reservation?.reservationNo) {
-      sessionStorage.setItem(`breadcrumb_${bookingId}`, data.reservation.reservationNo);
+      sessionStorage.setItem(
+        `breadcrumb_${bookingId}`,
+        data.reservation.reservationNo,
+      );
       window.dispatchEvent(new Event("breadcrumb_updated"));
     }
   }, [data, bookingId]);
-
 
   const handleAddRoom = () => {
     setSelectedData(null);
@@ -96,7 +101,9 @@ const RoomInformationList = () => {
           addButtonText={"Add New Room"}
         />
       </div>
-      <Button className="custom-blue-btn mb-2" onClick={() => setOpen(true)}> Change Status</Button>
+      <Button className="custom-blue-btn mb-2" onClick={() => setOpen(true)}>
+        Change Status
+      </Button>
 
       {open && (
         <ChangeStatusForm
@@ -125,7 +132,7 @@ const RoomInformationList = () => {
         mode={mode}
         selectedData={selectedData}
         setSelectedData={setSelectedData}
-      // onSuccess={refetch}
+        onSuccess={refetch}
       />
 
       {assignRoomOpen && (

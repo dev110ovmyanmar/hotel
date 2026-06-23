@@ -27,7 +27,7 @@ const ReservationMenu = ({ onStatusChange, onViewChange }) => {
     !routeStatus || routeStatus === ":status" ? "all" : routeStatus;
 
   const [view, setView] = useState("grid");
-  const [keyword, setKeyword] = useState("");
+  const [keyword, setKeyword] = useState(null);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [page, setPage] = useState(1);
@@ -55,8 +55,8 @@ const ReservationMenu = ({ onStatusChange, onViewChange }) => {
   const reservationCounts = data?.count;
 
   useEffect(() => {
-    setPage(1);
-  }, [keyword, activeStatus, perPage]);
+    setKeyword("");
+  }, [activeStatus]);
 
   const items = [
     {
@@ -94,6 +94,7 @@ const ReservationMenu = ({ onStatusChange, onViewChange }) => {
 
   const handleTabChange = (key) => {
     navigate(`/reservations/${key}`);
+    setKeyword("");
 
     if (onStatusChange) {
       onStatusChange(key);
