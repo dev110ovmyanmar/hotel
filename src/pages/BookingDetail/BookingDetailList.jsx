@@ -12,15 +12,31 @@ import RoomStatusTable from "./Components/BookingDetailsTables/RoomStatusTable";
 import BookingDetailButton from "./Components/BookingDetailButton/BookingDetailButton";
 import BookingStatusCard from "./Components/BookingDetailsTables/BookingStatusCard";
 import ContactPersonCard from "./Components/BookingDetailsTables/ContactPersonTable";
-import { useLocation } from "react-router-dom";
+import { useLocation, useParams, useNavigate } from "react-router-dom";
 import useApiQuery from "../../hooks/useApiQuery";
 import { folioPaymentList, reservationDetails } from "../../api/reservationSectionApi";
 import Loader from "../../component/Loader/Loader";
 import ServiceOrder from "./Components/BookingDetailsTables/ServiceOrder";
+import { useEffect } from "react";
 
 const BookingDetailList = () => {
-  const location = useLocation();
-  const uuid = location.state?.bookingId;
+  const navigate = useNavigate();
+  const { bookingId } = useParams();
+  const uuid = bookingId; // assigned directly to your uuid variable
+
+  // ROUTING GUARD: Kick out unassigned, empty, or partial/mangled IDs instantly
+  useEffect(() => {
+    const cleanId = bookingId ? bookingId.trim() : "";
+
+    if (
+      !cleanId ||
+      cleanId === "" ||
+      cleanId === ":bookingId" ||
+      cleanId.length < 32
+    ) {
+      navigate('/404', { replace: true });
+    }
+  }, [bookingId, navigate]);
 
   const { data, isLoading } = useApiQuery({
     fetchQueryName: "reservation-details",
@@ -29,10 +45,12 @@ const BookingDetailList = () => {
     options: { enabled: !!uuid },
   });
 
-  // const { data: folioPaymentListing } = useApiQuery({
-  //   fetchQueryName: "folio-payments",
-  //   fetchQueryFunction: folioPaymentList,
-  // })
+  useEffect(() => {
+    if (bookingId && data?.reservation?.reservationNo) {
+      sessionStorage.setItem(`breadcrumb_${bookingId}`, data.reservation.reservationNo);
+      window.dispatchEvent(new Event("breadcrumb_updated"));
+    }
+  }, [data, bookingId]);
 
   if (isLoading) {
     return (
@@ -55,7 +73,7 @@ const BookingDetailList = () => {
       <Row gutter={[16, 16]}>
         {/* LEFT */}
         <Col xs={24} lg={16}>
-          <Row gutter={[0,16]}>
+          <Row gutter={[0, 16]}>
             <Col span={24}>
               <PaymentSummaryTable data={data?.reservation?.folioPayments} />
             </Col>
@@ -63,10 +81,10 @@ const BookingDetailList = () => {
               <RoomStatusTable data={data?.reservation?.reservationRooms} />
             </Col>
             <Col span={24}>
-              <ServiceAddOn data={data?.reservation?.reservationAddOns}/>
+              <ServiceAddOn data={data?.reservation?.reservationAddOns} />
             </Col>
             <Col span={24}>
-              <ServiceOrder data={data?.reservation?.serviceOrders}/>
+              <ServiceOrder data={data?.reservation?.serviceOrders} />
             </Col>
             <Col span={24}>
               <EventFacility data={data?.reservation?.facilityBookings} />

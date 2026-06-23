@@ -301,37 +301,43 @@ export const authRoutes = [
 
   {
     key: 3.1,
-    path: "/reservations/booking-detail/",
+    // path: "/reservations/booking-detail/",
+    path: "/reservations/:bookingId/booking-detail",
     component: <BookingDetail />,
   },
   {
     key: 3.2,
-    path: "/reservations/guest-details/",
+    path: "/reservations/:bookingId/guest-details",
     component: <GuestDetails />,
   },
+  // {
+  //   key: 3.3,
+  //   path: "/reservations/room-information/",
+  //   component: <RoomInformation />,
+  // },
   {
     key: 3.3,
-    path: "/reservations/room-information/",
+    path: "/reservations/:bookingId/room-information",
     component: <RoomInformation />,
   },
   {
     key: 3.4,
-    path: "/reservations/event-facility-booking/",
+    path: "/reservations/:bookingId/event-facility-booking",
     component: <EventFacilityOrderList />,
   },
   {
     key: 3.5,
-    path: "/reservations/folio-operations/",
+    path: "/reservations/:bookingId/folio-operations",
     component: <FolioOperations />,
   },
   {
     key: 3.6,
-    path: "/reservations/service-add-on/",
+    path: "/reservations/:bookingId/service-add-on",
     component: <AddOnServiceList />,
   },
   {
     key: 3.6,
-    path: "/reservations/service-order/",
+    path: "/reservations/:bookingId/service-order",
     component: <ServiceOrderList />,
   },
 

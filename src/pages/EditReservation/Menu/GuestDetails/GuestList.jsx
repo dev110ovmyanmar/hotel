@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { Form } from "antd";
 import ReservationHeader from "../../Components/ReservationHeader";
 import ReservationMenu from "../../Components/ReservationMenu";
@@ -13,7 +13,25 @@ import GuestUploadDrawer from "./Components/GuestForms/GuestUploadDrawer";
 
 const GuestList = () => {
   const location = useLocation();
-  const uuid = location.state?.bookingId;
+
+  const navigate = useNavigate();
+  const { bookingId } = useParams();
+  const uuid = bookingId; // assigned directly to your uuid variable
+
+  // ROUTING GUARD: Kick out unassigned, empty, or partial/mangled IDs instantly
+  useEffect(() => {
+    const cleanId = bookingId ? bookingId.trim() : "";
+
+    if (
+      !cleanId ||
+      cleanId === "" ||
+      cleanId === ":bookingId" ||
+      cleanId.length < 32 // Checks if the user chopped or deleted characters from the ID
+    ) {
+      navigate('/404', { replace: true });
+    }
+  }, [bookingId, navigate]);
+
   const [form] = Form.useForm();
 
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -38,15 +56,19 @@ const GuestList = () => {
         perPage,
       },
       keyword,
-      // reservation: { uuid },
       reservationRoom: { uuid },
     },
   });
 
-
+  useEffect(() => {
+    if (bookingId && data?.reservation?.reservationNo) {
+      sessionStorage.setItem(`breadcrumb_${bookingId}`, data.reservation.reservationNo);
+      window.dispatchEvent(new Event("breadcrumb_updated"));
+    }
+  }, [data, bookingId]);
 
   const reservationInfo = data?.reservation ?? null;
-console.log (selectedData?.uuid,"selectedDataUuid")
+
   return (
     <div className="w-full px-6 py-2">
       <ReservationHeader data={data ?? {}} />

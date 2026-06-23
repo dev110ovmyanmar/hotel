@@ -31,12 +31,14 @@ const ReservationsGrid = ({
   changePage,
   changePerPage,
 }) => {
+
   const navigate = useNavigate();
 
+  // Updated to pass item?.uuid as a clear path parameter
   const handleMenuClick = (item) => {
-    navigate(`/reservations/room-information`, {
-      state: { bookingId: item?.uuid },
-    });
+    if (item?.uuid) {
+      navigate(`/reservations/${item.uuid}/room-information`);
+    }
   };
 
   if (!data || data.length === 0) {
@@ -69,12 +71,12 @@ const ReservationsGrid = ({
                       },
                       ...(item?.reservationStatus?.code !== "pending"
                         ? [
-                            {
-                              key: "print",
-                              label: "Print",
-                              icon: <PrinterOutlined />,
-                            },
-                          ]
+                          {
+                            key: "print",
+                            label: "Print",
+                            icon: <PrinterOutlined />,
+                          },
+                        ]
                         : []),
                     ],
                   }}
