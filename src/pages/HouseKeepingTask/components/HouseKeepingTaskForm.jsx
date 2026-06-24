@@ -14,8 +14,8 @@ import {
     updateHouseKeepingTask
 } from "../../../api/houseKeepingTaskApi";
 import HouseKeepingTaskAssignForm from "./HousKeepingTaskAssignForm";
-import MaintenanceRequestFromHK from "./MaintenanceRequestfromHK";
 import ColorStatusTag from "../../../component/ColorStatusTag/ColorStatusTag";
+import MaintenanceRequestFromHK from "./MaintenanceRequestFromHK";
 
 const { TextArea } = Input;
 
