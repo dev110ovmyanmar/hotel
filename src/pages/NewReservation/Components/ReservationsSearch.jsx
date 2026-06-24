@@ -36,11 +36,14 @@ const ReservationSearchBar = ({
     }, 500);
   }
 
+  // useEffect(() => {
+  //   return () => {
+  //     debouncedSearchRef.current?.cancel();
+  //   };
+  // }, []);
   useEffect(() => {
-    return () => {
-      debouncedSearchRef.current?.cancel();
-    };
-  }, []);
+    setInputValue(keyword || "");
+  }, [keyword]);
 
   return (
     <div className="flex flex-row justify-between items-center w-full mb-3 gap-20 ">

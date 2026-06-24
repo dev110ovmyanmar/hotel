@@ -33,9 +33,14 @@ const ReservationMenu = ({ onStatusChange, onViewChange }) => {
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(12);
 
+  const validStatuses = Object.keys(statusColors);
+  const isValidStatus = validStatuses.includes(activeStatus);
+
   useEffect(() => {
     if (!routeStatus || routeStatus === ":status") {
       navigate("/reservations/all", { replace: true });
+    } else if (!validStatuses.includes(routeStatus)) {
+      navigate("/404", { replace: true });
     }
   }, [routeStatus, navigate]);
 
@@ -49,6 +54,9 @@ const ReservationMenu = ({ onStatusChange, onViewChange }) => {
       },
       keyword,
       status: { name: activeStatus === "all" ? null : activeStatus },
+    },
+    options: {
+      enabled: isValidStatus,
     },
   });
 
@@ -194,3 +202,4 @@ const ReservationMenu = ({ onStatusChange, onViewChange }) => {
 };
 
 export default ReservationMenu;
+

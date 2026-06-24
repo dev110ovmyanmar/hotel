@@ -111,7 +111,10 @@ const StaffsForm = ({
   useEffect(() => {
     if (isAdd) {
       form.resetFields();
-      form.setFieldValue("status", statuses?.find((item) => item.label === "Active")?.value);
+      form.setFieldValue(
+        "status",
+        statuses?.find((item) => item.label === "Active")?.value,
+      );
     } else if (!isAdd && data) {
       const nrcSrNo = data?.nrc?.srNo || null;
       const nrcTownship = data?.nrc?.township || null;
@@ -206,7 +209,9 @@ const StaffsForm = ({
         afterOpenChange={(open) => {
           if (open && isAdd) {
             form.resetFields();
-            const defaultStatus = statuses?.find((s) => s.label.toLowerCase() === 'active')?.value;
+            const defaultStatus = statuses?.find(
+              (s) => s.label.toLowerCase() === "active",
+            )?.value;
             form.setFieldsValue({ status: defaultStatus });
           }
         }}
@@ -365,7 +370,7 @@ const StaffsForm = ({
                     getValueProps={(value) => ({
                       value: isView
                         ? citizenship.find((item) => item.value === value)
-                          ?.label
+                            ?.label
                         : value,
                     })}
                   >
@@ -387,8 +392,31 @@ const StaffsForm = ({
                 </Col>
 
                 <Col span={8}>
-                  <Form.Item name="nrcNumber" rules={[{ required: true }]}>
-                    <Input placeholder="Number" readOnly={isView} />
+                  <Form.Item
+                    name="nrcNumber"
+                    rules={[
+                      { required: true },
+                      {
+                        pattern: /^\d{6}$/,
+                        message: "Must be exactly 6 digits",
+                      },
+                    ]}
+                  >
+                    <Input
+                      placeholder="123456"
+                      maxLength={6}
+                      readOnly={isView}
+                      onKeyPress={(e) => {
+                        if (!/[0-9]/.test(e.key)) {
+                          e.preventDefault();
+                        }
+                      }}
+                      onChange={(e) => {
+                        const { value } = e.target;
+                        const cleaned = value.replace(/\D/g, "");
+                        form.setFieldValue("nrcNumber", cleaned);
+                      }}
+                    />
                   </Form.Item>
                 </Col>
               </Row>
@@ -407,7 +435,8 @@ const StaffsForm = ({
             >
               <Input
                 onKeyPress={(e) => {
-                  if (!/[0-9]/.test(e.key) &&
+                  if (
+                    !/[0-9]/.test(e.key) &&
                     !(e.key === "+" && value.length === 0)
                   ) {
                     e.preventDefault();
@@ -478,7 +507,7 @@ const StaffsForm = ({
               <Form.Item
                 label="Left Date"
                 name="endedAt"
-                rules={[{ required: true, message: "Please select Date" }]}
+                // rules={[{ required: true, message: "Please select Date" }]}
               >
                 {data?.endedAt ? (
                   // dayjs(data.endedAt).format("YYYY-MM-DD")
@@ -506,9 +535,9 @@ const StaffsForm = ({
                     <Form.Item
                       label="Left Date"
                       name="endedAt"
-                      rules={[
-                        { required: true, message: "Please select Date" },
-                      ]}
+                      // rules={[
+                      //   { required: true, message: "Please select Date" },
+                      // ]}
                     >
                       <DatePicker className="w-full" disabled={isView} />
                     </Form.Item>
@@ -530,13 +559,9 @@ const StaffsForm = ({
               {isView ? (
                 <Input readOnly={isView} />
               ) : (
-                <Select
-                  options={statuses}
-                  placeholder="Select Status"
-                />
+                <Select options={statuses} placeholder="Select Status" />
               )}
             </Form.Item>
-
           </Form>
         )}
       </Drawer>
