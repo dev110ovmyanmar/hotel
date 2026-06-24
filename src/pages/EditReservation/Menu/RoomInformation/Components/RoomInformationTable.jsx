@@ -38,6 +38,9 @@ import { useApiMutation } from "../../../../../hooks/useApiMutation";
 import { availabilitySearch } from "../../../../../api/reservationSectionApi";
 import Toast from "../../../../../component/Toast/Toast";
 import RoomDowngradeModal from "./RoomAmendmentModals/RoomDowngradeModal";
+import PriceTag from "../../../../../component/PriceTag/PriceTag";
+import AddRoomWithExtensionDateModal from "./RoomAmendmentModals/AddRoomWithExtensionDateModal";
+
 
 const RoomInformationTable = ({
   data,
@@ -66,6 +69,8 @@ const RoomInformationTable = ({
   const [roomUpgrade, setRoomUpgrade] = useState(false);
   const [roomDowngrade, setRoomDowngrade] = useState(false);
   const [ratePlanUuid, setRatePlanUuid] = useState();
+  const [addRoomWithStayExtension, setAddRoomWithStayExtension] = useState(false);
+
 
   // Unified State Engine for Split Modals
   const [activeModal, setActiveModal] = useState(null);
@@ -100,6 +105,11 @@ const RoomInformationTable = ({
     (item) => item.code === "room_downgrade",
   );
   const roomDowngradeUuid = roomDowngrades?.uuid;
+
+  const addRooms = amendmentType?.find(
+    (item) => item.code === "add_room"
+  );
+  const addRoomUuid = addRooms?.uuid;
 
   const availabilitySearchs = useApiMutation({
     mutationFn: availabilitySearch,
@@ -176,7 +186,10 @@ const RoomInformationTable = ({
 
         const isValidStatus = validStatuses.includes(statusCode);
         const isClickable =
-          isRoomNull && isValidStatus && !record?.expiredStatus;
+          record?.assignStatus === true && !record?.expiredStatus;
+
+        const shouldHighlightRoom =
+          !isRoomNull && record?.assignStatus === true;
 
         return (
           <span
@@ -185,12 +198,16 @@ const RoomInformationTable = ({
                 ? isClickable
                   ? "#1890ff"
                   : "#bfbfbf"
-                : "inherit",
-              cursor: isClickable ? "pointer" : "not-allowed",
-              textDecoration: isClickable ? "underline" : "none",
+                : shouldHighlightRoom
+                  ? "#1890ff"
+                  : "inherit",
+              cursor:
+                isClickable || shouldHighlightRoom ? "pointer" : "not-allowed",
+              textDecoration:
+                isClickable || shouldHighlightRoom ? "underline" : "none",
             }}
             onClick={(e) => {
-              if (isClickable) {
+              if (isClickable || shouldHighlightRoom) {
                 e.stopPropagation();
                 setSelectedData(record);
                 setAssignRoomOpen(true);
@@ -203,22 +220,35 @@ const RoomInformationTable = ({
       },
     },
     {
-      title: "Name",
+      title: "Room Type",
       dataIndex: ["roomType", "name"],
       key: "name",
     },
     {
-      title: "Arrival",
+      title: "Check In",
       dataIndex: "checkinDate",
       key: "checkinDate",
       render: (value) => (value ? dayjs(value).format("YYYY-MM-DD") : "-"),
       width: 110,
     },
     {
-      title: "Departure",
+      title: "Check Out",
       dataIndex: "checkoutDate",
       key: "checkoutDate",
       render: (value) => (value ? dayjs(value).format("YYYY-MM-DD") : "-"),
+      width: 110,
+    },
+    {
+      title: "Total Charges",
+      dataIndex: "grandTotal",
+      align: "center",
+      key: "grandTotal",
+      render: (value) => (
+        <div className="flex justify-end items-center gap-1">
+          <PriceTag value={value} />
+          <span className="text-gray-500 font-medium">MMK</span>
+        </div>
+      ),
       width: 110,
     },
     {
@@ -367,7 +397,12 @@ const RoomInformationTable = ({
                       key: "add_room",
                       label: "Add Room",
                       icon: <PlusOutlined />,
-                      onClick: () => handleAction("add_room", record),
+                      onClick: () => {
+                        handleAction("add_room", record),
+                          setAddRoomWithStayExtension(true),
+                          setRatePlanUuid(record?.ratePlan?.uuid)
+                      },
+
                     },
                     {
                       key: "remove_room",
@@ -624,6 +659,18 @@ const RoomInformationTable = ({
         availabilitySearchsPendings={availabilitySearchs?.isPending}
         ratePlanUuid={ratePlanUuid}
       />
+
+
+      <AddRoomWithExtensionDateModal
+        isOpen={addRoomWithStayExtension}
+        record={selectedData}
+        onClose={() => setAddRoomWithStayExtension(false)}
+        addRoomUuid={addRoomUuid}
+        availabilitySearchs={availabilitySearchs}
+        reservation={reservation}
+        ratePlanUuid={ratePlanUuid}
+      />
+
     </div>
   );
 };

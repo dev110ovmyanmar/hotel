@@ -31,12 +31,14 @@ const ReservationsGrid = ({
   changePage,
   changePerPage,
 }) => {
+
   const navigate = useNavigate();
 
+  // Updated to pass item?.uuid as a clear path parameter
   const handleMenuClick = (item) => {
-    navigate(`/reservations/room-information`, {
-      state: { bookingId: item?.uuid },
-    });
+    if (item?.uuid) {
+      navigate(`/reservations/${item.uuid}/room-information`);
+    }
   };
 
   if (!data || data.length === 0) {
@@ -69,12 +71,12 @@ const ReservationsGrid = ({
                       },
                       ...(item?.reservationStatus?.code !== "pending"
                         ? [
-                            {
-                              key: "print",
-                              label: "Print",
-                              icon: <PrinterOutlined />,
-                            },
-                          ]
+                          {
+                            key: "print",
+                            label: "Print",
+                            icon: <PrinterOutlined />,
+                          },
+                        ]
                         : []),
                     ],
                   }}
@@ -152,7 +154,8 @@ const ReservationsGrid = ({
                       : "-"}
                   </div>
 
-                  <div className="flex items-center gap-2 bg-indigo-50 text-indigo-700 px-3 py-1.5 rounded-lg border border-indigo-100 ml-auto sm:ml-0">
+                  {/* <div className="flex items-center gap-2 bg-indigo-50 text-indigo-700 px-3 py-1.5 rounded-lg border border-indigo-100 ml-auto sm:ml-0"> */}
+                  <div className="flex items-center gap-2 bg-gray-50 text-gray-700 px-3 py-1.5 rounded-lg border border-gray-100 ml-auto sm:ml-0">
                     <FaMoon className="text-xs" />
                     <span className="text-xs font-bold whitespace-nowrap">
                       {`${item.totalNight} ${item.totalNight === 1 ? "Night" : "Nights"}`}
@@ -181,7 +184,7 @@ const ReservationsGrid = ({
                     style={{ display: "flex", justifyContent: "space-between" }}
                   >
                     <span style={{ color: "#8c8c8c" }}>Res No:</span>
-                    <span className="font-bold text-indigo-700">
+                    <span className="font-bold text-indigo-800">
                       {item?.reservation?.reservationNo}
                     </span>
                   </div>
@@ -192,17 +195,26 @@ const ReservationsGrid = ({
                     <span style={{ color: "#8c8c8c" }}>Room Type:</span>
                     <span>{item?.roomType?.name}</span>
                   </div>
+
                   <div
                     style={{ display: "flex", justifyContent: "space-between" }}
                   >
                     <span style={{ color: "#8c8c8c" }}>Room No:</span>
-                    <span>{item?.room?.roomNo}</span>
+                    <span>
+                      {item?.room?.roomNo ? (
+                        item.room.roomNo
+                      ) : (
+                        <span className="text-blue-600 font-medium cursor-pointer hover:text-indigo-800">
+                          Assign Room
+                        </span>
+                      )}
+                    </span>
                   </div>
                   <div
                     style={{ display: "flex", justifyContent: "space-between" }}
                   >
                     <span style={{ color: "#8c8c8c" }}>Contact No:</span>
-                    <span>{item?.guest?.phone}</span>
+                    <span>{item?.guest?.phone ? item.guest.phone : "-"}</span>
                   </div>
                   <div
                     style={{ display: "flex", justifyContent: "space-between" }}
@@ -229,7 +241,7 @@ const ReservationsGrid = ({
                       fontWeight: "bold",
                     }}
                   >
-                    <span>Total</span>
+                    <span>Total Charges</span>
                     <span
                       style={{
                         display: "flex",

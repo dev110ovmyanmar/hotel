@@ -3,14 +3,18 @@ import { DEFAULT_IP_ADDRESS } from "../variables/constants";
 import { getPasswordMD5 } from "../utils";
 
 export const login = async ({ email, password, ipAddress }) => {
-  const { data } = await apiClient.post("admin/login", {
+  const response = await apiClient.post("admin/login", {
     email,
     password: getPasswordMD5(password),
     ipAddress: ipAddress || DEFAULT_IP_ADDRESS,
   });
 
-  return data.response;
+  return {
+    ...response.data.response
+    , headers: response.headers
+  };
 };
+
 
 export const changePassword = async ({
   currentPassword,

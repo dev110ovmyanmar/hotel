@@ -9,12 +9,13 @@ import {
 } from "../../../../api/reservationSectionApi";
 import dayjs from "dayjs";
 import { useApiQuery } from "./../../../../hooks/useApiQuery";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 const ChangeStatusForm = ({ reservationDetails, open, onClose }) => {
   const [form] = Form.useForm();
-  const location = useLocation();
-  const uuid = location.state?.bookingId;
+  const navigate = useNavigate();
+  const { bookingId } = useParams();
+  const uuid = bookingId; 
 
   const selectedStatusUuid = Form.useWatch("changeBookingStatusTo", form);
   const selectedRooms = Form.useWatch("reservationRooms", form) || [];
@@ -85,8 +86,8 @@ const ChangeStatusForm = ({ reservationDetails, open, onClose }) => {
     const statusColorMap = {
       booked: "text-[#0958D9] bg-[#E6F4FF] text-xs p-1 rounded ",
       confirmed: "text-[#389E0D] bg-[#F6FFED] text-xs p-1 rounded",
-      "checked_in": "text-[#08979C] bg-[#E6FFFB] text-xs p-1 rounded",
-      "checked_out": "text-[#FF8D28] bg-[#FFF4F1] text-xs p-1 rounded",
+      checked_in: "text-[#08979C] bg-[#E6FFFB] text-xs p-1 rounded",
+      checked_out: "text-[#FF8D28] bg-[#FFF4F1] text-xs p-1 rounded",
       "no-show": "text-gray-800 bg-gray-100 text-xs p-1 rounded",
       cancelled: "text-red-600 bg-red-100 text-xs p-1 rounded",
     };
@@ -115,14 +116,26 @@ const ChangeStatusForm = ({ reservationDetails, open, onClose }) => {
           statusColorMap[statusCode] ||
           "text-gray-600 bg-gray-100 text-xs p-1 rounded";
 
+        const isCheckedInStatusSelected =
+          currentActiveStatus.code === "checked_in";
+        const isRoomNull = !roomNo;
+        const isDisabledRoom = isCheckedInStatusSelected && isRoomNull;
+
         return {
           label: (
-            <div className="flex flex-col line-height-tight py-0.5">
+            <div
+              className={`flex flex-col line-height-tight py-0.5 ${isDisabledRoom ? "opacity-50" : ""}`}
+            >
               <span className="font-medium text-slate-800">
                 {roomNo ? `${roomNo} - ` : ""}
                 {roomTypeName}{" "}
                 {roomStatus && (
                   <span className={statusColorClass}>{roomStatus}</span>
+                )}
+                {isDisabledRoom && (
+                  <span className="text-red-500 bg-red-50 text-xs p-1 rounded ml-2 font-normal">
+                    Assign room first
+                  </span>
                 )}
               </span>
               {checkIn && checkOut && (
@@ -133,9 +146,15 @@ const ChangeStatusForm = ({ reservationDetails, open, onClose }) => {
             </div>
           ),
           value: roomItem?.id,
+          disabled: isDisabledRoom,
         };
       });
   }, [data, currentActiveStatus]);
+
+  const enabledRoomOptions = useMemo(
+    () => roomOptions.filter((o) => !o.disabled),
+    [roomOptions],
+  );
 
   const isStatusSelected = !!selectedStatusUuid;
   const shouldShowRoomSelection = roomOptions.length > 0;
@@ -160,7 +179,7 @@ const ChangeStatusForm = ({ reservationDetails, open, onClose }) => {
     if (values.reservationRooms && values.reservationRooms.length > 0) {
       collectedRoomIds = values.reservationRooms;
     } else {
-      collectedRoomIds = roomOptions.map((opt) => opt.value);
+      collectedRoomIds = enabledRoomOptions.map((opt) => opt.value);
     }
 
     const payload = {
@@ -184,14 +203,16 @@ const ChangeStatusForm = ({ reservationDetails, open, onClose }) => {
   };
 
   const isAllSelected =
-    roomOptions.length > 0 && selectedRooms.length === roomOptions.length;
+    enabledRoomOptions.length > 0 &&
+    selectedRooms.length === enabledRoomOptions.length;
   const isIndeterminate =
-    selectedRooms.length > 0 && selectedRooms.length < roomOptions.length;
+    selectedRooms.length > 0 &&
+    selectedRooms.length < enabledRoomOptions.length;
 
   const handleSelectAllChange = (e) => {
     form.setFieldsValue({
       reservationRooms: e.target.checked
-        ? roomOptions.map((opt) => opt.value)
+        ? enabledRoomOptions.map((opt) => opt.value)
         : [],
     });
   };
@@ -231,7 +252,6 @@ const ChangeStatusForm = ({ reservationDetails, open, onClose }) => {
           rules={[{ required: true, message: "Please select a status" }]}
         >
           <Select
-            // allowClear
             showSearch
             className="w-full"
             placeholder="Select a reservation status..."

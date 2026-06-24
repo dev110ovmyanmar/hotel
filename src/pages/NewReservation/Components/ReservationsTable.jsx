@@ -26,22 +26,16 @@ const ReservationsTable = ({
 }) => {
   const navigate = useNavigate();
 
+  // Updated to pass item?.uuid as a clear path parameter
   const handleMenuClick = (item) => {
-    navigate(`/reservations/room-information`, {
-      state: { bookingId: item?.uuid },
-    });
+    if (item?.uuid) {
+      navigate(`/reservations/${item.uuid}/room-information`);
+    }
   };
 
   const columns = [
     { title: "Id", dataIndex: "id", key: "id", width: 70 },
-    {
-      title: "Res No:",
-      dataIndex: ["reservation", "reservationNo"],
-      key: "reservationNo",
-      align: "center",
-      width: 140,
-      render: (text) => <span className="text-indigo-700">{text}</span>,
-    },
+
     {
       title: "Guest Name",
       dataIndex: ["guest", "name"],
@@ -50,13 +44,34 @@ const ReservationsTable = ({
         <span style={{ textTransform: "capitalize" }}>{text || ""}</span>
       ),
     },
+    {
+      title: "Res No:",
+      dataIndex: ["reservation", "reservationNo"],
+      key: "reservationNo",
+      align: "center",
+      width: 140,
+      render: (text) => <span className="text-indigo-800">{text}</span>,
+    },
 
     {
       title: "Room",
-      dataIndex: ["room", "roomNo"],
-      key: ["room", "roomNo"],
+      key: "roomNo",
       align: "center",
-      width: 80,
+      width: 120,
+      render: (_, record) => {
+        const roomNo = record?.room?.roomNo;
+
+        return roomNo ? (
+          <span className="font-medium text-gray-800">{roomNo}</span>
+        ) : (
+          <span
+            className="text-[#1890ff] font-medium cursor-pointer hover:text-indigo-800"
+            onClick={() => handleMenuClick(record)}
+          >
+            Assign Room
+          </span>
+        );
+      },
     },
     {
       title: "Rate Plan",
@@ -125,7 +140,7 @@ const ReservationsTable = ({
       render: (roomStatus) => <ReservationStatusColor status={roomStatus} />,
     },
     {
-      title: "Order Total",
+      title: "Total Charges",
       dataIndex: "grandTotal",
       key: "total",
       align: "end",

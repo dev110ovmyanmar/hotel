@@ -91,7 +91,7 @@ const Topbar = withDirection(function (props) {
       await persister.removeClient();
       queryClient.clear();
       localStorage.clear();
-      navigate("/signin");
+      window.location.href = "/signin";
     } catch (error) {
       console.error("Logout failed:", error);
     } finally {

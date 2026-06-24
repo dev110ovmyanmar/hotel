@@ -16,6 +16,7 @@ import { queryClient } from "../../../../app/queryClient";
 import { loadState } from "../../../../utils";
 import { LOCAL_STORAGE_KEYS } from "../../../../variables/constants";
 import { adminDetails } from "../../../../api/adminApi";
+import { useNavigate, useParams } from "react-router-dom";
 
 const FolioOperationsList = () => {
   const [keyword, setKeyword] = useState("");
@@ -32,25 +33,38 @@ const FolioOperationsList = () => {
   // get login admin details
   const adminUuid = loadState(LOCAL_STORAGE_KEYS.loginAdminDetails)?.uuid;
   const roleUuid = loadState(LOCAL_STORAGE_KEYS.loginAdminDetails)?.role?.uuid;
-  console.log("roleUuid", roleUuid)
-  console.log("adminUuid", adminUuid);
 
   const { data: loginAdminDetails } = useApiQuery({
     fetchQueryName: "login-admin-details",
     fetchQueryFunction: adminDetails,
     params: { uuid: adminUuid },
   });
-  console.log("loginAdminDetails", loginAdminDetails);
   const adminName = `${loginAdminDetails?.name}`;
-  console.log("adminName", adminName);
+
 
   // Property image
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
   const propertyFiles = initData?.property?.propertyFiles;
   const propretyImage = propertyFiles?.find((file) => file?.name === "email_photo")?.file;
 
-  const location = useLocation();
-  const reservationRoomUuid = location.state?.bookingId;
+
+  const navigate = useNavigate();
+  const { bookingId } = useParams();
+  const uuid = bookingId; // assigned directly to your uuid variable
+
+  // ROUTING GUARD: Kick out unassigned, empty, or partial/mangled IDs instantly
+  useEffect(() => {
+    const cleanId = bookingId ? bookingId.trim() : "";
+
+    if (
+      !cleanId ||
+      cleanId === "" ||
+      cleanId === ":bookingId" ||
+      cleanId.length < 32 // Checks if the user chopped or deleted characters from the ID
+    ) {
+      navigate('/404', { replace: true });
+    }
+  }, [bookingId, navigate]);
 
   const { data: folioList, isLoading, error } = useApiQuery({
     fetchQueryName: "folios",
@@ -58,9 +72,16 @@ const FolioOperationsList = () => {
     params: {
       pagination: { page, perPage },
       keyword,
-      reservationRoom: { uuid: reservationRoomUuid },
+      reservationRoom: { uuid: uuid },
     },
   });
+
+  useEffect(() => {
+    if (bookingId && folioList?.reservation?.reservationNo) {
+      sessionStorage.setItem(`breadcrumb_${bookingId}`, folioList.reservation.reservationNo);
+      window.dispatchEvent(new Event("breadcrumb_updated"));
+    }
+  }, [folioList, bookingId]);
 
   const reservationUuid = folioList?.reservation?.uuid;
 
