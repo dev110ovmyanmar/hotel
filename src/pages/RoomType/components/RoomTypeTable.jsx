@@ -40,6 +40,7 @@ const RoomTypeTable = ({
       dataIndex: "name",
       key: "name",
       align: "left",
+      width: 300,
     },
     {
       title: "Code",
@@ -51,22 +52,22 @@ const RoomTypeTable = ({
       title: "Total Rooms",
       dataIndex: "totalRooms",
       key: "totalRooms",
-      width: 120,
+      width: 100,
       align: "center",
     },
 
     {
-      title: "Guest",
+      title: "Max Occupancy",
       dataIndex: "maxOccupancy",
       key: "maxOccupancy",
-      width: 80,
+      width: 110,
       align: "center",
     },
     {
       title: "Max Extra Bed",
       dataIndex: "maxExtraBed",
       key: "maxExtraBed",
-      width: 130,
+      width: 100,
       align: "center",
     },
     {
@@ -74,6 +75,7 @@ const RoomTypeTable = ({
       dataIndex: "rank",
       key: "rank",
       align: "center",
+       width: 100,
     },
     {
       title: "Status",
