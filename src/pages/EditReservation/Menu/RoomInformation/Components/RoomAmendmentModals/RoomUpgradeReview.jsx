@@ -69,7 +69,7 @@ const RoomUpgradeReview = ({
             align:"center",
             render: (text, record) => (
                 <div className={`${record.color} px-2 py-1 rounded `}>
-                    {text}
+                    {text ? text : "-"}
                 </div>
             ),
         },

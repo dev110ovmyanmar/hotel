@@ -39,6 +39,8 @@ import { availabilitySearch } from "../../../../../api/reservationSectionApi";
 import Toast from "../../../../../component/Toast/Toast";
 import RoomDowngradeModal from "./RoomAmendmentModals/RoomDowngradeModal";
 import PriceTag from "../../../../../component/PriceTag/PriceTag";
+import AddRoomWithExtensionDateModal from "./RoomAmendmentModals/AddRoomWithExtensionDateModal";
+
 
 const RoomInformationTable = ({
   data,
@@ -50,7 +52,7 @@ const RoomInformationTable = ({
   changePage,
   changePerPage,
   reservationUuid,
-  }) => {
+}) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [guestOpen, setGuestOpen] = useState(false);
   const [guestListOpen, setGuestListOpen] = useState(false);
@@ -67,6 +69,8 @@ const RoomInformationTable = ({
   const [roomUpgrade, setRoomUpgrade] = useState(false);
   const [roomDowngrade, setRoomDowngrade] = useState(false);
   const [ratePlanUuid, setRatePlanUuid] = useState();
+  const [addRoomWithStayExtension, setAddRoomWithStayExtension] = useState(false);
+
 
   // Unified State Engine for Split Modals
   const [activeModal, setActiveModal] = useState(null);
@@ -101,6 +105,11 @@ const RoomInformationTable = ({
     (item) => item.code === "room_downgrade",
   );
   const roomDowngradeUuid = roomDowngrades?.uuid;
+
+  const addRooms = amendmentType?.find(
+    (item) => item.code === "add_room"
+  );
+  const addRoomUuid = addRooms?.uuid;
 
   const availabilitySearchs = useApiMutation({
     mutationFn: availabilitySearch,
@@ -232,9 +241,9 @@ const RoomInformationTable = ({
     {
       title: "Total Charges",
       dataIndex: "grandTotal",
-      align:"center",
+      align: "center",
       key: "grandTotal",
-       render: (value) => (
+      render: (value) => (
         <div className="flex justify-end items-center gap-1">
           <PriceTag value={value} />
           <span className="text-gray-500 font-medium">MMK</span>
@@ -325,16 +334,16 @@ const RoomInformationTable = ({
                       onClick: () => handleAction("date_change", record),
                     },
                     ...(record?.isExtend !== false ||
-                    record?.roomStatus?.code === "checked_in"
+                      record?.roomStatus?.code === "checked_in"
                       ? [
-                          {
-                            key: "stay_extension",
-                            label: "Extend Stay",
-                            icon: <PlusOutlined />,
-                            onClick: () =>
-                              handleAction("stay_extension", record),
-                          },
-                        ]
+                        {
+                          key: "stay_extension",
+                          label: "Extend Stay",
+                          icon: <PlusOutlined />,
+                          onClick: () =>
+                            handleAction("stay_extension", record),
+                        },
+                      ]
                       : []),
                     {
                       key: "stay_reduction",
@@ -388,7 +397,12 @@ const RoomInformationTable = ({
                       key: "add_room",
                       label: "Add Room",
                       icon: <PlusOutlined />,
-                      onClick: () => handleAction("add_room", record),
+                      onClick: () => {
+                        handleAction("add_room", record),
+                          setAddRoomWithStayExtension(true),
+                          setRatePlanUuid(record?.ratePlan?.uuid)
+                      },
+
                     },
                     {
                       key: "remove_room",
@@ -645,6 +659,18 @@ const RoomInformationTable = ({
         availabilitySearchsPendings={availabilitySearchs?.isPending}
         ratePlanUuid={ratePlanUuid}
       />
+
+
+      <AddRoomWithExtensionDateModal
+        isOpen={addRoomWithStayExtension}
+        record={selectedData}
+        onClose={() => setAddRoomWithStayExtension(false)}
+        addRoomUuid={addRoomUuid}
+        availabilitySearchs={availabilitySearchs}
+        reservation={reservation}
+        ratePlanUuid={ratePlanUuid}
+      />
+
     </div>
   );
 };

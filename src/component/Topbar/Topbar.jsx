@@ -34,6 +34,7 @@ import useApiQuery from "../../hooks/useApiQuery";
 import { adminDetails } from "../../api/adminApi";
 import { saveState } from "../../utils/Utils.js";
 import TopBarDropDown from "./TopBarDropDown.jsx";
+import PrintReservation from "./PrintReservation.jsx";
 
 const { Header } = Layout;
 
@@ -49,6 +50,7 @@ const Topbar = withDirection(function (props) {
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [printOpen, setPrintOpen] = useState(false);
 
   const uuid = loadState(LOCAL_STORAGE_KEYS.loginAdminDetails)?.uuid;
 
@@ -91,7 +93,7 @@ const Topbar = withDirection(function (props) {
       await persister.removeClient();
       queryClient.clear();
       localStorage.clear();
-      navigate("/signin");
+      window.location.href = "/signin";
     } catch (error) {
       console.error("Logout failed:", error);
     } finally {
@@ -202,6 +204,7 @@ const Topbar = withDirection(function (props) {
             type="default"
             icon={<PrinterOutlined />}
             size="middle"
+            onClick={() => setPrintOpen(true)}
             className="bg-gray-200 hover:bg-gray-300 border-none text-gray-700"
           >
             Print Reservation
@@ -223,7 +226,7 @@ const Topbar = withDirection(function (props) {
           <Button
             type="text"
             loading={refreshing}
-            icon={<ReloadOutlined style={{ fontSize: 18}} />}
+            icon={<ReloadOutlined style={{ fontSize: 18 }} />}
             className="bg-gray-200 hover:bg-gray-300 text-gray-700"
             onClick={handleRefetchInitData}
           />
@@ -282,15 +285,14 @@ const Topbar = withDirection(function (props) {
           </Popover>
         </div>
 
-        <TopBarDropDown 
-          addReservation = {() => navigate("/reservation/create-new-reservation")}
-          darklighmode = {() => dispatch(toggleTheme())}
-          refreshInitData = {handleRefetchInitData}
-          logoutmodal = {handleModalOpen}
+        <TopBarDropDown
+          addReservation={() => navigate("/reservation/create-new-reservation")}
+          darklighmode={() => dispatch(toggleTheme())}
+          refreshInitData={handleRefetchInitData}
+          logoutmodal={handleModalOpen}
           changePassword={() => handleMenuClick("password")}
-          profileDrawer = {() => handleMenuClick("profile")}
+          profileDrawer={() => handleMenuClick("profile")}
           refreshing={refreshing}
-
         />
       </Header>
 
@@ -312,6 +314,11 @@ const Topbar = withDirection(function (props) {
       >
         <ProfilePage onClose={closeProfileDrawer} profileData />
       </Drawer>
+      <PrintReservation
+        open={printOpen}
+        onClose={() => setPrintOpen(false)}
+        data={{}}
+      />
     </>
   );
 });

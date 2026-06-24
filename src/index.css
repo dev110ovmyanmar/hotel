@@ -699,3 +699,17 @@ span .ant-upload {
     #000b60 100%
   ) !important;
 }
+
+.hide-required-star .ant-form-item-required::before {
+  display: none !important;
+}
+
+
+/* Dark Mode for create and edit form */
+.dark .ant-form-item-label > label {
+  color: white !important;
+}
+
+.dark .ant-form-item-label > label::before{
+  color: red !important
+}

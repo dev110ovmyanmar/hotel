@@ -162,6 +162,7 @@ const CreateGuestForm = ({
               name="name"
               rules={[{required:true, message:"Name is required"}]}
               style={{ width: "80%" }}
+              className="hide-required-star"
             >
               <AutoComplete
                 options={autocompleteGuestOptions}

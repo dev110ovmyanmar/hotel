@@ -25,8 +25,10 @@ export default function SignIn() {
     options: {
       onSuccess: async (data) => {
         try {
-          saveState(LOCAL_STORAGE_KEYS.sessionId, data.XSessionToken);
-          saveState(LOCAL_STORAGE_KEYS.adminRole, data.role.name);
+          const sessionToken = data.XSessionToken;
+
+          saveState(LOCAL_STORAGE_KEYS.sessionId, sessionToken);
+          saveState(LOCAL_STORAGE_KEYS.adminRole, data.role?.name);
           saveState(LOCAL_STORAGE_KEYS.loginAdminDetails, data);
 
           // Fetch the AUTHENTICATED version of initData
@@ -39,11 +41,11 @@ export default function SignIn() {
           });
 
           if (initData) {
-            const permissions = saveState(
+            saveState(
               LOCAL_STORAGE_KEYS.initPermissions,
               initData.permissions,
             );
-            dispatch(setUserData({ permissions }));
+            dispatch(setUserData({ permissions: initData.permissions }));
 
             // Clean up any 'public' data leftover in the cache
             queryClient.removeQueries({ queryKey: ["initData", "public"] });
