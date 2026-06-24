@@ -82,9 +82,11 @@ const RoomTypeForm = ({
 
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
 
-  const statuses = initData?.statuses?.room_status?.map((status) => ({
-    value: status.uuid,
-    label: status.name,
+  const statuses = initData?.statuses?.status?.filter((item) => {
+    return item.code !== 'blocked'
+  }).map((item) => ({
+    value: item.uuid,
+    label: item.name,
   }));
 
   const { data: ratePlanMetaData } = useApiQuery({
@@ -235,6 +237,13 @@ const RoomTypeForm = ({
       <Drawer
         open={drawerOpen}
         onClose={handleClose}
+        afterOpenChange={(open) => {
+          if (open && isAdd) {
+            form.resetFields();
+            const defaultStatus = statuses?.find((s) => s.label === 'Active')?.value;
+            form.setFieldsValue({ status: defaultStatus });
+          }
+        }}
         size={600}
         title={
           <div className="flex justify-between items-center">
@@ -305,8 +314,17 @@ const RoomTypeForm = ({
             </Row>
 
             <div className="grid grid-cols-2 gap-6">
-              <Form.Item label="Room Size" name="areaSize">
-                <Input readOnly={isView} placeholder="Enter Room Size" />
+              <Form.Item
+                label="Total Rooms"
+                name="totalRooms"
+                rules={[{ required: true }]}
+              >
+                <InputNumber
+                  {...sharedProps}
+                  disabled={isView}
+                  style={{ width: "100%" }}
+                  placeholder="Enter Totals Rooms"
+                />
               </Form.Item>
 
               <Form.Item
@@ -375,24 +393,9 @@ const RoomTypeForm = ({
               </Form.Item>
             </div>
 
-            <div className="grid grid-cols-2 gap-6">
-              <Form.Item
-                label="Total Rooms"
-                name="totalRooms"
-                rules={[{ required: true }]}
-              >
-                <InputNumber
-                  {...sharedProps}
-                  disabled={isView}
-                  style={{ width: "100%" }}
-                  placeholder="Enter Totals Rooms"
-                />
-              </Form.Item>
-
-              <Form.Item label="Room Size" name="areaSize">
-                <Input readOnly={isView} placeholder="Enter Room Size" />
-              </Form.Item>
-            </div>
+            <Form.Item label="Room Size" name="areaSize">
+              <Input readOnly={isView} placeholder="Enter Room Size" />
+            </Form.Item>
 
             <Row gutter={24}>
               <Col span={24}>

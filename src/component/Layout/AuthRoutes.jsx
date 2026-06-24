@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { Suspense, useMemo } from "react";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, Navigate } from "react-router-dom";
 import Loader from "../../component/Loader/Loader";
 import NotFound from "../../pages/404/NotFound";
 import PermissionRoute from "../../app/permissionRoute";
@@ -1123,6 +1123,7 @@ const AuthRoutes = () => {
               }
             />
           ))}
+          <Route path="/" element={<Navigate to="/dashboard" replace />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>
