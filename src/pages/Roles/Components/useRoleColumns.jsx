@@ -22,7 +22,7 @@ export default function (onEdit, onView) {
       key: "code",
       width: 150,
       render: (text) => (
-        <code className="bg-gray-100 px-2 py-1 rounded text-xs">{text}</code>
+        <code>{text}</code>
       ),
     },
     {
@@ -60,8 +60,8 @@ export default function (onEdit, onView) {
       title: "Actions",
       key: "actions",
       width: 80,
-      fixed:"end",
-      align:"center",
+      fixed: "end",
+      align: "center",
       render: (_, record) => (
         <Dropdown
           menu={{
