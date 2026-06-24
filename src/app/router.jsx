@@ -40,8 +40,8 @@ export default function Routes() {
         <Router>
           <Switch>
             <Route path="/signin" element={<SignInLazy />} />
-             <Route element={<ProtectedRoute />}>
-            <Route path="/*" element={<AuthLayout />} />
+            <Route element={<ProtectedRoute />}>
+              <Route path="/*" element={<AuthLayout />} />
             </Route>
           </Switch>
           <ToastContainer />

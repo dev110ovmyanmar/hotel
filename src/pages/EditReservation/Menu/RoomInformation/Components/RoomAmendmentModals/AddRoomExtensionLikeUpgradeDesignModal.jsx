@@ -1,22 +1,28 @@
 import React, { use, useState } from 'react';
-import { Modal, Form, Input, Button, Radio, Row, Col, Divider, Typography, Card, Select, Spin, Checkbox } from 'antd';
-import { DoubleRightOutlined, InfoCircleOutlined, WalletOutlined } from '@ant-design/icons';
+import { Modal, Form, Input, Button, Radio, Row, Col, Divider, Typography, Card, Select, Spin, Checkbox, Table } from 'antd';
+import { DoubleRightOutlined, InfoCircleOutlined, SwapRightOutlined, WalletOutlined } from '@ant-design/icons';
 import { createRoomAmendment } from '../../../../../../api/roomAmendmentApi';
 import { useApiMutation } from '../../../../../../hooks/useApiMutation';
 import Toast from '../../../../../../component/Toast/Toast';
-import RoomDowngradeReview from './RoomDowngradeReview';
-import { FaStar } from 'react-icons/fa';
+import RoomUpgradeReview from './RoomUpgradeReview';
+import { GiMushroomHouse, GiQueenCrown } from "react-icons/gi";
+import { PiCrown, PiCrownFill, PiCrownSimpleThin, PiRanking } from "react-icons/pi";
+import { BsCalendar2Date } from "react-icons/bs";
+import { CiBadgeDollar } from "react-icons/ci";
+import { FaCrown, FaStar } from 'react-icons/fa';
 
 const { Text, Title } = Typography;
 
-export default function RoomDowngradeModal({
+export default function AddRoomExtensionLikeUpgradeDesignModal({
     isOpen,
     onClose,
     record,
-    roomDowngradeUuid,
+    addRoomUuid,
     roomList,
     availabilitySearchsPendings,
-    ratePlanUuid
+    ratePlanUuid,
+    originalCheckout,
+    newCheckoutDate,
 }) {
     const [form] = Form.useForm();
     const [selectedRoom, setSelectedRoom] = useState(null);
@@ -24,9 +30,9 @@ export default function RoomDowngradeModal({
     const [selectedRoomTypeName, setSelectedRoomTypeName] = useState({});
     console.log(selectedRoomTypeName, "selectedRoomTypeName")
     const [reviewData, setReviewData] = useState(null);
-    const [checkSelectedRoom, setCheckSelectedRoom] = useState(false)
+    const [checkSelectedRoom, setCheckSelectedRoom] = useState(false);
+    const [selectRoomNo, setSelectRoomNo] = useState(false);
 
-    console.log(reviewData, "ReviewData")
     // API Mutation engine handling state invalidation
     const createRoomAmendmentMutation = useApiMutation({
         mutationFn: createRoomAmendment,
@@ -43,7 +49,8 @@ export default function RoomDowngradeModal({
         setSelectedRoom();
         setToReviewPage();
         setSelectedRoomTypeName();
-        setReviewData()
+        setReviewData();
+        setSelectRoomNo(false)
     };
 
     console.log(record, "Record")
@@ -55,22 +62,25 @@ export default function RoomDowngradeModal({
             console.log(reviewData, "ReviewData")
 
             const payload = {
-                amendmentType: { uuid: roomDowngradeUuid },
+                amendmentType: { uuid: addRoomUuid },
                 reservationRoom: { uuid: record?.uuid },
                 room: { uuid: reviewData.roomUuid?.value },
                 roomType: { uuid: reviewData?.roomType },
                 ratePlan: { uuid: reviewData?.ratePlan?.value },
-                rateStatus: reviewData?.rateStatus
+                rateStatus: reviewData?.rateStatus,
+                checkinDate: originalCheckout.format("YYYY-MM-DD"),
+                checkoutDate: newCheckoutDate.format("YYYY-MM-DD"),
             };
 
             createRoomAmendmentMutation.mutate(payload, {
                 onSuccess: () => {
-                    Toast.success("Room is downgraded successfully.");
+                    Toast.success("Room is Added With Stay Extension successfully.");
                     handleCloseReset();
                     setSelectedRoom();
                     setToReviewPage();
                     setSelectedRoomTypeName();
                     setReviewData();
+                    onClose(false)
                 },
 
             });
@@ -94,6 +104,9 @@ export default function RoomDowngradeModal({
                     label: ratePlan.name,
                 }))
             ) || [];
+
+    console.log(ratePlanUuid, "ratePlanUuid");
+    console.log()
 
 
     const roomUuidOptions = roomList?.rooms
@@ -174,13 +187,16 @@ export default function RoomDowngradeModal({
         ];
     }
 
+    const selectedRatePlan = roomList?.rooms
+        ?.find(room => room.roomType.uuid === selectedRoom)
+        ?.ratePlans?.find(ratePlan => ratePlan.uuid === ratePlanUuid);
 
     return (
         <Modal
             title={
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <div style={{ width: '4px', height: '18px', background: '#1677ff', borderRadius: '2px' }} />
-                    <span style={{ fontWeight: 600 }}>Room Amendment — Downgrade Room</span>
+                    <span style={{ fontWeight: 600 }}>Room Amendment — Available Room</span>
                 </div>
             }
             open={isOpen}
@@ -211,7 +227,7 @@ export default function RoomDowngradeModal({
                                     fontSize: '13px'
                                 }}>
                                     <Text type="secondary"><strong style={{ color: '#475569' }}>Room Type:</strong> {currentRoomType}</Text>
-                                    {/* <Text type="secondary"><strong style={{ color: '#475569' }}>Rank :</strong> {record?.roomType?.rank}</Text> */}
+                                    <Text type="secondary"><strong style={{ color: '#475569' }}>Rank :</strong> {record?.roomType?.rank}</Text>
 
                                     <div className="grid place-items-center w-fit -mt-1">
                                         <FaStar className='text-amber-200  text-3xl col-start-1 row-start-1' />
@@ -219,7 +235,6 @@ export default function RoomDowngradeModal({
                                             {record?.roomType?.rank}
                                         </div>
                                     </div>
-
                                 </div>
 
                                 <Form
@@ -228,11 +243,9 @@ export default function RoomDowngradeModal({
                                 >
                                     <Row gutter={[16, 16]}>
 
-                                        
                                         {roomList?.rooms?.map(room => {
                                             return (
                                                 <Col span={8}>
-
                                                     <Card
                                                         className={`
                                                             min-h-25
@@ -252,16 +265,13 @@ export default function RoomDowngradeModal({
                                                             const matchedRatePlan = room.ratePlans.find(
                                                                 rp => rp.uuid === ratePlanUuid
                                                             );
-
-                                                            console.log(matchedRatePlan, "donwgradeRatePlan")
+                                                            console.log(room, "RoomInSearch")
                                                             setSelectedRoom(room.roomType.uuid);
                                                             setSelectedRoomTypeName(room.roomType);
                                                             setCheckSelectedRoom(true);
-
                                                             form.setFieldsValue({
                                                                 roomType: room?.roomType?.uuid
                                                             });
-
                                                             if (matchedRatePlan) {
                                                                 form.setFieldsValue({
                                                                     ratePlan: {
@@ -269,19 +279,22 @@ export default function RoomDowngradeModal({
                                                                         label: matchedRatePlan.name,
                                                                     },
                                                                 });
-                                                            }
+                                                            };
+
+
                                                         }}
+
                                                     >
 
                                                         <div className="absolute top-0 right-0 grid place-items-center w-fit mr-1 ">
                                                             <FaStar className={
                                                                 `
-                                                                ${selectedRoom === room.roomType.uuid ? "text-amber-500" : "text-amber-200 "
+                                                            ${selectedRoom === room.roomType.uuid ? "text-amber-500" : "text-amber-200 "
                                                                 }
-                                                                text-3xl 
-                                                                col-start-1 
-                                                                row-start-1
-                                                                `
+                                                            text-3xl 
+                                                            col-start-1 
+                                                            row-start-1
+                                                                                                                        `
                                                             } />
                                                             <div className="col-start-1 row-start-1 text-gray-900 font-bold text-xs mt-1 ml-1 mr-1">
                                                                 {room?.roomType?.rank}
@@ -293,6 +306,7 @@ export default function RoomDowngradeModal({
                                                                 {room?.roomType?.name}
                                                             </div>
                                                         </div>
+
                                                     </Card>
                                                 </Col>
                                             )
@@ -348,11 +362,29 @@ export default function RoomDowngradeModal({
                                                         <Select
                                                             options={roomUuidOptions}
                                                             labelInValue
+                                                            onChange={() => setSelectRoomNo(true)}
                                                         >
                                                         </Select>
                                                     </Form.Item>
                                                 </Col>
                                             </Row>
+
+                                            {
+                                                selectRoomNo &&
+                                                (selectedRatePlan?.dailyPrices?.map(daily => (
+                                                    <div key={daily.date} className='flex gap-6 !mb-4'>
+                                                        <div className='flex gap-3 border border-[#1677ff] bg-[#E0F2FE] p-2 rounded-sm shadow-md'>
+                                                            <BsCalendar2Date className='!mt-1' />
+                                                            <span className='!font-bold'>{daily.date}</span>
+                                                        </div>
+                                                        <SwapRightOutlined />
+                                                        <div className='flex gap-3 border border-[#1677ff] bg-[#E0F2FE] p-2 rounded-sm shadow-md'>
+                                                            <CiBadgeDollar className='!mt-0.5 !text-lg' />
+                                                            <span className='!font-bold'>{daily.price?.toLocaleString()} MMK</span>
+                                                        </div>
+                                                    </div>
+                                                )))
+                                            }
 
                                             <Form.Item
                                                 name="rateStatus"
@@ -371,12 +403,12 @@ export default function RoomDowngradeModal({
                             </>
                         ) : (
                             <div className="text-center py-8">
-                                <Text type="secondary">There are no rooms available to downgrade.</Text>
+                                <Text type="secondary">There are no rooms available to add.</Text>
                             </div>
                         )
                     )
                         : (
-                            <RoomDowngradeReview
+                            <RoomUpgradeReview
                                 record={record}
                                 selectedRoomTypeName={selectedRoomTypeName}
                                 reviewData={reviewData}
