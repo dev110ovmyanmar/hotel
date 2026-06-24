@@ -5,7 +5,7 @@ import Sidebar from "../Sidebar/Sidebar";
 import AuthRoutes from "./AuthRoutes";
 import { Footer } from "antd/es/layout/layout";
 import Topbar from "../Topbar/Topbar";
-import { appSelector, toggleAll } from "../../services/appSlice";
+import { appSelector, toggleAll, sessionExpired as setSessionExpiredAction } from "../../services/appSlice";
 import useWindowSize from "../../hooks/useWindowSize";
 import Breadcrumbs from "../Breadcrumbs/Breadcrumbs";
 import { queryClient } from './../../app/queryClient';
@@ -32,6 +32,19 @@ const AuthLayout = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sessionExpired]);
+
+  useEffect(() => {
+    const handleStorageChange = (e) => {
+      if (e.key === "SessionId" && e.newValue) {
+        dispatch(setSessionExpiredAction(false));
+        Modal.destroyAll();
+        // Reload to ensure all APIs are called with the fresh token
+        window.location.reload();
+      }
+    };
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
+  }, [dispatch]);
 
   const showConfirm = () => {
     confirm({

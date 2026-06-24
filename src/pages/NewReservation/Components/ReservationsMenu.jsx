@@ -27,15 +27,20 @@ const ReservationMenu = ({ onStatusChange, onViewChange }) => {
     !routeStatus || routeStatus === ":status" ? "all" : routeStatus;
 
   const [view, setView] = useState("grid");
-  const [keyword, setKeyword] = useState(null);
+  const [keyword, setKeyword] = useState("");
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(12);
 
+  const validStatuses = Object.keys(statusColors);
+  const isValidStatus = validStatuses.includes(activeStatus);
+
   useEffect(() => {
     if (!routeStatus || routeStatus === ":status") {
       navigate("/reservations/all", { replace: true });
+    } else if (!validStatuses.includes(routeStatus)) {
+      navigate("/404", { replace: true });
     }
   }, [routeStatus, navigate]);
 
@@ -50,13 +55,16 @@ const ReservationMenu = ({ onStatusChange, onViewChange }) => {
       keyword,
       status: { name: activeStatus === "all" ? null : activeStatus },
     },
+    options: {
+      enabled: isValidStatus,
+    },
   });
 
   const reservationCounts = data?.count;
 
   useEffect(() => {
-    setKeyword("");
-  }, [activeStatus]);
+    setPage(1);
+  }, [keyword, activeStatus, perPage]);
 
   const items = [
     {
@@ -94,7 +102,6 @@ const ReservationMenu = ({ onStatusChange, onViewChange }) => {
 
   const handleTabChange = (key) => {
     navigate(`/reservations/${key}`);
-    setKeyword("");
 
     if (onStatusChange) {
       onStatusChange(key);
@@ -195,3 +202,4 @@ const ReservationMenu = ({ onStatusChange, onViewChange }) => {
 };
 
 export default ReservationMenu;
+
