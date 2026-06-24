@@ -64,17 +64,17 @@ const RoomList = () => {
         changePerPage={(perPage) => setPerPage(perPage)}
         loading={isLoading}
       />
-
-      <RoomForm
-        page={page}
-        setPage={setPage}
-        mode={mode}
-        setMode={setMode}
-        drawerOpen={drawerOpen}
-        setDrawerOpen={setDrawerOpen}
-        selectedData={selectedData}
-        setSelectedData={setSelectedData}
-      />
+      {drawerOpen && (
+        <RoomForm
+          page={page}
+          setPage={setPage}
+          mode={mode}
+          drawerOpen={drawerOpen}
+          setDrawerOpen={setDrawerOpen}
+          selectedData={selectedData}
+          setSelectedData={setSelectedData}
+        />
+      )}
     </div>
   );
 };
