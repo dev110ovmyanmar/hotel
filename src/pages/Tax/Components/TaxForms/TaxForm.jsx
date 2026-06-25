@@ -19,6 +19,10 @@ import { createTax, editTax, TaxDetails } from "../../../../api/TaxApi";
 import TextArea from "antd/es/input/TextArea";
 import Loader from "../../../../component/Loader/Loader";
 import Status from "../../../../component/Status/Status";
+import {
+  priceFormatter,
+  priceParser,
+} from "../../../../component/PriceTag/PriceTag";
 
 const TaxForm = ({
   mode,
@@ -63,7 +67,7 @@ const TaxForm = ({
     label: unit.name,
   }));
 
-  const statuses = initData?.statuses?.status
+  const statuses = initData?.statuses?.status;
 
   const createTaxs = useApiMutation({
     mutationFn: createTax,
@@ -154,12 +158,14 @@ const TaxForm = ({
         afterOpenChange={(open) => {
           if (open && isAdd) {
             form.resetFields();
-            const activeStatus = statuses?.find((s) => s.name.toLowerCase() === 'active');
+            const activeStatus = statuses?.find(
+              (s) => s.name.toLowerCase() === "active",
+            );
             if (activeStatus) {
               form.setFieldsValue({
                 status: {
-                  uuid: activeStatus.uuid
-                }
+                  uuid: activeStatus.uuid,
+                },
               });
             }
           }
@@ -355,6 +361,8 @@ const TaxForm = ({
                     })()}
                     readOnly={isView}
                     placeholder="Enter Charge Value"
+                    formatter={priceFormatter}
+                    parser={priceParser}
                   />
                 </Form.Item>
               </Col>
@@ -374,7 +382,7 @@ const TaxForm = ({
                   getValueProps={(value) => ({
                     value: isView
                       ? chargeApplyType.find((item) => item.value === value)
-                        ?.label
+                          ?.label
                       : value,
                   })}
                 >

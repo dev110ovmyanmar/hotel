@@ -24,6 +24,10 @@ import dayjs from "dayjs";
 import { getFormattedDate } from "../../../../utils";
 import { PERMISSIONS } from "../../../../variables/permission";
 import usePermission from "../../../../hooks/usePermission";
+import {
+  priceFormatter,
+  priceParser,
+} from "../../../../component/PriceTag/PriceTag";
 
 const ExtraBedRateForm = ({
   mode,
@@ -47,8 +51,8 @@ const ExtraBedRateForm = ({
   const canEdit = hasPermission(PERMISSIONS.EXTRA_BED_RATE_EDIT);
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
 
-  const disabledDate = current => {
-    return current && current < dayjs().startOf('day');
+  const disabledDate = (current) => {
+    return current && current < dayjs().startOf("day");
   };
 
   const ageList = initData?.statuses?.age_type?.map((ageType) => ({
@@ -101,7 +105,7 @@ const ExtraBedRateForm = ({
         // endDate: data?.endDate ? dayjs(data.endDate) : null,
         dateRange: [
           data.startDate ? dayjs(data.startDate) : null,
-          data.endDate ? dayjs(data.endDate) : null
+          data.endDate ? dayjs(data.endDate) : null,
         ],
       });
 
@@ -281,6 +285,8 @@ const ExtraBedRateForm = ({
               suffix="MMK"
               placeholder="Enter price"
               style={{ width: "100%" }}
+              formatter={priceFormatter}
+              parser={priceParser}
             />
           </Form.Item>
 
@@ -296,12 +302,12 @@ const ExtraBedRateForm = ({
               disabled={isView}
               suffixIcon={isView ? null : undefined}
               className="w-full flex"
-              style={{ width: '100%' }}
+              style={{ width: "100%" }}
             />
           </Form.Item>
         </Form>
       </Drawer>
-    </div >
+    </div>
   );
 };
 

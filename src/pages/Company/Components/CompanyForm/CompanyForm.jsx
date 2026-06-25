@@ -23,6 +23,10 @@ import Status from "./../../../../component/Status/Status";
 import ImageUpload from "../../../../component/ImageUpload/ImageUpload";
 import { deleteImageUpload } from "../../../../api/deleteImageApi";
 import { validatePhoneNumber } from "../../../../utils";
+import {
+  priceFormatter,
+  priceParser,
+} from "../../../../component/PriceTag/PriceTag";
 
 const { TextArea } = Input;
 
@@ -208,25 +212,19 @@ const CompanyForm = ({
             <Input readOnly={isView} placeholder="Enter Email Address" />
           </Form.Item>
 
-          <Form.Item
-            label="Phone"
-            name="phone"
-            rules={[
-              { required: true },
-              
-
-            ]}
-          >
+          <Form.Item label="Phone" name="phone" rules={[{ required: true }]}>
             <Input
               readOnly={isView}
               placeholder="Enter Phone Number"
               onKeyPress={(e) => {
-                if (!/[0-9]/.test(e.key) &&
+                if (
+                  !/[0-9]/.test(e.key) &&
                   !(e.key === "+" && value.length === 0)
                 ) {
                   e.preventDefault();
                 }
               }}
+              maxLength={20}
             />
           </Form.Item>
 
@@ -292,6 +290,8 @@ const CompanyForm = ({
                   })()}
                   readOnly={isView}
                   placeholder="Enter Charge Value"
+                  formatter={priceFormatter}
+                  parser={priceParser}
                 />
               </Form.Item>
             </Col>

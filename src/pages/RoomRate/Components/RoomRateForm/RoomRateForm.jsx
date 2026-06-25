@@ -1,14 +1,28 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useLocation } from "react-router-dom";
-import { Form, Input, Button, Select, Drawer, Row, Col, InputNumber, Checkbox } from "antd";
+import {
+  Form,
+  Input,
+  Button,
+  Select,
+  Drawer,
+  Row,
+  Col,
+  InputNumber,
+  Checkbox,
+} from "antd";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
 import useApiQuery from "../../../../hooks/useApiQuery";
 import { queryClient } from "../../../../app/queryClient";
 import FormButton from "../../../../component/FormButtons/FormButtons";
-import Toast from './../../../../component/Toast/Toast';
-import usePermission from './../../../../hooks/usePermission';
+import Toast from "./../../../../component/Toast/Toast";
+import usePermission from "./../../../../hooks/usePermission";
 import { upsertRoomRate, roomRateDetails } from "../../../../api/roomRateApi";
 import { ratePlanMeta } from "../../../../api/ratePlanApi";
+import {
+  priceFormatter,
+  priceParser,
+} from "../../../../component/PriceTag/PriceTag";
 
 const RoomRateForm = ({
   mode,
@@ -32,19 +46,20 @@ const RoomRateForm = ({
   const isAdd = mode === "add";
 
   const { state } = useLocation();
-  const activePricingType = ratePlan?.pricingType?.code ?? state?.ratePlan?.pricingType?.code;
+  const activePricingType =
+    ratePlan?.pricingType?.code ?? state?.ratePlan?.pricingType?.code;
   const activeRatePlanUuid = ratePlan?.uuid ?? state?.ratePlan?.uuid;
 
   const { data: ratePlanMetas } = useApiQuery({
     fetchQueryName: "rate-plan-meta",
-    fetchQueryFunction: ratePlanMeta
+    fetchQueryFunction: ratePlanMeta,
   });
 
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
 
-  const roomTypeOptions = ratePlanMetas?.room_types?.map(item => ({
+  const roomTypeOptions = ratePlanMetas?.room_types?.map((item) => ({
     label: item.name,
-    value: item.uuid
+    value: item.uuid,
   }));
 
   const statuses = initData?.statuses?.status
@@ -55,19 +70,19 @@ const RoomRateForm = ({
     }));
 
   const days = [
-    { key: 'mon', label: 'Monday' },
-    { key: 'tue', label: 'Tuesday' },
-    { key: 'wed', label: 'Wednesday' },
-    { key: 'thu', label: 'Thursday' },
-    { key: 'fri', label: 'Friday' },
-    { key: 'sat', label: 'Saturday' },
-    { key: 'sun', label: 'Sunday' },
+    { key: "mon", label: "Monday" },
+    { key: "tue", label: "Tuesday" },
+    { key: "wed", label: "Wednesday" },
+    { key: "thu", label: "Thursday" },
+    { key: "fri", label: "Friday" },
+    { key: "sat", label: "Saturday" },
+    { key: "sun", label: "Sunday" },
   ];
 
   const upsertRoomRates = useApiMutation({
     mutationFn: upsertRoomRate,
     invalidateKeys: [["room-rates"], ["ratePlan"]],
-    shouldInvalidate: isEdit ? true : page === 1
+    shouldInvalidate: isEdit ? true : page === 1,
   });
 
   const { data: roomRateDetailData } = useApiQuery({
@@ -85,16 +100,19 @@ const RoomRateForm = ({
         ...roomRateDetailData,
         uuid: roomRateDetailData?.uuid,
         roomType: {
-          uuid: roomRateDetailData?.roomType?.uuid
+          uuid: roomRateDetailData?.roomType?.uuid,
         },
         price: roomRateDetailData?.price,
         durationHours: roomRateDetailData?.durationHours,
         status: roomRateDetailData?.status?.uuid,
         ...roomRateDetailData?.weekdays,
-        ...Object.keys(roomRateDetailData?.weekdays || {}).reduce((acc, day) => {
-          acc[`enable_${day}`] = roomRateDetailData?.weekdays[day] !== null;
-          return acc;
-        }, {}),
+        ...Object.keys(roomRateDetailData?.weekdays || {}).reduce(
+          (acc, day) => {
+            acc[`enable_${day}`] = roomRateDetailData?.weekdays[day] !== null;
+            return acc;
+          },
+          {},
+        ),
       });
       setSelectedData(roomRateDetailData);
     } else if (isAdd) {
@@ -120,10 +138,10 @@ const RoomRateForm = ({
         fri: values?.fri ? values?.fri : null,
         sat: values?.sat ? values?.sat : null,
         sun: values?.sun ? values?.sun : null,
-      }
+      },
     };
 
-    days.forEach(day => {
+    days.forEach((day) => {
       delete payload[day];
       delete payload[`enable_${day}`];
     });
@@ -190,7 +208,7 @@ const RoomRateForm = ({
           style={{ width: "100%" }}
           onFinish={onFinish}
           initialValues={{
-            durationHours: 0
+            durationHours: 0,
           }}
         >
           <Row gutter={16}>
@@ -200,18 +218,20 @@ const RoomRateForm = ({
                 name={["roomType", "uuid"]}
                 rules={[{ required: true, message: "Room Type is Required" }]}
                 getValueProps={(value) => {
-                  return ({
+                  return {
                     value: isView
-                      ? ratePlanMetas?.room_types?.find((item) => item.uuid === value)?.name
+                      ? ratePlanMetas?.room_types?.find(
+                          (item) => item.uuid === value,
+                        )?.name
                       : value,
-                  })
+                  };
                 }}
               >
-                {
-                  isView ?
-                    <Input readOnly={isView} /> :
-                    <Select options={roomTypeOptions} />
-                }
+                {isView ? (
+                  <Input readOnly={isView} />
+                ) : (
+                  <Select options={roomTypeOptions} />
+                )}
               </Form.Item>
             </Col>
 
@@ -225,24 +245,24 @@ const RoomRateForm = ({
                   readOnly={isView}
                   suffix="MMK"
                   style={{ width: "100%" }}
+                  formatter={priceFormatter}
+                  parser={priceParser}
                 />
               </Form.Item>
             </Col>
 
             <Col span={12}>
-              {
-                activePricingType !== "daily" &&
+              {activePricingType !== "daily" && (
                 <Form.Item
                   label="Duration Hours"
                   name="durationHours"
-                  rules={[{ required: true, message: "Duration Hours is Required" }]}
+                  rules={[
+                    { required: true, message: "Duration Hours is Required" },
+                  ]}
                 >
-                  <Input
-                    readOnly={isView}
-                    suffix="hrs"
-                  />
+                  <Input readOnly={isView} suffix="hrs" />
                 </Form.Item>
-              }
+              )}
             </Col>
           </Row>
 
@@ -282,7 +302,10 @@ const RoomRateForm = ({
               <Form.Item label="Days of Week" className="mb-4">
                 <div className="flex flex-wrap gap-x-3 gap-y-2 p-0.5">
                   {days.map((day) => (
-                    <div key={`group-${day.key}`} className="flex flex-col items-center">
+                    <div
+                      key={`group-${day.key}`}
+                      className="flex flex-col items-center"
+                    >
                       <span className="text-[10px] uppercase mb-1">
                         {day.key}
                       </span>
@@ -312,7 +335,9 @@ const RoomRateForm = ({
                   <Form.Item
                     name={day.key}
                     label={`${day.label}`}
-                    rules={[{ required: isEnabled, message: 'Price is required' }]}
+                    rules={[
+                      { required: isEnabled, message: "Price is required" },
+                    ]}
                   >
                     <InputNumber
                       placeholder="Enter Price"
@@ -328,7 +353,7 @@ const RoomRateForm = ({
           </Row>
         </Form>
       </Drawer>
-    </div >
+    </div>
   );
 };
 

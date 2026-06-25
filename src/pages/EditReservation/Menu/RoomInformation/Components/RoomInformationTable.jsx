@@ -41,7 +41,6 @@ import RoomDowngradeModal from "./RoomAmendmentModals/RoomDowngradeModal";
 import PriceTag from "../../../../../component/PriceTag/PriceTag";
 import AddRoomWithExtensionDateModal from "./RoomAmendmentModals/AddRoomWithExtensionDateModal";
 
-
 const RoomInformationTable = ({
   data,
   reservation,
@@ -69,8 +68,8 @@ const RoomInformationTable = ({
   const [roomUpgrade, setRoomUpgrade] = useState(false);
   const [roomDowngrade, setRoomDowngrade] = useState(false);
   const [ratePlanUuid, setRatePlanUuid] = useState();
-  const [addRoomWithStayExtension, setAddRoomWithStayExtension] = useState(false);
-
+  const [addRoomWithStayExtension, setAddRoomWithStayExtension] =
+    useState(false);
 
   // Unified State Engine for Split Modals
   const [activeModal, setActiveModal] = useState(null);
@@ -106,9 +105,7 @@ const RoomInformationTable = ({
   );
   const roomDowngradeUuid = roomDowngrades?.uuid;
 
-  const addRooms = amendmentType?.find(
-    (item) => item.code === "add_room"
-  );
+  const addRooms = amendmentType?.find((item) => item.code === "add_room");
   const addRoomUuid = addRooms?.uuid;
 
   const availabilitySearchs = useApiMutation({
@@ -174,7 +171,7 @@ const RoomInformationTable = ({
       width: 70,
     },
     {
-      title: "Room",
+      title: "Room No:",
       key: "room",
       dataIndex: "room",
       width: 120,
@@ -224,6 +221,8 @@ const RoomInformationTable = ({
       dataIndex: ["roomType", "name"],
       key: "name",
     },
+    { title: "Rate Plan", dataIndex: ["ratePlan", "name"], key: "ratePlan" },
+
     {
       title: "Check In",
       dataIndex: "checkinDate",
@@ -238,6 +237,14 @@ const RoomInformationTable = ({
       render: (value) => (value ? dayjs(value).format("YYYY-MM-DD") : "-"),
       width: 110,
     },
+
+    {
+      title: "Status",
+      dataIndex: ["roomStatus", "name"],
+      key: "roomStatus",
+      render: (_, record) => <ColorStatusTag status={record?.roomStatus} />,
+      width: 110,
+    },
     {
       title: "Total Charges",
       dataIndex: "grandTotal",
@@ -249,17 +256,8 @@ const RoomInformationTable = ({
           <span className="text-gray-500 font-medium">MMK</span>
         </div>
       ),
-      width: 110,
+      width: 150,
     },
-    {
-      title: "Status",
-      dataIndex: ["roomStatus", "name"],
-      key: "roomStatus",
-      render: (_, record) => <ColorStatusTag status={record?.roomStatus} />,
-      width: 110,
-    },
-    { title: "Rate Plan", dataIndex: ["ratePlan", "name"], key: "ratePlan" },
-
     {
       title: "Action",
       width: 80,
@@ -334,16 +332,16 @@ const RoomInformationTable = ({
                       onClick: () => handleAction("date_change", record),
                     },
                     ...(record?.isExtend !== false ||
-                      record?.roomStatus?.code === "checked_in"
+                    record?.roomStatus?.code === "checked_in"
                       ? [
-                        {
-                          key: "stay_extension",
-                          label: "Extend Stay",
-                          icon: <PlusOutlined />,
-                          onClick: () =>
-                            handleAction("stay_extension", record),
-                        },
-                      ]
+                          {
+                            key: "stay_extension",
+                            label: "Extend Stay",
+                            icon: <PlusOutlined />,
+                            onClick: () =>
+                              handleAction("stay_extension", record),
+                          },
+                        ]
                       : []),
                     {
                       key: "stay_reduction",
@@ -398,11 +396,10 @@ const RoomInformationTable = ({
                       label: "Add Room",
                       icon: <PlusOutlined />,
                       onClick: () => {
-                        handleAction("add_room", record),
+                        (handleAction("add_room", record),
                           setAddRoomWithStayExtension(true),
-                          setRatePlanUuid(record?.ratePlan?.uuid)
+                          setRatePlanUuid(record?.ratePlan?.uuid));
                       },
-
                     },
                     {
                       key: "remove_room",
@@ -660,7 +657,6 @@ const RoomInformationTable = ({
         ratePlanUuid={ratePlanUuid}
       />
 
-
       <AddRoomWithExtensionDateModal
         isOpen={addRoomWithStayExtension}
         record={selectedData}
@@ -670,7 +666,6 @@ const RoomInformationTable = ({
         reservation={reservation}
         ratePlanUuid={ratePlanUuid}
       />
-
     </div>
   );
 };

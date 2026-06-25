@@ -1,5 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Form, Input, Button, Select, Drawer, InputNumber, Row, Col } from "antd";
+import {
+  Form,
+  Input,
+  Button,
+  Select,
+  Drawer,
+  InputNumber,
+  Row,
+  Col,
+} from "antd";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
 import useApiQuery from "../../../../hooks/useApiQuery";
 import FormButton from "../../../../component/FormButtons/FormButtons";
@@ -11,6 +20,7 @@ import {
 } from "../../../../api/menuModifierApi";
 import Loader from "../../../../component/Loader/Loader";
 import { sellingPriceValidator } from "../../../../variables/constants";
+import { priceFormatter, priceParser } from "../../../../component/PriceTag/PriceTag";
 
 const MenuModifierForm = ({
   mode,
@@ -155,6 +165,8 @@ const MenuModifierForm = ({
                     className="!w-full"
                     placeholder="Enter Price"
                     suffix="MMK"
+                    formatter={priceFormatter}
+                    parser={priceParser}
                   />
                 </Form.Item>
               </Col>
@@ -162,11 +174,11 @@ const MenuModifierForm = ({
               <Col span={12}>
                 <Form.Item
                   label="Selling Price"
-                  dependencies={['unitCost']}
+                  dependencies={["unitCost"]}
                   name="unitPrice"
                   rules={[
                     { required: true, message: "Please enter selling price" },
-                    sellingPriceValidator("unitCost", "unitPrice", true)
+                    sellingPriceValidator("unitCost", "unitPrice", true),
                   ]}
                 >
                   <InputNumber
@@ -175,8 +187,11 @@ const MenuModifierForm = ({
                     className="!w-full"
                     placeholder="Enter Price"
                     suffix="MMK"
+                    formatter={priceFormatter}
+                    parser={priceParser}
                   />
-                </Form.Item></Col>
+                </Form.Item>
+              </Col>
             </Row>
           </Form>
         )}

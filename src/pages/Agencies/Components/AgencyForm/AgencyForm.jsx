@@ -23,6 +23,7 @@ import Status from "./../../../../component/Status/Status";
 import ImageUpload from "../../../../component/ImageUpload/ImageUpload";
 import { deleteImageUpload } from "../../../../api/deleteImageApi";
 import { validatePhoneNumber } from "../../../../utils";
+import { priceFormatter, priceParser } from "../../../../component/PriceTag/PriceTag";
 
 const { TextArea } = Input;
 
@@ -222,21 +223,20 @@ const AgencyForm = ({
             label="Phone"
             name="phone"
             validateTrigger="onChange"
-            rules={[
-              { required: true },
-              
-            ]}
+            rules={[{ required: true }]}
           >
             <Input
               readOnly={isView}
               placeholder="Enter Phone Number"
               onKeyPress={(e) => {
-                if (!/[0-9]/.test(e.key) &&
+                if (
+                  !/[0-9]/.test(e.key) &&
                   !(e.key === "+" && value.length === 0)
                 ) {
                   e.preventDefault();
                 }
               }}
+              maxLength={20}
             />
           </Form.Item>
 
@@ -302,6 +302,8 @@ const AgencyForm = ({
                   })()}
                   readOnly={isView}
                   placeholder="Enter Charge Value"
+                  formatter={priceFormatter}
+                  parser={priceParser}
                 />
               </Form.Item>
             </Col>

@@ -11,7 +11,7 @@ import {
   Switch,
   InputNumber,
   Tooltip,
-  Divider
+  Divider,
 } from "antd";
 import Toast from "../../../../component/Toast/Toast";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
@@ -29,6 +29,10 @@ import {
 import Loader from "../../../../component/Loader/Loader";
 import { PERMISSIONS } from "../../../../variables/permission";
 import usePermission from "../../../../hooks/usePermission";
+import {
+  priceFormatter,
+  priceParser,
+} from "../../../../component/PriceTag/PriceTag";
 
 const RatePlanForm = ({
   mode,
@@ -142,7 +146,7 @@ const RatePlanForm = ({
     }
   }, [data]);
 
-  const isDisableDefault = ratePlanList ? false : true;
+  const isDisableDefault = ratePlanList?.data?.length <= 0 ? true : false;
 
   const handleClose = () => {
     setDrawerOpen(false);
@@ -230,7 +234,10 @@ const RatePlanForm = ({
         afterOpenChange={(open) => {
           if (open && isAdd) {
             form.resetFields();
-            form.setFieldValue("status", statuses?.find((item) => item.label === "Active")?.value);
+            form.setFieldValue(
+              "status",
+              statuses?.find((item) => item.label === "Active")?.value,
+            );
             if (!ratePlanList) {
               form.setFieldValue("isDefault", true);
             }
@@ -474,7 +481,7 @@ const RatePlanForm = ({
               initialValue={false}
               rules={[{ required: true, message: "Please select Is Default!" }]}
               tooltip={{
-                title: "If no date-specific base rate exists, default room type pricing is used.",
+                title: "If no date-specific base rate exists, the default room type pricing will be used automatically. The default rate cannot be inactivated, as it acts as the system fallback rate for room pricing.",
                 icon: <InfoCircleOutlined style={{ color: "#1677ff" }} />,
               }}
             >
@@ -485,27 +492,23 @@ const RatePlanForm = ({
               />
             </Form.Item>
 
-            {
-              isAdd &&
-
+            {isAdd && (
               <div className="border-2 px-4  py-4 rounded mb-2">
-                {
-                  isAdd && (
-                    <div className="mb-3">
-                      <div className="mb-2">
-                        <span className="text-gray-900 text-[16px] font-semibold">
-                          Let's map room types to this rate plan
-                        </span>
-                      </div>
-
-                      <div>
-                        <span className="text-gray-900 text-[15px] italic">
-                          Map the following rate plans
-                        </span>
-                      </div>
+                {isAdd && (
+                  <div className="mb-3">
+                    <div className="mb-2">
+                      <span className="text-gray-900 text-[16px] font-semibold">
+                        Let's map room types to this rate plan
+                      </span>
                     </div>
-                  )
-                }
+
+                    <div>
+                      <span className="text-gray-900 text-[15px] italic">
+                        Map the following rate plans
+                      </span>
+                    </div>
+                  </div>
+                )}
 
                 {roomTypes?.map(
                   (roomType) =>
@@ -519,7 +522,9 @@ const RatePlanForm = ({
                           <span className="text-red-500">*</span>
                         </Col>
                         <Col span={9}>
-                          <span style={{ fontWeight: 500 }}>{roomType?.label}</span>
+                          <span style={{ fontWeight: 500 }}>
+                            {roomType?.label}
+                          </span>
                         </Col>
 
                         <Col span={1} style={{ textAlign: "center" }}>
@@ -539,6 +544,8 @@ const RatePlanForm = ({
                               style={{ width: "100%" }}
                               placeholder="Enter Rate"
                               suffix="MMK"
+                              formatter={priceFormatter}
+                              parser={priceParser}
                             />
                           </Form.Item>
                         </Col>
@@ -546,7 +553,7 @@ const RatePlanForm = ({
                     ),
                 )}
               </div>
-            }
+            )}
           </Form>
         )}
       </Drawer>
@@ -555,3 +562,4 @@ const RatePlanForm = ({
 };
 
 export default RatePlanForm;
+

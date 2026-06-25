@@ -1,9 +1,9 @@
 import { Dropdown, Space, Table } from "antd";
 import { useState } from "react";
 import { MoreOutlined, EyeOutlined, EditOutlined } from "@ant-design/icons";
-import RoomAttributeForm from "./RoomAttributeForms/RoomAttributeform";
 import usePermission from "../../../hooks/usePermission";
 import { PERMISSIONS } from "../../../variables/permission";
+import RoomAttributeForm from "./RoomAttributeForms/RoomAttributeForm";
 
 const RoomAttributeTable = ({
   data,

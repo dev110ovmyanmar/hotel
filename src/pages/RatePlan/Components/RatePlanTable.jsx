@@ -6,8 +6,26 @@ import { MoreOutlined, EyeOutlined, EditOutlined, ExclamationCircleOutlined } fr
 import usePermission from "../../../hooks/usePermission";
 import { PERMISSIONS } from "../../../variables/permission";
 import { TableColumns } from "../../../component/TableColumns/TableColumns";
-import PriceTag from "../../../component/PriceTag/PriceTag";
 import RoomRateForm from "../../RoomRate/Components/RoomRateForm/RoomRateForm";
+
+export const PriceTag = ({ value, currency }) => {
+  // 1. Convert to a number just in case it's passed as a string
+  const numericPrice = typeof value === 'string' ? parseFloat(value) : value;
+
+  // 2. Fallback safety if the value is missing or invalid
+  if (isNaN(numericPrice) || numericPrice === null || numericPrice === undefined) {
+    return <span>0 {currency}</span>;
+  }
+
+  // 3. Format the number with standard thousands separators (e.g., 15,000)
+  const formattedPrice = new Intl.NumberFormat('en-US').format(numericPrice);
+
+  return (
+    <span>
+      {formattedPrice} {currency}
+    </span>
+  );
+};
 
 const RatePlanTable = ({
   data,
@@ -66,6 +84,17 @@ const RatePlanTable = ({
       dataIndex: ["mealPlan", "name"],
       key: "mealPlan",
     },
+    {
+      title: "Is Default",
+      dataIndex: "isDefault",
+      key: "isDefault",
+      render: (isDefault) => (
+        <div className={isDefault === true ? "text-[#389E0D]" : "text-[#CF1322]"}>
+          {isDefault === true ? "True" : "False"}
+        </div>
+      ),
+    }
+    ,
     {
       title: "Action",
       fixed: "end",
@@ -229,13 +258,13 @@ const RatePlanTable = ({
       },
       align: "right"
     },
-    {
-      title: "Duration Hours",
-      dataIndex: "durationHours",
-      key: "durationHours",
-      align: "center",
-      render: (text) => <div>{text ? text : "-"}</div>,
-    },
+    // {
+    //   title: "Duration Hours",
+    //   dataIndex: "durationHours",
+    //   key: "durationHours",
+    //   align: "center",
+    //   render: (text) => <div>{text ? text : "-"}</div>,
+    // },
     {
       title: "Action",
       align: "center",
@@ -366,7 +395,7 @@ const RatePlanTable = ({
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
               <span style={{ color: '#8c8c8c' }}>Base Price</span>
               <span style={{ fontWeight: 600, fontSize: '16px' }}>
-                <PriceTag value={selectedWeekDayData.price} />
+                <PriceTag value={selectedWeekDayData.price} currency="MMK" />
               </span>
             </div>
 
@@ -379,7 +408,7 @@ const RatePlanTable = ({
                     <div key={day.label} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px' }}>
                       <span style={{ color: '#595959' }}>{day.label}</span>
                       <span style={{ fontWeight: 500 }}>
-                        <PriceTag value={day.val} />
+                        <PriceTag value={day.val} currency="MMK" />
                       </span>
                     </div>
                   ))}

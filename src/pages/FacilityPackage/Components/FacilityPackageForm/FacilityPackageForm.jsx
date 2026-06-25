@@ -25,6 +25,10 @@ import usePermission from "../../../../hooks/usePermission";
 import { PERMISSIONS } from "../../../../variables/permission";
 import dayjs from "dayjs";
 import Status from "../../../../component/Status/Status";
+import {
+  priceFormatter,
+  priceParser,
+} from "../../../../component/PriceTag/PriceTag";
 
 const FacilityPackageForm = ({
   mode,
@@ -113,7 +117,7 @@ const FacilityPackageForm = ({
         },
       });
     }
-  })
+  });
 
   const handleClose = () => {
     setDrawerOpen(false);
@@ -127,7 +131,8 @@ const FacilityPackageForm = ({
         ...values,
         facility: { uuid: values.facility },
         pricingType: { uuid: values.pricingType },
-        includedHours: values.includedHours ? values.includedHours.format("HH:mm:ss")
+        includedHours: values.includedHours
+          ? values.includedHours.format("HH:mm:ss")
           : null,
       };
 
@@ -288,6 +293,8 @@ const FacilityPackageForm = ({
                 readOnly={isView}
                 placeholder="Enter Base Price"
                 suffix="MMK"
+                formatter={priceFormatter}
+                parser={priceParser}
               />
             </Form.Item>
 
@@ -364,6 +371,8 @@ const FacilityPackageForm = ({
                   readOnly={isView}
                   placeholder="Enter Extra Hour Price"
                   suffix="MMK"
+                  formatter={priceFormatter}
+                  parser={priceParser}
                 />
               </Form.Item>
 
@@ -380,6 +389,8 @@ const FacilityPackageForm = ({
                   readOnly={isView}
                   placeholder="Enter Extra Pax Price"
                   suffix="MMK"
+                  formatter={priceFormatter}
+                  parser={priceParser}
                 />
               </Form.Item>
             </div>

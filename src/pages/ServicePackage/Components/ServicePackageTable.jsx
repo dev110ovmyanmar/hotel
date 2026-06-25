@@ -11,268 +11,266 @@ import PriceTag from "../../../component/PriceTag/PriceTag";
 import ItemsForm from "./ServicePackageForm/ItemsForm";
 
 const ServicePackageTable = ({
-    data,
-    page,
-    setPage,
-    perPage,
-    total,
-    changePage,
-    changePerPage,
-    loading,
+  data,
+  page,
+  setPage,
+  perPage,
+  total,
+  changePage,
+  changePerPage,
+  loading,
 }) => {
-    const { hasPermission } = usePermission();
+  const { hasPermission } = usePermission();
 
-    const [drawerOpen, setDrawerOpen] = useState(false);
-    const [itemDrawerOpen, setItemDrawerOpen] = useState(false);
-    const [mode, setMode] = useState(null);
-    const [selectedData, setSelectedData] = useState({});
-    const [selectedItem, setSelectedItem] = useState(null);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [itemDrawerOpen, setItemDrawerOpen] = useState(false);
+  const [mode, setMode] = useState(null);
+  const [selectedData, setSelectedData] = useState({});
+  const [selectedItem, setSelectedItem] = useState(null);
 
-    const columns = [
-        {
-            title: "ID",
-            render: (_, record) => <div>{record?.id}</div>,
-            width: 70,
-        },
-        {
-            title: "Name",
-            dataIndex: "name",
-            key: "name",
-        },
-        {
-            title: "Property",
-            dataIndex: ["property", "name"],
-            key: "property",
-        },
-        {
-            title: "Service",
-            dataIndex: ["service", "name"],
-            key: "service",
-        },
-        {
-            title: "Description",
-            dataIndex: "description",
-            key: "description",
-        },
-        {
-            title: "Base Price (MMK)",
-            dataIndex: "basePrice",
-            key: "basePrice",
-            render: (text) => <PriceTag value={text} />,
-        },
-        {
-            title: "Action",
-            render: (_, record) => {
-                const smallStyle = { fontSize: "12px" };
+  const columns = [
+    {
+      title: "ID",
+      render: (_, record) => <div>{record?.id}</div>,
+      width: 70,
+    },
+    {
+      title: "Name",
+      dataIndex: "name",
+      key: "name",
+    },
+    {
+      title: "Property",
+      dataIndex: ["property", "name"],
+      key: "property",
+    },
+    {
+      title: "Service",
+      dataIndex: ["service", "name"],
+      key: "service",
+    },
+    {
+      title: "Description",
+      dataIndex: "description",
+      key: "description",
+    },
+    {
+      title: "Base Price (MMK)",
+      dataIndex: "basePrice",
+      key: "basePrice",
+      render: (text) => <PriceTag value={text} />,
+    },
+    {
+      title: "Action",
+      render: (_, record) => {
+        const smallStyle = { fontSize: "12px" };
 
-                const actions = [
-                    {
-                        key: "view",
-                        label: "View",
-                        icon: <EyeOutlined style={{ fontSize: "12px" }} />,
-                        permission: PERMISSIONS.SERVICE_VIEW,
-                        onClick: () => {
-                            setDrawerOpen(true);
-                            setMode("view");
-                            setSelectedData(record);
-                        },
-                    },
-                    {
-                        key: "edit",
-                        label: "Edit",
-                        icon: <EditOutlined style={{ fontSize: "12px" }} />,
-                        permission: PERMISSIONS.SERVICE_EDIT,
-                        onClick: () => {
-                            setDrawerOpen(true);
-                            setMode("edit");
-                            setSelectedData(record);
-                        },
-                    },
-                ];
-
-                // Filter actions by permission
-                const items = actions
-                    .filter(
-                        (action) => !action.permission || hasPermission(action.permission),
-                    )
-                    .map((action) => ({
-                        key: action.key,
-                        label: (
-                            <Space size={4} style={smallStyle} onClick={action.onClick}>
-                                {action.icon}
-                                <span style={{ fontSize: "14px" }}>{action.label}</span>
-                            </Space>
-                        ),
-                    }));
-
-                return (
-                    <Dropdown menu={{ items }} trigger={["click"]}>
-                        <MoreOutlined style={{ fontSize: "16px" }} />
-                    </Dropdown>
-                );
+        const actions = [
+          {
+            key: "view",
+            label: "View",
+            icon: <EyeOutlined style={{ fontSize: "12px" }} />,
+            permission: PERMISSIONS.SERVICE_VIEW,
+            onClick: () => {
+              setDrawerOpen(true);
+              setMode("view");
+              setSelectedData(record);
             },
-        },
-    ];
-
-    const expandColumns = [
-        { title: "ID", dataIndex: "id", key: "id", align: "center" },
-        {
-            title: "Item Name",
-            dataIndex: ["item", "name"],
-            key: "name",
-            align: "center",
-        },
-        {
-            title: "Quantity",
-            dataIndex: "quantity",
-            key: "quantity",
-            align: "center",
-        },
-        {
-            title: "Description",
-            dataIndex: ["item", "description"],
-            key: "description",
-            align: "center",
-        },
-        {
-            title: "Base Price (MMK)",
-            dataIndex: ["item", "basePrice"],
-            key: "basePrice",
-            align: "center"
-        },
-        {
-            title: "Is Complimentary",
-            dataIndex: ["item", "isComplimentary"],
-            key: "isComplimentary",
-            align: "center",
-            render: (text) =>
-                <div className={text === true ? "text-[#389E0D]" : "text-[#CF1322]"}>
-                    {text === true ? "True" : "False"}
-                </div>
-        },
-        {
-            title: "Action",
-            align: "center",
-            render: (_, record) => {
-                const smallStyle = { fontSize: "12px" };
-
-                const actions = [
-                    {
-                        key: "edit",
-                        label: "Edit",
-                        icon: <EditOutlined style={{ fontSize: "12px" }} />,
-                        // permission: PERMISSIONS.SERVICE_EDIT,
-                        onClick: () => {
-                            setItemDrawerOpen(true);
-                            setMode("item-edit");
-                            setSelectedItem(record);
-                        },
-                    },
-                ];
-
-                // Filter actions by permission
-                const items = actions
-                    .filter(
-                        (action) => !action.permission || hasPermission(action.permission),
-                    )
-                    .map((action) => ({
-                        key: action.key,
-                        label: (
-                            <Space size={4} style={smallStyle} onClick={action.onClick}>
-                                {action.icon}
-                                <span style={{ fontSize: "14px" }}>{action.label}</span>
-                            </Space>
-                        ),
-                    }));
-
-                return (
-                    <Dropdown menu={{ items }} trigger={["click"]}>
-                        <MoreOutlined style={{ fontSize: "16px" }} />
-                    </Dropdown>
-                );
+          },
+          {
+            key: "edit",
+            label: "Edit",
+            icon: <EditOutlined style={{ fontSize: "12px" }} />,
+            permission: PERMISSIONS.SERVICE_EDIT,
+            onClick: () => {
+              setDrawerOpen(true);
+              setMode("edit");
+              setSelectedData(record);
             },
-        },
-    ];
+          },
+        ];
 
+        // Filter actions by permission
+        const items = actions
+          .filter(
+            (action) => !action.permission || hasPermission(action.permission),
+          )
+          .map((action) => ({
+            key: action.key,
+            label: (
+              <Space size={4} style={smallStyle} onClick={action.onClick}>
+                {action.icon}
+                <span style={{ fontSize: "14px" }}>{action.label}</span>
+              </Space>
+            ),
+          }));
 
-    const expandedRowRender = (record) => {
         return (
-            <div className="nested-table-container">
-                <div className="flex justify-between items-center mb-3">
-                    <Button
-                        className="py-4! rounded-[5px]!"
-                        type="primary"
-                        size="small"
-                        icon={<PlusOutlined />}
-                        onClick={() => {
-                            setSelectedItem({ servicePackage: { uuid: record?.uuid } });
-                            setMode("item-add");
-                            setItemDrawerOpen(true);
-                        }}
-                    >
-                        Package Item
-                    </Button>
-                </div>
-
-                {
-                    record?.servicePackageItems?.length <= 0 ? null :
-                        <Table
-                            className="[&_.ant-table-cell]:!border [&_.ant-table-cell]:!border-blue-300 [&_.ant-table-thead>tr>th]:!bg-[#F0F5FF]"
-                            columns={expandColumns}
-                            dataSource={record.servicePackageItems || []}
-                            rowKey="uuid"
-                            pagination={false}
-                            size="small"
-                        />
-                }
-
-            </div>
+          <Dropdown menu={{ items }} trigger={["click"]}>
+            <MoreOutlined style={{ fontSize: "16px" }} />
+          </Dropdown>
         );
-    };
+      },
+    },
+  ];
 
-    return (
-        <div id="scrollId" className="w-full h-[63vh] ">
-            <Table
-                tableLayout="fixed"
-                scroll={{ x: 1000 }}
-                columns={columns}
-                expandable={{ expandedRowRender, defaultExpandedRowKeys: ["0"] }}
-                dataSource={data}
-                loading={loading}
-                rowKey="uuid"
-                pagination={{
-                    current: page,
-                    pageSize: perPage,
-                    total: total,
-                    onChange: (page, perPage) => {
-                        changePage(page);
-                        changePerPage(perPage);
-                    },
-                    showSizeChanger: true,
-                }}
-            />
-
-            <ServicePackageForm
-                page={page}
-                setPage={setPage}
-                mode={mode}
-                setMode={setMode}
-                drawerOpen={drawerOpen}
-                setDrawerOpen={setDrawerOpen}
-                selectedData={selectedData}
-                setSelectedData={setSelectedData}
-            />
-
-            <ItemsForm
-                mode={mode}
-                setMode={setMode}
-                setSelectedItem={setSelectedItem}
-                selectedItem={selectedItem}
-                drawerOpen={itemDrawerOpen}
-                setDrawerOpen={setItemDrawerOpen}
-            />
+  const expandColumns = [
+    { title: "ID", dataIndex: "id", key: "id", align: "center" },
+    {
+      title: "Item Name",
+      dataIndex: ["item", "name"],
+      key: "name",
+      align: "center",
+    },
+    {
+      title: "Quantity",
+      dataIndex: "quantity",
+      key: "quantity",
+      align: "center",
+    },
+    {
+      title: "Description",
+      dataIndex: ["item", "description"],
+      key: "description",
+      align: "center",
+    },
+    {
+      title: "Base Price (MMK)",
+      dataIndex: ["item", "basePrice"],
+      key: "basePrice",
+      align: "end",
+    },
+    {
+      title: "Is Complimentary",
+      dataIndex: ["item", "isComplimentary"],
+      key: "isComplimentary",
+      align: "center",
+      render: (text) => (
+        <div className={text === true ? "text-[#389E0D]" : "text-[#CF1322]"}>
+          {text === true ? "True" : "False"}
         </div>
+      ),
+    },
+    {
+      title: "Action",
+      align: "center",
+      render: (_, record) => {
+        const smallStyle = { fontSize: "12px" };
+
+        const actions = [
+          {
+            key: "edit",
+            label: "Edit",
+            icon: <EditOutlined style={{ fontSize: "12px" }} />,
+            // permission: PERMISSIONS.SERVICE_EDIT,
+            onClick: () => {
+              setItemDrawerOpen(true);
+              setMode("item-edit");
+              setSelectedItem(record);
+            },
+          },
+        ];
+
+        // Filter actions by permission
+        const items = actions
+          .filter(
+            (action) => !action.permission || hasPermission(action.permission),
+          )
+          .map((action) => ({
+            key: action.key,
+            label: (
+              <Space size={4} style={smallStyle} onClick={action.onClick}>
+                {action.icon}
+                <span style={{ fontSize: "14px" }}>{action.label}</span>
+              </Space>
+            ),
+          }));
+
+        return (
+          <Dropdown menu={{ items }} trigger={["click"]}>
+            <MoreOutlined style={{ fontSize: "16px" }} />
+          </Dropdown>
+        );
+      },
+    },
+  ];
+
+  const expandedRowRender = (record) => {
+    return (
+      <div className="nested-table-container">
+        <div className="flex justify-between items-center mb-3">
+          <Button
+            className="py-4! rounded-[5px]!"
+            type="primary"
+            size="small"
+            icon={<PlusOutlined />}
+            onClick={() => {
+              setSelectedItem({ servicePackage: { uuid: record?.uuid } });
+              setMode("item-add");
+              setItemDrawerOpen(true);
+            }}
+          >
+            Package Item
+          </Button>
+        </div>
+
+        {record?.servicePackageItems?.length <= 0 ? null : (
+          <Table
+            className="[&_.ant-table-cell]:!border [&_.ant-table-cell]:!border-blue-300 [&_.ant-table-thead>tr>th]:!bg-[#F0F5FF]"
+            columns={expandColumns}
+            dataSource={record.servicePackageItems || []}
+            rowKey="uuid"
+            pagination={false}
+            size="small"
+          />
+        )}
+      </div>
     );
+  };
+
+  return (
+    <div id="scrollId" className="w-full h-[63vh] ">
+      <Table
+        tableLayout="fixed"
+        scroll={{ x: 1000 }}
+        columns={columns}
+        expandable={{ expandedRowRender, defaultExpandedRowKeys: ["0"] }}
+        dataSource={data}
+        loading={loading}
+        rowKey="uuid"
+        pagination={{
+          current: page,
+          pageSize: perPage,
+          total: total,
+          onChange: (page, perPage) => {
+            changePage(page);
+            changePerPage(perPage);
+          },
+          showSizeChanger: true,
+        }}
+      />
+
+      <ServicePackageForm
+        page={page}
+        setPage={setPage}
+        mode={mode}
+        setMode={setMode}
+        drawerOpen={drawerOpen}
+        setDrawerOpen={setDrawerOpen}
+        selectedData={selectedData}
+        setSelectedData={setSelectedData}
+      />
+
+      <ItemsForm
+        mode={mode}
+        setMode={setMode}
+        setSelectedItem={setSelectedItem}
+        selectedItem={selectedItem}
+        drawerOpen={itemDrawerOpen}
+        setDrawerOpen={setItemDrawerOpen}
+      />
+    </div>
+  );
 };
 
 export default ServicePackageTable;

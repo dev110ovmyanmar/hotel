@@ -7,6 +7,7 @@ import { queryClient } from "../../../../app/queryClient";
 import { getServiceDetails, upsertService } from "../../../../api/serviceApi";
 import FormButtons from "../../../../component/FormButtons/FormButtons";
 import Loader from "../../../../component/Loader/Loader";
+import { priceFormatter, priceParser } from "../../../../component/PriceTag/PriceTag";
 
 const ServiceForm = ({
   mode,
@@ -56,7 +57,6 @@ const ServiceForm = ({
     mutationFn: upsertService,
     invalidateKeys: [["services"]],
   });
-
 
   const { data, isLoading, error } = useApiQuery({
     fetchQueryName: "service-details",
@@ -133,7 +133,9 @@ const ServiceForm = ({
         afterOpenChange={(open) => {
           if (open && isAdd) {
             form.resetFields();
-            const defaultStatus = statusOptions?.find((s) => s.label.toLowerCase() === 'active')?.value;
+            const defaultStatus = statusOptions?.find(
+              (s) => s.label.toLowerCase() === "active",
+            )?.value;
             form.setFieldsValue({ status: defaultStatus });
           }
         }}
@@ -172,11 +174,7 @@ const ServiceForm = ({
             <Loader />
           </div>
         ) : (
-          <Form
-            form={form}
-            layout="vertical"
-            onFinish={onFinish}
-          >
+          <Form form={form} layout="vertical" onFinish={onFinish}>
             <Form.Item
               label="Name"
               name="name"
@@ -192,6 +190,8 @@ const ServiceForm = ({
                 readOnly={isView}
                 placeholder="Enter Base Price"
                 suffix="MMK"
+                formatter={priceFormatter}
+                parser={priceParser}
               />
             </Form.Item>
 
@@ -202,7 +202,7 @@ const ServiceForm = ({
               getValueProps={(value) => ({
                 value: isView
                   ? servicesTypesList.find((item) => item.value === value)
-                    ?.label
+                      ?.label
                   : value,
               })}
             >
@@ -249,21 +249,24 @@ const ServiceForm = ({
               )}
             </Form.Item>
 
-            <Form.Item label="Status" name="status" rules={[{ required: true }]}
+            <Form.Item
+              label="Status"
+              name="status"
+              rules={[{ required: true }]}
               getValueProps={(value) => ({
                 value: isView
                   ? statusOptions.find((item) => item.value === value)?.label
                   : value,
-              })}>
-              {
-                isView ?
-                  <Input readOnly={isView} />
-                  :
-                  <Select
-                    options={statusOptions}
-                    open={isView ? false : undefined}
-                  />
-              }
+              })}
+            >
+              {isView ? (
+                <Input readOnly={isView} />
+              ) : (
+                <Select
+                  options={statusOptions}
+                  open={isView ? false : undefined}
+                />
+              )}
             </Form.Item>
 
             <Form.Item
