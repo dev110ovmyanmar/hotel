@@ -67,7 +67,6 @@ export default function AddRoomExtensionLikeUpgradeDesignModal({
                 room: { uuid: reviewData.roomUuid?.value },
                 roomType: { uuid: reviewData?.roomType },
                 ratePlan: { uuid: reviewData?.ratePlan?.value },
-                rateStatus: reviewData?.rateStatus,
                 checkinDate: originalCheckout.format("YYYY-MM-DD"),
                 checkoutDate: newCheckoutDate.format("YYYY-MM-DD"),
             };
@@ -139,12 +138,9 @@ export default function AddRoomExtensionLikeUpgradeDesignModal({
         }
     };
 
-    console.log(reviewData, "reviewDatarateStatus")
-
     const backToSetFields = () => {
         setToReviewPage(false);
         form.setFieldsValue({
-            rateStatus: reviewData?.rateStatus,
             ratePlan: reviewData?.ratePlan,
             roomUuid: reviewData?.roomUuid,
             roomType: reviewData?.roomType,
@@ -196,7 +192,7 @@ export default function AddRoomExtensionLikeUpgradeDesignModal({
             title={
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <div style={{ width: '4px', height: '18px', background: '#1677ff', borderRadius: '2px' }} />
-                    <span style={{ fontWeight: 600 }}>Room Amendment — Available Room</span>
+                    <span style={{ fontWeight: 600 }}>{!toReviewPage ? "Room Amendment — Available Room" : "Add Room Summary"}</span>
                 </div>
             }
             open={isOpen}
@@ -227,7 +223,6 @@ export default function AddRoomExtensionLikeUpgradeDesignModal({
                                     fontSize: '13px'
                                 }}>
                                     <Text type="secondary"><strong style={{ color: '#475569' }}>Room Type:</strong> {currentRoomType}</Text>
-                                    <Text type="secondary"><strong style={{ color: '#475569' }}>Rank :</strong> {record?.roomType?.rank}</Text>
 
                                     <div className="grid place-items-center w-fit -mt-1">
                                         <FaStar className='text-amber-200  text-3xl col-start-1 row-start-1' />
@@ -245,12 +240,12 @@ export default function AddRoomExtensionLikeUpgradeDesignModal({
 
                                         {roomList?.rooms?.map(room => {
                                             return (
-                                                <Col span={8}>
-                                                    <Card
-                                                        className={`
-                                                            min-h-25
-                                                            relative 
-                                                            overflow-visible 
+                                                <Col span={12}>
+                                                    <div
+                                                        className={`  
+                                                            flex
+                                                            justify-between
+                                                            p-4                                                          
                                                             cursor-pointer 
                                                             shadow-md 
                                                             transition-all 
@@ -269,6 +264,10 @@ export default function AddRoomExtensionLikeUpgradeDesignModal({
                                                             setSelectedRoom(room.roomType.uuid);
                                                             setSelectedRoomTypeName(room.roomType);
                                                             setCheckSelectedRoom(true);
+                                                            setSelectRoomNo(false);
+                                                            form.setFieldsValue({
+                                                                roomUuid: undefined
+                                                            });
                                                             form.setFieldsValue({
                                                                 roomType: room?.roomType?.uuid
                                                             });
@@ -280,13 +279,15 @@ export default function AddRoomExtensionLikeUpgradeDesignModal({
                                                                     },
                                                                 });
                                                             };
-
-
                                                         }}
 
-                                                    >
 
-                                                        <div className="absolute top-0 right-0 grid place-items-center w-fit mr-1 ">
+                                                    >
+                                                        <div className="!text-xs">
+                                                            {room?.roomType?.name}
+                                                        </div>
+
+                                                        <div className="grid place-items-center w-fit -mt-2">
                                                             <FaStar className={
                                                                 `
                                                             ${selectedRoom === room.roomType.uuid ? "text-amber-500" : "text-amber-200 "
@@ -301,13 +302,7 @@ export default function AddRoomExtensionLikeUpgradeDesignModal({
                                                             </div>
                                                         </div>
 
-                                                        <div className="flex flex-col justify-center items-center text-center">
-                                                            <div className="!text-xs">
-                                                                {room?.roomType?.name}
-                                                            </div>
-                                                        </div>
-
-                                                    </Card>
+                                                    </div>
                                                 </Col>
                                             )
                                         })}
@@ -386,16 +381,6 @@ export default function AddRoomExtensionLikeUpgradeDesignModal({
                                                 )))
                                             }
 
-                                            <Form.Item
-                                                name="rateStatus"
-                                                valuePropName="checked"
-                                                labelInValue
-                                                initialValue={false}
-                                            >
-                                                <Checkbox>
-                                                    Override Room Rate
-                                                </Checkbox>
-                                            </Form.Item>
                                         </>
                                         // </Col>
                                     }
