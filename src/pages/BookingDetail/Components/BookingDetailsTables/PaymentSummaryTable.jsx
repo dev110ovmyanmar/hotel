@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Card, Space, Table, Typography, Tag } from "antd";
 import { IoCardOutline } from "react-icons/io5";
 import FolioPaymentDetailModal from "../BookingDetailModals/FolioPaymentDetailModal";
+import ColorStatusTag from "../../../../component/ColorStatusTag/ColorStatusTag";
 
 const { Text } = Typography;
 
@@ -42,12 +43,10 @@ const columns = [
   },
   {
     title: "Status",
-    dataIndex: ["paymentStatus", "name"],
+    dataIndex: ["paymentStatus"],
     key: "status",
     render: (status, record) => {
-      const code = record.paymentStatus?.code;
-      const color = code === "completed" ? "success" : "default";
-      return <Tag color={color}>{status}</Tag>;
+      return <ColorStatusTag status={status} />;
     },
   },
 ];

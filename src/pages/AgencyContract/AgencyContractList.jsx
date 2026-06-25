@@ -50,7 +50,6 @@ const AgencyContractList = () => {
 
   return (
     <div className="w-full px-6 py-2">
-      <div className="text-lg mb-3">{capitalizeFirstLetter(state?.agencyRecord?.name)}</div>
 
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
         <ListHeader

@@ -218,6 +218,13 @@ const CompanyContractForm = ({
           }}
         >
           <Row gutter={16}>
+            <Col span={24}>
+              <div >
+                <span className="text-red-500">* </span>
+                Selected Charge Type and Value effected on Selected Date Range.
+              </div>
+            </Col>
+            
             <Col span={12}>
               <Form.Item
                 label="Charge Type"
