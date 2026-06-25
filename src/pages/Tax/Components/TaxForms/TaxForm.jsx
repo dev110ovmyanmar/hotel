@@ -19,6 +19,10 @@ import { createTax, editTax, TaxDetails } from "../../../../api/TaxApi";
 import TextArea from "antd/es/input/TextArea";
 import Loader from "../../../../component/Loader/Loader";
 import Status from "../../../../component/Status/Status";
+import {
+  priceFormatter,
+  priceParser,
+} from "../../../../component/PriceTag/PriceTag";
 
 const TaxForm = ({
   mode,
@@ -357,19 +361,8 @@ const TaxForm = ({
                     })()}
                     readOnly={isView}
                     placeholder="Enter Charge Value"
-                    // formatter={(value) =>
-                    //   `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-                    // }
-
-                    // parser={(value) =>
-                    //   value
-                    //     ? value.replace(/\s?|(-*)/g, "").replace(/,/g, "")
-                    //     : ""
-                    // }
-                    formatter={(value) =>
-                      value ? new Intl.NumberFormat("en-US").format(value) : ""
-                    }
-                    parser={(value) => (value ? value.replace(/,/g, "") : "")}
+                    formatter={priceFormatter}
+                    parser={priceParser}
                   />
                 </Form.Item>
               </Col>

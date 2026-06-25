@@ -33,6 +33,10 @@ import {
   MAX_STOCK_QUANTITY,
   sellingPriceValidator,
 } from "../../../variables/constants";
+import {
+  priceFormatter,
+  priceParser,
+} from "../../../component/PriceTag/PriceTag";
 
 const ServiceInventoryForm = ({
   mode,
@@ -221,10 +225,8 @@ const ServiceInventoryForm = ({
                     readOnly={isView}
                     placeholder="Enter Purchase Price"
                     suffix="MMK"
-                    formatter={(value) =>
-                      value ? new Intl.NumberFormat("en-US").format(value) : ""
-                    }
-                    parser={(value) => (value ? value.replace(/,/g, "") : "")}
+                    formatter={priceFormatter}
+                    parser={priceParser}
                   />
                 </Form.Item>
               }
@@ -244,10 +246,8 @@ const ServiceInventoryForm = ({
                   readOnly={isView}
                   placeholder="Enter Selling Price"
                   suffix="MMK"
-                  formatter={(value) =>
-                    value ? new Intl.NumberFormat("en-US").format(value) : ""
-                  }
-                  parser={(value) => (value ? value.replace(/,/g, "") : "")}
+                  formatter={priceFormatter}
+                  parser={priceParser}
                 />
               </Form.Item>
 

@@ -29,7 +29,7 @@ import RoomTypeAmenityForm from "./RoomTypeAmenityForm";
 import { EditOutlined, PlusOutlined } from "@ant-design/icons";
 import Loader from "../../../../component/Loader/Loader";
 import ImageUpload from "../../../../component/ImageUpload/ImageUpload";
-import PriceTag from "../../../../component/PriceTag/PriceTag";
+import PriceTag, { priceFormatter, priceParser } from "../../../../component/PriceTag/PriceTag";
 import { PERMISSIONS } from "../../../../variables/permission";
 import usePermission from "../../../../hooks/usePermission";
 import { hasIn } from "lodash";
@@ -491,14 +491,8 @@ const RoomTypeForm = ({
                               style={{ width: "100%" }}
                               placeholder="Enter Rate"
                               suffix="MMK"
-                              formatter={(value) =>
-                                value
-                                  ? new Intl.NumberFormat("en-US").format(value)
-                                  : ""
-                              }
-                              parser={(value) =>
-                                value ? value.replace(/,/g, "") : ""
-                              }
+                              formatter={priceFormatter}
+                              parser={priceParser}
                             />
                           </Form.Item>
                         </Col>

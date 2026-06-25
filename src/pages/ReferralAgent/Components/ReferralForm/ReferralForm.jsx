@@ -24,6 +24,10 @@ import ImageUpload from "../../../../component/ImageUpload/ImageUpload";
 import { deleteImageUpload } from "../../../../api/deleteImageApi";
 import { validatePhoneNumber } from "../../../../utils";
 import { emailValidator } from "../../../../variables/constants";
+import {
+  priceFormatter,
+  priceParser,
+} from "../../../../component/PriceTag/PriceTag";
 
 const { TextArea } = Input;
 
@@ -206,9 +210,11 @@ const ReferralForm = ({
           <Form.Item
             label="Email"
             name="email"
-            rules={[{
-              validator: emailValidator,
-            }]}
+            rules={[
+              {
+                validator: emailValidator,
+              },
+            ]}
           >
             <Input readOnly={isView} placeholder="Enter Email Address" />
           </Form.Item>
@@ -291,10 +297,8 @@ const ReferralForm = ({
                   })()}
                   readOnly={isView}
                   placeholder="Enter Charge Value"
-                  formatter={(value) =>
-                    value ? new Intl.NumberFormat("en-US").format(value) : ""
-                  }
-                  parser={(value) => (value ? value.replace(/,/g, "") : "")}
+                  formatter={priceFormatter}
+                  parser={priceParser}
                 />
               </Form.Item>
             </Col>

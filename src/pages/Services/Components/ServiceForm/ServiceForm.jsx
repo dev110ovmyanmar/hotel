@@ -7,6 +7,7 @@ import { queryClient } from "../../../../app/queryClient";
 import { getServiceDetails, upsertService } from "../../../../api/serviceApi";
 import FormButtons from "../../../../component/FormButtons/FormButtons";
 import Loader from "../../../../component/Loader/Loader";
+import { priceFormatter, priceParser } from "../../../../component/PriceTag/PriceTag";
 
 const ServiceForm = ({
   mode,
@@ -189,10 +190,8 @@ const ServiceForm = ({
                 readOnly={isView}
                 placeholder="Enter Base Price"
                 suffix="MMK"
-                formatter={(value) =>
-                  value ? new Intl.NumberFormat("en-US").format(value) : ""
-                }
-                parser={(value) => (value ? value.replace(/,/g, "") : "")}
+                formatter={priceFormatter}
+                parser={priceParser}
               />
             </Form.Item>
 

@@ -19,6 +19,10 @@ import useApiQuery from "../../../../hooks/useApiQuery";
 import { menuDetails, menuMeta, upsertMenu } from "../../../../api/menuApi";
 import { queryClient } from "../../../../app/queryClient";
 import { sellingPriceValidator } from "../../../../variables/constants";
+import {
+  priceFormatter,
+  priceParser,
+} from "../../../../component/PriceTag/PriceTag";
 
 const MenuItemForm = ({
   mode,
@@ -237,10 +241,8 @@ const MenuItemForm = ({
                   suffix="MMK"
                   style={{ width: "100%" }}
                   placeholder="Enter Selling Price"
-                  formatter={(value) =>
-                    value ? new Intl.NumberFormat("en-US").format(value) : ""
-                  }
-                  parser={(value) => (value ? value.replace(/,/g, "") : "")}
+                  formatter={priceFormatter}
+                  parser={priceParser}
                 />
               </Form.Item>
             </Col>
@@ -258,10 +260,8 @@ const MenuItemForm = ({
                   suffix="MMK"
                   style={{ width: "100%" }}
                   placeholder="Enter Purchase Price"
-                  formatter={(value) =>
-                    value ? new Intl.NumberFormat("en-US").format(value) : ""
-                  }
-                  parser={(value) => (value ? value.replace(/,/g, "") : "")}
+                  formatter={priceFormatter}
+                  parser={priceParser}
                 />
               </Form.Item>
             </Col>

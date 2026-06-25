@@ -20,6 +20,7 @@ import {
 } from "../../../../api/menuModifierApi";
 import Loader from "../../../../component/Loader/Loader";
 import { sellingPriceValidator } from "../../../../variables/constants";
+import { priceFormatter, priceParser } from "../../../../component/PriceTag/PriceTag";
 
 const MenuModifierForm = ({
   mode,
@@ -164,10 +165,8 @@ const MenuModifierForm = ({
                     className="!w-full"
                     placeholder="Enter Price"
                     suffix="MMK"
-                    formatter={(value) =>
-                      value ? new Intl.NumberFormat("en-US").format(value) : ""
-                    }
-                    parser={(value) => (value ? value.replace(/,/g, "") : "")}
+                    formatter={priceFormatter}
+                    parser={priceParser}
                   />
                 </Form.Item>
               </Col>
@@ -188,10 +187,8 @@ const MenuModifierForm = ({
                     className="!w-full"
                     placeholder="Enter Price"
                     suffix="MMK"
-                    formatter={(value) =>
-                      value ? new Intl.NumberFormat("en-US").format(value) : ""
-                    }
-                    parser={(value) => (value ? value.replace(/,/g, "") : "")}
+                    formatter={priceFormatter}
+                    parser={priceParser}
                   />
                 </Form.Item>
               </Col>
