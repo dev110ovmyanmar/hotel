@@ -146,7 +146,7 @@ const RatePlanForm = ({
     }
   }, [data]);
 
-  const isDisableDefault = ratePlanList ? false : true;
+  const isDisableDefault = ratePlanList?.data?.length <= 0 ? true : false;
 
   const handleClose = () => {
     setDrawerOpen(false);
@@ -283,7 +283,7 @@ const RatePlanForm = ({
             layout="vertical"
             style={{ width: "100%" }}
             onFinish={onFinish}
-            // disabled={isView}
+          // disabled={isView}
           >
             <Row gutter={24}>
               <Col span={16}>
@@ -481,8 +481,7 @@ const RatePlanForm = ({
               initialValue={false}
               rules={[{ required: true, message: "Please select Is Default!" }]}
               tooltip={{
-                title:
-                  "If no date-specific base rate exists, default room type pricing is used.",
+                title: "If no date-specific base rate exists, the default room type pricing will be used automatically. The default rate cannot be inactivated, as it acts as the system fallback rate for room pricing.",
                 icon: <InfoCircleOutlined style={{ color: "#1677ff" }} />,
               }}
             >
@@ -563,3 +562,4 @@ const RatePlanForm = ({
 };
 
 export default RatePlanForm;
+
