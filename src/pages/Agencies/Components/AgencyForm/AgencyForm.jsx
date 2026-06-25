@@ -222,16 +222,14 @@ const AgencyForm = ({
             label="Phone"
             name="phone"
             validateTrigger="onChange"
-            rules={[
-              { required: true },
-              
-            ]}
+            rules={[{ required: true }]}
           >
             <Input
               readOnly={isView}
               placeholder="Enter Phone Number"
               onKeyPress={(e) => {
-                if (!/[0-9]/.test(e.key) &&
+                if (
+                  !/[0-9]/.test(e.key) &&
                   !(e.key === "+" && value.length === 0)
                 ) {
                   e.preventDefault();
@@ -302,6 +300,10 @@ const AgencyForm = ({
                   })()}
                   readOnly={isView}
                   placeholder="Enter Charge Value"
+                  formatter={(value) =>
+                    value ? new Intl.NumberFormat("en-US").format(value) : ""
+                  }
+                  parser={(value) => (value ? value.replace(/,/g, "") : "")}
                 />
               </Form.Item>
             </Col>
