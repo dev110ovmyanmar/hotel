@@ -11,7 +11,7 @@ import {
   Tag,
   InputNumber,
   Select,
-  Divider
+  Divider,
 } from "antd";
 import Toast from "../../../../component/Toast/Toast";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
@@ -82,10 +82,14 @@ const RoomTypeForm = ({
 
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
 
-  const statuses = initData?.statuses?.room_status?.map((status) => ({
-    value: status.uuid,
-    label: status.name,
-  }));
+  const statuses = initData?.statuses?.status
+    ?.filter((item) => {
+      return item.code !== "blocked";
+    })
+    .map((item) => ({
+      value: item.uuid,
+      label: item.name,
+    }));
 
   const { data: ratePlanMetaData } = useApiQuery({
     fetchQueryName: "ratePlanMetaData",
@@ -235,6 +239,15 @@ const RoomTypeForm = ({
       <Drawer
         open={drawerOpen}
         onClose={handleClose}
+        afterOpenChange={(open) => {
+          if (open && isAdd) {
+            form.resetFields();
+            const defaultStatus = statuses?.find(
+              (s) => s.label === "Active",
+            )?.value;
+            form.setFieldsValue({ status: defaultStatus });
+          }
+        }}
         size={600}
         title={
           <div className="flex justify-between items-center">
@@ -305,8 +318,17 @@ const RoomTypeForm = ({
             </Row>
 
             <div className="grid grid-cols-2 gap-6">
-              <Form.Item label="Room Size" name="areaSize">
-                <Input readOnly={isView} placeholder="Enter Room Size" />
+              <Form.Item
+                label="Total Rooms"
+                name="totalRooms"
+                rules={[{ required: true }]}
+              >
+                <InputNumber
+                  {...sharedProps}
+                  disabled={isView}
+                  style={{ width: "100%" }}
+                  placeholder="Enter Totals Rooms"
+                />
               </Form.Item>
 
               <Form.Item
@@ -375,24 +397,9 @@ const RoomTypeForm = ({
               </Form.Item>
             </div>
 
-            <div className="grid grid-cols-2 gap-6">
-              <Form.Item
-                label="Total Rooms"
-                name="totalRooms"
-                rules={[{ required: true }]}
-              >
-                <InputNumber
-                  {...sharedProps}
-                  disabled={isView}
-                  style={{ width: "100%" }}
-                  placeholder="Enter Totals Rooms"
-                />
-              </Form.Item>
-
-              <Form.Item label="Room Size" name="areaSize">
-                <Input readOnly={isView} placeholder="Enter Room Size" />
-              </Form.Item>
-            </div>
+            <Form.Item label="Room Size" name="areaSize">
+              <Input readOnly={isView} placeholder="Enter Room Size" />
+            </Form.Item>
 
             <Row gutter={24}>
               <Col span={24}>
@@ -432,26 +439,23 @@ const RoomTypeForm = ({
               )}
             </Form.Item>
 
-            {
-              isAdd &&
+            {isAdd && (
               <div className="border-2 px-4  py-4 rounded mb-2">
-                {
-                  isAdd && (
-                    <div className="mb-3">
-                      <div className="mb-2">
-                        <span className="text-gray-900 text-[16px] font-semibold">
-                          Let's map room types to this rate plan
-                        </span>
-                      </div>
-
-                      <div>
-                        <span className="text-gray-900 text-[15px] italic">
-                          Map the following rate plans
-                        </span>
-                      </div>
+                {isAdd && (
+                  <div className="mb-3">
+                    <div className="mb-2">
+                      <span className="text-gray-900 text-[16px] font-semibold">
+                        Let's map room types to this rate plan
+                      </span>
                     </div>
-                  )
-                }
+
+                    <div>
+                      <span className="text-gray-900 text-[15px] italic">
+                        Map the following rate plans
+                      </span>
+                    </div>
+                  </div>
+                )}
 
                 {ratePlans?.map(
                   (ratePlan) =>
@@ -465,7 +469,9 @@ const RoomTypeForm = ({
                           <span className="text-red-500">*</span>
                         </Col>
                         <Col span={9}>
-                          <span style={{ fontWeight: 500 }}>{ratePlan?.label}</span>
+                          <span style={{ fontWeight: 500 }}>
+                            {ratePlan?.label}
+                          </span>
                         </Col>
 
                         <Col span={1} style={{ textAlign: "center" }}>
@@ -485,6 +491,14 @@ const RoomTypeForm = ({
                               style={{ width: "100%" }}
                               placeholder="Enter Rate"
                               suffix="MMK"
+                              formatter={(value) =>
+                                value
+                                  ? new Intl.NumberFormat("en-US").format(value)
+                                  : ""
+                              }
+                              parser={(value) =>
+                                value ? value.replace(/,/g, "") : ""
+                              }
                             />
                           </Form.Item>
                         </Col>
@@ -492,7 +506,7 @@ const RoomTypeForm = ({
                     ),
                 )}
               </div>
-            }
+            )}
 
             {!isAdd && (
               <Card className="mt-5 shadow-sm  border border-gray-100 bg-gray-100!">

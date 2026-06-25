@@ -32,7 +32,7 @@ const FAndBInventoryForm = ({
 
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
 
-  const statuses = initData?.statuses?.status
+  const statuses = initData?.statuses?.status;
   // ?.filter((item) => item.code !== "blocked")
   // ?.map((status) => ({
   //   value: status.uuid,
@@ -143,12 +143,14 @@ const FAndBInventoryForm = ({
         afterOpenChange={(open) => {
           if (open && isAdd) {
             form.resetFields();
-            const activeStatus = statuses?.find((s) => s.name.toLowerCase() === 'active');
+            const activeStatus = statuses?.find(
+              (s) => s.name.toLowerCase() === "active",
+            );
             if (activeStatus) {
               form.setFieldsValue({
                 status: {
-                  uuid: activeStatus.uuid
-                }
+                  uuid: activeStatus.uuid,
+                },
               });
             }
           }
@@ -294,6 +296,10 @@ const FAndBInventoryForm = ({
                   placeholder="Purchase Price"
                   disabled={isView}
                   suffix="MMK"
+                  formatter={(value) =>
+                    value ? new Intl.NumberFormat("en-US").format(value) : ""
+                  }
+                  parser={(value) => (value ? value.replace(/,/g, "") : "")}
                 />
               </Form.Item>
 
@@ -303,7 +309,7 @@ const FAndBInventoryForm = ({
                 dependencies={["unitCost"]}
                 rules={[
                   { required: true, message: "Selling Price is Required" },
-                  sellingPriceValidator("unitCost")
+                  sellingPriceValidator("unitCost"),
                 ]}
               >
                 <InputNumber
@@ -312,6 +318,10 @@ const FAndBInventoryForm = ({
                   placeholder="Selling Price"
                   disabled={isView}
                   suffix="MMK"
+                  formatter={(value) =>
+                    value ? new Intl.NumberFormat("en-US").format(value) : ""
+                  }
+                  parser={(value) => (value ? value.replace(/,/g, "") : "")}
                 />
               </Form.Item>
             </div>

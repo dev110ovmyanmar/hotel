@@ -53,12 +53,14 @@ const ServiceTable = ({
       title: "Price (MMK)",
       dataIndex: "basePrice",
       key: "basePrice",
+      align:"end",
       render: (text) => <PriceTag value={text} />,
     },
     {
       title: "Status",
       dataIndex: ["status", "name"],
       key: "status",
+      align:"center",
       render: (_, record) => <ColorStatusTag status={record?.status} />,
     },
     {

@@ -177,28 +177,4 @@ export const validatePhoneNumber = (_, value) => {
   return Promise.resolve();
 };
 
-// Excel Export Function
-import dayjs from 'dayjs';
-import * as FileSaver from 'file-saver';
-import * as XLSX from 'xlsx';
-
-const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
-const fileExtension = ".xlsx";
-
-export const exportToCSV = (apiData, wscols, fileName) => {
-  //1. Transfrom JSON into Sheet
-  const ws = XLSX.utils.json_to_sheet(apiData);
-  const updateFileName = fileName + " " + dayjs().format("YYYYMMDD_HHmmss");
-
-  //2. Set Column Width
-  ws["!cols"] = wscols;
-
-  //3. Add sheet into workbook
-  const wb = { Sheets: { [fileName]: ws }, SheetNames: [fileName] };
-
-  // 4. Convert workbook into excel file
-  const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
-  const data = new Blob([excelBuffer], { type: fileType });
-  FileSaver.saveAs(data, updateFileName + fileExtension);
-};
 

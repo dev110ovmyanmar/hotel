@@ -229,11 +229,9 @@ export default function RoomUpgradeModal({
 
                                         {roomList?.rooms?.map(room => {
                                             return (
-                                                <Col span={8}>
-
-                                                    <Card
+                                                <Col span={12}>
+                                                    {/* <Card
                                                         className={`
-                                                            min-h-25
                                                             relative 
                                                             overflow-visible 
                                                             cursor-pointer 
@@ -289,7 +287,69 @@ export default function RoomUpgradeModal({
                                                                 {room?.roomType?.name}
                                                             </div>
                                                         </div>
-                                                    </Card>
+                                                    </Card> */}
+                                                    <div
+                                                        className={`  
+                                                            flex
+                                                            justify-between
+                                                            p-4                                                          
+                                                            cursor-pointer 
+                                                            shadow-md 
+                                                            transition-all 
+                                                            !border-2 
+                                                            !duration-500
+                                                            rounded-2xl 
+                                                            ${selectedRoom === room.roomType.uuid
+                                                                ? '!border-blue-500 !bg-blue-50 !shadow-lg'
+                                                                : '!border-blue-200 !shadow-md hover:!border-blue-300 hover:-translate-y-1'}
+                                                                                                            `}
+                                                        onClick={() => {
+                                                            const matchedRatePlan = room.ratePlans.find(
+                                                                rp => rp.uuid === ratePlanUuid
+                                                            );
+                                                            console.log(room, "RoomInSearch")
+                                                            setSelectedRoom(room.roomType.uuid);
+                                                            setSelectedRoomTypeName(room.roomType);
+                                                            setCheckSelectedRoom(true);
+                                                            form.resetFields(["roomUuid"]);
+                                                            form.setFieldsValue({
+                                                                roomUuid: undefined
+                                                            });
+                                                            form.setFieldsValue({
+                                                                roomType: room?.roomType?.uuid
+                                                            });
+                                                            if (matchedRatePlan) {
+                                                                form.setFieldsValue({
+                                                                    ratePlan: {
+                                                                        value: matchedRatePlan.uuid,
+                                                                        label: matchedRatePlan.name,
+                                                                    },
+                                                                });
+                                                            };
+                                                        }}
+
+
+                                                    >
+                                                        <div className="!text-xs">
+                                                            {room?.roomType?.name}
+                                                        </div>
+
+                                                        <div className="grid place-items-center w-fit -mt-2">
+                                                            <FaStar className={
+                                                                `
+                                                                ${selectedRoom === room.roomType.uuid ? "text-amber-500" : "text-amber-200 "
+                                                                    }
+                                                                text-3xl 
+                                                                col-start-1 
+                                                                row-start-1
+                                                                                                                                                                            `
+                                                            } />
+                                                            <div className="col-start-1 row-start-1 text-gray-900 font-bold text-xs mt-1 ml-1 mr-1">
+                                                                {room?.roomType?.rank}
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
                                                 </Col>
                                             )
                                         })}

@@ -34,7 +34,7 @@ const ReservationsTable = ({
   };
 
   const columns = [
-    { title: "Id", dataIndex: "id", key: "id", width: 70 },
+    { title: "Id", dataIndex: "id", key: "id", width: 60 },
 
     {
       title: "Guest Name",
@@ -54,10 +54,10 @@ const ReservationsTable = ({
     },
 
     {
-      title: "Room",
+      title: "Room No:",
       key: "roomNo",
       align: "center",
-      width: 120,
+      width: 100,
       render: (_, record) => {
         const roomNo = record?.room?.roomNo;
 
@@ -74,10 +74,20 @@ const ReservationsTable = ({
       },
     },
     {
+      title: "Room Type",
+      dataIndex: ["roomType", "name"],
+      key: "roomType",
+      align: "center",
+      width: 100,
+      // render: (text) => <span className="text-indigo-800">{text}</span>,
+    },
+
+    {
       title: "Rate Plan",
       dataIndex: ["ratePlan", "name"],
       key: ["ratePlan"],
       align: "center",
+      width: 110,
     },
 
     {
@@ -156,7 +166,7 @@ const ReservationsTable = ({
       key: "action",
       fixed: "end",
       align: "center",
-      width: 100,
+      width: 80,
       render: (_, record) => (
         <div style={{ display: "flex", justifyContent: "center", gap: "8px" }}>
           <Button

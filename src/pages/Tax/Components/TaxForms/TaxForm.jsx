@@ -63,7 +63,7 @@ const TaxForm = ({
     label: unit.name,
   }));
 
-  const statuses = initData?.statuses?.status
+  const statuses = initData?.statuses?.status;
 
   const createTaxs = useApiMutation({
     mutationFn: createTax,
@@ -154,12 +154,14 @@ const TaxForm = ({
         afterOpenChange={(open) => {
           if (open && isAdd) {
             form.resetFields();
-            const activeStatus = statuses?.find((s) => s.name.toLowerCase() === 'active');
+            const activeStatus = statuses?.find(
+              (s) => s.name.toLowerCase() === "active",
+            );
             if (activeStatus) {
               form.setFieldsValue({
                 status: {
-                  uuid: activeStatus.uuid
-                }
+                  uuid: activeStatus.uuid,
+                },
               });
             }
           }
@@ -355,6 +357,19 @@ const TaxForm = ({
                     })()}
                     readOnly={isView}
                     placeholder="Enter Charge Value"
+                    // formatter={(value) =>
+                    //   `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                    // }
+
+                    // parser={(value) =>
+                    //   value
+                    //     ? value.replace(/\s?|(-*)/g, "").replace(/,/g, "")
+                    //     : ""
+                    // }
+                    formatter={(value) =>
+                      value ? new Intl.NumberFormat("en-US").format(value) : ""
+                    }
+                    parser={(value) => (value ? value.replace(/,/g, "") : "")}
                   />
                 </Form.Item>
               </Col>
@@ -374,7 +389,7 @@ const TaxForm = ({
                   getValueProps={(value) => ({
                     value: isView
                       ? chargeApplyType.find((item) => item.value === value)
-                        ?.label
+                          ?.label
                       : value,
                   })}
                 >

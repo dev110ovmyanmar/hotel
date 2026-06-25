@@ -113,7 +113,7 @@ const FacilityPackageForm = ({
         },
       });
     }
-  })
+  });
 
   const handleClose = () => {
     setDrawerOpen(false);
@@ -127,7 +127,8 @@ const FacilityPackageForm = ({
         ...values,
         facility: { uuid: values.facility },
         pricingType: { uuid: values.pricingType },
-        includedHours: values.includedHours ? values.includedHours.format("HH:mm:ss")
+        includedHours: values.includedHours
+          ? values.includedHours.format("HH:mm:ss")
           : null,
       };
 
@@ -288,6 +289,10 @@ const FacilityPackageForm = ({
                 readOnly={isView}
                 placeholder="Enter Base Price"
                 suffix="MMK"
+                formatter={(value) =>
+                  value ? new Intl.NumberFormat("en-US").format(value) : ""
+                }
+                parser={(value) => (value ? value.replace(/,/g, "") : "")}
               />
             </Form.Item>
 
@@ -364,6 +369,10 @@ const FacilityPackageForm = ({
                   readOnly={isView}
                   placeholder="Enter Extra Hour Price"
                   suffix="MMK"
+                  formatter={(value) =>
+                    value ? new Intl.NumberFormat("en-US").format(value) : ""
+                  }
+                  parser={(value) => (value ? value.replace(/,/g, "") : "")}
                 />
               </Form.Item>
 
@@ -380,6 +389,10 @@ const FacilityPackageForm = ({
                   readOnly={isView}
                   placeholder="Enter Extra Pax Price"
                   suffix="MMK"
+                  formatter={(value) =>
+                    value ? new Intl.NumberFormat("en-US").format(value) : ""
+                  }
+                  parser={(value) => (value ? value.replace(/,/g, "") : "")}
                 />
               </Form.Item>
             </div>
