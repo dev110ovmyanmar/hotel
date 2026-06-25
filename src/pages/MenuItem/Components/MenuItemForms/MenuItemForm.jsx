@@ -145,7 +145,9 @@ const MenuItemForm = ({
         afterOpenChange={(open) => {
           if (open && isAdd) {
             form.resetFields();
-            const defaultStatus = statusList?.find((s) => s.label.toLowerCase() === 'active')?.value;
+            const defaultStatus = statusList?.find(
+              (s) => s.label.toLowerCase() === "active",
+            )?.value;
             form.setFieldsValue({ status: defaultStatus });
           }
         }}
@@ -224,9 +226,9 @@ const MenuItemForm = ({
               <Form.Item
                 label="Selling Price"
                 name="price"
-                dependencies={['cost']} // This ensures validation triggers when Purchase Price changes
+                dependencies={["cost"]} // This ensures validation triggers when Purchase Price changes
                 rules={[
-                  { required: true, message: 'Please enter selling price' },
+                  { required: true, message: "Please enter selling price" },
                   sellingPriceValidator("cost"),
                 ]}
               >
@@ -235,6 +237,10 @@ const MenuItemForm = ({
                   suffix="MMK"
                   style={{ width: "100%" }}
                   placeholder="Enter Selling Price"
+                  formatter={(value) =>
+                    value ? new Intl.NumberFormat("en-US").format(value) : ""
+                  }
+                  parser={(value) => (value ? value.replace(/,/g, "") : "")}
                 />
               </Form.Item>
             </Col>
@@ -252,6 +258,10 @@ const MenuItemForm = ({
                   suffix="MMK"
                   style={{ width: "100%" }}
                   placeholder="Enter Purchase Price"
+                  formatter={(value) =>
+                    value ? new Intl.NumberFormat("en-US").format(value) : ""
+                  }
+                  parser={(value) => (value ? value.replace(/,/g, "") : "")}
                 />
               </Form.Item>
             </Col>

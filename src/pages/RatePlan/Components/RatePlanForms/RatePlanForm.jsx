@@ -11,7 +11,7 @@ import {
   Switch,
   InputNumber,
   Tooltip,
-  Divider
+  Divider,
 } from "antd";
 import Toast from "../../../../component/Toast/Toast";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
@@ -230,7 +230,10 @@ const RatePlanForm = ({
         afterOpenChange={(open) => {
           if (open && isAdd) {
             form.resetFields();
-            form.setFieldValue("status", statuses?.find((item) => item.label === "Active")?.value);
+            form.setFieldValue(
+              "status",
+              statuses?.find((item) => item.label === "Active")?.value,
+            );
             if (!ratePlanList) {
               form.setFieldValue("isDefault", true);
             }
@@ -276,7 +279,7 @@ const RatePlanForm = ({
             layout="vertical"
             style={{ width: "100%" }}
             onFinish={onFinish}
-          // disabled={isView}
+            // disabled={isView}
           >
             <Row gutter={24}>
               <Col span={16}>
@@ -474,7 +477,8 @@ const RatePlanForm = ({
               initialValue={false}
               rules={[{ required: true, message: "Please select Is Default!" }]}
               tooltip={{
-                title: "If no date-specific base rate exists, default room type pricing is used.",
+                title:
+                  "If no date-specific base rate exists, default room type pricing is used.",
                 icon: <InfoCircleOutlined style={{ color: "#1677ff" }} />,
               }}
             >
@@ -485,27 +489,23 @@ const RatePlanForm = ({
               />
             </Form.Item>
 
-            {
-              isAdd &&
-
+            {isAdd && (
               <div className="border-2 px-4  py-4 rounded mb-2">
-                {
-                  isAdd && (
-                    <div className="mb-3">
-                      <div className="mb-2">
-                        <span className="text-gray-900 text-[16px] font-semibold">
-                          Let's map room types to this rate plan
-                        </span>
-                      </div>
-
-                      <div>
-                        <span className="text-gray-900 text-[15px] italic">
-                          Map the following rate plans
-                        </span>
-                      </div>
+                {isAdd && (
+                  <div className="mb-3">
+                    <div className="mb-2">
+                      <span className="text-gray-900 text-[16px] font-semibold">
+                        Let's map room types to this rate plan
+                      </span>
                     </div>
-                  )
-                }
+
+                    <div>
+                      <span className="text-gray-900 text-[15px] italic">
+                        Map the following rate plans
+                      </span>
+                    </div>
+                  </div>
+                )}
 
                 {roomTypes?.map(
                   (roomType) =>
@@ -519,7 +519,9 @@ const RatePlanForm = ({
                           <span className="text-red-500">*</span>
                         </Col>
                         <Col span={9}>
-                          <span style={{ fontWeight: 500 }}>{roomType?.label}</span>
+                          <span style={{ fontWeight: 500 }}>
+                            {roomType?.label}
+                          </span>
                         </Col>
 
                         <Col span={1} style={{ textAlign: "center" }}>
@@ -539,6 +541,14 @@ const RatePlanForm = ({
                               style={{ width: "100%" }}
                               placeholder="Enter Rate"
                               suffix="MMK"
+                              formatter={(value) =>
+                                value
+                                  ? new Intl.NumberFormat("en-US").format(value)
+                                  : ""
+                              }
+                              parser={(value) =>
+                                value ? value.replace(/,/g, "") : ""
+                              }
                             />
                           </Form.Item>
                         </Col>
@@ -546,7 +556,7 @@ const RatePlanForm = ({
                     ),
                 )}
               </div>
-            }
+            )}
           </Form>
         )}
       </Drawer>

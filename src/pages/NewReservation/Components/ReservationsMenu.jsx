@@ -33,6 +33,8 @@ const ReservationMenu = ({ onStatusChange, onViewChange }) => {
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(12);
 
+  const [cachedCounts, setCachedCounts] = useState(null);
+
   const validStatuses = Object.keys(statusColors);
   const isValidStatus = validStatuses.includes(activeStatus);
 
@@ -60,7 +62,13 @@ const ReservationMenu = ({ onStatusChange, onViewChange }) => {
     },
   });
 
-  const reservationCounts = data?.count;
+  useEffect(() => {
+    if (data?.count) {
+      setCachedCounts(data.count);
+    }
+  }, [data]);
+
+  const displayCounts = cachedCounts || data?.count;
 
   useEffect(() => {
     setPage(1);
@@ -70,38 +78,39 @@ const ReservationMenu = ({ onStatusChange, onViewChange }) => {
     {
       label: "Inquiry",
       key: "inquiry",
-      count: reservationCounts?.inquiryCount,
+      count: displayCounts?.inquiryCount,
     },
     {
       label: "Booking",
       key: "booking",
-      count: reservationCounts?.bookingCount,
+      count: displayCounts?.bookingCount,
     },
     {
       label: "Arrivals",
       key: "arrival",
-      count: reservationCounts?.arrivalCount,
+      count: displayCounts?.arrivalCount,
     },
     {
       label: "Departures",
       key: "departure",
-      count: reservationCounts?.departureCount,
+      count: displayCounts?.departureCount,
     },
     {
       label: "In-house",
       key: "in-house",
-      count: reservationCounts?.inHouseCount,
+      count: displayCounts?.inHouseCount,
     },
     {
       label: "Cancelled",
       key: "cancelled",
-      count: reservationCounts?.cancelledCount,
+      count: displayCounts?.cancelledCount,
     },
-    { label: "All", key: "all", count: reservationCounts?.totalCount },
+    { label: "All", key: "all", count: displayCounts?.totalCount },
   ];
 
   const handleTabChange = (key) => {
     navigate(`/reservations/${key}`);
+    setKeyword("");
 
     if (onStatusChange) {
       onStatusChange(key);
@@ -147,7 +156,7 @@ const ReservationMenu = ({ onStatusChange, onViewChange }) => {
                 <span>
                   {item.label}
                   <Badge
-                    count={item?.count}
+                    count={item?.count ?? 0} 
                     showZero
                     style={{
                       color: colors.color,
@@ -175,31 +184,33 @@ const ReservationMenu = ({ onStatusChange, onViewChange }) => {
           setStartDate={setStartDate}
           setEndDate={setEndDate}
         />
-        {view === "grid" ? (
-          <ReservationsGrid
-            data={data?.data || []}
-            page={page}
-            perPage={perPage}
-            total={data?.pagination?.total}
-            changePage={setPage}
-            changePerPage={setPerPage}
-            loading={isLoading}
-          />
-        ) : (
-          <ReservationsTable
-            data={data?.data || []}
-            page={page}
-            perPage={perPage}
-            total={data?.pagination?.total}
-            changePage={setPage}
-            changePerPage={setPerPage}
-            loading={isLoading}
-          />
-        )}
+        
+        <Spin spinning={isLoading}>
+          {view === "grid" ? (
+            <ReservationsGrid
+              data={data?.data || []}
+              page={page}
+              perPage={perPage}
+              total={data?.pagination?.total}
+              changePage={setPage}
+              changePerPage={setPerPage}
+              loading={isLoading}
+            />
+          ) : (
+            <ReservationsTable
+              data={data?.data || []}
+              page={page}
+              perPage={perPage}
+              total={data?.pagination?.total}
+              changePage={setPage}
+              changePerPage={setPerPage}
+              loading={isLoading}
+            />
+          )}
+        </Spin>
       </div>
     </>
   );
 };
 
 export default ReservationMenu;
-
