@@ -29,6 +29,10 @@ import {
 import Loader from "../../../../component/Loader/Loader";
 import { PERMISSIONS } from "../../../../variables/permission";
 import usePermission from "../../../../hooks/usePermission";
+import {
+  priceFormatter,
+  priceParser,
+} from "../../../../component/PriceTag/PriceTag";
 
 const RatePlanForm = ({
   mode,
@@ -541,14 +545,8 @@ const RatePlanForm = ({
                               style={{ width: "100%" }}
                               placeholder="Enter Rate"
                               suffix="MMK"
-                              formatter={(value) =>
-                                value
-                                  ? new Intl.NumberFormat("en-US").format(value)
-                                  : ""
-                              }
-                              parser={(value) =>
-                                value ? value.replace(/,/g, "") : ""
-                              }
+                              formatter={priceFormatter}
+                              parser={priceParser}
                             />
                           </Form.Item>
                         </Col>

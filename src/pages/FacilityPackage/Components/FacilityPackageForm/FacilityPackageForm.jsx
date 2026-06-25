@@ -25,6 +25,10 @@ import usePermission from "../../../../hooks/usePermission";
 import { PERMISSIONS } from "../../../../variables/permission";
 import dayjs from "dayjs";
 import Status from "../../../../component/Status/Status";
+import {
+  priceFormatter,
+  priceParser,
+} from "../../../../component/PriceTag/PriceTag";
 
 const FacilityPackageForm = ({
   mode,
@@ -289,10 +293,8 @@ const FacilityPackageForm = ({
                 readOnly={isView}
                 placeholder="Enter Base Price"
                 suffix="MMK"
-                formatter={(value) =>
-                  value ? new Intl.NumberFormat("en-US").format(value) : ""
-                }
-                parser={(value) => (value ? value.replace(/,/g, "") : "")}
+                formatter={priceFormatter}
+                parser={priceParser}
               />
             </Form.Item>
 
@@ -369,10 +371,8 @@ const FacilityPackageForm = ({
                   readOnly={isView}
                   placeholder="Enter Extra Hour Price"
                   suffix="MMK"
-                  formatter={(value) =>
-                    value ? new Intl.NumberFormat("en-US").format(value) : ""
-                  }
-                  parser={(value) => (value ? value.replace(/,/g, "") : "")}
+                  formatter={priceFormatter}
+                  parser={priceParser}
                 />
               </Form.Item>
 
@@ -389,10 +389,8 @@ const FacilityPackageForm = ({
                   readOnly={isView}
                   placeholder="Enter Extra Pax Price"
                   suffix="MMK"
-                  formatter={(value) =>
-                    value ? new Intl.NumberFormat("en-US").format(value) : ""
-                  }
-                  parser={(value) => (value ? value.replace(/,/g, "") : "")}
+                  formatter={priceFormatter}
+                  parser={priceParser}
                 />
               </Form.Item>
             </div>
