@@ -1,5 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Form, Input, Button, Select, Drawer, InputNumber, Row, Col } from "antd";
+import {
+  Form,
+  Input,
+  Button,
+  Select,
+  Drawer,
+  InputNumber,
+  Row,
+  Col,
+} from "antd";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
 import useApiQuery from "../../../../hooks/useApiQuery";
 import FormButton from "../../../../component/FormButtons/FormButtons";
@@ -155,6 +164,10 @@ const MenuModifierForm = ({
                     className="!w-full"
                     placeholder="Enter Price"
                     suffix="MMK"
+                    formatter={(value) =>
+                      value ? new Intl.NumberFormat("en-US").format(value) : ""
+                    }
+                    parser={(value) => (value ? value.replace(/,/g, "") : "")}
                   />
                 </Form.Item>
               </Col>
@@ -162,11 +175,11 @@ const MenuModifierForm = ({
               <Col span={12}>
                 <Form.Item
                   label="Selling Price"
-                  dependencies={['unitCost']}
+                  dependencies={["unitCost"]}
                   name="unitPrice"
                   rules={[
                     { required: true, message: "Please enter selling price" },
-                    sellingPriceValidator("unitCost", "unitPrice", true)
+                    sellingPriceValidator("unitCost", "unitPrice", true),
                   ]}
                 >
                   <InputNumber
@@ -175,8 +188,13 @@ const MenuModifierForm = ({
                     className="!w-full"
                     placeholder="Enter Price"
                     suffix="MMK"
+                    formatter={(value) =>
+                      value ? new Intl.NumberFormat("en-US").format(value) : ""
+                    }
+                    parser={(value) => (value ? value.replace(/,/g, "") : "")}
                   />
-                </Form.Item></Col>
+                </Form.Item>
+              </Col>
             </Row>
           </Form>
         )}

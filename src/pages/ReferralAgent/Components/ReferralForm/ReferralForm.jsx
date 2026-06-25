@@ -23,6 +23,7 @@ import Status from "./../../../../component/Status/Status";
 import ImageUpload from "../../../../component/ImageUpload/ImageUpload";
 import { deleteImageUpload } from "../../../../api/deleteImageApi";
 import { validatePhoneNumber } from "../../../../utils";
+import { emailValidator } from "../../../../variables/constants";
 
 const { TextArea } = Input;
 
@@ -39,7 +40,7 @@ const ReferralForm = ({
   setPage,
 }) => {
   const [form] = Form.useForm();
-  const phoneValue = Form.useWatch("phone",form);
+  const phoneValue = Form.useWatch("phone", form);
 
   const isView = mode === "view";
   const isEdit = mode === "edit";
@@ -202,28 +203,29 @@ const ReferralForm = ({
             <Input readOnly={isView} placeholder="Enter Card Number" />
           </Form.Item>
 
-          <Form.Item label="Email" name="email">
+          <Form.Item
+            label="Email"
+            name="email"
+            rules={[{
+              validator: emailValidator,
+            }]}
+          >
             <Input readOnly={isView} placeholder="Enter Email Address" />
           </Form.Item>
 
-          <Form.Item
-            label="Phone"
-            name="phone"
-            rules={[
-              { required: true },
-              
-            ]}
-          >
+          <Form.Item label="Phone" name="phone" rules={[{ required: true }]}>
             <Input
               readOnly={isView}
               placeholder="Enter Phone Number"
               onKeyPress={(e) => {
-                if (!/[0-9]/.test(e.key) &&
+                if (
+                  !/[0-9]/.test(e.key) &&
                   !(e.key === "+" && value.length === 0)
                 ) {
                   e.preventDefault();
                 }
               }}
+              maxLength={20}
             />
           </Form.Item>
 
@@ -289,6 +291,10 @@ const ReferralForm = ({
                   })()}
                   readOnly={isView}
                   placeholder="Enter Charge Value"
+                  formatter={(value) =>
+                    value ? new Intl.NumberFormat("en-US").format(value) : ""
+                  }
+                  parser={(value) => (value ? value.replace(/,/g, "") : "")}
                 />
               </Form.Item>
             </Col>

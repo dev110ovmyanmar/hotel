@@ -1,14 +1,38 @@
 import React, { useEffect } from "react";
-import { Button, Form, Input, Drawer, Select, InputNumber, Switch, Radio, Segmented, Divider } from "antd";
-import { ShopOutlined, MinusCircleOutlined, StopOutlined } from "@ant-design/icons";
+import {
+  Button,
+  Form,
+  Input,
+  Drawer,
+  Select,
+  InputNumber,
+  Switch,
+  Radio,
+  Segmented,
+  Divider,
+} from "antd";
+import {
+  ShopOutlined,
+  MinusCircleOutlined,
+  StopOutlined,
+} from "@ant-design/icons";
 import Loader from "../../../component/Loader/Loader";
 import FormButtons from "../../../component/FormButtons/FormButtons";
 import useApiQuery from "../../../hooks/useApiQuery";
-import { getServiceInventoryDetail, upsertInventory } from "../../../api/serviceInventoryApi";
+import {
+  getServiceInventoryDetail,
+  upsertInventory,
+} from "../../../api/serviceInventoryApi";
 import { useApiMutation } from "../../../hooks/useApiMutation";
 import { getServiceMeta } from "../../../api/serviceInventoryApi";
 import Toast from "../../../component/Toast/Toast";
-import { MIN_REORDER_LEVEL, MAX_REORDER_LEVEL, MIN_STOCK_QUANTITY, MAX_STOCK_QUANTITY, sellingPriceValidator } from "../../../variables/constants";
+import {
+  MIN_REORDER_LEVEL,
+  MAX_REORDER_LEVEL,
+  MIN_STOCK_QUANTITY,
+  MAX_STOCK_QUANTITY,
+  sellingPriceValidator,
+} from "../../../variables/constants";
 
 const ServiceInventoryForm = ({
   mode,
@@ -32,13 +56,13 @@ const ServiceInventoryForm = ({
     params: { uuid: selectedRow?.uuid },
     options: {
       enabled: !!selectedRow?.uuid && (isEdit || isView) && drawerOpen,
-    }
+    },
   });
 
   const { data: serviceMetaData } = useApiQuery({
     fetchQueryName: "serviceInventory_metaData",
     fetchQueryFunction: getServiceMeta,
-  })
+  });
 
   const categoryOptions = serviceMetaData?.categories?.map((category) => ({
     value: category.uuid,
@@ -53,7 +77,7 @@ const ServiceInventoryForm = ({
   const supplierOptions = serviceMetaData?.suppliers?.map((supplier) => ({
     value: supplier.uuid,
     label: supplier.name,
-  }))
+  }));
 
   useEffect(() => {
     if (isAdd) {
@@ -96,9 +120,8 @@ const ServiceInventoryForm = ({
       },
       supplier: {
         uuid: values.supplierUuid,
-      }
-    }
-
+      },
+    };
 
     if (isAdd) {
       createServiceInventory.mutate(basePayload, {
@@ -122,7 +145,7 @@ const ServiceInventoryForm = ({
         },
       });
     }
-  }
+  };
 
   const onClose = () => {
     form.resetFields();
@@ -141,15 +164,13 @@ const ServiceInventoryForm = ({
     min: MIN_STOCK_QUANTITY,
     max: MAX_STOCK_QUANTITY,
     style: { width: "100%" },
-  }
+  };
 
   return (
     <Drawer
       title={
         <div className="flex items-center justify-between w-full">
-          <span>
-            {DrawerTitle}
-          </span>
+          <span>{DrawerTitle}</span>
 
           {isView ? (
             <Button type="primary" onClick={switchToEdit}>
@@ -159,7 +180,10 @@ const ServiceInventoryForm = ({
             <FormButtons
               onClick={() => form.submit()}
               mode={mode}
-              isPending={createServiceInventory.isPending || editServiceInventory.isPending}
+              isPending={
+                createServiceInventory.isPending ||
+                editServiceInventory.isPending
+              }
             />
           )}
         </div>
@@ -185,7 +209,6 @@ const ServiceInventoryForm = ({
             </Form.Item>
 
             <div className="grid grid-cols-2 gap-x-5 gap-y-0">
-
               {
                 <Form.Item
                   label="Purchase Price"
@@ -198,6 +221,10 @@ const ServiceInventoryForm = ({
                     readOnly={isView}
                     placeholder="Enter Purchase Price"
                     suffix="MMK"
+                    formatter={(value) =>
+                      value ? new Intl.NumberFormat("en-US").format(value) : ""
+                    }
+                    parser={(value) => (value ? value.replace(/,/g, "") : "")}
                   />
                 </Form.Item>
               }
@@ -205,9 +232,9 @@ const ServiceInventoryForm = ({
               <Form.Item
                 label={<span className="text-xs">Selling Price</span>}
                 name="unitPrice"
-                dependencies={['unitCost']}
+                dependencies={["unitCost"]}
                 rules={[
-                  { required: true, message: 'Please enter selling price' },
+                  { required: true, message: "Please enter selling price" },
                   sellingPriceValidator("unitCost"),
                 ]}
               >
@@ -217,6 +244,10 @@ const ServiceInventoryForm = ({
                   readOnly={isView}
                   placeholder="Enter Selling Price"
                   suffix="MMK"
+                  formatter={(value) =>
+                    value ? new Intl.NumberFormat("en-US").format(value) : ""
+                  }
+                  parser={(value) => (value ? value.replace(/,/g, "") : "")}
                 />
               </Form.Item>
 
@@ -231,7 +262,8 @@ const ServiceInventoryForm = ({
                   max={MAX_STOCK_QUANTITY}
                   className="!w-full"
                   placeholder="Enter Stock Quantity"
-                  disabled={isView} />
+                  disabled={isView}
+                />
               </Form.Item>
 
               <Form.Item
@@ -245,7 +277,8 @@ const ServiceInventoryForm = ({
                   mode="spinner"
                   min={MIN_REORDER_LEVEL}
                   max={MAX_REORDER_LEVEL}
-                  style={{ width: "100%" }} />
+                  style={{ width: "100%" }}
+                />
               </Form.Item>
 
               <Form.Item
@@ -254,21 +287,21 @@ const ServiceInventoryForm = ({
                 rules={[{ required: true }]}
                 getValueProps={(value) => ({
                   value: isView
-                    ? categoryOptions.find((item) => item.value === value)?.label
+                    ? categoryOptions.find((item) => item.value === value)
+                        ?.label
                     : value,
                 })}
               >
-                {
-                  isView ?
-                    <Input readOnly={isView} />
-                    :
-                    <Select
-                      options={categoryOptions}
-                      placeholder="Select Category"
-                      disabled={isView}
-                      className="!w-full"
-                    />
-                }
+                {isView ? (
+                  <Input readOnly={isView} />
+                ) : (
+                  <Select
+                    options={categoryOptions}
+                    placeholder="Select Category"
+                    disabled={isView}
+                    className="!w-full"
+                  />
+                )}
               </Form.Item>
 
               <Form.Item
@@ -281,17 +314,16 @@ const ServiceInventoryForm = ({
                     : value,
                 })}
               >
-                {
-                  isView ?
-                    <Input readOnly={isView} />
-                    :
-                    <Select
-                      options={unitOptions}
-                      placeholder="Select Unit"
-                      disabled={isView}
-                      className="!w-full"
-                    />
-                }
+                {isView ? (
+                  <Input readOnly={isView} />
+                ) : (
+                  <Select
+                    options={unitOptions}
+                    placeholder="Select Unit"
+                    disabled={isView}
+                    className="!w-full"
+                  />
+                )}
               </Form.Item>
 
               <Form.Item
@@ -300,21 +332,21 @@ const ServiceInventoryForm = ({
                 rules={[{ required: true }]}
                 getValueProps={(value) => ({
                   value: isView
-                    ? supplierOptions.find((item) => item.value === value)?.label
+                    ? supplierOptions.find((item) => item.value === value)
+                        ?.label
                     : value,
                 })}
               >
-                {
-                  isView ?
-                    <Input readOnly={isView} /> :
-                    <Select
-                      options={supplierOptions}
-                      placeholder="Select Supplier"
-                      disabled={isView}
-                      className="!w-full"
-                    />
-                }
-
+                {isView ? (
+                  <Input readOnly={isView} />
+                ) : (
+                  <Select
+                    options={supplierOptions}
+                    placeholder="Select Supplier"
+                    disabled={isView}
+                    className="!w-full"
+                  />
+                )}
               </Form.Item>
             </div>
 
@@ -323,7 +355,9 @@ const ServiceInventoryForm = ({
                 label="Laundry Requirement"
                 name="laundryStatus"
                 initialValue={0}
-                rules={[{ required: true, message: "Please select laundry status!" }]}
+                rules={[
+                  { required: true, message: "Please select laundry status!" },
+                ]}
               >
                 <Switch
                   disabled={isView}
@@ -336,7 +370,9 @@ const ServiceInventoryForm = ({
                 label="Is this item free?"
                 name="isFree"
                 initialValue={0}
-                rules={[{ required: true, message: "Please select billing type!" }]}
+                rules={[
+                  { required: true, message: "Please select billing type!" },
+                ]}
               >
                 <Switch
                   disabled={isView}
@@ -346,12 +382,10 @@ const ServiceInventoryForm = ({
               </Form.Item>
             </div>
           </>
-        )
-        }
-      </Form >
-    </Drawer >
+        )}
+      </Form>
+    </Drawer>
   );
 };
 
 export default ServiceInventoryForm;
-

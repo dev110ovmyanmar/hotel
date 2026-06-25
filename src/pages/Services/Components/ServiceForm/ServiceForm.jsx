@@ -57,7 +57,6 @@ const ServiceForm = ({
     invalidateKeys: [["services"]],
   });
 
-
   const { data, isLoading, error } = useApiQuery({
     fetchQueryName: "service-details",
     fetchQueryFunction: getServiceDetails,
@@ -133,7 +132,9 @@ const ServiceForm = ({
         afterOpenChange={(open) => {
           if (open && isAdd) {
             form.resetFields();
-            const defaultStatus = statusOptions?.find((s) => s.label.toLowerCase() === 'active')?.value;
+            const defaultStatus = statusOptions?.find(
+              (s) => s.label.toLowerCase() === "active",
+            )?.value;
             form.setFieldsValue({ status: defaultStatus });
           }
         }}
@@ -172,11 +173,7 @@ const ServiceForm = ({
             <Loader />
           </div>
         ) : (
-          <Form
-            form={form}
-            layout="vertical"
-            onFinish={onFinish}
-          >
+          <Form form={form} layout="vertical" onFinish={onFinish}>
             <Form.Item
               label="Name"
               name="name"
@@ -192,6 +189,10 @@ const ServiceForm = ({
                 readOnly={isView}
                 placeholder="Enter Base Price"
                 suffix="MMK"
+                formatter={(value) =>
+                  value ? new Intl.NumberFormat("en-US").format(value) : ""
+                }
+                parser={(value) => (value ? value.replace(/,/g, "") : "")}
               />
             </Form.Item>
 
@@ -202,7 +203,7 @@ const ServiceForm = ({
               getValueProps={(value) => ({
                 value: isView
                   ? servicesTypesList.find((item) => item.value === value)
-                    ?.label
+                      ?.label
                   : value,
               })}
             >
@@ -249,21 +250,24 @@ const ServiceForm = ({
               )}
             </Form.Item>
 
-            <Form.Item label="Status" name="status" rules={[{ required: true }]}
+            <Form.Item
+              label="Status"
+              name="status"
+              rules={[{ required: true }]}
               getValueProps={(value) => ({
                 value: isView
                   ? statusOptions.find((item) => item.value === value)?.label
                   : value,
-              })}>
-              {
-                isView ?
-                  <Input readOnly={isView} />
-                  :
-                  <Select
-                    options={statusOptions}
-                    open={isView ? false : undefined}
-                  />
-              }
+              })}
+            >
+              {isView ? (
+                <Input readOnly={isView} />
+              ) : (
+                <Select
+                  options={statusOptions}
+                  open={isView ? false : undefined}
+                />
+              )}
             </Form.Item>
 
             <Form.Item

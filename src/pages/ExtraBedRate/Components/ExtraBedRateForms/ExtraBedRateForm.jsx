@@ -47,8 +47,8 @@ const ExtraBedRateForm = ({
   const canEdit = hasPermission(PERMISSIONS.EXTRA_BED_RATE_EDIT);
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
 
-  const disabledDate = current => {
-    return current && current < dayjs().startOf('day');
+  const disabledDate = (current) => {
+    return current && current < dayjs().startOf("day");
   };
 
   const ageList = initData?.statuses?.age_type?.map((ageType) => ({
@@ -101,7 +101,7 @@ const ExtraBedRateForm = ({
         // endDate: data?.endDate ? dayjs(data.endDate) : null,
         dateRange: [
           data.startDate ? dayjs(data.startDate) : null,
-          data.endDate ? dayjs(data.endDate) : null
+          data.endDate ? dayjs(data.endDate) : null,
         ],
       });
 
@@ -281,6 +281,10 @@ const ExtraBedRateForm = ({
               suffix="MMK"
               placeholder="Enter price"
               style={{ width: "100%" }}
+              formatter={(value) =>
+                value ? new Intl.NumberFormat("en-US").format(value) : ""
+              }
+              parser={(value) => (value ? value.replace(/,/g, "") : "")}
             />
           </Form.Item>
 
@@ -296,12 +300,12 @@ const ExtraBedRateForm = ({
               disabled={isView}
               suffixIcon={isView ? null : undefined}
               className="w-full flex"
-              style={{ width: '100%' }}
+              style={{ width: "100%" }}
             />
           </Form.Item>
         </Form>
       </Drawer>
-    </div >
+    </div>
   );
 };
 
