@@ -13,6 +13,7 @@ export default function AddRoomWithExtensionDateModal({
     record,
     addRoomUuid,
     availabilitySearchs,
+    reservation,
     ratePlanUuid
 }) {
     const [form] = Form.useForm();
@@ -25,8 +26,8 @@ export default function AddRoomWithExtensionDateModal({
     const [availabilitySearchRoomList, setAvailabilitySearchRoomList] = useState(false);
 
     // Parse baseline properties out of your JSON structure
-    const reservationNo = record?.reservation?.reservationNo || `ID-${record?.id}`;
-    const guestName = record?.reservation?.guest?.name || "Unknown Guest";
+    const reservationNo = reservation?.reservationNo || `ID-${record?.id}`;
+    const guestName = reservation?.guest?.name || "Unknown Guest";
 
     const originalCheckin = record?.checkinDate ? dayjs(record.checkinDate) : "";
     const originalCheckout = record?.checkoutDate ? dayjs(record.checkoutDate) : "";
@@ -46,7 +47,7 @@ export default function AddRoomWithExtensionDateModal({
             },
             totalNight: totalNights,
             reservation: {
-                uuid: record?.reservation?.uuid
+                uuid: reservation?.uuid
             }
         };
         availabilitySearchs.mutate(payload, {

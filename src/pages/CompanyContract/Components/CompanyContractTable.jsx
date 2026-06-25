@@ -33,9 +33,9 @@ const CompanyContractTable = ({
       width: 70,
     },
     {
-      title: "Phone",
-      dataIndex: ["company", "phone"],
-      key: "companyPhone",
+      title: "Name",
+      dataIndex: ["company", "name"],
+      key: "name",
       render: (text) => <div>{text ? text : "-"}</div>,
     },
     {

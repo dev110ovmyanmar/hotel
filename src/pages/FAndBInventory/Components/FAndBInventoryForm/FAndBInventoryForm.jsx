@@ -13,6 +13,10 @@ import Status from "../../../../component/Status/Status";
 import Loader from "../../../../component/Loader/Loader";
 import { queryClient } from "../../../../app/queryClient";
 import { sellingPriceValidator } from "../../../../variables/constants";
+import {
+  priceFormatter,
+  priceParser,
+} from "../../../../component/PriceTag/PriceTag";
 
 const FAndBInventoryForm = ({
   mode,
@@ -296,10 +300,8 @@ const FAndBInventoryForm = ({
                   placeholder="Purchase Price"
                   disabled={isView}
                   suffix="MMK"
-                  formatter={(value) =>
-                    value ? new Intl.NumberFormat("en-US").format(value) : ""
-                  }
-                  parser={(value) => (value ? value.replace(/,/g, "") : "")}
+                  formatter={priceFormatter}
+                  parser={priceParser}
                 />
               </Form.Item>
 
@@ -318,10 +320,8 @@ const FAndBInventoryForm = ({
                   placeholder="Selling Price"
                   disabled={isView}
                   suffix="MMK"
-                  formatter={(value) =>
-                    value ? new Intl.NumberFormat("en-US").format(value) : ""
-                  }
-                  parser={(value) => (value ? value.replace(/,/g, "") : "")}
+                  formatter={priceFormatter}
+                  parser={priceParser}
                 />
               </Form.Item>
             </div>

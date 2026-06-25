@@ -1,5 +1,6 @@
 import { Card, Space, Table, Tag, Typography } from "antd";
 import { MdOutlineKingBed } from "react-icons/md";
+import ColorStatusTag from "../../../../component/ColorStatusTag/ColorStatusTag";
 
 const { Text } = Typography;
 
@@ -23,20 +24,12 @@ const columns = [
   },
   {
     title: "Room Status",
-    dataIndex: ["roomStatus", "name"],
-    key: "roomStatus",
+    dataIndex: ["room", "status"],
+    key: "roomstatus",
     render: (status) => {
-      let color = "default";
-      const normalizedStatus = status.toLowerCase();
-
-      if (normalizedStatus === "dirty") color = "error";
-      if (normalizedStatus === "cleaning") color = "processing";
-      if (normalizedStatus === "maintained") color = "success";
-      if (normalizedStatus === "block") color = "default";
+      
       return (
-        <Tag color={color} key={status} className="capitalize">
-          {status}
-        </Tag>
+        <ColorStatusTag status={status}/>
       );
     },
   },
@@ -58,7 +51,7 @@ const RoomStatusTable = ({ data }) => {
           <Card
             title={CustomTitle}
             className="room-card"
-            extra={<Tag color="blue">Reserved - 2 Rooms</Tag>}
+            // extra={<Tag color="blue">Reserved - 2 Rooms</Tag>}
           >
             <Table
               columns={columns}
