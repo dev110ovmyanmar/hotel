@@ -9,7 +9,7 @@ import { reservationRoomSearch } from '../../../../../../api/reservationSectionA
 import { createRoomAmendment } from '../../../../../../api/roomAmendmentApi';
 import ColorStatusTag from '../../../../../../component/ColorStatusTag/ColorStatusTag';
 import { MdOutlineBedroomParent } from "react-icons/md";
-
+import { GiBed } from "react-icons/gi";
 export default function RoomMoveModal({
     isOpen,
     onClose,
@@ -152,7 +152,6 @@ export default function RoomMoveModal({
                                                                 <Card
                                                                     onClick={() => setSelectRoomUuid(room.uuid)}
                                                                     className={`
-                                                                    !h[200px] 
                                                                     !overflow-hidden 
                                                                     !border
                                                                     !p-3
@@ -162,7 +161,7 @@ export default function RoomMoveModal({
                                                                     hover:!shadow-lg
                                                                     hover:-translate-y-1
                                                                     ${selectRoomUuid === room.uuid
-                                                                            ? '!border-sky-600 !bg-sky-300'
+                                                                            ? '!border-sky-600 !bg-sky-100'
                                                                             : '!border-sky-200'
                                                                         }
                                                                     
@@ -179,8 +178,9 @@ export default function RoomMoveModal({
                                                                 >
                                                                     <div className="flex justify-between items-start mb-3">
                                                                         <div className="flex gap-1">
-                                                                            <MdOutlineBedroomParent fontSize={20} className='text-purple-400' />
-                                                                            <h3 className="text-xl font-black text-gray-900 leading-tight group-hover:text-blue-600 transition-colors">
+                                                                            {/* <MdOutlineBedroomParent fontSize={20} className='text-purple-400' /> */}
+                                                                            <GiBed fontSize={30} className='text-green-500' />
+                                                                            <h3 className="text-xl font-black text-green-500 leading-tight group-hover:text-blue-600 transition-colors">
                                                                                 {room?.roomNo || "---"}
                                                                             </h3>
                                                                         </div>
@@ -205,15 +205,18 @@ export default function RoomMoveModal({
                                                 <Row gutter={16}>
 
                                                     <Col span={10}>
-                                                        <div className='flex justify-between border border-sky-300 p-3 rounded-md'>
-                                                            <div>{record?.room?.roomNo}</div>
+                                                        <div className='flex justify-between border border-gray-300 p-3 rounded-md'>
+                                                            <div className='flex gap-2'>
+                                                                <GiBed fontSize={25} className='text-gray-500' />
+                                                                <div className='text-md'>{record?.room?.roomNo}</div>
+                                                            </div>
                                                             <ColorStatusTag status={record?.room?.status} />
                                                         </div>
                                                     </Col>
 
                                                     <Col span={4}>
                                                         <div className='flex justify-center p-3 rounded-md'>
-                                                            <SwapRightOutlined className='!text-xl !font-bold' />
+                                                            <SwapRightOutlined className='!text-2xl !font-bold' />
                                                         </div>
                                                     </Col>
                                                     {
@@ -222,7 +225,10 @@ export default function RoomMoveModal({
 
                                                                 <Col span={10}>
                                                                     <div className='flex justify-between border-2 border-[#4C16FF] bg-[#F0EBFF] p-3 rounded-md'>
-                                                                        <div>{searchroom?.roomNo}</div>
+                                                                        <div className='flex gap-2'>
+                                                                            <GiBed fontSize={25} className='text-green-500' />
+                                                                            <div className='text-md text-green-500'>{searchroom?.roomNo}</div>
+                                                                        </div>
                                                                         <ColorStatusTag status={searchroom?.status} />
                                                                     </div>
                                                                 </Col>

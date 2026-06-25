@@ -97,6 +97,20 @@ const RoomForm = ({
     }
   }, [data]);
 
+  useEffect(() => {
+    if (isAdd && statuses?.length > 0) {
+      const availableStatus = statuses.find(
+        (s) => s.label.toLowerCase() === "available",
+      );
+
+      if (availableStatus) {
+        form.setFieldsValue({
+          status: availableStatus.value,
+        });
+      }
+    }
+  }, [statuses, isAdd]);
+
   const handleClose = () => {
     setDrawerOpen(false);
     setSelectedData(null);
@@ -305,8 +319,8 @@ const RoomForm = ({
 
             {!isAdd && (
               <Card className="mt-5 shadow-sm  border border-gray-100 bg-gray-100!">
-                <div className="flex justify-between text-base items-center font-semibold mb-2">
-                  <span>Room Attribute Value</span>
+                <div className="flex justify-between text-sm items-center font-semibold mb-2">
+                  <span>Room Attributes already exits for this room</span>
 
                   {!isView && canCreateAttribute && (
                     <Button
