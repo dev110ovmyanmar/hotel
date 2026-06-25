@@ -220,6 +220,7 @@ const CompanyForm = ({
                   e.preventDefault();
                 }
               }}
+              maxLength={20}
             />
           </Form.Item>
 

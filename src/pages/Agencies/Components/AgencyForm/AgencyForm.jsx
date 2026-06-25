@@ -235,6 +235,7 @@ const AgencyForm = ({
                   e.preventDefault();
                 }
               }}
+              maxLength={20}
             />
           </Form.Item>
 

@@ -35,9 +35,9 @@ const AgencyContractTable = ({
       width: 70,
     },
     {
-      title: "Phone",
-      dataIndex: ["agency", "phone"],
-      key: "agencyPhone",
+      title: "Name",
+      dataIndex: ["agency", "name"],
+      key: "name",
       render: (text) => <div>{text ? text : "-"}</div>,
     },
     {

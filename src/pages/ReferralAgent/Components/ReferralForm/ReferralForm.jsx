@@ -23,6 +23,7 @@ import Status from "./../../../../component/Status/Status";
 import ImageUpload from "../../../../component/ImageUpload/ImageUpload";
 import { deleteImageUpload } from "../../../../api/deleteImageApi";
 import { validatePhoneNumber } from "../../../../utils";
+import { emailValidator } from "../../../../variables/constants";
 
 const { TextArea } = Input;
 
@@ -202,7 +203,13 @@ const ReferralForm = ({
             <Input readOnly={isView} placeholder="Enter Card Number" />
           </Form.Item>
 
-          <Form.Item label="Email" name="email">
+          <Form.Item
+            label="Email"
+            name="email"
+            rules={[{
+              validator: emailValidator,
+            }]}
+          >
             <Input readOnly={isView} placeholder="Enter Email Address" />
           </Form.Item>
 
@@ -218,6 +225,7 @@ const ReferralForm = ({
                   e.preventDefault();
                 }
               }}
+              maxLength={20}
             />
           </Form.Item>
 
