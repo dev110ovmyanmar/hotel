@@ -85,7 +85,7 @@ const PaymentForm = ({
   const onFinish = (values) => {
     const payload = {
       ...values,
-      provider: { uuid: values.provider ? values.provider : null },
+      provider: values.provider ? values.provider : null,
       isOnline: values.isOnline === true ? 1 : 0,
     };
     if (isAdd) {

@@ -20,7 +20,10 @@ import {
 } from "../../../../api/menuModifierApi";
 import Loader from "../../../../component/Loader/Loader";
 import { sellingPriceValidator } from "../../../../variables/constants";
-import { priceFormatter, priceParser } from "../../../../component/PriceTag/PriceTag";
+import {
+  priceFormatter,
+  priceParser,
+} from "../../../../component/PriceTag/PriceTag";
 
 const MenuModifierForm = ({
   mode,
@@ -153,10 +156,12 @@ const MenuModifierForm = ({
             <Row gutter={16}>
               <Col span={12}>
                 <Form.Item
-                  label="Purchase Price"
-                  name="unitCost"
+                  label="Selling Price"
+                  dependencies={["unitCost"]}
+                  name="unitPrice"
                   rules={[
-                    { required: true, message: "Purchase Price is Required" },
+                    { required: true, message: "Please enter selling price" },
+                    sellingPriceValidator("unitCost", "unitPrice", true),
                   ]}
                 >
                   <InputNumber
@@ -170,15 +175,12 @@ const MenuModifierForm = ({
                   />
                 </Form.Item>
               </Col>
-
               <Col span={12}>
                 <Form.Item
-                  label="Selling Price"
-                  dependencies={["unitCost"]}
-                  name="unitPrice"
+                  label="Purchase Price"
+                  name="unitCost"
                   rules={[
-                    { required: true, message: "Please enter selling price" },
-                    sellingPriceValidator("unitCost", "unitPrice", true),
+                    { required: true, message: "Purchase Price is Required" },
                   ]}
                 >
                   <InputNumber

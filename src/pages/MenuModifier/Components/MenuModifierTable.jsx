@@ -1,10 +1,6 @@
-import { Dropdown, Space, Table, } from "antd";
+import { Dropdown, Space, Table } from "antd";
 import { useState } from "react";
-import {
-  MoreOutlined,
-  EyeOutlined,
-  EditOutlined,
-} from "@ant-design/icons";
+import { MoreOutlined, EyeOutlined, EditOutlined } from "@ant-design/icons";
 import usePermission from "../../../hooks/usePermission"; // <-- Permission hook
 import { PERMISSIONS } from "../../../variables/permission";
 import MenuModifierForm from "../Components/MenuModifierForm/MenuModifierForm";
@@ -17,7 +13,7 @@ const MenuModifierTable = ({
   total,
   changePage,
   changePerPage,
-  loading
+  loading,
 }) => {
   const { hasPermission } = usePermission();
 
@@ -38,23 +34,23 @@ const MenuModifierTable = ({
       render: (text) => <div>{text}</div>,
     },
     {
-      title: "Purchasing Price (MMK)",
-      dataIndex: "unitCost",
-      key: "unitCost",
-      align:"end",
-      render: (text) => <PriceTag value={text} />
-    },
-    {
       title: "Selling Price (MMK)",
       dataIndex: "unitPrice",
       key: "unitPrice",
-      align:"end",
-      render: (text) => <PriceTag value={text} />
+      align: "end",
+      render: (text) => <PriceTag value={text} />,
+    },
+    {
+      title: "Purchasing Price (MMK)",
+      dataIndex: "unitCost",
+      key: "unitCost",
+      align: "end",
+      render: (text) => <PriceTag value={text} />,
     },
     {
       title: "Action",
-      fixed:"end",
-      align:"center",
+      fixed: "end",
+      align: "center",
       render: (_, record) => {
         const smallStyle = { fontSize: "12px" };
 
@@ -86,7 +82,8 @@ const MenuModifierTable = ({
         const items = actions
           .filter(
             (action) =>
-              (!action.permission || hasPermission(action.permission)) && !action.hidden,
+              (!action.permission || hasPermission(action.permission)) &&
+              !action.hidden,
           )
           .map((action) => ({
             key: action.key,
@@ -136,7 +133,6 @@ const MenuModifierTable = ({
         setDrawerOpen={setDrawerOpen}
         selectedData={selectedData}
         setSelectedData={setSelectedData}
-
       />
     </div>
   );

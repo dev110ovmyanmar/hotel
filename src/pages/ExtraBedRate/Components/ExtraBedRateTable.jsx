@@ -35,13 +35,13 @@ const ExtraBedRateTable = ({ data, page, setPage }) => {
       title: "Start Date",
       dataIndex: "startDate",
       key: "startDate",
-      align: "center"
+      align: "center",
     },
     {
       title: "End Date",
       dataIndex: "endDate",
       key: "endDate",
-      align: "center"
+      align: "center",
     },
     {
       title: "Age Type",
@@ -118,7 +118,7 @@ const ExtraBedRateTable = ({ data, page, setPage }) => {
   // Process data to calculate rowSpan for rate plans
   const processData = (data) => {
     if (!data) return [];
-    const newData = data.map(item => ({ ...item })); // Shallow clone to avoid mutating props
+    const newData = data.map((item) => ({ ...item })); // Shallow clone to avoid mutating props
 
     const calculateSpan = (keyPath) => {
       let i = 0;
@@ -157,19 +157,19 @@ const ExtraBedRateTable = ({ data, page, setPage }) => {
   const expandedRowRender = (record) => {
     const processedRates = processData(record?.rates || []);
     return (
-    <Table
-      // className="custom-table-style"
-      className="[&_.ant-table-cell]:!border [&_.ant-table-cell]:!border-blue-300 [&_.ant-table-thead>tr>th]:!bg-[#F0F5FF]"
-      columns={nestedColumns}
-      // dataSource={record.rates || []}
-      dataSource={processedRates}
-      bordered
-      pagination={false}
-      rowKey="id"
-      size="small"
-      style={{ marginTop: "16px", marginBottom: "16px" }}
-    />
-  )
+      <Table
+        // className="custom-table-style"
+        className="[&_.ant-table-cell]:!border [&_.ant-table-cell]:!border-blue-300 [&_.ant-table-thead>tr>th]:!bg-[#F0F5FF]"
+        columns={nestedColumns}
+        // dataSource={record.rates || []}
+        dataSource={processedRates}
+        bordered
+        pagination={false}
+        rowKey="id"
+        size="small"
+        style={{ marginTop: "16px", marginBottom: "16px" }}
+      />
+    );
   };
 
   const columns = [
@@ -177,13 +177,13 @@ const ExtraBedRateTable = ({ data, page, setPage }) => {
       title: "ID",
       dataIndex: ["roomType", "id"],
       key: "id",
+      width: 70,
     },
     {
       title: "Room Type",
-      fixed:"end",
-      align: "center",
       dataIndex: ["roomType", "name"],
       key: "roomType",
+      align: "left",
     },
     // {
     //   title: "Base Price (MMK)",
