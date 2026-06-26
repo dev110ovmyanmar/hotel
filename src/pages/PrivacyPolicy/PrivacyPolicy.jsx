@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { Form, Button, Select } from "antd";
+import { Form, Button, Select, Input } from "antd";
 import Toast from "../../component/Toast/Toast";
 import useApiQuery from "../../hooks/useApiQuery";
 import { useApiMutation } from "../../hooks/useApiMutation";
@@ -8,6 +8,38 @@ import { fetchPrivacyPolicyData, createPrivacyPolicy } from "../../api/privacyPo
 import { queryClient } from "../../app/queryClient";
 import Editor from "../../component/Editor/Editor";
 import Loader from "../../component/Loader/Loader";
+
+const stripHTML = (html) => {
+  if (!html) return "";
+  const doc = new DOMParser().parseFromString(html, 'text/html');
+  return doc.body.textContent || "";
+};
+
+const EditorOrTextArea = ({ value, onChange, isEdit, ...props }) => {
+  return !isEdit ? (
+    <Input.TextArea
+      {...props}
+      value={stripHTML(value)}
+      readOnly
+      rows={10}
+      className="bg-gray-50 
+      dark:bg-[#1f1f1f] 
+      border-gray-200 
+      dark:border-gray-700 
+      text-gray-700 
+      dark:text-[#D9D9D9] 
+      cursor-default"
+    />
+  ) : (
+    <Editor
+      {...props}
+      value={value}
+      onChange={onChange}
+      placeholder="Content..."
+      theme="snow"
+    />
+  );
+};
 
 const PrivacyPolicy = () => {
   const [form] = Form.useForm();
@@ -25,6 +57,8 @@ const PrivacyPolicy = () => {
     params: {},
   });
 
+  const isEmpty = data?.privacyPolicy === "" && data?.termsAndConditions === "";
+
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
 
   const statusOptions =
@@ -37,7 +71,6 @@ const PrivacyPolicy = () => {
 
   const cleanHTML = (html) => (html ? html.replace(/<p><br><\/p>/gi, "").trim() : "");
 
-  const getStatusLabel = (uuid) => statusOptions.find((s) => s.value === uuid)?.label || "-";
 
   // 2. Sync form when data arrives
   useEffect(() => {
@@ -95,8 +128,6 @@ const PrivacyPolicy = () => {
     setIsEdit(false);
   };
 
-  const isEmpty = !savedPolicies.privacyPolicy && !savedPolicies.termsAndConditions;
-
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -106,110 +137,107 @@ const PrivacyPolicy = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-gray-50 dark:bg-[#141414] p-6">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="flex justify-end mb-6">
-          {!isEmpty && !isEdit && (
-            <Button
-              type="primary"
-              className="bg-blue-600 hover:bg-blue-700 h-10 px-8 font-semibold shadow-sm"
-              onClick={() => setIsEdit(true)}
-            >
-              Edit Policies
-            </Button>
-          )}
+          {
+            !isEmpty && !isEdit && (
+              <Button
+                type="primary"
+                className="bg-blue-600 hover:bg-blue-700 h-10 px-8 font-semibold shadow-sm"
+                onClick={() => setIsEdit(true)}
+              >
+                Edit
+              </Button>
+            )}
+          {
+            isEmpty && !isEdit && (
+              <Button
+                type="primary"
+                className="bg-blue-600 hover:bg-blue-700 h-10 px-8 font-semibold shadow-sm"
+                onClick={() => setIsEdit(true)}
+              >
+                Create
+              </Button>
+            )
+          }
         </div>
 
-        {/* Empty State */}
-        {isEmpty && !isEdit ? (
-          <div className="py-40 bg-white rounded-xl shadow-sm flex flex-col items-center justify-center text-center">
-            <h3 className="text-xl font-semibold text-gray-700">No Content Available</h3>
-            <p className="text-gray-500 mb-8">Start by creating your first policy.</p>
-            <Button
-              type="primary"
-              size="large"
-              className="bg-blue-600 px-10 font-bold"
-              onClick={() => setIsEdit(true)}
-            >
-              Create Now
-            </Button>
-          </div>
-        ) : (
-          <Form
-            form={form}
-            layout="horizontal"
-            className="p-10"
-            labelAlign="left"
-            labelCol={{ span: 4 }}
-            wrapperCol={{ span: 16 }}
-            onFinish={onFinish}
-          >
-            
+        <Form
+          form={form}
+          layout="horizontal"
+          className="p-10"
+          labelAlign="left"
+          labelCol={{ span: 4 }}
+          wrapperCol={{ span: 16 }}
+          onFinish={onFinish}
+        >
+
+          <div className="mr-2">
             <Form.Item
               name="privacyPolicy"
-              label={<span className="font-bold text-gray-700 text-sm">Privacy Policy</span>}
+              label={<span className="font-bold text-gray-700 dark:text-[#D9D9D9] text-sm">Privacy Policy</span>}
               /* Only validate when not in view mode */
-              rules={[{ required: isEdit , message: "Required" }]}
+              rules={[{ required: true, message: "Required" }]}
               className="mb-10"
             >
-              <Editor 
-              placeholder="Content..." 
-              readOnly={!isEdit} // Most editors use this prop
-              disabled={!isEdit} // Some editors (like AntD variants) use this
-              // If your editor needs a specific "view" theme:
-              theme={!isEdit ? "bubble" : "snow"} 
-              />
+              <EditorOrTextArea isEdit={isEdit} />
             </Form.Item>
 
             <Form.Item
               name="termsAndConditions"
-              label={<span className="font-bold text-gray-700 text-sm">Terms & Conditions</span>}
+              label={<span className="font-bold text-gray-700 dark:text-[#D9D9D9] text-sm">Terms & Conditions</span>}
               /* Only validate when not in view mode */
-              rules={[{ required: isEdit , message: "Required" }]}
+              rules={[{ required: true, message: "Required" }]}
               className="mb-10"
             >
-              <Editor 
-              placeholder="Content..." 
-              readOnly={!isEdit} // Most editors use this prop
-              disabled={!isEdit} // Some editors (like AntD variants) use this
-              // If your editor needs a specific "view" theme:
-              theme={!isEdit ? "bubble" : "snow"} 
-              />
+              <EditorOrTextArea isEdit={isEdit} />
             </Form.Item>
 
             {/* Status */}
             <Form.Item
               name="statusUuid"
-              label={<span className="font-bold text-gray-700 text-sm">Status</span>}
+              label={<span className="font-bold text-gray-700 dark:text-[#D9D9D9] text-sm">Status</span>}
               rules={[{ required: true, message: "Required" }]}
+              getValueProps={(value) => ({
+                value: !isEdit
+                  ? statusOptions.find((item) => item.value === value)?.label || "-"
+                  : value,
+              })}
             >
+              {isEdit ? (
                 <Select
                   options={statusOptions}
                   className="h-11 w-40"
                   placeholder="Select Status"
-                  disabled={!isEdit}
                 />
+              ) : (
+                <Input
+                  readOnly
+                  className="h-11 w-40 bg-gray-50 dark:bg-[#1f1f1f] border-gray-200 dark:border-gray-700 text-gray-700 dark:!text-[#D9D9D9] cursor-default"
+                />
+              )}
             </Form.Item>
+          </div>
 
-            {/* Buttons */}
-            {isEdit && (
-              <div className="flex justify-end gap-4 mt-12 pt-8 border-t border-gray-200">
-                <Button onClick={handleCancel} className="px-8 h-11">
-                  Cancel
-                </Button>
-                <Button
-                  type="primary"
-                  loading={mutation.isLoading}
-                  className="bg-blue-600 hover:bg-blue-700 px-12 h-11 font-bold text-white"
-                  htmlType="submit"
-                >
-                  Create
-                </Button>
-              </div>
-            )}
-          </Form>
-        )}
+          {/* Buttons */}
+          {isEdit && (
+            <div className="flex justify-end gap-4 mt-12 border-gray-200 mr-50">
+              <Button onClick={handleCancel} className="px-8 h-11">
+                Cancel
+              </Button>
+              <Button
+                type="primary"
+                loading={mutation.isLoading}
+                className="bg-blue-600 hover:bg-blue-700 px-12 h-11 font-bold text-white"
+                htmlType="submit"
+              >
+                Save
+              </Button>
+            </div>
+          )}
+        </Form>
       </div>
     </div>
   );

@@ -298,7 +298,7 @@ const MenuItemForm = ({
             )}
           </Form.Item>
 
-          {!isAdd && (
+          {/* {!isAdd && (
             <Card className="mt-5 shadow-sm border border-gray-100 bg-gray-100!">
               <div className="flex justify-between items-center mb-5">
                 <span className="text-base font-semibold">Add On</span>
@@ -319,6 +319,36 @@ const MenuItemForm = ({
                         <Checkbox value={modifier.id} disabled={isView}>
                           {modifier.name}
                         </Checkbox>
+                      </Col>
+                    ))}
+                  </Row>
+                </Checkbox.Group>
+              </Form.Item>
+            </Card>
+          )} */}
+          {!isAdd && data?.menuModifiers?.length > 0 && (
+            <Card className="mt-5 border border-gray-100 bg-gray-50 shadow-sm">
+              <div className="mb-4 flex items-center justify-between">
+                <span className="text-base font-semibold text-gray-800">
+                  Add On
+                </span>
+              </div>
+
+              {/* Form.Item completely manages value and onChange for the group */}
+              <Form.Item name="menuModifier" className="mb-0">
+                <Checkbox.Group className="w-full">
+                  <Row gutter={[16, 16]}>
+                    {data?.menuModifiers?.map((modifier) => (
+                      <Col xs={24} sm={12} key={modifier.id}>
+                        <div className="flex items-center rounded-lg border border-gray-200 bg-white p-3 hover:border-blue-300 transition-all shadow-sm">
+                          <Checkbox
+                            value={modifier.id}
+                            disabled={isView}
+                            className="w-full text-sm font-medium text-gray-700"
+                          >
+                            {modifier.name}
+                          </Checkbox>
+                        </div>
                       </Col>
                     ))}
                   </Row>

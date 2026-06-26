@@ -18,10 +18,9 @@ const ServiceInventoryListing = () => {
     fetchQueryName: "service_inventories",
     fetchQueryFunction: getServiceInventory,
     params: {
-      pagination:
-      {
+      pagination: {
         page: page,
-        perPage: perPage
+        perPage: perPage,
       },
       keyword,
     },
@@ -99,4 +98,3 @@ const ServiceInventoryListing = () => {
 };
 
 export default ServiceInventoryListing;
-
