@@ -28,6 +28,7 @@ const FAndBInventoryTable = ({
   const columns = [
     {
       title: "ID",
+      width: 80,
       render: (_, record) => <div>{record?.id}</div>,
     },
     {
@@ -36,30 +37,34 @@ const FAndBInventoryTable = ({
       key: "name",
     },
     {
-      title: "Category",
+      title: "Category Name",
       dataIndex: ["category", "name"],
       key: "category",
     },
+    // {
+    //   title: "Supplier",
+    //   dataIndex: ["supplier", "name"],
+    //   key: "supplier",
+    // },
     {
-      title: "Supplier",
-      dataIndex: ["supplier", "name"],
-      key: "supplier",
+      // title: "Reorder Level",
+      title: "Stock Quantity",
+      dataIndex: "reorderLevel",
+      key: "reorderLevel",
+      width: 100,
     },
     {
       title: "Unit",
       dataIndex: ["unit", "name"],
       key: "unit",
+      width: 100,
     },
     {
-      title: "Reorder Level",
-      dataIndex: "reorderLevel",
-      key: "reorderLevel",
-    },
-    {
-      title: "Purchase Price (MMK)",
-      dataIndex: "unitCost",
-      key: "unitCost",
-      render: (text) => <PriceTag value={text} />,
+      title: "Status",
+      dataIndex: ["status", "name"],
+      key: "status",
+      width: 100,
+      render: (_, record) => <ColorStatusTag status={record?.status} />,
     },
     {
       title: "Selling Price (MMK)",
@@ -68,15 +73,16 @@ const FAndBInventoryTable = ({
       render: (text) => <PriceTag value={text} />,
     },
     {
-      title: "Status",
-      dataIndex: ["status", "name"],
-      key: "status",
-      render: (_, record) => <ColorStatusTag status={record?.status} />,
+      title: "Purchase Price (MMK)",
+      dataIndex: "unitCost",
+      key: "unitCost",
+      render: (text) => <PriceTag value={text} />,
     },
     {
       title: "Action",
       fixed: "end",
       align: "center",
+      width: 80,
       render: (_, record) => {
         const smallStyle = { fontSize: "12px" };
 
@@ -131,9 +137,24 @@ const FAndBInventoryTable = ({
 
   const expandColumns = [
     { title: "ID", dataIndex: "id", key: "id", align: "center" },
-    { title: "Menu Item", dataIndex: ["menuItem", "name"], key: "name", align: "center" },
-    { title: "Quantity", dataIndex: "quantityPerItem", key: "quantityPerItem", align: "center" },
-    { title: "Unit", dataIndex: ["unit", "name"], key: "unit", align: "center" },
+    {
+      title: "Menu Item",
+      dataIndex: ["menuItem", "name"],
+      key: "name",
+      align: "center",
+    },
+    {
+      title: "Quantity",
+      dataIndex: "quantityPerItem",
+      key: "quantityPerItem",
+      align: "center",
+    },
+    {
+      title: "Unit",
+      dataIndex: ["unit", "name"],
+      key: "unit",
+      align: "center",
+    },
   ];
 
   const expandedRowRender = (record) => {
@@ -160,7 +181,7 @@ const FAndBInventoryTable = ({
         columns={columns}
         expandable={{
           expandedRowRender,
-          rowExpandable: (record) => record?.menuInventoryMappings.length > 0
+          rowExpandable: (record) => record?.menuInventoryMappings.length > 0,
         }}
         dataSource={data}
         loading={loading}
@@ -175,7 +196,6 @@ const FAndBInventoryTable = ({
           },
           showSizeChanger: true,
         }}
-
       />
 
       <FAndBInventoryForm

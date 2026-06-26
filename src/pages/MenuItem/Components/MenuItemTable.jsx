@@ -39,9 +39,15 @@ const MenuItemTable = ({
       key: "name",
     },
     {
+      title: "Menu category",
+      dataIndex: ["menuCategory", "name"],
+      key: "menuCategory",
+    },
+    {
       title: "Is Taxable",
       dataIndex: "isTaxable",
       key: "isTaxable",
+      width: 100,
       render: (_, record) => (
         <div
           className={
@@ -53,35 +59,33 @@ const MenuItemTable = ({
       ),
     },
     {
-      title: "Menu category",
-      dataIndex: ["menuCategory", "name"],
-      key: "menuCategory",
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      align: "center",
+      width: 100,
+      render: (status) => <ColorStatusTag status={status} />,
     },
+
     {
-      title: "Price (MMK)",
-      dataIndex: "price",
-      key: "price",
-      align: "end",
-      render: (price) => <PriceTag value={price} />,
-    },
-    {
-      title: "Cost (MMK)",
+      title: "Selling Price (MMK)",
       dataIndex: "cost",
       key: "cost",
       align: "end",
       render: (price) => <PriceTag value={price} />,
     },
     {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
-      align: "center",
-      render: (status) => <ColorStatusTag status={status} />,
+      title: "Purchasing Price (MMK)",
+      dataIndex: "price",
+      key: "price",
+      align: "end",
+      render: (price) => <PriceTag value={price} />,
     },
     {
       title: "Action",
       fixed: "end",
       align: "center",
+      width: 100,
       render: (_, record) => {
         const smallStyle = { fontSize: "12px" };
 

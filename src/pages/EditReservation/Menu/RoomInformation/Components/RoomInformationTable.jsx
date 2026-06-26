@@ -174,7 +174,7 @@ const RoomInformationTable = ({
       title: "Room No:",
       key: "room",
       dataIndex: "room",
-      width: 120,
+      width: 110,
       render: (text, record) => {
         const isRoomNull = !text;
 
