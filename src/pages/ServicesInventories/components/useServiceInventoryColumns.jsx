@@ -1,5 +1,10 @@
 import { Tag, Dropdown, Button, Space } from "antd";
-import { EditOutlined, EyeOutlined, FileOutlined, MoreOutlined } from "@ant-design/icons";
+import {
+  EditOutlined,
+  EyeOutlined,
+  FileOutlined,
+  MoreOutlined,
+} from "@ant-design/icons";
 import usePermission from "../../../hooks/usePermission";
 import { PERMISSIONS } from "../../../variables/permission";
 import BooleanTag from "../../../component/BooleanTag/BooleanTag";
@@ -50,10 +55,11 @@ export default function useServiceInventoryColumns(onEdit, onView) {
       key: "laundryStatus",
       align: "center",
       width: 90,
-      render: (status) =>
+      render: (status) => (
         <div className={status === true ? "text-[#389E0D]" : "text-[#CF1322]"}>
           {status === true ? "True" : "False"}
         </div>
+      ),
     },
     {
       title: "Free",
@@ -67,22 +73,21 @@ export default function useServiceInventoryColumns(onEdit, onView) {
         </div>
       ),
     },
-    {
-      title: "Purchase Price (MMK)",
-      dataIndex: "unitCost",
-      key: "unitCost",
-      width: 120,
-      render: (cost) => <PriceTag value={cost} />
-    },
+
     {
       title: "Selling Price (MMK)",
       dataIndex: "unitPrice",
       key: "unitPrice",
       // align: "right",
       width: 110,
-      render: (price) => (
-        <PriceTag value={price} />
-      ),
+      render: (price) => <PriceTag value={price} />,
+    },
+    {
+      title: "Purchase Price (MMK)",
+      dataIndex: "unitCost",
+      key: "unitCost",
+      width: 120,
+      render: (cost) => <PriceTag value={cost} />,
     },
     {
       title: "Actions",
@@ -110,7 +115,9 @@ export default function useServiceInventoryColumns(onEdit, onView) {
 
         // 2. Filter based on permissions
         const items = actions
-          .filter((action) => !action.permission || hasPermission(action.permission))
+          .filter(
+            (action) => !action.permission || hasPermission(action.permission),
+          )
           .map((action) => ({
             key: action.key,
             label: (

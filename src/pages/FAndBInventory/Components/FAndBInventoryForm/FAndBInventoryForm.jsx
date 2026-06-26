@@ -233,78 +233,52 @@ const FAndBInventoryForm = ({
                 />
               )}
             </Form.Item>
-
-            <Form.Item
-              label="Unit"
-              name="unit"
-              rules={[{ required: true, message: "Unit is Required" }]}
-              getValueProps={(value) => ({
-                value: isView
-                  ? unitList.find((item) => item.value === value)?.label
-                  : value,
-              })}
-            >
-              {isView ? (
-                <Input readOnly={isView} />
-              ) : (
-                <Select
-                  showSearch={{
-                    filterOption: (input, option) =>
-                      (option?.label ?? "")
-                        .toLowerCase()
-                        .includes(input.toLowerCase()),
-                  }}
-                  options={unitList}
-                  placeholder="Select Unit"
-                />
-              )}
-            </Form.Item>
-
-            <Form.Item
-              label="Supplier"
-              name="supplier"
-              rules={[{ required: true, message: "Supplier is Required" }]}
-              getValueProps={(value) => ({
-                value: isView
-                  ? supplierList.find((item) => item.value === value)?.label
-                  : value,
-              })}
-            >
-              {isView ? (
-                <Input readOnly={isView} />
-              ) : (
-                <Select
-                  showSearch={{
-                    filterOption: (input, option) =>
-                      (option?.label ?? "")
-                        .toLowerCase()
-                        .includes(input.toLowerCase()),
-                  }}
-                  options={supplierList}
-                  placeholder="Select Supplier"
-                />
-              )}
-            </Form.Item>
-
             <div className="grid grid-cols-2 gap-4">
+              {" "}
               <Form.Item
-                label="Purchase Price"
-                name="unitCost"
+                label="Unit"
+                name="unit"
+                rules={[{ required: true, message: "Unit is Required" }]}
+                getValueProps={(value) => ({
+                  value: isView
+                    ? unitList.find((item) => item.value === value)?.label
+                    : value,
+                })}
+              >
+                {isView ? (
+                  <Input readOnly={isView} />
+                ) : (
+                  <Select
+                    showSearch={{
+                      filterOption: (input, option) =>
+                        (option?.label ?? "")
+                          .toLowerCase()
+                          .includes(input.toLowerCase()),
+                    }}
+                    options={unitList}
+                    placeholder="Select Unit"
+                  />
+                )}
+              </Form.Item>
+              <Form.Item
+                label="Stock Quantity"
+                name="stockQuantity"
                 rules={[
-                  { required: true, message: "Purchase Price is Required" },
+                  { required: true, message: "Stock Quantity is Required" },
                 ]}
               >
                 <InputNumber
                   className="w-full!"
-                  min={0}
-                  placeholder="Purchase Price"
+                  mode={"spinner"}
+                  min={1}
+                  max={100}
+                  placeholder="Stock Quantity"
                   disabled={isView}
-                  suffix="MMK"
-                  formatter={priceFormatter}
-                  parser={priceParser}
                 />
               </Form.Item>
+            </div>
 
+            <div className="grid grid-cols-2 gap-4">
               <Form.Item
                 label="Selling Price"
                 name="unitPrice"
@@ -324,11 +298,56 @@ const FAndBInventoryForm = ({
                   parser={priceParser}
                 />
               </Form.Item>
+
+              <Form.Item
+                label="Purchase Price"
+                name="unitCost"
+                rules={[
+                  { required: true, message: "Purchase Price is Required" },
+                ]}
+              >
+                <InputNumber
+                  className="w-full!"
+                  min={0}
+                  placeholder="Purchase Price"
+                  disabled={isView}
+                  suffix="MMK"
+                  formatter={priceFormatter}
+                  parser={priceParser}
+                />
+              </Form.Item>
             </div>
 
+            <Status isView={isView} statusValue={statuses} />
             <div className="grid grid-cols-2 gap-4">
               <Form.Item
-                label="Reorder Level"
+                label="Supplier"
+                name="supplier"
+                rules={[{ required: true, message: "Supplier is Required" }]}
+                getValueProps={(value) => ({
+                  value: isView
+                    ? supplierList.find((item) => item.value === value)?.label
+                    : value,
+                })}
+              >
+                {isView ? (
+                  <Input readOnly={isView} />
+                ) : (
+                  <Select
+                    showSearch={{
+                      filterOption: (input, option) =>
+                        (option?.label ?? "")
+                          .toLowerCase()
+                          .includes(input.toLowerCase()),
+                    }}
+                    options={supplierList}
+                    placeholder="Select Supplier"
+                  />
+                )}
+              </Form.Item>
+
+              <Form.Item
+                label="Minimun Stock Reorder"
                 name="reorderLevel"
                 rules={[
                   { required: true, message: "Reorder Level is Required" },
@@ -342,25 +361,7 @@ const FAndBInventoryForm = ({
                   disabled={isView}
                 />
               </Form.Item>
-
-              <Form.Item
-                label="Stock Quantity"
-                name="stockQuantity"
-                rules={[
-                  { required: true, message: "Stock Quantity is Required" },
-                ]}
-              >
-                <InputNumber
-                  className="w-full!"
-                  mode={"spinner"}
-                  min={1}
-                  max={100}
-                  placeholder="Stock Quantity"
-                  disabled={isView}
-                />
-              </Form.Item>
             </div>
-            <Status isView={isView} statusValue={statuses} />
           </Form>
         )}
       </Drawer>
