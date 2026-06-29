@@ -327,6 +327,14 @@ const RoomInformationTable = ({
                       key: "date_change",
                       label: "Change CI/CO Dates",
                       icon: <CalendarOutlined />,
+                      disabled: record?.checkinDate
+                        ? dayjs(record.checkinDate)
+                            .startOf("day")
+                            .isSame(dayjs().startOf("day")) ||
+                          dayjs(record.checkinDate)
+                            .startOf("day")
+                            .isBefore(dayjs().startOf("day"))
+                        : false,
                       onClick: () => handleAction("date_change", record),
                     },
                     ...(record?.isExtend !== false ||
