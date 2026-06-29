@@ -77,24 +77,28 @@ const CompanyForm = ({
   });
 
   useEffect(() => {
-    if (isAdd) {
+    if (drawerOpen && isAdd && initDataStatus) {
       form.resetFields();
-    }
 
-    if (isAdd && initDataStatus) {
       form.setFieldsValue({
         status: {
-          uuid: initDataStatus?.find((item) => item.code === "active")?.uuid,
+          uuid: initDataStatus.find(
+            item => item.code === "active"
+          )?.uuid,
         },
       });
     }
+  }, [drawerOpen, isAdd, initDataStatus]);
+
+  useEffect(() => {
     const isViewCompanyFormData = isView || isEdit;
     if (isViewCompanyFormData && data) {
       form.setFieldsValue({
         ...data,
       });
     }
-  }, [data, isEdit]);
+  }, [isEdit, isView, data]);
+
 
   const handleClose = () => {
     setDrawerOpen(false);
@@ -110,10 +114,8 @@ const CompanyForm = ({
     if (isAdd) {
       upsertPartners.mutate(modifiedValues, {
         onSuccess: () => {
-          form.resetFields();
-          setPage(1);
-          setDrawerOpen(false);
           handleClose();
+          setPage(1);
           Toast.success("Company Created Successfully!");
         },
       });
@@ -292,6 +294,7 @@ const CompanyForm = ({
                   placeholder="Enter Charge Value"
                   formatter={priceFormatter}
                   parser={priceParser}
+                  maxLength={12}
                 />
               </Form.Item>
             </Col>
