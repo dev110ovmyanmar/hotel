@@ -318,7 +318,7 @@ const RoomTypeForm = ({
             </Row>
 
             <div className="grid grid-cols-2 gap-6">
-              <Form.Item
+              {/* <Form.Item
                 label="Total Rooms"
                 name="totalRooms"
                 rules={[{ required: true }]}
@@ -329,20 +329,9 @@ const RoomTypeForm = ({
                   style={{ width: "100%" }}
                   placeholder="Enter Totals Rooms"
                 />
-              </Form.Item>
+              </Form.Item> */}
 
-              <Form.Item
-                label="Luxury Level"
-                name="rank"
-                rules={[{ required: true }]}
-              >
-                <InputNumber
-                  {...sharedProps}
-                  readOnly={isView}
-                  style={{ width: "100%" }}
-                  placeholder="Enter Rank"
-                />
-              </Form.Item>
+
             </div>
 
             <Form.Item name="basePrice" hidden>
@@ -397,9 +386,24 @@ const RoomTypeForm = ({
               </Form.Item>
             </div>
 
-            <Form.Item label="Room Size" name="areaSize">
-              <Input readOnly={isView} placeholder="Enter Room Size" />
-            </Form.Item>
+            <div className="grid grid-cols-2 gap-6">
+              <Form.Item
+                label="Luxury Level"
+                name="rank"
+                rules={[{ required: true }]}
+              >
+                <InputNumber
+                  {...sharedProps}
+                  readOnly={isView}
+                  style={{ width: "100%" }}
+                  placeholder="Enter Rank"
+                />
+              </Form.Item>
+
+              <Form.Item label="Room Size" name="areaSize">
+                <Input readOnly={isView} placeholder="Enter Room Size" />
+              </Form.Item>
+            </div>
 
             <Row gutter={24}>
               <Col span={24}>

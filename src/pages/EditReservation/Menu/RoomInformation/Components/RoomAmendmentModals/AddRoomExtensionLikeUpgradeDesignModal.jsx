@@ -1,4 +1,4 @@
-import React, { use, useState } from 'react';
+import React, { use, useEffect, useState } from 'react';
 import { Modal, Form, Input, Button, Radio, Row, Col, Divider, Typography, Card, Select, Spin, Checkbox, Table } from 'antd';
 import { DoubleRightOutlined, InfoCircleOutlined, SwapRightOutlined, WalletOutlined } from '@ant-design/icons';
 import { createRoomAmendment } from '../../../../../../api/roomAmendmentApi';
@@ -23,12 +23,13 @@ export default function AddRoomExtensionLikeUpgradeDesignModal({
     ratePlanUuid,
     originalCheckout,
     newCheckoutDate,
+    setBackToExtensionStayDate,
+    extensionDateonClose
 }) {
     const [form] = Form.useForm();
     const [selectedRoom, setSelectedRoom] = useState(null);
     const [toReviewPage, setToReviewPage] = useState(null);
     const [selectedRoomTypeName, setSelectedRoomTypeName] = useState({});
-    console.log(selectedRoomTypeName, "selectedRoomTypeName")
     const [reviewData, setReviewData] = useState(null);
     const [checkSelectedRoom, setCheckSelectedRoom] = useState(false);
     const [selectRoomNo, setSelectRoomNo] = useState(false);
@@ -50,16 +51,13 @@ export default function AddRoomExtensionLikeUpgradeDesignModal({
         setToReviewPage();
         setSelectedRoomTypeName();
         setReviewData();
-        setSelectRoomNo(false)
+        setSelectRoomNo(false);
+        extensionDateonClose(false)
     };
-
-    console.log(record, "Record")
     // Submits data directly using single-pane architectural validation structures
     const handleSubmit = async () => {
         try {
             const values = await form.validateFields();
-
-            console.log(reviewData, "ReviewData")
 
             const payload = {
                 amendmentType: { uuid: addRoomUuid },
@@ -79,7 +77,8 @@ export default function AddRoomExtensionLikeUpgradeDesignModal({
                     setToReviewPage();
                     setSelectedRoomTypeName();
                     setReviewData();
-                    onClose(false)
+                    onClose(false);
+                    extensionDateonClose(false)
                 },
 
             });
@@ -87,8 +86,6 @@ export default function AddRoomExtensionLikeUpgradeDesignModal({
             console.error("Form validation requirements missing:", err);
         }
     };
-
-    console.log(selectedRoomTypeName, "selectedRoomTypeName")
 
     const options = roomList?.rooms?.map(room => (
         { value: room?.roomType?.uuid, label: room?.roomType?.name }
@@ -103,10 +100,6 @@ export default function AddRoomExtensionLikeUpgradeDesignModal({
                     label: ratePlan.name,
                 }))
             ) || [];
-
-    console.log(ratePlanUuid, "ratePlanUuid");
-    console.log()
-
 
     const roomUuidOptions = roomList?.rooms
         ?.filter(room => room?.roomType?.uuid === selectedRoom)
@@ -132,12 +125,11 @@ export default function AddRoomExtensionLikeUpgradeDesignModal({
 
             setReviewData(data);
             setToReviewPage(true);
-            console.log(data, "DataINHandleReview");
         } catch (error) {
             console.log(error);
         }
     };
-
+    
     const backToSetFields = () => {
         setToReviewPage(false);
         form.setFieldsValue({
@@ -155,14 +147,26 @@ export default function AddRoomExtensionLikeUpgradeDesignModal({
         footerContent = null;
     } else if (!toReviewPage) {
         footerContent = [
-            <Button
-                key="review"
-                type="primary"
-                onClick={handleReview}
-                disabled={!checkSelectedRoom}
-            >
-                Review
-            </Button>,
+            <>
+                <Button
+                    key="back"
+                    onClick={() => {
+                        setBackToExtensionStayDate(true);
+                        onClose(false)
+                    }}
+                >
+                    Back
+                </Button>
+
+                <Button
+                    key="review"
+                    type="primary"
+                    onClick={handleReview}
+                    disabled={!checkSelectedRoom}
+                >
+                    Review
+                </Button>
+            </>
         ];
     } else {
         footerContent = [
@@ -186,6 +190,40 @@ export default function AddRoomExtensionLikeUpgradeDesignModal({
     const selectedRatePlan = roomList?.rooms
         ?.find(room => room.roomType.uuid === selectedRoom)
         ?.ratePlans?.find(ratePlan => ratePlan.uuid === ratePlanUuid);
+
+    const selectRoom = (room) => {
+        const matchedRatePlan = room.ratePlans.find(
+            rp => rp.uuid === ratePlanUuid
+        );
+        setSelectedRoom(room.roomType.uuid);
+        setSelectedRoomTypeName(room.roomType);
+        setCheckSelectedRoom(true);
+        setSelectRoomNo(false);
+        form.setFieldsValue({
+            roomUuid: undefined
+        });
+        form.setFieldsValue({
+            roomType: room?.roomType?.uuid
+        });
+        if (matchedRatePlan) {
+            form.setFieldsValue({
+                ratePlan: {
+                    value: matchedRatePlan.uuid,
+                    label: matchedRatePlan.name,
+                },
+            });
+        };
+    };
+
+    useEffect(() => {
+        const matchedRoom = roomList?.rooms?.find(
+            room => room.roomType.uuid === record?.roomType?.uuid
+        );
+
+        if (matchedRoom) {
+            selectRoom(matchedRoom);
+        }
+    }, [roomList]);
 
     return (
         <Modal
@@ -256,30 +294,7 @@ export default function AddRoomExtensionLikeUpgradeDesignModal({
                                                                 ? '!border-blue-500 !bg-blue-50 !shadow-lg'
                                                                 : '!border-blue-200 !shadow-md hover:!border-blue-300 hover:-translate-y-1'}
                                                         `}
-                                                        onClick={() => {
-                                                            const matchedRatePlan = room.ratePlans.find(
-                                                                rp => rp.uuid === ratePlanUuid
-                                                            );
-                                                            console.log(room, "RoomInSearch")
-                                                            setSelectedRoom(room.roomType.uuid);
-                                                            setSelectedRoomTypeName(room.roomType);
-                                                            setCheckSelectedRoom(true);
-                                                            setSelectRoomNo(false);
-                                                            form.setFieldsValue({
-                                                                roomUuid: undefined
-                                                            });
-                                                            form.setFieldsValue({
-                                                                roomType: room?.roomType?.uuid
-                                                            });
-                                                            if (matchedRatePlan) {
-                                                                form.setFieldsValue({
-                                                                    ratePlan: {
-                                                                        value: matchedRatePlan.uuid,
-                                                                        label: matchedRatePlan.name,
-                                                                    },
-                                                                });
-                                                            };
-                                                        }}
+                                                        onClick={() => selectRoom(room)}
 
 
                                                     >

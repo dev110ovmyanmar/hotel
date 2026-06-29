@@ -3,14 +3,13 @@ import JoditEditor from "jodit-react";
 // import EditorWrapper from "./EditorWrapper"; // Ensure this is styled correctly 
 
 const Editor = ({
-  value = "", // Ant Design passes 'value'
+  value, // Ant Design passes 'value'
   onChange,
   readOnly = false,
   placeholder = "Start typing here...",
   className,
 }) => {
   const editorRef = useRef(null);
-  const [content, setContent] = useState("");
 
   // Apply inline table styles to ensure HTML output contains necessary CSS
   const applyTableStyles = (html) => {
@@ -33,12 +32,17 @@ const Editor = ({
     return doc.body.innerHTML;
   };
 
+  const [content, setContent] = useState(() => applyTableStyles(value));
+
   // Sync internal state with external 'value' prop
   useEffect(() => {
     const styledHtml = applyTableStyles(value);
     // Only update if the content is actually different to avoid cursor jumps
     if (styledHtml !== content) {
       setContent(styledHtml);
+      if (editorRef.current && typeof editorRef.current.value !== 'undefined') {
+        editorRef.current.value = styledHtml;
+      }
     }
   }, [value]);
 
@@ -62,6 +66,7 @@ const Editor = ({
 
   // Configuration Memoized to prevent unnecessary re-renders
   const config = useMemo(() => ({
+    theme: "default",
     readonly: readOnly,
     toolbar: !readOnly,
     placeholder,
@@ -94,10 +99,13 @@ const Editor = ({
         font-size: 14px !important;
         line-height: 1.6 !important;
         padding: 10px !important;
+        color: #000 !important;
+        background-color: #fff !important;
       } 
       table { border-collapse: collapse; width: 100%; }
       table, td, th { border: 1px solid #000 !important; padding: 8px; }
-    `,
+    `
+    ,
 
     events: {
       afterInsertTable: function (table) {
@@ -114,6 +122,15 @@ const Editor = ({
 
   return (
     <div className={`relative ${className}`}>
+      <style>{`
+        .jodit-wysiwyg {
+          color: #000 !important;
+          background-color: #fff !important;
+        }
+        .jodit-wysiwyg * {
+          color: #000 !important;
+        }
+      `}</style>
       <JoditEditor
         ref={editorRef}
         value={content}
