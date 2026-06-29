@@ -47,7 +47,7 @@ const CompanyContractTable = ({
         const chargeValue = record?.chargeValue;
 
         if (chargeTypeName === "flat") {
-          return <div>{chargeValue} MMK</div>
+          return <div>{chargeValue.toLocaleString()} MMK</div>
         } else {
           return <div>{chargeValue} %</div>
         }
