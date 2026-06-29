@@ -29,6 +29,10 @@ import {
 import Loader from "../../../../component/Loader/Loader";
 import { PERMISSIONS } from "../../../../variables/permission";
 import usePermission from "../../../../hooks/usePermission";
+import {
+  priceFormatter,
+  priceParser,
+} from "../../../../component/PriceTag/PriceTag";
 
 const RatePlanForm = ({
   mode,
@@ -142,7 +146,7 @@ const RatePlanForm = ({
     }
   }, [data]);
 
-  const isDisableDefault = ratePlanList ? false : true;
+  const isDisableDefault = ratePlanList?.data?.length <= 0 ? true : false;
 
   const handleClose = () => {
     setDrawerOpen(false);
@@ -279,7 +283,7 @@ const RatePlanForm = ({
             layout="vertical"
             style={{ width: "100%" }}
             onFinish={onFinish}
-            // disabled={isView}
+          // disabled={isView}
           >
             <Row gutter={24}>
               <Col span={16}>
@@ -477,8 +481,7 @@ const RatePlanForm = ({
               initialValue={false}
               rules={[{ required: true, message: "Please select Is Default!" }]}
               tooltip={{
-                title:
-                  "If no date-specific base rate exists, default room type pricing is used.",
+                title: "If no date-specific base rate exists, the default room type pricing will be used automatically. The default rate cannot be inactivated, as it acts as the system fallback rate for room pricing.",
                 icon: <InfoCircleOutlined style={{ color: "#1677ff" }} />,
               }}
             >
@@ -541,14 +544,8 @@ const RatePlanForm = ({
                               style={{ width: "100%" }}
                               placeholder="Enter Rate"
                               suffix="MMK"
-                              formatter={(value) =>
-                                value
-                                  ? new Intl.NumberFormat("en-US").format(value)
-                                  : ""
-                              }
-                              parser={(value) =>
-                                value ? value.replace(/,/g, "") : ""
-                              }
+                              formatter={priceFormatter}
+                              parser={priceParser}
                             />
                           </Form.Item>
                         </Col>
@@ -565,3 +562,4 @@ const RatePlanForm = ({
 };
 
 export default RatePlanForm;
+

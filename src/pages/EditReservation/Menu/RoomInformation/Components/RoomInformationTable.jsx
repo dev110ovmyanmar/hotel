@@ -114,8 +114,6 @@ const RoomInformationTable = ({
     // enabled: !!selectedData?.reservation?.uuid
   });
 
-  console.log(availabilitySearchs, "AvailabilitySearchs");
-
   const handleAction = (key, record) => {
     setSelectedData(record);
     setActiveModal(key);
@@ -174,7 +172,7 @@ const RoomInformationTable = ({
       title: "Room No:",
       key: "room",
       dataIndex: "room",
-      width: 120,
+      width: 110,
       render: (text, record) => {
         const isRoomNull = !text;
 
@@ -660,7 +658,7 @@ const RoomInformationTable = ({
       <AddRoomWithExtensionDateModal
         isOpen={addRoomWithStayExtension}
         record={selectedData}
-        onClose={() => setAddRoomWithStayExtension(false)}
+        extensionDateonClose={() => setAddRoomWithStayExtension(false)}
         addRoomUuid={addRoomUuid}
         availabilitySearchs={availabilitySearchs}
         reservation={reservation}

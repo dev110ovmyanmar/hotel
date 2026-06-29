@@ -27,6 +27,10 @@ import Loader from "../../../../component/Loader/Loader";
 import usePermission from "../../../../hooks/usePermission";
 import { PERMISSIONS } from "../../../../variables/permission";
 import { queryClient } from "../../../../app/queryClient";
+import {
+  priceFormatter,
+  priceParser,
+} from "../../../../component/PriceTag/PriceTag";
 
 const SeasonalRateForm = ({
   mode,
@@ -354,10 +358,8 @@ const SeasonalRateForm = ({
                     readOnly={isView}
                     placeholder="Price"
                     suffix="MMK"
-                    formatter={(value) =>
-                      value ? new Intl.NumberFormat("en-US").format(value) : ""
-                    }
-                    parser={(value) => (value ? value.replace(/,/g, "") : "")}
+                    formatter={priceFormatter}
+                    parser={priceParser}
                   />
                 </Form.Item>
               </Col>
@@ -429,14 +431,8 @@ const SeasonalRateForm = ({
                         min={0}
                         disabled={!isEnabled || isView}
                         suffix="MMK"
-                        formatter={(value) =>
-                          value
-                            ? new Intl.NumberFormat("en-US").format(value)
-                            : ""
-                        }
-                        parser={(value) =>
-                          value ? value.replace(/,/g, "") : ""
-                        }
+                        formatter={priceFormatter}
+                        parser={priceParser}
                       />
                     </Form.Item>
                   </Col>

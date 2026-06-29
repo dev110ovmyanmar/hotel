@@ -33,6 +33,10 @@ import {
   MAX_STOCK_QUANTITY,
   sellingPriceValidator,
 } from "../../../variables/constants";
+import {
+  priceFormatter,
+  priceParser,
+} from "../../../component/PriceTag/PriceTag";
 
 const ServiceInventoryForm = ({
   mode,
@@ -209,26 +213,6 @@ const ServiceInventoryForm = ({
             </Form.Item>
 
             <div className="grid grid-cols-2 gap-x-5 gap-y-0">
-              {
-                <Form.Item
-                  label="Purchase Price"
-                  name="unitCost"
-                  rules={[{ required: true }]}
-                >
-                  <InputNumber
-                    className="!w-full"
-                    min={0}
-                    readOnly={isView}
-                    placeholder="Enter Purchase Price"
-                    suffix="MMK"
-                    formatter={(value) =>
-                      value ? new Intl.NumberFormat("en-US").format(value) : ""
-                    }
-                    parser={(value) => (value ? value.replace(/,/g, "") : "")}
-                  />
-                </Form.Item>
-              }
-
               <Form.Item
                 label={<span className="text-xs">Selling Price</span>}
                 name="unitPrice"
@@ -244,12 +228,28 @@ const ServiceInventoryForm = ({
                   readOnly={isView}
                   placeholder="Enter Selling Price"
                   suffix="MMK"
-                  formatter={(value) =>
-                    value ? new Intl.NumberFormat("en-US").format(value) : ""
-                  }
-                  parser={(value) => (value ? value.replace(/,/g, "") : "")}
+                  formatter={priceFormatter}
+                  parser={priceParser}
                 />
               </Form.Item>
+
+              {
+                <Form.Item
+                  label="Purchase Price"
+                  name="unitCost"
+                  rules={[{ required: true }]}
+                >
+                  <InputNumber
+                    className="!w-full"
+                    min={0}
+                    readOnly={isView}
+                    placeholder="Enter Purchase Price"
+                    suffix="MMK"
+                    formatter={priceFormatter}
+                    parser={priceParser}
+                  />
+                </Form.Item>
+              }
 
               <Form.Item
                 label={<span className="text-xs">Stock Quantity</span>}

@@ -13,6 +13,10 @@ import Status from "../../../../component/Status/Status";
 import Loader from "../../../../component/Loader/Loader";
 import { queryClient } from "../../../../app/queryClient";
 import { sellingPriceValidator } from "../../../../variables/constants";
+import {
+  priceFormatter,
+  priceParser,
+} from "../../../../component/PriceTag/PriceTag";
 
 const FAndBInventoryForm = ({
   mode,
@@ -229,120 +233,33 @@ const FAndBInventoryForm = ({
                 />
               )}
             </Form.Item>
-
-            <Form.Item
-              label="Unit"
-              name="unit"
-              rules={[{ required: true, message: "Unit is Required" }]}
-              getValueProps={(value) => ({
-                value: isView
-                  ? unitList.find((item) => item.value === value)?.label
-                  : value,
-              })}
-            >
-              {isView ? (
-                <Input readOnly={isView} />
-              ) : (
-                <Select
-                  showSearch={{
-                    filterOption: (input, option) =>
-                      (option?.label ?? "")
-                        .toLowerCase()
-                        .includes(input.toLowerCase()),
-                  }}
-                  options={unitList}
-                  placeholder="Select Unit"
-                />
-              )}
-            </Form.Item>
-
-            <Form.Item
-              label="Supplier"
-              name="supplier"
-              rules={[{ required: true, message: "Supplier is Required" }]}
-              getValueProps={(value) => ({
-                value: isView
-                  ? supplierList.find((item) => item.value === value)?.label
-                  : value,
-              })}
-            >
-              {isView ? (
-                <Input readOnly={isView} />
-              ) : (
-                <Select
-                  showSearch={{
-                    filterOption: (input, option) =>
-                      (option?.label ?? "")
-                        .toLowerCase()
-                        .includes(input.toLowerCase()),
-                  }}
-                  options={supplierList}
-                  placeholder="Select Supplier"
-                />
-              )}
-            </Form.Item>
-
             <div className="grid grid-cols-2 gap-4">
+              {" "}
               <Form.Item
-                label="Purchase Price"
-                name="unitCost"
-                rules={[
-                  { required: true, message: "Purchase Price is Required" },
-                ]}
+                label="Unit"
+                name="unit"
+                rules={[{ required: true, message: "Unit is Required" }]}
+                getValueProps={(value) => ({
+                  value: isView
+                    ? unitList.find((item) => item.value === value)?.label
+                    : value,
+                })}
               >
-                <InputNumber
-                  className="w-full!"
-                  min={0}
-                  placeholder="Purchase Price"
-                  disabled={isView}
-                  suffix="MMK"
-                  formatter={(value) =>
-                    value ? new Intl.NumberFormat("en-US").format(value) : ""
-                  }
-                  parser={(value) => (value ? value.replace(/,/g, "") : "")}
-                />
+                {isView ? (
+                  <Input readOnly={isView} />
+                ) : (
+                  <Select
+                    showSearch={{
+                      filterOption: (input, option) =>
+                        (option?.label ?? "")
+                          .toLowerCase()
+                          .includes(input.toLowerCase()),
+                    }}
+                    options={unitList}
+                    placeholder="Select Unit"
+                  />
+                )}
               </Form.Item>
-
-              <Form.Item
-                label="Selling Price"
-                name="unitPrice"
-                dependencies={["unitCost"]}
-                rules={[
-                  { required: true, message: "Selling Price is Required" },
-                  sellingPriceValidator("unitCost"),
-                ]}
-              >
-                <InputNumber
-                  className="w-full!"
-                  min={0}
-                  placeholder="Selling Price"
-                  disabled={isView}
-                  suffix="MMK"
-                  formatter={(value) =>
-                    value ? new Intl.NumberFormat("en-US").format(value) : ""
-                  }
-                  parser={(value) => (value ? value.replace(/,/g, "") : "")}
-                />
-              </Form.Item>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <Form.Item
-                label="Reorder Level"
-                name="reorderLevel"
-                rules={[
-                  { required: true, message: "Reorder Level is Required" },
-                ]}
-              >
-                <InputNumber
-                  className="w-full!"
-                  mode={"spinner"}
-                  min={1}
-                  placeholder="Reorder Level"
-                  disabled={isView}
-                />
-              </Form.Item>
-
               <Form.Item
                 label="Stock Quantity"
                 name="stockQuantity"
@@ -360,7 +277,91 @@ const FAndBInventoryForm = ({
                 />
               </Form.Item>
             </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <Form.Item
+                label="Selling Price"
+                name="unitPrice"
+                dependencies={["unitCost"]}
+                rules={[
+                  { required: true, message: "Selling Price is Required" },
+                  sellingPriceValidator("unitCost"),
+                ]}
+              >
+                <InputNumber
+                  className="w-full!"
+                  min={0}
+                  placeholder="Selling Price"
+                  disabled={isView}
+                  suffix="MMK"
+                  formatter={priceFormatter}
+                  parser={priceParser}
+                />
+              </Form.Item>
+
+              <Form.Item
+                label="Purchase Price"
+                name="unitCost"
+                rules={[
+                  { required: true, message: "Purchase Price is Required" },
+                ]}
+              >
+                <InputNumber
+                  className="w-full!"
+                  min={0}
+                  placeholder="Purchase Price"
+                  disabled={isView}
+                  suffix="MMK"
+                  formatter={priceFormatter}
+                  parser={priceParser}
+                />
+              </Form.Item>
+            </div>
+
             <Status isView={isView} statusValue={statuses} />
+            <div className="grid grid-cols-2 gap-4">
+              <Form.Item
+                label="Supplier"
+                name="supplier"
+                rules={[{ required: true, message: "Supplier is Required" }]}
+                getValueProps={(value) => ({
+                  value: isView
+                    ? supplierList.find((item) => item.value === value)?.label
+                    : value,
+                })}
+              >
+                {isView ? (
+                  <Input readOnly={isView} />
+                ) : (
+                  <Select
+                    showSearch={{
+                      filterOption: (input, option) =>
+                        (option?.label ?? "")
+                          .toLowerCase()
+                          .includes(input.toLowerCase()),
+                    }}
+                    options={supplierList}
+                    placeholder="Select Supplier"
+                  />
+                )}
+              </Form.Item>
+
+              <Form.Item
+                label="Minimun Stock Reorder"
+                name="reorderLevel"
+                rules={[
+                  { required: true, message: "Reorder Level is Required" },
+                ]}
+              >
+                <InputNumber
+                  className="w-full!"
+                  mode={"spinner"}
+                  min={1}
+                  placeholder="Reorder Level"
+                  disabled={isView}
+                />
+              </Form.Item>
+            </div>
           </Form>
         )}
       </Drawer>

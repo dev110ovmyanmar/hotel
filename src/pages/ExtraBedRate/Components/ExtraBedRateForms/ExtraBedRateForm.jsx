@@ -24,6 +24,10 @@ import dayjs from "dayjs";
 import { getFormattedDate } from "../../../../utils";
 import { PERMISSIONS } from "../../../../variables/permission";
 import usePermission from "../../../../hooks/usePermission";
+import {
+  priceFormatter,
+  priceParser,
+} from "../../../../component/PriceTag/PriceTag";
 
 const ExtraBedRateForm = ({
   mode,
@@ -281,10 +285,8 @@ const ExtraBedRateForm = ({
               suffix="MMK"
               placeholder="Enter price"
               style={{ width: "100%" }}
-              formatter={(value) =>
-                value ? new Intl.NumberFormat("en-US").format(value) : ""
-              }
-              parser={(value) => (value ? value.replace(/,/g, "") : "")}
+              formatter={priceFormatter}
+              parser={priceParser}
             />
           </Form.Item>
 

@@ -57,7 +57,7 @@ const RoomForm = ({
   const roomType = roomMetaData?.room_types?.map((type) => ({
     value: type.uuid,
     // label: `${type.name} (${type.availableRooms}/${type.totalRooms})`,
-    label: `${type.name} (Remaining: ${type.remainingRooms}, Total:${type.totalRooms})`,
+    label: `${type.name} (Remaining: ${type.remainingRooms}, Total: ${type.totalRooms})`,
   }));
 
   const floors = roomMetaData?.floors?.map((floor) => ({

@@ -20,6 +20,10 @@ import {
 } from "../../../../api/menuModifierApi";
 import Loader from "../../../../component/Loader/Loader";
 import { sellingPriceValidator } from "../../../../variables/constants";
+import {
+  priceFormatter,
+  priceParser,
+} from "../../../../component/PriceTag/PriceTag";
 
 const MenuModifierForm = ({
   mode,
@@ -152,28 +156,6 @@ const MenuModifierForm = ({
             <Row gutter={16}>
               <Col span={12}>
                 <Form.Item
-                  label="Purchase Price"
-                  name="unitCost"
-                  rules={[
-                    { required: true, message: "Purchase Price is Required" },
-                  ]}
-                >
-                  <InputNumber
-                    disabled={isView}
-                    min={1}
-                    className="!w-full"
-                    placeholder="Enter Price"
-                    suffix="MMK"
-                    formatter={(value) =>
-                      value ? new Intl.NumberFormat("en-US").format(value) : ""
-                    }
-                    parser={(value) => (value ? value.replace(/,/g, "") : "")}
-                  />
-                </Form.Item>
-              </Col>
-
-              <Col span={12}>
-                <Form.Item
                   label="Selling Price"
                   dependencies={["unitCost"]}
                   name="unitPrice"
@@ -188,10 +170,27 @@ const MenuModifierForm = ({
                     className="!w-full"
                     placeholder="Enter Price"
                     suffix="MMK"
-                    formatter={(value) =>
-                      value ? new Intl.NumberFormat("en-US").format(value) : ""
-                    }
-                    parser={(value) => (value ? value.replace(/,/g, "") : "")}
+                    formatter={priceFormatter}
+                    parser={priceParser}
+                  />
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item
+                  label="Purchase Price"
+                  name="unitCost"
+                  rules={[
+                    { required: true, message: "Purchase Price is Required" },
+                  ]}
+                >
+                  <InputNumber
+                    disabled={isView}
+                    min={1}
+                    className="!w-full"
+                    placeholder="Enter Price"
+                    suffix="MMK"
+                    formatter={priceFormatter}
+                    parser={priceParser}
                   />
                 </Form.Item>
               </Col>

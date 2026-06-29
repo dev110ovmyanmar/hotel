@@ -19,6 +19,10 @@ import Toast from "./../../../../component/Toast/Toast";
 import usePermission from "./../../../../hooks/usePermission";
 import { upsertRoomRate, roomRateDetails } from "../../../../api/roomRateApi";
 import { ratePlanMeta } from "../../../../api/ratePlanApi";
+import {
+  priceFormatter,
+  priceParser,
+} from "../../../../component/PriceTag/PriceTag";
 
 const RoomRateForm = ({
   mode,
@@ -241,10 +245,8 @@ const RoomRateForm = ({
                   readOnly={isView}
                   suffix="MMK"
                   style={{ width: "100%" }}
-                  formatter={(value) =>
-                    value ? new Intl.NumberFormat("en-US").format(value) : ""
-                  }
-                  parser={(value) => (value ? value.replace(/,/g, "") : "")}
+                  formatter={priceFormatter}
+                  parser={priceParser}
                 />
               </Form.Item>
             </Col>
