@@ -41,7 +41,7 @@ const AgencyForm = ({
 }) => {
   const [form] = Form.useForm();
   const phoneValue = Form.useWatch("phone", form);
-
+  
   const isView = mode === "view";
   const isEdit = mode === "edit";
   const isAdd = mode === "add";
@@ -51,6 +51,7 @@ const AgencyForm = ({
     "authenticated",
   ])?.statuses;
   const initDataStatus = initData?.status;
+
   const chargeType = initData?.charge_type;
 
   const chargeTypeValue = Form.useWatch(["chargeType", "uuid"], form);
@@ -74,27 +75,30 @@ const AgencyForm = ({
   });
 
   useEffect(() => {
-    if (isAdd) {
+    if (drawerOpen && isAdd && initDataStatus) {
       form.resetFields();
-    }
 
-    if (isAdd && initDataStatus) {
       form.setFieldsValue({
         status: {
-          uuid: initDataStatus?.find((item) => item?.code === "active")?.uuid,
+          uuid: initDataStatus.find(
+            item => item.code === "active"
+          )?.uuid,
         },
       });
     }
+  }, [drawerOpen, isAdd, initDataStatus]);
+
+  useEffect(()=>{
     const AgencyFormDataView = isView || isEdit;
-    if (AgencyFormDataView && data) {
-      form.setFieldsValue({
-        ...data,
-        status: {
-          uuid: data?.status?.uuid,
-        },
-      });
-    }
-  }, [data, isEdit, isAdd]);
+      if (AgencyFormDataView && data) {
+        form.setFieldsValue({
+          ...data,
+          status: {
+            uuid: data?.status?.uuid,
+          },
+        });
+      }
+  },[isEdit,isView,data])
 
   const handleClose = () => {
     setDrawerOpen(false);
@@ -110,10 +114,8 @@ const AgencyForm = ({
     if (isAdd) {
       upsertPartners.mutate(modifiedValues, {
         onSuccess: () => {
-          form.resetFields();
-          setPage(1);
-          setDrawerOpen(false);
           handleClose();
+          setPage(1);
           Toast.success("Agency Created Successfully!");
         },
       });
@@ -304,6 +306,7 @@ const AgencyForm = ({
                   placeholder="Enter Charge Value"
                   formatter={priceFormatter}
                   parser={priceParser}
+                  maxLength={12}
                 />
               </Form.Item>
             </Col>

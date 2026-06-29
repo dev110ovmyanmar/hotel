@@ -1,5 +1,15 @@
 import React, { useEffect } from "react";
-import { Form, Input, Button, Select, Drawer, InputNumber, Switch } from "antd";
+import {
+  Form,
+  Input,
+  Button,
+  Select,
+  Drawer,
+  InputNumber,
+  Switch,
+  Row,
+  Col,
+} from "antd";
 import Toast from "../../../../component/Toast/Toast";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
 import useApiQuery from "../../../../hooks/useApiQuery";
@@ -7,7 +17,10 @@ import { queryClient } from "../../../../app/queryClient";
 import { getServiceDetails, upsertService } from "../../../../api/serviceApi";
 import FormButtons from "../../../../component/FormButtons/FormButtons";
 import Loader from "../../../../component/Loader/Loader";
-import { priceFormatter, priceParser } from "../../../../component/PriceTag/PriceTag";
+import {
+  priceFormatter,
+  priceParser,
+} from "../../../../component/PriceTag/PriceTag";
 
 const ServiceForm = ({
   mode,
@@ -174,25 +187,20 @@ const ServiceForm = ({
             <Loader />
           </div>
         ) : (
-          <Form form={form} layout="vertical" onFinish={onFinish}>
+          <Form
+            form={form}
+            layout="vertical"
+            onFinish={onFinish}
+            initialValues={{
+              isComplimentary: false,
+            }}
+          >
             <Form.Item
-              label="Name"
+              label="Service Name"
               name="name"
               rules={[{ required: true, message: "Name is Required" }]}
             >
               <Input readOnly={isView} placeholder="Enter Service Name" />
-            </Form.Item>
-
-            <Form.Item label="Base Price" name="basePrice">
-              <InputNumber
-                className="w-full!"
-                min={0}
-                readOnly={isView}
-                placeholder="Enter Base Price"
-                suffix="MMK"
-                formatter={priceFormatter}
-                parser={priceParser}
-              />
             </Form.Item>
 
             <Form.Item
@@ -222,31 +230,61 @@ const ServiceForm = ({
               )}
             </Form.Item>
 
+            <Row gutter={16}>
+              <Col span={12}>
+                <Form.Item
+                  label="Billing Type"
+                  name="billingType"
+                  rules={[
+                    { required: true, message: "Billing Type is Required" },
+                  ]}
+                  getValueProps={(value) => ({
+                    value: isView
+                      ? billingTypesList.find((item) => item.value === value)
+                          ?.label
+                      : value,
+                  })}
+                >
+                  {isView ? (
+                    <Input readOnly={isView} />
+                  ) : (
+                    <Select
+                      showSearch={{
+                        filterOption: (input, option) =>
+                          (option?.label ?? "")
+                            .toLowerCase()
+                            .includes(input.toLowerCase()),
+                      }}
+                      options={billingTypesList}
+                      placeholder="Select Billing Type"
+                      open={isView ? false : undefined}
+                    />
+                  )}
+                </Form.Item>
+              </Col>
+
+              <Col span={12}>
+                <Form.Item label="Base Price" name="basePrice">
+                  <InputNumber
+                    className="w-full!"
+                    min={0}
+                    readOnly={isView}
+                    placeholder="Enter Base Price"
+                    suffix="MMK"
+                    formatter={priceFormatter}
+                    parser={priceParser}
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
+
             <Form.Item
-              label="Billing Type"
-              name="billingType"
-              rules={[{ required: true, message: "Billing Type is Required" }]}
-              getValueProps={(value) => ({
-                value: isView
-                  ? billingTypesList.find((item) => item.value === value)?.label
-                  : value,
-              })}
+              label="Is Complimentary"
+              name="isComplimentary"
+              valuePropName="checked"
+              rules={[{ required: true }]}
             >
-              {isView ? (
-                <Input readOnly={isView} />
-              ) : (
-                <Select
-                  showSearch={{
-                    filterOption: (input, option) =>
-                      (option?.label ?? "")
-                        .toLowerCase()
-                        .includes(input.toLowerCase()),
-                  }}
-                  options={billingTypesList}
-                  placeholder="Select Billing Type"
-                  open={isView ? false : undefined}
-                />
-              )}
+              <Switch readOnly={isView} disabled={isView} />
             </Form.Item>
 
             <Form.Item
@@ -267,15 +305,6 @@ const ServiceForm = ({
                   open={isView ? false : undefined}
                 />
               )}
-            </Form.Item>
-
-            <Form.Item
-              label="Is Complimentary"
-              name="isComplimentary"
-              valuePropName="checked"
-              rules={[{ required: true }]}
-            >
-              <Switch readOnly={isView} disabled={isView} />
             </Form.Item>
 
             <Form.Item label="Description" name="description">

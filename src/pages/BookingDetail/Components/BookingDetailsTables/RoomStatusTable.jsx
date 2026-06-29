@@ -21,15 +21,19 @@ const columns = [
     dataIndex: ["room", "roomNo"],
     key: "room",
     align: "center",
+    render: (text) => {
+      return text? text: "-"
+    }
   },
   {
     title: "Room Status",
     dataIndex: ["room", "status"],
     key: "roomstatus",
+    align:"center",
     render: (status) => {
       
       return (
-        <ColorStatusTag status={status}/>
+        status? <ColorStatusTag status={status}/> : "-"
       );
     },
   },

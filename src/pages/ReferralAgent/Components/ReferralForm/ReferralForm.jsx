@@ -78,26 +78,27 @@ const ReferralForm = ({
   });
 
   useEffect(() => {
-    if (isAdd) {
+    if (drawerOpen && isAdd && initDataStatus) {
       form.resetFields();
-    }
 
-    if (isAdd && initDataStatus) {
       form.setFieldsValue({
         status: {
-          uuid: initDataStatus?.find((item) => item?.code === "active")?.uuid,
+          uuid: initDataStatus.find(
+            item => item.code === "active"
+          )?.uuid,
         },
       });
     }
+  }, [drawerOpen, isAdd, initDataStatus]);
 
+  useEffect(() => {
     const isViewReferralFormData = isView || isEdit;
-
     if (isViewReferralFormData && data) {
       form.setFieldsValue({
         ...data,
       });
     }
-  }, [data, isEdit, isAdd, initDataStatus]);
+  }, [isEdit, isView, data]);
 
   const handleClose = () => {
     setDrawerOpen(false);
@@ -113,10 +114,8 @@ const ReferralForm = ({
     if (isAdd) {
       upsertPartners.mutate(modifiedValues, {
         onSuccess: () => {
-          form.resetFields();
-          setPage(1);
-          setDrawerOpen(false);
           handleClose();
+          setPage(1);
           Toast.success("Referral Agent Created Successfully!");
         },
       });
@@ -299,6 +298,7 @@ const ReferralForm = ({
                   placeholder="Enter Charge Value"
                   formatter={priceFormatter}
                   parser={priceParser}
+                  maxLength={12}
                 />
               </Form.Item>
             </Col>
