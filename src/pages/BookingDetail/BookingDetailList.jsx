@@ -18,6 +18,7 @@ import { folioPaymentList, reservationDetails } from "../../api/reservationSecti
 import Loader from "../../component/Loader/Loader";
 import ServiceOrder from "./Components/BookingDetailsTables/ServiceOrder";
 import { useEffect } from "react";
+import FolioSummaryCard from "./Components/BookingDetailsTables/FolioSummaryCard";
 
 const BookingDetailList = () => {
   const navigate = useNavigate();
@@ -73,7 +74,7 @@ const BookingDetailList = () => {
       <Row gutter={[16, 16]}>
         {/* LEFT */}
         <Col xs={24} lg={16}>
-          <Row gutter={16}>
+          <Row gutter={[16,16]}>
             <Col span={24}>
               <PaymentSummaryTable data={data?.reservation?.folioPayments} />
             </Col>
@@ -98,6 +99,9 @@ const BookingDetailList = () => {
         {/* RIGHT */}
         <Col xs={24} lg={8}>
           <Row gutter={[0, 16]}>
+            <Col span={24}>
+              <FolioSummaryCard data={data?.reservation || {}} />
+            </Col>
             <Col span={24}>
               <SummaryCard data={data?.reservation || {}} />
             </Col>

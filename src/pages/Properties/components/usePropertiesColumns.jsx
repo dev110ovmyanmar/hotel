@@ -17,11 +17,11 @@ export default function usePropertiesColumns(onEdit, onView, onUpload) {
       key: "name",
       render: (text) => <p>{text}</p>
     },
-    {
-      title: "Address",
-      dataIndex: "address",
-      key: "address",
-    },
+    // {
+    //   title: "Address",
+    //   dataIndex: "address",
+    //   key: "address",
+    // },
     {
       title: "Email",
       dataIndex: "email",
@@ -55,8 +55,8 @@ export default function usePropertiesColumns(onEdit, onView, onUpload) {
     {
       title: "Actions",
       key: "actions",
-      fixed:"end",
-      align:"center",
+      fixed: "end",
+      align: "center",
       render: (_, record) => {
         return (
           <Dropdown

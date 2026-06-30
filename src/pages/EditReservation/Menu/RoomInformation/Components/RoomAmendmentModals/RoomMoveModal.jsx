@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Modal, Form, Input, Descriptions, Badge, Button, Divider, Space, Row, Col, Card } from 'antd';
+import { Modal, Form, Input, Descriptions, Badge, Button, Divider, Space, Row, Col, Card, Typography } from 'antd';
 import dayjs from 'dayjs';
 import { ArrowRightOutlined, CheckCircleOutlined, PlusOutlined, MinusOutlined, SwapLeftOutlined, SwapRightOutlined } from '@ant-design/icons';
 import { useApiMutation } from '../../../../../../hooks/useApiMutation';
@@ -10,6 +10,8 @@ import { createRoomAmendment } from '../../../../../../api/roomAmendmentApi';
 import ColorStatusTag from '../../../../../../component/ColorStatusTag/ColorStatusTag';
 import { MdOutlineBedroomParent } from "react-icons/md";
 import { GiBed } from "react-icons/gi";
+
+const { Text } = Typography;
 export default function RoomMoveModal({
     isOpen,
     onClose,
@@ -76,22 +78,33 @@ export default function RoomMoveModal({
                 (reservationRoomSearchDetails?.rooms?.length === 0)
                     ?
                     <Modal
+                        title={
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <div style={{ width: '4px', height: '18px', background: '#1677ff', borderRadius: '2px' }} />
+                                <span style={{ fontWeight: 600 }}>Room Amendment — Change Room</span>
+                            </div>
+                        }
                         open={isOpen}
                         onCancel={() => onClose(false)}
-                        onOk={() => onClose(false)}
+                        // onOk={() => onClose(false)}
                         cancelButtonProps={{ style: { display: 'none' } }}
+                        footer={null}
                     >
-                        <div className='text-lg font-bold text-center my-3'>
-                            There are no rooms available to switch to.
+                        <div className="text-center py-8">
+                            <Text type="secondary">There are no rooms available to move.</Text>
                         </div>
                     </Modal>
                     :
                     <Modal
                         title={
                             <div>
-                                <p className='text-[20px] font-bold'>
+                                {/* <p className='text-[20px] font-bold'>
                                     {selectRoomToMove ? "Review Room Move Summary" : "Change Room"}
-                                </p>
+                                </p> */}
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                    <div style={{ width: '4px', height: '18px', background: '#1677ff', borderRadius: '2px' }} />
+                                    <span style={{ fontWeight: 600 }}>Room Amendment — Change Room</span>
+                                </div>
                             </div>
                         }
                         closable={{ 'aria-label': 'Custom Close Button' }}

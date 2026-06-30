@@ -64,7 +64,9 @@ const AdminForm = ({
   const [initialValue, setInitialValue] = useState(null);
   const [finalValues, setFinalValues] = useState(null);
 
-  const roles = initData?.roles?.map((role) => ({
+  const roles = initData?.roles?.filter?.(role=>(
+    role.code !== "super_admin"
+  )).map((role) => ({
     value: role.uuid,
     label: role.name,
   }));

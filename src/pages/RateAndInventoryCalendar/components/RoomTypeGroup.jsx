@@ -156,9 +156,9 @@ const RoomTypeGroup = ({
                     const isEditing = editingCell?.rtId === rt.id && editingCell?.dateStr === dateStr;
                     const isLoading = loadingStates.availability[avail?.uuid];
                     const isDisabled = isPast || avail.stopSell || isLoading;
-                    const totalRooms = avail.totalRooms ?? null;
+
                     const editingValue = isEditing ? parseInt(editingCell.value, 10) : NaN;
-                    const isOverLimit = isEditing && !isNaN(editingValue) && totalRooms != null && editingValue > totalRooms;
+                    const isOverLimit = isEditing && !isNaN(editingValue) && editingValue > avail.availableRooms;
                     return (
                         <td
                             key={i}
@@ -167,7 +167,7 @@ const RoomTypeGroup = ({
                             {avail?.uuid && !isPast ? (
                                 <Tooltip
                                     open={isOverLimit}
-                                    title={`Max: ${totalRooms}`}
+                                    title={`Max: ${avail?.availableRooms}`}
                                     color="red"
                                     placement="top"
                                 >
@@ -176,9 +176,9 @@ const RoomTypeGroup = ({
                                         className="text-center text-[12px] font-bold text-green-600 px-1 !w-[50px] !border-gray-200 !rounded"
                                         status={isOverLimit ? 'error' : undefined}
                                         disabled={isDisabled}
-                                        value={isEditing ? editingCell.value : avail.stopSell ? 0 : avail.available}
+                                        value={isEditing ? editingCell.value : avail.stopSell ? 0 : avail.availableRooms}
                                         onFocus={() =>
-                                            setEditingCell({ rtId: rt.id, dateStr, value: avail.available })
+                                            setEditingCell({ rtId: rt.id, dateStr, value: avail.availableRooms })
                                         }
                                         onChange={(e) => {
                                             const raw = e.target.value;
@@ -196,7 +196,7 @@ const RoomTypeGroup = ({
                                             // }
                                         }}
                                         onBlur={() => {
-                                            if (isEditing && editingCell?.value !== avail.available) {
+                                            if (isEditing && editingCell?.value !== avail.availableRooms) {
                                                 handleAvailableUpdate(rt.id, avail.uuid, editingCell?.value, totalRooms);
                                             } else {
                                                 setEditingCell(null);
@@ -220,7 +220,7 @@ const RoomTypeGroup = ({
                                 </Tooltip>
                             ) : (
                                 <span className={isPast ? 'text-gray-400' : ''}>
-                                    {avail.stopSell ? 0 : avail.available}
+                                    {avail.stopSell ? 0 : avail.availableRooms}
                                 </span>
                             )}
                         </td>
@@ -240,7 +240,8 @@ const RoomTypeGroup = ({
                             key={i}
                             className={`border-b border-[#dee2e6] text-center text-[13px] font-bold text-red-500 ${cellClass}`}
                         >
-                            {avail.sold}
+                            {/* {avail.sold} */}
+                            {avail.soldRooms}
                         </td>
                     );
                 })}

@@ -45,6 +45,7 @@ const PropertiesListing = () => {
       })) || [],
     [initData],
   );
+
   const countryOptions = useMemo(
     () =>
       initData?.locations?.map((item) => ({

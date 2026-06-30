@@ -3,6 +3,7 @@ import { Card, Space, Table, Typography, Tag } from "antd";
 import { IoCardOutline } from "react-icons/io5";
 import FolioPaymentDetailModal from "../BookingDetailModals/FolioPaymentDetailModal";
 import ColorStatusTag from "../../../../component/ColorStatusTag/ColorStatusTag";
+import PriceTag from "../../../../component/PriceTag/PriceTag";
 
 const { Text } = Typography;
 
@@ -33,12 +34,21 @@ const columns = [
     key: "paymentMethod",
   },
   {
+    title: "Payment Type",
+    dataIndex: ["paymentType", "name"],
+    key: "paymentType",
+  },
+  {
     title: "Amount",
     dataIndex: "amount",
     key: "amount",
-    render: (value, record) => {
-      const symbol = record.currency?.symbol || "";
-      return <strong>{symbol} {value?.toLocaleString()}</strong>;
+    render: (value) => {
+      return (
+        <>
+          <span>{value?.toLocaleString()}</span>
+          <span>MMK</span>
+        </>
+      );
     },
   },
   {

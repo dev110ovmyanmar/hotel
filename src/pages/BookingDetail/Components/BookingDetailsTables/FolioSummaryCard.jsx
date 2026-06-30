@@ -5,19 +5,19 @@ import PriceTag from "../../../../component/PriceTag/PriceTag";
 
 const { Text, Title } = Typography;
 
-const SummaryCard = ({ data }) => {
-  const reservation = data?.summary;
+const FolioSummaryCard = ({ data }) => {
+  const reservation = data?.folioSummary;
   const CustomTitle = (
     <Space>
-      <div className="summary-icon-box">
-        <DollarCircleOutlined style={{ color: "#52c41a", fontSize: "20px" }} />
+      <div className="folio-summary-icon-box">
+        <DollarCircleOutlined style={{ color: "#1ab3c4", fontSize: "20px" }} />
       </div>
-      <Text>Room Summary</Text>
+      <Text>Folio Summary</Text>
     </Space>
   );
 
   return (
-    <Card title={CustomTitle} className="summary-card line-height">
+    <Card title={CustomTitle} className="folio-summary-card line-height">
       <Row justify="space-between">
         <Text>Total Charge</Text>
         <div className="flex  justify-end gap-1">
@@ -44,19 +44,25 @@ const SummaryCard = ({ data }) => {
         </div>
       </Row>
 
-      {/* <Row justify="space-between">
+      <Row justify="space-between">
         <Text>Payment</Text>
-        <Text>- 300,000 MMK</Text>
+        <div className="flex  justify-end gap-1">
+          <PriceTag value={reservation?.paidAmount} />
+          <span>MMK</span>
+        </div>
       </Row>
 
       <Divider className="custom-line" />
 
       <Row justify="space-between">
         <Text strong>Balance</Text>
-        <Text>42,500 MMK</Text>
+        <div className="flex  justify-end gap-1">
+          <PriceTag value={reservation?.balanceAmount} />
+          <span>MMK</span>
+        </div>
       </Row>
 
-      <Divider className="custom-line" />
+      {/* <Divider className="custom-line" />
 
       <Row justify="space-between">
         <Text>Total Credit</Text>
@@ -66,4 +72,4 @@ const SummaryCard = ({ data }) => {
   );
 };
 
-export default SummaryCard;
+export default FolioSummaryCard;
