@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { LIMITS } from "../../variables/constants";
 import useApiQuery from "../../hooks/useApiQuery";
-import ListHeader from './../../component/ListHeader/ListHeader';
-import { fetchPayment } from './../../api/paymentApi';
-import PaymentTable from './Components/PaymentTable';
-import PaymentForm from './Components/PaymentForm/PaymentForm';
-
+import ListHeader from "./../../component/ListHeader/ListHeader";
+import { fetchPayment } from "./../../api/paymentApi";
+import PaymentTable from "./Components/PaymentTable";
+import PaymentForm from "./Components/PaymentForm/PaymentForm";
+import { PERMISSIONS } from "../../variables/permission";
 
 // PaymentList
 const PaymentList = () => {
@@ -33,14 +33,14 @@ const PaymentList = () => {
   });
 
   useEffect(() => {
-    setPage(1)
+    setPage(1);
   }, [keyword, status, perPage]);
 
   const handleAdd = () => {
     setDrawerOpen(true);
     setSelectedData({});
     setMode("add");
-  }
+  };
 
   return (
     <div className="w-full px-6 py-2">
@@ -52,9 +52,9 @@ const PaymentList = () => {
           setKeyword={setKeyword}
           addButtonText="Add New Payment"
           onAdd={handleAdd}
+          permission={PERMISSIONS.TAX_CREATE}
         />
       </div>
-
 
       <PaymentTable
         data={data?.data || []}
@@ -75,11 +75,9 @@ const PaymentList = () => {
         setMode={setMode}
         selectedData={selectedData}
         setSelectedData={setSelectedData}
-
       />
     </div>
-  )
+  );
 };
-
 
 export default PaymentList;
