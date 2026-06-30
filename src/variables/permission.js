@@ -238,10 +238,10 @@ export const PERMISSIONS = {
   MENU_CATEGORY_EDIT: "menu-category.edit",
 
   // Menu Item
-  MENU_ITEM_LIST: "menu.list",
-  MENU_ITEM_VIEW: "menu.view",
-  MENU_ITEM_CREATE: "menu.create",
-  MENU_ITEM_EDIT: "menu.edit",
+  // MENU_ITEM_LIST: "menu.list",
+  // MENU_ITEM_VIEW: "menu.view",
+  // MENU_ITEM_CREATE: "menu.create",
+  // MENU_ITEM_EDIT: "menu.edit",
 
   // Menu Modifier 
   MENU_MODIFIER_LIST: "menu.list",

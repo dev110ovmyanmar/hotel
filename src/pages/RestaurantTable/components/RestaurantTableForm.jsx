@@ -14,6 +14,8 @@ import {
   MIN_SEAT_CAPACITY,
   MAX_SEAT_CAPACITY,
 } from "../../../variables/constants";
+import usePermission from "../../../hooks/usePermission";
+import { PERMISSIONS } from "../../../variables/permission";
 
 const RestaurantTableForm = ({
   mode,
@@ -26,10 +28,13 @@ const RestaurantTableForm = ({
   page,
 }) => {
   const [form] = Form.useForm();
+  const { hasPermission } = usePermission();
 
   const isView = mode === "view";
   const isEdit = mode === "edit";
   const isAdd = mode === "add";
+
+  const canEdit = hasPermission(PERMISSIONS.RESTAURANT_TABLE_EDIT);
 
   // 1. API Query for Table Detail
   const { data, isLoading } = useApiQuery({
@@ -53,9 +58,8 @@ const RestaurantTableForm = ({
 
   // Find the 'Available' status UUID safely
   const availableStatusUuid = useMemo(() => {
-    return tableStatusOptions.find(
-      (s) => s.label.toLowerCase() === "available"
-    )?.value;
+    return tableStatusOptions.find((s) => s.label.toLowerCase() === "available")
+      ?.value;
   }, [tableStatusOptions]);
 
   // 2. Handle Form Filling and Resetting when Drawer opens/changes
@@ -129,9 +133,11 @@ const RestaurantTableForm = ({
       open={drawerOpen}
       extra={
         isView ? (
-          <Button type="primary" onClick={() => setMode("edit")}>
-            Edit
-          </Button>
+          canEdit && (
+            <Button type="primary" onClick={() => setMode("edit")}>
+              Edit
+            </Button>
+          )
         ) : (
           <FormButtons
             onClick={() => form.submit()}
@@ -183,11 +189,12 @@ const RestaurantTableForm = ({
               {/* FIXED: Changed name from "status" to "tableStatus" to align with state */}
               <Form.Item
                 label="Status"
-                name="tableStatus" 
+                name="tableStatus"
                 rules={[{ required: true, message: "Status is Required" }]}
                 getValueProps={(value) => ({
                   value: isView
-                    ? tableStatusOptions.find((item) => item.value === value)?.label
+                    ? tableStatusOptions.find((item) => item.value === value)
+                        ?.label
                     : value,
                 })}
               >

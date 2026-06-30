@@ -1,7 +1,7 @@
 import { Dropdown, Space, Table } from "antd";
 import { useState } from "react";
 import { MoreOutlined, EyeOutlined, EditOutlined } from "@ant-design/icons";
-import usePermission from "../../../hooks/usePermission"; // <-- Permission hook
+import usePermission from "../../../hooks/usePermission"; 
 import { PERMISSIONS } from "../../../variables/permission";
 import MenuModifierForm from "../Components/MenuModifierForm/MenuModifierForm";
 import PriceTag from "../../../component/PriceTag/PriceTag";
@@ -59,7 +59,7 @@ const MenuModifierTable = ({
             key: "view",
             label: "View",
             icon: <EyeOutlined style={{ fontSize: "12px" }} />,
-            // permission: PERMISSIONS.ROOM_RATE_VIEW,
+            permission: PERMISSIONS.MENU_MODIFIER_VIEW,
             onClick: () => {
               setDrawerOpen(true);
               setMode("view");
@@ -70,7 +70,7 @@ const MenuModifierTable = ({
             key: "edit",
             label: "Edit",
             icon: <EditOutlined style={{ fontSize: "12px" }} />,
-            // permission: PERMISSIONS.ROOM_RATE_EDIT,
+            permission: PERMISSIONS.MENU_MODIFIER_EDIT,
             onClick: () => {
               setDrawerOpen(true);
               setMode("edit");
