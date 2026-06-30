@@ -13,7 +13,13 @@ const ALL_TABS = [
 ];
 
 const BASIC_TABS = ["booking-detail", "room-information"];
-const EXTENDED_TABS = [...BASIC_TABS, "guest-details", "event-facility-booking", "service-order", "folio-operations"];
+const EXTENDED_TABS = [
+  ...BASIC_TABS,
+  "guest-details",
+  "event-facility-booking",
+  "service-order",
+  "folio-operations",
+];
 
 const ReservationMenu = ({ data }) => {
   const navigate = useNavigate();
@@ -30,12 +36,19 @@ const ReservationMenu = ({ data }) => {
 
   const rawCode = data?.reservationRoom?.roomStatus?.code || "";
   const statusCode = rawCode.toLowerCase().replace("-", "_");
-  const cancelledFromStatus = data?.reservationRoom?.cancelledFromStatus?.code || "";
+  const cancelledFromStatus =
+    data?.reservationRoom?.cancelledFromStatus?.code || "";
 
   const filteredTabs = useMemo(() => {
+    if (!data || !statusCode) {
+      return [];
+    }
     if (statusCode === "cancelled") {
       return ALL_TABS.filter((tab) =>
-        (cancelledFromStatus === "confirmed" ? EXTENDED_TABS : BASIC_TABS).includes(tab.key)
+        (cancelledFromStatus === "confirmed"
+          ? EXTENDED_TABS
+          : BASIC_TABS
+        ).includes(tab.key),
       );
     }
 
@@ -43,14 +56,30 @@ const ReservationMenu = ({ data }) => {
       checked_in: EXTENDED_TABS,
       pending: BASIC_TABS,
       booked: BASIC_TABS,
-      confirmed: [...BASIC_TABS, "guest-details", "event-facility-booking", "service-add-on"],
-      no_show: [...BASIC_TABS, "guest-details", "service-order", "folio-operations"],
-      checked_out: [...BASIC_TABS, "guest-details", "service-order", "folio-operations"],
+      confirmed: [
+        ...BASIC_TABS,
+        "guest-details",
+        "event-facility-booking",
+        "service-add-on",
+      ],
+      no_show: [
+        ...BASIC_TABS,
+        "guest-details",
+        "service-order",
+        "folio-operations",
+      ],
+      checked_out: [
+        ...BASIC_TABS,
+        "guest-details",
+        "service-order",
+        "folio-operations",
+      ],
     };
 
     const allowedKeys = statusTabMapping[statusCode];
 
-    if (!allowedKeys) return ALL_TABS;
+    if (!allowedKeys) return [];
+
     return ALL_TABS.filter((tab) => allowedKeys.includes(tab.key));
   }, [statusCode, cancelledFromStatus]);
 

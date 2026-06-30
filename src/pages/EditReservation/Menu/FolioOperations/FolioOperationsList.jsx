@@ -8,7 +8,11 @@ import FolioOperationsTable from "./Components/FolioOperationsTable";
 import FolioInvoicePrint from "./Components/FolioInvoicePrint";
 import { Card, Divider, Modal } from "antd";
 import useApiQuery from "../../../../hooks/useApiQuery";
-import { getFolioList, createFolio, transferFolioLines } from "../../../../api/folioApi";
+import {
+  getFolioList,
+  createFolio,
+  transferFolioLines,
+} from "../../../../api/folioApi";
 import { LIMITS } from "../../../../variables/constants";
 import { useLocation } from "react-router-dom";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
@@ -17,6 +21,7 @@ import { loadState } from "../../../../utils";
 import { LOCAL_STORAGE_KEYS } from "../../../../variables/constants";
 import { adminDetails } from "../../../../api/adminApi";
 import { useNavigate, useParams } from "react-router-dom";
+import Loader from "../../../../component/Loader/Loader";
 
 const FolioOperationsList = () => {
   const [keyword, setKeyword] = useState("");
@@ -41,12 +46,12 @@ const FolioOperationsList = () => {
   });
   const adminName = `${loginAdminDetails?.name}`;
 
-
   // Property image
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
   const propertyFiles = initData?.property?.propertyFiles;
-  const propretyImage = propertyFiles?.find((file) => file?.name === "email_photo")?.file;
-
+  const propretyImage = propertyFiles?.find(
+    (file) => file?.name === "email_photo",
+  )?.file;
 
   const navigate = useNavigate();
   const { bookingId } = useParams();
@@ -62,11 +67,15 @@ const FolioOperationsList = () => {
       cleanId === ":bookingId" ||
       cleanId.length < 32 // Checks if the user chopped or deleted characters from the ID
     ) {
-      navigate('/404', { replace: true });
+      navigate("/404", { replace: true });
     }
   }, [bookingId, navigate]);
 
-  const { data: folioList, isLoading, error } = useApiQuery({
+  const {
+    data: folioList,
+    isLoading,
+    error,
+  } = useApiQuery({
     fetchQueryName: "folios",
     fetchQueryFunction: getFolioList,
     params: {
@@ -78,7 +87,10 @@ const FolioOperationsList = () => {
 
   useEffect(() => {
     if (bookingId && folioList?.reservation?.reservationNo) {
-      sessionStorage.setItem(`breadcrumb_${bookingId}`, folioList.reservation.reservationNo);
+      sessionStorage.setItem(
+        `breadcrumb_${bookingId}`,
+        folioList.reservation.reservationNo,
+      );
       window.dispatchEvent(new Event("breadcrumb_updated"));
     }
   }, [folioList, bookingId]);
@@ -101,7 +113,10 @@ const FolioOperationsList = () => {
     invalidateKeys: [["folios"]],
   });
 
-  const handleTransferLines = ({ destinationFolioUuid, folioLineIds }, onSuccess) => {
+  const handleTransferLines = (
+    { destinationFolioUuid, folioLineIds },
+    onSuccess,
+  ) => {
     transferLinesMutation.mutate(
       {
         reservation: { uuid: reservationUuid },
@@ -149,7 +164,10 @@ const FolioOperationsList = () => {
 
   const handlePrintAll = useCallback(() => {
     if (!folioList?.data || folioList.data.length === 0) return;
-    setPrintTarget({ folios: folioList.data, reservation: folioList.reservation });
+    setPrintTarget({
+      folios: folioList.data,
+      reservation: folioList.reservation,
+    });
   }, [folioList]);
 
   // Global trigger event listener setup
@@ -158,6 +176,14 @@ const FolioOperationsList = () => {
     window.addEventListener("print-all-folios", handler);
     return () => window.removeEventListener("print-all-folios", handler);
   }, [handlePrintAll]);
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-full min-h-[300px]">
+        <Loader />
+      </div>
+    );
+  }
 
   return (
     <div className="w-full px-6 py-2">
@@ -187,22 +213,25 @@ const FolioOperationsList = () => {
         onTransferLines={handleTransferLines}
         isTransferring={transferLinesMutation.isPending}
         // Triggers single folio extraction configurations
-        onPrintFolio={(folio) => setPrintTarget({ folio, reservation: folioList?.reservation })}
+        onPrintFolio={(folio) =>
+          setPrintTarget({ folio, reservation: folioList?.reservation })
+        }
       />
 
       {/* Renders template outside the main DOM tree to prevent layout interference */}
-      {printTarget && createPortal(
-        <div id="native-print-container">
-          <FolioInvoicePrint
-            folios={printTarget.folios}
-            folio={printTarget.folio}
-            adminName={adminName}
-            reservation={printTarget.reservation}
-            propertyImage={propretyImage}
-          />
-        </div>,
-        document.body
-      )}
+      {printTarget &&
+        createPortal(
+          <div id="native-print-container">
+            <FolioInvoicePrint
+              folios={printTarget.folios}
+              folio={printTarget.folio}
+              adminName={adminName}
+              reservation={printTarget.reservation}
+              propertyImage={propretyImage}
+            />
+          </div>,
+          document.body,
+        )}
 
       <Modal
         title="Create New Folio"
