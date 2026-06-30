@@ -17,6 +17,8 @@ import {
   priceFormatter,
   priceParser,
 } from "../../../../component/PriceTag/PriceTag";
+import usePermission from "../../../../hooks/usePermission";
+import { PERMISSIONS } from "../../../../variables/permission";
 
 const FAndBInventoryForm = ({
   mode,
@@ -29,12 +31,14 @@ const FAndBInventoryForm = ({
   setPage,
 }) => {
   const [form] = Form.useForm();
+  const { hasPermission } = usePermission();
 
   const isView = mode === "view";
   const isEdit = mode === "edit";
   const isAdd = mode === "add";
 
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
+  const canEdit = hasPermission(PERMISSIONS.FOOD_AND_BEVERAGE_INVENTORY_EDIT);
 
   const statuses = initData?.statuses?.status;
   // ?.filter((item) => item.code !== "blocked")
@@ -171,14 +175,11 @@ const FAndBInventoryForm = ({
                   : "Create Inventory"}
             </span>
             {isView ? (
-              <Button
-                type="primary"
-                onClick={() => {
-                  setMode("edit");
-                }}
-              >
-                Edit
-              </Button>
+              canEdit && (
+                <Button type="primary" onClick={() => setMode("edit")}>
+                  Edit
+                </Button>
+              )
             ) : (
               <FormButtons
                 onClick={() => form.submit()}

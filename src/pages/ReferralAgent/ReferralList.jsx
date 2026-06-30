@@ -5,6 +5,7 @@ import ListHeader from "../../component/ListHeader/ListHeader";
 import { fetchPartner } from '../../api/partnerApi';
 import ReferralTable from './Components/ReferralTable';
 import ReferralForm from './Components/ReferralForm/ReferralForm';
+import { PERMISSIONS } from "../../variables/permission";
 
 const ReferralList = () => {
   const [keyword, setKeyword] = useState("");
@@ -49,6 +50,7 @@ const ReferralList = () => {
           setKeyword={setKeyword}
           addButtonText="Add New Referral Agent"
           onAdd={handleAdd}
+          permission={PERMISSIONS.PARTNER_CREATE}
         />
       </div>
 

@@ -23,6 +23,8 @@ import {
   priceFormatter,
   priceParser,
 } from "../../../../component/PriceTag/PriceTag";
+import usePermission from "../../../../hooks/usePermission";
+import { PERMISSIONS } from "../../../../variables/permission";
 
 const MenuItemForm = ({
   mode,
@@ -35,6 +37,7 @@ const MenuItemForm = ({
   setPage,
 }) => {
   const [form] = Form.useForm();
+  const { hasPermission } = usePermission();
 
   const isView = mode === "view";
   const isEdit = mode === "edit";
@@ -42,6 +45,7 @@ const MenuItemForm = ({
 
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
   const status = initData?.statuses?.status;
+  const canEdit = hasPermission(PERMISSIONS.MENU_MODIFIER_EDIT);
 
   const statusList = status
     ?.filter((item) => item.code !== "blocked")
@@ -167,14 +171,11 @@ const MenuItemForm = ({
                   : "Create Menu Item"}
             </span>
             {isView ? (
-              <Button
-                type="primary"
-                onClick={() => {
-                  setMode("edit");
-                }}
-              >
-                Edit
-              </Button>
+              canEdit && (
+                <Button type="primary" onClick={() => setMode("edit")}>
+                  Edit
+                </Button>
+              )
             ) : (
               <FormButtons
                 onClick={() => form.submit()}

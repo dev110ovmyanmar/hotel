@@ -117,9 +117,9 @@ const AddPaymentForm = ({
 
     const onFinish = (values) => {
         const payload = {
-            reservation: { uuid: bookingDetails?.reservation?.uuid },
+            reservation: { uuid: bookingDetails?.reservation?.uuid || bookingDetails?.uuid },
             guest: { uuid: values.guest },
-            folio: { uuid: bookingDetails?.reservation?.parentFolio?.uuid },
+            folio: { uuid: bookingDetails?.reservation?.parentFolio?.uuid || bookingDetails?.parentFolio?.uuid },
             paymentMethod: { uuid: values.paymentMethod },
             paymentStatus: { uuid: values.paymentStatus },
             amount: values.amount,
@@ -175,7 +175,7 @@ const AddPaymentForm = ({
                 <div className="flex items-center justify-between bg-slate-50 border border-slate-200 rounded-xl p-3 mb-6">
                     <span className="text-slate-600 font-medium text-sm">Folio No</span>
                     <span className="text-slate-800 font-semibold text-base bg-white px-3 py-1 rounded-md shadow-sm border border-slate-100">
-                        {bookingDetails?.reservation?.parentFolio?.folioNo || "N/A"}
+                        {bookingDetails?.reservation?.parentFolio?.folioNo || bookingDetails?.parentFolio?.folioNo}
                     </span>
                 </div>
                 <div className="flex items-center !mb-3">
@@ -257,7 +257,7 @@ const AddPaymentForm = ({
                         <Form.Item
                             label={<span className="text-slate-600 font-medium">Guest</span>}
                             name="guest"
-                            rules={[{ required: true, message: "Please select a guest" }]}
+                        // rules={[{ required: true, message: "Please select a guest" }]}
                         >
                             <Select
                                 showSearch={{

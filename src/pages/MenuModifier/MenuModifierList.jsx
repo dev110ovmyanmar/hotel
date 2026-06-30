@@ -50,7 +50,7 @@ const MenuModifierList = () => {
           setKeyword={setKeyword}
           addButtonText="Add New Menu Modifier "
           onAdd={handleAdd}
-          // permission={PERMISSIONS.ROOM_RATE_CREATE}
+          permission={PERMISSIONS.MENU_MODIFIER_CREATE}
         />
       </div>
 

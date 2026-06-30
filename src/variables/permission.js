@@ -32,6 +32,7 @@ export const PERMISSIONS = {
   PERMISSION_CREATE: "permission.create",
   PERMISSION_EDIT: "permission.edit",
 
+  // Settings
   // Property
   PROPERTY_LIST: "property.list",
   PROPERTY_VIEW: "property.view",
@@ -44,6 +45,18 @@ export const PERMISSIONS = {
   POLICY_CREATE: "policy.create",
   POLICY_EDIT: "policy.edit",
   POLICY_DUPLICATE: "policy.duplicate",
+
+    // Country & City Location
+  LOCATION_VIEW: "location.view",
+  LOCATION_LIST: "location.list",
+  LOCATION_CREATE: "location.create",
+  LOCATION_EDIT: "location.edit",
+
+  // Privacy Policy
+  PRIVACY_POLICY_LIST: "privacy-policy.list",
+  PRIVACY_POLICY_VIEW: "privacy-policy.view",
+  PRIVACY_POLICY_CREATE: "privacy-policy.create",
+  PRIVACY_POLICY_EDIT: "privacy-policy.edit",
 
   // Floor
   FLOOR_LIST: "floor.list",
@@ -115,6 +128,12 @@ export const PERMISSIONS = {
   SERVICE_INVENTORY_CREATE: "service-inventory.create",
   SERVICE_INVENTORY_EDIT: "service-inventory.edit",
 
+    //Service Packages
+  SERVICE_PACKAGE_LIST: "service-package.list",
+  SERVICE_PACKAGE_VIEW: "service-package.view",
+  SERVICE_PACKAGE_CREATE: "service-package.create",
+  SERVICE_PACKAGE_EDIT: "service-package.edit",
+
   // Payment
   PAYMENT_LIST: "payment.list",
   PAYMENT_VIEW: "payment.view",
@@ -169,6 +188,12 @@ export const PERMISSIONS = {
   FACILITY_PACKAGE_CREATE: "facility-package.create",
   FACILITY_PACKAGE_EDIT: "facility-package.edit",
 
+    // Facility Booking
+  FACILITY_BOOKING_LIST: "facility-booking.list",
+  FACILITY_BOOKING_VIEW: "facility-booking.view",
+  FACILITY_BOOKING_CREATE: "facility-booking.create",
+  FACILITY_BOOKING_EDIT: "facility-booking.edit",
+
   // Rate Plan
   RATE_PLAN_LIST: "rate-plan.list",
   RATE_PLAN_VIEW: "rate-plan.view",
@@ -213,10 +238,10 @@ export const PERMISSIONS = {
   MENU_CATEGORY_EDIT: "menu-category.edit",
 
   // Menu Item
-  MENU_ITEM_LIST: "menu.list",
-  MENU_ITEM_VIEW: "menu.view",
-  MENU_ITEM_CREATE: "menu.create",
-  MENU_ITEM_EDIT: "menu.edit",
+  // MENU_ITEM_LIST: "menu.list",
+  // MENU_ITEM_VIEW: "menu.view",
+  // MENU_ITEM_CREATE: "menu.create",
+  // MENU_ITEM_EDIT: "menu.edit",
 
   // Menu Modifier 
   MENU_MODIFIER_LIST: "menu.list",
@@ -242,7 +267,5 @@ export const PERMISSIONS = {
   RESERVATION_ROOM_CREATE: "reservation-room.view",
   RESERVATION_ROOM_SEARCH: "reservation-room.search",
 
-  //Service Packages
-  SERVICE_PACKAGE_LIST: "service-package.list",
 };
 

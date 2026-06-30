@@ -70,7 +70,7 @@ const ServicePackageTable = ({
             key: "view",
             label: "View",
             icon: <EyeOutlined style={{ fontSize: "12px" }} />,
-            permission: PERMISSIONS.SERVICE_VIEW,
+            permission: PERMISSIONS.SERVICE_PACKAGE_VIEW,
             onClick: () => {
               setDrawerOpen(true);
               setMode("view");
@@ -81,7 +81,7 @@ const ServicePackageTable = ({
             key: "edit",
             label: "Edit",
             icon: <EditOutlined style={{ fontSize: "12px" }} />,
-            permission: PERMISSIONS.SERVICE_EDIT,
+            permission: PERMISSIONS.SERVICE_PACKAGE_EDIT,
             onClick: () => {
               setDrawerOpen(true);
               setMode("edit");

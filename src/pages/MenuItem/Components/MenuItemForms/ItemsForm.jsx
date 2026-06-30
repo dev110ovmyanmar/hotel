@@ -4,9 +4,14 @@ import FormButtons from "../../../../component/FormButtons/FormButtons";
 import useApiQuery from "../../../../hooks/useApiQuery";
 import { getServiceMeta } from "../../../../api/serviceInventoryApi";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
-import { getFnbMenuInventoryMappingDetails, upsertFnbMenuInventoryMapping } from "../../../../api/fnbMenuInventoryMappingApi";
+import {
+  getFnbMenuInventoryMappingDetails,
+  upsertFnbMenuInventoryMapping,
+} from "../../../../api/fnbMenuInventoryMappingApi";
 import { menuMeta } from "../../../../api/menuApi";
 import Toast from "../../../../component/Toast/Toast";
+import { PERMISSIONS } from "../../../../variables/permission";
+import usePermission from "../../../../hooks/usePermission";
 
 const ItemsForm = ({
   selectedItem,
@@ -17,10 +22,13 @@ const ItemsForm = ({
   setMode,
 }) => {
   const [form] = Form.useForm();
+  const { hasPermission } = usePermission();
+
   const isView = mode === "item-view";
   const isEdit = mode === "item-edit";
   const isAdd = mode === "item-add";
-
+  
+  const canEdit = hasPermission(PERMISSIONS.MENU_MODIFIER_EDIT);
 
   const { data: menuMetaData } = useApiQuery({
     fetchQueryName: "menuMetaData",
@@ -125,14 +133,11 @@ const ItemsForm = ({
                   : "Create Item"}
             </span>
             {isView ? (
-              <Button
-                type="primary"
-                onClick={() => {
-                  setMode("item-edit");
-                }}
-              >
-                Edit
-              </Button>
+              canEdit && (
+                <Button type="primary" onClick={() => setMode("item-edit")}>
+                  Edit
+                </Button>
+              )
             ) : (
               <FormButtons
                 onClick={() => form.submit()}
@@ -156,7 +161,7 @@ const ItemsForm = ({
             getValueProps={(value) => ({
               value: isView
                 ? fnbInventoryOptions.find((item) => item.value === value)
-                  ?.label
+                    ?.label
                 : value,
             })}
           >
