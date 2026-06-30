@@ -543,6 +543,20 @@ span .ant-upload {
   padding-left: 12px;
 }
 
+/* Folio Summary */
+.folio-summary-icon-box {
+  background-color: #ffffff;
+  border: 1px solid #1ab3c4;
+  border-radius: 6px;
+  padding: 4px;
+  display: flex;
+}
+
+.folio-summary-card .ant-card-head {
+  border-left: 4px solid #1ab3c4;
+  padding-left: 12px;
+}
+
 /* reservation booking details (summary card) */
 .summary-icon-box {
   background-color: #ffffff;
@@ -712,4 +726,8 @@ span .ant-upload {
 
 .dark .ant-form-item-label > label::before{
   color: red !important
+}
+
+.dark .ant-table-expanded-row .ant-table-thead > tr > th {
+  color: black !important;
 }
