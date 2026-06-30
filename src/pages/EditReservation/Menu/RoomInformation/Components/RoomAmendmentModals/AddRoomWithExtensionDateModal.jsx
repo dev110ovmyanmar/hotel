@@ -9,7 +9,7 @@ import AddRoomExtensionLikeUpgradeDesignModal from './AddRoomExtensionLikeUpgrad
 
 export default function AddRoomWithExtensionDateModal({ 
     isOpen,
-    onClose,
+    extensionDateonClose,
     record,
     addRoomUuid,
     availabilitySearchs,
@@ -24,6 +24,7 @@ export default function AddRoomWithExtensionDateModal({
     const [pendingValues, setPendingValues] = useState(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [availabilitySearchRoomList, setAvailabilitySearchRoomList] = useState(false);
+    const [backToExtensionStayDate,setBackToExtensionStayDate] = useState(false);
 
     // Parse baseline properties out of your JSON structure
     const reservationNo = reservation?.reservationNo || `ID-${record?.id}`;
@@ -53,7 +54,8 @@ export default function AddRoomWithExtensionDateModal({
         availabilitySearchs.mutate(payload, {
             onSuccess: () => {
                 setAvailabilitySearchRoomList(true);
-                onClose(false)
+                // onClose(false)
+                setBackToExtensionStayDate(false)
             }
         })
     }
@@ -63,13 +65,13 @@ export default function AddRoomWithExtensionDateModal({
         setDaysToAdd(1);
         setCurrentStep('form');
         setPendingValues(null);
-        onClose(false);
+        extensionDateonClose(false);
     };
 
     return (
         <>
             {
-                availabilitySearchRoomList &&
+                (availabilitySearchRoomList || !backToExtensionStayDate) &&
                 <AddRoomExtensionLikeUpgradeDesignModal
                     isOpen={availabilitySearchRoomList}
                     onClose={() => setAvailabilitySearchRoomList(false)}
@@ -80,11 +82,13 @@ export default function AddRoomWithExtensionDateModal({
                     originalCheckout={originalCheckout}
                     newCheckoutDate={newCheckoutDate}
                     ratePlanUuid={ratePlanUuid}
+                    setBackToExtensionStayDate={setBackToExtensionStayDate}
+                    extensionDateonClose={extensionDateonClose}
                 />
             }
 
             {
-                !availabilitySearchRoomList &&
+                (!availabilitySearchRoomList || backToExtensionStayDate) &&
                 <Modal
                     title={
                         currentStep === 'form'

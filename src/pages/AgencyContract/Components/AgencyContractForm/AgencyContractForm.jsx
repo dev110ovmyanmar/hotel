@@ -217,11 +217,12 @@ const AgencyContractForm = ({
             },
           }}
         >
-          <Row gutter={[16,16]}>
+          <Row gutter={[16, 16]}>
             <Col span={24}>
-              <div >
+              <div className="mb-4 p-5 shadow-sm  border border-gray-200 bg-gray-100!">
                 <span className="text-red-500">* </span>
                 Selected Charge Type and Value effected on Selected Date Range.
+                <span className="text-red-500">* </span>
               </div>
             </Col>
             <Col span={12}>

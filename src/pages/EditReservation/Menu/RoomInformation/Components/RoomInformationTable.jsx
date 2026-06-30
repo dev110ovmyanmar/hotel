@@ -114,8 +114,6 @@ const RoomInformationTable = ({
     // enabled: !!selectedData?.reservation?.uuid
   });
 
-  console.log(availabilitySearchs, "AvailabilitySearchs");
-
   const handleAction = (key, record) => {
     setSelectedData(record);
     setActiveModal(key);
@@ -329,6 +327,14 @@ const RoomInformationTable = ({
                       key: "date_change",
                       label: "Change CI/CO Dates",
                       icon: <CalendarOutlined />,
+                      disabled: record?.checkinDate
+                        ? dayjs(record.checkinDate)
+                            .startOf("day")
+                            .isSame(dayjs().startOf("day")) ||
+                          dayjs(record.checkinDate)
+                            .startOf("day")
+                            .isBefore(dayjs().startOf("day"))
+                        : false,
                       onClick: () => handleAction("date_change", record),
                     },
                     ...(record?.isExtend !== false ||
@@ -660,7 +666,7 @@ const RoomInformationTable = ({
       <AddRoomWithExtensionDateModal
         isOpen={addRoomWithStayExtension}
         record={selectedData}
-        onClose={() => setAddRoomWithStayExtension(false)}
+        extensionDateonClose={() => setAddRoomWithStayExtension(false)}
         addRoomUuid={addRoomUuid}
         availabilitySearchs={availabilitySearchs}
         reservation={reservation}

@@ -7,6 +7,7 @@ import GuestForm from "./Components/NewGuestForm";
 import { LIMITS } from "../../variables/constants";
 import { useNavigate } from "react-router-dom";
 import NewGuestUploadForm from "./Components/NewGuestUploadForm";
+import { PERMISSIONS } from "../../variables/permission";
 
 const GuestList = () => {
   const [selectedRow, setSelectedRow] = useState(null);
@@ -85,6 +86,7 @@ const GuestList = () => {
           setKeyword={setKeyword}
           addButtonText="Add New Guest"
           onAdd={handleAdd}
+          permission={PERMISSIONS?.GUEST_CREATE}
         />
       </div>
 

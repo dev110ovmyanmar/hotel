@@ -15,7 +15,7 @@ const ChangeStatusForm = ({ reservationDetails, open, onClose }) => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
   const { bookingId } = useParams();
-  const uuid = bookingId; 
+  const uuid = bookingId;
 
   const selectedStatusUuid = Form.useWatch("changeBookingStatusTo", form);
   const selectedRooms = Form.useWatch("reservationRooms", form) || [];
@@ -87,9 +87,6 @@ const ChangeStatusForm = ({ reservationDetails, open, onClose }) => {
       booked: "text-[#0958D9] bg-[#E6F4FF] text-xs p-1 rounded ",
       confirmed: "text-[#389E0D] bg-[#F6FFED] text-xs p-1 rounded",
       checked_in: "text-[#08979C] bg-[#E6FFFB] text-xs p-1 rounded",
-      checked_out: "text-[#FF8D28] bg-[#FFF4F1] text-xs p-1 rounded",
-      "no-show": "text-gray-800 bg-gray-100 text-xs p-1 rounded",
-      cancelled: "text-red-600 bg-red-100 text-xs p-1 rounded",
     };
 
     return roomsArray
@@ -111,7 +108,7 @@ const ChangeStatusForm = ({ reservationDetails, open, onClose }) => {
         const roomNo = roomItem?.room?.roomNo || roomItem?.roomNo;
         const roomTypeName = roomItem?.roomType?.name || "Standard Room";
         const roomStatus = roomItem?.roomStatus?.name || "";
-        const statusCode = roomStatus.toLowerCase().trim();
+        const statusCode = roomStatus.toLowerCase().replace(/\s+/g, "_");
         const statusColorClass =
           statusColorMap[statusCode] ||
           "text-gray-600 bg-gray-100 text-xs p-1 rounded";

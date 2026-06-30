@@ -5,6 +5,7 @@ import ListHeader from "../../component/ListHeader/ListHeader";
 import ServiceInventoryTable from "./components/ServiceInventoryTable";
 import ServiceInventoryForm from "./components/ServiceInventoryForm";
 import { LIMITS } from "../../variables/constants";
+import { PERMISSIONS } from "../../variables/permission";
 
 const ServiceInventoryListing = () => {
   const [selectedRow, setSelectedRow] = useState(null);
@@ -67,6 +68,7 @@ const ServiceInventoryListing = () => {
           setKeyword={setKeyword}
           addButtonText="Add New Item"
           onAdd={handleAdd}
+          permission={PERMISSIONS.SERVICE_INVENTORY_CREATE}
         />
       </div>
 
