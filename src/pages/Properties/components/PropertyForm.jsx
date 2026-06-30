@@ -56,7 +56,7 @@ const PropertyForm = ({
   const createProperty = useApiMutation({
     mutationFn: upsertProperty,
     invalidateKeys: [["properties"]],
-    shouldInvalidate: page === 1
+    // shouldInvalidate: page === 1
   });
 
   const editProperty = useApiMutation({
@@ -476,22 +476,22 @@ const PropertyForm = ({
         size={550}
         open={settingDrawer}
         onClose={() => {
-            setSettingDrawer(false);
-            settingForm.resetFields(); // Reset when closing
+          setSettingDrawer(false);
+          settingForm.resetFields(); // Reset when closing
         }}
         footer={null}
         destroyOnClose // Important for clean form states
         extra={
-        <div className="flex gap-2">
-          <Button 
-          type="primary" 
-          onClick={() => settingForm.submit()} // Triggers SettingForm's onFinish
-          loading={editProperty.isLoading} // Show loading state if API is active
-          >
-        Create
-        </Button>
-        </div>
-  }
+          <div className="flex gap-2">
+            <Button
+              type="primary"
+              onClick={() => settingForm.submit()} // Triggers SettingForm's onFinish
+              loading={editProperty.isLoading} // Show loading state if API is active
+            >
+              Create
+            </Button>
+          </div>
+        }
       >
         <SettingForm
           // initialValues={editingSetting}
