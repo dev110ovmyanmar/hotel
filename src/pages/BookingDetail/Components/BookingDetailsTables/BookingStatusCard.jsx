@@ -7,7 +7,7 @@ import ReservationStatusColor from "../../../../component/ReservationStatusColor
 
 const { Text } = Typography;
 
-const RoomStatusCard = ({ data }) => {
+const BookingStatusCard = ({ data }) => {
   const reservation = data?.reservationRoom;
   const CustomTitle = (
     <Space>
@@ -23,11 +23,11 @@ const RoomStatusCard = ({ data }) => {
       <Card
         title={CustomTitle}
         className="booking-status-card line-height"
-        // extra={
-        //   <ReservationStatusColor
-        //     status={data?.reservation?.reservationStatus?.name}
-        //   />
-        // }
+      // extra={
+      //   <ReservationStatusColor
+      //     status={data?.reservation?.reservationStatus?.name}
+      //   />
+      // }
       >
         {/* <Row>
           <Col span={8}>
@@ -77,16 +77,24 @@ const RoomStatusCard = ({ data }) => {
 
         <div>
           <Text>Booking Source: </Text>
-          <Text strong>{data?.reservation?.source?.name || "-"}</Text>
+          <Text strong>{data?.reservation?.bookedVia?.name || "-"}</Text>
         </div>
 
         <div>
           <Text>Source Type: </Text>
           <Text strong>{data?.reservation?.sourceType?.name}</Text>
         </div>
+
+        {
+          data?.reservation?.source?.name &&
+          <div>
+            <Text>Source Name: </Text>
+            <Text strong>{data?.reservation?.source?.name}</Text>
+          </div>
+        }
       </Card>
     </>
   );
 };
 
-export default RoomStatusCard;
+export default BookingStatusCard;
