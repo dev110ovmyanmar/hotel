@@ -187,12 +187,6 @@ export const PERMISSIONS = {
   AVAILABILITY_CALENDAR_CREATE: "availability-calendar.create",
   AVAILABILITY_CALENDAR_UPDATE: "availability-calendar.edit",
 
-  // Menu Category
-  MENU_CATEGORY_LIST: "menu-category.list",
-  MENU_CATEGORY_VIEW: "menu-category.view",
-  MENU_CATEGORY_CREATE: "menu-category.create",
-  MENU_CATEGORY_EDIT: "menu-category.edit",
-
   //Supplier
   SUPPLIER_LIST: "supplier.list",
   SUPPLIER_VIEW: "supplier.view",
@@ -211,11 +205,24 @@ export const PERMISSIONS = {
   FOOD_AND_BEVERAGE_INVENTORY_CREATE: "fnb-inventory.create",
   FOOD_AND_BEVERAGE_INVENTORY_EDIT: "fnb-inventory.edit",
 
+//F&B Management
+  // Menu Category
+  MENU_CATEGORY_LIST: "menu-category.list",
+  MENU_CATEGORY_VIEW: "menu-category.view",
+  MENU_CATEGORY_CREATE: "menu-category.create",
+  MENU_CATEGORY_EDIT: "menu-category.edit",
+
   // Menu Item
   MENU_ITEM_LIST: "menu.list",
   MENU_ITEM_VIEW: "menu.view",
   MENU_ITEM_CREATE: "menu.create",
   MENU_ITEM_EDIT: "menu.edit",
+
+  // Menu Modifier 
+  MENU_MODIFIER_LIST: "menu.list",
+  MENU_MODIFIER_VIEW: "menu.view",
+  MENU_MODIFIER_CREATE: "menu.create",
+  MENU_MODIFIER_EDIT: "menu.edit",
 
   // Extra bed rate
   EXTRA_BED_RATE_LIST: "extra-bed-rate.list",

@@ -171,7 +171,7 @@ const RoomRestrictionTable = ({ data, page, setPage }) => {
             key: "view",
             label: "View",
             icon: <EyeOutlined style={{ fontSize: "12px" }} />,
-            // permission: PERMISSIONS.ROOM_RESTRICTION_VIEW,
+            permission: PERMISSIONS.ROOM_RESTRICTION_VIEW,
             onClick: () => {
               setDrawerOpen(true);
               setMode("view");
@@ -182,7 +182,7 @@ const RoomRestrictionTable = ({ data, page, setPage }) => {
             key: "edit",
             label: "Edit",
             icon: <EditOutlined style={{ fontSize: "12px" }} />,
-            // permission: PERMISSIONS.ROOM_RESTRICTION_EDIT,
+            permission: PERMISSIONS.ROOM_RESTRICTION_EDIT,
             onClick: () => {
               setDrawerOpen(true);
               setMode("edit");
