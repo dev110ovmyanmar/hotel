@@ -23,6 +23,8 @@ import {
   priceFormatter,
   priceParser,
 } from "../../../../component/PriceTag/PriceTag";
+import usePermission from "../../../../hooks/usePermission";
+import { PERMISSIONS } from "../../../../variables/permission";
 
 const TaxForm = ({
   mode,
@@ -35,6 +37,7 @@ const TaxForm = ({
   page,
 }) => {
   const [form] = Form.useForm();
+  const { hasPermission } = usePermission();
 
   const isView = mode === "view";
   const isEdit = mode === "edit";
@@ -42,6 +45,8 @@ const TaxForm = ({
 
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
   const chargeTypeValue = Form.useWatch("charge_type", form);
+
+  const canEdit = hasPermission(PERMISSIONS.TAX_EDIT);
 
   const chargeCategory = initData?.statuses?.charge_category?.map(
     (category) => ({
@@ -182,14 +187,11 @@ const TaxForm = ({
                   : "Create Tax"}
             </span>
             {isView ? (
-              <Button
-                type="primary"
-                onClick={() => {
-                  setMode("edit");
-                }}
-              >
-                Edit
-              </Button>
+              canEdit && (
+                <Button type="primary" onClick={() => setMode("edit")}>
+                  Edit
+                </Button>
+              )
             ) : (
               <FormButton
                 onClick={() => form.submit()}

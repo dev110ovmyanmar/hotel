@@ -23,6 +23,8 @@ import {
 import { queryClient } from "./../../../../app/queryClient";
 import Status from "./../../../../component/Status/Status";
 import ImageUploadCard from "../../../../component/ImageUploadCard/ImageUploadCard";
+import usePermission from "../../../../hooks/usePermission";
+import { PERMISSIONS } from "../../../../variables/permission";
 
 // Add PaymentForm
 const PaymentForm = ({
@@ -36,6 +38,7 @@ const PaymentForm = ({
   setPage,
 }) => {
   const [form] = Form.useForm();
+  const { hasPermission } = usePermission();
 
   const isView = mode === "view";
   const isEdit = mode === "edit";
@@ -46,6 +49,8 @@ const PaymentForm = ({
   const provider = initData?.statuses.provider;
   const providerType = initData?.statuses.provider_type;
   const cashName = providerType.find((item) => item?.name === "Cash")?.name;
+
+  const canEdit = hasPermission(PERMISSIONS.PAYMENT_EDIT);
 
   const upsertPayments = useApiMutation({
     mutationFn: upsertPayment,
@@ -134,12 +139,14 @@ const PaymentForm = ({
         afterOpenChange={(open) => {
           if (open && isAdd) {
             form.resetFields();
-            const activeStatus = statuses?.find((s) => s.name.toLowerCase() === 'active');
+            const activeStatus = statuses?.find(
+              (s) => s.name.toLowerCase() === "active",
+            );
             if (activeStatus) {
               form.setFieldsValue({
                 status: {
-                  uuid: activeStatus.uuid
-                }
+                  uuid: activeStatus.uuid,
+                },
               });
             }
           }
@@ -156,14 +163,11 @@ const PaymentForm = ({
                   : "Add Payment"}
             </span>
             {isView ? (
-              <Button
-                type="primary"
-                onClick={() => {
-                  setMode("edit");
-                }}
-              >
-                Edit
-              </Button>
+              canEdit && (
+                <Button type="primary" onClick={() => setMode("edit")}>
+                  Edit
+                </Button>
+              )
             ) : (
               <FormButtons
                 onClick={() => form.submit()}
