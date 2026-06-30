@@ -714,7 +714,7 @@ export const authRoutes = [
         icon: <LuPackageSearch style={{ fontSize: "20px" }} />,
         isPrivate: true,
         component: <FacilityBookingList />,
-        // permission: PERMISSIONS.FACILITY_PACKAGE_LIST,
+        permission: PERMISSIONS.FACILITY_BOOKING_LIST,
       },
     ],
   },
@@ -736,7 +736,7 @@ export const authRoutes = [
         path: "/services-management/services",
         icon: <SecurityScanOutlined style={{ fontSize: "20px" }} />,
         component: <ServiceList />,
-        // permission: PERMISSIONS.SERVICE_LIST,
+        permission: PERMISSIONS.SERVICE_LIST,
       },
       {
         key: 13.2,
@@ -890,7 +890,7 @@ export const authRoutes = [
         icon: <MdOutlinePolicy style={{ fontSize: "20px" }} />,
         isPrivate: true,
         component: <PolicyList />,
-        // permission: ".list",
+        permission: PERMISSIONS.POLICY_LIST,
       },
       // {
       //   key: 15.3,
@@ -923,7 +923,7 @@ export const authRoutes = [
         icon: <FileProtectOutlined style={{ fontSize: "20px" }} />,
         isPrivate: true,
         component: <PrivacyPolicy />,
-        permission: PERMISSIONS.PRIVACY_POLICY_VIEW,
+        permission: PERMISSIONS.PRIVACY_POLICY_LIST,
       },
     ],
   },
@@ -964,6 +964,7 @@ export const authRoutes = [
         path: "/partners/agencies",
         icon: <BiGroup style={{ fontSize: "20px" }} />,
         component: <Agencies />,
+        permission: PERMISSIONS.PARTNER_LIST
       },
       {
         key: 17.2,
@@ -972,6 +973,7 @@ export const authRoutes = [
         icon: <IoBusinessSharp style={{ fontSize: "20px" }} />,
         isPrivate: true,
         component: <Company />,
+        permission: PERMISSIONS.PARTNER_LIST
       },
       {
         key: 17.3,
@@ -980,6 +982,7 @@ export const authRoutes = [
         icon: <MdOutlineSupportAgent style={{ fontSize: "20px" }} />,
         isPrivate: true,
         component: <ReferralAgent />,
+        permission: PERMISSIONS.PARTNER_LIST
       },
     ],
   },
