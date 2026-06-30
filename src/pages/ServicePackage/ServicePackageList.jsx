@@ -46,7 +46,7 @@ const ServicePackageList = () => {
                     setKeyword={setKeyword}
                     addButtonText="Add New Package"
                     onAdd={handleAdd}
-                // permission={PERMISSIONS.SERVICE_CREATE}
+                    permission={PERMISSIONS.SERVICE_PACKAGE_CREATE}
                 />
             </div>
 

@@ -5,6 +5,7 @@ import ListHeader from "../../component/ListHeader/ListHeader";
 import { fetchPartner } from './../../api/partnerApi';
 import CompanyTable from './Components/CompanyTable';
 import CompanyForm from './Components/CompanyForm/CompanyForm';
+import { PERMISSIONS } from "../../variables/permission";
 
 const CompanyList = () => {
   const [keyword, setKeyword] = useState("");
@@ -49,6 +50,7 @@ const CompanyList = () => {
           setKeyword={setKeyword}
           addButtonText="Add New Company"
           onAdd={handleAdd}
+          permission={PERMISSIONS.PARTNER_CREATE}
         />
       </div>
 

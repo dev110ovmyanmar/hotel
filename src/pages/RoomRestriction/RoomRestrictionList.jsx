@@ -55,7 +55,7 @@ const RoomRestrictionList = () => {
           endDate={endDate}
           setStartDate={setStartDate}
           setEndDate={setEndDate}
-          // permission={PERMISSIONS.ROOM_RESTRICTION_CREATE}
+          permission={PERMISSIONS.ROOM_RESTRICTION_CREATE}
         />
       </div>
 

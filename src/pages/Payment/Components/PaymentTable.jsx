@@ -5,8 +5,8 @@ import { EditOutlined } from '@ant-design/icons';
 import { EyeOutlined } from '@ant-design/icons';
 import PaymentForm from './PaymentForm/PaymentForm';
 import ColorStatusTag from './../../../component/ColorStatusTag/ColorStatusTag';
-import { PERMISSIONS } from './../../../variables/permission';
 import usePermission from './../../../hooks/usePermission';
+import { PERMISSIONS } from '../../../variables/permission';
 
 // PaymentTable
 const PaymentTable = ({ data, page, perPage, total, changePage, changePerPage, loading }) => {
