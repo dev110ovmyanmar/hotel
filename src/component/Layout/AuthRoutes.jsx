@@ -796,7 +796,7 @@ export const authRoutes = [
         icon: <CoffeeOutlined style={{ fontSize: "20px" }} />,
         isPrivate: true,
         component: <MenuItemList />,
-        permission: PERMISSIONS.MENU_ITEM_LIST,
+        permission: PERMISSIONS.MENU_MODIFIER_LIST,
       },
       {
         key: 14.3,
@@ -804,6 +804,7 @@ export const authRoutes = [
         path: "/f&b-management/menu-modifiers",
         icon: <LuSalad style={{ fontSize: "20px" }} />,
         component: <MenuModifierList />,
+        isPrivate: true,
         permission: PERMISSIONS.MENU_MODIFIER_LIST,
       },
       {
@@ -812,7 +813,7 @@ export const authRoutes = [
         label: "Restaurant Table",
         component: <RestauranttableList />,
         icon: <MdOutlineTableRestaurant style={{ fontSize: "20px" }} />,
-        isPrivate: false,
+        isPrivate: true,
         permission: PERMISSIONS.RESTAURANT_TABLE_LIST,
       },
       {
@@ -964,7 +965,7 @@ export const authRoutes = [
         path: "/partners/agencies",
         icon: <BiGroup style={{ fontSize: "20px" }} />,
         component: <Agencies />,
-        permission: PERMISSIONS.PARTNER_LIST
+        permission: PERMISSIONS.PARTNER_LIST,
       },
       {
         key: 17.2,
@@ -973,7 +974,7 @@ export const authRoutes = [
         icon: <IoBusinessSharp style={{ fontSize: "20px" }} />,
         isPrivate: true,
         component: <Company />,
-        permission: PERMISSIONS.PARTNER_LIST
+        permission: PERMISSIONS.PARTNER_LIST,
       },
       {
         key: 17.3,
@@ -982,7 +983,7 @@ export const authRoutes = [
         icon: <MdOutlineSupportAgent style={{ fontSize: "20px" }} />,
         isPrivate: true,
         component: <ReferralAgent />,
-        permission: PERMISSIONS.PARTNER_LIST
+        permission: PERMISSIONS.PARTNER_LIST,
       },
     ],
   },

@@ -10,6 +10,8 @@ import {
 import useApiQuery from "../../../../hooks/useApiQuery";
 import { queryClient } from "../../../../app/queryClient";
 import Loader from "../../../../component/Loader/Loader";
+import { PERMISSIONS } from "../../../../variables/permission";
+import usePermission from "../../../../hooks/usePermission";
 
 const MenuCategoryForm = ({
   mode,
@@ -22,6 +24,7 @@ const MenuCategoryForm = ({
   setPage,
 }) => {
   const [form] = Form.useForm();
+  const { hasPermission } = usePermission();
 
   const isView = mode === "view";
   const isEdit = mode === "edit";
@@ -29,6 +32,7 @@ const MenuCategoryForm = ({
 
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
   const status = initData?.statuses?.status;
+  const canEdit = hasPermission(PERMISSIONS.PAYMENT_EDIT);
 
   const statusList = status
     ?.filter((item) => item.code !== "blocked")
@@ -118,7 +122,9 @@ const MenuCategoryForm = ({
         afterOpenChange={(open) => {
           if (open && isAdd) {
             form.resetFields();
-            const defaultStatus = statusList?.find((s) => s.label.toLowerCase() === 'active')?.value;
+            const defaultStatus = statusList?.find(
+              (s) => s.label.toLowerCase() === "active",
+            )?.value;
             form.setFieldsValue({ status: defaultStatus });
           }
         }}
@@ -185,21 +191,24 @@ const MenuCategoryForm = ({
               />
             </Form.Item>
 
-            <Form.Item label="Status" name="status" rules={[{ required: true }]}
+            <Form.Item
+              label="Status"
+              name="status"
+              rules={[{ required: true }]}
               getValueProps={(value) => ({
                 value: isView
                   ? statusList?.find((item) => item.value === value)?.label
                   : value,
-              })}>
-              {
-                isView ?
-                  <Input readOnly={isView} />
-                  :
-                  <Select
-                    options={statusList}
-                    open={isView ? false : undefined}
-                  />
-              }
+              })}
+            >
+              {isView ? (
+                <Input readOnly={isView} />
+              ) : (
+                <Select
+                  options={statusList}
+                  open={isView ? false : undefined}
+                />
+              )}
             </Form.Item>
           </Form>
         )}

@@ -24,6 +24,7 @@ import {
   priceFormatter,
   priceParser,
 } from "../../../../component/PriceTag/PriceTag";
+import { PERMISSIONS } from "../../../../variables/permission";
 
 const MenuModifierForm = ({
   mode,
@@ -42,6 +43,8 @@ const MenuModifierForm = ({
   const isView = mode === "view";
   const isEdit = mode === "edit";
   const isAdd = mode === "add";
+
+  const canEdit = hasPermission(PERMISSIONS.MENU_MODIFIER_EDIT);
 
   const upsertMenuModifiers = useApiMutation({
     mutationFn: upsertMenuModifier,
@@ -117,14 +120,11 @@ const MenuModifierForm = ({
                   : "Create Menu Modifier"}
             </span>
             {isView ? (
-              <Button
-                type="primary"
-                onClick={() => {
-                  setMode("edit");
-                }}
-              >
-                Edit
-              </Button>
+              canEdit && (
+                <Button type="primary" onClick={() => setMode("edit")}>
+                  Edit
+                </Button>
+              )
             ) : (
               <FormButton
                 onClick={() => form.submit()}

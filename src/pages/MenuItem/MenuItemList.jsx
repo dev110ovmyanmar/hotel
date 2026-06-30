@@ -46,7 +46,7 @@ const MenuItemList = () => {
           setKeyword={setKeyword}
           addButtonText="Add New Menu Item"
           onAdd={handleAdd}
-          permission={PERMISSIONS.MENU_ITEM_CREATE}
+          permission={PERMISSIONS.MENU_MODIFIER_CREATE}
         />
       </div>
 
