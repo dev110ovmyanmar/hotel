@@ -267,18 +267,25 @@ const ServiceInventoryForm = ({
               </Form.Item>
 
               <Form.Item
-                label={<span className="text-xs">Reorder</span>}
-                name="reorderLevel"
+                label="Unit"
+                name="unitUuid"
                 rules={[{ required: true }]}
+                getValueProps={(value) => ({
+                  value: isView
+                    ? unitOptions.find((item) => item.value === value)?.label
+                    : value,
+                })}
               >
-                <InputNumber
-                  placeholder="Enter Reorder Level"
-                  disabled={isView}
-                  mode="spinner"
-                  min={MIN_REORDER_LEVEL}
-                  max={MAX_REORDER_LEVEL}
-                  style={{ width: "100%" }}
-                />
+                {isView ? (
+                  <Input readOnly={isView} />
+                ) : (
+                  <Select
+                    options={unitOptions}
+                    placeholder="Select Unit"
+                    disabled={isView}
+                    className="!w-full"
+                  />
+                )}
               </Form.Item>
 
               <Form.Item
@@ -303,33 +310,9 @@ const ServiceInventoryForm = ({
                   />
                 )}
               </Form.Item>
-
-              <Form.Item
-                label="Unit"
-                name="unitUuid"
-                rules={[{ required: true }]}
-                getValueProps={(value) => ({
-                  value: isView
-                    ? unitOptions.find((item) => item.value === value)?.label
-                    : value,
-                })}
-              >
-                {isView ? (
-                  <Input readOnly={isView} />
-                ) : (
-                  <Select
-                    options={unitOptions}
-                    placeholder="Select Unit"
-                    disabled={isView}
-                    className="!w-full"
-                  />
-                )}
-              </Form.Item>
-
               <Form.Item
                 label="Supplier"
                 name="supplierUuid"
-                rules={[{ required: true }]}
                 getValueProps={(value) => ({
                   value: isView
                     ? supplierOptions.find((item) => item.value === value)
@@ -349,6 +332,20 @@ const ServiceInventoryForm = ({
                 )}
               </Form.Item>
             </div>
+
+            <Form.Item
+              label={<span className="text-xs">Reorder</span>}
+              name="reorderLevel"        
+            >
+              <InputNumber
+                placeholder="Enter Reorder Level"
+                disabled={isView}
+                mode="spinner"
+                min={MIN_REORDER_LEVEL}
+                max={MAX_REORDER_LEVEL}
+                style={{ width: 240 }}
+              />
+            </Form.Item>
 
             <div className="grid grid-cols-2 gap-3">
               <Form.Item

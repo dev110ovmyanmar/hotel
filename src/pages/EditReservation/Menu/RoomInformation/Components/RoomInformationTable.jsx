@@ -40,6 +40,7 @@ import Toast from "../../../../../component/Toast/Toast";
 import RoomDowngradeModal from "./RoomAmendmentModals/RoomDowngradeModal";
 import PriceTag from "../../../../../component/PriceTag/PriceTag";
 import AddRoomWithExtensionDateModal from "./RoomAmendmentModals/AddRoomWithExtensionDateModal";
+import { checkIfActionDisabled } from "./RoomInformationDate";
 
 const RoomInformationTable = ({
   data,
@@ -311,6 +312,7 @@ const RoomInformationTable = ({
         ];
 
         if (record?.amendStatus) {
+          const isActionDisabled = checkIfActionDisabled(record);
           menuItems.push(
             { type: "divider" },
             {
@@ -340,14 +342,22 @@ const RoomInformationTable = ({
                     ...(record?.isExtend !== false ||
                       record?.roomStatus?.code === "checked_in"
                       ? [
-                        {
-                          key: "stay_extension",
-                          label: "Extend Stay",
-                          icon: <PlusOutlined />,
-                          onClick: () =>
-                            handleAction("stay_extension", record),
-                        },
-                      ]
+                          {
+                            key: "stay_extension",
+                            label: "Extend Stay",
+                            icon: <PlusOutlined />,
+                            disabled: record?.checkinDate
+                              ? dayjs(record.checkinDate)
+                                  .startOf("day")
+                                  .isSame(dayjs().startOf("day")) ||
+                                dayjs(record.checkinDate)
+                                  .startOf("day")
+                                  .isBefore(dayjs().startOf("day"))
+                              : false,
+                            onClick: () =>
+                              handleAction("stay_extension", record),
+                          },
+                        ]
                       : []),
                     {
                       key: "stay_reduction",
