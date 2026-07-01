@@ -45,9 +45,9 @@ const FacilityPackageTable = ({
       align: "left",
     },
     {
-      title: "Price Type",
-      dataIndex: ["pricingType", "name"],
-      key: "pricingType",
+      title: "Included Pax",
+      dataIndex: "includedPax",
+      key: "includedPax",
     },
     {
       title: "Included Hours",
@@ -55,23 +55,9 @@ const FacilityPackageTable = ({
       key: "includedHours",
     },
     {
-      title: "Included Pax",
-      dataIndex: "includedPax",
-      key: "includedPax",
-    },
-    {
-      title: "Extra Hour Price (MMK)",
-      dataIndex: "extraHourPrice",
-      key: "extraHourPrice",
-      align: "end",
-      render: (text) => <PriceTag value={text} />,
-    },
-    {
-      title: "Extra Pax Price (MMK)",
-      dataIndex: "extraPaxPrice",
-      key: "extraPaxPrice",
-      align: "end",
-      render: (text) => <PriceTag value={text} />,
+      title: "Price Type",
+      dataIndex: ["pricingType", "name"],
+      key: "pricingType",
     },
     {
       title: "Base Price (MMK)",
@@ -79,6 +65,20 @@ const FacilityPackageTable = ({
       key: "basePrice",
       render: (text) => <PriceTag value={text} />,
     },
+    // {
+    //   title: "Extra Hour Price (MMK)",
+    //   dataIndex: "extraHourPrice",
+    //   key: "extraHourPrice",
+    //   align: "end",
+    //   render: (text) => <PriceTag value={text} />,
+    // },
+    // {
+    //   title: "Extra Pax Price (MMK)",
+    //   dataIndex: "extraPaxPrice",
+    //   key: "extraPaxPrice",
+    //   align: "end",
+    //   render: (text) => <PriceTag value={text} />,
+    // },
     {
       title: "Status",
       dataIndex: "status",

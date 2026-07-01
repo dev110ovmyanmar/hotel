@@ -27,6 +27,8 @@ const MenuItemTable = ({
   const [selectedData, setSelectedData] = useState({});
   const [selectedItem, setSelectedItem] = useState(null);
 
+  const canCreate = hasPermission(PERMISSIONS.MENU_MODIFIER_CREATE);
+
   const columns = [
     {
       title: "ID",
@@ -94,7 +96,7 @@ const MenuItemTable = ({
             key: "view",
             label: "View",
             icon: <EyeOutlined style={{ fontSize: "12px" }} />,
-            permission: PERMISSIONS.MENU_ITEM_VIEW,
+            permission: PERMISSIONS.MENU_MODIFIER_VIEW,
             onClick: () => {
               setDrawerOpen(true);
               setMode("view");
@@ -105,7 +107,7 @@ const MenuItemTable = ({
             key: "edit",
             label: "Edit",
             icon: <EditOutlined style={{ fontSize: "12px" }} />,
-            permission: PERMISSIONS.MENU_ITEM_EDIT,
+            permission: PERMISSIONS.MENU_MODIFIER_EDIT,
             onClick: () => {
               setDrawerOpen(true);
               setMode("edit");
@@ -168,7 +170,7 @@ const MenuItemTable = ({
             key: "edit",
             label: "Edit",
             icon: <EditOutlined style={{ fontSize: "12px" }} />,
-            // permission: PERMISSIONS.SERVICE_EDIT,
+            permission: PERMISSIONS.MENU_MODIFIER_EDIT,
             onClick: () => {
               setItemDrawerOpen(true);
               setMode("item-edit");
@@ -205,6 +207,7 @@ const MenuItemTable = ({
     return (
       <div className="nested-table-container">
         <div className="flex justify-between items-center mb-3">
+          {canCreate && (
           <Button
             className="py-4! rounded-[5px]!"
             type="primary"
@@ -218,6 +221,7 @@ const MenuItemTable = ({
           >
             F&B Inventory Item
           </Button>
+          )}
         </div>
 
         {record?.menuInventoryMappings?.length <= 0 ? null : (
