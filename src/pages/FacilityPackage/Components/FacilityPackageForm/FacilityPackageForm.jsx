@@ -138,12 +138,53 @@ const FacilityPackageForm = ({
 
       createFacility.mutate(createValues, {
         onSuccess: () => {
-          form.resetFields();
-          handleClose();
-          setDrawerOpen(false);
-          setPage(1);
-          Toast.success("Facility Package Created Successfully!");
-        },
+          {
+            //   title: "Extra Hour Price (MMK)",
+            //   dataIndex: "extraHourPri{
+            //   title: "Extra Hour Price (MMK)",
+            //   dataIndex: "extraHourPrice",
+            //   key: "extraHourPrice",
+            //   align: "end",
+            //   render: (text) => <PriceTag value={text} />,
+            // },
+            // {
+            //   title: "Extra Pax Price (MMK)",
+            //   dataIndex: "extraPaxPrice",
+            //   key: "extraPaxPrice",
+            //   align: "end",
+            //   render: (text) => <PriceTag value={text} />,
+            // },ce",
+            //   key: "extraHourPrice",{
+            //   title: "Extra Hour Price (MMK)",
+            //   dataIndex: "extraHourPrice",
+            //   key: "extraHourPrice",
+            //   align: "end",
+            //   render: (text) => <PriceTag value={text} />,
+            // },
+            // {
+            //   title: "Extra Pax Price (MMK)",
+            //   dataIndex: "extraPaxPrice",
+            //   key: "extraPaxPrice",
+            //   align: "end",
+            //   render: (text) => <PriceTag value={text} />,
+            // },
+            //   align: "end",
+            //   render: (text) => <PriceTag value={text} />,
+            // },
+            // {
+            //   title: "Extra Pax Price (MMK)",
+            //   dataIndex: "extraPaxPrice",
+            //   key: "extraPaxPrice",
+            //   align: "end",
+            //   render: (text) => <PriceTag value={text} />,
+            // },
+            form.resetFields();
+            handleClose();
+            setDrawerOpen(false);
+            setPage(1);
+            Toast.success("Facility Package Created Successfully!");
+          }
+        }
       });
     }
     if (isEdit) {
@@ -251,90 +292,7 @@ const FacilityPackageForm = ({
               )}
             </Form.Item>
 
-            <Form.Item
-              label="Pricing Type"
-              name="pricingType"
-              rules={[{ required: true, message: "Pricing Type is Required" }]}
-              getValueProps={(value) => ({
-                value: isView
-                  ? pricingTypesList.find((item) => item.value === value)?.label
-                  : value,
-              })}
-            >
-              {isView ? (
-                <Input readOnly={isView} />
-              ) : (
-                <Select
-                  showSearch={{
-                    filterOption: (input, option) =>
-                      (option?.label ?? "")
-                        .toLowerCase()
-                        .includes(input.toLowerCase()),
-                  }}
-                  options={pricingTypesList}
-                  placeholder="Select Pricing Type"
-                />
-              )}
-            </Form.Item>
-
-            <Form.Item
-              label="Base Price"
-              name="basePrice"
-              rules={[{ required: true, message: "Base Price is Required" }]}
-            >
-              {/* <Space.Compact>
-              <Input readOnly={isView} />
-              {addon}
-            </Space.Compact> */}
-              {/* <Input readOnly={isView} suffix="MMK" /> */}
-              <InputNumber
-                className="!w-full"
-                min={0}
-                readOnly={isView}
-                placeholder="Enter Base Price"
-                suffix="MMK"
-                formatter={priceFormatter}
-                parser={priceParser}
-              />
-            </Form.Item>
-
             <div className="grid grid-cols-2 gap-4">
-              {/* <Form.Item
-                    label="Included Hours"
-                    name="includedHours"
-                    rules={[
-                      { required: true, message: "Included Hours is Required" },
-                    ]}
-                  >
-                    <InputNumber
-                      className="!w-full"
-                      min={0}
-                      readOnly={isView}
-                      placeholder="Enter Included Hours"
-                      {...{
-                        mode: "spinner",
-                        min: 0,
-                        max: 24,
-                        style: { width: "100%" },
-                      }}
-                    />
-                  </Form.Item> */}
-
-              <Form.Item
-                label="Included Hours"
-                name="includedHours"
-                rules={[
-                  { required: true, message: "Included Hours is Required" },
-                ]}
-              >
-                <TimePicker
-                  style={{
-                    width: "100%",
-                  }}
-                  format="HH:mm"
-                />
-              </Form.Item>
-
               <Form.Item
                 label="Included Pax"
                 name="includedPax"
@@ -355,26 +313,73 @@ const FacilityPackageForm = ({
                   }}
                 />
               </Form.Item>
+
+              <Form.Item
+                label="Included Hours"
+                name="includedHours"
+                rules={[
+                  { required: true, message: "Included Hours is Required" },
+                ]}
+              >
+                <TimePicker
+                  style={{
+                    width: "100%",
+                  }}
+                  format="HH:mm"
+                />
+              </Form.Item>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <Form.Item
-                label="Extra Hour Price"
-                name="extraHourPrice"
-                rules={[
-                  { required: true, message: "Extra Hour Price is Required" },
-                ]}
+                label="Pricing Type"
+                name="pricingType"
+                rules={[{ required: true, message: "Pricing Type is Required" }]}
+                getValueProps={(value) => ({
+                  value: isView
+                    ? pricingTypesList.find((item) => item.value === value)?.label
+                    : value,
+                })}
               >
+                {isView ? (
+                  <Input readOnly={isView} />
+                ) : (
+                  <Select
+                    showSearch={{
+                      filterOption: (input, option) =>
+                        (option?.label ?? "")
+                          .toLowerCase()
+                          .includes(input.toLowerCase()),
+                    }}
+                    options={pricingTypesList}
+                    placeholder="Select Pricing Type"
+                  />
+                )}
+              </Form.Item>
+
+              <Form.Item
+                label="Base Price"
+                name="basePrice"
+                rules={[{ required: true, message: "Base Price is Required" }]}
+              >
+                {/* <Space.Compact>
+              <Input readOnly={isView} />
+              {addon}
+            </Space.Compact> */}
+                {/* <Input readOnly={isView} suffix="MMK" /> */}
                 <InputNumber
                   className="!w-full"
                   min={0}
                   readOnly={isView}
-                  placeholder="Enter Extra Hour Price"
+                  placeholder="Enter Base Price"
                   suffix="MMK"
                   formatter={priceFormatter}
                   parser={priceParser}
                 />
               </Form.Item>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
 
               <Form.Item
                 label="Extra Pax Price"
@@ -388,6 +393,24 @@ const FacilityPackageForm = ({
                   min={0}
                   readOnly={isView}
                   placeholder="Enter Extra Pax Price"
+                  suffix="MMK"
+                  formatter={priceFormatter}
+                  parser={priceParser}
+                />
+              </Form.Item>
+
+              <Form.Item
+                label="Extra Hour Price"
+                name="extraHourPrice"
+                rules={[
+                  { required: true, message: "Extra Hour Price is Required" },
+                ]}
+              >
+                <InputNumber
+                  className="!w-full"
+                  min={0}
+                  readOnly={isView}
+                  placeholder="Enter Extra Hour Price"
                   suffix="MMK"
                   formatter={priceFormatter}
                   parser={priceParser}
