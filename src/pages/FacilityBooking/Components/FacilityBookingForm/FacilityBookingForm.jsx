@@ -106,17 +106,20 @@ const FacilityBookingForm = ({
   });
 
   useEffect(() => {
-    if (isAdd) {
+    if (drawerOpen && isAdd && initDataStatus) {
       form.resetFields();
-    }
 
-    if (isAdd && initDataStatus) {
       form.setFieldsValue({
         status: {
-          uuid: initDataStatus?.find((item) => item?.code === "active")?.uuid,
+          uuid: initDataStatus.find(
+            item => item.code === "active"
+          )?.uuid,
         },
       });
     }
+  }, [drawerOpen, isAdd, initDataStatus]);
+
+  useEffect(() => {
     const FacilityBookingFormDataView = isView || isEdit;
     if (FacilityBookingFormDataView && bookingDetails) {
       form.setFieldsValue({
@@ -140,7 +143,7 @@ const FacilityBookingForm = ({
         },
       });
     }
-  }, [bookingDetails, isEdit, isAdd]);
+  }, [isEdit, isView, bookingDetails])
 
   const handleClose = () => {
     setDrawerOpen(false);
@@ -250,7 +253,7 @@ const FacilityBookingForm = ({
             name="guestPhone"
             rules={[
               { required: true },
-              
+
             ]}
           >
             <Input
@@ -333,8 +336,9 @@ const FacilityBookingForm = ({
             label="Expected Pax"
             name="expectedPax"
             rules={[{ required: true, message: "Expected Pax is Required" }]}
+
           >
-            <TextArea readOnly={isView} placeholder="Enter Expected Hours" />
+            <InputNumber readOnly={isView} placeholder="Enter Expected Pax" style={{ width: "100%" }} min={1} />
           </Form.Item>
 
           <Status isView={isView} statusValue={initDataStatus} />

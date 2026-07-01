@@ -29,6 +29,7 @@ export default function AddRoomWithExtensionDateModal({
     // Parse baseline properties out of your JSON structure
     const reservationNo = reservation?.reservationNo || `ID-${record?.id}`;
     const guestName = reservation?.guest?.name || "Unknown Guest";
+    const roomTypeName = record?.roomType?.name;
 
     const originalCheckin = record?.checkinDate ? dayjs(record.checkinDate) : "";
     const originalCheckout = record?.checkoutDate ? dayjs(record.checkoutDate) : "";
@@ -118,6 +119,7 @@ export default function AddRoomWithExtensionDateModal({
                 >
                     {/* Context Target Ribbon Header */}
                     <div className="mb-4 text-slate-500 text-sm font-medium">
+                        <div className='text-md text-slate-900'>{roomTypeName}</div>
                         {reservationNo} — <span className="text-slate-800">{guestName}</span>
                     </div>
 
