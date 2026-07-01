@@ -184,12 +184,20 @@ const FacilityForm = ({
               <Input readOnly={isView} placeholder="Enter Facility Name" />
             </Form.Item>
 
-            <Form.Item label="Capacity" name="capacity" readOnly={isView}>
+            <Form.Item 
+              label="Capacity" 
+              name="capacity" 
+              readOnly={isView}
+              rules={[{ required: true, message: "Capacity is Required" }]}
+            >
               {/* <Input placeholder="Enter Capacity" /> */}
-              <Input
-                type="number"
+              <InputNumber
+                // type="number"
+                mode="spinner"
                 placeholder="Enter Capacity"
                 disabled={isView}
+                style={{width:"100%"}}
+                min={1}
               />
             </Form.Item>
 

@@ -331,16 +331,16 @@ const RoomInformationTable = ({
                       icon: <CalendarOutlined />,
                       disabled: record?.checkinDate
                         ? dayjs(record.checkinDate)
-                            .startOf("day")
-                            .isSame(dayjs().startOf("day")) ||
-                          dayjs(record.checkinDate)
-                            .startOf("day")
-                            .isBefore(dayjs().startOf("day"))
+                          .startOf("day")
+                          .isSame(dayjs().startOf("day")) ||
+                        dayjs(record.checkinDate)
+                          .startOf("day")
+                          .isBefore(dayjs().startOf("day"))
                         : false,
                       onClick: () => handleAction("date_change", record),
                     },
                     ...(record?.isExtend !== false ||
-                    record?.roomStatus?.code === "checked_in"
+                      record?.roomStatus?.code === "checked_in"
                       ? [
                           {
                             key: "stay_extension",
@@ -635,10 +635,13 @@ const RoomInformationTable = ({
           rateChangeUuid={rateChangeUuid}
         />
       )}
-      {selectedData && (
+      {roomMoveOpen && selectedData && (
         <RoomMoveModal
           isOpen={roomMoveOpen}
-          onClose={() => setRoomMoveOpen(false)}
+          onClose={() => {
+            setRoomMoveOpen(false);
+            setSelectedData(null)
+          }}
           record={selectedData}
           roomMoveUuid={roomMoveUuid}
         />
