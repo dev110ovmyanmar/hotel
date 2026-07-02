@@ -22,6 +22,9 @@ import {
   priceFormatter,
   priceParser,
 } from "../../../../component/PriceTag/PriceTag";
+import usePermission from "../../../../hooks/usePermission";
+import { PERMISSIONS } from "../../../../variables/permission";
+
 
 const ServiceForm = ({
   mode,
@@ -38,6 +41,9 @@ const ServiceForm = ({
   const isView = mode === "view";
   const isEdit = mode === "edit";
   const isAdd = mode === "add";
+
+  const { hasPermission } = usePermission();
+  const canEdit = hasPermission(PERMISSIONS.SERVICE_EDIT);
 
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
   const billingType = initData?.statuses?.billing_type;
@@ -165,14 +171,17 @@ const ServiceForm = ({
                   : "Create Service"}
             </span>
             {isView ? (
-              <Button
-                type="primary"
-                onClick={() => {
-                  setMode("edit");
-                }}
-              >
-                Edit
-              </Button>
+              canEdit && (
+                <Button
+                  type="primary"
+                  onClick={() => {
+                    setMode("edit");
+                  }}
+                >
+                  Edit
+                </Button>
+              )
+
             ) : (
               <FormButtons
                 onClick={() => form.submit()}
@@ -211,7 +220,7 @@ const ServiceForm = ({
               getValueProps={(value) => ({
                 value: isView
                   ? servicesTypesList.find((item) => item.value === value)
-                      ?.label
+                    ?.label
                   : value,
               })}
             >
@@ -242,7 +251,7 @@ const ServiceForm = ({
                   getValueProps={(value) => ({
                     value: isView
                       ? billingTypesList.find((item) => item.value === value)
-                          ?.label
+                        ?.label
                       : value,
                   })}
                 >

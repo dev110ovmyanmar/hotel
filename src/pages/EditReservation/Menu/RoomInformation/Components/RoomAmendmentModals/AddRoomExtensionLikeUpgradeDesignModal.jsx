@@ -174,7 +174,7 @@ export default function AddRoomExtensionLikeUpgradeDesignModal({
                 key="backTo"
                 onClick={backToSetFields}
             >
-                Back To
+                Back
             </Button>,
             <Button
                 key="confirm"

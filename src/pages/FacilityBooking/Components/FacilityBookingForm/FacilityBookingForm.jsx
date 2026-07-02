@@ -26,6 +26,9 @@ import {
 } from "../../../../api/booking";
 import dayjs from "dayjs";
 import { facilityMeta } from "../../../../api/facilityPackageApi";
+import usePermission from "../../../../hooks/usePermission";
+import { PERMISSIONS } from "../../../../variables/permission";
+
 
 const { TextArea } = Input;
 const { RangePicker } = TimePicker;
@@ -46,6 +49,10 @@ const FacilityBookingForm = ({
   const disabledDate = (current) => {
     return current < dayjs().startOf("day");
   };
+
+  const { hasPermission } = usePermission();
+  const canEdit = hasPermission(PERMISSIONS.FACILITY_BOOKING_EDIT);
+
   const format = "HH:mm";
 
   const eventTime = Form.useWatch("timeRange", form);
@@ -221,14 +228,17 @@ const FacilityBookingForm = ({
                   : "Add New Facility Booking"}
             </span>
             {isView ? (
-              <Button
-                type="primary"
-                onClick={() => {
-                  setMode("edit");
-                }}
-              >
-                Edit
-              </Button>
+              canEdit && (
+                <Button
+                  type="primary"
+                  onClick={() => {
+                    setMode("edit");
+                  }}
+                >
+                  Edit
+                </Button>
+              )
+
             ) : (
               <FormButtons
                 onClick={() => form.submit()}
@@ -348,7 +358,7 @@ const FacilityBookingForm = ({
               {...childSharedProps}
               placeholder="Outlined"
               readOnly={isView}
-              style={{ width: 240}}
+              style={{ width: 240 }}
             />
           </Form.Item>
 
