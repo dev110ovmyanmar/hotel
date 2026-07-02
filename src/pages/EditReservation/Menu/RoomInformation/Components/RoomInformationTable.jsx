@@ -40,7 +40,7 @@ import Toast from "../../../../../component/Toast/Toast";
 import RoomDowngradeModal from "./RoomAmendmentModals/RoomDowngradeModal";
 import PriceTag from "../../../../../component/PriceTag/PriceTag";
 import AddRoomWithExtensionDateModal from "./RoomAmendmentModals/AddRoomWithExtensionDateModal";
-import { checkIfActionDisabled } from "./RoomInformationDate";
+// import { checkIfActionDisabled } from "./RoomInformationDate";
 
 const RoomInformationTable = ({
   data,
@@ -312,7 +312,7 @@ const RoomInformationTable = ({
         ];
 
         if (record?.amendStatus) {
-          const isActionDisabled = checkIfActionDisabled(record);
+          // const isActionDisabled = checkIfActionDisabled(record);
           menuItems.push(
             { type: "divider" },
             {

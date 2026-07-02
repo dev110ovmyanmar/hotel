@@ -10,6 +10,7 @@ import {
   Radio,
   Segmented,
   Divider,
+  Checkbox,
 } from "antd";
 import {
   ShopOutlined,
@@ -335,7 +336,7 @@ const ServiceInventoryForm = ({
 
             <Form.Item
               label={<span className="text-xs">Reorder</span>}
-              name="reorderLevel"        
+              name="reorderLevel"
             >
               <InputNumber
                 placeholder="Enter Reorder Level"
@@ -351,31 +352,27 @@ const ServiceInventoryForm = ({
               <Form.Item
                 label="Laundry Requirement"
                 name="laundryStatus"
-                initialValue={0}
+                initialValue={false}
+                valuePropName="checked"
                 rules={[
-                  { required: true, message: "Please select laundry status!" },
+                  { required: true, message: "Please check laundry status!" },
                 ]}
               >
-                <Switch
-                  disabled={isView}
-                  checkedChildren="True"
-                  unCheckedChildren="False"
-                />
+                <Checkbox disabled={isView}>Laundry Requirement</Checkbox>
               </Form.Item>
 
               <Form.Item
                 label="Is this item free?"
                 name="isFree"
-                initialValue={0}
+                initialValue={false}
+                valuePropName="checked"
                 rules={[
                   { required: true, message: "Please select billing type!" },
                 ]}
               >
-                <Switch
-                  disabled={isView}
-                  checkedChildren="True"
-                  unCheckedChildren="False"
-                />
+                <Checkbox disabled={isView}>
+                  This item is free
+                </Checkbox>
               </Form.Item>
             </div>
           </>
