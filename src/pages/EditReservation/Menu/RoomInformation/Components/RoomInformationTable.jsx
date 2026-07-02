@@ -53,7 +53,7 @@ const RoomInformationTable = ({
   changePerPage,
   reservationUuid,
 }) => {
-  console.log(reservationUuid,"reservationUuid")
+  console.log(reservationUuid, "reservationUuid");
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [guestOpen, setGuestOpen] = useState(false);
   const [guestListOpen, setGuestListOpen] = useState(false);
@@ -332,34 +332,33 @@ const RoomInformationTable = ({
                       icon: <CalendarOutlined />,
                       disabled: record?.checkinDate
                         ? dayjs(record.checkinDate)
-                          .startOf("day")
-                          .isSame(dayjs().startOf("day")) ||
-                        dayjs(record.checkinDate)
-                          .startOf("day")
-                          .isBefore(dayjs().startOf("day"))
+                            .startOf("day")
+                            .isSame(dayjs().startOf("day")) ||
+                          dayjs(record.checkinDate)
+                            .startOf("day")
+                            .isBefore(dayjs().startOf("day"))
                         : false,
                       onClick: () => handleAction("date_change", record),
                     },
-                    ...(record?.isExtend !== false ||
-                      record?.roomStatus?.code === "checked_in"
-                      ? [
-                          {
-                            key: "stay_extension",
-                            label: "Extend Stay",
-                            icon: <PlusOutlined />,
-                            disabled: record?.checkinDate
-                              ? dayjs(record.checkinDate)
-                                  .startOf("day")
-                                  .isSame(dayjs().startOf("day")) ||
-                                dayjs(record.checkinDate)
-                                  .startOf("day")
-                                  .isBefore(dayjs().startOf("day"))
-                              : false,
-                            onClick: () =>
-                              handleAction("stay_extension", record),
-                          },
-                        ]
-                      : []),
+                    // ...(record?.isExtend !== false ||
+                    //   record?.roomStatus?.code === "checked_in"
+                    //   ? [
+                    {
+                      key: "stay_extension",
+                      label: "Extend Stay",
+                      icon: <PlusOutlined />,
+                      disabled: record?.checkinDate
+                        ? dayjs(record.checkinDate)
+                            .startOf("day")
+                            .isSame(dayjs().startOf("day")) ||
+                          dayjs(record.checkinDate)
+                            .startOf("day")
+                            .isBefore(dayjs().startOf("day"))
+                        : false,
+                      onClick: () => handleAction("stay_extension", record),
+                    },
+                    //   ]
+                    // : []),
                     {
                       key: "stay_reduction",
                       label: "Shorten Stay",
@@ -489,7 +488,6 @@ const RoomInformationTable = ({
       },
     },
   ];
-
 
   return (
     <div>
@@ -644,7 +642,7 @@ const RoomInformationTable = ({
           isOpen={roomMoveOpen}
           onClose={() => {
             setRoomMoveOpen(false);
-            setSelectedData(null)
+            setSelectedData(null);
           }}
           record={selectedData}
           roomMoveUuid={roomMoveUuid}
