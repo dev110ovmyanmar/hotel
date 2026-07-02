@@ -5,6 +5,7 @@ import ListHeader from "../../component/ListHeader/ListHeader";
 import { facilityBookingDetails, fetchFacilityBooking } from "../../api/booking";
 import FacilityBookingTable from "./Components/FacilityBookingTable";
 import FacilityBookingForm from "./Components/FacilityBookingForm/FacilityBookingForm";
+import { PERMISSIONS } from "../../variables/permission";
 
 const FacilityBookingList = () => {
   const [keyword, setKeyword] = useState("");
@@ -49,6 +50,7 @@ const FacilityBookingList = () => {
           setKeyword={setKeyword}
           addButtonText="Add New Facility Booking"
           onAdd={handleAdd}
+          permission={PERMISSIONS.FACILITY_BOOKING_CREATE}
         />
       </div>
 

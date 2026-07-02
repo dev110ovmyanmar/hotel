@@ -161,7 +161,7 @@ export default function RoomUpgradeModal({
                 key="backTo"
                 onClick={backToSetFields}
             >
-                Back To
+                Back
             </Button>,
             <Button
                 key="confirm"
@@ -196,100 +196,43 @@ export default function RoomUpgradeModal({
                     </div>
                     :
                     !toReviewPage ? (
-                        hasRooms ? (
-                            <>
-                                <div style={{
-                                    display: 'flex',
-                                    justifyContent: 'space-between',
-                                    background: '#f8fafc',
-                                    padding: '10px 14px',
+                        <>
+                            <div style={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                background: '#f8fafc',
+                                padding: '10px 14px',
 
-                                    borderRadius: '6px',
-                                    margin: '12px 0 20px 0',
-                                    border: '1px solid #e2e8f0',
-                                    fontSize: '13px'
-                                }}>
-                                    <Text type="secondary"><strong style={{ color: '#475569' }}>Room Type:</strong> {currentRoomType}</Text>
-                                    {/* <Text type="secondary"><strong style={{ color: '#475569' }}>Rank :</strong> {record?.roomType?.rank}</Text> */}
+                                borderRadius: '6px',
+                                margin: '12px 0 20px 0',
+                                border: '1px solid #e2e8f0',
+                                fontSize: '13px'
+                            }}>
+                                <Text type="secondary"><strong style={{ color: '#475569' }}>Room Type:</strong> {currentRoomType}</Text>
+                                {/* <Text type="secondary"><strong style={{ color: '#475569' }}>Rank :</strong> {record?.roomType?.rank}</Text> */}
 
-                                    <div className="grid place-items-center w-fit -mt-1">
-                                        <FaStar className='text-amber-200  text-3xl col-start-1 row-start-1' />
-                                        <div className="col-start-1 row-start-1 text-gray-900 font-bold text-xs mt-1">
-                                            {record?.roomType?.rank}
-                                        </div>
+                                <div className="grid place-items-center w-fit -mt-1">
+                                    <FaStar className='text-amber-200  text-3xl col-start-1 row-start-1' />
+                                    <div className="col-start-1 row-start-1 text-gray-900 font-bold text-xs mt-1">
+                                        {record?.roomType?.rank}
                                     </div>
                                 </div>
+                            </div>
 
+                            {
+                                hasRooms ?
+                                    <Form
+                                        form={form}
+                                        layout="vertical"
+                                    >
+                                        <Row gutter={[16, 16]}>
 
-                                <Form
-                                    form={form}
-                                    layout="vertical"
-                                >
-                                    <Row gutter={[16, 16]}>
+                                            {roomList?.rooms?.map(room => {
+                                                return (
+                                                    <Col span={12}>
 
-                                        {roomList?.rooms?.map(room => {
-                                            return (
-                                                <Col span={12}>
-                                                    {/* <Card
-                                                        className={`
-                                                            relative 
-                                                            overflow-visible 
-                                                            cursor-pointer 
-                                                            shadow-md 
-                                                            transition-all 
-                                                            !border-2 
-                                                            !duration-500
-                                                            rounded-2xl 
-                                                            ${selectedRoom === room.roomType.uuid
-                                                                ? '!border-blue-500 !bg-blue-50 !shadow-lg'
-                                                                : '!border-blue-200 !shadow-md hover:!border-blue-300 hover:-translate-y-1'}
-                                                        `}
-                                                        onClick={() => {
-                                                            const matchedRatePlan = room.ratePlans.find(
-                                                                rp => rp.uuid === ratePlanUuid
-                                                            );
-                                                            setSelectedRoom(room.roomType.uuid);
-                                                            setSelectedRoomTypeName(room.roomType);
-                                                            setCheckSelectedRoom(true);
-
-                                                            form.setFieldsValue({
-                                                                roomType: room?.roomType?.uuid
-                                                            });
-
-                                                            if (matchedRatePlan) {
-                                                                form.setFieldsValue({
-                                                                    ratePlan: {
-                                                                        value: matchedRatePlan.uuid,
-                                                                        label: matchedRatePlan.name,
-                                                                    },
-                                                                });
-                                                            }
-                                                        }}
-                                                    >
-
-                                                        <div className="absolute top-1 right-0 grid place-items-center w-fit mr-1 ">
-                                                            <FaStar className={
-                                                                `
-                                                                    ${selectedRoom === room.roomType.uuid ? "text-amber-500" : "text-amber-200 "
-                                                                }
-                                                                    text-3xl 
-                                                                    col-start-1 
-                                                                    row-start-1
-                                                                `
-                                                            } />
-                                                            <div className="col-start-1 row-start-1 text-gray-900 font-bold text-xs mt-1 ml-1 mr-1">
-                                                                {room?.roomType?.rank}
-                                                            </div>
-                                                        </div>
-
-                                                        <div className="flex flex-col justify-center items-center text-center">
-                                                            <div className="!text-xs">
-                                                                {room?.roomType?.name}
-                                                            </div>
-                                                        </div>
-                                                    </Card> */}
-                                                    <div
-                                                        className={`  
+                                                        <div
+                                                            className={`  
                                                             flex
                                                             justify-between
                                                             p-4                                                          
@@ -300,136 +243,138 @@ export default function RoomUpgradeModal({
                                                             !duration-500
                                                             rounded-2xl 
                                                             ${selectedRoom === room.roomType.uuid
-                                                                ? '!border-blue-500 !bg-blue-50 !shadow-lg'
-                                                                : '!border-blue-200 !shadow-md hover:!border-blue-300 hover:-translate-y-1'}
+                                                                    ? '!border-blue-500 !bg-blue-50 !shadow-lg'
+                                                                    : '!border-blue-200 !shadow-md hover:!border-blue-300 hover:-translate-y-1'}
                                                                                                             `}
-                                                        onClick={() => {
-                                                            const matchedRatePlan = room.ratePlans.find(
-                                                                rp => rp.uuid === ratePlanUuid
-                                                            );
-                                                            console.log(room, "RoomInSearch")
-                                                            setSelectedRoom(room.roomType.uuid);
-                                                            setSelectedRoomTypeName(room.roomType);
-                                                            setCheckSelectedRoom(true);
-                                                            form.resetFields(["roomUuid"]);
-                                                            form.setFieldsValue({
-                                                                roomUuid: undefined
-                                                            });
-                                                            form.setFieldsValue({
-                                                                roomType: room?.roomType?.uuid
-                                                            });
-                                                            if (matchedRatePlan) {
+                                                            onClick={() => {
+                                                                const matchedRatePlan = room.ratePlans.find(
+                                                                    rp => rp.uuid === ratePlanUuid
+                                                                );
+                                                                console.log(room, "RoomInSearch")
+                                                                setSelectedRoom(room.roomType.uuid);
+                                                                setSelectedRoomTypeName(room.roomType);
+                                                                setCheckSelectedRoom(true);
+                                                                form.resetFields(["roomUuid"]);
                                                                 form.setFieldsValue({
-                                                                    ratePlan: {
-                                                                        value: matchedRatePlan.uuid,
-                                                                        label: matchedRatePlan.name,
-                                                                    },
+                                                                    roomUuid: undefined
                                                                 });
-                                                            };
-                                                        }}
+                                                                form.setFieldsValue({
+                                                                    roomType: room?.roomType?.uuid
+                                                                });
+                                                                if (matchedRatePlan) {
+                                                                    form.setFieldsValue({
+                                                                        ratePlan: {
+                                                                            value: matchedRatePlan.uuid,
+                                                                            label: matchedRatePlan.name,
+                                                                        },
+                                                                    });
+                                                                };
+                                                            }}
 
 
-                                                    >
-                                                        <div className="!text-xs">
-                                                            {room?.roomType?.name}
-                                                        </div>
+                                                        >
+                                                            <div className="!text-xs">
+                                                                {room?.roomType?.name}
+                                                            </div>
 
-                                                        <div className="grid place-items-center w-fit -mt-2">
-                                                            <FaStar className={
-                                                                `
+                                                            <div className="grid place-items-center w-fit -mt-2">
+                                                                <FaStar className={
+                                                                    `
                                                                 ${selectedRoom === room.roomType.uuid ? "text-amber-500" : "text-amber-200 "
                                                                     }
                                                                 text-3xl 
                                                                 col-start-1 
                                                                 row-start-1
                                                                                                                                                                             `
-                                                            } />
-                                                            <div className="col-start-1 row-start-1 text-gray-900 font-bold text-xs mt-1 ml-1 mr-1">
-                                                                {room?.roomType?.rank}
+                                                                } />
+                                                                <div className="col-start-1 row-start-1 text-gray-900 font-bold text-xs mt-1 ml-1 mr-1">
+                                                                    {room?.roomType?.rank}
+                                                                </div>
                                                             </div>
+
                                                         </div>
+                                                    </Col>
+                                                )
+                                            })}
 
-                                                    </div>
-                                                </Col>
-                                            )
-                                        })}
+                                            {/* </Row> */}
+                                            {/* </Col> */}
+                                        </Row>
 
-                                        {/* </Row> */}
-                                        {/* </Col> */}
-                                    </Row>
+                                        <Form.Item name="roomType" hidden>
+                                            <Input />
+                                        </Form.Item>
 
-                                    <Form.Item name="roomType" hidden>
-                                        <Input />
-                                    </Form.Item>
+                                        {
+                                            selectedRoom &&
+                                            // <Col span={12}>
+                                            <>
+                                                <Row gutter={16}>
+                                                    <Col span={12}>
+                                                        <Form.Item
+                                                            name="ratePlan"
+                                                            className='!my-5'
+                                                            label="Rate Plan"
+                                                            rules={[
+                                                                {
+                                                                    required: true,
+                                                                    message: "Please select a rate plan",
+                                                                },
+                                                            ]}
 
-                                    {
-                                        selectedRoom &&
-                                        // <Col span={12}>
-                                        <>
-                                            <Row gutter={16}>
-                                                <Col span={12}>
-                                                    <Form.Item
-                                                        name="ratePlan"
-                                                        className='!my-5'
-                                                        label="Rate Plan"
-                                                        rules={[
-                                                            {
-                                                                required: true,
-                                                                message: "Please select a rate plan",
-                                                            },
-                                                        ]}
-
-                                                    >
-                                                        <Select
-                                                            options={ratePlanOptions}
-                                                            labelInValue
                                                         >
-                                                        </Select>
-                                                    </Form.Item>
-                                                </Col>
+                                                            <Select
+                                                                options={ratePlanOptions}
+                                                                labelInValue
+                                                            >
+                                                            </Select>
+                                                        </Form.Item>
+                                                    </Col>
 
-                                                <Col span={12}>
-                                                    <Form.Item
-                                                        name="roomUuid"
-                                                        className='!mt-5'
-                                                        label="Rooms"
-                                                        rules={[
-                                                            {
-                                                                required: true,
-                                                                message: "Please select a room number",
-                                                            },
-                                                        ]}
+                                                    <Col span={12}>
+                                                        <Form.Item
+                                                            name="roomUuid"
+                                                            className='!mt-5'
+                                                            label="Rooms"
+                                                            rules={[
+                                                                {
+                                                                    required: true,
+                                                                    message: "Please select a room number",
+                                                                },
+                                                            ]}
 
-                                                    >
-                                                        <Select
-                                                            options={roomUuidOptions}
-                                                            labelInValue
                                                         >
-                                                        </Select>
-                                                    </Form.Item>
-                                                </Col>
-                                            </Row>
+                                                            <Select
+                                                                options={roomUuidOptions}
+                                                                labelInValue
+                                                            >
+                                                            </Select>
+                                                        </Form.Item>
+                                                    </Col>
+                                                </Row>
 
-                                            <Form.Item
-                                                name="rateStatus"
-                                                valuePropName="checked"
-                                                labelInValue
-                                                initialValue={false}
-                                            >
-                                                <Checkbox>
-                                                    Override Room Rate
-                                                </Checkbox>
-                                            </Form.Item>
-                                        </>
-                                        // </Col>
-                                    }
-                                </Form>
-                            </>
-                        ) : (
-                            <div className="text-center py-8">
-                                <Text type="secondary">There are no rooms available to upgrade.</Text>
-                            </div>
-                        )
+                                                <Form.Item
+                                                    name="rateStatus"
+                                                    valuePropName="checked"
+                                                    labelInValue
+                                                    initialValue={false}
+                                                >
+                                                    <Checkbox>
+                                                        Override Room Rate
+                                                    </Checkbox>
+                                                </Form.Item>
+                                            </>
+                                            // </Col>
+                                        }
+                                    </Form>
+                                    :
+                                    <div className="text-center py-8">
+                                        <Text type="secondary">There are no rooms available to upgrade.</Text>
+                                    </div>
+                            }
+
+
+                        </>
                     )
                         : (
                             <RoomUpgradeReview

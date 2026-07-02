@@ -15,6 +15,7 @@ import ImageUpload from "../../../component/ImageUpload/ImageUpload";
 import { useApiMutation } from "../../../hooks/useApiMutation";
 import PriceTag from "../../../component/PriceTag/PriceTag";
 import FacilityBookingForm from "./FacilityBookingForm/FacilityBookingForm";
+import { PERMISSIONS } from './../../../variables/permission';
 import dayjs from "dayjs";
 
 const FacilityBookingTable = ({
@@ -136,7 +137,7 @@ const FacilityBookingTable = ({
             key: "view",
             label: "View",
             icon: <EyeOutlined style={{ fontSize: "12px" }} />,
-            permission: PERMISSIONS.PARTNER_VIEW,
+            permission: PERMISSIONS.FACILITY_BOOKING_VIEW,
             onClick: () => {
               setDrawerOpen(true);
               setMode("view");
@@ -147,7 +148,7 @@ const FacilityBookingTable = ({
             key: "edit",
             label: "Edit",
             icon: <EditOutlined style={{ fontSize: "12px" }} />,
-            permission: PERMISSIONS.PARTNER_EDIT,
+            permission: PERMISSIONS.FACILITY_BOOKING_EDIT,
             onClick: () => {
               setDrawerOpen(true);
               setMode("edit");

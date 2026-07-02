@@ -7,6 +7,7 @@ import PolicyTable from "./Components/PolicyTable";
 import PolicyForm from "./Components/PolicyForm/PolicyForm";
 import { fetchPolicy } from "../../api/policyApi";
 import ListHeader from "../../component/ListHeader/ListHeader";
+import { PERMISSIONS } from "../../variables/permission";
 
 // PolicyList
 const PolicyList = () => {
@@ -53,6 +54,7 @@ const PolicyList = () => {
           setKeyword={setKeyword}
           addButtonText="Add New Policy"
           onAdd={handleAdd}
+          permission={PERMISSIONS.POLICY_CREATE}
         />
       </div>
 

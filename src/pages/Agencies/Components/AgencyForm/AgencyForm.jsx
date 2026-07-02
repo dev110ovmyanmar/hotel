@@ -24,6 +24,8 @@ import ImageUpload from "../../../../component/ImageUpload/ImageUpload";
 import { deleteImageUpload } from "../../../../api/deleteImageApi";
 import { validatePhoneNumber } from "../../../../utils";
 import { priceFormatter, priceParser } from "../../../../component/PriceTag/PriceTag";
+import usePermission from "../../../../hooks/usePermission";
+import { PERMISSIONS } from "../../../../variables/permission";
 
 const { TextArea } = Input;
 
@@ -41,10 +43,13 @@ const AgencyForm = ({
 }) => {
   const [form] = Form.useForm();
   const phoneValue = Form.useWatch("phone", form);
-  
+
   const isView = mode === "view";
   const isEdit = mode === "edit";
   const isAdd = mode === "add";
+
+  const { hasPermission } = usePermission();
+  const canEdit = hasPermission(PERMISSIONS.PARTNER_EDIT);
 
   const initData = queryClient.getQueryData([
     "initData",
@@ -88,17 +93,17 @@ const AgencyForm = ({
     }
   }, [drawerOpen, isAdd, initDataStatus]);
 
-  useEffect(()=>{
+  useEffect(() => {
     const AgencyFormDataView = isView || isEdit;
-      if (AgencyFormDataView && data) {
-        form.setFieldsValue({
-          ...data,
-          status: {
-            uuid: data?.status?.uuid,
-          },
-        });
-      }
-  },[isEdit,isView,data])
+    if (AgencyFormDataView && data) {
+      form.setFieldsValue({
+        ...data,
+        status: {
+          uuid: data?.status?.uuid,
+        },
+      });
+    }
+  }, [isEdit, isView, data])
 
   const handleClose = () => {
     setDrawerOpen(false);
@@ -171,14 +176,16 @@ const AgencyForm = ({
                   : "Add New Agency"}
             </span>
             {isView ? (
-              <Button
-                type="primary"
-                onClick={() => {
-                  setMode("edit");
-                }}
-              >
-                Edit
-              </Button>
+              canEdit && (
+                <Button
+                  type="primary"
+                  onClick={() => {
+                    setMode("edit");
+                  }}
+                >
+                  Edit
+                </Button>
+              )
             ) : (
               <FormButtons
                 onClick={() => form.submit()}

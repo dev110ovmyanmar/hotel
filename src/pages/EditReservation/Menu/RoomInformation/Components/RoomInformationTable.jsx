@@ -191,10 +191,9 @@ const RoomInformationTable = ({
         return (
           <span
             style={{
-              color: isRoomNull
-                ? isClickable
-                  ? "#1890ff"
-                  : "#bfbfbf"
+              color: isRoomNull ? isClickable
+                ? "#1890ff"
+                : "#bfbfbf"
                 : shouldHighlightRoom
                   ? "#1890ff"
                   : "inherit",
@@ -332,11 +331,11 @@ const RoomInformationTable = ({
                       icon: <CalendarOutlined />,
                       disabled: record?.checkinDate
                         ? dayjs(record.checkinDate)
-                            .startOf("day")
-                            .isSame(dayjs().startOf("day")) ||
-                          dayjs(record.checkinDate)
-                            .startOf("day")
-                            .isBefore(dayjs().startOf("day"))
+                          .startOf("day")
+                          .isSame(dayjs().startOf("day")) ||
+                        dayjs(record.checkinDate)
+                          .startOf("day")
+                          .isBefore(dayjs().startOf("day"))
                         : false,
                       onClick: () => handleAction("date_change", record),
                     },
@@ -347,14 +346,6 @@ const RoomInformationTable = ({
                       key: "stay_extension",
                       label: "Extend Stay",
                       icon: <PlusOutlined />,
-                      disabled: record?.checkinDate
-                        ? dayjs(record.checkinDate)
-                            .startOf("day")
-                            .isSame(dayjs().startOf("day")) ||
-                          dayjs(record.checkinDate)
-                            .startOf("day")
-                            .isBefore(dayjs().startOf("day"))
-                        : false,
                       onClick: () => handleAction("stay_extension", record),
                     },
                     //   ]
