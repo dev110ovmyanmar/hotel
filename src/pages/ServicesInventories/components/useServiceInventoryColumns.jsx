@@ -38,7 +38,8 @@ export default function useServiceInventoryColumns(onEdit, onView) {
       title: "Stock",
       dataIndex: "stockQuantity",
       key: "stockQuantity",
-      width: 80,
+      width: 60,
+      align:"center",
       render: (qty, record) => <p>{qty}</p>,
     },
     {

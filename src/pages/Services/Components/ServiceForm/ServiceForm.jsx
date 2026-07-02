@@ -9,6 +9,7 @@ import {
   Switch,
   Row,
   Col,
+  Checkbox,
 } from "antd";
 import Toast from "../../../../component/Toast/Toast";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
@@ -284,7 +285,7 @@ const ServiceForm = ({
               valuePropName="checked"
               rules={[{ required: true }]}
             >
-              <Switch readOnly={isView} disabled={isView} />
+              <Checkbox disabled={isView}>Complimentary</Checkbox>
             </Form.Item>
 
             <Form.Item
