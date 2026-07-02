@@ -78,7 +78,7 @@ const CompanyContractTable = ({
             key: "view",
             label: "View",
             icon: <EyeOutlined style={{ fontSize: "12px" }} />,
-            // permission: PERMISSIONS.ROOM_RATE_VIEW,
+            permission: PERMISSIONS.PARTNER_VIEW,
             onClick: () => {
               setDrawerOpen(true);
               setMode("view");
@@ -89,7 +89,7 @@ const CompanyContractTable = ({
             key: "edit",
             label: "Edit",
             icon: <EditOutlined style={{ fontSize: "12px" }} />,
-            // permission: PERMISSIONS.ROOM_RATE_EDIT,
+            permission: PERMISSIONS.PARTNER_EDIT,
             onClick: () => {
               setDrawerOpen(true);
               setMode("edit");

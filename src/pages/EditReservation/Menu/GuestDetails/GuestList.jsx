@@ -10,6 +10,7 @@ import { reservationGuestList } from "../../../../api/reservationSectionApi";
 import useApiQuery from "../../../../hooks/useApiQuery";
 import { LIMITS } from "../../../../variables/constants";
 import GuestUploadDrawer from "./Components/GuestForms/GuestUploadDrawer";
+import Loader from "../../../../component/Loader/Loader";
 
 const GuestList = () => {
   const location = useLocation();
@@ -28,7 +29,7 @@ const GuestList = () => {
       cleanId === ":bookingId" ||
       cleanId.length < 32 // Checks if the user chopped or deleted characters from the ID
     ) {
-      navigate('/404', { replace: true });
+      navigate("/404", { replace: true });
     }
   }, [bookingId, navigate]);
 
@@ -62,12 +63,23 @@ const GuestList = () => {
 
   useEffect(() => {
     if (bookingId && data?.reservation?.reservationNo) {
-      sessionStorage.setItem(`breadcrumb_${bookingId}`, data.reservation.reservationNo);
+      sessionStorage.setItem(
+        `breadcrumb_${bookingId}`,
+        data.reservation.reservationNo,
+      );
       window.dispatchEvent(new Event("breadcrumb_updated"));
     }
   }, [data, bookingId]);
 
   const reservationInfo = data?.reservation ?? null;
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-full min-h-[300px]">
+        <Loader />
+      </div>
+    );
+  }
 
   return (
     <div className="w-full px-6 py-2">

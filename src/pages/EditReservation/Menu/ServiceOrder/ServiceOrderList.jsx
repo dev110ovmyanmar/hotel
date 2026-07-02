@@ -8,6 +8,7 @@ import { serviceOrderList } from "../../../../api/reservationSectionApi";
 import { LIMITS } from "../../../../variables/constants";
 import ServiceOrderTable from "./Components/ServiceOrderTable";
 import ServiceOrderForm from "./Components/ServiceOrderForms/ServiceOrderForm";
+import Loader from "../../../../component/Loader/Loader";
 
 const ServiceOrderList = () => {
   const navigate = useNavigate();
@@ -24,7 +25,7 @@ const ServiceOrderList = () => {
       cleanId === ":bookingId" ||
       cleanId.length < 32 // Checks if the user chopped or deleted characters from the ID
     ) {
-      navigate('/404', { replace: true });
+      navigate("/404", { replace: true });
     }
   }, [bookingId, navigate]);
 
@@ -35,7 +36,7 @@ const ServiceOrderList = () => {
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(LIMITS.PAGE_SIZE);
 
-  const { data, refetch } = useApiQuery({
+  const { data, isLoading, refetch } = useApiQuery({
     fetchQueryName: "service-order",
     fetchQueryFunction: serviceOrderList,
     params: {
@@ -47,7 +48,10 @@ const ServiceOrderList = () => {
 
   useEffect(() => {
     if (bookingId && data?.reservation?.reservationNo) {
-      sessionStorage.setItem(`breadcrumb_${bookingId}`, data.reservation.reservationNo);
+      sessionStorage.setItem(
+        `breadcrumb_${bookingId}`,
+        data.reservation.reservationNo,
+      );
       window.dispatchEvent(new Event("breadcrumb_updated"));
     }
   }, [data, bookingId]);
@@ -57,6 +61,14 @@ const ServiceOrderList = () => {
     setMode("add");
     setDrawerOpen(true);
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-full min-h-[300px]">
+        <Loader />
+      </div>
+    );
+  }
 
   return (
     <div className="w-full px-6 py-2">

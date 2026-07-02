@@ -28,6 +28,7 @@ import { capitalizeFirstLetter } from "../../../../utils/Utils";
 import ImageUpload from "../../../../component/ImageUpload/ImageUpload";
 import { fetchCompanyUpload } from "../../../../api/partnerApi";
 import { deleteImageUpload } from "../../../../api/deleteImageApi";
+import { PERMISSIONS } from "../../../../variables/permission";
 
 const CompanyContractForm = ({
   mode,
@@ -50,11 +51,12 @@ const CompanyContractForm = ({
 
   const { state } = useLocation();
 
-  const { hasPermission } = usePermission();
-
   const isView = mode === "view";
   const isEdit = mode === "edit";
   const isAdd = mode === "add";
+
+  const { hasPermission } = usePermission();
+  const canEdit = hasPermission(PERMISSIONS.PARTNER_EDIT);
 
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
   const chargeType = initData?.statuses.charge_type;
@@ -185,14 +187,16 @@ const CompanyContractForm = ({
           <div className="flex justify-between items-center">
             <span>{capitalizeFirstLetter(state?.companyRecord?.name)}</span>
             {isView ? (
-              <Button
-                type="primary"
-                onClick={() => {
-                  setMode("edit");
-                }}
-              >
-                Edit
-              </Button>
+              canEdit && (
+                <Button
+                  type="primary"
+                  onClick={() => {
+                    setMode("edit");
+                  }}
+                >
+                  Edit
+                </Button>
+              )
             ) : (
               <FormButton
                 onClick={() => form.submit()}

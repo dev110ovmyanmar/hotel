@@ -40,6 +40,7 @@ import Toast from "../../../../../component/Toast/Toast";
 import RoomDowngradeModal from "./RoomAmendmentModals/RoomDowngradeModal";
 import PriceTag from "../../../../../component/PriceTag/PriceTag";
 import AddRoomWithExtensionDateModal from "./RoomAmendmentModals/AddRoomWithExtensionDateModal";
+// import { checkIfActionDisabled } from "./RoomInformationDate";
 
 const RoomInformationTable = ({
   data,
@@ -52,6 +53,7 @@ const RoomInformationTable = ({
   changePerPage,
   reservationUuid,
 }) => {
+  console.log(reservationUuid, "reservationUuid");
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [guestOpen, setGuestOpen] = useState(false);
   const [guestListOpen, setGuestListOpen] = useState(false);
@@ -169,10 +171,10 @@ const RoomInformationTable = ({
       width: 70,
     },
     {
-      title: "Room No:",
+      title: "Room No.",
       key: "room",
       dataIndex: "room",
-      width: 110,
+      width: 130,
       render: (text, record) => {
         const isRoomNull = !text;
 
@@ -189,10 +191,9 @@ const RoomInformationTable = ({
         return (
           <span
             style={{
-              color: isRoomNull
-                ? isClickable
-                  ? "#1890ff"
-                  : "#bfbfbf"
+              color: isRoomNull ? isClickable
+                ? "#1890ff"
+                : "#bfbfbf"
                 : shouldHighlightRoom
                   ? "#1890ff"
                   : "inherit",
@@ -241,7 +242,7 @@ const RoomInformationTable = ({
       dataIndex: ["roomStatus", "name"],
       key: "roomStatus",
       render: (_, record) => <ColorStatusTag status={record?.roomStatus} />,
-      width: 110,
+      width: 90,
     },
     {
       title: "Total Charges",
@@ -311,6 +312,7 @@ const RoomInformationTable = ({
         ];
 
         if (record?.amendStatus) {
+          // const isActionDisabled = checkIfActionDisabled(record);
           menuItems.push(
             { type: "divider" },
             {
@@ -337,18 +339,17 @@ const RoomInformationTable = ({
                         : false,
                       onClick: () => handleAction("date_change", record),
                     },
-                    ...(record?.isExtend !== false ||
-                      record?.roomStatus?.code === "checked_in"
-                      ? [
-                        {
-                          key: "stay_extension",
-                          label: "Extend Stay",
-                          icon: <PlusOutlined />,
-                          onClick: () =>
-                            handleAction("stay_extension", record),
-                        },
-                      ]
-                      : []),
+                    // ...(record?.isExtend !== false ||
+                    //   record?.roomStatus?.code === "checked_in"
+                    //   ? [
+                    {
+                      key: "stay_extension",
+                      label: "Extend Stay",
+                      icon: <PlusOutlined />,
+                      onClick: () => handleAction("stay_extension", record),
+                    },
+                    //   ]
+                    // : []),
                     {
                       key: "stay_reduction",
                       label: "Shorten Stay",
@@ -399,7 +400,7 @@ const RoomInformationTable = ({
                     },
                     {
                       key: "add_room",
-                      label: "Add Room",
+                      label: "Add Room for Split Stay",
                       icon: <PlusOutlined />,
                       onClick: () => {
                         (handleAction("add_room", record),
@@ -478,6 +479,7 @@ const RoomInformationTable = ({
       },
     },
   ];
+
   return (
     <div>
       <Table
@@ -557,6 +559,7 @@ const RoomInformationTable = ({
           setMode={setGuestFormMode}
           guestData={selectedGuestData}
           setSelectedData={setSelectedGuestData}
+          roomuuid={reservationUuid?.reservationRoom?.uuid}
           reservationUuid={reservationUuid?.reservation}
         />
       )}
@@ -630,7 +633,7 @@ const RoomInformationTable = ({
           isOpen={roomMoveOpen}
           onClose={() => {
             setRoomMoveOpen(false);
-            setSelectedData(null)
+            setSelectedData(null);
           }}
           record={selectedData}
           roomMoveUuid={roomMoveUuid}

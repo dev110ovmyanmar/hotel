@@ -304,7 +304,12 @@ const GuestForm = ({
         layout="vertical"
         onFinish={onFinish}
         disabled={isView}
-        initialValues={{ isAdult: 1, status: activeStatusUuid, isPrimary: 1 }}
+        initialValues={{
+          isAdult: 1,
+          status: activeStatusUuid,
+          isPrimary: 1,
+          country: "Myanmar",
+        }}
         onValuesChange={(changedValues) => {
           if (changedValues.hasOwnProperty("isAdult")) {
             const nextGuestType = changedValues.isAdult;
@@ -313,6 +318,7 @@ const GuestForm = ({
               isAdult: nextGuestType,
               status: activeStatusUuid,
               isPrimary: 1,
+              country: "Myanmar",
             });
             setSelectedCountryUuid(null);
             setSelectedGuestProfileUuid(null);

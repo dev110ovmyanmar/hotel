@@ -19,9 +19,16 @@ import { queryClient } from "./../../../../app/queryClient";
 import Status from "./../../../../component/Status/Status";
 import ImageUpload from "../../../../component/ImageUpload/ImageUpload";
 import { validatePhoneNumber } from "../../../../utils";
-import { createFacilityBooking, editFacilityBooking, facilityBookingDetails } from "../../../../api/booking";
+import {
+  createFacilityBooking,
+  editFacilityBooking,
+  facilityBookingDetails,
+} from "../../../../api/booking";
 import dayjs from "dayjs";
 import { facilityMeta } from "../../../../api/facilityPackageApi";
+import usePermission from "../../../../hooks/usePermission";
+import { PERMISSIONS } from "../../../../variables/permission";
+
 
 const { TextArea } = Input;
 const { RangePicker } = TimePicker;
@@ -34,14 +41,18 @@ const FacilityBookingForm = ({
   drawerOpen,
   setDrawerOpen,
   page,
-  setPage
+  setPage,
 }) => {
   const [form] = Form.useForm();
   const phoneValue = Form.useWatch("guestPhone", form);
   const dateFormat = "DD-MM-YYYY";
-  const disabledDate = current => {
-    return current < dayjs().startOf('day');
+  const disabledDate = (current) => {
+    return current < dayjs().startOf("day");
   };
+
+  const { hasPermission } = usePermission();
+  const canEdit = hasPermission(PERMISSIONS.FACILITY_BOOKING_EDIT);
+
   const format = "HH:mm";
 
   const eventTime = Form.useWatch("timeRange", form);
@@ -49,9 +60,7 @@ const FacilityBookingForm = ({
   const endTime = eventTime?.[1];
 
   const expectedSeconds =
-    startTime && endTime
-      ? endTime.diff(startTime, "second")
-      : null;
+    startTime && endTime ? endTime.diff(startTime, "second") : null;
 
   const hours = Math.floor(expectedSeconds / 3600);
   const minutes = Math.floor((expectedSeconds % 3600) / 60);
@@ -59,7 +68,6 @@ const FacilityBookingForm = ({
 
   const frontformattedExpectedHours = `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
   const formattedExpectedHours = `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:00`;
-
 
   const isView = mode === "view";
   const isEdit = mode === "edit";
@@ -79,7 +87,7 @@ const FacilityBookingForm = ({
   const facilityPackages = facilityMetaData?.facility_packages?.map((item) => ({
     label: item?.name,
     value: item?.uuid,
-  }))
+  }));
 
   const createFacilityBookings = useApiMutation({
     mutationFn: createFacilityBooking,
@@ -93,8 +101,11 @@ const FacilityBookingForm = ({
     // shouldInvalidate: isEdit ? true : page === 1,
   });
 
-
-  const { data: bookingDetails, isPending, error } = useApiQuery({
+  const {
+    data: bookingDetails,
+    isPending,
+    error,
+  } = useApiQuery({
     fetchQueryName: "facility-booking-details",
     fetchQueryFunction: facilityBookingDetails,
     params: {
@@ -111,9 +122,7 @@ const FacilityBookingForm = ({
 
       form.setFieldsValue({
         status: {
-          uuid: initDataStatus.find(
-            item => item.code === "active"
-          )?.uuid,
+          uuid: initDataStatus.find((item) => item.code === "active")?.uuid,
         },
       });
     }
@@ -134,23 +143,19 @@ const FacilityBookingForm = ({
           dayjs(bookingDetails?.endTime, "HH:mm"),
         ],
 
-        expectedHours: dayjs(
-          bookingDetails?.expectedHours,
-          "HH:mm"
-        ),
+        expectedHours: dayjs(bookingDetails?.expectedHours, "HH:mm"),
         status: {
           uuid: bookingDetails?.status?.uuid,
         },
       });
     }
-  }, [isEdit, isView, bookingDetails])
+  }, [isEdit, isView, bookingDetails]);
 
   const handleClose = () => {
     setDrawerOpen(false);
     setSelectedData(null);
     form.resetFields();
   };
-
 
   const onFinish = (values) => {
     const modifiedValues = {
@@ -160,8 +165,8 @@ const FacilityBookingForm = ({
       endTime: values.timeRange[1].format("HH:mm:ss"),
       expectedHours: formattedExpectedHours,
       facilityPackage: {
-        uuid: values?.facilityPackage
-      }
+        uuid: values?.facilityPackage,
+      },
     };
 
     if (isAdd) {
@@ -184,9 +189,9 @@ const FacilityBookingForm = ({
         endTime: values.timeRange[1].format("HH:mm:ss"),
         expectedHours: formattedExpectedHours,
         facilityPackage: {
-          uuid: values?.facilityPackage
+          uuid: values?.facilityPackage,
         },
-        uuid: bookingDetails?.uuid
+        uuid: bookingDetails?.uuid,
       };
 
       editFacilityBookings.mutate(editValues, {
@@ -199,6 +204,13 @@ const FacilityBookingForm = ({
     }
   };
 
+  const childSharedProps = {
+    mode: "spinner",
+    min: 0,
+    max: 10,
+    defaultValue: 0,
+    style: { width: 150 },
+  };
 
   return (
     <div className="flex justify-center">
@@ -216,14 +228,17 @@ const FacilityBookingForm = ({
                   : "Add New Facility Booking"}
             </span>
             {isView ? (
-              <Button
-                type="primary"
-                onClick={() => {
-                  setMode("edit");
-                }}
-              >
-                Edit
-              </Button>
+              canEdit && (
+                <Button
+                  type="primary"
+                  onClick={() => {
+                    setMode("edit");
+                  }}
+                >
+                  Edit
+                </Button>
+              )
+
             ) : (
               <FormButtons
                 onClick={() => form.submit()}
@@ -239,11 +254,16 @@ const FacilityBookingForm = ({
           layout="vertical"
           validateTrigger="onSubmit"
           onFinish={onFinish}
+          initialValues={{
+            expectedPax: 0,
+          }}
         >
           <Form.Item
             label="Guest Name"
             name="guestName"
-            rules={[{ required: true, message: "Facility Booking Name is Required" }]}
+            rules={[
+              { required: true, message: "Facility Booking Name is Required" },
+            ]}
           >
             <Input readOnly={isView} placeholder="Enter FacilityBooking Name" />
           </Form.Item>
@@ -251,21 +271,21 @@ const FacilityBookingForm = ({
           <Form.Item
             label="Phone"
             name="guestPhone"
-            rules={[
-              { required: true },
-
-            ]}
+            rules={[{ required: true }]}
           >
             <Input
+              maxLength={20}
               readOnly={isView}
-              placeholder="Enter Phone"
               onKeyPress={(e) => {
-                if (!/[0-9]/.test(e.key) &&
-                  !(e.key === "+" && value.length === 0)
+                const currentValue = form.getFieldValue("phone") || "";
+                if (
+                  !/[0-9]/.test(e.key) &&
+                  !(e.key === "+" && currentValue.length === 0)
                 ) {
                   e.preventDefault();
                 }
               }}
+              placeholder="Enter Phone Number"
             />
           </Form.Item>
 
@@ -280,21 +300,16 @@ const FacilityBookingForm = ({
           <Form.Item
             label="Facility Package"
             name="facilityPackage"
-            rules={[{ required: true, message: "Facility Package is Required" }]}
-          >
-            <Select options={facilityPackages} readOnly={isView} placeholder="Select Event Name" />
-          </Form.Item>
-
-
-          {/* <Form.Item
-            label="Total Price"
-            name="totalPrice"
             rules={[
-              { required: true },
+              { required: true, message: "Facility Package is Required" },
             ]}
           >
-            <Input readOnly={isView} placeholder="Enter Total Price" />
-          </Form.Item> */}
+            <Select
+              options={facilityPackages}
+              readOnly={isView}
+              placeholder="Select Event Name"
+            />
+          </Form.Item>
 
           <Form.Item
             label="Event Date"
@@ -315,30 +330,36 @@ const FacilityBookingForm = ({
                 name="timeRange"
                 rules={[{ required: true, message: "Time Range is Required" }]}
               >
-                <RangePicker
-                  format={format}
-
-                />
+                <RangePicker format={format} />
               </Form.Item>
             </Col>
 
             <Col span={12}>
-              <Form.Item
-                label="Expected Hours"
-                required
-              >
+              <Form.Item label="Expected Hours" required>
                 <Input value={frontformattedExpectedHours} readOnly />
               </Form.Item>
             </Col>
           </Row>
 
-          <Form.Item
+          {/* <Form.Item
             label="Expected Pax"
             name="expectedPax"
             rules={[{ required: true, message: "Expected Pax is Required" }]}
 
           >
             <InputNumber readOnly={isView} placeholder="Enter Expected Pax" style={{ width: "100%" }} min={1} />
+          </Form.Item> */}
+          <Form.Item
+            label="Expected Pax"
+            name="expectedPax"
+            rules={[{ required: true, message: "Expected Pax is Required" }]}
+          >
+            <InputNumber
+              {...childSharedProps}
+              placeholder="Outlined"
+              readOnly={isView}
+              style={{ width: 240 }}
+            />
           </Form.Item>
 
           <Status isView={isView} statusValue={initDataStatus} />
@@ -346,11 +367,8 @@ const FacilityBookingForm = ({
           <Form.Item label="Remark" name="remark">
             <TextArea readOnly={isView} placeholder="Enter Remark" />
           </Form.Item>
-
-
         </Form>
       </Drawer>
-
     </div>
   );
 };

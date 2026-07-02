@@ -58,7 +58,7 @@ const CompanyContractList = () => {
           setKeyword={setKeyword}
           addButtonText="Add Contract "
           onAdd={handleAdd}
-          // permission={PERMISSIONS.ROOM_RATE_CREATE}
+          permission={PERMISSIONS.PARTNER_CREATE}
         />
       </div>
 

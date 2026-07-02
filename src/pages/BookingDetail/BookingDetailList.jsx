@@ -61,6 +61,8 @@ const BookingDetailList = () => {
     );
   }
 
+  const reservationBooked = data?.reservationRoom?.roomStatus?.code === "booked";
+
   return (
     <div className="w-full px-6 py-2">
       <ReservationHeader data={data || {}} />
@@ -74,7 +76,7 @@ const BookingDetailList = () => {
       <Row gutter={[16, 16]}>
         {/* LEFT */}
         <Col xs={24} lg={16}>
-          <Row gutter={[16,16]}>
+          <Row gutter={[16, 16]}>
             <Col span={24}>
               <PaymentSummaryTable data={data?.reservation?.folioPayments} />
             </Col>
@@ -98,13 +100,20 @@ const BookingDetailList = () => {
 
         {/* RIGHT */}
         <Col xs={24} lg={8}>
-          <Row gutter={[0, 16]}>
-            <Col span={24}>
-              <FolioSummaryCard data={data?.reservation || {}} />
-            </Col>
-            <Col span={24}>
-              <SummaryCard data={data?.reservation || {}} />
-            </Col>
+          <Row gutter={[16, 16]}>
+            {
+              !reservationBooked &&
+              (
+                <>
+                  <Col span={24}>
+                    <FolioSummaryCard data={data?.reservation || {}} />
+                  </Col>
+                  <Col span={24}>
+                    <SummaryCard data={data?.reservation || {}} />
+                  </Col>
+                </>
+              )
+            }
             <Col span={24}>
               <BookingStatusCard data={data || {}} />
             </Col>

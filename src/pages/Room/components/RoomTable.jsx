@@ -4,8 +4,8 @@ import { MoreOutlined, EyeOutlined, EditOutlined } from "@ant-design/icons";
 import RoomForm from "./Room/RoomForm";
 import usePermission from "../../../hooks/usePermission";
 import { PERMISSIONS } from "../../../variables/permission";
-import ColorStatusTag from '../../../component/ColorStatusTag/ColorStatusTag';
-import Topbar from './../../../component/Topbar/Topbar';
+import ColorStatusTag from "../../../component/ColorStatusTag/ColorStatusTag";
+import Topbar from "./../../../component/Topbar/Topbar";
 
 const RoomTable = ({
   data,
@@ -14,7 +14,7 @@ const RoomTable = ({
   total,
   changePage,
   changePerPage,
-  loading
+  loading,
 }) => {
   const { hasPermission } = usePermission();
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -28,11 +28,10 @@ const RoomTable = ({
       width: 70,
     },
     {
-      title: "Room No",
+      title: "Room No.",
       dataIndex: "roomNo",
       key: "roomNo",
       render: (text) => <div>{text}</div>,
-      width: 100,
     },
     {
       title: "Room Type Name",
@@ -40,7 +39,7 @@ const RoomTable = ({
       key: "roomTypeName",
     },
     {
-      title: "Floor",
+      title: "Floor Name",
       dataIndex: "floor",
       key: "floorName",
       render: (floor) => `${floor.name} (${floor.floorNo})`,
@@ -54,8 +53,8 @@ const RoomTable = ({
     },
     {
       title: "Action",
-      fixed:"end",
-      align:"center",
+      fixed: "end",
+      align: "center",
       render: (_, record) => {
         const smallStyle = { fontSize: "12px" };
 

@@ -17,6 +17,7 @@ import { LIMITS } from "../../../../variables/constants";
 import AssignRoomForm from "./Components/RoomInformationForms/AssignRoomForm";
 import { Button } from "antd";
 import ChangeStatusForm from "../../../BookingDetail/Components/BookingDetailForms/ChangeStatusForm";
+import Loader from "../../../../component/Loader/Loader";
 
 const RoomInformationList = () => {
   const navigate = useNavigate();
@@ -82,6 +83,15 @@ const RoomInformationList = () => {
     setMode("add");
     setDrawerOpen(true);
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-full min-h-[300px]">
+        <Loader />
+      </div>
+    );
+  }
+
   return (
     <div className="w-full px-6 py-2">
       <ReservationHeader data={data || {}} />
@@ -153,6 +163,7 @@ const RoomInformationList = () => {
           onClose={() => setShowRoomResults(false)}
           selectedData={selectedData}
           setSelectedData={setSelectedData}
+          reservationUuid={data || []}
         />
       )}
     </div>

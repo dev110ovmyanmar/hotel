@@ -1,7 +1,11 @@
 import React from "react";
 import { FaChild, FaCalendarAlt, FaMoon } from "react-icons/fa";
 import { IoPeopleSharp } from "react-icons/io5";
-import { MdOutlineMeetingRoom } from "react-icons/md";
+import {
+  MdOutlineBed,
+  MdOutlineMeetingRoom,
+  MdOutlineRoom,
+} from "react-icons/md";
 import { BiMoneyWithdraw } from "react-icons/bi";
 import { MdArrowDownward } from "react-icons/md";
 import dayjs from "dayjs";
@@ -32,22 +36,41 @@ const ReservationHeader = ({ data }) => {
             </span>
           </div>
 
-          <div className="flex items-center gap-2 py-1 rounded-lg mt-2.5">
+          {/* <div className="flex items-center gap-2 py-1 rounded-lg mt-2.5">
             <FaChild className="text-pink-500 text-base" />
             <span className="text-[10px] md:text-[10px] lg:text-[13px] font-medium text-[#ffffff]">
               {reservation?.children || 0} Children
             </span>
-          </div>
+          </div> */}
+          {reservation?.children > 0 && (
+            <div className="flex items-center gap-2 py-1 rounded-lg mt-2.5">
+              <FaChild className="text-pink-500 text-base" />
+              <span className="text-[10px] md:text-[10px] lg:text-[13px] font-medium text-[#ffffff]">
+                {reservation.children} Children
+              </span>
+            </div>
+          )}
 
           <div className="hidden sm:block text-[#ffffff] mt-2.5">|</div>
 
-          <div className="flex items-center gap-2 py-1 rounded-lg mt-2.5">
-            <MdOutlineMeetingRoom className="text-emerald-300 text-lg" />
+          {/* <div className="flex items-center gap-2 py-1 rounded-lg mt-2.5">
+            <MdOutlineBed className="text-emerald-300 text-lg" />
             <span className="text-[10px] md:text-[10px] lg:text-[13px] font-medium text-[#ffffff]">
-              {reservation?.totalRooms || 0}{" "}
-              {reservation?.totalRooms === 1 ? "Room" : "Rooms"}
+             {reservation?.totalRooms || 0}{" "} 
+            {reservation?.totalRooms === 1 ? "Room" : "Rooms"} 
+              {reservation?.extraBed || 0}{" "}
+              {reservation?.extraBed === 1 ? "Exta Bed" : "Extra Beds"}
             </span>
-          </div>
+          </div> */}
+          {reservation?.extraBeds > 0 && (
+            <div className="flex items-center gap-2 py-1 rounded-lg mt-2.5">
+              <FaBed className="text-blue-500 text-base" />{" "}
+              {/* Replace with your actual icon */}
+              <span className="text-[10px] md:text-[10px] lg:text-[13px] font-medium text-[#ffffff]">
+                {reservation.extraBeds} Extra Beds
+              </span>
+            </div>
+          )}
 
           <div className="flex items-center gap-2 py-1 rounded-lg mt-2.5">
             <span className="text-[10px] md:text-[10px] lg:text-[13px] font-medium">
@@ -93,7 +116,7 @@ const ReservationHeader = ({ data }) => {
           <div className="hidden sm:block text-gray-200 mt-2">/</div>
 
           <div className="flex items-center gap-2.5">
-            <div className="text-amber-200">
+            <div className="text-[#eb9446]">
               <FaCalendarAlt className="text-base mt-1.5" />
             </div>
             <div className="flex flex-col">
@@ -117,12 +140,28 @@ const ReservationHeader = ({ data }) => {
 
           <div className="hidden md:block text-gray-300 mt-2">|</div>
 
-          <div className="flex items-center gap-2 text-[#ffffff] py-1.5 ml-auto sm:ml-0 mt-2">
+          {/* <div className="flex items-center gap-2 text-[#ffffff] py-1.5 ml-auto sm:ml-0 mt-2">
             <FaMoon className="text-xs text-[#ffffff]" />
             <span className="text-xs font-bold whitespace-nowrap">
               {reservation?.totalNight || 0}{" "}
               {reservation?.totalNight === 1 ? "Night" : "Nights"}
             </span>
+          </div> */}
+          <div className="flex items-center gap-2.5">
+            <div className="text-amber-200">
+              <FaMoon className="text-base mt-1.5" />
+            </div>
+            <div className="flex flex-col">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 leading-none mb-0.5">
+                Total Night
+              </span>
+              <div className="flex items-center gap-2">
+                <span className="text-[#ffffff] text-[12px] font-mono whitespace-nowrap">
+                  {reservation?.totalNight || 0}{" "}
+                  {reservation?.totalNight === 1 ? "Night" : "Nights"}
+                </span>
+              </div>
+            </div>
           </div>
         </div>
       </div>

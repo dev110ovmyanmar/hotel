@@ -1,9 +1,14 @@
 import { Button, Tag, Dropdown } from "antd";
 import { Typography } from "antd";
 import { EditOutlined, EyeOutlined, FolderAddOutlined, MoreOutlined } from "@ant-design/icons";
+import { PERMISSIONS } from "../../../variables/permission";
+import usePermission from "../../../hooks/usePermission";
 
 
 export default function usePropertiesColumns(onEdit, onView, onUpload) {
+  const { hasPermission } = usePermission();
+  const viewPermission = hasPermission(PERMISSIONS.PROPERTY_VIEW);
+  const editPermission = hasPermission(PERMISSIONS.PROPERTY_EDIT);
   return [
     {
       title: "ID",
@@ -67,8 +72,8 @@ export default function usePropertiesColumns(onEdit, onView, onUpload) {
                 if (key === "3") onUpload(record);
               },
               items: [
-                { key: "1", label: "View", icon: <EyeOutlined /> },
-                { key: "2", label: "Edit", icon: <EditOutlined /> },
+                viewPermission && { key: "1", label: "View", icon: <EyeOutlined /> },
+                editPermission && { key: "2", label: "Edit", icon: <EditOutlined /> },
                 { key: "3", label: "Manage Files", icon: <FolderAddOutlined /> }
               ],
             }}

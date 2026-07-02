@@ -30,6 +30,7 @@ export default function AddRoomWithExtensionDateModal({
     const reservationNo = reservation?.reservationNo || `ID-${record?.id}`;
     const guestName = reservation?.guest?.name || "Unknown Guest";
     const roomTypeName = record?.roomType?.name;
+    console.log(record?.reservation?.room?.uuid,"ReservationUUId")
 
     const originalCheckin = record?.checkinDate ? dayjs(record.checkinDate) : "";
     const originalCheckout = record?.checkoutDate ? dayjs(record.checkoutDate) : "";
@@ -50,7 +51,11 @@ export default function AddRoomWithExtensionDateModal({
             totalNight: totalNights,
             reservation: {
                 uuid: reservation?.uuid
+            },
+            room : {
+                uuid : record?.room?.uuid? record?.room?.uuid : null
             }
+
         };
         availabilitySearchs.mutate(payload, {
             onSuccess: () => {

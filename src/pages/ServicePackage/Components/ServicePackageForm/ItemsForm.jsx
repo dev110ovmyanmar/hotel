@@ -7,6 +7,8 @@ import { useApiMutation } from "../../../../hooks/useApiMutation";
 import { getServicePackageItemDetails, upsertServicePackageItem } from "../../../../api/servicePackageApi";
 import { queryClient } from "../../../../app/queryClient";
 import Toast from "../../../../component/Toast/Toast";
+import usePermission from "../../../../hooks/usePermission";
+import { PERMISSIONS } from "../../../../variables/permission";
 
 const ItemsForm = ({
     selectedItem,
@@ -20,6 +22,9 @@ const ItemsForm = ({
     const isView = mode === "item-view";
     const isEdit = mode === "item-edit";
     const isAdd = mode === "item-add";
+
+    const { hasPermission } = usePermission();
+    const canEdit = hasPermission(PERMISSIONS.SERVICE_PACKAGE_ITEM_EDIT);
 
     const initData = queryClient.getQueryData(["initData", "authenticated"]);
 
@@ -154,14 +159,16 @@ const ItemsForm = ({
                                     : "Create Item"}
                         </span>
                         {isView ? (
-                            <Button
-                                type="primary"
-                                onClick={() => {
-                                    setMode("item-edit");
-                                }}
-                            >
-                                Edit
-                            </Button>
+                            canEdit && (
+                                <Button
+                                    type="primary"
+                                    onClick={() => {
+                                        setMode("item-edit");
+                                    }}
+                                >
+                                    Edit
+                                </Button>
+                            )
                         ) : (
                             <FormButtons
                                 onClick={() => form.submit()}

@@ -25,6 +25,8 @@ import { queryClient } from "../../../../app/queryClient";
 import { EditOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import Loader from "../../../../component/Loader/Loader";
+import usePermission from "../../../../hooks/usePermission";
+import { PERMISSIONS } from "../../../../variables/permission";
 
 const { TextArea } = Input;
 
@@ -44,6 +46,9 @@ const PolicyForm = ({
   const isView = mode === "view";
   const isEdit = mode === "edit";
   const isAdd = mode === "add";
+
+  const { hasPermission } = usePermission();
+  const canEdit = hasPermission(PERMISSIONS.PARTNER_EDIT);
 
   const isUnlimited = Form.useWatch("isUnlimited", policyForm);
 
@@ -492,14 +497,16 @@ const PolicyForm = ({
                   : "Add New Policy"}
             </span>
             {isView ? (
-              <Button
-                type="primary"
-                onClick={() => {
-                  setMode("edit");
-                }}
-              >
-                Edit
-              </Button>
+              canEdit && (
+                <Button
+                  type="primary"
+                  onClick={() => {
+                    setMode("edit");
+                  }}
+                >
+                  Edit
+                </Button>
+              )
             ) : (
               <FormButtons
                 onClick={() => form.submit()}

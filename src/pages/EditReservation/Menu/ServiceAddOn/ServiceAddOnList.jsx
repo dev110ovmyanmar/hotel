@@ -11,9 +11,9 @@ import {
 import { LIMITS } from "../../../../variables/constants";
 import ServiceAddOnForm from "./Components/ServiceAddOnForms/ServiceAddOnForm";
 import ServiceAddOnTable from "./Components/ServiceAddOnTable";
+import Loader from "../../../../component/Loader/Loader";
 
 const ServiceAddOnList = () => {
-
   const navigate = useNavigate();
   const { bookingId } = useParams();
   const uuid = bookingId; // assigned directly to your uuid variable
@@ -28,7 +28,7 @@ const ServiceAddOnList = () => {
       cleanId === ":bookingId" ||
       cleanId.length < 32 // Checks if the user chopped or deleted characters from the ID
     ) {
-      navigate('/404', { replace: true });
+      navigate("/404", { replace: true });
     }
   }, [bookingId, navigate]);
 
@@ -39,7 +39,7 @@ const ServiceAddOnList = () => {
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(LIMITS.PAGE_SIZE);
 
-  const { data, refetch } = useApiQuery({
+  const { data, isLoading, refetch } = useApiQuery({
     fetchQueryName: "service-addon",
     fetchQueryFunction: serviceAddonList,
     params: {
@@ -51,7 +51,10 @@ const ServiceAddOnList = () => {
 
   useEffect(() => {
     if (bookingId && data?.reservation?.reservationNo) {
-      sessionStorage.setItem(`breadcrumb_${bookingId}`, data.reservation.reservationNo);
+      sessionStorage.setItem(
+        `breadcrumb_${bookingId}`,
+        data.reservation.reservationNo,
+      );
       window.dispatchEvent(new Event("breadcrumb_updated"));
     }
   }, [data, bookingId]);
@@ -61,6 +64,14 @@ const ServiceAddOnList = () => {
     setMode("add");
     setDrawerOpen(true);
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-full min-h-[300px]">
+        <Loader />
+      </div>
+    );
+  }
 
   return (
     <div className="w-full px-6 py-2">

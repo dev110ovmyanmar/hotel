@@ -13,6 +13,8 @@ import { getServiceMeta } from "../../../../api/serviceInventoryApi";
 import FormButtons from "../../../../component/FormButtons/FormButtons";
 import Loader from "../../../../component/Loader/Loader";
 import { priceFormatter, priceParser } from "../../../../component/PriceTag/PriceTag";
+import usePermission from "../../../../hooks/usePermission";
+import { PERMISSIONS } from "../../../../variables/permission";
 
 const ServicePackageForm = ({
   mode,
@@ -27,6 +29,9 @@ const ServicePackageForm = ({
   const [form] = Form.useForm();
 
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
+
+  const { hasPermission } = usePermission();
+  const canEdit = hasPermission(PERMISSIONS.SERVICE_INVENTORY_EDIT);
 
   const isView = mode === "view";
   const isEdit = mode === "edit";
@@ -191,14 +196,16 @@ const ServicePackageForm = ({
                   : "Create Package"}
             </span>
             {isView ? (
-              <Button
-                type="primary"
-                onClick={() => {
-                  setMode("edit");
-                }}
-              >
-                Edit
-              </Button>
+              canEdit && (
+                <Button
+                  type="primary"
+                  onClick={() => {
+                    setMode("edit");
+                  }}
+                >
+                  Edit
+                </Button>
+              )
             ) : (
               <FormButtons
                 onClick={() => form.submit()}

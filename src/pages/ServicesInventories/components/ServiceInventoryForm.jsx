@@ -10,6 +10,7 @@ import {
   Radio,
   Segmented,
   Divider,
+  Checkbox,
 } from "antd";
 import {
   ShopOutlined,
@@ -37,6 +38,8 @@ import {
   priceFormatter,
   priceParser,
 } from "../../../component/PriceTag/PriceTag";
+import usePermission from "../../../hooks/usePermission";
+import { PERMISSIONS } from "../../../variables/permission";
 
 const ServiceInventoryForm = ({
   mode,
@@ -53,6 +56,9 @@ const ServiceInventoryForm = ({
   const isView = mode === "view";
   const isEdit = mode === "edit";
   const isAdd = mode === "add";
+
+  const { hasPermission } = usePermission();
+  const canEdit = hasPermission(PERMISSIONS.SERVICE_INVENTORY_EDIT);
 
   const { data, isLoading, error } = useApiQuery({
     fetchQueryName: "serviceInventory_detail",
@@ -177,9 +183,12 @@ const ServiceInventoryForm = ({
           <span>{DrawerTitle}</span>
 
           {isView ? (
-            <Button type="primary" onClick={switchToEdit}>
-              Edit
-            </Button>
+            canEdit && (
+              <Button type="primary" onClick={switchToEdit}>
+                Edit
+              </Button>
+            )
+
           ) : (
             <FormButtons
               onClick={() => form.submit()}
@@ -267,44 +276,6 @@ const ServiceInventoryForm = ({
               </Form.Item>
 
               <Form.Item
-                label={<span className="text-xs">Reorder</span>}
-                name="reorderLevel"
-                rules={[{ required: true }]}
-              >
-                <InputNumber
-                  placeholder="Enter Reorder Level"
-                  disabled={isView}
-                  mode="spinner"
-                  min={MIN_REORDER_LEVEL}
-                  max={MAX_REORDER_LEVEL}
-                  style={{ width: "100%" }}
-                />
-              </Form.Item>
-
-              <Form.Item
-                label="Category"
-                name="categoryUuid"
-                rules={[{ required: true }]}
-                getValueProps={(value) => ({
-                  value: isView
-                    ? categoryOptions.find((item) => item.value === value)
-                        ?.label
-                    : value,
-                })}
-              >
-                {isView ? (
-                  <Input readOnly={isView} />
-                ) : (
-                  <Select
-                    options={categoryOptions}
-                    placeholder="Select Category"
-                    disabled={isView}
-                    className="!w-full"
-                  />
-                )}
-              </Form.Item>
-
-              <Form.Item
                 label="Unit"
                 name="unitUuid"
                 rules={[{ required: true }]}
@@ -327,13 +298,34 @@ const ServiceInventoryForm = ({
               </Form.Item>
 
               <Form.Item
-                label="Supplier"
-                name="supplierUuid"
+                label="Category"
+                name="categoryUuid"
                 rules={[{ required: true }]}
                 getValueProps={(value) => ({
                   value: isView
+                    ? categoryOptions.find((item) => item.value === value)
+                      ?.label
+                    : value,
+                })}
+              >
+                {isView ? (
+                  <Input readOnly={isView} />
+                ) : (
+                  <Select
+                    options={categoryOptions}
+                    placeholder="Select Category"
+                    disabled={isView}
+                    className="!w-full"
+                  />
+                )}
+              </Form.Item>
+              <Form.Item
+                label="Supplier"
+                name="supplierUuid"
+                getValueProps={(value) => ({
+                  value: isView
                     ? supplierOptions.find((item) => item.value === value)
-                        ?.label
+                      ?.label
                     : value,
                 })}
               >
@@ -350,35 +342,45 @@ const ServiceInventoryForm = ({
               </Form.Item>
             </div>
 
+            <Form.Item
+              label={<span className="text-xs">Reorder</span>}
+              name="reorderLevel"
+            >
+              <InputNumber
+                placeholder="Enter Reorder Level"
+                disabled={isView}
+                mode="spinner"
+                min={MIN_REORDER_LEVEL}
+                max={MAX_REORDER_LEVEL}
+                style={{ width: 240 }}
+              />
+            </Form.Item>
+
             <div className="grid grid-cols-2 gap-3">
               <Form.Item
                 label="Laundry Requirement"
                 name="laundryStatus"
-                initialValue={0}
+                initialValue={false}
+                valuePropName="checked"
                 rules={[
-                  { required: true, message: "Please select laundry status!" },
+                  { required: true, message: "Please check laundry status!" },
                 ]}
               >
-                <Switch
-                  disabled={isView}
-                  checkedChildren="True"
-                  unCheckedChildren="False"
-                />
+                <Checkbox disabled={isView}>Laundry Requirement</Checkbox>
               </Form.Item>
 
               <Form.Item
                 label="Is this item free?"
                 name="isFree"
-                initialValue={0}
+                initialValue={false}
+                valuePropName="checked"
                 rules={[
                   { required: true, message: "Please select billing type!" },
                 ]}
               >
-                <Switch
-                  disabled={isView}
-                  checkedChildren="True"
-                  unCheckedChildren="False"
-                />
+                <Checkbox disabled={isView}>
+                  This item is free
+                </Checkbox>
               </Form.Item>
             </div>
           </>
