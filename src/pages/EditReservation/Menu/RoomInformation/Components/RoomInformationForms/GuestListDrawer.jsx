@@ -64,18 +64,7 @@ const GuestListDrawer = ({
         return title || name ? `${title} ${name}`.trim() : "-";
       },
     },
-    {
-      title: "NRC",
-      dataIndex: ["guest", "nrcNo"],
-      key: "nrc",
-      render: (text) => (text ? text : "-"),
-    },
-    {
-      title: "Phone",
-      dataIndex: ["guest", "phone"],
-      key: "phone",
-      render: (text) => (text ? text : "-"),
-    },
+
     {
       title: "Guest Type",
       dataIndex: "isPrimary",
@@ -117,7 +106,6 @@ const GuestListDrawer = ({
       ),
     },
   ];
-
   return (
     <Drawer
       title="Guest List"

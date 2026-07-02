@@ -13,7 +13,7 @@ const DepartmentsTable = ({
   total,
   changePage,
   changePerPage,
-  loading
+  loading,
 }) => {
   const { hasPermission } = usePermission();
 
@@ -22,7 +22,7 @@ const DepartmentsTable = ({
   const [selectedData, setSelectedData] = useState(null);
 
   const columns = [
-    { title: "ID", dataIndex: "id", key: "id" },
+    { title: "ID", dataIndex: "id", key: "id", width: 70 },
     { title: "Name", dataIndex: "name", key: "name" },
     { title: "Code", dataIndex: "code", key: "code" },
     {
@@ -34,8 +34,8 @@ const DepartmentsTable = ({
     },
     {
       title: "Action",
-      fixed:"end",
-      align:"center",
+      fixed: "end",
+      align: "center",
       render: (_, record) => {
         const smallStyle = { fontSize: "12px" };
 

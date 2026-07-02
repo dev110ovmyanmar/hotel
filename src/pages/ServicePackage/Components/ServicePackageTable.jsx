@@ -50,18 +50,15 @@ const ServicePackageTable = ({
       key: "service",
     },
     {
-      title: "Description",
-      dataIndex: "description",
-      key: "description",
-    },
-    {
       title: "Base Price (MMK)",
       dataIndex: "basePrice",
       key: "basePrice",
+      align:"right",
       render: (text) => <PriceTag value={text} />,
     },
     {
       title: "Action",
+      align:"center",
       render: (_, record) => {
         const smallStyle = { fontSize: "12px" };
 
