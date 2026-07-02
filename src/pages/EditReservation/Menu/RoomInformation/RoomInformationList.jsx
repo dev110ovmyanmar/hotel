@@ -84,7 +84,7 @@ const RoomInformationList = () => {
     setDrawerOpen(true);
   };
 
-   if (isLoading) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center h-full min-h-[300px]">
         <Loader />
@@ -163,6 +163,7 @@ const RoomInformationList = () => {
           onClose={() => setShowRoomResults(false)}
           selectedData={selectedData}
           setSelectedData={setSelectedData}
+          reservationUuid={data || []}
         />
       )}
     </div>

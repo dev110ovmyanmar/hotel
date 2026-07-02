@@ -1,17 +1,21 @@
 import { Dropdown, Space, Table, Tag, Button, Drawer } from "antd";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { EditOutlined, EyeOutlined, FolderAddOutlined, MoreOutlined } from "@ant-design/icons";
-import { PERMISSIONS } from './../../../variables/permission';
-import usePermission from './../../../hooks/usePermission';
-import ColorStatusTag from './../../../component/ColorStatusTag/ColorStatusTag';
+import {
+  EditOutlined,
+  EyeOutlined,
+  FolderAddOutlined,
+  MoreOutlined,
+} from "@ant-design/icons";
+import { PERMISSIONS } from "./../../../variables/permission";
+import usePermission from "./../../../hooks/usePermission";
+import ColorStatusTag from "./../../../component/ColorStatusTag/ColorStatusTag";
 import { FaFileContract } from "react-icons/fa";
 import ImageUpload from "../../../component/ImageUpload/ImageUpload";
 import { useApiMutation } from "../../../hooks/useApiMutation";
 import PriceTag from "../../../component/PriceTag/PriceTag";
 import FacilityBookingForm from "./FacilityBookingForm/FacilityBookingForm";
 import dayjs from "dayjs";
-
 
 const FacilityBookingTable = ({
   data,
@@ -20,7 +24,7 @@ const FacilityBookingTable = ({
   total,
   changePage,
   changePerPage,
-  loading
+  loading,
 }) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mode, setMode] = useState(null);
@@ -45,9 +49,10 @@ const FacilityBookingTable = ({
       render: (text) => <div>{text}</div>,
     },
     {
-      title: "Guest Phone",
+      title: "Guest Phone No.",
       dataIndex: "guestPhone",
       key: "guestPhone",
+      width: 150,
       render: (text) => <div>{text}</div>,
     },
     {
@@ -56,74 +61,73 @@ const FacilityBookingTable = ({
       key: "eventName",
       render: (text) => <div>{text}</div>,
     },
-    // {
-    //   title: "Total Price",
-    //   dataIndex: "totalPrice",
-    //   key: "totalPrice",
-    //   render: (text) => <div>{text ? text : "-"}</div>,
-    // },
+    {
+      title: " Package Name",
+      dataIndex: ["facilityPackage", "name"],
+      // key: "totalPrice",
+      // render: (text) => <div>{text ? text : "-"}</div>,
+    },
     {
       title: "Event Date",
       dataIndex: "eventDate",
       key: "eventDate",
-      render: (text) => <div>{text? dayjs(text,"YYYY-MM-DD").format("DD-MM-YYYY") : "-"}</div>,
-    },
-    {
-      title: "Start Time",
-      dataIndex: "startTime",
-      key: "startTime",
+      width: 120,
       render: (text) => (
-        <div>{text ? dayjs(text, "HH:mm:ss").format("HH:mm") : "-"}</div>
+        <div>{text ? dayjs(text, "YYYY-MM-DD").format("DD-MM-YYYY") : "-"}</div>
       ),
     },
     {
-      title: "End Time",
-      dataIndex: "endTime",
-      key: "endTime",
-      render: (text) => (
-        <div>{text ? dayjs(text, "HH:mm:ss").format("HH:mm") : "-"}</div>
-      ),
-    },
-    {
-      title: "Expected Hours",
-      dataIndex: "expectedHours",
-      key: "expectedHours",
+      title: "Event Time",
+      key: "eventAndTime",
+      align: "center",
+      width: 120,
       render: (_, record) => {
-        const startTime = dayjs(record.startTime, "HH:mm");
-        const endTime = dayjs(record.endTime, "HH:mm");
+        const startTime = record.startTime
+          ? dayjs(record.startTime, "HH:mm:ss").format("HH:mm")
+          : "-";
 
-        const totalSeconds = endTime.diff(startTime, "second");
+        const endTime = record.endTime
+          ? dayjs(record.endTime, "HH:mm:ss").format("HH:mm")
+          : "-";
 
-        const hours = Math.floor(totalSeconds / 3600);
-        const minutes = Math.floor((totalSeconds % 3600) / 60);
-        const seconds = totalSeconds % 60;
-
-        const text = `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
-        return <div>{text}</div>;
-
+        return (
+          <div>
+            {startTime} - {endTime}
+          </div>
+        );
       },
     },
-    {
-      title: "Expected Pax",
-      dataIndex: "expectedPax",
-      key: "expectedPax",
-      render: (text) => <div>{text ? text : "-"}</div>,
-    },
+
+    // {
+    //   title: "Expected Hours",
+    //   dataIndex: "expectedHours",
+    //   key: "expectedHours",
+    //   render: (_, record) => {
+    //     const startTime = dayjs(record.startTime, "HH:mm");
+    //     const endTime = dayjs(record.endTime, "HH:mm");
+
+    //     const totalSeconds = endTime.diff(startTime, "second");
+
+    //     const hours = Math.floor(totalSeconds / 3600);
+    //     const minutes = Math.floor((totalSeconds % 3600) / 60);
+    //     const seconds = totalSeconds % 60;
+
+    //     const text = `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
+    //     return <div>{text}</div>;
+    //   },
+    // },
     {
       title: "Status",
       dataIndex: ["status", "name"],
       key: "status",
+      width: 80,
       render: (_, record) => <ColorStatusTag status={record?.status} />,
-    },
-    {
-      title: "Remark",
-      dataIndex: "remark",
-      key: "remark",
-      render: (text) => <div>{text ? text : "-"}</div>,
     },
     {
       title: "Action",
       fixed: "end",
+      align: "center",
+      width: 80,
       render: (_, record) => {
         const smallStyle = { fontSize: "12px" };
 
@@ -149,23 +153,29 @@ const FacilityBookingTable = ({
               setMode("edit");
               setSelectedData(record);
             },
-          }
+          },
         ];
 
-        const items = actions.filter(
-          action => (!action.permission || hasPermission(action.permission)) && !action.hidden
-        ).map(action => ({
-          key: action.key,
-          onClick: action.onClick,
-          label: (
-            <Space size={4} style={smallStyle}
-            // onClick={action.onClick}
-            >
-              {action.icon}
-              <span style={{ fontSize: "14px" }}>{action.label}</span>
-            </Space>
+        const items = actions
+          .filter(
+            (action) =>
+              (!action.permission || hasPermission(action.permission)) &&
+              !action.hidden,
           )
-        }))
+          .map((action) => ({
+            key: action.key,
+            onClick: action.onClick,
+            label: (
+              <Space
+                size={4}
+                style={smallStyle}
+                // onClick={action.onClick}
+              >
+                {action.icon}
+                <span style={{ fontSize: "14px" }}>{action.label}</span>
+              </Space>
+            ),
+          }));
 
         return (
           <Dropdown menu={{ items }} trigger={["click"]}>
@@ -175,7 +185,6 @@ const FacilityBookingTable = ({
       },
     },
   ];
-
 
   return (
     <div id="scrollId" className="w-full h-[63vh] ">
@@ -207,8 +216,6 @@ const FacilityBookingTable = ({
         setSelectedData={setSelectedData}
         page={page}
       />
-
-
     </div>
   );
 };

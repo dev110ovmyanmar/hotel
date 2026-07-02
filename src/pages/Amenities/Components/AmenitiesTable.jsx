@@ -27,7 +27,7 @@ const AmenitiesTable = ({
       title: "ID",
       render: (_, record) => <div>{record?.id}</div>,
       width: 70,
-      align: "center",
+      // align: "center",
     },
     {
       title: "Name",
@@ -64,6 +64,7 @@ const AmenitiesTable = ({
     {
       title: "Action",
       fixed:"end",
+      align:"center",
       render: (_, record) => {
         const smallStyle = { fontSize: "12px" };
         const actions = [

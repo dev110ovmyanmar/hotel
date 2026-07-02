@@ -24,6 +24,7 @@ const RoomAttributeTable = ({
       title: "ID",
       dataIndex: "id",
       key: "id",
+      width:70,
     },
     {
       title: "Name",

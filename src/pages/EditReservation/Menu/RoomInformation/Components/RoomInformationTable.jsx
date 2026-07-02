@@ -53,6 +53,7 @@ const RoomInformationTable = ({
   changePerPage,
   reservationUuid,
 }) => {
+  console.log(reservationUuid,"reservationUuid")
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [guestOpen, setGuestOpen] = useState(false);
   const [guestListOpen, setGuestListOpen] = useState(false);
@@ -170,10 +171,10 @@ const RoomInformationTable = ({
       width: 70,
     },
     {
-      title: "Room No:",
+      title: "Room No.",
       key: "room",
       dataIndex: "room",
-      width: 110,
+      width: 130,
       render: (text, record) => {
         const isRoomNull = !text;
 
@@ -242,7 +243,7 @@ const RoomInformationTable = ({
       dataIndex: ["roomStatus", "name"],
       key: "roomStatus",
       render: (_, record) => <ColorStatusTag status={record?.roomStatus} />,
-      width: 110,
+      width: 90,
     },
     {
       title: "Total Charges",
@@ -409,7 +410,7 @@ const RoomInformationTable = ({
                     },
                     {
                       key: "add_room",
-                      label: "Add Room",
+                      label: "Add Room for Split Stay",
                       icon: <PlusOutlined />,
                       onClick: () => {
                         (handleAction("add_room", record),
@@ -488,6 +489,8 @@ const RoomInformationTable = ({
       },
     },
   ];
+
+
   return (
     <div>
       <Table
@@ -567,6 +570,7 @@ const RoomInformationTable = ({
           setMode={setGuestFormMode}
           guestData={selectedGuestData}
           setSelectedData={setSelectedGuestData}
+          roomuuid={reservationUuid?.reservationRoom?.uuid}
           reservationUuid={reservationUuid?.reservation}
         />
       )}
