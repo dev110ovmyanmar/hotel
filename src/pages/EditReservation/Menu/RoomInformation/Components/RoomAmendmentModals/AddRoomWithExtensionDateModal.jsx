@@ -7,7 +7,7 @@ import { useApiMutation } from '../../../../../../hooks/useApiMutation';
 import Toast from '../../../../../../component/Toast/Toast';
 import AddRoomExtensionLikeUpgradeDesignModal from './AddRoomExtensionLikeUpgradeDesignModal';
 
-export default function AddRoomWithExtensionDateModal({ 
+export default function AddRoomWithExtensionDateModal({
     isOpen,
     extensionDateonClose,
     record,
@@ -24,13 +24,13 @@ export default function AddRoomWithExtensionDateModal({
     const [pendingValues, setPendingValues] = useState(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [availabilitySearchRoomList, setAvailabilitySearchRoomList] = useState(false);
-    const [backToExtensionStayDate,setBackToExtensionStayDate] = useState(false);
+    const [backToExtensionStayDate, setBackToExtensionStayDate] = useState(false);
 
     // Parse baseline properties out of your JSON structure
     const reservationNo = reservation?.reservationNo || `ID-${record?.id}`;
     const guestName = reservation?.guest?.name || "Unknown Guest";
     const roomTypeName = record?.roomType?.name;
-    console.log(record?.reservation?.room?.uuid,"ReservationUUId")
+    console.log(record?.reservation?.room?.uuid, "ReservationUUId")
 
     const originalCheckin = record?.checkinDate ? dayjs(record.checkinDate) : "";
     const originalCheckout = record?.checkoutDate ? dayjs(record.checkoutDate) : "";
@@ -52,8 +52,8 @@ export default function AddRoomWithExtensionDateModal({
             reservation: {
                 uuid: reservation?.uuid
             },
-            room : {
-                uuid : record?.room?.uuid? record?.room?.uuid : null
+            room: {
+                uuid: record?.room?.uuid ? record?.room?.uuid : null
             }
 
         };
@@ -195,6 +195,17 @@ export default function AddRoomWithExtensionDateModal({
                                     </div>
                                 )}
                             </div>
+
+                            <Form.Item
+                                name="reason"
+                                label="Reason for Stay Extension"
+                            >
+                                <Input.TextArea
+                                    placeholder={maxDayExtension === 0 ? "Stay extension is currently unavailable." : "Provide business justification for stay extensions..."}
+                                    rows={3}
+                                    disabled={maxDayExtension === 0}
+                                />
+                            </Form.Item>
 
                         </Form>
                     )}
