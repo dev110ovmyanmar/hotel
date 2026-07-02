@@ -21,7 +21,7 @@ const FloorTable = ({
   const [selectedData, setSelectedData] = useState(null);
 
   const columns = [
-    { title: "ID", dataIndex: "id", key: "id" },
+    { title: "ID", dataIndex: "id", key: "id", width:70 },
     { title: "Name", dataIndex: "name", key: "name" },
     { title: "Floor No", dataIndex: "floorNo", key: "floorNo" },
     {

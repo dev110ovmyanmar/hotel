@@ -12,12 +12,12 @@ export default function useUnitColumns(onEdit, onView) {
       title: "ID",
       dataIndex: "id",
       key: "id",
-      width: 80
+      width: 70,
     },
     {
       title: "Name",
       dataIndex: "name",
-      key: "name"
+      key: "name",
     },
     {
       title: "Short Name",
@@ -34,7 +34,7 @@ export default function useUnitColumns(onEdit, onView) {
       title: "Actions",
       key: "actions",
       fixed: "right",
-      align:"center",
+      align: "center",
       render: (_, record) => {
         // 1. Define available actions with permission keys
         const actions = [
@@ -56,7 +56,9 @@ export default function useUnitColumns(onEdit, onView) {
 
         // 2. Filter and map actions based on user permissions
         const items = actions
-          .filter((action) => !action.permission || hasPermission(action.permission))
+          .filter(
+            (action) => !action.permission || hasPermission(action.permission),
+          )
           .map((action) => ({
             key: action.key,
             label: (

@@ -357,7 +357,7 @@ const ChangeStatusForm = ({ reservationDetails, open, onClose }) => {
               <div
                 className={`w-full transition-opacity duration-200 ${
                   option.data.disabled
-                    ? "opacity-40 cursor-not-allowed filter grayscale"
+                    ? "opacity-40 cursor-not-allowed pointer-events-none filter grayscale"
                     : "opacity-100"
                 }`}
               >

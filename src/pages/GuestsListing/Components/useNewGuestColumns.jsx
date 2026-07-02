@@ -29,34 +29,33 @@ export default function useGuestColumns(
       key: "id",
       width: 60,
     },
-    // {
-    //   title: "Name",
-    //   dataIndex: "name",
-    //   key: "name",
-    // },
     {
       title: "Name",
       dataIndex: "name",
       key: "name",
-      render: (name, record) => (
-        <Typography.Link
-          onClick={(e) => {
-            e.preventDefault(); // Prevent default anchor behavior
-            handleNameClick(record);
-          }}
-          style={{ fontWeight: 500 }}
-        >
-          {name}
-        </Typography.Link>
-      ),
+      render: (name, record) => {
+        const titlePrefix = record.title ? `${record.title} ` : "";
+
+        return (
+          <Typography.Link
+            onClick={(e) => {
+              e.preventDefault();
+              handleNameClick(record);
+            }}
+            style={{ fontWeight: 500 }}
+          >
+            {`${titlePrefix}${name}`}
+          </Typography.Link>
+        );
+      },
     },
     {
-      title: "Phone No",
+      title: "Phone No.",
       dataIndex: "phone",
       key: "phone",
     },
     {
-      title: "NRC No",
+      title: "NRC No.",
       dataIndex: "nrcNo",
       key: "nrcNo",
     },
@@ -76,34 +75,7 @@ export default function useGuestColumns(
       key: "status",
       render: (_, record) => <ColorStatusTag status={record?.status} />,
     },
-    // {
-    //   title: "Actions",
-    //   key: "actions",
-    //   width: 100,
-    //   fixed: "right",
-    //   align:"center",
-    //   render: (_, record) => (
-    //     <Dropdown
-    //       menu={{
-    //         onClick: ({ key }) => {
-    //           if (key === "1") onView(record);
-    //           if (key === "2") onEdit(record);
-    //           if (key === "3") onViewNotes(record);
-    //           if (key === "4") onFileUpload(record);
-    //         },
-    //         items: [
-    //           { key: "1", label: "View", icon: <EyeOutlined /> },
-    //           { key: "2", label: "Edit", icon: <EditOutlined /> },
-    //           { key: "3", label: "Guest Notes", icon: <FileTextOutlined /> },
-    //           { key: "4", label: "Manage Files", icon: <UploadOutlined /> },
-    //         ],
-    //       }}
-    //       trigger={["click"]}
-    //     >
-    //       <Button icon={<MoreOutlined />} size="small" type="text" />
-    //     </Dropdown>
-    //   ),
-    // },
+
     {
       title: "Actions",
       key: "actions",
@@ -146,17 +118,12 @@ export default function useGuestColumns(
 
         const items = actions
           .filter(
-            (action) =>
-              !action.permission || hasPermission(action.permission)
+            (action) => !action.permission || hasPermission(action.permission),
           )
           .map((action) => ({
             key: action.key,
             label: (
-              <Space
-                size={4}
-                style={smallStyle}
-                onClick={action.onClick}
-              >
+              <Space size={4} style={smallStyle} onClick={action.onClick}>
                 {action.icon}
                 <span style={{ fontSize: "14px" }}>{action.label}</span>
               </Space>
