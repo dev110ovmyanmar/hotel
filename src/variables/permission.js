@@ -53,7 +53,6 @@ export const PERMISSIONS = {
   LOCATION_EDIT: "location.edit",
 
   // Privacy Policy
-  PRIVACY_POLICY_LIST: "privacy-policy.list",
   PRIVACY_POLICY_VIEW: "privacy-policy.view",
   PRIVACY_POLICY_CREATE: "privacy-policy.create",
   PRIVACY_POLICY_EDIT: "privacy-policy.edit",
