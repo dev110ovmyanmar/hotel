@@ -20,6 +20,8 @@ import FormButtons from "../../../component/FormButtons/FormButtons";
 import { useApiMutation } from "../../../hooks/useApiMutation";
 import useApiQuery from "../../../hooks/useApiQuery";
 import Toast from "../../../component/Toast/Toast";
+import usePermission from "../../../hooks/usePermission";
+import { PERMISSIONS } from "../../../variables/permission";
 
 
 const PropertyForm = ({
@@ -47,6 +49,9 @@ const PropertyForm = ({
   const isView = mode === "view";
   const isEdit = mode === "edit";
   const isAdd = mode === "add";
+
+  const { hasPermission } = usePermission();
+  const canEdit = hasPermission(PERMISSIONS.PARTNER_EDIT);
 
   const timezone = dayjs.tz.guess();
 
@@ -183,9 +188,11 @@ const PropertyForm = ({
         <div className="flex items-center justify-between">
           <span>{DrawerTitle}</span>
           {isView ? (
-            <Button type="primary" onClick={switchToEdit}>
-              Edit
-            </Button>
+            canEdit && (
+              <Button type="primary" onClick={switchToEdit}>
+                Edit
+              </Button>
+            )
           ) : (
             <FormButtons
               onClick={() => form.submit()}

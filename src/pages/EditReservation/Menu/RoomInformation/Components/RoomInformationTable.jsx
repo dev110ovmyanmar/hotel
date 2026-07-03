@@ -27,7 +27,7 @@ import DateChangeModal from "./RoomAmendmentModals/DateChangeModals";
 import StayExtensionModal from "./RoomAmendmentModals/StayExtensionModal";
 import StayReductionModal from "./RoomAmendmentModals/StayReductionModal";
 import GuestForm from "../../GuestDetails/Components/GuestForms/GuestForm";
-import { BsPeople, BsPeopleFill } from "react-icons/bs";
+import { Bs0Circle, BsPeople, BsPeopleFill } from "react-icons/bs";
 import GuestListDrawer from "./RoomInformationForms/GuestListDrawer";
 import RoomMoveModal from "./RoomAmendmentModals/RoomMoveModal";
 import GuestUploadDrawer from "../../GuestDetails/Components/GuestForms/GuestUploadDrawer";
@@ -41,6 +41,7 @@ import RoomDowngradeModal from "./RoomAmendmentModals/RoomDowngradeModal";
 import PriceTag from "../../../../../component/PriceTag/PriceTag";
 import AddRoomWithExtensionDateModal from "./RoomAmendmentModals/AddRoomWithExtensionDateModal";
 // import { checkIfActionDisabled } from "./RoomInformationDate";
+import SingleRoomComplimentaryUpdateModal from "./ComplimentaryModals/SingleRoomComplimentaryUpdateModal";
 
 const RoomInformationTable = ({
   data,
@@ -53,7 +54,6 @@ const RoomInformationTable = ({
   changePerPage,
   reservationUuid,
 }) => {
-  console.log(reservationUuid, "reservationUuid");
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [guestOpen, setGuestOpen] = useState(false);
   const [guestListOpen, setGuestListOpen] = useState(false);
@@ -72,6 +72,9 @@ const RoomInformationTable = ({
   const [ratePlanUuid, setRatePlanUuid] = useState();
   const [addRoomWithStayExtension, setAddRoomWithStayExtension] =
     useState(false);
+
+  const [compOpen, setCompOpen] = useState(false);
+  const [reservationRoomDetail, setReservationRoomDetail] = useState(null);
 
   // Unified State Engine for Split Modals
   const [activeModal, setActiveModal] = useState(null);
@@ -109,6 +112,8 @@ const RoomInformationTable = ({
 
   const addRooms = amendmentType?.find((item) => item.code === "add_room");
   const addRoomUuid = addRooms?.uuid;
+
+  console.log("SelectedData", selectedData);
 
   const availabilitySearchs = useApiMutation({
     mutationFn: availabilitySearch,
@@ -310,6 +315,15 @@ const RoomInformationTable = ({
               setGuestListOpen(true);
             },
           },
+          {
+            key: "roomComp",
+            label: "Complimentary",
+            icon: <Bs0Circle />,
+            onClick: () => {
+              setReservationRoomDetail(record);
+              setCompOpen(true);
+            }
+          }
         ];
 
         if (record?.amendStatus) {
@@ -330,35 +344,14 @@ const RoomInformationTable = ({
                       key: "date_change",
                       label: "Change CI/CO Dates",
                       icon: <CalendarOutlined />,
-                      disabled: record?.checkinDate
-                        ? dayjs(record.checkinDate)
-                            .startOf("day")
-                            .isSame(dayjs().startOf("day")) ||
-                          dayjs(record.checkinDate)
-                            .startOf("day")
-                            .isBefore(dayjs().startOf("day"))
-                        : false,
                       onClick: () => handleAction("date_change", record),
                     },
-                    // ...(record?.isExtend !== false ||
-                    //   record?.roomStatus?.code === "checked_in"
-                    //   ? [
                     {
                       key: "stay_extension",
                       label: "Extend Stay",
                       icon: <PlusOutlined />,
-                      disabled: record?.checkinDate
-                        ? dayjs(record.checkinDate)
-                            .startOf("day")
-                            .isSame(dayjs().startOf("day")) ||
-                          dayjs(record.checkinDate)
-                            .startOf("day")
-                            .isBefore(dayjs().startOf("day"))
-                        : false,
                       onClick: () => handleAction("stay_extension", record),
                     },
-                    //   ]
-                    // : []),
                     {
                       key: "stay_reduction",
                       label: "Shorten Stay",
@@ -409,7 +402,7 @@ const RoomInformationTable = ({
                     },
                     {
                       key: "add_room",
-                      label: "Add Room for Split Stay",
+                      label: "Add Room",
                       icon: <PlusOutlined />,
                       onClick: () => {
                         (handleAction("add_room", record),
@@ -488,7 +481,6 @@ const RoomInformationTable = ({
       },
     },
   ];
-
   return (
     <div>
       <Table
@@ -605,7 +597,7 @@ const RoomInformationTable = ({
           isOpen={true}
           onClose={closeModal}
           record={selectedData} // Direct row object mapping
-          refetch={refetch}
+        // refetch={refetch}
         />
       )}
 
@@ -686,6 +678,12 @@ const RoomInformationTable = ({
         availabilitySearchs={availabilitySearchs}
         reservation={reservation}
         ratePlanUuid={ratePlanUuid}
+      />
+
+      <SingleRoomComplimentaryUpdateModal
+        reservationData={reservationRoomDetail}
+        open={compOpen}
+        onCancel={() => setCompOpen(false)}
       />
     </div>
   );

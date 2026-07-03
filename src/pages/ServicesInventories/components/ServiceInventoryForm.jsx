@@ -38,6 +38,8 @@ import {
   priceFormatter,
   priceParser,
 } from "../../../component/PriceTag/PriceTag";
+import usePermission from "../../../hooks/usePermission";
+import { PERMISSIONS } from "../../../variables/permission";
 
 const ServiceInventoryForm = ({
   mode,
@@ -54,6 +56,9 @@ const ServiceInventoryForm = ({
   const isView = mode === "view";
   const isEdit = mode === "edit";
   const isAdd = mode === "add";
+
+  const { hasPermission } = usePermission();
+  const canEdit = hasPermission(PERMISSIONS.SERVICE_INVENTORY_EDIT);
 
   const { data, isLoading, error } = useApiQuery({
     fetchQueryName: "serviceInventory_detail",
@@ -178,9 +183,12 @@ const ServiceInventoryForm = ({
           <span>{DrawerTitle}</span>
 
           {isView ? (
-            <Button type="primary" onClick={switchToEdit}>
-              Edit
-            </Button>
+            canEdit && (
+              <Button type="primary" onClick={switchToEdit}>
+                Edit
+              </Button>
+            )
+
           ) : (
             <FormButtons
               onClick={() => form.submit()}
@@ -296,7 +304,7 @@ const ServiceInventoryForm = ({
                 getValueProps={(value) => ({
                   value: isView
                     ? categoryOptions.find((item) => item.value === value)
-                        ?.label
+                      ?.label
                     : value,
                 })}
               >
@@ -317,7 +325,7 @@ const ServiceInventoryForm = ({
                 getValueProps={(value) => ({
                   value: isView
                     ? supplierOptions.find((item) => item.value === value)
-                        ?.label
+                      ?.label
                     : value,
                 })}
               >

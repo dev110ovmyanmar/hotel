@@ -15,10 +15,14 @@ import {
   CheckOutlined,
   CloseOutlined,
 } from "@ant-design/icons";
-import { reservationNoteCreate, reservationNoteDelete, reservationNoteList } from "../../../../api/reservationSectionApi";
+import {
+  reservationNoteCreate,
+  reservationNoteDelete,
+  reservationNoteList,
+} from "../../../../api/reservationSectionApi";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
 import Toast from "../../../../component/Toast/Toast";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { LIMITS } from "../../../../variables/constants";
 import useApiQuery from "../../../../hooks/useApiQuery";
 
@@ -28,11 +32,11 @@ const ReservationNoteForm = ({
   onClose,
   selectedData,
   onSuccess,
+  reservationUuid,
 }) => {
-  const location = useLocation();
-  const uuid = location.state?.bookingId;
   const [form] = Form.useForm();
-
+  const uuid = reservationUuid;
+  
   const [editingKey, setEditingKey] = useState("");
   const [editValue, setEditValue] = useState("");
   const [keyword, setKeyword] = useState("");

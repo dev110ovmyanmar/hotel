@@ -122,6 +122,12 @@ export const PERMISSIONS = {
   SERVICE_CREATE: "service.create",
   SERVICE_EDIT: "service.edit",
 
+  // Service Inventory Item
+  SERVICE_INVENTORY_ITEM_LIST : "inventory.list",
+  SERVICE_INVENTORY_ITEM_VIEW : "inventory.view",
+  SERVICE_INVENTORY_ITEM_CREATE : "inventory.create",
+  SERVICE_INVENTORY_ITEM_EDIT : "inventory.edit",
+
   // Inventory
   SERVICE_INVENTORY_LIST: "service-inventory.list",
   SERVICE_INVENTORY_VIEW: "service-inventory.view",
@@ -133,6 +139,12 @@ export const PERMISSIONS = {
   SERVICE_PACKAGE_VIEW: "service-package.view",
   SERVICE_PACKAGE_CREATE: "service-package.create",
   SERVICE_PACKAGE_EDIT: "service-package.edit",
+
+  // Service Package Item
+  SERVICE_PACKAGE_ITEM_LIST : "package.list",
+  SERVICE_PACKAGE_ITEM_VIEW : "package.view",
+  SERVICE_PACKAGE_ITEM_CREATE : "package.create",
+  SERVICE_PACKAGE_ITEM_EDIT : "package.edit",
 
   // Payment
   PAYMENT_LIST: "payment.list",

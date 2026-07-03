@@ -9,6 +9,8 @@ import ListHeader from "./../../../../component/ListHeader/ListHeader";
 import FormButtons from "./../../../../component/FormButtons/FormButtons";
 import { queryClient } from "./../../../../app/queryClient";
 import Loader from "../../../../component/Loader/Loader";
+import usePermission from "../../../../hooks/usePermission";
+import { PERMISSIONS } from "../../../../variables/permission";
 
 const LocationForm = ({
   page,
@@ -27,6 +29,10 @@ const LocationForm = ({
   const isView = mode === "view";
   const isEdit = mode === "edit";
   const isAdd = mode === "add";
+
+  const { hasPermission } = usePermission();
+  const canCreateCity = hasPermission(PERMISSIONS.LOCATION_CREATE);
+  const canEdit = hasPermission(PERMISSIONS.LOCATION_EDIT);
 
   const [cityMode, setCityMode] = useState("");
   const isCityEdit = cityMode === "cityEdit";
@@ -115,23 +121,23 @@ const LocationForm = ({
       key: "name",
       render: (text) => <div>{text}</div>,
     },
-    {
-      title: "Action",
-      render: (_, record) => {
-        return (
+    ...(canEdit
+      ? [{
+        title: "Action",
+        render: (_, record) => (
           <Space>
             <FiEdit
               className="text-blue-500"
               onClick={() => {
-                (setCreateDrawerOpen(true),
-                  setCityMode("cityEdit"),
-                  setSelectedCity(record));
+                setCreateDrawerOpen(true);
+                setCityMode("cityEdit");
+                setSelectedCity(record);
               }}
             />
           </Space>
-        );
-      },
-    },
+        ),
+      }]
+      : []),
   ];
 
   const onCityFinish = (values) => {
@@ -198,15 +204,19 @@ const LocationForm = ({
                   <span style={{ fontWeight: "normal" }}>Country: </span>
                   <span>{data?.name}</span>
                 </div>
-                <Button
-                  type="primary"
-                  onClick={() => {
-                    setCreateDrawerOpen(true);
-                    setCityMode("cityAdd");
-                  }}
-                >
-                  Add New City
-                </Button>
+                {
+                  canCreateCity && (
+                    <Button
+                      type="primary"
+                      onClick={() => {
+                        setCreateDrawerOpen(true);
+                        setCityMode("cityAdd");
+                      }}
+                    >
+                      Add New City
+                    </Button>
+                  )
+                }
               </div>
             </>
           }

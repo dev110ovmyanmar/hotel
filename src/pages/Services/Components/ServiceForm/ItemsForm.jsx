@@ -9,6 +9,8 @@ import {
   upsertServiceInventoryMapping,
 } from "../../../../api/serviceInventoryMappingApi";
 import Toast from "../../../../component/Toast/Toast";
+import usePermission from "../../../../hooks/usePermission";
+import { PERMISSIONS } from "../../../../variables/permission";
 
 const ItemsForm = ({
   selectedItem,
@@ -22,6 +24,9 @@ const ItemsForm = ({
   const isView = mode === "item-view";
   const isEdit = mode === "item-edit";
   const isAdd = mode === "item-add";
+
+  const { hasPermission } = usePermission();
+  const canEdit = hasPermission(PERMISSIONS.SERVICE_INVENTORY_EDIT);
 
   const { data: serviceMetaData } = useApiQuery({
     fetchQueryName: "serviceInventory_metaData",
@@ -144,14 +149,16 @@ const ItemsForm = ({
                   : "Create Item"}
             </span>
             {isView ? (
-              <Button
-                type="primary"
-                onClick={() => {
-                  setMode("item-edit");
-                }}
-              >
-                Edit
-              </Button>
+              canEdit && (
+                <Button
+                  type="primary"
+                  onClick={() => {
+                    setMode("item-edit");
+                  }}
+                >
+                  Edit
+                </Button>
+              )
             ) : (
               <FormButtons
                 onClick={() => form.submit()}
