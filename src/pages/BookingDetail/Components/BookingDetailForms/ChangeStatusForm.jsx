@@ -255,7 +255,7 @@ const ChangeStatusForm = ({ reservationDetails, open, onClose }) => {
 
   const updateReservationStatusMutation = useApiMutation({
     mutationFn: updateReservationStatus,
-    invalidateKeys: [["reservation-details"], ["reservation-room"]],
+    invalidateKeys: [["reservation-details"], ["reservation-room"], ["reservation-room-comp"]],
   });
 
   useEffect(() => {
