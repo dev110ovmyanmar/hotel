@@ -184,3 +184,9 @@ export const folioPaymentDetails = async (params) => {
   const { data } = await apiClient.get("folio-payment", { params });
   return data.response;
 }
+
+// Complimentary Update
+export const complimentaryUpdate = async (params) => {
+  const { data } = await apiClient.put("complimentary/update", params);
+  return data.response;
+}

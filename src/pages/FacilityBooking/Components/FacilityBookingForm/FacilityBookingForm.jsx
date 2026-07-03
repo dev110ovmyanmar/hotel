@@ -29,7 +29,6 @@ import { facilityMeta } from "../../../../api/facilityPackageApi";
 import usePermission from "../../../../hooks/usePermission";
 import { PERMISSIONS } from "../../../../variables/permission";
 
-
 const { TextArea } = Input;
 const { RangePicker } = TimePicker;
 
@@ -206,9 +205,9 @@ const FacilityBookingForm = ({
 
   const childSharedProps = {
     mode: "spinner",
-    min: 0,
+    min: 1,
     max: 10,
-    defaultValue: 0,
+    defaultValue: 1,
     style: { width: 150 },
   };
 
@@ -238,7 +237,6 @@ const FacilityBookingForm = ({
                   Edit
                 </Button>
               )
-
             ) : (
               <FormButtons
                 onClick={() => form.submit()}
@@ -255,7 +253,7 @@ const FacilityBookingForm = ({
           validateTrigger="onSubmit"
           onFinish={onFinish}
           initialValues={{
-            expectedPax: 0,
+            expectedPax: 1,
           }}
         >
           <Form.Item
@@ -269,7 +267,7 @@ const FacilityBookingForm = ({
           </Form.Item>
 
           <Form.Item
-            label="Phone"
+            label="Guest Phone No."
             name="guestPhone"
             rules={[{ required: true }]}
           >
@@ -341,14 +339,6 @@ const FacilityBookingForm = ({
             </Col>
           </Row>
 
-          {/* <Form.Item
-            label="Expected Pax"
-            name="expectedPax"
-            rules={[{ required: true, message: "Expected Pax is Required" }]}
-
-          >
-            <InputNumber readOnly={isView} placeholder="Enter Expected Pax" style={{ width: "100%" }} min={1} />
-          </Form.Item> */}
           <Form.Item
             label="Expected Pax"
             name="expectedPax"

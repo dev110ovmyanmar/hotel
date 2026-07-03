@@ -52,11 +52,13 @@ export default function StayExtensionModal({ isOpen,
     const handleFinalCommit = async () => {
         setIsSubmitting(true);
         const checkinDate = record?.checkinDate ? record.checkinDate.split(" ")[0] : originalCheckin.format('YYYY-MM-DD');
+        const checkoutDate = record?.checkoutDate ? record.checkoutDate.split(" ")[0] : originalCheckout.format('YYYY-MM-DD');
+
         try {
             const payload = {
                 amendmentType: { uuid: stayExtensionUuid },
                 reservationRoom: { uuid: record?.uuid },
-                checkinDate: checkinDate,
+                checkinDate: checkoutDate,
                 checkoutDate: newCheckoutDate.format('YYYY-MM-DD'),
                 reason: pendingValues?.reason
             };
@@ -191,7 +193,6 @@ export default function StayExtensionModal({ isOpen,
                     <Form.Item
                         name="reason"
                         label="Reason for Stay Extension"
-                        rules={[{ required: maxDayExtension > 0, message: 'Please input a reason for stay extension.' }]}
                     >
                         <Input.TextArea
                             placeholder={maxDayExtension === 0 ? "Stay extension is currently unavailable." : "Provide business justification for stay extensions..."}

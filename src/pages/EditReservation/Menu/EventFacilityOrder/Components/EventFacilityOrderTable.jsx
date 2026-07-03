@@ -21,7 +21,7 @@ const EventFacilityOrderTable = ({
   total,
   changePage,
   changePerPage,
-  loading
+  loading,
 }) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mode, setMode] = useState("add");
@@ -133,9 +133,10 @@ const EventFacilityOrderTable = ({
       render: (text) => <div>{text}</div>,
     },
     {
-      title: "Guest Phone",
+      title: "Guest Phone No.",
       dataIndex: "guestPhone",
       key: "guestPhone",
+      width: 150,
       render: (text) => <div>{text}</div>,
     },
     {
@@ -144,70 +145,54 @@ const EventFacilityOrderTable = ({
       key: "eventName",
       render: (text) => <div>{text}</div>,
     },
-    // {
-    //   title: "Total Price",
-    //   dataIndex: "totalPrice",
-    //   key: "totalPrice",
-    //   render: (text) => <div>{text ? text : "-"}</div>,
-    // },
+    {
+      title: "Package Name",
+      dataIndex: ["facilityPackage", "name"],
+      key: "facilityPackage",
+      render: (text) => <div>{text}</div>,
+    },
     {
       title: "Event Date",
       dataIndex: "eventDate",
       key: "eventDate",
-      render: (text) => <div>{text? dayjs(text,"YYYY-MM-DD").format("DD-MM-YYYY") : "-"}</div>,
+      width: 120,
+      render: (text) => (
+        <div>{text ? dayjs(text, "YYYY-MM-DD").format("DD-MM-YYYY") : "-"}</div>
+      ),
     },
     {
-      title: "Start Time",
-      dataIndex: "startTime",
-      key: "startTime",
-      render: (text) => <div>{text ? dayjs(text,"HH:mm").format("HH:mm") : "-"}</div>,
-    },
-    {
-      title: "End Time",
-      dataIndex: "endTime",
-      key: "endTime",
-      render: (text) => <div>{text ? dayjs(text,"HH:mm").format("HH:mm") : "-"}</div>,
-    },
-    {
-      title: "Expected Hours",
-      dataIndex: "expectedHours",
-      key: "expectedHours",
+      title: "Event Time",
+      key: "eventAndTime",
+      align: "center",
+      width: 120,
       render: (_, record) => {
-        const startTime = dayjs(record.startTime, "HH:mm:ss");
-        const endTime = dayjs(record.endTime, "HH:mm:ss");
+        const startTime = record.startTime
+          ? dayjs(record.startTime, "HH:mm:ss").format("HH:mm")
+          : "-";
 
-        const totalSeconds = endTime.diff(startTime, "second");
+        const endTime = record.endTime
+          ? dayjs(record.endTime, "HH:mm:ss").format("HH:mm")
+          : "-";
 
-        const hours = Math.floor(totalSeconds / 3600);
-        const minutes = Math.floor((totalSeconds % 3600) / 60);
-        const seconds = totalSeconds % 60;
-
-        const text = `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
-        return <div>{text}</div>;
-
+        return (
+          <div>
+            {startTime} - {endTime}
+          </div>
+        );
       },
     },
-    {
-      title: "Expected Pax",
-      dataIndex: "expectedPax",
-      key: "expectedPax",
-      render: (text) => <div>{text ? text : "-"}</div>,
-    },
+   
     {
       title: "Status",
       dataIndex: ["status", "name"],
       key: "status",
+      width: 100,
       render: (_, record) => <ColorStatusTag status={record?.status} />,
-    },
-    {
-      title: "Remark",
-      dataIndex: "remark",
-      key: "remark",
-      render: (text) => <div>{text ? text : "-"}</div>,
     },
     {
       title: "Action",
       fixed: "end",
+      width: 80,
       render: (_, record) => {
         const smallStyle = { fontSize: "12px" };
 
@@ -233,23 +218,25 @@ const EventFacilityOrderTable = ({
               setMode("edit");
               setSelectedData(record);
             },
-          }
+          },
         ];
 
-        const items = actions.filter(
-          action => (!action.permission || hasPermission(action.permission)) && !action.hidden
-        ).map(action => ({
-          key: action.key,
-          onClick: action.onClick,
-          label: (
-            <Space size={4} style={smallStyle}
-            onClick={action.onClick}
-            >
-              {action.icon}
-              <span style={{ fontSize: "14px" }}>{action.label}</span>
-            </Space>
+        const items = actions
+          .filter(
+            (action) =>
+              (!action.permission || hasPermission(action.permission)) &&
+              !action.hidden,
           )
-        }))
+          .map((action) => ({
+            key: action.key,
+            onClick: action.onClick,
+            label: (
+              <Space size={4} style={smallStyle} onClick={action.onClick}>
+                {action.icon}
+                <span style={{ fontSize: "14px" }}>{action.label}</span>
+              </Space>
+            ),
+          }));
 
         return (
           <Dropdown menu={{ items }} trigger={["click"]}>
