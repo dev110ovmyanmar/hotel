@@ -21,6 +21,8 @@ const ServiceTable = ({
   loading,
 }) => {
   const { hasPermission } = usePermission();
+  const canCreateNested = hasPermission(PERMISSIONS.SERVICE_INVENTORY_ITEM_CREATE);
+  const rowExpandList = hasPermission(PERMISSIONS.SERVICE_INVENTORY_ITEM_LIST);
 
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [itemDrawerOpen, setItemDrawerOpen] = useState(false);
@@ -49,13 +51,20 @@ const ServiceTable = ({
       title: "Complimentary",
       dataIndex: "isComplimentary",
       key: "isComplimentary",
-      align:"center",
-      width:135,
+      align: "center",
+      width: 135,
       render: (text) => (
         <div className={text === true ? "text-[#389E0D]" : "text-[#CF1322]"}>
           {text === true ? "Yes" : "No"}
         </div>
       ),
+    },
+    {
+      title: "Price (MMK)",
+      dataIndex: "basePrice",
+      key: "basePrice",
+      align: "end",
+      render: (text) => <PriceTag value={text} />,
     },
     {
       title: "Status",
@@ -68,14 +77,6 @@ const ServiceTable = ({
       title: "Billing Type",
       dataIndex: ["billingType", "name"],
       key: "billingType",
-    },
-
-    {
-      title: "Price (MMK)",
-      dataIndex: "basePrice",
-      key: "basePrice",
-      align: "end",
-      render: (text) => <PriceTag value={text} />,
     },
 
     {
@@ -162,10 +163,21 @@ const ServiceTable = ({
 
         const actions = [
           {
+            key: "view",
+            label: "View",
+            icon: <EyeOutlined style={{ fontSize: "12px" }} />,
+            permission: PERMISSIONS.SERVICE_INVENTORY_ITEM_VIEW,
+            onClick: () => {
+              setItemDrawerOpen(true);
+              setMode("item-view");
+              setSelectedItem(record);
+            },
+          },
+          {
             key: "edit",
             label: "Edit",
             icon: <EditOutlined style={{ fontSize: "12px" }} />,
-            // permission: PERMISSIONS.SERVICE_EDIT,
+            permission: PERMISSIONS.SERVICE_INVENTORY_ITEM_EDIT,
             onClick: () => {
               setItemDrawerOpen(true);
               setMode("item-edit");
@@ -201,21 +213,27 @@ const ServiceTable = ({
   const expandedRowRender = (record) => {
     return (
       <div className="nested-table-container">
-        <div className="flex justify-between items-center mb-3">
-          <Button
-            className="py-4! rounded-[5px]!"
-            type="primary"
-            size="small"
-            icon={<PlusOutlined />}
-            onClick={() => {
-              setSelectedItem({ serviceUuid: record?.uuid });
-              setMode("item-add");
-              setItemDrawerOpen(true);
-            }}
-          >
-            Inventory Item
-          </Button>
-        </div>
+
+        {
+          canCreateNested && (
+            <div className="flex justify-between items-center mb-3">
+              <Button
+                className="py-4! rounded-[5px]!"
+                type="primary"
+                size="small"
+                icon={<PlusOutlined />}
+                onClick={() => {
+                  setSelectedItem({ serviceUuid: record?.uuid });
+                  setMode("item-add");
+                  setItemDrawerOpen(true);
+                }}
+              >
+                Inventory Item
+              </Button>
+            </div>
+          )
+        }
+
 
         {record?.serviceInventoryMappings <= 0 ? null : (
           <Table
@@ -238,7 +256,11 @@ const ServiceTable = ({
         tableLayout="fixed"
         scroll={{ x: 1000 }}
         columns={columns}
-        expandable={{ expandedRowRender, defaultExpandedRowKeys: ["0"] }}
+        expandable={{
+          expandedRowRender,
+          defaultExpandedRowKeys: ["0"],
+          rowExpandable: (record) => rowExpandList && record?.serviceInventoryMappings?.length > 0 || canCreateNested
+        }}
         dataSource={data}
         loading={loading}
         rowKey="uuid"

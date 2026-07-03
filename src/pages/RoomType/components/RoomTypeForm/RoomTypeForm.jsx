@@ -292,6 +292,7 @@ const RoomTypeForm = ({
             initialValues={{
               maxAdults: 1,
               maxOccupancy: 1,
+              maxExtraBed: 0,
               totalRooms: 1,
               rank: 1,
             }}

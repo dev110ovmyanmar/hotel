@@ -15,8 +15,10 @@ import {
 } from "react-router-dom";
 import { LIMITS } from "../../../../variables/constants";
 import AssignRoomForm from "./Components/RoomInformationForms/AssignRoomForm";
-import { Button } from "antd";
+import { Button, Modal } from "antd";
 import ChangeStatusForm from "../../../BookingDetail/Components/BookingDetailForms/ChangeStatusForm";
+import Loader from "../../../../component/Loader/Loader";
+import ComplimentaryUpdateModal from "./Components/ComplimentaryModals/ComplimentaryUpdateModal";
 
 const RoomInformationList = () => {
   const navigate = useNavigate();
@@ -48,6 +50,8 @@ const RoomInformationList = () => {
   const [assignRoomOpen, setAssignRoomOpen] = useState(false);
   const [showRoomResults, setShowRoomResults] = useState(false);
   const [open, setOpen] = useState(false);
+  const [compOpen, setCompOpen] = useState(false);
+
 
   const { data, isLoading, refetch } = useApiQuery({
     fetchQueryName: "reservation-room",
@@ -67,6 +71,32 @@ const RoomInformationList = () => {
     },
   });
 
+  const { data: reservationRoomsForComplimentary, isLoading: complimentaryLoading } = useApiQuery({
+    fetchQueryName: "reservation-room-comp",
+    fetchQueryFunction: reservationRoomList,
+    params: {
+      reservationRoom: {
+        uuid: uuid,
+      },
+    },
+    options: {
+      enabled: !!bookingId && bookingId.trim().length >= 32,
+    },
+  });
+
+  const upcomingReservations = (reservationRoomsForComplimentary?.data || []).filter((item) => {
+    const checkin = new Date(item.checkinDate);
+    checkin.setHours(0, 0, 0, 0);
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    return checkin > today && item.roomStatus?.code == "confirmed";
+  });
+
+  const disableComplimentaryUpdateButton = upcomingReservations?.length == 0;
+
+
   useEffect(() => {
     if (bookingId && data?.reservation?.reservationNo) {
       sessionStorage.setItem(
@@ -82,6 +112,15 @@ const RoomInformationList = () => {
     setMode("add");
     setDrawerOpen(true);
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-full min-h-[300px]">
+        <Loader />
+      </div>
+    );
+  }
+
   return (
     <div className="w-full px-6 py-2">
       <ReservationHeader data={data || {}} />
@@ -101,9 +140,21 @@ const RoomInformationList = () => {
           addButtonText={"Add New Room"}
         />
       </div>
-      <Button className="custom-blue-btn mb-2" onClick={() => setOpen(true)}>
-        Change Status
-      </Button>
+      <div className="flex gap-2 mb-2">
+        <Button className="custom-blue-btn" onClick={() => setOpen(true)}>
+          Change Status
+        </Button>
+
+        {
+          disableComplimentaryUpdateButton ? null : (
+            <Button className="custom-blue-btn" onClick={() => setCompOpen(true)}>
+              Add Complimentary
+            </Button>
+          )
+        }
+
+      </div>
+
 
       {open && (
         <ChangeStatusForm
@@ -153,8 +204,18 @@ const RoomInformationList = () => {
           onClose={() => setShowRoomResults(false)}
           selectedData={selectedData}
           setSelectedData={setSelectedData}
+          reservationUuid={data || []}
         />
       )}
+
+      {
+        <ComplimentaryUpdateModal
+          upcomingReservations={upcomingReservations}
+          open={compOpen}
+          onCancel={() => setCompOpen(false)}
+        />
+      }
+
     </div>
   );
 };

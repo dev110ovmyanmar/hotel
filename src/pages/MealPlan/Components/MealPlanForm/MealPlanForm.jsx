@@ -34,7 +34,6 @@ const MeanPlanForm = ({
   const { hasPermission } = usePermission();
   const canEdit = hasPermission(PERMISSIONS.MEAL_PLAN_EDIT);
 
-
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
 
   const statuses = initData?.statuses?.status

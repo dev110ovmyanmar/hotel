@@ -122,6 +122,12 @@ export const PERMISSIONS = {
   SERVICE_CREATE: "service.create",
   SERVICE_EDIT: "service.edit",
 
+  // Service Inventory Item
+  SERVICE_INVENTORY_ITEM_LIST : "inventory.list",
+  SERVICE_INVENTORY_ITEM_VIEW : "inventory.view",
+  SERVICE_INVENTORY_ITEM_CREATE : "inventory.create",
+  SERVICE_INVENTORY_ITEM_EDIT : "inventory.edit",
+
   // Inventory
   SERVICE_INVENTORY_LIST: "service-inventory.list",
   SERVICE_INVENTORY_VIEW: "service-inventory.view",
@@ -133,6 +139,12 @@ export const PERMISSIONS = {
   SERVICE_PACKAGE_VIEW: "service-package.view",
   SERVICE_PACKAGE_CREATE: "service-package.create",
   SERVICE_PACKAGE_EDIT: "service-package.edit",
+
+  // Service Package Item
+  SERVICE_PACKAGE_ITEM_LIST : "package.list",
+  SERVICE_PACKAGE_ITEM_VIEW : "package.view",
+  SERVICE_PACKAGE_ITEM_CREATE : "package.create",
+  SERVICE_PACKAGE_ITEM_EDIT : "package.edit",
 
   // Payment
   PAYMENT_LIST: "payment.list",
@@ -238,10 +250,10 @@ export const PERMISSIONS = {
   MENU_CATEGORY_EDIT: "menu-category.edit",
 
   // Menu Item
-  MENU_ITEM_LIST: "menu.list",
-  MENU_ITEM_VIEW: "menu.view",
-  MENU_ITEM_CREATE: "menu.create",
-  MENU_ITEM_EDIT: "menu.edit",
+  // MENU_ITEM_LIST: "menu.list",
+  // MENU_ITEM_VIEW: "menu.view",
+  // MENU_ITEM_CREATE: "menu.create",
+  // MENU_ITEM_EDIT: "menu.edit",
 
   // Menu Modifier 
   MENU_MODIFIER_LIST: "menu.list",

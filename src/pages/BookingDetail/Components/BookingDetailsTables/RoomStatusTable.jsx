@@ -17,23 +17,34 @@ const columns = [
   //   align: "center",
   // },
   {
+    title: "Reservation Status",
+    dataIndex: "roomStatus",
+    key: "roomStatus",
+    render: (status) => {
+
+      return (
+        status ? <ColorStatusTag status={status} /> : "-"
+      );
+    },
+  },
+  {
     title: "Room",
     dataIndex: ["room", "roomNo"],
     key: "room",
     align: "center",
     render: (text) => {
-      return text? text: "-"
+      return text ? text : "-"
     }
   },
   {
     title: "Room Status",
     dataIndex: ["room", "status"],
     key: "roomstatus",
-    align:"center",
+    align: "center",
     render: (status) => {
-      
+
       return (
-        status? <ColorStatusTag status={status}/> : "-"
+        status ? <ColorStatusTag status={status} /> : "-"
       );
     },
   },
@@ -45,7 +56,7 @@ const RoomStatusTable = ({ data }) => {
       <div className="room-icon-box">
         <MdOutlineKingBed style={{ color: "#035ef1", fontSize: "18px" }} />
       </div>
-      <Text>Room Status</Text>
+      <Text>Reservation Room</Text>
     </Space>
   );
   return (
@@ -55,7 +66,7 @@ const RoomStatusTable = ({ data }) => {
           <Card
             title={CustomTitle}
             className="room-card"
-            // extra={<Tag color="blue">Reserved - 2 Rooms</Tag>}
+          // extra={<Tag color="blue">Reserved - 2 Rooms</Tag>}
           >
             <Table
               columns={columns}

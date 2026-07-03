@@ -12,7 +12,7 @@ export default function useCategoryColumns(onEdit, onView) {
       title: "ID",
       dataIndex: "id",
       key: "id",
-      width: 80
+      width: 70
     },
     {
       title: "Name",

@@ -8,6 +8,7 @@ import { fetchFacilityBooking } from "../../../../api/booking";
 import { LIMITS } from "../../../../variables/constants";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import ReservationMenu from "../../Components/ReservationMenu.jsx";
+import Loader from "../../../../component/Loader/Loader.jsx";
 
 const EventFacilityOrderList = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -36,7 +37,7 @@ const EventFacilityOrderList = () => {
       cleanId === ":bookingId" ||
       cleanId.length < 32 // Checks if the user chopped or deleted characters from the ID
     ) {
-      navigate('/404', { replace: true });
+      navigate("/404", { replace: true });
     }
   }, [bookingId, navigate]);
 
@@ -56,7 +57,10 @@ const EventFacilityOrderList = () => {
 
   useEffect(() => {
     if (bookingId && data?.reservation?.reservationNo) {
-      sessionStorage.setItem(`breadcrumb_${bookingId}`, data.reservation.reservationNo);
+      sessionStorage.setItem(
+        `breadcrumb_${bookingId}`,
+        data.reservation.reservationNo,
+      );
       window.dispatchEvent(new Event("breadcrumb_updated"));
     }
   }, [data, bookingId]);
@@ -66,6 +70,14 @@ const EventFacilityOrderList = () => {
     setMode("add");
     setDrawerOpen(true);
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-full min-h-[300px]">
+        <Loader />
+      </div>
+    );
+  }
 
   return (
     <div className="w-full px-6 py-2">
@@ -96,7 +108,6 @@ const EventFacilityOrderList = () => {
         reservationId={data?.reservation?.uuid}
         searchOpen={searchOpen}
         setSearchOpen={setSearchOpen}
-
       />
     </div>
   );

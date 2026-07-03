@@ -31,6 +31,46 @@ const ChangeStatusForm = ({ reservationDetails, open, onClose }) => {
     enabled: !!uuid && open,
   });
 
+  // const reservationStatuses = useMemo(() => {
+  //   if (!initData?.statuses?.reservation_room_status) return [];
+
+  //   const roomsArray = Array.isArray(data?.data)
+  //     ? data.data
+  //     : data?.data
+  //       ? [data.data]
+  //       : [];
+
+  //   return initData.statuses.reservation_room_status
+  //     .filter((status) => {
+  //       const statusCode = status.code?.toLowerCase();
+  //       return (
+  //         statusCode !== "pending" &&
+  //         statusCode !== "reserved" &&
+  //         statusCode !== "booked"
+  //       );
+  //     })
+  //     .map((status) => {
+  //       const statusCode = status.code?.toLowerCase();
+  //       let isDisabled = false;
+
+  //       if (data?.data) {
+  //         const hasValidRooms = roomsArray.some((roomItem) => {
+  //           const allowableStatuses = Array.isArray(roomItem?.checkStatus)
+  //             ? roomItem.checkStatus.map((s) => String(s).toLowerCase())
+  //             : [];
+  //           return allowableStatuses.includes(statusCode);
+  //         });
+  //         isDisabled = !hasValidRooms;
+  //       }
+
+  //       return {
+  //         value: status.uuid,
+  //         label: status.name,
+  //         code: statusCode,
+  //         disabled: isDisabled,
+  //       };
+  //     });
+  // }, [initData, data]);
   const reservationStatuses = useMemo(() => {
     if (!initData?.statuses?.reservation_room_status) return [];
 
@@ -39,6 +79,34 @@ const ChangeStatusForm = ({ reservationDetails, open, onClose }) => {
       : data?.data
         ? [data.data]
         : [];
+
+    const statusDesignMap = {
+      checked_in: {
+        dotColor: "bg-[#08979C]",
+        textColor: "text-[#08979C]",
+        desc: "Guest has checked into the assigned room(s)",
+      },
+      confirmed: {
+        dotColor: "bg-[#389E0D]",
+        textColor: "text-[#389E0D]",
+        desc: "Reservation is officially locked and confirmed",
+      },
+      checked_out: {
+        dotColor: "bg-[#FF8D28]",
+        textColor: "text-[#FF8D28]",
+        desc: "Guest has finalized billing and left the premises",
+      },
+      cancelled: {
+        dotColor: "bg-[#CF1322]",
+        textColor: "text-[#CF1322]",
+        desc: "Reservation is canceled (Requires a reason)",
+      },
+      no_show: {
+        dotColor: "bg-[#D46B08]",
+        textColor: "text-[#D46B08]",
+        desc: "Guest failed to arrive for their scheduled stay",
+      },
+    };
 
     return initData.statuses.reservation_room_status
       .filter((status) => {
@@ -63,9 +131,35 @@ const ChangeStatusForm = ({ reservationDetails, open, onClose }) => {
           isDisabled = !hasValidRooms;
         }
 
+        const design = statusDesignMap[statusCode] || {
+          dotColor: "bg-gray-600",
+          textColor: "text-gray-900",
+          desc: "Update room booking to this status state.",
+        };
+
         return {
           value: status.uuid,
-          label: status.name,
+          searchText: status.name,
+          label: (
+            <div className="flex flex-col py-0.5 w-full line-height-tight">
+              <div className="flex items-center gap-2">
+                {/* Discrete indicator dot */}
+                <span className={`w-2 h-2 rounded-full ${design.dotColor}`} />
+
+                {/* Clean Colored Status Title */}
+                <span
+                  className={`text-sm font-semibold tracking-wide ${design.textColor}`}
+                >
+                  {status.name}
+                </span>
+              </div>
+
+              {/* Description text placed write under title description text */}
+              <span className="text-xs text-gray-600 font-normal mt-0.5 pl-4 block leading-normal">
+                {design.desc}
+              </span>
+            </div>
+          ),
           code: statusCode,
           disabled: isDisabled,
         };
@@ -236,6 +330,7 @@ const ChangeStatusForm = ({ reservationDetails, open, onClose }) => {
                 ? "!bg-blue-100 !text-blue-400 !border-blue-200 opacity-60 filter blur-[0.4px] cursor-not-allowed"
                 : "bg-blue-600 hover:bg-blue-700"
             }`}
+            loading={updateReservationStatusMutation.isPending}
           >
             Update
           </Button>
@@ -254,18 +349,20 @@ const ChangeStatusForm = ({ reservationDetails, open, onClose }) => {
             placeholder="Select a reservation status..."
             options={reservationStatuses}
             filterOption={(input, option) =>
-              (option?.label ?? "").toLowerCase().includes(input.toLowerCase())
+              (option?.searchText ?? "")
+                .toLowerCase()
+                .includes(input.toLowerCase())
             }
             optionRender={(option) => (
-              <span
-                className={
+              <div
+                className={`w-full transition-opacity duration-200 ${
                   option.data.disabled
-                    ? "text-gray-500 font-normal opacity-90"
-                    : "text-slate-800 font-medium"
-                }
+                    ? "opacity-40 cursor-not-allowed pointer-events-none filter grayscale"
+                    : "opacity-100"
+                }`}
               >
                 {option.data.label}
-              </span>
+              </div>
             )}
           />
         </Form.Item>

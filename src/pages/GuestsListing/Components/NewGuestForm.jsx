@@ -1,5 +1,14 @@
 import React, { useEffect, useState, useMemo } from "react";
-import { Form, Input, Drawer, DatePicker, Select, Button, Space, Typography } from "antd";
+import {
+  Form,
+  Input,
+  Drawer,
+  DatePicker,
+  Select,
+  Button,
+  Space,
+  Typography,
+} from "antd";
 import dayjs from "dayjs";
 import { useQueryClient } from "@tanstack/react-query";
 import Loader from "../../../component/Loader/Loader";
@@ -38,36 +47,76 @@ const GuestForm = ({
   const watchedSrNo = Form.useWatch("srcNo", form);
 
   // 3. Mapped Options
-  const statusOptions = useMemo(() =>
-    initData?.statuses?.status?.map(s => ({ value: s.uuid, label: s.name })) || [], [initData]);
+  const statusOptions = useMemo(
+    () =>
+      initData?.statuses?.status?.map((s) => ({
+        value: s.uuid,
+        label: s.name,
+      })) || [],
+    [initData],
+  );
 
-  const nrcTypeOptions = useMemo(() =>
-    initData?.statuses?.nrc_type?.map(t => ({ value: t.code, label: t.code })) || [], [initData]);
+  const nrcTypeOptions = useMemo(
+    () =>
+      initData?.statuses?.nrc_type?.map((t) => ({
+        value: t.code,
+        label: t.code,
+      })) || [],
+    [initData],
+  );
 
-  console.log('Init data locations:', initData?.locations);
-  const countryOptions = useMemo(() =>
-    initData?.locations?.map(l => ({ value: l.uuid, label: l.name })) || [], [initData]);
-  console.log('Country options:', countryOptions);
+  console.log("Init data locations:", initData?.locations);
+  const countryOptions = useMemo(
+    () =>
+      initData?.locations?.map((l) => ({ value: l.uuid, label: l.name })) || [],
+    [initData],
+  );
+  console.log("Country options:", countryOptions);
 
-  const genderOptions = useMemo(() =>
-    initData?.genders?.map(g => ({ value: g.uuid, label: g.name })) || [], [initData]);
+  const genderOptions = useMemo(
+    () =>
+      initData?.genders?.map((g) => ({ value: g.uuid, label: g.name })) || [],
+    [initData],
+  );
 
   const cityOptions = useMemo(() => {
     if (!selectedCountryUuid) return [];
-    return initData?.locations?.find(l => l.uuid === selectedCountryUuid)?.city?.map(c => ({ value: c.uuid, label: c.name })) || [];
+    return (
+      initData?.locations
+        ?.find((l) => l.uuid === selectedCountryUuid)
+        ?.city?.map((c) => ({ value: c.uuid, label: c.name })) || []
+    );
   }, [selectedCountryUuid, initData]);
 
   // NRC Options derived from watchedSrNo
-  const srNoOptions = useMemo(() =>
-    initData?.nrcLocations?.map(loc => ({ value: loc.srNo, label: loc.srNo })) || [], [initData]);
+  const srNoOptions = useMemo(
+    () =>
+      initData?.nrcLocations?.map((loc) => ({
+        value: loc.srNo,
+        label: loc.srNo,
+      })) || [],
+    [initData],
+  );
 
   const townshipOptions = useMemo(() => {
-    const location = initData?.nrcLocations?.find(loc => loc.srNo === watchedSrNo);
-    return location?.nrcTownships?.map(ts => ({ value: ts.name, label: ts.name })) || [];
+    const location = initData?.nrcLocations?.find(
+      (loc) => loc.srNo === watchedSrNo,
+    );
+    return (
+      location?.nrcTownships?.map((ts) => ({
+        value: ts.name,
+        label: ts.name,
+      })) || []
+    );
   }, [watchedSrNo, initData]);
 
   const titleOptions = useMemo(() => {
-    return initData?.statuses?.name_title?.map(t => ({ value: t.name, label: t.name })) || [];
+    return (
+      initData?.statuses?.name_title?.map((t) => ({
+        value: t.name,
+        label: t.name,
+      })) || []
+    );
   }, [initData]);
 
   // 4. API Query for single Guest Detail
@@ -79,40 +128,51 @@ const GuestForm = ({
   });
 
   // 5. Fill Form when data arrives
-  useEffect(() => {
-    if (isAdd) {
-      const defaultStatus = statusOptions.find(s => s.label.toLowerCase() === 'active')?.value;
-      form.resetFields();
-      form.setFieldsValue({ status: defaultStatus });
-      setSelectedCountryUuid(null);
-    } else if (data) {
-      setSelectedCountryUuid(data.country?.uuid);
+  useEffect(
+    () => {
+      if (isAdd) {
+        const defaultStatus = statusOptions.find(
+          (s) => s.label.toLowerCase() === "active",
+        )?.value;
+        const defaultCountry = countryOptions.find(
+          (c) => c.label.toLowerCase() === "myanmar",
+        )?.value;
+        form.resetFields();
+        form.setFieldsValue({ status: defaultStatus, country: defaultCountry });
+        // setSelectedCountryUuid(null);
+        setSelectedCountryUuid(defaultCountry || null);
+      } else if (data) {
+        setSelectedCountryUuid(data.country?.uuid);
 
-      form.setFieldsValue({
-        ...data,
-        title: data.title,
-        dob: data.dob ? dayjs(data.dob) : null,
-        gender: data.gender?.uuid,
-        country: data.country?.uuid,
-        city: data.city?.uuid,
-        status: data.status?.uuid,
-        // Map NRC fields from nested object to flat fields
-        srcNo: data.nrc?.srNo,
-        township: data.nrc?.township,
-        type: data.nrc?.type,
-        number: data.nrc?.number,
-      });
-    }
-  }, [data, isAdd, form, drawerOpen]);
+        form.setFieldsValue({
+          ...data,
+          title: data.title,
+          dob: data.dob ? dayjs(data.dob) : null,
+          gender: data.gender?.uuid,
+          country: data.country?.uuid,
+          city: data.city?.uuid,
+          status: data.status?.uuid,
+          // Map NRC fields from nested object to flat fields
+          srcNo: data.nrc?.srNo,
+          township: data.nrc?.township,
+          type: data.nrc?.type,
+          number: data.nrc?.number,
+        });
+      }
+    },
+    // [data, isAdd, form, drawerOpen])
+    [data, isAdd, form, drawerOpen, statusOptions, countryOptions],
+  );
 
   const upsertMutation = useApiMutation({
     mutationFn: upsertGuest,
     invalidateKeys: [["guests"]],
-    shouldInvalidate: page === 1
+    shouldInvalidate: page === 1,
   });
 
   const onFinish = (values) => {
-    const hasNrc = values?.srcNo && values?.township && values?.type && values?.number;
+    const hasNrc =
+      values?.srcNo && values?.township && values?.type && values?.number;
     const payload = {
       title: values.title,
       name: values.name,
@@ -120,7 +180,9 @@ const GuestForm = ({
       phone: values.phone,
       email: values.email,
       address: values.address,
-      nrcNo: hasNrc ? `${values?.srcNo}/${values?.township}(${values?.type})${values?.number}` : null,
+      nrcNo: hasNrc
+        ? `${values?.srcNo}/${values?.township}(${values?.type})${values?.number}`
+        : null,
       passport: values?.passport,
       dob: values?.dob?.format("YYYY-MM-DD"),
       nationality: values?.nationality,
@@ -129,11 +191,10 @@ const GuestForm = ({
       country: values.country ? { uuid: values.country } : null,
       status: values.status ? { uuid: values.status } : null,
       uuid: isEdit ? selectedRow?.uuid : null,
-
     };
 
     // Remove undefined fields
-    Object.keys(payload).forEach(key => {
+    Object.keys(payload).forEach((key) => {
       if (payload[key] === undefined || payload[key] === null) {
         delete payload[key];
       }
@@ -145,7 +206,7 @@ const GuestForm = ({
         if (isAdd) setPage(1);
         Toast.success(`Guest ${isEdit ? "Updated" : "Created"} successfully.`);
         queryClient.invalidateQueries({
-          queryKey: ["guest-detail"]
+          queryKey: ["guest-detail"],
         });
       },
     });
@@ -158,7 +219,7 @@ const GuestForm = ({
   };
 
   const getLabel = (value, options) => {
-    return options?.find(opt => opt.value === value)?.label || value;
+    return options?.find((opt) => opt.value === value)?.label || value;
   };
 
   return (
@@ -167,41 +228,56 @@ const GuestForm = ({
       size={550}
       onClose={handleClose}
       open={drawerOpen}
-      extra={isView ? (
-        <Button type="primary" onClick={() => setMode("edit")}>Edit</Button>
-      ) : (
-        <FormButtons onClick={() => form.submit()} mode={mode} isPending={upsertMutation.isPending} />
-      )}
+      extra={
+        isView ? (
+          <Button type="primary" onClick={() => setMode("edit")}>
+            Edit
+          </Button>
+        ) : (
+          <FormButtons
+            onClick={() => form.submit()}
+            mode={mode}
+            isPending={upsertMutation.isPending}
+          />
+        )
+      }
     >
-      {isLoading ? <Loader /> : (
-        <Form form={form} layout="vertical" onFinish={onFinish} className="w-full">
+      {isLoading ? (
+        <Loader />
+      ) : (
+        <Form
+          form={form}
+          layout="vertical"
+          onFinish={onFinish}
+          className="w-full"
+        >
           {/* Name, Phone, Email, Dob */}
           <div className="grid grid-cols-12 gap-x-4">
             <div className="col-span-12">
               <Form.Item label="Full Name" required>
-                <Space.Compact style={{ width: '100%' }}>
+                <Space.Compact style={{ width: "100%" }}>
                   <Form.Item
                     name="title"
                     noStyle
-                    rules={[{ required: true, message: 'Title is required' }]}
+                    rules={[{ required: true, message: "Title is required" }]}
                   >
                     <Select
                       options={titleOptions}
                       disabled={isView}
                       placeholder="Select Title"
-                      style={{ width: '20%' }}
+                      style={{ width: "20%" }}
                     />
                   </Form.Item>
                   <Form.Item
                     name="name"
                     noStyle
-                    rules={[{ required: true, message: 'Name is required' }]}
+                    rules={[{ required: true, message: "Name is required" }]}
                   >
                     <Input
                       readOnly={isView}
                       style={{
-                        width: '80%',
-                        cursor: isView ? "default" : "text"
+                        width: "80%",
+                        cursor: isView ? "default" : "text",
                       }}
                       placeholder="Enter Full Name"
                     />
@@ -218,24 +294,26 @@ const GuestForm = ({
                 />
               </Form.Item>
             </div>
+    
             <div className="col-span-12">
-              <Form.Item
-                label="Phone"
-                name="phone"
-              >
+              <Form.Item label="Phone" name="phone">
                 <Input
+                  maxLength={20}
                   readOnly={isView}
                   onKeyPress={(e) => {
-                    if (!/[0-9]/.test(e.key) &&
-                      !(e.key === "+" && value.length === 0)
+                    const currentValue = form.getFieldValue("phone") || "";
+                    if (
+                      !/[0-9]/.test(e.key) &&
+                      !(e.key === "+" && currentValue.length === 0)
                     ) {
                       e.preventDefault();
                     }
                   }}
-                  placeholder="Enter Phone Number"                  
+                  placeholder="Enter Phone Number"
                 />
               </Form.Item>
             </div>
+
             <div className="col-span-12">
               <Form.Item label="Email" name="email">
                 <Input
@@ -243,7 +321,6 @@ const GuestForm = ({
                   style={{ cursor: isView ? "default" : "text" }}
                   placeholder="Enter Email Address"
                 />
-
               </Form.Item>
             </div>
             <div className="col-span-12">
@@ -254,7 +331,7 @@ const GuestForm = ({
                   allowClear={!isView}
                   inputReadOnly={isView}
                   disabledDate={(current) => {
-                    return current && current > dayjs().endOf('day');
+                    return current && current > dayjs().endOf("day");
                   }}
                   showToday={false}
                   placeholder="Select Date of Birth"
@@ -289,7 +366,6 @@ const GuestForm = ({
                     />
                   )}
                 </Form.Item>
-
               </div>
 
               {/* Slash 1 - Dedicated narrow column */}
@@ -342,12 +418,16 @@ const GuestForm = ({
 
                         // 2. Check if it's strictly numeric
                         if (!/^\d+$/.test(value)) {
-                          return Promise.reject(new Error("Only numbers are allowed"));
+                          return Promise.reject(
+                            new Error("Only numbers are allowed"),
+                          );
                         }
 
                         // 3. Check length
                         if (value.length !== 6) {
-                          return Promise.reject(new Error("Must be exactly 6 digits"));
+                          return Promise.reject(
+                            new Error("Must be exactly 6 digits"),
+                          );
                         }
 
                         return Promise.resolve();
@@ -370,8 +450,9 @@ const GuestForm = ({
 
             <div className="col-span-12">
               <Form.Item
-                // label="Passport Number" 
-                name="passport">
+                // label="Passport Number"
+                name="passport"
+              >
                 <Input
                   readOnly={isView}
                   style={{ cursor: isView ? "default" : "text" }}
@@ -400,13 +481,15 @@ const GuestForm = ({
               </Form.Item>
             </div>
 
-
             <div className="grid grid-cols-2 gap-x-4">
               {isView ? (
                 <Form.Item label="Country">
                   <Input
                     readOnly
-                    value={getLabel(form.getFieldValue('country'), countryOptions)}
+                    value={getLabel(
+                      form.getFieldValue("country"),
+                      countryOptions,
+                    )}
                     className="bg-white text-black cursor-default border-gray-200"
                     variant="outlined"
                     placeholder="Select Country"
@@ -428,7 +511,7 @@ const GuestForm = ({
                 <Form.Item label="City">
                   <Input
                     readOnly
-                    value={getLabel(form.getFieldValue('city'), cityOptions)}
+                    value={getLabel(form.getFieldValue("city"), cityOptions)}
                     className="bg-white text-black cursor-default border-gray-200"
                     variant="outlined"
                     placeholder="Select City"
@@ -448,21 +531,25 @@ const GuestForm = ({
             </div>
 
             <Form.Item label="Address" name="address">
-              <Input.TextArea rows={2}
+              <Input.TextArea
+                rows={2}
                 readOnly={isView}
                 style={{ cursor: isView ? "default" : "text" }}
                 placeholder="Enter Address"
               />
             </Form.Item>
 
-            <Form.Item label="Status" name="status" rules={[{ required: true }]}>
+            <Form.Item
+              label="Status"
+              name="status"
+              rules={[{ required: true }]}
+            >
               <Select
                 options={statusOptions}
                 open={isView ? false : undefined}
               />
             </Form.Item>
           </div>
-
         </Form>
       )}
     </Drawer>

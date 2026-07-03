@@ -31,22 +31,22 @@ const RoomTypeTable = ({
   const baseColumns = [
     {
       title: "ID",
-      dataIndex: "id",
-      key: "id",
-      width: 70,
+      render: (_, record) => <div>{record?.id}</div>,
+      width: 55,
+      align: "left",
     },
     {
       title: "Name",
       dataIndex: "name",
       key: "name",
       align: "left",
-      width: 300,
+      width: 250,
     },
     {
       title: "Code",
       dataIndex: "code",
       key: "code",
-      width: 80,
+      width: 70,
     },
     {
       title: "Total Rooms",
@@ -67,7 +67,7 @@ const RoomTypeTable = ({
       title: "Max Extra Bed",
       dataIndex: "maxExtraBed",
       key: "maxExtraBed",
-      width: 100,
+      width: 110,
       align: "center",
     },
     {
@@ -75,19 +75,20 @@ const RoomTypeTable = ({
       dataIndex: "rank",
       key: "rank",
       align: "center",
-       width: 100,
+      width: 100,
     },
     {
       title: "Status",
       dataIndex: "status",
       key: "status",
+      width: 80,
       render: (status) => <ColorStatusTag status={status} />,
-    }
-    ,
+    },
     {
       title: "Action",
       fixed: "end",
       align: "center",
+      width: 80,
       render: (_, record) => {
         const smallStyle = { fontSize: "12px" };
 
