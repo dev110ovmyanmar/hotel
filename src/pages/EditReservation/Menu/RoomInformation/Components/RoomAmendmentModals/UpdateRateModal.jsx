@@ -185,7 +185,7 @@ export default function UpdateRateModal({
                                                         className="!w-full"
                                                         placeholder="Rate Amount"
                                                         formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                                                        parser={value => value.replace(/\s?|(,*)/g, '')}
+                                                        parser={value => value.replace(/[\s,]/g, '')}
                                                         min={0}
                                                         addonBefore={<span className="text-xs font-semibold text-slate-500">MMK</span>}
                                                     />
@@ -201,7 +201,6 @@ export default function UpdateRateModal({
                     <Form.Item
                         name="reason"
                         label="Reason for Rate Modification"
-                        rules={[{ required: true, message: 'Please provide reason documentation for updating prices.' }]}
                     >
                         <Input.TextArea placeholder="Provide business justification details explaining rate variations..." rows={3} />
                     </Form.Item>
