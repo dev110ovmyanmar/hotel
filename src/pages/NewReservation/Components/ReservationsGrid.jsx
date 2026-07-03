@@ -31,7 +31,6 @@ const ReservationsGrid = ({
   changePage,
   changePerPage,
 }) => {
-
   const navigate = useNavigate();
 
   // Updated to pass item?.uuid as a clear path parameter
@@ -71,12 +70,12 @@ const ReservationsGrid = ({
                       },
                       ...(item?.reservationStatus?.code !== "pending"
                         ? [
-                          {
-                            key: "print",
-                            label: "Print",
-                            icon: <PrinterOutlined />,
-                          },
-                        ]
+                            {
+                              key: "print",
+                              label: "Print",
+                              icon: <PrinterOutlined />,
+                            },
+                          ]
                         : []),
                     ],
                   }}
@@ -154,8 +153,7 @@ const ReservationsGrid = ({
                       : "-"}
                   </div>
 
-                  {/* <div className="flex items-center gap-2 bg-indigo-50 text-indigo-700 px-3 py-1.5 rounded-lg border border-indigo-100 ml-auto sm:ml-0"> */}
-                  <div className="flex items-center gap-2 bg-gray-50 text-gray-700 px-3 py-1.5 rounded-lg border border-gray-100 ml-auto sm:ml-0">
+                  <div className="flex items-center gap-2 bg-indigo-100 text-indigo-700 px-3 py-1.5 rounded-lg border border-gray-100 ml-auto sm:ml-0">
                     <FaMoon className="text-xs" />
                     <span className="text-xs font-bold whitespace-nowrap">
                       {`${item.totalNight} ${item.totalNight === 1 ? "Night" : "Nights"}`}

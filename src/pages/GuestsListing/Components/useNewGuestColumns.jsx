@@ -53,21 +53,25 @@ export default function useGuestColumns(
       title: "Phone No.",
       dataIndex: "phone",
       key: "phone",
+      render: (text) => text || "-",
     },
     {
       title: "NRC No.",
       dataIndex: "nrcNo",
       key: "nrcNo",
+      render: (text) => text || "-",
     },
     {
       title: "Passport",
       dataIndex: "passport",
       key: "passport",
+      render: (text) => text || "-",
     },
     {
       title: "Nationality",
       dataIndex: "nationality",
       key: "nationality",
+      render: (text) => text || "-",
     },
     {
       title: "Status",
