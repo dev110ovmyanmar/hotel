@@ -91,7 +91,7 @@ const BookingDetailButton = ({ data }) => {
         break;
     }
   };
-
+console.log(data?.reservation?.uuid,"data")
   return (
     <div>
       <div className="text-sm mb-6 mt-1.5">
@@ -188,6 +188,7 @@ const BookingDetailButton = ({ data }) => {
           open={noteOpen}
           onClose={() => setNoteOpen(false)}
           reservationId={data?.reservationNo}
+          reservationUuid={data?.reservation?.uuid}
         />
       )}
     </div>

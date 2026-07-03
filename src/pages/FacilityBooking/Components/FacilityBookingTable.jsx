@@ -15,7 +15,6 @@ import ImageUpload from "../../../component/ImageUpload/ImageUpload";
 import { useApiMutation } from "../../../hooks/useApiMutation";
 import PriceTag from "../../../component/PriceTag/PriceTag";
 import FacilityBookingForm from "./FacilityBookingForm/FacilityBookingForm";
-import { PERMISSIONS } from './../../../variables/permission';
 import dayjs from "dayjs";
 
 const FacilityBookingTable = ({

@@ -57,7 +57,7 @@ const ReservationSearchBar = ({
           setInputValue(value);
           debouncedSearchRef.current(value);
         }}
-        style={{ width: "280px" }}
+        style={{ width: "400px" }}
       />
 
       {/* <div className="w-110 flex justify-end">
