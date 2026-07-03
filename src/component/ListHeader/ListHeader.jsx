@@ -48,11 +48,11 @@ const ListHeader = ({
   };
 
   return (
-    <div className="flex flex-row justify-between items-center w-full gap-2">
+    <div className="flex flex-row w-full ">
       <div
         className={
           !setCreateDrawerOpen && !setCityMode
-            ? "flex items-center justify-between gap-2"
+            ? "flex items-center justify-between gap-4"
             : "flex"
         }
       >
@@ -67,10 +67,10 @@ const ListHeader = ({
               setInputValue(value);
               debouncedSearchRef.current(value);
             }}
-            className="w-50 rounded-[5px]!"
+            className="w-100! rounded-[5px]! "
           />
         )}
-        <div className="w-110">
+        <div className="w-70!">
           {setStartDate && setEndDate && (
             <RangePicker
               style={{ width: "100%" }}
