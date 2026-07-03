@@ -1,15 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useApiMutation } from '../../../../../../hooks/useApiMutation';
 import { complimentaryUpdate } from '../../../../../../api/reservationSectionApi';
 import { queryClient } from '../../../../../../app/queryClient';
 import { Button, Checkbox, Form, Select } from 'antd';
 import Modal from 'antd/es/modal/Modal';
 import Toast from '../../../../../../component/Toast/Toast';
+import useApiQuery from '../../../../../../hooks/useApiQuery';
+import { reservationRoomList } from '../../../../../../api/reservationSectionApi';
 
 const ComplimentaryUpdateModal = ({
-    upcomingReservations = [], // Defensive default assignment
     open,
     onCancel,
+    bookingUuid,
 }) => {
     const initData = queryClient.getQueryData(["initData", "authenticated"]);
     const complimentaryStatuses = initData?.statuses?.complimentary_status;
@@ -18,8 +20,33 @@ const ComplimentaryUpdateModal = ({
     const [selectedStatusUuid, setSelectedStatusUuid] = useState("");
     const [form] = Form.useForm();
 
+    const { data: reservationRoomsForComplimentary, isLoading: complimentaryLoading } = useApiQuery({
+        fetchQueryName: "reservation-room-comp",
+        fetchQueryFunction: reservationRoomList,
+        params: {
+            reservationRoom: {
+                uuid: bookingUuid,
+            },
+        },
+        options: {
+            enabled: !!bookingUuid && open,
+        },
+    });
+
+    const upcomingReservations = useMemo(() => {
+        return (reservationRoomsForComplimentary?.data || []).filter((item) => {
+            const checkin = new Date(item.checkinDate);
+            checkin.setHours(0, 0, 0, 0);
+
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            return checkin > today && item.roomStatus?.code == "confirmed";
+        });
+    }, [reservationRoomsForComplimentary?.data]);
+
     useEffect(() => {
-        if (Array.isArray(complimentaryStatuses) && complimentaryStatuses.length > 0 && !selectedStatusUuid) {
+        if (open && !complimentaryLoading && Array.isArray(complimentaryStatuses) && complimentaryStatuses.length > 0 && !selectedStatusUuid) {
             if (upcomingReservations?.[0]?.complimentaryStatus) {
                 const currentStatus = complimentaryStatuses.find(s => s.uuid === upcomingReservations?.[0]?.complimentaryStatus?.uuid);
                 if (currentStatus) {
@@ -32,7 +59,7 @@ const ComplimentaryUpdateModal = ({
                 form.setFieldsValue({ statusUuid: defaultStatus.uuid });
             }
         }
-    }, [complimentaryStatuses, selectedStatusUuid, form, upcomingReservations]);
+    }, [open, complimentaryLoading, complimentaryStatuses, selectedStatusUuid, form, upcomingReservations]);
 
     // Centralized Clean Up and Close Handler
     const handleClose = () => {
@@ -43,28 +70,30 @@ const ComplimentaryUpdateModal = ({
     };
 
     useEffect(() => {
-        const data = upcomingReservations || [];
-        setReservationRooms(data);
+        if (open) {
+            const reservationRoomListing = upcomingReservations || [];
+            setReservationRooms(reservationRoomListing);
 
-        const initialAllocations = data.map(roomData => {
-            const nights = roomData.rates || [];
-            const initialCompDates = nights.filter(n => n.isComplimentary).map(n => n.date);
+            const initialAllocations = reservationRoomListing.map(roomData => {
+                const nights = roomData.rates || [];
+                const initialCompDates = nights.filter(n => n.isComplimentary).map(n => n.date);
 
-            return {
-                roomInfo: {
-                    id: roomData.id,
-                    uuid: roomData.uuid,
-                    number: roomData.room?.roomNo || "-",
-                    type: roomData.roomType?.name || "Unknown Room Type",
-                    isComplimentary: roomData?.isComplimentary,
-                },
-                ratePlan: roomData.ratePlan || { name: 'Unknown', code: 'N/A', channelVisibility: {} },
-                nights: nights,
-                compDates: initialCompDates
-            };
-        });
-        setRoomAllocations(initialAllocations);
-    }, [upcomingReservations]);
+                return {
+                    roomInfo: {
+                        id: roomData.id,
+                        uuid: roomData.uuid,
+                        number: roomData.room?.roomNo || "-",
+                        type: roomData.roomType?.name || "Unknown Room Type",
+                        isComplimentary: roomData?.isComplimentary,
+                    },
+                    ratePlan: roomData.ratePlan || { name: 'Unknown', code: 'N/A', channelVisibility: {} },
+                    nights: nights,
+                    compDates: initialCompDates
+                };
+            });
+            setRoomAllocations(initialAllocations);
+        }
+    }, [upcomingReservations, open]);
 
     // Toggle specific date within a specific room sequence block
     const handleToggleDate = (roomIndex, dateString) => {
