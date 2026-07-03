@@ -193,7 +193,6 @@ export default function StayReductionModal({
                     <Form.Item
                         name="reason"
                         label="Reason for Stay Reduction"
-                        rules={[{ required: maxReduction > 0, message: 'Please input a reason for stay reduction.' }]}
                     >
                         <Input.TextArea
                             placeholder={maxReduction === 0 ? "Stay reduction is currently unavailable." : "Provide business justification for early checkout / stay reduction..."}
