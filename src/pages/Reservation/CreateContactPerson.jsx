@@ -76,7 +76,7 @@ const CreateGuestForm = ({
       let payload = {
         title: values.title,
         phone: values.phone,
-        secondaryPhone : values?.secondaryPhone,
+        secondaryPhone: values?.secondaryPhone,
         status: {
           uuid: statusOptions[0]?.value,
         },
@@ -145,53 +145,55 @@ const CreateGuestForm = ({
 
       <Form layout="vertical" form={createContactForm}>
         <Row gutter={16}>
-          <Space.Compact style={{ width: '100%' }}>
-            <Form.Item
-              label="Full Name"
-              name="title"
-              style={{ width: '20%' }}
-              rules={[{required:true, message:"This is required"}]}
-            >
-              <Select options={titleOptions} placeholder="Select Title" />
-            </Form.Item>
-
-            <Form.Item
-              label={
-                <p className="hidden">Name</p>
-              }
-              name="name"
-              rules={[{required:true, message:"Name is required"}]}
-              style={{ width: "80%" }}
-              className="hide-required-star"
-            >
-              <AutoComplete
-                options={autocompleteGuestOptions}
-                placeholder="Select or type guest name"
-                filterOption={(inputValue, option) =>
-                  option?.label
-                    ?.toLowerCase()
-                    .includes(inputValue.toLowerCase())
-                }
-                onSelect={(value, option) => {
-                  createContactForm.setFieldsValue({
-                    title: option.title,
-                    name: option.name,
-                    guestUuid: value,
-                    phone: option.phone,
-                    secondaryPhone: option.secondaryPhone
-                  });
-                }}
-                onChange={(value, option) => {
-                  createContactForm.setFieldsValue({
-                    name: value,
-                    guestUuid: null,
-                  });
-                }}
+          <Col span={24}>
+            <Space.Compact style={{ width: '100%' }}>
+              <Form.Item
+                label="Full Name"
+                name="title"
+                style={{ width: '20%' }}
+                rules={[{ required: true, message: "This is required" }]}
               >
-                <Input />
-              </AutoComplete>
-            </Form.Item>
-          </Space.Compact>
+                <Select options={titleOptions} placeholder="Select Title" />
+              </Form.Item>
+
+              <Form.Item
+                label={
+                  <p className="hidden">Name</p>
+                }
+                name="name"
+                rules={[{ required: true, message: "Name is required" }]}
+                style={{ width: "80%" }}
+                className="hide-required-star"
+              >
+                <AutoComplete
+                  options={autocompleteGuestOptions}
+                  placeholder="Select or type guest name"
+                  filterOption={(inputValue, option) =>
+                    option?.label
+                      ?.toLowerCase()
+                      .includes(inputValue.toLowerCase())
+                  }
+                  onSelect={(value, option) => {
+                    createContactForm.setFieldsValue({
+                      title: option.title,
+                      name: option.name,
+                      guestUuid: value,
+                      phone: option.phone,
+                      secondaryPhone: option.secondaryPhone
+                    });
+                  }}
+                  onChange={(value, option) => {
+                    createContactForm.setFieldsValue({
+                      name: value,
+                      guestUuid: null,
+                    });
+                  }}
+                >
+                  <Input />
+                </AutoComplete>
+              </Form.Item>
+            </Space.Compact>
+          </Col>
         </Row>
 
         <Form.Item name="guestUuid" hidden>
@@ -204,8 +206,8 @@ const CreateGuestForm = ({
               label="Phone Number"
               name="phone"
               rules={[
-                { required: true , message: "Phone number is required." },
-                
+                { required: true, message: "Phone number is required." },
+
               ]}
             >
               <Input

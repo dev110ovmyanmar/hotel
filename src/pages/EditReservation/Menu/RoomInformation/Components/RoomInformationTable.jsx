@@ -470,7 +470,6 @@ const RoomInformationTable = ({
           <Dropdown
             menu={{ items: menuItems, style: { minWidth: "200px" } }}
             trigger={["click"]}
-            placement="bottomRight"
           >
             <IoOptionsSharp
               className="cursor-pointer"

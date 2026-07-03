@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Modal, Form, Input, Descriptions, Badge, Button, Divider, Space, Row, Col, Card, Typography, Spin } from 'antd';
+import { Modal, Form, Input, Descriptions, Badge, Button, Divider, Space, Row, Col, Card, Typography, Spin, Tag } from 'antd';
 import dayjs from 'dayjs';
 import { ArrowRightOutlined, CheckCircleOutlined, PlusOutlined, MinusOutlined, SwapLeftOutlined, SwapRightOutlined } from '@ant-design/icons';
 import { useApiMutation } from '../../../../../../hooks/useApiMutation';
@@ -22,7 +22,7 @@ export default function RoomMoveModal({
 
     useEffect(() => {
         if (!isOpen) {
-            queryClient.removeQueries({ 
+            queryClient.removeQueries({
                 queryKey: 'reservation-room-search'
             });
         }
@@ -46,7 +46,7 @@ export default function RoomMoveModal({
 
     const createRoomAmendmentMutation = useApiMutation({
         mutationFn: createRoomAmendment,
-        invalidateKeys: [["reservation-room"],["reservation-room-search"]],
+        invalidateKeys: [["reservation-room"], ["reservation-room-search"]],
     });
 
     const [selectRoomToMove, setSelectRoomToMove] = useState(false);
@@ -71,6 +71,8 @@ export default function RoomMoveModal({
 
     // Clean structural conditions
     const hasNoRooms = !isQueryLoading && reservationRoomSearchDetails?.rooms?.length === 0;
+    console.log(record?.roomType?.name, "RecordInRoomMove")
+    console.log(record?.room?.roomNo, "room")
 
     return (
         <Modal
@@ -121,6 +123,22 @@ export default function RoomMoveModal({
                 <div>
                     {!selectRoomToMove && (
                         <>
+                            <div
+                                className='
+                                    flex 
+                                    justify-between 
+                                    bg-[#f8fafc]
+                                    p-3
+                                    rounded
+                                    border
+                                    border-[#e2e8f0]
+                                    text-sm
+                                '
+                            >
+                                <h1>{record?.roomType?.name}</h1>
+                                <Tag color="green" className='!border !border-green-300 !rounded-sm'>{record?.room?.roomNo}</Tag>
+                            </div>
+
                             <h4 className='!my-[10px]'>Available Rooms:</h4>
                             <Row gutter={[16, 16]}>
                                 {reservationRoomSearchDetails?.rooms?.map((room) => (
