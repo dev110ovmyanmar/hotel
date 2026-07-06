@@ -19,7 +19,7 @@ const useHouseKeepingTaskColumns = (onEdit, onView) => {
             width: 60,
         },
         {
-            title: "Room Number",
+            title: "Room No.",
             key: "roomNo",
             // Accessing roomNo from the nested room object
             render: (_, record) => record?.room?.roomNo || "-",
@@ -40,6 +40,7 @@ const useHouseKeepingTaskColumns = (onEdit, onView) => {
             title: "House Keeping Status",
             dataIndex: "housekeepingStatus",
             key: "housekeepingStatus",
+            width:200,
             render: (housekeepingStatus) => {
                 // 1. Get the first item from the array
                 const firstItem = Array.isArray(housekeepingStatus) ? housekeepingStatus[0] : housekeepingStatus;
@@ -69,6 +70,7 @@ const useHouseKeepingTaskColumns = (onEdit, onView) => {
             title: "Priority",
             dataIndex: "priorityLevel",
             key: "priorityLevel",
+            width:100,
             render: (priorityLevel) => {
                 // Return null or a placeholder if data is missing
                 if (!priorityLevel?.name) return "-";
@@ -91,6 +93,7 @@ const useHouseKeepingTaskColumns = (onEdit, onView) => {
             title: "Request Status",
             dataIndex: "maintenanceRequestStatus",
             key: "maintenanceRequestStatus",
+            width:140,
             render: (maintenanceRequestStatus) =>
                 <div className={maintenanceRequestStatus === true ? "text-[#389E0D]" : "text-[#CF1322]"}>
                     {maintenanceRequestStatus === true ? "True" : "False"}
@@ -100,7 +103,7 @@ const useHouseKeepingTaskColumns = (onEdit, onView) => {
         {
             title: "Actions",
             key: "actions",
-            width: 100,
+            width: 90,
             fixed: 'right',
             align:"center",
             render: (_, record) => {

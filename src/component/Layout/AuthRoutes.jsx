@@ -428,7 +428,7 @@ export const authRoutes = [
       },
       {
         key: 5.2,
-        path: "/manage-rooms/room-type",
+        path: "/manage-rooms/room-types",
         label: "Room Types",
         icon: <MdMeetingRoom style={{ fontSize: "20px" }} />,
         component: <RoomType />,
@@ -436,7 +436,7 @@ export const authRoutes = [
       },
       {
         key: 5.3,
-        path: "/manage-rooms/room-attribute",
+        path: "/manage-rooms/room-attributes",
         label: "Room Attributes",
         icon: <MdBathtub style={{ fontSize: "20px" }} />,
         component: <RoomAttribute />,
@@ -444,7 +444,7 @@ export const authRoutes = [
       },
       {
         key: 5.4,
-        path: "/manage-rooms/floor",
+        path: "/manage-rooms/floors",
         label: "Floors",
         icon: <IoLayersOutline style={{ fontSize: "20px" }} />,
         component: <Floor />,
@@ -453,7 +453,7 @@ export const authRoutes = [
       {
         key: 5.5,
         label: "Amenities",
-        path: "/amenities",
+        path: "/manage-rooms/amenities",
         icon: <MdFitnessCenter style={{ fontSize: "20px" }} />,
         isPrivate: true,
         component: <AmenitiesList />,
@@ -599,8 +599,8 @@ export const authRoutes = [
       },
       {
         key: 9.4,
-        path: "/supplier",
-        label: "Supplier",
+        path: "/inventory-management/supplier",
+        label: "Suppliers",
         icon: <MdOutlinePeople style={{ fontSize: "20px" }} />,
         component: <SupplierList />,
         isPrivate: true,

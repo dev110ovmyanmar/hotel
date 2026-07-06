@@ -2,12 +2,16 @@ import { AiOutlineDropbox } from "react-icons/ai";
 import { Dropdown, Space, Table, Tag, Button } from "antd";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { EditOutlined, EyeOutlined, FolderAddOutlined, MoreOutlined } from "@ant-design/icons";
-import CompanyForm from './CompanyForm/CompanyForm';
-import ColorStatusTag from './../../../component/ColorStatusTag/ColorStatusTag';
-import { PERMISSIONS } from './../../../variables/permission';
-import usePermission from './../../../hooks/usePermission';
-
+import {
+  EditOutlined,
+  EyeOutlined,
+  FolderAddOutlined,
+  MoreOutlined,
+} from "@ant-design/icons";
+import CompanyForm from "./CompanyForm/CompanyForm";
+import ColorStatusTag from "./../../../component/ColorStatusTag/ColorStatusTag";
+import { PERMISSIONS } from "./../../../variables/permission";
+import usePermission from "./../../../hooks/usePermission";
 
 const CompanyTable = ({
   data,
@@ -55,34 +59,40 @@ const CompanyTable = ({
       title: "Phone",
       dataIndex: "phone",
       key: "phone",
+      width: 140,
       render: (text) => <div>{text ? text : "-"}</div>,
     },
     {
       title: "Charge Value",
       dataIndex: "chargeValue",
       key: "chargeValue",
+      align: "right",
+      width: 160,
       render: (_, record) => {
         const chargeValue = record?.chargeValue;
         const chargeTypeName = record?.chargeType?.code;
 
         if (chargeTypeName === "flat") {
-          return <div>{chargeValue.toLocaleString()} MMK</div>
+          return <div>{chargeValue.toLocaleString()} MMK</div>;
         } else {
-          return <div>{chargeValue} %</div>
+          return <div>{chargeValue} %</div>;
         }
       },
-      align: "center"
+      
     },
     {
       title: "Status",
       dataIndex: ["status", "name"],
       key: "status",
-      render: (_, record) => <ColorStatusTag status={record?.status} />
+      align: "center",
+      width: 100,
+      render: (_, record) => <ColorStatusTag status={record?.status} />,
     },
     {
       title: "Action",
-      fixed:"end",
-      align:"center",
+      fixed: "end",
+      align: "center",
+      width: 90,
       render: (_, record) => {
         const smallStyle = { fontSize: "12px" };
 
@@ -124,22 +134,18 @@ const CompanyTable = ({
             icon: <AiOutlineDropbox style={{ fontSize: "12px" }} />,
             // permission: PERMISSIONS.PARTNER_EDIT,
             onClick: () => {
-              navigate(
-                `/partners/company/${record?.id}/company-contract`,
-                {
-                  state:
-                    { companyRecord: record }
-                }
-
-              )
+              navigate(`/partners/company/${record?.id}/company-contract`, {
+                state: { companyRecord: record },
+              });
             },
-          }
+          },
         ];
 
         const items = actions
           .filter(
             (action) =>
-              (!action.permission || hasPermission(action.permission)) && !action.hidden,
+              (!action.permission || hasPermission(action.permission)) &&
+              !action.hidden,
           )
           .map((action) => ({
             key: action.key,
@@ -160,7 +166,6 @@ const CompanyTable = ({
       },
     },
   ];
-
 
   return (
     <div id="scrollId" className="w-full h-[63vh] ">
@@ -193,7 +198,6 @@ const CompanyTable = ({
         setSelectedData={setSelectedData}
         page={page}
       />
-
     </div>
   );
 };

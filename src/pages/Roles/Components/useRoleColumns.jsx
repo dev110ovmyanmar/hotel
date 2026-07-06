@@ -31,7 +31,7 @@ export default function (onEdit, onView) {
       key: "description",
       ellipsis: true,
       width: 250,
-      render: (text) => <span className="text-gray-600">{text || "—"}</span>,
+      render: (text) => <span className="text-gray-600">{text || "-"}</span>,
     },
     // {
     //   title: "Actions",
