@@ -924,7 +924,7 @@ export const authRoutes = [
         icon: <FileProtectOutlined style={{ fontSize: "20px" }} />,
         isPrivate: true,
         component: <PrivacyPolicy />,
-        permission: PERMISSIONS.PRIVACY_POLICY_LIST,
+        permission: PERMISSIONS.PRIVACY_POLICY_VIEW,
       },
     ],
   },
