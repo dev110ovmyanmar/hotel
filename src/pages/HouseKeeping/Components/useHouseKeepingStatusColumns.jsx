@@ -23,7 +23,7 @@ const useHouseKeepingStatusColumns = (onEdit, onView) => {
             width: 60,
         },
         {
-            title: "Room Number",
+            title: "Room No.",
             key: "roomNo",
             // Accessing roomNo from the nested room object
             render: (_, record) => record?.room?.roomNo || "-",

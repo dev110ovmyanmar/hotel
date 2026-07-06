@@ -36,11 +36,12 @@ export default function usePermissionColumns(onEdit, onView) {
       title: "Description",
       dataIndex: "description",
       key: "description",
+      render: (text) => text || "-",
     },
     {
       title: "Actions",
       key: "actions",
-      width: 80,
+      width: 90,
       fixed:"end",
       align:"center",
       render: (_, record) => (

@@ -17,7 +17,6 @@ import FormButton from "../../../../component/FormButtons/FormButtons";
 import { createStaff, editStaff, staffDetails } from "../../../../api/staffApi";
 import dayjs from "dayjs";
 import { getFormattedDate, validatePhoneNumber } from "../../../../utils";
-// import Status from "../../../../component/Status/Status";
 import Loader from "../../../../component/Loader/Loader";
 import { PERMISSIONS } from "../../../../variables/permission";
 import usePermission from "../../../../hooks/usePermission";
@@ -426,14 +425,9 @@ const StaffsForm = ({
               <Input placeholder="Enter Passport" readOnly={isView} />
             </Form.Item>
 
-            <Form.Item
-              label="Phone"
-              name="phone"
-              // rules={[
-              //   { validator: validatePhoneNumber }
-              // ]}
-            >
+            <Form.Item label="Phone" name="phone">
               <Input
+                maxLength={20}
                 onKeyPress={(e) => {
                   if (
                     !/[0-9]/.test(e.key) &&
@@ -489,28 +483,9 @@ const StaffsForm = ({
               />
             </Form.Item>
 
-            {/* <Form.Item name="currentlyWorking" valuePropName="checked">
-            <Checkbox disabled={isView} onChange={handleCurrentChange}>
-              Currently Working
-            </Checkbox>
-          </Form.Item>
-
-          {!isCurrent && <Form.Item
-            label="Left Date"
-            name="endedAt"
-            rules={[{ required: true, message: "Please select Date" }]}
-          >
-            <DatePicker className="w-full" disabled={isView} />
-          </Form.Item>} */}
-
             {isView ? (
-              <Form.Item
-                label="Left Date"
-                name="endedAt"
-                // rules={[{ required: true, message: "Please select Date" }]}
-              >
+              <Form.Item label="Left Date" name="endedAt">
                 {data?.endedAt ? (
-                  // dayjs(data.endedAt).format("YYYY-MM-DD")
                   <DatePicker
                     className="w-full"
                     disabled={isView}
@@ -532,13 +507,7 @@ const StaffsForm = ({
                   </Form.Item>
 
                   {!isCurrent && (
-                    <Form.Item
-                      label="Left Date"
-                      name="endedAt"
-                      // rules={[
-                      //   { required: true, message: "Please select Date" },
-                      // ]}
-                    >
+                    <Form.Item label="Left Date" name="endedAt">
                       <DatePicker className="w-full" disabled={isView} />
                     </Form.Item>
                   )}
