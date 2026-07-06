@@ -13,7 +13,8 @@ import React from 'react';
 const RoomRow = ({ room, daysMeta, getAvailability, roomDateMap, rtId }) => (
     <tr key={room.id} className="h-9  hover:bg-gray-50">
         <td className="sticky left-0 z-30 border-b border-r border-[#dee2e6] bg-[#fcfcfc]  px-4 py-1">
-            <span className="text-[11px] font-semibold text-gray-700">{`${room?.roomNo} (${room?.floor})`}</span>
+            <div className="font-bold text-[12px] text-gray-700">{room.roomNo}</div>
+            <div className="text-[9px] text-gray-400 uppercase">{room.floor}</div>
         </td>
         {daysMeta.map(({ dateStr, cellClass }, dayIdx) => {
             const avail = getAvailability(rtId, dateStr);
