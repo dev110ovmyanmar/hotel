@@ -103,7 +103,6 @@ const TaxForm = ({
         charge_type: data?.chargeType?.uuid,
         charge_apply_type: data?.chargeApplyType?.uuid,
         per_unit: data?.perUnit?.uuid,
-        // status: data?.status?.uuid,
       });
       setSelectedData(data);
     }
@@ -279,7 +278,6 @@ const TaxForm = ({
               label="Is Inclusive"
               name="isInclusive"
               valuePropName="checked"
-              // normalize={(value) => (value ? 1 : 0)}
               initialValue={0}
               rules={[{ required: true, message: "Is Inclusive is Required" }]}
             >

@@ -21,7 +21,7 @@ const SingleRoomComplimentaryUpdateModal = ({
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    const isCheckinValid = checkin ? checkin < today : false;
+    const isCheckinValid = checkin ? checkin <= today : false;
     const isCheckoutValid = checkout ? checkout > today : false;
     const isStatusValid = reservationData?.roomStatus?.code === "checked_in";
 
@@ -89,7 +89,9 @@ const SingleRoomComplimentaryUpdateModal = ({
 
     // Toggle specific date with guard clause
     const handleToggleDate = (dateString) => {
-        if (!isModificationAllowed || isPastOrToday(dateString)) return;
+        if (!isModificationAllowed
+            // || isPastOrToday(dateString)
+        ) return;
 
         setRoomAllocation(prev => {
             if (!prev) return null;
@@ -309,7 +311,8 @@ const SingleRoomComplimentaryUpdateModal = ({
                             <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-slate-300">
                                 {roomAllocation.nights.map((night) => {
                                     const isComp = roomAllocation.compDates.includes(night.date);
-                                    const disabledDate = !isModificationAllowed || isPastOrToday(night.date);
+                                    const disabledDate = !isModificationAllowed;
+                                    // || isPastOrToday(night.date);
                                     const displayValue = isComp ? 0 : parseFloat(night.price);
 
                                     return (

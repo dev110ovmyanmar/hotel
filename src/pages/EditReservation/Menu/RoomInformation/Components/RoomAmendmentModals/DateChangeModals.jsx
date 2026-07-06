@@ -121,7 +121,9 @@ export default function DateChangeModal({
                         </Form.Item>
                     </div>
 
-                    <Form.Item name="reason" label="Reason For Schedule Disruption" rules={[{ required: true, message: 'Please provide an audit trail reason.' }]}>
+                    <Form.Item name="reason" label="Reason For Schedule Disruption"
+                    // rules={[{ required: true, message: 'Please provide an audit trail reason.' }]}
+                    >
                         <Input.TextArea placeholder="Provide detailed explanation for tracking logs..." rows={3} />
                     </Form.Item>
                 </Form>

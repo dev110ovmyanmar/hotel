@@ -210,7 +210,7 @@ const RoomInformationList = () => {
 
       {
         <ComplimentaryUpdateModal
-          upcomingReservations={upcomingReservations}
+          bookingUuid={uuid}
           open={compOpen}
           onCancel={() => setCompOpen(false)}
         />

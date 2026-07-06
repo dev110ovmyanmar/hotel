@@ -39,19 +39,20 @@ const MeanPlanTable = ({
       title: "Description",
       dataIndex: "description",
       key: "description",
-      render: (text) => <div>{text}</div>,
-      width: 500,
+      render: (text) => text || "-",
     },
     {
       title: "Status",
       dataIndex: ["status", "name"],
       key: "status",
+      width:150,
       render: (_, record) => <ColorStatusTag status={record?.status} />,
     },
     {
       title: "Action",
-      fixed:"end",
-      align:"center",
+      fixed: "end",
+      align: "center",
+      width:100,
       render: (_, record) => {
         const smallStyle = { fontSize: "12px" };
 
@@ -81,7 +82,9 @@ const MeanPlanTable = ({
         ];
 
         const items = actions
-          .filter((action) => !action.permission || hasPermission(action.permission))
+          .filter(
+            (action) => !action.permission || hasPermission(action.permission),
+          )
           .map((action) => ({
             key: action.key,
             label: (
