@@ -62,10 +62,10 @@ const ReservationHeader = ({ data }) => {
               {reservation?.extraBed === 1 ? "Exta Bed" : "Extra Beds"}
             </span>
           </div> */}
+          
           {reservation?.extraBeds > 0 && (
             <div className="flex items-center gap-2 py-1 rounded-lg mt-2.5">
               <FaBed className="text-blue-500 text-base" />{" "}
-              {/* Replace with your actual icon */}
               <span className="text-[10px] md:text-[10px] lg:text-[13px] font-medium text-[#ffffff]">
                 {reservation.extraBeds} Extra Beds
               </span>

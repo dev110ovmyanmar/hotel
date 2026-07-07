@@ -78,6 +78,7 @@ const RoomInventoryTable = ({
       title: "Extra Bed",
       dataIndex: "extraBed",
       key: "extraBed",
+      render: (text) => text || "-",
     },
     {
       title: "Max Occupancy",

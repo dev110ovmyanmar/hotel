@@ -35,7 +35,7 @@ const StaffsTable = ({
     },
     { title: "Name", dataIndex: "name", key: "name" },
 
-    { title: "Phone", dataIndex: "phone", key: "phone" },
+    { title: "Phone", dataIndex: "phone", key: "phone" ,render: (text) => text || "-"},
     {
       title: "Department",
       dataIndex: ["department", "name"],

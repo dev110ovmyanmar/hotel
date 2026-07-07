@@ -4,7 +4,7 @@ import { DollarCircleOutlined, PhoneOutlined } from "@ant-design/icons";
 
 const { Text, Title } = Typography;
 
-const ContactPersonCard = ({data}) => {
+const ContactPersonCard = ({ data }) => {
   const reservation = data?.reservation;
   const CustomTitle = (
     <Space>
@@ -23,7 +23,7 @@ const ContactPersonCard = ({data}) => {
       </Row>
 
       <Row justify="space-between" className="mt-3">
-        <Text >{reservation?.guest?.name}</Text>
+        <Text className="capitalize">{reservation?.guest?.name}</Text>
         <Text>{reservation?.guest?.phone}</Text>
       </Row>
     </Card>
