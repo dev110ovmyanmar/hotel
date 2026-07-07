@@ -45,7 +45,7 @@ const PolicyList = () => {
   };
 
   return (
-    <div className="w-full px-6 py-2">
+    <div className="w-full md:w-[1/2] px-6 py-2">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
         <ListHeader
           title="Policy List"

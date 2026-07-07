@@ -28,7 +28,7 @@ const STATUS_COLORS = {
 
 const Calendar = () => {
   const [currentDate, setCurrentDate] = useState(dayjs());
-  const [allData, setAllData] = useState([]); // Empty state initially
+  const [allData, setAllData] = useState([]);
   const [expandedGroups, setExpandedGroups] = useState(new Set());
   const [searchQuery, setSearchQuery] = useState('');
   const [filters, setFilters] = useState({ roomType: null, floor: null, statuses: null });
@@ -113,7 +113,6 @@ const Calendar = () => {
     setSelectedBooking(null);
   };
 
-  // --- DATA TRANSFORMATION ---
   useEffect(() => {
     if (apiData && apiData.roomTypes) {
       setAllData(apiData.roomTypes);
@@ -123,8 +122,6 @@ const Calendar = () => {
     }
   }, [apiData]);
 
-
-  // --- FILTERING LOGIC ---
   const filteredData = useMemo(() => {
     return allData
       .map(group => {
@@ -144,7 +141,6 @@ const Calendar = () => {
           return floorMatch && searchMatch && statusMatch;
         });
 
-
         if (typeMatch && filteredRooms.length > 0) {
           return { ...group, rooms: filteredRooms };
         }
@@ -152,9 +148,6 @@ const Calendar = () => {
       })
       .filter(Boolean);
   }, [allData, filters, searchQuery, roomMetaData]);
-
-  console.log("FilteredData", filteredData);
-
 
   const days = useMemo(() => {
     const start = currentDate.startOf('month');
@@ -168,7 +161,6 @@ const Calendar = () => {
     const totalRoomsCount = allData.reduce((acc, g) => acc + g.rooms.length, 0);
     if (totalRoomsCount === 0) return [];
 
-
     return days.map(day => {
       let occupiedCount = 0;
       allData.forEach(group => {
@@ -180,14 +172,12 @@ const Calendar = () => {
         });
       });
 
-
       return {
         available: totalRoomsCount - occupiedCount,
         occupancy: Math.round((occupiedCount / totalRoomsCount) * 100)
       };
     });
   }, [allData, days]);
-
 
   const toggleGroup = (type) => {
     const newSet = new Set(expandedGroups);
@@ -196,8 +186,6 @@ const Calendar = () => {
     setExpandedGroups(newSet);
   };
 
-
-  // --- FILTER UI ---
   const filterContent = (
     <div className="w-72 p-1 flex flex-col gap-4">
       <div>
@@ -235,21 +223,15 @@ const Calendar = () => {
     </div>
   );
 
-
   const CELL_WIDTH = 85;
   const SIDEBAR_WIDTH = 240;
 
-
-  // --- AUTO SCROLL TO TODAY ---
   useEffect(() => {
     if (!isLoading && !isFetching && gridRef.current) {
       const today = dayjs();
-      // Only scroll if we're viewing the current month
       if (currentDate.isSame(today, 'month')) {
         const todayIdx = today.date() - 1;
-        // Scroll so 'today' is visible, keeping 1 column as left padding
         const scrollAmount = (todayIdx * CELL_WIDTH) - CELL_WIDTH;
-        // Small timeout ensures the DOM has painted before scrolling
         setTimeout(() => {
           gridRef.current?.scrollTo({
             left: Math.max(0, scrollAmount),
@@ -260,8 +242,6 @@ const Calendar = () => {
     }
   }, [isLoading, isFetching, currentDate]);
 
-
-  // --- LOADING OVERLAY ---
   if (isLoading || isFetching) {
     return (
       <div className="h-screen w-full flex items-center justify-center flex-col gap-4">
@@ -269,7 +249,6 @@ const Calendar = () => {
       </div>
     );
   }
-
 
   return (
     <div className="flex flex-col h-[calc(100vh-180px)] bg-white overflow-hidden text-[#333]">
@@ -280,7 +259,6 @@ const Calendar = () => {
             <DoubleLeftOutlined className="text-gray-400 cursor-pointer" onClick={() => setCurrentDate(currentDate.subtract(1, 'year'))} />
             <LeftOutlined className="text-gray-400 cursor-pointer" onClick={() => setCurrentDate(currentDate.subtract(1, 'month'))} />
             <DatePicker
-              // picker="month"
               picker="date"
               value={currentDate}
               format="MMMM YYYY"
@@ -296,13 +274,11 @@ const Calendar = () => {
           </Space>
         </div>
 
-
         <div className="flex items-center gap-4">
           <div className="text-lg font-medium w-full text-center">
             {currentDate ? currentDate.format('DD MMMM YYYY') : ''}
           </div>
         </div>
-
 
         <div className="flex items-center gap-3">
           <Input
@@ -321,10 +297,8 @@ const Calendar = () => {
         </div>
       </div>
 
-
-      {/* GRID CONTAINER (Parent for floating logic) */}
+      {/* GRID CONTAINER */}
       <div className="flex-1 relative overflow-hidden flex flex-col">
-        {/* SCROLLABLE GRID */}
         <div className="flex-1 overflow-auto relative pb-[160px]" ref={gridRef} onScroll={handleScroll}>
           <table className="border-separate border-spacing-0 table-fixed">
             <thead>
@@ -333,7 +307,6 @@ const Calendar = () => {
                   Room Type
                 </th>
                 {days.map((day, i) => {
-                  // const isToday = day.isSame(dayjs(), 'day');
                   const isToday = checkIsToday(day);
                   return (
                     <th key={i} className={`sticky top-0 z-[50] border-b border-[#dee2e6] text-center p-2
@@ -365,20 +338,20 @@ const Calendar = () => {
                       const dayStr = day.format('YYYY-MM-DD');
                       const dateData = (group.dates || []).find(d => d.date === dayStr);
                       const availableRooms = dateData?.availability?.availableRooms;
+                      console.log("Available", availableRooms);
                       return (
                         <td key={i}
                           className={`border-b border-[#dee2e6] text-center p-1
-                                ${isToday
+                          ${isToday
                               ? 'bg-[#E6F4FF] border-r-2 border-r-[#91CAFF] border-l-2 border-l-[#91CAFF]'
-                              : 'bg-[#fcfcfc] border-r'
+                              : 'bg-[#fcfcfc] border-r' // <-- Modify this line for normal days
                             }
-                          `}
+  `}
                           style={{ width: CELL_WIDTH, minWidth: CELL_WIDTH, maxWidth: CELL_WIDTH }}>
                           <div className={`flex flex-col items-center justify-center`}>
-                            <div className="text-red-500 font-bold flex flex-col items-center">
+                            <div className="font-bold flex flex-col items-center">
                               <Input readOnly value={availableRooms} style={{ padding: '0 2px', height: '24px', fontSize: '12px' }} className="!w-5 text-center bg-white" />
                             </div>
-                            <div className="text-[12px] text-gray-400">{group.price || ''}</div>
                           </div>
                         </td>
                       );
@@ -405,86 +378,107 @@ const Calendar = () => {
                               if (!bookingItem.isBooked || !bookingItem.booking) return null;
 
                               const booking = bookingItem.booking;
-                              const bookingCheckIn = dayjs(booking.checkinDate);
-                              const bookingCheckOut = dayjs(booking.checkoutDate);
-                              const bookingDate = dayjs(bookingItem.date);
+                              const bookingCheckIn = dayjs(booking.checkinDate).startOf('day');
+                              const bookingCheckOut = dayjs(booking.checkoutDate).startOf('day');
+                              const firstVisibleDay = days[0].startOf('day');
+                              const lastVisibleDay = days[days.length - 1].startOf('day');
 
-                              if (day.isSame(bookingDate, 'day') && (day.isSame(bookingCheckIn, 'day') || (day.date() === 1 && bookingCheckIn.isBefore(day, 'day')))) {
-                                const endDay = bookingCheckOut.startOf('day');
-                                const totalNights = endDay.diff(bookingCheckIn.startOf('day'), 'day') || 1;
-                                const nightsToDraw = endDay.diff(day.startOf('day'), 'day') || 1;
-                                const remainingCols = days.length - dayIdx;
-                                const span = Math.min(nightsToDraw, remainingCols);
-                                const width = (span * CELL_WIDTH);
+                              const isContinuingLeft = bookingCheckIn.isBefore(firstVisibleDay);
+                              const isContinuingRight = bookingCheckOut.isAfter(lastVisibleDay);
+
+                              const entryDay = isContinuingLeft ? firstVisibleDay : bookingCheckIn;
+                              const exitDay = isContinuingRight ? lastVisibleDay : bookingCheckOut;
+
+                              if (day.isSame(entryDay, 'day')) {
+                                let span = exitDay.diff(entryDay, 'day');
+
+                                if (isContinuingLeft && !isContinuingRight) {
+                                  span = exitDay.diff(firstVisibleDay, 'day') + 1;
+                                }
+                                if (isContinuingLeft && isContinuingRight) {
+                                  span = days.length;
+                                }
+
+                                if (span <= 0) return null;
+
+                                const totalNights = bookingCheckOut.diff(bookingCheckIn, 'day') || 1;
                                 const style = STATUS_COLORS[booking.roomStatus];
                                 const checkInFmt = bookingCheckIn.format('DD MMM');
                                 const checkOutFmt = bookingCheckOut.format('DD MMM');
                                 const guestName = booking.guest?.name || 'Unknown';
 
-                                // 1. Check if the booking extends past your current view or specific date
-                                const isContinuing = bookingCheckOut.isAfter(days[days.length - 1], 'day');
+                                const leftOffset = isContinuingLeft ? '0px' : '42.5px';
+                                let dynamicWidth = span * CELL_WIDTH;
 
-                                // 2. Define the clip path dynamically
-                                // Standard slice:  /____/
-                                // Continuing arrow: /____>
-                                const clipPathStyle = isContinuing
-                                  ? 'polygon(10px 0%, calc(100% - 10px) 0%, 100% 50%, calc(100% - 10px) 100%, 0% 100%)'
-                                  : 'polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%)';
+                                if (!isContinuingLeft && !isContinuingRight) {
+                                  dynamicWidth = span * CELL_WIDTH;
+                                } else if (isContinuingLeft && !isContinuingRight) {
+                                  dynamicWidth = (span * CELL_WIDTH) - 42.5;
+                                } else if (!isContinuingLeft && isContinuingRight) {
+                                  dynamicWidth = (span * CELL_WIDTH) - 42.5;
+                                } else {
+                                  dynamicWidth = span * CELL_WIDTH;
+                                }
+
+                                let clipPathStyle = 'polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%)';
+
+                                if (isContinuingLeft && isContinuingRight) {
+                                  clipPathStyle = 'polygon(0% 50%, 10px 0%, calc(100% - 10px) 0%, 100% 50%, calc(100% - 10px) 100%, 10px 100%)';
+                                } else if (isContinuingLeft) {
+                                  clipPathStyle = 'polygon(0% 50%, 10px 0%, 100% 0%, calc(100% - 10px) 100%, 10px 100%)';
+                                } else if (isContinuingRight) {
+                                  clipPathStyle = 'polygon(10px 0%, calc(100% - 10px) 0%, 100% 50%, calc(100% - 10px) 100%, 0% 100%)';
+                                }
 
                                 return (
-                                  <Tooltip
-                                    key={bIdx}
-                                    title={
-                                      <span>
-                                        <strong>{guestName}</strong> · {room.roomNo}<br />
-                                        📅 {checkInFmt} → {checkOutFmt} ({totalNights} nights)
-                                      </span>
-                                    }
+                                  // <Tooltip
+                                  //   key={bIdx}
+                                  //   title={
+                                  //     <span>
+                                  //       <strong>{guestName}</strong> · {room.roomNo}<br />
+                                  //       📅 {checkInFmt} → {checkOutFmt} ({totalNights} nights)
+                                  //     </span>
+                                  //   }
+                                  // >
+                                  <div
+                                    className="absolute z-10 cursor-pointer transition-all hover:brightness-110 select-none"
+                                    onClick={() => handleBookingClick(booking, room)}
+                                    style={{
+                                      left: leftOffset,
+                                      width: dynamicWidth,
+                                      color: style?.text || '#fff',
+                                      height: '25px',
+                                      top: '16px',
+                                    }}
                                   >
                                     <div
-                                      className="absolute left-[42.5px] z-10 cursor-pointer transition-all hover:brightness-110 select-none"
-                                      onClick={() => handleBookingClick(booking, room)}
+                                      className="absolute inset-0"
                                       style={{
-                                        width: width,
-                                        color: style?.text || '#fff',
-                                        height: '25px',
-                                        top: '16px',
+                                        backgroundColor: style?.bg || '#ccc',
+                                        clipPath: clipPathStyle,
                                       }}
-                                    >
-                                      {/* Background with Clip Path */}
-                                      <div
-                                        className="absolute inset-0"
-                                        style={{
-                                          backgroundColor: style?.bg || '#ccc',
-                                          clipPath: clipPathStyle, // Applies the arrow or the standard slant
-                                        }}
-                                      />
+                                    />
 
-                                      {/* Text Content */}
-                                      <div className="relative z-10 flex items-center gap-1.5 pl-4 pr-5 h-full">
-                                        <span className="text-[12px] font-bold whitespace-nowrap overflow-hidden text-ellipsis pr-2">
-                                          {guestName}
+                                    <div className={`relative z-10 flex items-center gap-1.5 h-full ${isContinuingLeft ? 'pl-6' : 'pl-4'} pr-5`}>
+                                      <span className="text-[12px] font-bold whitespace-nowrap overflow-hidden text-ellipsis pr-2">
+                                        {guestName}
+                                      </span>
+                                      {span >= 3 && (
+                                        <span className="text-[12px] opacity-80 whitespace-nowrap">
+                                          {checkInFmt} → {checkOutFmt}
                                         </span>
-
-                                        {span >= 3 && (
-                                          <span className="text-[12px] opacity-80 whitespace-nowrap">
-                                            {checkInFmt} → {checkOutFmt}
-                                          </span>
-                                        )}
-                                      </div>
-
-                                      {/* ICON GROUP CONTAINER */}
-                                      <div className="absolute -top-3 -right-2 flex gap-1 z-20">
-
-                                        {/* Team Icon */}
-                                        {booking.isGroup && (
-                                          <span className="bg-gray-100 rounded-full p-0.5 shadow-sm border border-white flex items-center justify-center">
-                                            <img src={Team} alt="Team" className="w-3.5 h-3.5" />
-                                          </span>
-                                        )}
-                                      </div>
+                                      )}
                                     </div>
-                                  </Tooltip>
+
+                                    <div className="absolute -top-3 -right-2 flex gap-1 z-20">
+                                      {booking.isGroup && (
+                                        <span className="bg-gray-100 rounded-full p-0.5 shadow-sm border border-white flex items-center justify-center">
+                                          <img src={Team} alt="Team" className="w-3.5 h-3.5" />
+                                        </span>
+                                      )}
+                                    </div>
+                                  </div>
+                                  // </Tooltip>
                                 );
                               }
                               return null;
@@ -497,14 +491,12 @@ const Calendar = () => {
                 </React.Fragment>
               ))}
 
-
               <tr className="bg-transparent">
                 <td className="sticky left-0 z-40 bg-gray-50/50 border-b border-r border-[#dee2e6] p-3 font-bold" style={{ width: SIDEBAR_WIDTH, minWidth: SIDEBAR_WIDTH, maxWidth: SIDEBAR_WIDTH }}>
                   <span className="text-[11px] uppercase text-gray-500">Rooms Available</span>
                 </td>
                 {dailyStats.map((stat, i) => {
                   const isZero = stat.available === 0;
-                  // const isToday = days[i].isSame(dayjs(), 'day');
                   const isToday = checkIsToday(days[i]);
                   return (
                     <td key={i} className={`border-b border-[#dee2e6] text-center p-2 font-bold
@@ -548,13 +540,8 @@ const Calendar = () => {
           </table>
         </div>
 
-
         {/* FLOATING FOOTER CONTAINER */}
         <div className="absolute bottom-0 left-0 right-0 z-[100] flex flex-col bg-white/80 backdrop-blur-md border-t border-gray-200 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
-          {/* STATS FOOTER (Horizontal Scroll synced) */}
-
-
-          {/* LEGEND FOOTER */}
           <div className="px-6 py-3">
             <div className="flex flex-wrap gap-x-6 gap-y-2">
               <span className="text-[11px] uppercase font-bold text-gray-400 mr-2 self-center">Reservation Status</span>
@@ -573,7 +560,6 @@ const Calendar = () => {
           </div>
         </div>
       </div>
-
 
       <Modal
         title="Booking Details"
@@ -603,14 +589,12 @@ const Calendar = () => {
             </Descriptions.Item>
             <Descriptions.Item label="Nights">{selectedBooking.nights} Night(s)</Descriptions.Item>
             <Descriptions.Item label="Guests">{selectedBooking.guests} Person(s)</Descriptions.Item>
-            {/* <Descriptions.Item label="Price">{selectedBooking.price} / night</Descriptions.Item> */}
             <Descriptions.Item label="Status">
               <Badge
                 color={STATUS_COLORS[selectedBooking.status]?.bg || '#ccc'}
                 text={<span style={{ textTransform: 'capitalize', fontWeight: 500 }}>{selectedBooking.status}</span>}
               />
             </Descriptions.Item>
-            {/* <Descriptions.Item label="Special Requests">{selectedBooking.specialRequests}</Descriptions.Item> */}
           </Descriptions>
         )}
       </Modal>
@@ -619,4 +603,3 @@ const Calendar = () => {
 };
 
 export default Calendar;
-
