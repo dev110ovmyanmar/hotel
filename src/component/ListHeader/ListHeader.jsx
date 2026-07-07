@@ -31,6 +31,8 @@ const ListHeader = ({
 
   const { collapsed, openDrawer } = useSelector(appSelector);
   const isCollapsed = collapsed && !openDrawer;
+  const isMediumScreen = window?.innerWidth >= 766;
+  const isSmallScreen  = window?.innerWidth <= 768;
 
   const [inputValue, setInputValue] = useState(keyword || "");
   const debouncedSearchRef = useRef(null);
@@ -52,8 +54,15 @@ const ListHeader = ({
     setCreateDrawerOpen(true);
   };
 
+  const containerClass =
+  !isCollapsed && !isMediumScreen
+    ? "flex-col gap-y-3 items-start"
+    : isSmallScreen
+    ? "flex-col gap-y-3 items-start"
+    : "flex-row justify-between items-center w-full";
+
   return (
-    <div className={`flex ${!isCollapsed ? "flex-col gap-y-3 items-start" : "flex-row justify-between items-center"}`}>
+    <div className={`flex ${containerClass}`}>
       <div
         className={
           !setCreateDrawerOpen && !setCityMode
@@ -92,12 +101,12 @@ const ListHeader = ({
                 }
               }}
             />
-          )}
+          )}  
         </div>
       </div>
 
       <div className="flex justify-end md:flex-1">
-        <div className={`flex justify-end flex-1 ${isCollapsed ? 'pr-2' : ''}`}>
+        <div className='flex justify-end flex-1'>
           {radioButtonsForTableAndGrid}
         </div>
         <div className="flex justify-start">
