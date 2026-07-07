@@ -21,7 +21,7 @@ const columns = [
       >
         {id}
       </span>
-    )
+    ),
   },
   {
     title: "Date",
@@ -46,7 +46,7 @@ const columns = [
       return (
         <>
           <span>{value?.toLocaleString()}</span>
-          <span>MMK</span>
+          <span> {""} MMK</span>
         </>
       );
     },
@@ -62,13 +62,16 @@ const columns = [
 ];
 
 const PaymentSummaryTable = ({ data }) => {
-
   // Localized Modal state configuration handlers
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedDataUuid, setSelectedDataUuid] = useState(null);
 
   // Safely extract the clean array from your wrapped object structure { data: Array(9) }
-  const rawDataArray = data?.reservation?.folioPayments && Array.isArray(data?.reservation?.folioPayments) ? data?.reservation?.folioPayments : [];
+  const rawDataArray =
+    data?.reservation?.folioPayments &&
+    Array.isArray(data?.reservation?.folioPayments)
+      ? data?.reservation?.folioPayments
+      : [];
 
   // Fired when the interactive Id column row item gets selected
   // const handleIdClick = (uuid) => {
@@ -95,28 +98,26 @@ const PaymentSummaryTable = ({ data }) => {
 
   return (
     <>
-      {
-        data?.length !== 0 && (
-          <Card title={CustomTitle} className="payment-card">
-            <Table
-              columns={columns}
-              dataSource={data}
-              rowKey="uuid"
-              size="small"
-              pagination={false}
-            />
+      {data?.length !== 0 && (
+        <Card title={CustomTitle} className="payment-card">
+          <Table
+            columns={columns}
+            dataSource={data}
+            rowKey="uuid"
+            size="small"
+            pagination={false}
+          />
 
-            <FolioPaymentDetailModal
-              isOpen={isModalOpen}
-              onClose={() => {
-                setIsModalOpen(false);
-                setSelectedDataUuid(null);
-              }}
-              selectedDataUuid={selectedDataUuid}
-            />
-          </Card>
-        )
-      }
+          <FolioPaymentDetailModal
+            isOpen={isModalOpen}
+            onClose={() => {
+              setIsModalOpen(false);
+              setSelectedDataUuid(null);
+            }}
+            selectedDataUuid={selectedDataUuid}
+          />
+        </Card>
+      )}
     </>
   );
 };

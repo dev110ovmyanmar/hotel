@@ -42,6 +42,7 @@ import PriceTag from "../../../../../component/PriceTag/PriceTag";
 import AddRoomWithExtensionDateModal from "./RoomAmendmentModals/AddRoomWithExtensionDateModal";
 // import { checkIfActionDisabled } from "./RoomInformationDate";
 import SingleRoomComplimentaryUpdateModal from "./ComplimentaryModals/SingleRoomComplimentaryUpdateModal";
+import RoomInformationDetailsForm from "./RoomInformationForms/RoomInformationDetailsForm";
 
 const RoomInformationTable = ({
   data,
@@ -55,6 +56,7 @@ const RoomInformationTable = ({
   reservationUuid,
 }) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [detailsDrawerOpen, setDetailsDrawerOpen] = useState(false); 
   const [guestOpen, setGuestOpen] = useState(false);
   const [guestListOpen, setGuestListOpen] = useState(false);
   const [mode, setMode] = useState(null);
@@ -294,7 +296,7 @@ const RoomInformationTable = ({
             onClick: () => {
               setSelectedData(record);
               setMode("view");
-              setDrawerOpen(true);
+              setDetailsDrawerOpen(true);
             },
           },
           {
@@ -322,8 +324,8 @@ const RoomInformationTable = ({
             onClick: () => {
               setReservationRoomDetail(record);
               setCompOpen(true);
-            }
-          }
+            },
+          },
         ];
 
         if (record?.amendStatus) {
@@ -514,6 +516,13 @@ const RoomInformationTable = ({
         selectedData={selectedData}
       />
 
+      <RoomInformationDetailsForm
+        drawerOpen={detailsDrawerOpen}
+        setDrawerOpen={setDetailsDrawerOpen}
+        selectedData={selectedData}
+        setSelectedData={setSelectedData}
+      />
+
       {/* <RoomMoveDrawer
         open={roomMoveOpen}
         selectedData={selectedData}
@@ -596,7 +605,7 @@ const RoomInformationTable = ({
           isOpen={true}
           onClose={closeModal}
           record={selectedData} // Direct row object mapping
-        // refetch={refetch}
+          // refetch={refetch}
         />
       )}
 
