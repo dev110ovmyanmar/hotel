@@ -32,7 +32,7 @@ import GuestListDrawer from "./RoomInformationForms/GuestListDrawer";
 import RoomMoveModal from "./RoomAmendmentModals/RoomMoveModal";
 import GuestUploadDrawer from "../../GuestDetails/Components/GuestForms/GuestUploadDrawer";
 import UpdateRateModal from "./RoomAmendmentModals/UpdateRateModal";
-import AddExtraBedModal from "./RoomAmendmentModals/AddExtraBedModal";
+// import AddExtraBedModal from "./RoomAmendmentModals/AddExtraBedModal";
 import RoomUpgradeModal from "./RoomAmendmentModals/RoomUpgradeModal";
 import { useApiMutation } from "../../../../../hooks/useApiMutation";
 import { availabilitySearch } from "../../../../../api/reservationSectionApi";
@@ -43,6 +43,9 @@ import AddRoomWithExtensionDateModal from "./RoomAmendmentModals/AddRoomWithExte
 // import { checkIfActionDisabled } from "./RoomInformationDate";
 import SingleRoomComplimentaryUpdateModal from "./ComplimentaryModals/SingleRoomComplimentaryUpdateModal";
 import RoomInformationDetailsForm from "./RoomInformationForms/RoomInformationDetailsForm";
+import AddExtraAmenities from "./Extra/AddExtraAmenities";
+import { useEffect } from "react";
+
 
 const RoomInformationTable = ({
   data,
@@ -56,7 +59,7 @@ const RoomInformationTable = ({
   reservationUuid,
 }) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [detailsDrawerOpen, setDetailsDrawerOpen] = useState(false); 
+  const [detailsDrawerOpen, setDetailsDrawerOpen] = useState(false);
   const [guestOpen, setGuestOpen] = useState(false);
   const [guestListOpen, setGuestListOpen] = useState(false);
   const [mode, setMode] = useState(null);
@@ -76,6 +79,7 @@ const RoomInformationTable = ({
     useState(false);
 
   const [compOpen, setCompOpen] = useState(false);
+  const [addExtraBedOpen, setExtraBedOpen] = useState(false);
   const [reservationRoomDetail, setReservationRoomDetail] = useState(null);
 
   // Unified State Engine for Split Modals
@@ -326,6 +330,15 @@ const RoomInformationTable = ({
               setCompOpen(true);
             },
           },
+          {
+            key: "extra",
+            label: "Extra",
+            icon: <PlusOutlined />,
+            onClick: () => {
+              setSelectedData(record);
+              setExtraBedOpen(true);
+            }
+          }
         ];
 
         if (record?.amendStatus) {
@@ -449,12 +462,12 @@ const RoomInformationTable = ({
                         setGuestOpen(true);
                       },
                     },
-                    {
-                      key: "extra_bed_add",
-                      label: "Add Extra Bed",
-                      icon: <PlusOutlined />,
-                      onClick: () => handleAction("extra_bed_add", record),
-                    },
+                    // {
+                    //   key: "extra_bed_add",
+                    //   label: "Add Extra Bed",
+                    //   icon: <PlusOutlined />,
+                    //   onClick: () => handleAction("extra_bed_add", record),
+                    // },
                     {
                       key: "extra_bed_remove",
                       label: "Remove Extra Bed",
@@ -605,7 +618,7 @@ const RoomInformationTable = ({
           isOpen={true}
           onClose={closeModal}
           record={selectedData} // Direct row object mapping
-          // refetch={refetch}
+        // refetch={refetch}
         />
       )}
 
@@ -649,14 +662,14 @@ const RoomInformationTable = ({
         />
       )}
 
-      {activeModal === "extra_bed_add" && selectedData && (
+      {/* {activeModal === "extra_bed_add" && selectedData && (
         <AddExtraBedModal
           isOpen={true}
           onClose={closeModal}
           record={selectedData}
           extraBedAmendmentUuid={extraBedAmendmentUuid}
         />
-      )}
+      )} */}
 
       <RoomUpgradeModal
         isOpen={roomUpgrade}
@@ -693,6 +706,14 @@ const RoomInformationTable = ({
         open={compOpen}
         onCancel={() => setCompOpen(false)}
       />
+
+
+      <AddExtraAmenities
+        isOpen={addExtraBedOpen}
+        onClose={() => setExtraBedOpen(false)}
+        record={selectedData}
+      />
+
     </div>
   );
 };
