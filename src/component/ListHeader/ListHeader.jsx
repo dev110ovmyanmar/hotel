@@ -5,6 +5,8 @@ import _ from "lodash";
 import usePermission from "../../hooks/usePermission";
 import { DatePicker } from "antd";
 import dayjs from "dayjs";
+import { useSelector } from "react-redux";
+import { appSelector } from "../../services/appSlice";
 
 const ListHeader = ({
   keyword,
@@ -27,6 +29,9 @@ const ListHeader = ({
   const canCreate = hasPermission(permission);
   const { RangePicker } = DatePicker;
 
+  const { collapsed, openDrawer } = useSelector(appSelector);
+  const isCollapsed = collapsed && !openDrawer;
+
   const [inputValue, setInputValue] = useState(keyword || "");
   const debouncedSearchRef = useRef(null);
 
@@ -48,7 +53,7 @@ const ListHeader = ({
   };
 
   return (
-    <div className="flex flex-row w-full ">
+    <div className={`flex ${!isCollapsed ? "flex-col gap-y-3 items-start" : "flex-row justify-between items-center"}`}>
       <div
         className={
           !setCreateDrawerOpen && !setCityMode
@@ -67,10 +72,10 @@ const ListHeader = ({
               setInputValue(value);
               debouncedSearchRef.current(value);
             }}
-            className="w-100! rounded-[5px]! "
+            className="w-full md:w-72 lg:w-96 rounded-[5px]!"
           />
         )}
-        <div className="w-70!">
+        <div className="w-90! md:w-100! xs:flex-1">
           {setStartDate && setEndDate && (
             <RangePicker
               style={{ width: "100%" }}
@@ -91,11 +96,11 @@ const ListHeader = ({
         </div>
       </div>
 
-      <div className="w-full flex justify-end">
-        <div className="w-full flex justify-end pr-2">
+      <div className="flex justify-end md:flex-1">
+        <div className={`flex justify-end flex-1 ${isCollapsed ? 'pr-2' : ''}`}>
           {radioButtonsForTableAndGrid}
         </div>
-        <div>
+        <div className="flex justify-start">
           {canCreate && showCreateButton && (
             <Button
               type="primary"
