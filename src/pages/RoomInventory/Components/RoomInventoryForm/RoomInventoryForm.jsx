@@ -137,7 +137,7 @@ const RoomInventoryForm = ({
           onFinish={onFinish}
         >
           <Form.Item label="Room Type" name="name">
-            <Input disabled={!isAdd} />
+            <Input readOnly={!isAdd}/>
           </Form.Item>
 
           <div className="grid grid-cols-2 gap-6">
@@ -151,7 +151,7 @@ const RoomInventoryForm = ({
               <InputNumber
                 {...sharedProps}
                 placeholder="Outlined"
-                disabled={isView}
+                readOnly={isView}
               />
             </Form.Item>
 
@@ -177,7 +177,7 @@ const RoomInventoryForm = ({
                 }),
               ]}
             >
-              <InputNumber {...sharedProps} disabled={true} />
+              <InputNumber {...sharedProps} readOnly={true} />
             </Form.Item>
           </div>
         </Form>

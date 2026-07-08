@@ -249,7 +249,7 @@ const ReferralForm = ({
                 rules={[{ required: true, message: "Charge Type is Required" }]}
                 getValueProps={(value) => ({
                   value: isView
-                    ? chargeType.find((item) => item.value === value)?.label
+                    ? chargeType.find((item) => item.uuid === value)?.name
                     : value,
                 })}
               >

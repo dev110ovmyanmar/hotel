@@ -143,6 +143,11 @@ const RoleForm = ({
     setPermDrawerOpen(false);
   };
 
+  const darkModeStyle = `
+    dark:border dark:border-gray-600 dark:!bg-[#141414] 
+    dark:text-gray-100
+  `;
+
   return (
     <>
       <Drawer
@@ -192,15 +197,7 @@ const RoleForm = ({
               <>
                 <Divider />
                 <div
-                  style={{
-                    background: "#f5f5f5",
-                    padding: "15px",
-                    borderRadius: "8px",
-                    marginBottom: "20px",
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
+                  className={`bg-[#f5f5f5] p-4 rounded-lg mb-5 flex justify-between items-center ${darkModeStyle}`}
                 >
                   <span>
                     Permissions Selected: <b>{currentPermissions.length}</b>

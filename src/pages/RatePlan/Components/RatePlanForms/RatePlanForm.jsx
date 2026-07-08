@@ -461,9 +461,9 @@ const RatePlanForm = ({
                   message: "Please select at least one channel",
                 },
               ]}
-              className={isView ? "custom-disabled-checkbox" : ""}
+              className={isView ? "pointer-events-none" : ""}
             >
-              <Checkbox.Group options={channelOptions} disabled={isView} />
+              <Checkbox.Group options={channelOptions}  />
             </Form.Item>
 
             <Form.Item label="Description" name="description">
