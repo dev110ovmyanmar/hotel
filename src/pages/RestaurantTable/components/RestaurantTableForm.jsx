@@ -180,7 +180,7 @@ const RestaurantTableForm = ({
                 <InputNumber
                   {...sharedProps}
                   placeholder="Enter Seats Quantity"
-                  disabled={isView}
+                  readOnly={isView}
                 />
               </Form.Item>
             </div>
