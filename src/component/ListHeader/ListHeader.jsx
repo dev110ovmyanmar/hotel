@@ -24,6 +24,7 @@ const ListHeader = ({
   endDate,
   setStartDate,
   setEndDate,
+  isHouseKeepingTask
 }) => {
   const { hasPermission } = usePermission(); // permission checker
   const canCreate = hasPermission(permission);
@@ -106,7 +107,7 @@ const ListHeader = ({
       </div>
 
       <div className="flex justify-end md:flex-1">
-        <div className='flex justify-end flex-1'>
+        <div className={`flex justify-end flex-1 ${isHouseKeepingTask? 'mr-5' : ''}`}>
           {radioButtonsForTableAndGrid}
         </div>
         <div className="flex justify-start">

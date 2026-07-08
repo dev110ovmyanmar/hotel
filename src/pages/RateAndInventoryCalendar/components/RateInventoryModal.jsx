@@ -13,6 +13,12 @@ import { CloseOutlined, EditOutlined, EyeOutlined } from '@ant-design/icons';
  *   handleStopSellToggle    – (rtId, dateStr, stopSellValue, availUuid) => void
  *   handleRestrictionEditOpen – (restriction, rp, rt, dateStr) => void
  */
+
+const darkModeStyle = `
+    dark:!bg-[#141414] 
+    dark:!border-[#dee2e6] 
+    dark:!text-gray-200
+`;
 const RateInventoryModal = ({
     open,
     onClose,
@@ -91,7 +97,7 @@ const RateInventoryModal = ({
                         ].filter(Boolean)
                         : [];
                     return (
-                        <div key={rp.id} className="bg-gray-50 rounded p-2 flex flex-col gap-1">
+                        <div key={rp.id} className={`bg-gray-50 rounded p-2 flex flex-col gap-1 ${darkModeStyle}`}>
                             <div className="flex justify-between items-center">
                                 <span className="font-semibold text-[12px]">{rp.name}</span>
                                 <div className="flex items-center gap-2">

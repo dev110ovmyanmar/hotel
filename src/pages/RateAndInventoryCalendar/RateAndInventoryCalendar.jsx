@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useCallback, useEffect, useRef } from 'react';
-import { Modal, Form, Spin, Divider } from 'antd';
+import { App, Form, Spin, Divider } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 
@@ -30,6 +30,7 @@ const GC_TIME = 10 * 60 * 1000;
 // ─── Component ───────────────────────────────────────────────────────────────
 const RateAndInventoryCalendar = () => {
     // ── UI state ──────────────────────────────────────────────────────────────
+    const { modal } = App.useApp();
     const [currentDate, setCurrentDate] = useState(dayjs());
     const [expandedGroups, setExpandedGroups] = useState(new Set());
     const [keyword, setKeyword] = useState('');
@@ -235,7 +236,8 @@ const RateAndInventoryCalendar = () => {
             const rtName = roomType?.name || 'this room type';
             const formattedDate = dayjs(dateStr).format('D MMM YYYY');
 
-            Modal.confirm({
+            modal.confirm({
+                
                 icon: null,
                 title: (
                     <div className="flex justify-between items-center w-full">
@@ -465,6 +467,7 @@ const RateAndInventoryCalendar = () => {
         const formattedDate = dayjs(dateStr).format('D MMM YYYY');
 
         Modal.confirm({
+            rootClassName: "dark-confirm-modal",
             icon: null,
             title: (
                 <div className="flex justify-between items-center w-full">

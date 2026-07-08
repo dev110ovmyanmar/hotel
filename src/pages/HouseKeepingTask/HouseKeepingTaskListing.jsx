@@ -135,6 +135,7 @@ const HouseKeepingTaskListing = () => {
                     addButtonText="Add Housekeeping Task"
                     onAdd={handleAdd}
                     radioButtonsForTableAndGrid={radioButtonsForTableAndGrid}
+                    isHouseKeepingTask={true}
                 />
             </div>
 
