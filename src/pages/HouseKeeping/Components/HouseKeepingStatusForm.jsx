@@ -37,6 +37,7 @@ const HouseKeepingStatusForm = ({
     const priorityOptions = useMemo(() =>
         initData?.statuses?.priority_level?.map(p => ({ value: p.uuid, label: p.name })) || [], [initData]);
 
+    console.log(priorityOptions, "priorityOptions")
     // 2. API Query for single Detail
     const { data: houseKeepingStatusDetail, isLoading } = useApiQuery({
         fetchQueryName: "housekeeping-detail",
@@ -117,7 +118,7 @@ const HouseKeepingStatusForm = ({
                         <Form.Item label="Room" className="flex-2">
                             <Input
                                 value={houseKeepingStatusDetail?.room?.roomNo}
-                                disabled={true}
+                                readOnly={true}
                             />
                         </Form.Item>
 
@@ -127,7 +128,12 @@ const HouseKeepingStatusForm = ({
                                 name="cleanStatus"
                                 rules={[{ required: true, message: 'Required' }]}
                             >
-                                <Select options={cleanStatusOptions} disabled={isView} placeholder="Select Clean Status" />
+                                <Select 
+                                    open={isView? !isView: undefined}
+                                    options={cleanStatusOptions} 
+                                    readOnly={isView} 
+                                    placeholder="Select Clean Status" 
+                                />
                             </Form.Item>
 
                             <Form.Item
@@ -135,8 +141,30 @@ const HouseKeepingStatusForm = ({
                                 name="priorityLevel"
                                 rules={[{ required: true, message: 'Required' }]}
                             >
-                                <Select options={priorityOptions} disabled={isView} placeholder="Select Priority Level" />
+                                <Select
+                                    open={isView? !isView: undefined}
+                                    options={priorityOptions}
+                                    readOnly={isView}
+                                    placeholder="Select Priority Level" 
+                                />
                             </Form.Item>
+
+                            {/* <Form.Item
+                                label="Priority Level"
+                                name="priorityLevel"
+                                rules={[{ required: true, message: "Priority Level is Required" }]}
+                                getValueProps={(value) => ({
+                                    value: isView
+                                        ? priorityOptions.find((item) => item.value === value)?.label
+                                        : value,
+                                })}
+                            >
+                                {isView ? (
+                                    <Input readOnly={isView} />
+                                ) : (
+                                    <Select options={priorityOptions} open={isView ? false : undefined} />
+                                )}
+                            </Form.Item> */}
                         </div>
 
                         <div className="grid grid-cols-2 gap-4">

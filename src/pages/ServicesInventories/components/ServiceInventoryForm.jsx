@@ -271,7 +271,7 @@ const ServiceInventoryForm = ({
                   max={MAX_STOCK_QUANTITY}
                   className="!w-full"
                   placeholder="Enter Stock Quantity"
-                  disabled={isView}
+                  readOnly={isView}
                 />
               </Form.Item>
 
@@ -348,7 +348,7 @@ const ServiceInventoryForm = ({
             >
               <InputNumber
                 placeholder="Enter Reorder Level"
-                disabled={isView}
+                readOnly={isView}
                 mode="spinner"
                 min={MIN_REORDER_LEVEL}
                 max={MAX_REORDER_LEVEL}
@@ -365,8 +365,9 @@ const ServiceInventoryForm = ({
                 rules={[
                   { required: true, message: "Please check laundry status!" },
                 ]}
+                className={isView? "pointer-events-none" : ""}
               >
-                <Checkbox disabled={isView}>Laundry Requirement</Checkbox>
+                <Checkbox>Laundry Requirement</Checkbox>
               </Form.Item>
 
               <Form.Item
@@ -377,8 +378,9 @@ const ServiceInventoryForm = ({
                 rules={[
                   { required: true, message: "Please select billing type!" },
                 ]}
+                className={isView? "pointer-events-none" : ""}
               >
-                <Checkbox disabled={isView}>
+                <Checkbox>
                   This item is free
                 </Checkbox>
               </Form.Item>

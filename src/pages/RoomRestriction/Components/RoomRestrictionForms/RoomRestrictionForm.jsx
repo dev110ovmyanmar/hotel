@@ -274,10 +274,10 @@ const RoomRestrictionForm = ({
           >
             <DatePicker
               className="w-60"
-              disabled={isView}
-              //   disabledDate={(current) => {
-              //     return current && current < dayjs().startOf("day");
-              //   }}
+              open={isView? !isView : undefined}
+              inputReadOnly={isView}
+              suffixIcon={isView ? null : undefined}
+              allowClear={!isView}
             />
           </Form.Item>
 

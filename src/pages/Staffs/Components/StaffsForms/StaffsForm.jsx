@@ -369,7 +369,7 @@ const StaffsForm = ({
                     getValueProps={(value) => ({
                       value: isView
                         ? citizenship.find((item) => item.value === value)
-                            ?.label
+                          ?.label
                         : value,
                     })}
                   >
@@ -478,8 +478,12 @@ const StaffsForm = ({
             >
               <DatePicker
                 className="w-full"
-                disabled={isView}
                 placeholder="Select Joined Date"
+                open={isView ? !isView : undefined}
+                inputReadOnly={isView}
+                suffixIcon={isView ? null : undefined}
+                style={{ width: '100%' }}
+                allowClear={!isView}
               />
             </Form.Item>
 
@@ -488,8 +492,12 @@ const StaffsForm = ({
                 {data?.endedAt ? (
                   <DatePicker
                     className="w-full"
-                    disabled={isView}
                     placeholder="Select Left Date"
+                    open={isView ? !isView : undefined}
+                    inputReadOnly={isView}
+                    suffixIcon={isView ? null : undefined}
+                    style={{ width: '100%' }}
+                    allowClear={!isView}
                   />
                 ) : (
                   <span className="text-green-600 font-medium pl-2.5">
