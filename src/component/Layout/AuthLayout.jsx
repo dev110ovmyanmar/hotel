@@ -84,9 +84,11 @@ const AuthLayout = () => {
   return (
     <>
       <Layout style={{ height: height }}>
-        <Topbar headerColor={headerColor} />
+        {/* <Topbar headerColor={headerColor} /> */}
+        <Topbar/>
         <Layout className="flex-row overflow-x-hidden">
-          <Sidebar sideBarColor={sideBarColor} />
+          {/* <Sidebar sideBarColor={sideBarColor} /> */}
+          <Sidebar />
           <Layout
             className="overflow-hidden border-l border-gray-300 shrink-0 w-full md:w-[calc(100% - 80px)]"
             style={{
@@ -102,7 +104,8 @@ const AuthLayout = () => {
               <Divider className="custom-divider" />
               <AuthRoutes />
             </Content>
-            <Footer className={`text-center text-md bg-white border-t border-gray-300 ${footerColor}`}>
+            {/* <Footer className={`text-center text-md bg-white border-t border-gray-300 ${footerColor}`}> */}
+            <Footer className="text-center text-md bg-white border-t border-gray-300">
               Hotel Management @ 2026 Developed by ORIENTAL VIGOUR
             </Footer>
           </Layout>
