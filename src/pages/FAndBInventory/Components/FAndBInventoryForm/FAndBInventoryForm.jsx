@@ -274,7 +274,7 @@ const FAndBInventoryForm = ({
                   min={1}
                   max={100}
                   placeholder="Stock Quantity"
-                  disabled={isView}
+                  readOnly={isView}
                 />
               </Form.Item>
             </div>
@@ -293,7 +293,7 @@ const FAndBInventoryForm = ({
                   className="w-full!"
                   min={0}
                   placeholder="Selling Price"
-                  disabled={isView}
+                  readOnly={isView}
                   suffix="MMK"
                   formatter={priceFormatter}
                   parser={priceParser}
@@ -311,7 +311,7 @@ const FAndBInventoryForm = ({
                   className="w-full!"
                   min={0}
                   placeholder="Purchase Price"
-                  disabled={isView}
+                  readOnly={isView}
                   suffix="MMK"
                   formatter={priceFormatter}
                   parser={priceParser}
@@ -359,7 +359,7 @@ const FAndBInventoryForm = ({
                   mode={"spinner"}
                   min={1}
                   placeholder="Reorder Level"
-                  disabled={isView}
+                  readOnly={isView}
                 />
               </Form.Item>
             </div>

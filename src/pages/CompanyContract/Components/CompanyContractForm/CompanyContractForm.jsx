@@ -315,6 +315,7 @@ const CompanyContractForm = ({
                   inputReadOnly={isView}
                   suffixIcon={isView ? null : undefined}
                   style={{ width: '100%' }}
+                  allowClear={!isView}
                 />
               </Form.Item>
             </Col>

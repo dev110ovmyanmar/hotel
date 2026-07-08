@@ -293,8 +293,9 @@ const ServiceForm = ({
               name="isComplimentary"
               valuePropName="checked"
               rules={[{ required: true }]}
+              className={isView ? "pointer-events-none" : ""}
             >
-              <Checkbox disabled={isView}>Complimentary</Checkbox>
+              <Checkbox >Complimentary</Checkbox>
             </Form.Item>
 
             <Form.Item

@@ -128,7 +128,7 @@ const MaintenanceRequestFromHK = ({
                                 {
                                     hkDetail && (
                                         <Form.Item name="roomUuid" label="Room" rules={[{ required: true }]}>
-                                            <Select options={roomOptions} disabled={true} placeholder="Select Room" />
+                                            <Select options={roomOptions} open={true? !true: undefined} placeholder="Select Room" />
                                         </Form.Item>
                                     )
                                 }
@@ -157,7 +157,7 @@ const MaintenanceRequestFromHK = ({
                                     >
                                         <Select
                                             options={maintenanceStatusOptions}
-                                            disabled={true}
+                                            open={true? !true: undefined}
                                         />
                                     </Form.Item>
                                 ) : (

@@ -299,10 +299,12 @@ const ExtraBedRateForm = ({
           >
             <RangePicker
               disabledDate={disabledDate}
-              disabled={isView}
+              open={isView? !isView : undefined}
+              inputReadOnly={isView}
               suffixIcon={isView ? null : undefined}
               className="w-full flex"
               style={{ width: "100%" }}
+              allowClear={!isView}
             />
           </Form.Item>
         </Form>

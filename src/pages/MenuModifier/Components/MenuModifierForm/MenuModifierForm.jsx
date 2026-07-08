@@ -165,7 +165,7 @@ const MenuModifierForm = ({
                   ]}
                 >
                   <InputNumber
-                    disabled={isView}
+                    readOnly={isView}
                     min={1}
                     className="!w-full"
                     placeholder="Enter Price"
@@ -184,7 +184,7 @@ const MenuModifierForm = ({
                   ]}
                 >
                   <InputNumber
-                    disabled={isView}
+                    readOnly={isView}
                     min={1}
                     className="!w-full"
                     placeholder="Enter Price"

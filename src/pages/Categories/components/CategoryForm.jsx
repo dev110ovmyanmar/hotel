@@ -198,15 +198,20 @@ const CategoryForm = ({
             </Form.Item>
 
             <Form.Item
-              name="status"
               label="Status"
+              name="status"
               rules={[{ required: true, message: "Status is required" }]}
+              getValueProps={(value) => ({
+                value: isView
+                  ? statusOptions.find((item) => item.value === value)?.label
+                  : value,
+              })}
             >
-              <Select
-                options={statusOptions}
-                placeholder="Select Status"
-                disabled={isView}
-              />
+              {isView ? (
+                <Input readOnly={isView} />
+              ) : (
+                <Select options={statusOptions} placeholder="Select Status" />
+              )}
             </Form.Item>
           </Form>
         )

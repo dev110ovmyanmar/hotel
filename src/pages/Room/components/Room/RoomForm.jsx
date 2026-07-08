@@ -193,6 +193,11 @@ const RoomForm = ({
     },
   ];
 
+  const darkModeStyle = `
+    dark:border dark:border-gray-200 dark:bg-[#141414]!
+    dark:text-gray-100
+  `;
+
   return (
     <>
       <Drawer
@@ -318,7 +323,7 @@ const RoomForm = ({
             </Form.Item>
 
             {!isAdd && (
-              <Card className="mt-5 shadow-sm  border border-gray-100 bg-gray-100!">
+              <Card className={`mt-5 shadow-sm  border border-gray-100 bg-gray-100! ${darkModeStyle}`}>
                 <div className="flex justify-between text-sm items-center font-semibold mb-2">
                   <span>Room Attributes already exits for this room</span>
 
