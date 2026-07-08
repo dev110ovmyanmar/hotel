@@ -9,7 +9,7 @@ import { appSelector, toggleAll, sessionExpired as setSessionExpiredAction } fro
 import useWindowSize from "../../hooks/useWindowSize";
 import Breadcrumbs from "../Breadcrumbs/Breadcrumbs";
 import { queryClient } from './../../app/queryClient';
-import GlobalIcon from "../GlobalIcon/GlobalIcon";
+// import GlobalIcon from "../GlobalIcon/GlobalIcon";
 
 
 const { confirm } = Modal;
@@ -20,11 +20,11 @@ const AuthLayout = () => {
   const dispatch = useDispatch();
 
   // Theme Header Colors
-  const [headerColor, setHeaderColor] = useState(localStorage.getItem("headerColor"));
+  // const [headerColor, setHeaderColor] = useState(localStorage.getItem("headerColor"));
   // Sidebar Theme Color
-  const [sideBarColor, setSideBarColor] = useState(localStorage.getItem("sideBarColor"));
+  // const [sideBarColor, setSideBarColor] = useState(localStorage.getItem("sideBarColor"));
   // Footer Theme Color
-  const [footerColor, setFooterColor] = useState(localStorage.getItem("footerColor"));
+  // const [footerColor, setFooterColor] = useState(localStorage.getItem("footerColor"));
 
 
 
@@ -109,14 +109,14 @@ const AuthLayout = () => {
         </Layout>
       </Layout>
 
-      <GlobalIcon
+      {/* <GlobalIcon
         headerColor={headerColor}
         setHeaderColor={setHeaderColor}
         sideBarColor={sideBarColor}
         setSideBarColor={setSideBarColor}
         footerColor={footerColor}
         setFooterColor={setFooterColor}
-      />
+      /> */}
     </>
   );
 };
