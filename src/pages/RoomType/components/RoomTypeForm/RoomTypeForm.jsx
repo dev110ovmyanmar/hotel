@@ -35,7 +35,7 @@ import usePermission from "../../../../hooks/usePermission";
 import { hasIn } from "lodash";
 import { deleteImageUpload } from "../../../../api/deleteImageApi";
 import { queryClient } from "../../../../app/queryClient";
-import { roomAndRoomTypeDarkMode } from "../../../../utils";
+import { roomAndRoomTypeDarkMode, textWhiteInDarkStyle } from "../../../../utils";
 
 const RoomTypeForm = ({
   mode,
@@ -450,13 +450,13 @@ const RoomTypeForm = ({
                 {isAdd && (
                   <div className="mb-3">
                     <div className="mb-2">
-                      <span className="text-gray-900 text-[16px] font-semibold dark:text-gray-100">
+                      <span className={`text-gray-900 text-[16px] font-semibold ${textWhiteInDarkStyle}`}>
                         Let's map room types to this rate plan
                       </span>
                     </div>
 
                     <div>
-                      <span className="text-gray-900 text-[15px] italic dark:text-gray-100">
+                      <span className={`text-gray-900 text-[15px] italic ${textWhiteInDarkStyle}`}>
                         Map the following rate plans
                       </span>
                     </div>

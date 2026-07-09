@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Button } from "antd";
 import { useSelector } from "react-redux";
 import { appSelector } from "../../services/appSlice";
+import { textWhiteInDarkStyle } from "../../utils";
 
 const NetworkErrorPage = () => {
     const { networkFailed } = useSelector(appSelector);
@@ -61,7 +62,7 @@ const NetworkErrorPage = () => {
                     </div>
                 </div>
                 
-                <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-100 mb-3 tracking-tight">
+                <h2 className={`text-2xl sm:text-3xl font-bold text-gray-800 mb-3 tracking-tight ${textWhiteInDarkStyle}`}>
                     {isLeaving ? "Reconnecting..." : "Connection Lost"}
                 </h2>
                 

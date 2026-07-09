@@ -10,6 +10,7 @@ import { createRoomAmendment } from '../../../../../../api/roomAmendmentApi';
 import ColorStatusTag from '../../../../../../component/ColorStatusTag/ColorStatusTag';
 import { GiBed } from "react-icons/gi";
 import { queryClient } from '../../../../../../app/queryClient';
+import { darkModeStyle, selectedDarkMode, upgradeAndDownRoomDarkMode } from '../../../../../../utils';
 
 const { Text } = Typography;
 
@@ -124,7 +125,7 @@ export default function RoomMoveModal({
                     {!selectRoomToMove && (
                         <>
                             <div
-                                className='
+                                className={`
                                     flex 
                                     justify-between 
                                     bg-[#f8fafc]
@@ -133,10 +134,15 @@ export default function RoomMoveModal({
                                     border
                                     border-[#e2e8f0]
                                     text-sm
-                                '
+                                    ${darkModeStyle}
+                                `}
                             >
                                 <h1>{record?.roomType?.name}</h1>
-                                <Tag color="green" className='!border !border-green-300 !rounded-sm'>{record?.room?.roomNo}</Tag>
+                                {
+                                    record?.room?.roomNo ?
+                                    <Tag color="green" className='!border !border-green-300 !rounded-sm'>{record?.room?.roomNo}</Tag>
+                                    : null
+                                }
                             </div>
 
                             <h4 className='!my-[10px]'>Available Rooms:</h4>
@@ -147,8 +153,9 @@ export default function RoomMoveModal({
                                             onClick={() => setSelectRoomUuid(room.uuid)}
                                             className={`
                                                 !overflow-hidden !border !p-3 shadow-md cursor-pointer
-                                                hover:!border-sky-300 hover:!shadow-lg hover:-translate-y-1
-                                                ${selectRoomUuid === room.uuid ? '!border-sky-600 !bg-sky-100' : '!border-sky-200'}
+                                                hover:!border-sky-300 hover:!shadow-lg hover:-translate-y-1 
+                                                ${selectRoomUuid === room.uuid ? `!border-sky-600 !bg-sky-100 ${selectedDarkMode}` : '!border-sky-200'}
+                                                
                                             `}
                                             styles={{
                                                 body: {
@@ -199,7 +206,7 @@ export default function RoomMoveModal({
                                 ?.filter(searchroom => searchroom?.uuid === selectRoomUuid)
                                 ?.map(searchroom => (
                                     <Col span={10} key={searchroom.uuid}>
-                                        <div className='flex justify-between border-2 border-[#4C16FF] bg-[#F0EBFF] p-3 rounded-md'>
+                                        <div className={`flex justify-between border-2 border-[#4C16FF] bg-[#F0EBFF] p-3 rounded-md ${upgradeAndDownRoomDarkMode}`}>
                                             <div className='flex gap-2'>
                                                 <GiBed fontSize={25} className='text-green-500' />
                                                 <div className='text-md text-green-500'>{searchroom?.roomNo}</div>

@@ -277,9 +277,9 @@ const AddExtraAmenities = ({
         }).length > 0;
 
         return (
-            <div style={{ background: '#ffffff', padding: '14px', borderRadius: '8px', border: '1px solid #e2e8f0', marginBottom: '16px' }}>
+            <div style={{ background: '#ffffff', padding: '14px', borderRadius: '8px', border: '1px solid #e2e8f0', marginBottom: '16px' }} className={darkModeStyle}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                    <Text strong style={{ fontSize: '14px', color: '#0f172a' }}>{sectionLabel}</Text>
+                    <Text strong style={{ fontSize: '14px', color: '#0f172a' }} className='dark:!text-gray-100'>{sectionLabel}</Text>
                     <Checkbox
                         checked={selectedDatesArray.length === dailySchedule.length && dailySchedule.length > 0}
                         indeterminate={selectedDatesArray.length > 0 && selectedDatesArray.length < dailySchedule.length}
@@ -370,9 +370,10 @@ const AddExtraAmenities = ({
                             width: "240px",
                             marginLeft: 'auto'
                         }}
+                        className={darkModeStyle}
                     >
                         <Form.Item
-                            label={<Text style={{ fontSize: '12px', color: '#64748b' }}>Set Quantity</Text>}
+                            label={<Text style={{ fontSize: '12px', color: '#64748b' }} className='dark:!text-gray-200'>Set Quantity</Text>}
                             validateStatus={zeroQtyErrors[formFieldName] ? 'error' : ''}
                             help={zeroQtyErrors[formFieldName] ? 'Quantity is required' : ''}
                             required={true}
@@ -403,6 +404,13 @@ const AddExtraAmenities = ({
     const isSaveEnabled = hasAnyNewDate(selectedBedDates, 'extra_bed') ||
         hasAnyNewDate(selectedPersonDates, 'extra_person') ||
         hasAnyNewDate(selectedCotDates, 'baby_cot');
+
+    const darkModeStyle = `
+        dark:!bg-[#141414] 
+        dark:border 
+        dark:!border-gray-500
+        dark:!text-gray-100
+    `;
 
     return (
         <Modal
@@ -441,10 +449,12 @@ const AddExtraAmenities = ({
                 margin: '12px 0 16px 0',
                 border: '1px solid #e2e8f0',
                 fontSize: '13px'
-            }}>
+            }}
+                className={darkModeStyle}
+            >
                 {/* <Text type="secondary"><strong style={{ color: '#475569' }}>Reservation No:</strong> {reservationNo}</Text> */}
-                <Text type="secondary"><strong style={{ color: '#475569' }}>Primary Guest:</strong> {guestName}</Text>
-                <Text type="secondary"><strong style={{ color: '#475569' }}>Room Type:</strong> {currentRoomType}</Text>
+                <Text type="secondary"><strong style={{ color: '#475569' }} className='dark:!text-gray-300'>Primary Guest:</strong> <span className='dark:!text-gray-500'>{guestName}</span></Text>
+                <Text type="secondary"><strong style={{ color: '#475569' }} className='dark:!text-gray-300'>Room Type:</strong> {currentRoomType}</Text>
             </div>
 
             <Form form={form} layout="vertical">

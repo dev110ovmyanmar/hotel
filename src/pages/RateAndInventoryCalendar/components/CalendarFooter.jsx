@@ -1,5 +1,5 @@
 import React from 'react';
-import { darkModeStyle } from '../../../utils';
+import { darkModeStyle, textWhiteInDarkStyle } from '../../../utils';
 
 /**
  * CalendarFooter
@@ -52,7 +52,7 @@ const CalendarFooter = ({ dailyStats, daysMeta, CELL_WIDTH, SIDEBAR_WIDTH }) => 
                     style={{ width: CELL_WIDTH, minWidth: CELL_WIDTH }}
                 >
                     <div className="flex flex-col items-center">
-                        <div className="text-[12px] font-bold text-gray-700 dark:text-gray-200">{stat.occupancy}%</div>
+                        <div className={`text-[12px] font-bold text-gray-700 ${textWhiteInDarkStyle}`}>{stat.occupancy}%</div>
                         <div className="w-full bg-gray-200 h-1 mt-1 rounded-full overflow-hidden">
                             <div
                                 className={`h-full ${stat.occupancy > 80 ? 'bg-amber-500' : 'bg-blue-500'}`}

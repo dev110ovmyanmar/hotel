@@ -4,6 +4,7 @@ import dayjs from "dayjs";
 import { Gift } from "lucide-react";
 import { useApiMutation } from "../../../../../../hooks/useApiMutation";
 import { reservationRoomDetails } from "../../../../../../api/reservationSectionApi";
+import { textBlackInDarkStyle, textColorDarkMode, textWhiteInDarkStyle } from "../../../../../../utils";
 
 const STATUS_CONFIG = {
   Confirmed: { tagColor: "success" },
@@ -41,6 +42,7 @@ const RoomInformationDetailsForm = ({
   const currentStatus = d?.roomStatus?.name;
   const statusStyle = STATUS_CONFIG[currentStatus] || STATUS_CONFIG.default;
 
+  const textWhiteDark = `flex justify-between text-slate-600 ${textWhiteInDarkStyle}`;
   return (
     <Drawer
       open={drawerOpen}
@@ -48,7 +50,7 @@ const RoomInformationDetailsForm = ({
       width={650}
       title={
         <div className="flex justify-between items-center">
-          <span className="font-semibold text-lg text-slate-800">
+          <span className={`font-semibold text-lg text-slate-800 ${textWhiteInDarkStyle}`}>
             Room Information Details
           </span>
           <Button className="custom-blue-btn" onClick={handleClose}>
@@ -71,7 +73,7 @@ const RoomInformationDetailsForm = ({
                   ? dayjs(d.checkinDate).format("DD MMM YYYY")
                   : "--"}
               </div>
-              <div className="text-slate-400 text-xs">
+              <div className={`text-slate-400 text-xs ${textBlackInDarkStyle}`}>
                 {d?.checkinDate ? dayjs(d.checkinDate).format("dddd") : "—"}
               </div>
             </div>
@@ -100,7 +102,7 @@ const RoomInformationDetailsForm = ({
 
           <div className="px-6 py-4 space-y-4">
             <div className="flex justify-between items-center">
-              <div className="font-bold text-slate-800 text-base">
+              <div className={`font-bold text-slate-800 text-base ${textColorDarkMode}`}>
                 {d?.room === null ? (
                   <span className="text-blue-400 text-sm px-3 py-1 rounded-full bg-blue-50 font-normal">
                     Assign Room
@@ -119,7 +121,7 @@ const RoomInformationDetailsForm = ({
 
             <div className="grid grid-cols-2 gap-4">
               <div className="bg-slate-50 rounded-xl p-3 border border-slate-100">
-                <span className="text-xs text-slate-400 font-medium">
+                <span className={`text-xs text-slate-400 font-medium ${textColorDarkMode}`}>
                   Room Type
                 </span>
                 <div className="text-sm font-semibold text-slate-700 mt-1">
@@ -128,7 +130,7 @@ const RoomInformationDetailsForm = ({
               </div>
 
               <div className="bg-slate-50 rounded-xl p-3 border border-slate-100">
-                <span className="text-xs text-slate-400 font-medium">
+                <span className={`text-xs text-slate-400 font-medium ${textColorDarkMode}`}>
                   Rate Plan
                 </span>
                 <div className="text-sm font-semibold text-slate-700 mt-1">
@@ -141,15 +143,15 @@ const RoomInformationDetailsForm = ({
 
         {/* Financial Summary Card */}
         <div className="bg-white rounded-xl p-5 shadow-sm border border-slate-100">
-          <h3 className="font-semibold text-base text-slate-800 mb-4">
+          <h3 className={`font-semibold text-base text-slate-800 mb-4 ${textColorDarkMode}`}>
             Payment Summary
           </h3>
           <div className="space-y-3 text-sm">
-            <div className="flex justify-between text-slate-600">
-              <span>Adults</span>
+            <div className={textWhiteDark}>
+              <span >Adults</span>
               <span className="font-medium">{d?.adults || 0} Guests</span>
             </div>
-            <div className="flex justify-between text-slate-600">
+            <div className={textWhiteDark}>
               <span>Nights</span>
               <span className="font-medium">
                 {d?.totalNight} {d?.totalNight === 1 ? "Night" : "Nights"}
@@ -158,19 +160,19 @@ const RoomInformationDetailsForm = ({
 
             <div className="border-t my-2" />
 
-            <div className="flex justify-between text-slate-600">
+            <div className={textWhiteDark}>
               <span>Sub Total</span>
               <span>{(d?.subTotal || 0).toLocaleString()} MMK</span>
             </div>
-            <div className="flex justify-between text-slate-600">
+            <div className={textWhiteDark}>
               <span>Tax ({d?.taxPercentage || 0}%)</span>
               <span>{(d?.taxTotal || 0).toLocaleString()} MMK</span>
             </div>
-            <div className="flex justify-between text-slate-600">
+            <div className={textWhiteDark}>
               <span>Service Charge</span>
               <span>{(d?.serviceChargeTotal || 0).toLocaleString()} MMK</span>
             </div>
-            <div className="flex justify-between text-slate-600">
+            <div className={textWhiteDark}>
               <span>Discount</span>
               <span className="text-rose-500 font-medium">
                 - {(d?.discountTotal || 0).toLocaleString()} MMK
@@ -179,7 +181,7 @@ const RoomInformationDetailsForm = ({
 
             <div className="border-t my-2" />
 
-            <div className="flex justify-between text-base font-semibold text-slate-900">
+            <div className={`text-base font-semibold ${textWhiteDark}`}>
               <span>Grand Total</span>
               <span className="text-indigo-600 text-lg">
                 {(d?.grandTotal || 0).toLocaleString()} MMK
@@ -199,7 +201,7 @@ const RoomInformationDetailsForm = ({
         {/* Daily Breakdown Table Component - Only renders if there are rates available */}
         {d?.reservationRoomRates && d.reservationRoomRates.length > 0 && (
           <div className="bg-white rounded-xl p-5 shadow-sm border border-slate-100">
-            <h3 className="font-semibold text-base text-slate-800 mb-4">
+            <h3 className={`font-semibold text-base text-slate-800 mb-4 ${textColorDarkMode}`}>
               Daily Breakdown
             </h3>
             <div className="overflow-hidden rounded-xl border border-slate-100 shadow-sm">
@@ -213,11 +215,11 @@ const RoomInformationDetailsForm = ({
                 </thead>
                 <tbody className="divide-y divide-slate-100 text-slate-700">
                   {d.reservationRoomRates.map((r) => (
-                    <tr key={r.uuid} className="hover:bg-slate-50/80 transition">
+                    <tr key={r.uuid} className={`hover:bg-slate-50/80 transition ${textWhiteInDarkStyle}`}>
                       <td className="p-3 font-medium">
                         {dayjs(r.date).format("DD-MM-YYYY")}
                       </td>
-                      <td className="p-3 text-xs">
+                      <td className='p-3 text-xs'>
                         {r?.reservationRoomExtras?.length > 0 ? (
                           r.reservationRoomExtras.map((extra) => {
                             const quantity = extra.quantity
@@ -251,7 +253,7 @@ const RoomInformationDetailsForm = ({
                               <Gift className="w-4 h-4 text-emerald-600" />
                             </span>
                           )}
-                          <span>
+                          <span className={textColorDarkMode}>
                             {(() => {
                               const extrasTotal =
                                 r?.reservationRoomExtras?.reduce(

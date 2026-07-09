@@ -5,6 +5,7 @@ import { queryClient } from '../../../../../../app/queryClient';
 import { Button, Checkbox, Form, Select, Alert } from 'antd';
 import Modal from 'antd/es/modal/Modal';
 import Toast from '../../../../../../component/Toast/Toast';
+import { darkModeStyle, textWhiteInDarkStyle } from '../../../../../../utils';
 
 const SingleRoomComplimentaryUpdateModal = ({
     reservationData,
@@ -211,7 +212,7 @@ const SingleRoomComplimentaryUpdateModal = ({
             <div className="text-slate-800 font-sans">
                 <div className="mb-6 flex flex-col gap-3">
                     <div>
-                        <h2 className="text-base font-bold text-slate-900">Complimentary Offer</h2>
+                        <h2 className={`text-base font-bold t$ext-slate-900 ${textWhiteInDarkStyle}`}>Complimentary Offer</h2>
                     </div>
 
                     {!isModificationAllowed && (
@@ -235,7 +236,7 @@ const SingleRoomComplimentaryUpdateModal = ({
                             <Form.Item
                                 name="statusUuid"
                                 className='!mt-5 mb-0'
-                                label={<span className="text-sm font-semibold text-slate-700">Complimentary Reason:</span>}
+                                label={<span className={`text-sm font-semibold text-slate-700 ${textWhiteInDarkStyle}`}>Complimentary Reason:</span>}
                                 rules={[
                                     {
                                         required: true,
@@ -266,13 +267,13 @@ const SingleRoomComplimentaryUpdateModal = ({
                             <div className="flex flex-wrap justify-between items-start gap-4 pb-4 border-b border-slate-100 mb-4">
                                 <div className="flex flex-col gap-2">
                                     <div className="flex items-center gap-2">
-                                        <span className="bg-slate-100 font-mono text-xs px-2 py-0.5 rounded text-slate-700 border border-slate-200 font-bold">
+                                        <span className={`bg-slate-100 font-mono text-xs px-2 py-0.5 rounded text-slate-700 border border-slate-200 font-bold ${darkModeStyle}`}>
                                             Room - {roomAllocation.roomInfo.number}
                                         </span>
-                                        <h3 className="text-sm font-bold text-slate-900">{roomAllocation.roomInfo.type}</h3>
+                                        <h3 className={`text-sm font-bold text-slate-900 ${textWhiteInDarkStyle}`}>{roomAllocation.roomInfo.type}</h3>
                                     </div>
                                     <div className="flex items-center">
-                                        <span className="text-[10px] bg-slate-50 text-slate-500 border border-slate-100 px-2 py-0.5 rounded font-medium">
+                                        <span className={`text-[10px] bg-slate-50 text-slate-500 border border-slate-100 px-2 py-0.5 rounded font-medium ${darkModeStyle}`}>
                                             🏷️ {roomAllocation.ratePlan.name} ({roomAllocation.ratePlan.code})
                                         </span>
                                     </div>
@@ -294,7 +295,9 @@ const SingleRoomComplimentaryUpdateModal = ({
                                     <div className={`border transition-colors px-3 py-1.5 rounded-md flex items-center ${isModificationAllowed && manageableNights.length > 0
                                         ? 'bg-slate-50 hover:bg-slate-100 border-slate-200'
                                         : 'bg-slate-50 border-slate-200 opacity-60 cursor-not-allowed'
-                                        }`}>
+                                        }
+                                        ${darkModeStyle}
+                                        `}>
                                         <Checkbox
                                             checked={isAllSelected}
                                             indeterminate={isIndeterminate}
@@ -326,7 +329,9 @@ const SingleRoomComplimentaryUpdateModal = ({
                                                 : isComp
                                                     ? 'bg-emerald-50 border-emerald-300 text-emerald-700 shadow-xs'
                                                     : 'bg-slate-50 border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-100/70'
-                                                }`}
+                                                }
+                                                ${darkModeStyle}
+                                                `}
                                         >
                                             <span className="text-[9px] block text-slate-400 font-semibold">
                                                 {night.date}

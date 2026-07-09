@@ -6,6 +6,7 @@ import { createRoomAmendment } from '../../../../../../api/roomAmendmentApi';
 import { useApiMutation } from '../../../../../../hooks/useApiMutation';
 import Toast from '../../../../../../component/Toast/Toast';
 import AddRoomExtensionLikeUpgradeDesignModal from './AddRoomExtensionLikeUpgradeDesignModal';
+import { borderDarkMode, darkModeStyle, textWhiteInDarkStyle } from '../../../../../../utils';
 
 export default function AddRoomWithExtensionDateModal({
     isOpen,
@@ -124,8 +125,8 @@ export default function AddRoomWithExtensionDateModal({
                 >
                     {/* Context Target Ribbon Header */}
                     <div className="mb-4 text-slate-500 text-sm font-medium">
-                        <div className='text-md text-slate-900'>{roomTypeName}</div>
-                        {reservationNo} — <span className="text-slate-800">{guestName}</span>
+                        <div className={`text-md text-slate-900 ${textWhiteInDarkStyle}`}>{roomTypeName}</div>
+                        {reservationNo} — <span className={`text-slate-800 ${textWhiteInDarkStyle}`}>{guestName}</span>
                     </div>
 
                     <Divider className="my-3" />
@@ -149,9 +150,9 @@ export default function AddRoomWithExtensionDateModal({
                                 </div>
                             ) : (
                                 // Standard Interactive Incrementer
-                                <div className="bg-slate-50 p-4 rounded-lg mb-5">
+                                <div className={`bg-slate-50 p-4 rounded-lg mb-5 ${darkModeStyle}`}>
                                     <div className="flex justify-between items-center mb-2">
-                                        <label className="block text-sm font-medium text-slate-600">
+                                        <label className={`block text-sm font-medium text-slate-600 ${textWhiteInDarkStyle}`}>
                                             Provision Additional Days
                                         </label>
                                         {/* MAX EXTENSION BADGE */}
@@ -177,7 +178,7 @@ export default function AddRoomWithExtensionDateModal({
                                             onClick={() => setDaysToAdd(prev => prev + 1)}
                                             disabled={daysToAdd >= maxDayExtension}
                                         />
-                                        <span className="text-sm text-slate-500 font-medium">
+                                        <span className={`text-sm text-slate-500 font-medium ${textWhiteInDarkStyle}`}>
                                             Extra Day(s)
                                         </span>
                                     </Space>
@@ -185,9 +186,9 @@ export default function AddRoomWithExtensionDateModal({
                             )}
 
                             {/* Timeline Data Footer */}
-                            <div className="bg-slate-50 p-3 px-4 rounded-lg mb-5 border border-slate-200">
+                            <div className={`bg-slate-50 p-3 px-4 rounded-lg mb-5 border border-slate-200 ${darkModeStyle} ${borderDarkMode}`}>
                                 <div className="text-xs text-slate-500">
-                                    Current Checkout <strong className="text-slate-700">{originalCheckout ? originalCheckout?.format('DD MMM YYYY') : '-'}</strong>
+                                    Current Checkout <strong className={`text-slate-700 ${textWhiteInDarkStyle}`}>{originalCheckout ? originalCheckout?.format('DD MMM YYYY') : '-'}</strong>
                                 </div>
                                 {maxDayExtension !== 0 && (
                                     <div className="text-sm text-blue-600 mt-1">

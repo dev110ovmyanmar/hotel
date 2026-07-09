@@ -3,7 +3,7 @@ import { Switch, Input, Tooltip } from 'antd';
 import { ExclamationCircleOutlined, UpOutlined, DownOutlined, EyeOutlined } from '@ant-design/icons';
 import RatePlanRows from './RatePlanRows';
 import RoomRow from './RoomRow';
-import { darkModeStyle } from '../../../utils';
+import { darkModeStyle, textWhiteInDarkStyle } from '../../../utils';
 
 const CELL_WIDTH = 100;
 
@@ -100,7 +100,7 @@ const RoomTypeGroup = ({
                                     `
                                 }
                             >
-                                <EyeOutlined className="mr-1 text-xs dark:text-gray-200" /> Info
+                                <EyeOutlined className={`mr-1 text-xs ${textWhiteInDarkStyle}`} /> Info
                             </div>
                         </td>
                     );

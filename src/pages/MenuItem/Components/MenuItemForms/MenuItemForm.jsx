@@ -25,6 +25,7 @@ import {
 } from "../../../../component/PriceTag/PriceTag";
 import usePermission from "../../../../hooks/usePermission";
 import { PERMISSIONS } from "../../../../variables/permission";
+import { textWhiteInDarkStyle } from "../../../../utils";
 
 const MenuItemForm = ({
   mode,
@@ -330,7 +331,7 @@ const MenuItemForm = ({
           {!isAdd && data?.menuModifiers?.length > 0 && (
             <Card className="mt-5 border border-gray-100 bg-gray-50 shadow-sm">
               <div className="mb-4 flex items-center justify-between">
-                <span className="text-base font-semibold text-gray-800 dark:text-gray-200">
+                <span className={`text-base font-semibold text-gray-800 ${textWhiteInDarkStyle}`}>
                   Add On
                 </span>
               </div>
