@@ -207,7 +207,7 @@ const PolicyTable = ({ data, page, setPage, perPage, total, changePage, changePe
     <div id="scrollId" className="w-full h-[63vh] " >
       <Table
         tableLayout="fixed"
-        scroll={{ x: 1000 }}
+        scroll={{ x: 'max-content' }}
         columns={columns}
         dataSource={data}
         loading={loading}

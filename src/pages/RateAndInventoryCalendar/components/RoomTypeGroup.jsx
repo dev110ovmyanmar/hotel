@@ -3,6 +3,7 @@ import { Switch, Input, Tooltip } from 'antd';
 import { ExclamationCircleOutlined, UpOutlined, DownOutlined, EyeOutlined } from '@ant-design/icons';
 import RatePlanRows from './RatePlanRows';
 import RoomRow from './RoomRow';
+import { darkModeStyle, textWhiteInDarkStyle } from '../../../utils';
 
 const CELL_WIDTH = 100;
 
@@ -35,6 +36,9 @@ const CELL_WIDTH = 100;
  *   handleRestrictionEditOpen – (restriction, rp, rt, dateStr) => void
  *   roomDateMap             – { [roomId]: { [dateStr]: { isBooked, isAvailable } } }
  */
+
+
+
 const RoomTypeGroup = ({
     rt,
     daysMeta,
@@ -63,7 +67,7 @@ const RoomTypeGroup = ({
                 className="bg-[#fcfcfc] cursor-pointer hover:bg-gray-100 h-10"
                 onClick={onToggle}
             >
-                <td className="sticky left-0 z-40 bg-[#fcfcfc] border-r border-[#dee2e6] p-3 font-bold bg-gray-300" style={{ borderTop: '3px solid #6b7280' }}>
+                <td className={`sticky left-0 z-40 bg-[#fcfcfc] border-r border-[#dee2e6] p-3 font-bold bg-gray-300 ${darkModeStyle}`} style={{ borderTop: '3px solid #6b7280' }}>
                     <div className="flex justify-between items-center">
                         <span className="text-[13px] truncate">{rt.name}</span>
                         {isExpanded ? (
@@ -78,7 +82,7 @@ const RoomTypeGroup = ({
                     return (
                         <td
                             key={i}
-                            className={`border-b border-[#dee2e6] text-center p-0 relative ${cellClass}`}
+                            className={`border-b border-[#dee2e6] text-center p-0 relative ${cellClass} ${darkModeStyle}`}
                             style={{ width: CELL_WIDTH, borderTop: '3px solid #6b7280' }}
                         >
                             <div
@@ -91,10 +95,12 @@ const RoomTypeGroup = ({
                                      ${avail.stopSell
                                         ? 'bg-red-100'
                                         : 'bg-green-100'
-                                    }`
+                                    }
+                                    ${darkModeStyle}
+                                    `
                                 }
                             >
-                                <EyeOutlined className="mr-1 text-xs" /> Info
+                                <EyeOutlined className={`mr-1 text-xs ${textWhiteInDarkStyle}`} /> Info
                             </div>
                         </td>
                     );
@@ -103,14 +109,14 @@ const RoomTypeGroup = ({
 
             {/* STOP SELL TOGGLE ROW */}
             <tr className="bg-[#fcfcfc] h-8">
-                <td className="sticky left-0 z-40 bg-[#fcfcfc] border-r border-[#dee2e6] px-3 text-black text-[13px] pl-4">
+                <td className={`sticky left-0 z-40 bg-[#fcfcfc] border-r border-[#dee2e6] px-3 text-black text-[13px] pl-4 ${darkModeStyle}`}>
                     Stop Sell
                 </td>
                 {daysMeta.map(({ dateStr, cellClass, isPast }, i) => {
                     const avail = getAvailability(rt.id, dateStr);
                     const isLoading = loadingStates.stopSell[avail?.uuid];
                     return (
-                        <td key={i} className={`border-b border-[#dee2e6] text-center p-0 ${cellClass}`}>
+                        <td key={i} className={`border-b border-[#dee2e6] text-center p-0 ${cellClass} ${darkModeStyle}`}>
                             {avail?.uuid ? (
                                 <Switch
                                     size="small"
@@ -130,7 +136,7 @@ const RoomTypeGroup = ({
 
             {/* TOTAL ROOMS ROW */}
             <tr className="bg-[#fcfcfc] h-8">
-                <td className="sticky left-0 z-40 bg-[#fcfcfc] border-r border-[#dee2e6] px-3 text-black text-[13px] pl-4">
+                <td className={`sticky left-0 z-40 bg-[#fcfcfc] border-r border-[#dee2e6] px-3 text-black text-[13px] pl-4 ${darkModeStyle} `}>
                     Total Rooms
                 </td>
                 {daysMeta.map(({ dateStr, cellClass }, i) => {
@@ -138,7 +144,7 @@ const RoomTypeGroup = ({
                     return (
                         <td
                             key={i}
-                            className={`border-b border-[#dee2e6] text-center text-[13px] font-bold ${cellClass}`}
+                            className={`border-b border-[#dee2e6] text-center text-[13px] font-bold ${cellClass} ${darkModeStyle}`}
                         >
                             {total || '-'}
                         </td>
@@ -148,7 +154,7 @@ const RoomTypeGroup = ({
 
             {/* ROOM AVAILABLE ROW */}
             <tr className="bg-[#fcfcfc] h-8">
-                <td className="sticky left-0 z-40 bg-[#fcfcfc] border-r border-[#dee2e6] px-3 text-black text-[13px] pl-4">
+                <td className={`sticky left-0 z-40 bg-[#fcfcfc] border-r border-[#dee2e6] px-3 text-black text-[13px] pl-4 ${darkModeStyle}`}>
                     Room Available
                 </td>
                 {daysMeta.map(({ dateStr, cellClass, isPast }, i) => {
@@ -162,7 +168,7 @@ const RoomTypeGroup = ({
                     return (
                         <td
                             key={i}
-                            className={`border-b border-[#dee2e6] text-center text-[13px] font-bold text-green-600 ${cellClass}`}
+                            className={`border-b border-[#dee2e6] text-center text-[13px] font-bold text-green-600 ${cellClass} ${darkModeStyle}`}
                         >
                             {avail?.uuid && !isPast ? (
                                 <Tooltip
@@ -230,7 +236,7 @@ const RoomTypeGroup = ({
 
             {/* SOLD ROOMS ROW */}
             <tr className="bg-[#fcfcfc] h-8">
-                <td className="sticky left-0 z-40 bg-[#fcfcfc] border-b border-r border-[#dee2e6] px-3 text-black text-[13px] pl-4">
+                <td className={`sticky left-0 z-40 bg-[#fcfcfc] border-b border-r border-[#dee2e6] px-3 text-black text-[13px] pl-4 ${darkModeStyle}`}>
                     Sold Rooms
                 </td>
                 {daysMeta.map(({ dateStr, cellClass }, i) => {
@@ -238,7 +244,7 @@ const RoomTypeGroup = ({
                     return (
                         <td
                             key={i}
-                            className={`border-b border-[#dee2e6] text-center text-[13px] font-bold text-red-500 ${cellClass}`}
+                            className={`border-b border-[#dee2e6] text-center text-[13px] font-bold text-red-500 ${cellClass} dark:!text-red-500 ${darkModeStyle}`}
                         >
                             {/* {avail.sold} */}
                             {avail.soldRooms}

@@ -11,14 +11,19 @@ import { useApiMutation } from "../../../../../../hooks/useApiMutation";
 import Toast from "../../../../../../component/Toast/Toast";
 
 const GetRoomForm = ({ selectedData, onSelectRoom, onClose, floorUuid }) => {
-
   const statusColorMap = {
-    Available: "text-[#389E0D] bg-[#F6FFED] text-xs p-1 px-2 rounded border border-[#B7EB8F]",
-    Occupied: "text-[#0958D9] bg-[#E6F4FF] text-xs p-1 px-2 rounded border border-[#91CAFF]",
-    Dirty: "text-[#D4A106] bg-[#FDFFE0] text-xs p-1 px-2 rounded border border-[#F4E34F]",
-    Maintenance: "text-[#CF1322] bg-[#FFF1F0] text-xs p-1 px-2 rounded border border-[#FFA39E]",
-    "Out of Service": "text-[#CF1322] bg-[#FFF1F0] text-xs p-1 px-2 rounded border border-[#FFA39E]",
-    "Cleaning":"text-[#389E0D] bg-[#F6FFED] text-xs p-1 px-2 rounded border border-[#B7EB8F]",
+    Available:
+      "text-[#389E0D] bg-[#F6FFED] text-xs p-1 px-2 rounded border border-[#B7EB8F]",
+    Occupied:
+      "text-[#0958D9] bg-[#E6F4FF] text-xs p-1 px-2 rounded border border-[#91CAFF]",
+    Dirty:
+      "text-[#D4A106] bg-[#FDFFE0] text-xs p-1 px-2 rounded border border-[#F4E34F]",
+    Maintenance:
+      "text-[#CF1322] bg-[#FFF1F0] text-xs p-1 px-2 rounded border border-[#FFA39E]",
+    "Out of Order":
+      "text-[#CF1322] bg-[#FFF1F0] text-xs p-1 px-2 rounded border border-[#FFA39E]",
+    Cleaning:
+      "text-[#389E0D] bg-[#F6FFED] text-xs p-1 px-2 rounded border border-[#B7EB8F]",
   };
 
   const { data, isLoading } = useApiQuery({
@@ -67,7 +72,9 @@ const GetRoomForm = ({ selectedData, onSelectRoom, onClose, floorUuid }) => {
       title: "Confirm Room Assign",
       content: `Are you sure you want to assign Room ${room.roomNo} (${room.roomType?.name || ""}) to this reservation?`,
       okText: "Confirm",
-      okButtonProps: { className: "bg-blue-600 hover:bg-blue-500 text-white border-none" }, 
+      okButtonProps: {
+        className: "bg-blue-600 hover:bg-blue-500 text-white border-none",
+      },
       cancelText: "Cancel",
       onOk: () => {
         executeRoomAssignment(room);

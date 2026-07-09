@@ -20,6 +20,7 @@ import { PlusOutlined } from "@ant-design/icons";
 import { createFolioAddPayment } from "../../../../api/reservationSectionApi";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
 import Toast from "../../../../component/Toast/Toast";
+import { borderDarkMode, darkModeStyle, textColorDarkMode, textWhiteInDarkStyle } from "../../../../utils";
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -138,6 +139,10 @@ const AddPaymentForm = ({
         return method.type?.uuid === selectedProviderUuid;
     });
 
+    const textSlateToWhiteInDark = `
+    text-slate-600 font-medium ${textWhiteInDarkStyle}
+    `;
+
     return (
         <Drawer
             open={open}
@@ -172,9 +177,9 @@ const AddPaymentForm = ({
                 onFinish={onFinish}
                 initialValues={{ paymentType: "full" }}
             >
-                <div className="flex items-center justify-between bg-slate-50 border border-slate-200 rounded-xl p-3 mb-6">
-                    <span className="text-slate-600 font-medium text-sm">Folio No</span>
-                    <span className="text-slate-800 font-semibold text-base bg-white px-3 py-1 rounded-md shadow-sm border border-slate-100">
+                <div className={`flex items-center justify-between bg-slate-50 border border-slate-200 rounded-xl p-3 mb-6 ${darkModeStyle}`}>
+                    <span className={`text-sm ${textSlateToWhiteInDark}`}>Folio No</span>
+                    <span className={`text-slate-800 font-semibold text-base bg-white px-3 py-1 rounded-md shadow-sm border border-slate-100 ${textColorDarkMode} ${borderDarkMode}`}>
                         {bookingDetails?.reservation?.parentFolio?.folioNo || bookingDetails?.parentFolio?.folioNo}
                     </span>
                 </div>
@@ -255,7 +260,7 @@ const AddPaymentForm = ({
                 <Row gutter={16}>
                     <Col span={12}>
                         <Form.Item
-                            label={<span className="text-slate-600 font-medium">Guest</span>}
+                            label={<span className={textSlateToWhiteInDark}>Guest</span>}
                             name="guest"
                         // rules={[{ required: true, message: "Please select a guest" }]}
                         >
@@ -272,7 +277,7 @@ const AddPaymentForm = ({
                     </Col>
                     <Col span={12}>
                         <Form.Item
-                            label={<span className="text-slate-600 font-medium">Status</span>}
+                            label={<span className={textSlateToWhiteInDark}>Status</span>}
                             name="paymentStatus"
                             rules={[{ required: true, message: "Required" }]}
                         >
@@ -295,7 +300,7 @@ const AddPaymentForm = ({
                 {/* --- AMOUNT & PAYMENT DATE ROW --- */}
                 <Row gutter={16}>
                     <Col span={12}>
-                        <Form.Item label={<span className="text-slate-600 font-medium">Amount</span>} name="amount" rules={[{ required: true, message: "Amount required" }]}>
+                        <Form.Item label={<span className={textSlateToWhiteInDark}>Amount</span>} name="amount" rules={[{ required: true, message: "Amount required" }]}>
                             <Input
                                 placeholder="0.00"
                                 type="number"
@@ -304,7 +309,7 @@ const AddPaymentForm = ({
                         </Form.Item>
                     </Col>
                     <Col span={12}>
-                        <Form.Item label={<span className="text-slate-600 font-medium">Payment Date</span>} name="paymentDate">
+                        <Form.Item label={<span className={textSlateToWhiteInDark}>Payment Date</span>} name="paymentDate">
                             <DatePicker className="w-full rounded" showTime format="YYYY-MM-DD HH:mm:ss" />
                         </Form.Item>
                     </Col>
@@ -313,19 +318,19 @@ const AddPaymentForm = ({
                 {/* --- TRANSACTION NO & EXTERNAL REFERENCE --- */}
                 <Row gutter={16}>
                     <Col span={12}>
-                        <Form.Item label={<span className="text-slate-600 font-medium">Transaction No</span>} name="transactionNo">
+                        <Form.Item label={<span className={textSlateToWhiteInDark}>Transaction No</span>} name="transactionNo">
                             <Input placeholder="Enter Transaction Number" className="rounded" />
                         </Form.Item>
                     </Col>
                     <Col span={12}>
-                        <Form.Item label={<span className="text-slate-600 font-medium">External Reference</span>} name="externalReference">
+                        <Form.Item label={<span className={textSlateToWhiteInDark}>External Reference</span>} name="externalReference">
                             <Input placeholder="Enter External Reference" className="rounded" />
                         </Form.Item>
                     </Col>
                 </Row>
 
                 {/* --- REMARK FIELD --- */}
-                <Form.Item label={<span className="text-slate-600 font-medium">Remark</span>} name="remark">
+                <Form.Item label={<span className={textSlateToWhiteInDark}>Remark</span>} name="remark">
                     <TextArea rows={3} placeholder="Add operational adjustments or audit notes here..." className="rounded" />
                 </Form.Item>
 

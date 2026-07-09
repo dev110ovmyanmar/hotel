@@ -195,7 +195,7 @@ const FacilityForm = ({
                 // type="number"
                 mode="spinner"
                 placeholder="Enter Capacity"
-                disabled={isView}
+                readOnly={isView}
                 style={{width:"100%"}}
                 min={1}
               />

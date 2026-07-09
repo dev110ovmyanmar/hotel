@@ -15,7 +15,7 @@ import { useApiMutation } from "../../../../hooks/useApiMutation";
 import useApiQuery from "../../../../hooks/useApiQuery";
 import { queryClient } from "../../../../app/queryClient";
 import FormButton from "../../../../component/FormButtons/FormButtons";
-import { createTax, editTax, TaxDetails } from "../../../../api/TaxApi";
+import { createTax, editTax, TaxDetails } from "../../../../api/taxApi";
 import TextArea from "antd/es/input/TextArea";
 import Loader from "../../../../component/Loader/Loader";
 import Status from "../../../../component/Status/Status";

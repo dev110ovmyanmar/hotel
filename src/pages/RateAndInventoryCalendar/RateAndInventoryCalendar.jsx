@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useCallback, useEffect, useRef } from 'react';
-import { Modal, Form, Spin, Divider } from 'antd';
+import { App, Form, Spin, Divider, Modal } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 
@@ -30,6 +30,7 @@ const GC_TIME = 10 * 60 * 1000;
 // ─── Component ───────────────────────────────────────────────────────────────
 const RateAndInventoryCalendar = () => {
     // ── UI state ──────────────────────────────────────────────────────────────
+    const { modal } = App.useApp();
     const [currentDate, setCurrentDate] = useState(dayjs());
     const [expandedGroups, setExpandedGroups] = useState(new Set());
     const [keyword, setKeyword] = useState('');
@@ -236,10 +237,11 @@ const RateAndInventoryCalendar = () => {
             const formattedDate = dayjs(dateStr).format('D MMM YYYY');
 
             Modal.confirm({
+                rootClassName:"dark-confirm-modal",
                 icon: null,
                 title: (
                     <div className="flex justify-between items-center w-full">
-                        <span className="text-[16px] font-bold">
+                        <span className="text-[16px] font-bold dark:!text-gray-100">
                             {stopSellValue ? 'Open sales for this room type?' : 'Stop sell for this room type?'}
                         </span>
                     </div>
@@ -248,7 +250,7 @@ const RateAndInventoryCalendar = () => {
                 content: (
                     <div className="mt-[-20px]">
                         <Divider className="my-3 border-gray-200" />
-                        <div className="text-[14px] text-gray-600">
+                        <div className="text-[14px] text-gray-600 dark:!text-gray-100">
                             {stopSellValue
                                 ? <span>This will open all availability for <strong>{rtName}</strong> on <strong>{formattedDate}</strong>. Guests will now be able to book this date.</span>
                                 : <span>This will remove all availability for <strong>{rtName}</strong> on <strong>{formattedDate}</strong>. Guests will no longer be able to book this date.</span>
@@ -281,6 +283,7 @@ const RateAndInventoryCalendar = () => {
                 return;
             }
             Modal.confirm({
+                rootClassName:"dark-confirm-modal",
                 icon: null,
                 title: (
                     <div className="flex justify-between items-center w-full">
@@ -465,10 +468,11 @@ const RateAndInventoryCalendar = () => {
         const formattedDate = dayjs(dateStr).format('D MMM YYYY');
 
         Modal.confirm({
+            rootClassName: "dark-confirm-modal",
             icon: null,
             title: (
                 <div className="flex justify-between items-center w-full">
-                    <span className="text-[16px] font-bold">
+                    <span className="text-[16px] font-bold dark:!text-gray-100">
                         {restrictionEditModal?.stopSell ? 'Open sales for this rate plan?' : 'Stop sell for this rate plan?'}
                     </span>
                 </div>

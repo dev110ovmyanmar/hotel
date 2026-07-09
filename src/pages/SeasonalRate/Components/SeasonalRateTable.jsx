@@ -329,6 +329,7 @@ const SeasonalRateTable = ({
                     marginBottom: "12px",
                     color: "#262626",
                   }}
+                  className="dark:!text-gray-200"
                 >
                   Weekday Rates
                 </p>

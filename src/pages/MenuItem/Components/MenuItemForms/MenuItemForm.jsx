@@ -25,6 +25,7 @@ import {
 } from "../../../../component/PriceTag/PriceTag";
 import usePermission from "../../../../hooks/usePermission";
 import { PERMISSIONS } from "../../../../variables/permission";
+import { textWhiteInDarkStyle } from "../../../../utils";
 
 const MenuItemForm = ({
   mode,
@@ -330,13 +331,13 @@ const MenuItemForm = ({
           {!isAdd && data?.menuModifiers?.length > 0 && (
             <Card className="mt-5 border border-gray-100 bg-gray-50 shadow-sm">
               <div className="mb-4 flex items-center justify-between">
-                <span className="text-base font-semibold text-gray-800">
+                <span className={`text-base font-semibold text-gray-800 ${textWhiteInDarkStyle}`}>
                   Add On
                 </span>
               </div>
 
               {/* Form.Item completely manages value and onChange for the group */}
-              <Form.Item name="menuModifier" className="mb-0">
+              <Form.Item name="menuModifier" className={`mb-0 ${isView?'pointer-events-none':''}`}>
                 <Checkbox.Group className="w-full">
                   <Row gutter={[16, 16]}>
                     {data?.menuModifiers?.map((modifier) => (
@@ -344,8 +345,8 @@ const MenuItemForm = ({
                         <div className="flex items-center rounded-lg border border-gray-200 bg-white p-3 hover:border-blue-300 transition-all shadow-sm">
                           <Checkbox
                             value={modifier.id}
-                            disabled={isView}
-                            className="w-full text-sm font-medium text-gray-700"
+                            readOnly={isView}
+                            className="w-full text-sm font-medium text-gray-700 dark:!text-gray-100"
                           >
                             {modifier.name}
                           </Checkbox>

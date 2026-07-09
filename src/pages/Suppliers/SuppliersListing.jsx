@@ -2,11 +2,11 @@ import React, { useState, useEffect } from "react";
 import { getSuppliers } from "../../api/supplierApi";
 import useApiQuery from "../../hooks/useApiQuery";
 import ListHeader from "../../component/ListHeader/ListHeader";
-import SupplierTable from "./Components/SupplierTable";
 import SupplierForm from "./components/SupplierForm";
 import { LIMITS } from "../../variables/constants";
 import { PERMISSIONS } from "../../variables/permission";
 import { queryClient } from "../../app/queryClient";
+import SupplierTable from "./components/SupplierTable";
 
 const SupplierListing = () => {
   const [selectedRow, setSelectedRow] = useState(null);

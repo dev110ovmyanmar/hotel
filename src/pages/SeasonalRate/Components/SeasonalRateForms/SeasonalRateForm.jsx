@@ -376,14 +376,16 @@ const SeasonalRateForm = ({
                 >
                   <RangePicker
                     disabledDate={disabledDate}
-                    disabled={isView}
+                    open={isView? !isView : undefined}
+                    inputReadOnly={isView}
                     suffixIcon={isView ? null : undefined}
+                    allowClear={!isView}
                   />
                 </Form.Item>
               </Col>
 
               <Col span={12}>
-                <Form.Item label="Week Days" className="mb-4">
+                <Form.Item label="Week Days"className={`mb-4 ${isView? "pointer-events-none": ""}`}>
                   <div className="flex flex-wrap gap-x-3 gap-y-2 p-0.5">
                     {days.map((day) => (
                       <div
@@ -398,11 +400,12 @@ const SeasonalRateForm = ({
                           name={`enable_${day.key}`}
                           valuePropName="checked"
                           noStyle
+                          
                         >
                           <Checkbox
                             className="ant-checkbox-small"
                             style={{ margin: 0 }}
-                            disabled={isView}
+                            inputReadOnly={isView}
                           />
                         </Form.Item>
                       </div>
@@ -429,7 +432,7 @@ const SeasonalRateForm = ({
                         placeholder="Enter Price"
                         style={{ width: "100%" }}
                         min={0}
-                        disabled={!isEnabled || isView}
+                        readOnly={!isEnabled || isView}
                         suffix="MMK"
                         formatter={priceFormatter}
                         parser={priceParser}

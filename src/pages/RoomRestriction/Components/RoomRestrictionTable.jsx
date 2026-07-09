@@ -6,8 +6,8 @@ import {
   EditOutlined,
   FileAddOutlined,
 } from "@ant-design/icons";
-// import { PERMISSIONS } from "../../../variables/permission";
-// import usePermission from "../../../hooks/usePermission";
+import { PERMISSIONS } from "../../../variables/permission";
+import usePermission from "../../../hooks/usePermission";
 import RoomRestrictionForm from "./RoomRestrictionForms/RoomRestrictionForm";
 import PriceTag from "../../../component/PriceTag/PriceTag";
 import dayjs from "dayjs";
@@ -18,7 +18,7 @@ import isSameOrBeforePlugin from "dayjs/plugin/isSameOrBefore";
 dayjs.extend(isSameOrBeforePlugin);
 
 const RoomRestrictionTable = ({ data, page, setPage }) => {
-  //   const { hasPermission } = usePermission();
+    const { hasPermission } = usePermission();
 
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mode, setMode] = useState(null);
@@ -256,7 +256,7 @@ const RoomRestrictionTable = ({ data, page, setPage }) => {
 
       <Modal
         open={confirmOpen}
-        title={"Confirm Stop Selling"}
+        title={"Confirm Stop Selling ?"}
         okText="Confirm"
         cancelText="Cancel"
         confirmLoading={updateStopSelling.isLoading}
