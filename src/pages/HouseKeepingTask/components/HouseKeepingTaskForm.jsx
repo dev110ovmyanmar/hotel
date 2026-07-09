@@ -16,6 +16,7 @@ import {
 import HouseKeepingTaskAssignForm from "./HousKeepingTaskAssignForm";
 import ColorStatusTag from "../../../component/ColorStatusTag/ColorStatusTag";
 import MaintenanceRequestFromHK from "./MaintenanceRequestFromHK";
+import { houseKeepingAndMaintenanceRequestDarkMode } from "../../../utils";
 
 const { TextArea } = Input;
 
@@ -161,11 +162,7 @@ const HouseKeepingTaskForm = ({
         setMaintenanceRequestDrawerOpen(true);
     };
 
-    const darkModeStyle = `
-        dark:bg-[#141414]
-        hover:bg-blue-50 
-        hover:text-blue-500
-    `
+    
 
 
     return (
@@ -382,7 +379,7 @@ const HouseKeepingTaskForm = ({
                                                     e.stopPropagation();
                                                     onViewTaskAssign(detail);
                                                 }}
-                                                className={`flex items-center gap-1.5 px-2 py-1 bg-gray-50 hover:bg-blue-50 hover:text-blue-600 rounded text-[12px] border border-gray-100 hover:border-blue-200 transition-all ${darkModeStyle}`}
+                                                className={`flex items-center gap-1.5 px-2 py-1 bg-gray-50 hover:bg-blue-50 hover:text-blue-600 rounded text-[12px] border border-gray-100 hover:border-blue-200 transition-all ${houseKeepingAndMaintenanceRequestDarkMode}`}
                                             >
                                                 <TeamOutlined /> Staff Assigns
                                             </button>
@@ -391,7 +388,7 @@ const HouseKeepingTaskForm = ({
                                         {
                                             isDisableEdit ? null :
                                                 <div className="flex justify-end gap-3 mt-6">
-                                                    <button onClick={handleNext} className={`flex items-center gap-1.5 px-2 py-1 bg-gray-50 hover:bg-blue-50 hover:text-blue-600 rounded text-[12px] border border-gray-100 hover:border-blue-200 transition-all ${darkModeStyle}`}>
+                                                    <button onClick={handleNext} className={`flex items-center gap-1.5 px-2 py-1 bg-gray-50 hover:bg-blue-50 hover:text-blue-600 rounded text-[12px] border border-gray-100 hover:border-blue-200 transition-all ${houseKeepingAndMaintenanceRequestDarkMode}`}>
                                                         Transfer Maintenance Request <ArrowRightOutlined /></button>
                                                 </div>
                                         }

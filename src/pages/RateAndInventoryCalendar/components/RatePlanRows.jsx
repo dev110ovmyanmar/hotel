@@ -2,6 +2,7 @@ import React from 'react';
 import { ExclamationCircleOutlined, UserOutlined } from '@ant-design/icons';
 import { Baby, PersonStanding } from 'lucide-react';
 import { Tooltip } from 'antd';
+import { darkModeStyle } from '../../../utils';
 
 /**
  * RatePlanRows
@@ -19,11 +20,7 @@ import { Tooltip } from 'antd';
  *   handleRestrictionEditOpen – (restriction, rp, rt, dateStr) => void
  */
 
-const darkModeStyle = `
-    dark:!bg-[#141414] 
-    dark:!border-[#dee2e6] 
-    dark:!text-gray-200
-`;
+
 
 const RatePlanRows = ({ rp, rt, daysMeta, getRateData, handleRestrictionEditOpen }) => (
     <React.Fragment key={rp.id}>
