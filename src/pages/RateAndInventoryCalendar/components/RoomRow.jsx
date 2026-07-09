@@ -1,4 +1,5 @@
 import React from 'react';
+import { darkModeStyle } from '../../../utils';
 
 /**
  * RoomRow
@@ -10,11 +11,7 @@ import React from 'react';
  *   roomDateMap     – { [roomId]: { [dateStr]: { isBooked, isAvailable } } }
  *   rtId            – room type id
  */
-const darkModeStyle = `
-    dark:!bg-[#141414] 
-    dark:!border-[#dee2e6] 
-    dark:!text-gray-200
-`;
+
 
 const RoomRow = ({ room, daysMeta, getAvailability, roomDateMap, rtId }) => (
     <tr key={room.id} className="h-9  hover:bg-gray-50">

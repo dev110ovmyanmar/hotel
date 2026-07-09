@@ -1,4 +1,5 @@
 import React from 'react';
+import { darkModeStyle } from '../../../utils';
 
 /**
  * CalendarFooter
@@ -10,12 +11,6 @@ import React from 'react';
  *   SIDEBAR_WIDTH – number (px)
  */
 
-const darkModeStyle = `
-    dark:!bg-[#141414] 
-    dark:!border-[#dee2e6] 
-    dark:!text-gray-200
-`;
-
 const CalendarFooter = ({ dailyStats, daysMeta, CELL_WIDTH, SIDEBAR_WIDTH }) => (
     <tfoot className="sticky bottom-0 z-[55] bg-white border-t-2 border-gray-200">
         {/* Total Available row */}
@@ -23,7 +18,7 @@ const CalendarFooter = ({ dailyStats, daysMeta, CELL_WIDTH, SIDEBAR_WIDTH }) => 
         // className="bg-gray-50/80"
         >
             <td
-                className={`sticky left-0 z-40 bg-[#1677FF] border-b border-r border-[#dee2e6] p-3 font-bol${darkModeStyle}`}
+                className={`sticky left-0 z-40 bg-[#1677FF] border-b border-r border-[#dee2e6] p-3 font-bol ${darkModeStyle}`}
                 style={{ width: SIDEBAR_WIDTH, minWidth: SIDEBAR_WIDTH }}
             >
                 <span className="text-[12px] uppercase !text-[#FFFFFF] font-bold">Total Available</span>
