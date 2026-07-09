@@ -4,6 +4,7 @@ import dayjs from 'dayjs';
 import { CheckCircleOutlined, ArrowRightOutlined } from '@ant-design/icons';
 import { createRoomAmendment } from '../../../../../../api/roomAmendmentApi';
 import { useApiMutation } from '../../../../../../hooks/useApiMutation';
+import { darkModeStyle, textColorDarkMode, textWhiteInDarkStyle } from '../../../../../../utils';
 
 export default function UpdateRateModal({
     isOpen,
@@ -124,7 +125,7 @@ export default function UpdateRateModal({
         >
             {/* Header Identity Information */}
             <div className="mb-1 text-slate-500 text-xs font-medium">
-                {reservationNo} — <span className="text-slate-800">{guestName}</span>
+                {reservationNo} — <span className={`text-slate-800 ${textWhiteInDarkStyle}`}>{guestName}</span>
             </div>
 
             {/* Context window visual helper */}
@@ -145,16 +146,16 @@ export default function UpdateRateModal({
                             <>
                                 <div className="grid grid-cols-12 gap-4 mb-2">
                                     <div className="col-span-6">
-                                        <span className="text-xs font-semibold text-slate-600">TARGET DATE</span>
+                                        <span className={`text-xs font-semibold text-slate-600 ${textColorDarkMode}`}>TARGET DATE</span>
                                     </div>
                                     <div className="col-span-6">
-                                        <span className="text-xs font-semibold text-slate-600">NIGHTLY RATE (MMK)</span>
+                                        <span className={`text-xs font-semibold text-slate-600 ${textColorDarkMode}`}>NIGHTLY RATE (MMK)</span>
                                     </div>
                                 </div>
 
-                                <div className="max-h-[280px] overflow-y-auto mb-4 pr-1">
+                                <div className='max-h-[280px] overflow-y-auto mb-4 pr-1'>
                                     {fields.map(({ key, name, ...restField }) => (
-                                        <div key={key} className="grid grid-cols-12 gap-4 items-center mb-3 bg-slate-50 p-3 rounded-md">
+                                        <div key={key} className={`grid grid-cols-12 gap-4 items-center mb-3 bg-slate-50 p-3 rounded-md ${darkModeStyle}`}>
 
                                             {/* DYNAMIC EDITABLE DATE PICKER (PRE-FILLED) */}
                                             <div className="col-span-6">
@@ -215,8 +216,8 @@ export default function UpdateRateModal({
                     </p>
 
                     <div className="max-h-[220px] overflow-y-auto mb-4 border border-slate-200 rounded-md">
-                        <table className="w-full border-collapse text-xs">
-                            <thead className="bg-slate-100 text-left sticky top-0 z-10">
+                        <table className={`w-full border-collapse text-xs ${darkModeStyle}`}>
+                            <thead className={`bg-slate-100 text-left sticky top-0 z-10 ${darkModeStyle}`}>
                                 <tr>
                                     <th className="p-2.5">Target Date</th>
                                     <th className="p-2.5">Status Execution</th>

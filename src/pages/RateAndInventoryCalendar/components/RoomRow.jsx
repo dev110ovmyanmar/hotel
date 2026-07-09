@@ -1,5 +1,5 @@
 import React from 'react';
-import { darkModeStyle } from '../../../utils';
+import { darkModeStyle, textWhiteInDarkStyle } from '../../../utils';
 
 /**
  * RoomRow
@@ -16,7 +16,7 @@ import { darkModeStyle } from '../../../utils';
 const RoomRow = ({ room, daysMeta, getAvailability, roomDateMap, rtId }) => (
     <tr key={room.id} className="h-9  hover:bg-gray-50">
         <td className={`sticky left-0 z-30 border-b border-r border-[#dee2e6] bg-[#fcfcfc]  px-4 py-1 ${darkModeStyle}`}>
-            <div className="font-bold text-[12px] text-gray-700 dark:text-gray-200">{room.roomNo}</div>
+            <div className={`font-bold text-[12px] text-gray-700 ${textWhiteInDarkStyle}`}>{room.roomNo}</div>
             <div className="text-[9px] text-gray-400 uppercase">{room.floor}</div>
         </td>
         {daysMeta.map(({ dateStr, cellClass }, dayIdx) => {

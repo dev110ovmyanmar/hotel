@@ -691,6 +691,7 @@ import FormButtons from "../../../../../../component/FormButtons/FormButtons";
 import { useApiMutation } from "../../../../../../hooks/useApiMutation";
 import { availabilitySearch, createReservationRoom } from "../../../../../../api/reservationSectionApi";
 import Toast from "../../../../../../component/Toast/Toast";
+import { darkModeStyle, textWhiteInDarkStyle } from "../../../../../../utils";
 
 const { RangePicker } = DatePicker;
 
@@ -861,7 +862,7 @@ const RoomInformationForm = ({
       width={650}
       title={
         <div className="flex justify-between items-center">
-          <span className="font-semibold text-lg text-slate-800">Create Room Information</span>
+          <span className={`font-semibold text-lg text-slate-800 ${textWhiteInDarkStyle}`}>Create Room Information</span>
           <FormButtons onClick={() => form.submit()} mode={mode} isPending={createReservationRooms.isPending} />
         </div>
       }
@@ -877,7 +878,7 @@ const RoomInformationForm = ({
             <RangePicker className="w-full" format="YYYY-MM-DD" disabledDate={disabledDate} />
           </Form.Item>
 
-          <Form.Item className="w-1/5 mb-0 bg-gray-200 rounded">
+          <Form.Item className={`w-1/5 mb-0 bg-gray-200 rounded ${darkModeStyle} dark:!shadow-lg dark:shadow-gray-900 dark:border dark:border-gray-100`}>
             <div className="flex items-center gap-2 px-2 py-1.5 ml-3">
               <FaMoon className="text-xs" />
               <span className="text-xs font-bold whitespace-nowrap">
@@ -933,7 +934,7 @@ const RoomInformationForm = ({
               max={maxAvailableRooms}
               placeholder="Quantity"
               style={{ width: "100%" }}
-              disabled={!selectedRoomUuid}
+              readOnly={!selectedRoomUuid}
             />
           </Form.Item>
         </div>

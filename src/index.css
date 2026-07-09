@@ -701,8 +701,18 @@ span .ant-upload {
   background-color: #ebf6e1 !important;
 }
 
+.dark .active-reservation-row {
+  background-color: #dff9c6 !important;
+  color: #141414 !important
+}
+
 .active-reservation-row:hover td {
-  background-color: #dbe8cd !important;
+  background-color: #7d8079 !important;
+}
+
+.dark .active-reservation-row:hover td {
+  background-color: #d3f9b0 !important;
+  color: #141414 !important;
 }
 
 /* Your global.css or component.scss file */
@@ -740,4 +750,19 @@ span .ant-upload {
 
 .dark .dark-confirm-modal .ant-modal-close{
   color: #e5e7eb !important
+}
+
+/* extension */
+.dark .ant-space-item button{
+  border: 1px solid gray;
+}
+
+.dark .ant-space-item button .ant-btn-icon{
+  color: white
+}
+
+/* split folio modal */
+.dark .custom-ant-modal .ant-modal-header{
+  border-bottom: 1px solid rgb(77, 74, 74);
+  background-color: #1f1f1f;
 }

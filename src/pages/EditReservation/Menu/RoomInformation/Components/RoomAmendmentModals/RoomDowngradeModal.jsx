@@ -6,6 +6,7 @@ import { useApiMutation } from '../../../../../../hooks/useApiMutation';
 import Toast from '../../../../../../component/Toast/Toast';
 import RoomDowngradeReview from './RoomDowngradeReview';
 import { FaStar } from 'react-icons/fa';
+import { darkModeStyle, selectedDarkMode, textWhiteInDarkStyle } from '../../../../../../utils';
 
 const { Text, Title } = Typography;
 
@@ -208,8 +209,10 @@ export default function RoomDowngradeModal({
                                 margin: '12px 0 20px 0',
                                 border: '1px solid #e2e8f0',
                                 fontSize: '13px'
-                            }}>
-                                <Text type="secondary"><strong style={{ color: '#475569' }}>Room Type:</strong> {currentRoomType}</Text>
+                            }}
+                                className={darkModeStyle}
+                            >
+                                <Text type="secondary"><strong style={{ color: '#475569' }}>Room Type:</strong> <span className={textWhiteInDarkStyle}>{currentRoomType}</span></Text>
                                 {/* <Text type="secondary"><strong style={{ color: '#475569' }}>Rank :</strong> {record?.roomType?.rank}</Text> */}
 
                                 <div className="grid place-items-center w-fit -mt-1">
@@ -245,7 +248,7 @@ export default function RoomDowngradeModal({
                                                                 !duration-500
                                                                 rounded-2xl 
                                                                 ${selectedRoom === room.roomType.uuid
-                                                                    ? '!border-blue-500 !bg-blue-50 !shadow-lg'
+                                                                    ? `!border-blue-500 !bg-blue-50 !shadow-lg ${selectedDarkMode}`
                                                                     : '!border-blue-200 !shadow-md hover:!border-blue-300 hover:-translate-y-1'}
                                                                                                                                                                 `}
                                                             onClick={() => {
