@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Drawer,
   Form,
@@ -20,6 +20,8 @@ import {
 import FormItem from "antd/es/form/FormItem";
 import TextArea from "antd/es/input/TextArea";
 import SearchFacilityOrderDrawer from "./SearchFacilityOrderDrawer";
+import Status from "../../../../../../component/Status/Status";
+import { queryClient } from "../../../../../../app/queryClient";
 const { Text } = Typography;
 
 const onChange = (value) => {
@@ -31,6 +33,23 @@ const AddNewFacilityOrderForm = ({ open, onClose, reservationId }) => {
   const [searchOpen, setSearchOpen] = useState(false);
   const [showTable, setShowTable] = useState(false);
   const [tableData, setTableData] = useState([]);
+
+  const initData = queryClient.getQueryData([
+    "initData",
+    "authenticated",
+  ])?.statuses;
+
+  const initDataStatus = initData?.status;
+
+  useEffect(() => {
+    form.setFieldsValue({
+      status: {
+        uuid: initDataStatus.find(
+          item => item.code === "active"
+        )?.uuid,
+      },
+    });
+  })
 
   const handleSubmit = (values) => {
     console.log("Searching with:", values);
@@ -173,7 +192,7 @@ const AddNewFacilityOrderForm = ({ open, onClose, reservationId }) => {
             </Form.Item>
           </div>
 
-          <Form.Item label="Status" name="status">
+          {/* <Form.Item label="Status" name="status">
             <Select
               rules={[{ required: true }]}
               placeholder="Select Status"
@@ -183,7 +202,9 @@ const AddNewFacilityOrderForm = ({ open, onClose, reservationId }) => {
                 { value: "Inactive", label: "Inactive" },
               ]}
             />
-          </Form.Item>
+          </Form.Item> */}
+
+          <Status statusValue={initDataStatus} />
 
           <Form.Item label="Remarks" name="remarks">
             <TextArea />

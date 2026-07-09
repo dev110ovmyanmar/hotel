@@ -13,15 +13,6 @@ const columns = [
     dataIndex: "id",
     key: "id",
     width: 140,
-    render: (id, record) => (
-      <span
-        className="clickable-id"
-        style={{ color: "#1677ff", cursor: "pointer", fontWeight: 500 }}
-        onClick={() => record._onIdClick?.(record.uuid)} // Passes the unique item row uuid upstream
-      >
-        {id}
-      </span>
-    ),
   },
   {
     title: "Date",

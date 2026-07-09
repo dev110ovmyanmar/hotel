@@ -185,7 +185,7 @@ const MenuCategoryForm = ({
               rules={[{ required: true }]}
             >
               <InputNumber
-                disabled={isView}
+                readOnly={isView}
                 className="!w-full"
                 placeholder="Enter Display Order"
               />

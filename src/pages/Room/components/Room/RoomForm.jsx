@@ -16,6 +16,7 @@ import { EditOutlined, PlusOutlined } from "@ant-design/icons";
 import { PERMISSIONS } from "../../../../variables/permission";
 import usePermission from "../../../../hooks/usePermission";
 import Loader from "../../../../component/Loader/Loader";
+import { roomAndRoomTypeDarkMode } from "../../../../utils";
 
 const RoomForm = ({
   mode,
@@ -318,7 +319,7 @@ const RoomForm = ({
             </Form.Item>
 
             {!isAdd && (
-              <Card className="mt-5 shadow-sm  border border-gray-100 bg-gray-100!">
+              <Card className={`mt-5 shadow-sm  border border-gray-100 bg-gray-100! ${roomAndRoomTypeDarkMode}`}>
                 <div className="flex justify-between text-sm items-center font-semibold mb-2">
                   <span>Room Attributes already exits for this room</span>
 

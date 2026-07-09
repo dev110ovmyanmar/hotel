@@ -15,6 +15,7 @@ import {
     adminMeta,
 } from "../../../api/maintenanceRequestApi";
 import MaintenanceTaskAssignForm from "./MaintenanceTaskAssignForm";
+import { houseKeepingAndMaintenanceRequestDarkMode } from "../../../utils";
 
 const { TextArea } = Input;
 
@@ -210,7 +211,7 @@ const MaintenanceRequestForm = ({
                             )}
 
                             <Form.Item name="name" label="Name" rules={[{ required: true }]}>
-                                <Input disabled={isView} placeholder="Enter Maintenance Request" />
+                                <Input readOnly={isView} placeholder="Enter Maintenance Request" />
                             </Form.Item>
 
                             <Row gutter={16}>
@@ -227,7 +228,7 @@ const MaintenanceRequestForm = ({
                                     >
                                         {
                                             isView ?
-                                                <Input disabled={isView} readOnly={isView} />
+                                                <Input readOnly={isView} readOnly={isView} />
                                                 :
                                                 <Select options={roomOptions} disabled={isView || detail?.housekeepingTask} placeholder="Select Room" />
                                         }
@@ -247,7 +248,7 @@ const MaintenanceRequestForm = ({
                                     >
                                         {
                                             isView ?
-                                                <Input disabled={isView} readOnly={isView} /> :
+                                                <Input readOnly={isView} readOnly={isView} /> :
                                                 <Select options={issueTypeOptions} disabled={isView} placeholder="Select Issue Type" />
                                         }
                                     </Form.Item>
@@ -268,7 +269,7 @@ const MaintenanceRequestForm = ({
                                     >
                                         {
                                             isView ?
-                                                <Input disabled={isView} readOnly={isView} /> :
+                                                <Input readOnly={isView} readOnly={isView} /> :
                                                 <Select options={priorityOptions} disabled={isView} placeholder="Select Priority" />
                                         }
                                     </Form.Item>
@@ -282,7 +283,7 @@ const MaintenanceRequestForm = ({
                                         >
                                             <Select
                                                 options={maintenanceStatusOptions}
-                                                disabled={true}
+                                                open={true? !true: undefined}
                                             />
                                         </Form.Item>
                                     ) : (
@@ -297,7 +298,7 @@ const MaintenanceRequestForm = ({
                                             })}
                                         >
                                             {
-                                                isView ? <Input disabled={isView} readOnly={isView} /> :
+                                                isView ? <Input readOnly={isView} readOnly={isView} /> :
                                                     <Select
                                                         options={maintenanceStatusOptions}
                                                         disabled={isView}
@@ -321,7 +322,7 @@ const MaintenanceRequestForm = ({
                                     >
                                         {
                                             isView ?
-                                                <Input disabled={isView} readOnly={isView} />
+                                                <Input readOnly={isView} readOnly={isView} />
                                                 :
                                                 <DatePicker className="w-full" disabled={isView} />
 
@@ -339,7 +340,7 @@ const MaintenanceRequestForm = ({
                                     >
                                         {
                                             isView ?
-                                                <Input disabled={isView} readOnly={isView} /> :
+                                                <Input readOnly={isView} /> :
                                                 <TimePicker className="w-full" format="HH:mm" disabled={isView} />
                                         }
                                     </Form.Item>
@@ -358,7 +359,7 @@ const MaintenanceRequestForm = ({
                                     >
                                         {
                                             isView ?
-                                                <Input disabled={isView} readOnly={isView} /> :
+                                                <Input readOnly={isView} /> :
                                                 <DatePicker className="w-full" disabled={isView} />
                                         }
                                     </Form.Item>
@@ -374,7 +375,7 @@ const MaintenanceRequestForm = ({
                                     >
                                         {
                                             isView ?
-                                                <Input disabled={isView} readOnly={isView} /> :
+                                                <Input readOnly={isView} /> :
                                                 <TimePicker className="w-full" format="HH:mm" disabled={isView} />
                                         }
                                     </Form.Item>
@@ -386,7 +387,7 @@ const MaintenanceRequestForm = ({
                                     isCreate && (
                                         <Col span={12}>
                                             <Form.Item name="staff" label="Staff">
-                                                <Select options={staffOptions} disabled={isView}
+                                                <Select options={staffOptions} open={isView? !isView : undefined}
                                                     mode="multiple" placeholder="Select Staff" />
                                             </Form.Item>
                                         </Col>
@@ -403,7 +404,7 @@ const MaintenanceRequestForm = ({
                                     >
                                         {
                                             isView ?
-                                                <Input readOnly={isView} disabled={isView} /> :
+                                                <Input readOnly={isView} /> :
                                                 <Select options={departmentOptions} disabled={isView || detail?.housekeepingTask} placeholder="Select Dept" />
                                         }
                                     </Form.Item>
@@ -423,7 +424,7 @@ const MaintenanceRequestForm = ({
                                         e.stopPropagation();
                                         onViewTaskAssign(detail);
                                     }}
-                                    className="flex items-center gap-1.5 px-2 py-1 bg-gray-50 hover:bg-blue-50 hover:text-blue-600 rounded text-[12px] border border-gray-100 hover:border-blue-200 transition-all"
+                                    className={`flex items-center gap-1.5 px-2 py-1 bg-gray-50 hover:bg-blue-50 hover:text-blue-600 rounded text-[12px] border border-gray-100 hover:border-blue-200 transition-all ${houseKeepingAndMaintenanceRequestDarkMode}`}
                                 >
                                     <TeamOutlined /> Staff Assigns
                                 </button>

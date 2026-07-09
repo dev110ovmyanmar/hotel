@@ -24,7 +24,7 @@ import {
 import { queryClient } from "../../../../app/queryClient";
 import { getFormattedDate } from "../../../../utils";
 import dayjs from "dayjs";
-import { capitalizeFirstLetter } from "../../../../utils/Utils";
+import { capitalizeFirstLetter, partnerDarkModeStyle } from "../../../../utils/Utils";
 import ImageUpload from "../../../../component/ImageUpload/ImageUpload";
 import { fetchCompanyUpload } from "../../../../api/partnerApi";
 import { deleteImageUpload } from "../../../../api/deleteImageApi";
@@ -223,7 +223,7 @@ const CompanyContractForm = ({
         >
           <Row gutter={16}>
             <Col span={24}>
-              <div className="mb-4 p-5 shadow-sm  border border-gray-200 bg-gray-100!">
+              <div className={`mb-4 p-5 shadow-sm  border border-gray-200 bg-gray-100! ${partnerDarkModeStyle}`}>
                 <span className="text-red-500">* </span>
                 Selected Charge Type and Value effected on Selected Date Range.
                 <span className="text-red-500">* </span>
@@ -306,9 +306,11 @@ const CompanyContractForm = ({
               >
                 <RangePicker
                   disabledDate={disabledDate}
-                  disabled={isView}
+                  open={isView? !isView : undefined}
+                  inputReadOnly={isView}
                   suffixIcon={isView ? null : undefined}
                   style={{ width: '100%' }}
+                  allowClear={!isView}
                 />
               </Form.Item>
             </Col>

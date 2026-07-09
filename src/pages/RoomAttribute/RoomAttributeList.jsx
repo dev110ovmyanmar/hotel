@@ -4,8 +4,8 @@ import useApiQuery from "../../hooks/useApiQuery";
 import ListHeader from "../../component/ListHeader/ListHeader";
 import { fetchRoomAttribute } from "../../api/roomApi";
 import RoomAttributeTable from "./Components/RoomAttributeTable";
-import RoomAttributeForm from "./Components/RoomAttributeForms/RoomAttributeform";
 import { PERMISSIONS } from "../../variables/permission";
+import RoomAttributeForm from "./Components/RoomAttributeForms/RoomAttributeForm";
 
 const RoomAttributeList = () => {
   const [keyword, setKeyword] = useState("");

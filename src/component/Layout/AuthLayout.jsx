@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Layout, Modal, Divider } from "antd";
 import Sidebar from "../Sidebar/Sidebar";
@@ -9,6 +9,8 @@ import { appSelector, toggleAll, sessionExpired as setSessionExpiredAction } fro
 import useWindowSize from "../../hooks/useWindowSize";
 import Breadcrumbs from "../Breadcrumbs/Breadcrumbs";
 import { queryClient } from './../../app/queryClient';
+// import GlobalIcon from "../GlobalIcon/GlobalIcon";
+
 
 const { confirm } = Modal;
 
@@ -17,9 +19,19 @@ const { Content } = Layout;
 const AuthLayout = () => {
   const dispatch = useDispatch();
 
+  // Theme Header Colors
+  // const [headerColor, setHeaderColor] = useState(localStorage.getItem("headerColor"));
+  // Sidebar Theme Color
+  // const [sideBarColor, setSideBarColor] = useState(localStorage.getItem("sideBarColor"));
+  // Footer Theme Color
+  // const [footerColor, setFooterColor] = useState(localStorage.getItem("footerColor"));
+
+
+
   const { height: appHeight, sessionExpired } = useSelector(appSelector);
 
   const { width, height } = useWindowSize();
+
 
   useEffect(() => {
     dispatch(toggleAll({ width, height }));
@@ -72,8 +84,10 @@ const AuthLayout = () => {
   return (
     <>
       <Layout style={{ height: height }}>
-        <Topbar />
+        {/* <Topbar headerColor={headerColor} /> */}
+        <Topbar/>
         <Layout className="flex-row overflow-x-hidden">
+          {/* <Sidebar sideBarColor={sideBarColor} /> */}
           <Sidebar />
           <Layout
             className="overflow-hidden border-l border-gray-300 shrink-0 w-full md:w-[calc(100% - 80px)]"
@@ -90,12 +104,22 @@ const AuthLayout = () => {
               <Divider className="custom-divider" />
               <AuthRoutes />
             </Content>
+            {/* <Footer className={`text-center text-md bg-white border-t border-gray-300 ${footerColor}`}> */}
             <Footer className="text-center text-md bg-white border-t border-gray-300">
               Hotel Management @ 2026 Developed by ORIENTAL VIGOUR
             </Footer>
           </Layout>
         </Layout>
       </Layout>
+
+      {/* <GlobalIcon
+        headerColor={headerColor}
+        setHeaderColor={setHeaderColor}
+        sideBarColor={sideBarColor}
+        setSideBarColor={setSideBarColor}
+        footerColor={footerColor}
+        setFooterColor={setFooterColor}
+      /> */}
     </>
   );
 };

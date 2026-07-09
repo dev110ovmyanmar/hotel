@@ -461,9 +461,9 @@ const RatePlanForm = ({
                   message: "Please select at least one channel",
                 },
               ]}
-              className={isView ? "custom-disabled-checkbox" : ""}
+              className={isView ? "pointer-events-none" : ""}
             >
-              <Checkbox.Group options={channelOptions} disabled={isView} />
+              <Checkbox.Group options={channelOptions}  />
             </Form.Item>
 
             <Form.Item label="Description" name="description">
@@ -497,13 +497,13 @@ const RatePlanForm = ({
                 {isAdd && (
                   <div className="mb-3">
                     <div className="mb-2">
-                      <span className="text-gray-900 text-[16px] font-semibold">
+                      <span className="text-gray-900 text-[16px] font-semibold dark:text-gray-100">
                         Let's map room types to this rate plan
                       </span>
                     </div>
 
                     <div>
-                      <span className="text-gray-900 text-[15px] italic">
+                      <span className="text-gray-900 text-[15px] italic dark:text-gray-100">
                         Map the following rate plans
                       </span>
                     </div>

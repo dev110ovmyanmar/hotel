@@ -2,7 +2,7 @@ import { DownOutlined, PlusOutlined } from "@ant-design/icons";
 import { IoPrintOutline } from "react-icons/io5";
 import React, { useState } from "react";
 import { Button, Drawer, Dropdown, Form, Select } from "antd";
-import FoodBeverageOrder from "../FolioOperationsForms/FoodBeverageOrder.JSX";
+import FoodBeverageOrder from "../FolioOperationsForms/FoodBeverageOrder";
 import AddNewServiceOrderForm from "../FolioOperationsForms/AddNewServiceOrderForm";
 import AddNewFacilityOrderForm from "../FolioOperationsForms/AddNewFacilityOrderForm";
 import AddPaymentForm from "../../../../../BookingDetail/Components/BookingDetailForms/AddPaymentForm";
@@ -71,7 +71,7 @@ const FolioOperationsButtons = ({ data, folioUuid, reservationId, onPrintAllFoli
           Folio Operation
         </Button> */}
 
-        <Dropdown
+        {/* <Dropdown
           menu={{ items: addOrder }}
           trigger={["click"]}
           placement="bottomRight"
@@ -79,7 +79,7 @@ const FolioOperationsButtons = ({ data, folioUuid, reservationId, onPrintAllFoli
           <Button className="custom-blue-btn flex items-center gap-1">
             Add Orders <DownOutlined />
           </Button>
-        </Dropdown>
+        </Dropdown> */}
 
         <Button
           className="custom-blue-btn"

@@ -1,4 +1,5 @@
 import React from 'react';
+import { darkModeStyle } from '../../../utils';
 
 /**
  * CalendarFooter
@@ -9,6 +10,7 @@ import React from 'react';
  *   CELL_WIDTH    – number (px)
  *   SIDEBAR_WIDTH – number (px)
  */
+
 const CalendarFooter = ({ dailyStats, daysMeta, CELL_WIDTH, SIDEBAR_WIDTH }) => (
     <tfoot className="sticky bottom-0 z-[55] bg-white border-t-2 border-gray-200">
         {/* Total Available row */}
@@ -16,7 +18,7 @@ const CalendarFooter = ({ dailyStats, daysMeta, CELL_WIDTH, SIDEBAR_WIDTH }) => 
         // className="bg-gray-50/80"
         >
             <td
-                className="sticky left-0 z-40 bg-[#1677FF] border-b border-r border-[#dee2e6] p-3 font-bold"
+                className={`sticky left-0 z-40 bg-[#1677FF] border-b border-r border-[#dee2e6] p-3 font-bol ${darkModeStyle}`}
                 style={{ width: SIDEBAR_WIDTH, minWidth: SIDEBAR_WIDTH }}
             >
                 <span className="text-[12px] uppercase !text-[#FFFFFF] font-bold">Total Available</span>
@@ -24,7 +26,7 @@ const CalendarFooter = ({ dailyStats, daysMeta, CELL_WIDTH, SIDEBAR_WIDTH }) => 
             {dailyStats.map((stat, i) => (
                 <td
                     key={i}
-                    className={`border-b border-[#dee2e6] text-center p-2 font-bold bg-gray-200 ${daysMeta[i].cellClass}`}
+                    className={`border-b border-[#dee2e6] text-center p-2 font-bold bg-gray-200 ${daysMeta[i].cellClass} ${darkModeStyle}`}
                     style={{ width: CELL_WIDTH, minWidth: CELL_WIDTH }}
                 >
                     <div className={`text-sm ${stat.available === 0 ? 'text-red-500' : 'text-green-600'}`}>
@@ -38,7 +40,7 @@ const CalendarFooter = ({ dailyStats, daysMeta, CELL_WIDTH, SIDEBAR_WIDTH }) => 
         <tr className="bg-gray-50/80">
             {/* Header Column */}
             <td
-                className="sticky left-0 z-40 bg-[#1677FF] border-b border-r border-[#dee2e6] p-3"
+                className={`sticky left-0 z-40 bg-[#1677FF] border-b border-r border-[#dee2e6] p-3 ${darkModeStyle}`}
                 style={{ width: SIDEBAR_WIDTH, minWidth: SIDEBAR_WIDTH }}
             >
                 <span className="text-[12px] uppercase !text-[#FFFFFF] font-bold">Occupancy %</span>
@@ -46,11 +48,11 @@ const CalendarFooter = ({ dailyStats, daysMeta, CELL_WIDTH, SIDEBAR_WIDTH }) => 
             {dailyStats.map((stat, i) => (
                 <td
                     key={i}
-                    className={`border-b border-[#dee2e6] text-center p-2 bg-gray-200 text-white ${daysMeta[i].cellClass}`}
+                    className={`border-b border-[#dee2e6] text-center p-2 bg-gray-200 text-white ${daysMeta[i].cellClass} ${darkModeStyle}`}
                     style={{ width: CELL_WIDTH, minWidth: CELL_WIDTH }}
                 >
                     <div className="flex flex-col items-center">
-                        <div className="text-[12px] font-bold text-gray-700">{stat.occupancy}%</div>
+                        <div className="text-[12px] font-bold text-gray-700 dark:text-gray-200">{stat.occupancy}%</div>
                         <div className="w-full bg-gray-200 h-1 mt-1 rounded-full overflow-hidden">
                             <div
                                 className={`h-full ${stat.occupancy > 80 ? 'bg-amber-500' : 'bg-blue-500'}`}

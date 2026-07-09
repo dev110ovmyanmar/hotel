@@ -295,13 +295,21 @@ const ServicePackageForm = ({
             <Form.Item
               label="Status"
               name="status"
-              rules={[{ required: true, message: "Status is Required" }]}
+              rules={[{ required: true }]}
+              getValueProps={(value) => ({
+                value: isView
+                  ? statusOptions.find((item) => item.value === value)?.label
+                  : value,
+              })}
             >
-              <Select
-                options={statusOptions}
-                placeholder="Select Status"
-                disabled={isView}
-              />
+              {isView ? (
+                <Input readOnly={isView} />
+              ) : (
+                <Select
+                  options={statusOptions}
+                  open={isView ? false : undefined}
+                />
+              )}
             </Form.Item>
           </Form>
         )}

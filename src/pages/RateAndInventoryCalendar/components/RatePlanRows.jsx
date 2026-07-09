@@ -2,6 +2,7 @@ import React from 'react';
 import { ExclamationCircleOutlined, UserOutlined } from '@ant-design/icons';
 import { Baby, PersonStanding } from 'lucide-react';
 import { Tooltip } from 'antd';
+import { darkModeStyle } from '../../../utils';
 
 /**
  * RatePlanRows
@@ -18,23 +19,26 @@ import { Tooltip } from 'antd';
  *   getRateData           – (rtId, ratePlanId, dateStr) => rateData | null
  *   handleRestrictionEditOpen – (restriction, rp, rt, dateStr) => void
  */
+
+
+
 const RatePlanRows = ({ rp, rt, daysMeta, getRateData, handleRestrictionEditOpen }) => (
     <React.Fragment key={rp.id}>
         {/* Rate Plan Name Header */}
         <tr className="bg-[#f0f5ff]">
-            <td className="sticky left-0 z-30 bg-[#f0f5ff] border-b border-r border-[#dee2e6] px-4 py-1" colSpan={1}>
-                <div className="text-[12px] font-semibold text-[#072F60] pl-2 border-l-2 border-[#072F60]">
+            <td className={`sticky left-0 z-30 bg-[#f0f5ff] border-b border-r border-[#dee2e6] px-4 py-1 ${darkModeStyle}`} colSpan={1}>
+                <div className="text-[12px] font-semibold text-[#072F60] pl-2 border-l-2 border-[#072F60] dark:text-blue-400">
                     {rp.name}
                 </div>
             </td>
             {daysMeta.map(({ cellClass }, dayIdx) => (
-                <td key={dayIdx} className={`border-b border-[#dee2e6] ${cellClass}`} />
+                <td key={dayIdx} className={`border-b border-[#dee2e6] ${cellClass} ${darkModeStyle}`} />
             ))}
         </tr>
 
         {/* Price Row */}
         <tr className="h-8 hover:bg-gray-50">
-            <td className="sticky left-0 z-30 bg-[#f9f9f9] border-b border-r border-[#dee2e6] px-4 py-1">
+            <td className={`sticky left-0 z-30 bg-[#f9f9f9] border-b border-r border-[#dee2e6] px-4 py-1 ${darkModeStyle}`}>
                 <div className="text-[12px] text-gray-500 pl-4">Price</div>
             </td>
             {daysMeta.map(({ dateStr, cellClass, isPast }, dayIdx) => {
@@ -47,7 +51,9 @@ const RatePlanRows = ({ rp, rt, daysMeta, getRateData, handleRestrictionEditOpen
                     <td
                         key={dayIdx}
                         className={`border-b border-[#dee2e6] text-center p-1 ${cellClass} cursor-pointer ${hasStopSellRatePlan && !isPast ? 'bg-red-100' : 'bg-green-100'
-                            }`}
+                            }
+                           ${darkModeStyle} 
+                            `}
                         onClick={() =>
                             handleRestrictionEditOpen(
                                 rateData?.restriction ?? null,
@@ -79,7 +85,7 @@ const RatePlanRows = ({ rp, rt, daysMeta, getRateData, handleRestrictionEditOpen
 
         {/* Extra Bed Row */}
         <tr className="h-8 hover:bg-gray-50">
-            <td className="sticky left-0 z-30 bg-[#f9f9f9] border-b border-r border-[#dee2e6] px-4 py-1">
+            <td className={`sticky left-0 z-30 bg-[#f9f9f9] border-b border-r border-[#dee2e6] px-4 py-1 ${darkModeStyle}`}>
                 <div className="text-[12px] text-gray-500 pl-4">Extra Bed</div>
             </td>
             {daysMeta.map(({ dateStr, cellClass }, dayIdx) => {
@@ -87,7 +93,7 @@ const RatePlanRows = ({ rp, rt, daysMeta, getRateData, handleRestrictionEditOpen
                 const hasAdult = extraBed?.adult != null;
                 const hasChild = extraBed?.child != null;
                 return (
-                    <td key={dayIdx} className={`border-b border-[#dee2e6] text-center p-1 ${cellClass}`}>
+                    <td key={dayIdx} className={`border-b border-[#dee2e6] text-center p-1 ${cellClass} ${darkModeStyle}`}>
                         {hasAdult || hasChild ? (
                             <div className="flex flex-col items-center gap-0.5">
                                 {hasAdult && (
@@ -113,7 +119,7 @@ const RatePlanRows = ({ rp, rt, daysMeta, getRateData, handleRestrictionEditOpen
 
         {/* Restriction Row */}
         <tr className="h-8 hover:bg-gray-50">
-            <td className="sticky left-0 z-30 bg-[#f9f9f9] border-b border-r border-[#dee2e6] px-4 py-1">
+            <td className={`sticky left-0 z-30 bg-[#f9f9f9] border-b border-r border-[#dee2e6] px-4 py-1 ${darkModeStyle}`}>
                 <div className="text-[12px] text-gray-500 pl-4">Room Restriction</div>
             </td>
             {daysMeta.map(({ dateStr, cellClass }, dayIdx) => {
@@ -130,7 +136,7 @@ const RatePlanRows = ({ rp, rt, daysMeta, getRateData, handleRestrictionEditOpen
                 const closureTags = [r?.cta && 'CTA', r?.ctd && 'CTD'].filter(Boolean);
                 const hasAnyTag = stopSellTag || stayTag || closureTags.length > 0;
                 return (
-                    <td key={dayIdx} className={`border-b border-[#dee2e6] text-center p-1 ${cellClass}`}>
+                    <td key={dayIdx} className={`border-b border-[#dee2e6] text-center p-1 ${cellClass} ${darkModeStyle}`}>
                         {hasAnyTag ? (
                             <div className="flex flex-col gap-0.5 items-center">
                                 {stopSellTag && (

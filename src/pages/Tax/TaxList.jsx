@@ -4,8 +4,8 @@ import useApiQuery from "../../hooks/useApiQuery";
 import ListHeader from "../../component/ListHeader/ListHeader";
 import TaxTable from "./Components/TaxTable";
 import TaxForm from "./Components/TaxForms/TaxForm";
-import { fetchTax } from "../../api/TaxApi";
 import { PERMISSIONS } from "../../variables/permission";
+import { fetchTax } from "../../api/taxApi";
 
 const TaxList = () => {
   const [keyword, setKeyword] = useState("");

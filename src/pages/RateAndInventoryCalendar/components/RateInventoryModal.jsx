@@ -1,6 +1,7 @@
 import React from 'react';
 import { Modal, Switch, Divider } from 'antd';
 import { CloseOutlined, EditOutlined, EyeOutlined } from '@ant-design/icons';
+import { darkModeStyle } from '../../../utils';
 
 /**
  * RateInventoryModal
@@ -13,6 +14,8 @@ import { CloseOutlined, EditOutlined, EyeOutlined } from '@ant-design/icons';
  *   handleStopSellToggle    – (rtId, dateStr, stopSellValue, availUuid) => void
  *   handleRestrictionEditOpen – (restriction, rp, rt, dateStr) => void
  */
+
+
 const RateInventoryModal = ({
     open,
     onClose,
@@ -91,7 +94,7 @@ const RateInventoryModal = ({
                         ].filter(Boolean)
                         : [];
                     return (
-                        <div key={rp.id} className="bg-gray-50 rounded p-2 flex flex-col gap-1">
+                        <div key={rp.id} className={`bg-gray-50 rounded p-2 flex flex-col gap-1 ${darkModeStyle}`}>
                             <div className="flex justify-between items-center">
                                 <span className="font-semibold text-[12px]">{rp.name}</span>
                                 <div className="flex items-center gap-2">

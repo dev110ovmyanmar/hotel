@@ -111,6 +111,7 @@ const GuestUploadDrawer = ({ open, onClose, selectedRow }) => {
   const handleDeleteConfirm = (doc) => {
     Modal.confirm({
       title: "Are you sure?",
+      icon: null,
       content: "This document will be permanently deleted.",
       okText: "Delete",
       okType: "danger",
