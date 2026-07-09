@@ -3,6 +3,7 @@ import { Switch, Input, Tooltip } from 'antd';
 import { ExclamationCircleOutlined, UpOutlined, DownOutlined, EyeOutlined } from '@ant-design/icons';
 import RatePlanRows from './RatePlanRows';
 import RoomRow from './RoomRow';
+import { darkModeStyle } from '../../../utils';
 
 const CELL_WIDTH = 100;
 
@@ -36,11 +37,7 @@ const CELL_WIDTH = 100;
  *   roomDateMap             – { [roomId]: { [dateStr]: { isBooked, isAvailable } } }
  */
 
-const darkModeStyle = `
-    dark:!bg-[#141414] 
-    dark:!border-[#dee2e6] 
-    dark:!text-gray-200
-`;
+
 
 const RoomTypeGroup = ({
     rt,

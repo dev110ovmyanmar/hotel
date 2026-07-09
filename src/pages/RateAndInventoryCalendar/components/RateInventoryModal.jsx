@@ -1,6 +1,7 @@
 import React from 'react';
 import { Modal, Switch, Divider } from 'antd';
 import { CloseOutlined, EditOutlined, EyeOutlined } from '@ant-design/icons';
+import { darkModeStyle } from '../../../utils';
 
 /**
  * RateInventoryModal
@@ -14,11 +15,7 @@ import { CloseOutlined, EditOutlined, EyeOutlined } from '@ant-design/icons';
  *   handleRestrictionEditOpen – (restriction, rp, rt, dateStr) => void
  */
 
-const darkModeStyle = `
-    dark:!bg-[#141414] 
-    dark:!border-[#dee2e6] 
-    dark:!text-gray-200
-`;
+
 const RateInventoryModal = ({
     open,
     onClose,

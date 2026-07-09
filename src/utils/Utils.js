@@ -177,4 +177,29 @@ export const validatePhoneNumber = (_, value) => {
   return Promise.resolve();
 };
 
+// For Rate and Inventory Calendar's component
+export const darkModeStyle = `
+    dark:!bg-[#141414] 
+    dark:!border-[#dee2e6] 
+    dark:!text-gray-200
+`;
 
+// Agency Contract and Company Contract
+export const partnerDarkModeStyle = `
+    dark:border dark:border-gray-600 dark:!bg-gray-900 
+    dark:text-gray-100
+`;
+
+// Maintenance Request and House Keeping
+export const houseKeepingAndMaintenanceRequestDarkMode = `
+        dark:bg-[#141414]
+        hover:bg-blue-50 
+        hover:text-blue-500
+    `;
+
+
+// Room and Room Type Form
+export const roomAndRoomTypeDarkMode = `
+    dark:border dark:border-gray-200 dark:bg-[#141414]!
+    dark:text-gray-100
+  `;

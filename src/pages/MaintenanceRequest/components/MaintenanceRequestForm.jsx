@@ -15,6 +15,7 @@ import {
     adminMeta,
 } from "../../../api/maintenanceRequestApi";
 import MaintenanceTaskAssignForm from "./MaintenanceTaskAssignForm";
+import { houseKeepingAndMaintenanceRequestDarkMode } from "../../../utils";
 
 const { TextArea } = Input;
 
@@ -178,12 +179,6 @@ const MaintenanceRequestForm = ({
         }
 
     };
-
-     const darkModeStyle = `
-        dark:bg-[#141414]
-        hover:bg-blue-50 
-        hover:text-blue-500
-    `
 
     return (
         <>
@@ -429,7 +424,7 @@ const MaintenanceRequestForm = ({
                                         e.stopPropagation();
                                         onViewTaskAssign(detail);
                                     }}
-                                    className={`flex items-center gap-1.5 px-2 py-1 bg-gray-50 hover:bg-blue-50 hover:text-blue-600 rounded text-[12px] border border-gray-100 hover:border-blue-200 transition-all ${darkModeStyle}`}
+                                    className={`flex items-center gap-1.5 px-2 py-1 bg-gray-50 hover:bg-blue-50 hover:text-blue-600 rounded text-[12px] border border-gray-100 hover:border-blue-200 transition-all ${houseKeepingAndMaintenanceRequestDarkMode}`}
                                 >
                                     <TeamOutlined /> Staff Assigns
                                 </button>

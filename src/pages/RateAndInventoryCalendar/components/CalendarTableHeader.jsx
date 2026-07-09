@@ -1,4 +1,5 @@
 import React from 'react';
+import { darkModeStyle } from '../../../utils';
 
 /**
  * CalendarTableHeader
@@ -9,11 +10,7 @@ import React from 'react';
  *   SIDEBAR_WIDTH – number (px)
  */
 
-const darkModeStyle = `
-    dark:!bg-[#141414] 
-    dark:!border-[#dee2e6] 
-    dark:!text-gray-200
-`;
+
 
 
 const CalendarTableHeader = ({ daysMeta, CELL_WIDTH, SIDEBAR_WIDTH }) => (

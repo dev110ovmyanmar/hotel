@@ -35,6 +35,7 @@ import usePermission from "../../../../hooks/usePermission";
 import { hasIn } from "lodash";
 import { deleteImageUpload } from "../../../../api/deleteImageApi";
 import { queryClient } from "../../../../app/queryClient";
+import { roomAndRoomTypeDarkMode } from "../../../../utils";
 
 const RoomTypeForm = ({
   mode,
@@ -233,11 +234,6 @@ const RoomTypeForm = ({
     mutationFn: deleteImageUpload,
     invalidateKeys: [["roomTypeData", { uuid: selectedData?.uuid }]],
   });
-
-   const darkModeStyle = `
-    dark:border dark:border-gray-200 dark:bg-[#141414]!
-    dark:text-gray-100
-  `;
 
   return (
     <div>
@@ -513,7 +509,7 @@ const RoomTypeForm = ({
             )}
 
             {!isAdd && (
-              <Card className={`mt-5 shadow-sm  border border-gray-100 bg-gray-100! ${darkModeStyle}`}>
+              <Card className={`mt-5 shadow-sm  border border-gray-100 bg-gray-100! ${roomAndRoomTypeDarkMode}`}>
                 <div className="flex justify-between items-center text-base font-semibold mb-5">
                   <span>Room Type Amenity </span>
 
