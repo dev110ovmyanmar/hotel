@@ -289,7 +289,7 @@ const RoomInventoryTable = ({
 
       <Modal
         open={confirmOpen}
-        title={"Confirm Stop Selling"}
+        title={"Confirm Stop Selling ?"}
         okText="Confirm"
         cancelText="Cancel"
         confirmLoading={updateStopSelling.isLoading}
