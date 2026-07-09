@@ -46,7 +46,6 @@ import RoomInformationDetailsForm from "./RoomInformationForms/RoomInformationDe
 import AddExtraAmenities from "./Extra/AddExtraAmenities";
 import { useEffect } from "react";
 
-
 const RoomInformationTable = ({
   data,
   reservation,
@@ -130,8 +129,6 @@ const RoomInformationTable = ({
   const handleAction = (key, record) => {
     setSelectedData(record);
     setActiveModal(key);
-
-    console.log(record, "RecordInHandleAction");
 
     // 1. Keep them as objects, not formatted strings
     const checkinDate = dayjs().startOf("day");
@@ -337,8 +334,8 @@ const RoomInformationTable = ({
             onClick: () => {
               setSelectedData(record);
               setExtraBedOpen(true);
-            }
-          }
+            },
+          },
         ];
 
         if (record?.amendStatus) {
@@ -618,7 +615,7 @@ const RoomInformationTable = ({
           isOpen={true}
           onClose={closeModal}
           record={selectedData} // Direct row object mapping
-        // refetch={refetch}
+          // refetch={refetch}
         />
       )}
 
@@ -707,13 +704,11 @@ const RoomInformationTable = ({
         onCancel={() => setCompOpen(false)}
       />
 
-
       <AddExtraAmenities
         isOpen={addExtraBedOpen}
         onClose={() => setExtraBedOpen(false)}
         record={selectedData}
       />
-
     </div>
   );
 };

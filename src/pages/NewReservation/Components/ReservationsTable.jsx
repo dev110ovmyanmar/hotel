@@ -50,7 +50,7 @@ const ReservationsTable = ({
       key: "reservationNo",
       align: "center",
       width: 140,
-      render: (text) => <span className="text-indigo-800">{text}</span>,
+      render: (text) => <span className="text-indigo-700">{text}</span>,
     },
 
     {
@@ -62,7 +62,7 @@ const ReservationsTable = ({
         const roomNo = record?.room?.roomNo;
 
         return roomNo ? (
-          <span className="font-medium text-gray-800">{roomNo}</span>
+          <span className="font-medium">{roomNo}</span>
         ) : (
           <span
             className="text-[#1890ff] font-medium cursor-pointer hover:text-indigo-800"
@@ -78,7 +78,7 @@ const ReservationsTable = ({
       dataIndex: ["roomType", "name"],
       key: "roomType",
       align: "center",
-      width: 100,
+      width: 120,
       // render: (text) => <span className="text-indigo-800">{text}</span>,
     },
 
@@ -91,33 +91,58 @@ const ReservationsTable = ({
     },
 
     {
-      title: "Stay Period",
-      align: "center",
-      render: (_, record) => {
-        const arrival = record.checkinDate
-          ? dayjs(record.checkinDate).format("YYYY-MM-DD")
-          : "-";
-        const departure = record.checkoutDate
-          ? dayjs(record.checkoutDate).format("YYYY-MM-DD")
-          : "-";
+  title: "Stay Period",
+  align: "center",
+  render: (_, record) => {
+    const arrival = record.checkinDate
+      ? dayjs(record.checkinDate).format("YYYY-MM-DD")
+      : "-";
+    const departure = record.checkoutDate
+      ? dayjs(record.checkoutDate).format("YYYY-MM-DD")
+      : "-";
+    const totalNight = record.totalNight ?? 0;
 
-        return (
-          <div className="flex flex-col items-center justify-center text-sm gap-0.5">
-            <span className="text-gray-700">{arrival}</span>
-            <span className="text-xs text-gray-400 font-light">to</span>
-            <span className="text-gray-700">{departure}</span>
-          </div>
-        );
-      },
-    },
+    return (
+      <div className="flex flex-col items-center justify-center text-sm gap-0.5">
+        <span>{arrival}</span>
+        <span className="text-xs font-light text-gray-500 my-0.5">
+         ( <span className="font-medium text-black mr-1">{totalNight} - </span>
+          {totalNight === 1 ? "night" : "nights"} ) 
+        </span>
+        <span>{departure}</span>
+      </div>
+    );
+  },
+},
 
-    {
-      title: "Night",
-      dataIndex: "totalNight",
-      key: "totalNight",
-      align: "center",
-      width: 68,
-    },
+    // {
+    //   title: "Stay Period",
+    //   align: "center",
+    //   render: (_, record) => {
+    //     const arrival = record.checkinDate
+    //       ? dayjs(record.checkinDate).format("YYYY-MM-DD")
+    //       : "-";
+    //     const departure = record.checkoutDate
+    //       ? dayjs(record.checkoutDate).format("YYYY-MM-DD")
+    //       : "-";
+
+    //     return (
+    //       <div className="flex flex-col items-center justify-center text-sm gap-0.5">
+    //         <span>{arrival}</span>
+    //         <span className="text-xs font-light">to</span>
+    //         <span>{departure}</span>
+    //       </div>
+    //     );
+    //   },
+    // },
+
+    // {
+    //   title: "Night",
+    //   dataIndex: "totalNight",
+    //   key: "totalNight",
+    //   align: "center",
+    //   width: 68,
+    // },
     {
       title: "Contact & Guests",
       key: "contact",
@@ -157,7 +182,7 @@ const ReservationsTable = ({
       render: (value) => (
         <div className="flex justify-end items-center gap-1">
           <PriceTag value={value} />
-          <span className="text-gray-500 font-medium">MMK</span>
+          <span className="font-medium">MMK</span>
         </div>
       ),
     },
