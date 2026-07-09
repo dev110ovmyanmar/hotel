@@ -91,12 +91,12 @@ const BookingDetailButton = ({ data }) => {
         break;
     }
   };
-console.log(data?.reservation?.uuid,"data")
+
   return (
     <div>
       <div className="text-sm mb-6 mt-1.5">
         Reservation No:
-        <strong className="text-[#286399] ">
+        <strong className="text-indigo-700">
           {" "}
           {reservation?.reservation?.reservationNo}
         </strong>

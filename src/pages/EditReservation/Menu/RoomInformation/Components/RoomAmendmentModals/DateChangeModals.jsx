@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Modal, DatePicker, Form, Input, Descriptions, Badge, Button, Divider } from 'antd';
 import dayjs from 'dayjs';
 import { ArrowRightOutlined, CheckCircleOutlined } from '@ant-design/icons';
+import { textColorDarkMode, textWhiteInDarkStyle } from '../../../../../../utils';
 
 export default function DateChangeModal({
     isOpen,
@@ -95,7 +96,7 @@ export default function DateChangeModal({
         >
             {/* Context header string linked to your JSON payload structure */}
             <div style={{ marginBottom: 16, color: '#64748b', fontSize: '13px', fontWeight: 500 }}>
-                {reservationNo} — <span style={{ color: '#1e293b' }}>{guestName}</span>
+                {reservationNo} — <span style={{ color: '#1e293b' }} className={textWhiteInDarkStyle}>{guestName}</span>
             </div>
 
             <Divider style={{ margin: '12px 0' }} />
@@ -142,7 +143,7 @@ export default function DateChangeModal({
                                 {originalCheckin.format('DD MMM YYYY')}
                             </span>
                             <ArrowRightOutlined style={{ margin: '0 10px', color: '#1677ff' }} />
-                            <strong style={{ color: '#1e293b' }}>
+                            <strong style={{ color: '#1e293b' }} className={textColorDarkMode}>
                                 {pendingValues.checkin.format('DD MMM YYYY')}
                             </strong>
                         </Descriptions.Item>
@@ -152,7 +153,7 @@ export default function DateChangeModal({
                                 {originalCheckout.format('DD MMM YYYY')}
                             </span>
                             <ArrowRightOutlined style={{ margin: '0 10px', color: '#1677ff' }} />
-                            <strong style={{ color: '#1e293b' }}>
+                            <strong style={{ color: '#1e293b' }} className={textColorDarkMode}>
                                 {pendingValues.checkout.format('DD MMM YYYY')}
                             </strong>
                         </Descriptions.Item>

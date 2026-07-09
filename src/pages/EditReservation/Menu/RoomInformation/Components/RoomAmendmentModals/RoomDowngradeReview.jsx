@@ -1,6 +1,7 @@
 import React from 'react';
 import { Descriptions, Table } from 'antd';
 import { SwapRightOutlined } from '@ant-design/icons';
+import { upgradeAndDownRoomDarkMode } from '../../../../../../utils';
 
 
 const RoomDowngradeReview = ({
@@ -68,7 +69,7 @@ const RoomDowngradeReview = ({
             key: "downgrade",
             align:"center",
             render: (text, record) => (
-                <div className={`${record.color} px-2 py-1 rounded `}>
+                <div className={`${record.color} px-2 py-1 rounded ${upgradeAndDownRoomDarkMode}`}>
                     {text}
                 </div>
             ),

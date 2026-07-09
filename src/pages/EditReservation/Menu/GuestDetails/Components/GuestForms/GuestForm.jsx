@@ -15,7 +15,7 @@ import {
   AutoComplete,
 } from "antd";
 import dayjs from "dayjs";
-import { validatePhoneNumber } from "../../../../../../utils";
+import { textColorDarkMode, textWhiteInDarkStyle, validatePhoneNumber } from "../../../../../../utils";
 import {
   reservationGuestDetails,
   reservationGuestUpsert,
@@ -277,6 +277,8 @@ const isChild = values.isAdult === 0;
     });
   };
 
+  
+
   return (
     <Drawer
       open={drawerOpen}
@@ -343,20 +345,20 @@ const isChild = values.isAdult === 0;
             <Row gutter={16}>
               <Col span={12}>
                 <Radio value={1} className="align-top">
-                  <span className="block font-medium text-slate-800">
+                  <span className={`block font-medium text-slate-800 ${textColorDarkMode}`}>
                     Save Guest Profile
                   </span>
-                  <span className="block text-xs text-slate-500 whitespace-normal">
+                  <span className={`block text-xs text-slate-500 whitespace-normal ${textWhiteInDarkStyle}`}>
                     For guests aged 10 and above
                   </span>
                 </Radio>
               </Col>
               <Col span={12}>
                 <Radio value={0} className="align-top">
-                  <span className="block font-medium text-slate-800">
+                  <span className={`block font-medium text-slate-800 ${textColorDarkMode}`}>
                     Child Guest
                   </span>
-                  <span className="block text-xs text-slate-500 whitespace-normal">
+                  <span className={`block text-xs text-slate-500 whitespace-normal ${textWhiteInDarkStyle}`}>
                     Temporary local record setup
                   </span>
                 </Radio>
@@ -377,12 +379,12 @@ const isChild = values.isAdult === 0;
             <Row gutter={16}>
               <Col span={12}>
                 <Radio value={1}>
-                  <span className="font-medium text-slate-800">Main Guest</span>
+                  <span className={`font-medium text-slate-800 ${textColorDarkMode}`}>Main Guest</span>
                 </Radio>
               </Col>
               <Col span={12}>
                 <Radio value={0}>
-                  <span className="font-medium text-slate-800">
+                  <span className={`font-medium text-slate-800 ${textColorDarkMode}`}>
                     Share Guest
                   </span>
                 </Radio>

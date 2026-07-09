@@ -247,7 +247,7 @@ const ServiceAddOnForm = ({
           <InputNumber
             {...sharedProps}
             placeholder="Outlined"
-            style={{ width: "100%" }}
+            style={{ width: "480%" }}
           />
         </Form.Item>
 

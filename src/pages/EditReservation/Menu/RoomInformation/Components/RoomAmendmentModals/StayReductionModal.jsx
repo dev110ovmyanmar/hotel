@@ -5,6 +5,7 @@ import { ArrowRightOutlined, CheckCircleOutlined, PlusOutlined, MinusOutlined, W
 import { createRoomAmendment } from '../../../../../../api/roomAmendmentApi';
 import { useApiMutation } from '../../../../../../hooks/useApiMutation';
 import Toast from '../../../../../../component/Toast/Toast';
+import { borderDarkMode, darkModeStyle, textColorDarkMode, textWhiteInDarkStyle } from '../../../../../../utils';
 
 export default function StayReductionModal({
     isOpen,
@@ -119,7 +120,7 @@ export default function StayReductionModal({
         >
             {/* Context Target Ribbon Header */}
             <div className="mb-4 text-slate-500 text-sm font-medium">
-                {reservationNo} — <span className="text-slate-800">{guestName}</span>
+                {reservationNo} — <span className={`text-slate-800 ${textWhiteInDarkStyle}`}>{guestName}</span>
             </div>
 
             <Divider className="my-3" />
@@ -143,7 +144,7 @@ export default function StayReductionModal({
                         </div>
                     ) : (
                         // Standard Interactive Decrementer
-                        <div className="bg-slate-50 p-4 rounded-lg mb-5">
+                        <div className={`bg-slate-50 p-4 rounded-lg mb-5 ${darkModeStyle}`}>
                             <div className="flex justify-between items-center mb-2">
                                 <label className="block text-sm font-medium text-slate-600">
                                     Reduce Stay Duration By
@@ -179,7 +180,7 @@ export default function StayReductionModal({
                     )}
 
                     {/* Timeline Data Footer */}
-                    <div className="bg-slate-50 p-3 px-4 rounded-lg mb-5 border border-slate-200">
+                    <div className={`bg-slate-50 p-3 px-4 rounded-lg mb-5 border border-slate-200 ${darkModeStyle} ${borderDarkMode}`}>
                         <div className="text-xs text-slate-500">
                             Current Checkout <strong className="text-slate-700">{originalCheckout.isValid() ? originalCheckout.format('DD MMM YYYY') : '-'}</strong>
                         </div>
@@ -212,7 +213,7 @@ export default function StayReductionModal({
                                 {originalCheckout.isValid() ? originalCheckout.format('DD MMM YYYY') : '-'}
                             </span>
                             <ArrowRightOutlined className="mx-2.5 text-red-500" />
-                            <strong className="text-slate-800">
+                            <strong className={`text-slate-800 ${textColorDarkMode}`}>
                                 {newCheckoutDate.isValid() ? newCheckoutDate.format('DD MMM YYYY') : '-'}
                             </strong>
                         </Descriptions.Item>

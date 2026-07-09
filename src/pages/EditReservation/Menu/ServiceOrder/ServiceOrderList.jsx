@@ -79,7 +79,7 @@ const ServiceOrderList = () => {
         <ReservationListHeader
           reservationId={data?.reservation?.reservationNo}
           onAddreservation={handleAddService}
-          addButtonText="Add Service"
+          addButtonText="Add Service Order"
         />
       </div>
 

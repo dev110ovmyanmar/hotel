@@ -199,7 +199,7 @@ const ComplimentaryUpdateModal = ({
             <div className="text-slate-800 font-sans">
                 <div className="mb-6 flex flex-col gap-3">
                     <div>
-                        <h2 className="text-base font-bold text-slate-900">Complimentary Offer</h2>
+                        <h2 className="text-base font-bold text-slate-900 dark:!text-gray-200">Complimentary Offer</h2>
                     </div>
 
                     {Array.isArray(complimentaryStatuses) && complimentaryStatuses.length > 0 && (
