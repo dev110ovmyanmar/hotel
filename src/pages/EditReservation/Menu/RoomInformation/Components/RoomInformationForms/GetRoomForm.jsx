@@ -9,6 +9,7 @@ import { LIMITS } from "../../../../../../variables/constants";
 import useApiQuery from "../../../../../../hooks/useApiQuery";
 import { useApiMutation } from "../../../../../../hooks/useApiMutation";
 import Toast from "../../../../../../component/Toast/Toast";
+import { textColorDarkMode, textWhiteInDarkStyle } from "../../../../../../utils";
 
 const GetRoomForm = ({ selectedData, onSelectRoom, onClose, floorUuid }) => {
   const statusColorMap = {
@@ -79,6 +80,7 @@ const GetRoomForm = ({ selectedData, onSelectRoom, onClose, floorUuid }) => {
       onOk: () => {
         executeRoomAssignment(room);
       },
+      rootClassName:'dark-confirm-modal'
     });
   };
 
@@ -98,10 +100,10 @@ const GetRoomForm = ({ selectedData, onSelectRoom, onClose, floorUuid }) => {
             className="flex justify-between items-center p-3 border border-gray-100 shadow-sm rounded-lg hover:border-blue-300 transition-all bg-white"
           >
             <div className="flex flex-col">
-              <span className="font-bold text-gray-800 text-sm">
+              <span className={`font-bold text-gray-800 text-sm ${textColorDarkMode}`}>
                 Room {room.roomNo}
               </span>
-              <span className="text-[11px] text-gray-500">
+              <span className={`text-[11px] text-gray-500 ${textWhiteInDarkStyle}`}>
                 {room.roomType?.name}
               </span>
             </div>

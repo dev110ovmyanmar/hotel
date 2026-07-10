@@ -766,3 +766,20 @@ span .ant-upload {
   border-bottom: 1px solid rgb(77, 74, 74);
   background-color: #1f1f1f;
 }
+
+.dark .minus-icon .anticon-minus{
+  color:rgb(134, 129, 129)
+}
+
+.dark .ant-form-item-control-input-content input ,
+.dark .ant-form-item-control-input-content div,
+.dark .ant-form-item-control-input-content .ant-picker-input input
+{
+  color: #ffffff;
+}
+
+.dark .ant-form-item-control-input-content input::placeholder ,
+.dark .ant-form-item-control-input-content div,
+.dark .ant-form-item-control-input-content .ant-picker-input input::placeholder {
+  color: #878d97 !important; /* Tailwind gray-400 */
+}
