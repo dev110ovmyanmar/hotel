@@ -12,6 +12,7 @@ import usePermission from "../../../hooks/usePermission";
 import { PERMISSIONS } from "../../../variables/permission";
 import { TableColumns } from "../../../component/TableColumns/TableColumns";
 import RoomRateForm from "../../RoomRate/Components/RoomRateForm/RoomRateForm";
+import { textGrayInDarkStyle, textWhiteInDarkStyle } from "../../../utils";
 
 export const PriceTag = ({ value, currency }) => {
   // 1. Convert to a number just in case it's passed as a string
@@ -428,6 +429,7 @@ const RatePlanTable = ({
                     marginBottom: "12px",
                     color: "#262626",
                   }}
+                  className={textWhiteInDarkStyle}
                 >
                   Weekday Prices
                 </p>
@@ -437,6 +439,7 @@ const RatePlanTable = ({
                     flexDirection: "column",
                     gap: "8px",
                   }}
+                  
                 >
                   {getWeekdayList(selectedWeekDayData.weekdays).map((day) => (
                     <div
@@ -446,8 +449,9 @@ const RatePlanTable = ({
                         justifyContent: "space-between",
                         fontSize: "13px",
                       }}
+                      
                     >
-                      <span style={{ color: "#595959" }}>{day.label}</span>
+                      <span style={{ color: "#595959" }} className={textGrayInDarkStyle}>{day.label}</span>
                       <span style={{ fontWeight: 500 }}>
                         <PriceTag value={day.val} currency="MMK" />
                       </span>
