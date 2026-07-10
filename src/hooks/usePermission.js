@@ -9,6 +9,12 @@ const usePermission = () => {
   const { permissions } = useSelector(authSelector);
 
   const hasPermission = (permission) => {
+    const roleCode = loadState(LOCAL_STORAGE_KEYS.loginAdminDetails)?.role?.code;
+
+    if (roleCode === "super_admin") {
+      return true;
+    }
+
     if (!permission) return true; // No permission required, allow by default
 
     if (Array.isArray(permission)) {
