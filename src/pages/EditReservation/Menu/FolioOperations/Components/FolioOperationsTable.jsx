@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Button, Divider, Modal, Radio, Space, Table } from "antd";
 import { SwapOutlined, InfoCircleOutlined, FolderOpenOutlined, PrinterOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
+import { darkModeStyle, houseKeepingAndMaintenanceRequestDarkMode, partnerDarkModeStyle, selectedDarkMode, textColorDarkMode, textWhiteInDarkStyle } from "../../../../../utils";
 
 
 const FolioTitle = ({ rest }) => (
@@ -268,8 +269,8 @@ const FolioOperationsTable = ({
               <SwapOutlined className="text-lg animate-pulse" />
             </div>
             <div>
-              <h3 className="text-base font-semibold text-gray-800 leading-none m-0">Transfer Folio Lines</h3>
-              <p className="text-xs text-gray-500 font-normal mt-1">Move selected line items to another folio</p>
+              <h3 className={`text-base font-semibold text-gray-800 leading-none m-0 ${textColorDarkMode}`}>Transfer Folio Lines</h3>
+              <p className={`text-xs text-gray-500 font-normal mt-1 ${textWhiteInDarkStyle}`}>Move selected line items to another folio</p>
             </div>
           </div>
         }
@@ -297,19 +298,19 @@ const FolioOperationsTable = ({
       >
         <div className="py-4">
           {/* Info Banner */}
-          <div className="bg-blue-50/60 border border-blue-100 rounded-xl p-3 mb-4 flex items-start gap-2.5 mx-2">
+          <div className={`bg-blue-50/60 border border-blue-100 rounded-xl p-3 mb-4 flex items-start gap-2.5 mx-2 ${darkModeStyle}`}>
             <InfoCircleOutlined className="text-blue-500 mt-0.5 text-sm flex-shrink-0" />
             <div className="text-xs text-blue-800 leading-relaxed">
               Moving <strong className="text-blue-900">{selectedLineIds.length}</strong> selected line item{selectedLineIds.length !== 1 ? 's' : ''} from <strong className="text-blue-900">{selectedFolio?.folioNo}</strong>.
             </div>
           </div>
 
-          <div className="mb-2 text-xs font-semibold text-gray-500 tracking-wider mx-2">
+          <div className={`mb-2 text-xs font-semibold text-gray-500 tracking-wider mx-2 ${textWhiteInDarkStyle}`}>
             Select Target Folio
           </div>
 
           {/* Card Selection List */}
-          <div className="max-h-[280px] overflow-y-auto pr-1 py-1 flex flex-col gap-2.5 custom-scrollbar">
+          <div className={`max-h-[280px] overflow-y-auto pr-1 py-1 flex flex-col gap-2.5 custom-scrollbar `}>
             {dataSource
               ?.filter((folio) => !selectedFolio || folio.id !== selectedFolio.id)
               ?.map((folio) => {
@@ -338,7 +339,7 @@ const FolioOperationsTable = ({
                         className="m-0 pointer-events-none"
                       />
                       <div className="flex flex-col">
-                        <span className="font-semibold text-sm text-gray-800 group-hover:text-blue-600 transition-colors">
+                        <span className={`font-semibold text-sm text-gray-800 group-hover:text-blue-600 transition-colors ${textColorDarkMode}`}>
                           {folio.folioNo}
                         </span>
                       </div>

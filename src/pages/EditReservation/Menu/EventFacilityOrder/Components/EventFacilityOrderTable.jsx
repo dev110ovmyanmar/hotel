@@ -183,9 +183,9 @@ const EventFacilityOrderTable = ({
     },
    
     {
-      title: "Status",
-      dataIndex: ["status", "name"],
-      key: "status",
+      title: "Facility Status",
+      dataIndex: ["facilityStatus", "name"],
+      key: "facilityStatus",
       width: 100,
       render: (_, record) => <ColorStatusTag status={record?.status} />,
     },
