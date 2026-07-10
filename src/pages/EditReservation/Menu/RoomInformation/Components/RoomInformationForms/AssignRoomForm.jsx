@@ -19,6 +19,7 @@ import {
 import useApiQuery from "../../../../../../hooks/useApiQuery";
 import { useLocation } from "react-router-dom";
 import { FaMoon } from "react-icons/fa";
+import { borderDarkMode, darkModeStyle } from "../../../../../../utils";
 
 const { RangePicker } = DatePicker;
 
@@ -145,7 +146,7 @@ const AssignRoomForm = ({
                   />
                 </Form.Item>
 
-                <div className="flex items-center justify-center gap-1.5 bg-gray-200 rounded px-3 h-[32px] min-w-[100px] ">
+                <div className={`flex items-center justify-center gap-1.5 bg-gray-200 rounded px-3 h-[32px] min-w-[100px] ${darkModeStyle}`}>
                   <FaMoon className=" text-xs" />
                   <span className="font-bold text-black text-center text-xs">
                     {calculateNights()}{" "}
@@ -157,7 +158,7 @@ const AssignRoomForm = ({
 
             <div className="grid grid-cols-2 gap-6">
               <Form.Item label="Room Type" name={["roomType", "name"]}>
-                <Input disabled />
+                <Input readOnly />
               </Form.Item>
 
               <Form.Item

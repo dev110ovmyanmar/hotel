@@ -253,7 +253,7 @@ const SingleRoomComplimentaryUpdateModal = ({
                                     onChange={(obj) => setSelectedStatusUuid(obj.value)}
                                     placeholder="Select Status"
                                     style={{ minWidth: 200 }}
-                                    disabled={!isModificationAllowed}
+                                    open={!isModificationAllowed ? isModificationAllowed : undefined}
                                 />
                             </Form.Item>
                         </Form>
@@ -302,8 +302,7 @@ const SingleRoomComplimentaryUpdateModal = ({
                                             checked={isAllSelected}
                                             indeterminate={isIndeterminate}
                                             onChange={(e) => handleToggleAllDates(e.target.checked)}
-                                            className="text-xs font-semibold text-slate-700"
-                                            disabled={!isModificationAllowed || manageableNights.length === 0}
+                                            className={`text-xs font-semibold text-slate-700 ${!isModificationAllowed || manageableNights.length === 0 ? 'pointer-events-none' : null}`}
                                         >
                                             Mark Future Dates as Complimentary
                                         </Checkbox>
