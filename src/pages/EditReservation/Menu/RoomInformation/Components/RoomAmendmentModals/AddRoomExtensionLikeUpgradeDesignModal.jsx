@@ -10,6 +10,7 @@ import { PiCrown, PiCrownFill, PiCrownSimpleThin, PiRanking } from "react-icons/
 import { BsCalendar2Date } from "react-icons/bs";
 import { CiBadgeDollar } from "react-icons/ci";
 import { FaCrown, FaStar } from 'react-icons/fa';
+import { darkModeStyle, selectedDarkMode, textWhiteInDarkStyle, upgradeAndDownRoomDarkMode } from '../../../../../../utils';
 
 const { Text, Title } = Typography;
 
@@ -259,8 +260,10 @@ export default function AddRoomExtensionLikeUpgradeDesignModal({
                                     margin: '12px 0 20px 0',
                                     border: '1px solid #e2e8f0',
                                     fontSize: '13px'
-                                }}>
-                                    <Text type="secondary"><strong style={{ color: '#475569' }}>Room Type:</strong> {currentRoomType}</Text>
+                                }}
+                                    className={darkModeStyle}
+                                >
+                                    <Text type="secondary"><strong style={{ color: '#475569' }}>Room Type:</strong> <span className={textWhiteInDarkStyle}>{currentRoomType}</span></Text>
 
                                     <div className="grid place-items-center w-fit -mt-1">
                                         <FaStar className='text-amber-200  text-3xl col-start-1 row-start-1' />
@@ -291,7 +294,7 @@ export default function AddRoomExtensionLikeUpgradeDesignModal({
                                                             !duration-500
                                                             rounded-2xl 
                                                             ${selectedRoom === room.roomType.uuid
-                                                                ? '!border-blue-500 !bg-blue-50 !shadow-lg'
+                                                                ? `!border-blue-500 !bg-blue-50 !shadow-lg ${selectedDarkMode}`
                                                                 : '!border-blue-200 !shadow-md hover:!border-blue-300 hover:-translate-y-1'}
                                                         `}
                                                         onClick={() => selectRoom(room)}
@@ -383,12 +386,12 @@ export default function AddRoomExtensionLikeUpgradeDesignModal({
                                                 selectRoomNo &&
                                                 (selectedRatePlan?.dailyPrices?.map(daily => (
                                                     <div key={daily.date} className='flex gap-6 !mb-4'>
-                                                        <div className='flex gap-3 border border-[#1677ff] bg-[#E0F2FE] p-2 rounded-sm shadow-md'>
+                                                        <div className={`flex gap-3 border border-[#1677ff] bg-[#E0F2FE] p-2 rounded-sm shadow-md ${upgradeAndDownRoomDarkMode}`}>
                                                             <BsCalendar2Date className='!mt-1' />
                                                             <span className='!font-bold'>{daily.date}</span>
                                                         </div>
                                                         <SwapRightOutlined />
-                                                        <div className='flex gap-3 border border-[#1677ff] bg-[#E0F2FE] p-2 rounded-sm shadow-md'>
+                                                        <div className={`flex gap-3 border border-[#1677ff] bg-[#E0F2FE] p-2 rounded-sm shadow-md ${upgradeAndDownRoomDarkMode}`}>
                                                             <CiBadgeDollar className='!mt-0.5 !text-lg' />
                                                             <span className='!font-bold'>{daily.price?.toLocaleString()} MMK</span>
                                                         </div>

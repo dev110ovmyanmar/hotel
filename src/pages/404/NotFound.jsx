@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Button } from "antd";
 import { useNavigate } from "react-router-dom";
+import { textWhiteInDarkStyle } from "../../utils";
 
 const NotFound = () => {
   const navigate = useNavigate();
@@ -58,7 +59,7 @@ const NotFound = () => {
           </div>
         </div>
 
-        <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-100 mb-3 tracking-tight">
+        <h2 className={`text-2xl sm:text-3xl font-bold text-gray-800 mb-3 tracking-tight ${textWhiteInDarkStyle}`}>
           {isLeaving ? "Opening Door..." : "Page Not Found"}
         </h2>
         
