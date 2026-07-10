@@ -38,12 +38,12 @@ const ServiceOrderForm = ({
 
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
 
-  const consumptionType = initData?.statuses?.consumption_type.map((item) => ({
+  const consumptionType = initData?.statuses?.consumption_type?.map((item) => ({
     value: item.uuid,
     label: item.name,
   }));
 
-  const orderStatus = initData?.statuses?.order_status.map((item) => ({
+  const orderStatus = initData?.statuses?.order_status?.map((item) => ({
     value: item.uuid,
     label: item.name,
   }));
@@ -141,6 +141,13 @@ const ServiceOrderForm = ({
   }, [orderDetails, isView, isEdit, form]);
 
   const sharedProps = {
+    mode: "spinner",
+    min: 0,
+    max: 10,
+    style: { width: 150 },
+  };
+
+  const packages = {
     mode: "spinner",
     min: 1,
     max: 10,
@@ -264,7 +271,24 @@ const ServiceOrderForm = ({
         </Form.Item>
 
         <Form.Item label="Selection Type" name="orderType">
-          <Radio.Group disabled={isView}>
+          <Radio.Group
+            disabled={isView}
+            onChange={(e) => {
+              const currentSelection = e.target.value;
+              if (currentSelection === "service") {
+                form.setFieldsValue({
+                  servicePackage: undefined,
+                  quantity: 1,
+                });
+              } else if (currentSelection === "package") {
+                form.setFieldsValue({
+                  selectService: undefined,
+                  inventoryItems: undefined,
+                  quantity: 1,
+                });
+              }
+            }}
+          >
             <Radio value="service">Service</Radio>
             <Radio value="package">Package</Radio>
           </Radio.Group>
@@ -298,7 +322,7 @@ const ServiceOrderForm = ({
                   rules={[{ required: true }, { type: "number" }]}
                 >
                   <InputNumber
-                    {...sharedProps}
+                    {...packages}
                     placeholder="Quantity"
                     style={{ width: "100%" }}
                   />
@@ -316,7 +340,7 @@ const ServiceOrderForm = ({
 
                 {serviceInventories.length > 0 && (
                   <div className="mb-5 mt-3 py-3 px-1 border border-gray-200 border-2 rounded-xl overflow-hidden bg-white">
-                    {serviceInventories.map((item, index) => (
+                    {serviceInventories?.map((item, index) => (
                       <div
                         key={item.value}
                         className="flex items-center justify-between py-1 px-3.5 hover:bg-gray-50/70 transition-colors duration-150"
@@ -358,8 +382,7 @@ const ServiceOrderForm = ({
                               { required: true, message: "Required" },
                               {
                                 type: "number",
-                                min: 1,
-                                message: "Must be at least 1",
+                                min: 0,
                               },
                               ...(item.maxLimit
                                 ? [
@@ -374,7 +397,7 @@ const ServiceOrderForm = ({
                           >
                             <InputNumber
                               {...sharedProps}
-                              min={1}
+                              min={0}
                               max={item.maxLimit}
                               placeholder="Qty"
                               className="w-24 h-8 rounded-lg text-center"
