@@ -249,7 +249,7 @@ const AddPaymentForm = ({
                         </Form.Item>
                     </div>
                 ) : (
-                    <div className="text-center py-6 text-slate-400 bg-slate-50 rounded-lg mb-6 border border-dashed border-slate-200">
+                    <div className={`text-center py-6 text-slate-400 bg-slate-50 rounded-lg mb-6 border border-dashed border-slate-200 ${darkModeStyle}`}>
                         No payment methods configuration available for this type.
                     </div>
                 )}

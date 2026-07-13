@@ -6,6 +6,11 @@ import { authSelector } from "../services/authSlice";
 
 const PermissionRoute = ({ children, permission }) => {
   const {permissions} = useSelector(authSelector)
+  const roleCode = loadState(LOCAL_STORAGE_KEYS.loginAdminDetails)?.role?.code;
+
+  if (roleCode === "super_admin") {
+    return children;
+  }
 
   if (!permission) {
     return children;

@@ -1,5 +1,5 @@
 import React from "react";
-import { FaChild, FaCalendarAlt, FaMoon } from "react-icons/fa";
+import { FaChild, FaCalendarAlt, FaMoon, FaBed } from "react-icons/fa";
 import { IoPeopleSharp } from "react-icons/io5";
 import {
   MdOutlineBed,
@@ -51,7 +51,7 @@ const ReservationHeader = ({ data }) => {
             </div>
           )}
 
-          <div className="hidden sm:block text-[#ffffff] mt-2.5">|</div>
+          {/* <div className="hidden sm:block text-[#ffffff] mt-2.5">|</div> */}
 
           {/* <div className="flex items-center gap-2 py-1 rounded-lg mt-2.5">
             <MdOutlineBed className="text-emerald-300 text-lg" />
@@ -62,12 +62,12 @@ const ReservationHeader = ({ data }) => {
               {reservation?.extraBed === 1 ? "Exta Bed" : "Extra Beds"}
             </span>
           </div> */}
-          
-          {reservation?.extraBeds > 0 && (
+
+          {reservation?.extraBedCount > 0 && (
             <div className="flex items-center gap-2 py-1 rounded-lg mt-2.5">
               <FaBed className="text-blue-500 text-base" />{" "}
               <span className="text-[10px] md:text-[10px] lg:text-[13px] font-medium text-[#ffffff]">
-                {reservation.extraBeds} Extra Beds
+                {reservation.extraBedCount} Extra Beds
               </span>
             </div>
           )}

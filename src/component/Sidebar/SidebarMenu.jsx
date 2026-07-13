@@ -2,8 +2,7 @@ import React, { useMemo } from "react";
 import { Menu } from "antd";
 import { useNavigate, useLocation } from "react-router-dom";
 import { authRoutes } from "../Layout/AuthRoutes";
-import { loadState } from "../../utils/Utils";
-import { LOCAL_STORAGE_KEYS } from "../../variables/constants";
+import usePermission from "../../hooks/usePermission";
 
 const SidebarContent = ({
   onClick,
@@ -12,10 +11,8 @@ const SidebarContent = ({
 }) => {
   const location = useLocation();
   const navigate = useNavigate();
-  console.log(location?.pathname, "INSideBarContant")
-  const userPermissions = useMemo(() =>
-    loadState(LOCAL_STORAGE_KEYS.initPermissions) || [],
-    []);
+
+  const { hasPermission, permissions: userPermissions } = usePermission();
 
   const handleMenuItemClick = (path) => {
     navigate(path);
@@ -31,7 +28,7 @@ const SidebarContent = ({
         // 1. Basic visibility check
         if (!route.label || !route.icon) return false;
         // 2. Permission check
-        if (route.permission && !userPermissions.includes(route.permission)) return false;
+        if (route.permission && !hasPermission(route.permission)) return false;
         return true;
       })
       .map((route) => {

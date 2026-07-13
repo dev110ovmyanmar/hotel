@@ -58,7 +58,7 @@ const EventFacilityOrderForm = ({
     "initData",
     "authenticated",
   ])?.statuses;
-  const initDataStatus = initData?.status;
+  const initDataStatus = initData?.facility_status;
 
   const dateFormat = "DD-MM-YYYY";
   const disabledDate = (current) => {
@@ -124,13 +124,13 @@ const EventFacilityOrderForm = ({
       form.resetFields();
     }
 
-    if (isAdd && initDataStatus) {
-      form.setFieldsValue({
-        status: {
-          uuid: initDataStatus?.find((item) => item?.code === "active")?.uuid,
-        },
-      });
-    }
+    // if (isAdd && initDataStatus) {
+    //   form.setFieldsValue({
+    //     status: {
+    //       uuid: initDataStatus?.find((item) => item?.code === "active")?.uuid,
+    //     },
+    //   });
+    // }
 
     const FacilityBookingFormDataView = isView || isEdit;
     if (FacilityBookingFormDataView && bookingDetails) {
@@ -394,6 +394,7 @@ const EventFacilityOrderForm = ({
               placeholder="Outlined"
               readOnly={isView}
               style={{ width: 240 }}
+              className="minus-icon"
             />
           </Form.Item>
 
@@ -405,7 +406,7 @@ const EventFacilityOrderForm = ({
             <Input readOnly={isView} placeholder="Enter Expected Pax" />
           </Form.Item> */}
 
-          <Status isView={isView} statusValue={initDataStatus} />
+          <Status isView={isView} statusValue={initDataStatus} facilityStatus={true}/>
 
           <Form.Item label="Remark" name="remark">
             <TextArea readOnly={isView} placeholder="Enter Remark" />

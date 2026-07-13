@@ -10,6 +10,7 @@ import {
 import dayjs from "dayjs";
 import { useApiQuery } from "./../../../../hooks/useApiQuery";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { textColorDarkMode, textWhiteInDarkStyle } from "../../../../utils";
 
 const ChangeStatusForm = ({ reservationDetails, open, onClose }) => {
   const [form] = Form.useForm();
@@ -217,7 +218,7 @@ const ChangeStatusForm = ({ reservationDetails, open, onClose }) => {
             <div
               className={`flex flex-col line-height-tight py-0.5 ${isDisabledRoom ? "opacity-50" : ""}`}
             >
-              <span className="font-medium text-slate-800">
+              <span className={`font-medium text-slate-800 ${textColorDarkMode}`}>
                 {roomNo ? `${roomNo} - ` : ""}
                 {roomTypeName}{" "}
                 {roomStatus && (
@@ -230,7 +231,7 @@ const ChangeStatusForm = ({ reservationDetails, open, onClose }) => {
                 )}
               </span>
               {checkIn && checkOut && (
-                <span className="text-xs text-slate-500">
+                <span className={`text-xs text-slate-500 ${textWhiteInDarkStyle}`}>
                   ({checkIn} - {checkOut})
                 </span>
               )}
@@ -372,10 +373,10 @@ const ChangeStatusForm = ({ reservationDetails, open, onClose }) => {
             <Form.Item
               label={
                 <div className="flex">
-                  <span className="text-slate-800">Select Room to Update</span>
+                  <span className={`text-slate-800 ${textWhiteInDarkStyle}`}>Select Room to Update</span>
                   <div className="text-slate-800 ml-50 font-medium">
                     <Checkbox
-                      className="room-select"
+                      className='room-select'
                       indeterminate={isIndeterminate}
                       onChange={handleSelectAllChange}
                       checked={isAllSelected}
@@ -392,7 +393,7 @@ const ChangeStatusForm = ({ reservationDetails, open, onClose }) => {
             >
               <Checkbox.Group
                 options={roomOptions}
-                className="flex flex-col gap-2 w-full "
+                className='flex flex-col gap-2 w-full'
               />
             </Form.Item>
           </div>

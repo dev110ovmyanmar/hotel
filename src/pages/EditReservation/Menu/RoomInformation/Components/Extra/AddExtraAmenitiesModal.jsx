@@ -15,6 +15,7 @@ import dayjs from 'dayjs';
 import { TbBed } from "react-icons/tb";
 import { LiaBabyCarriageSolid } from "react-icons/lia";
 import { IoPersonOutline } from "react-icons/io5";
+import { darkModeStyle, textColorDarkMode } from '../../../../../../utils';
 
 const { Text } = Typography;
 
@@ -614,7 +615,7 @@ const AddExtraAmenitiesModal = ({
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                         <div style={{ width: '4px', height: '20px', background: 'linear-gradient(180deg,#1677ff,#6366f1)', borderRadius: '3px' }} />
                         <div>
-                            <div style={{ fontWeight: 700, fontSize: '15px', color: '#0f172a', lineHeight: 1.3 }}>
+                            <div style={{ fontWeight: 700, fontSize: '15px', color: '#0f172a', lineHeight: 1.3 }} className={textColorDarkMode}>
                                 Extra Bed, Person & Baby Cot
                             </div>
                             <div style={{ fontWeight: 400, fontSize: '11px', color: '#94a3b8', marginTop: '1px' }}>
@@ -664,16 +665,19 @@ const AddExtraAmenitiesModal = ({
                 }
             >
                 {/* Guest & Room info bar */}
-                <div style={{
-                    display: 'flex',
-                    gap: '16px',
-                    background: 'linear-gradient(135deg, #f8faff 0%, #f0f4ff 100%)',
-                    padding: '10px 16px',
-                    borderRadius: '8px',
-                    margin: '4px 0 16px 0',
-                    border: '1px solid #e0e7ff',
-                    fontSize: '12.5px',
-                }}>
+                <div
+                    style={{
+                        display: 'flex',
+                        gap: '16px',
+                        background: 'linear-gradient(135deg, #f8faff 0%, #f0f4ff 100%)',
+                        padding: '10px 16px',
+                        borderRadius: '8px',
+                        margin: '4px 0 16px 0',
+                        border: '1px solid #e0e7ff',
+                        fontSize: '12.5px',
+                    }}
+                    className={darkModeStyle}
+                >
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#3730a3' }}>
                         <UserOutlined style={{ fontSize: '13px' }} />
                         <span style={{ color: '#64748b' }}>Guest:</span>
