@@ -28,26 +28,33 @@ const ServiceOrderTable = ({ data }) => {
     },
     {
       title: "Service Name",
-      dataIndex: ["service", "name"],
+      dataIndex: "serviceName",
       key: "serviceName",
     },
     {
       title: "Service Package",
       dataIndex: ["servicePackage", "name"],
       key: "servicePackage",
+      render: (text) => <div>{text ? text : "-"}</div>,
     },
-
     {
-      title: "Qty Unit",
-      dataIndex: "quantity",
+      title: "Total Quantity",
+      dataIndex: "serviceOrderItems",
       key: "quantity",
+      render: (items = []) => (
+        <span>
+          {Array.isArray(items)
+            ? items.reduce((total, { quantity = 0 }) => total + quantity, 0)
+            : 0}
+        </span>
+      ),
     },
     {
       title: "Price (MMK)",
-      dataIndex: "basePrice",
-      key: "basePrice",
+      dataIndex: "grandTotal",
+      key: "grandTotal",
       render: (text) => <PriceTag value={text} />,
-      width: 100,
+      width: 150,
       align: "right",
     },
     {

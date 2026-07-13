@@ -6,7 +6,6 @@ import {
   Select,
   Drawer,
   InputNumber,
-  Switch,
   Row,
   Col,
   Checkbox,
@@ -24,7 +23,6 @@ import {
 } from "../../../../component/PriceTag/PriceTag";
 import usePermission from "../../../../hooks/usePermission";
 import { PERMISSIONS } from "../../../../variables/permission";
-
 
 const ServiceForm = ({
   mode,
@@ -48,6 +46,7 @@ const ServiceForm = ({
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
   const billingType = initData?.statuses?.billing_type;
   const serviceType = initData?.statuses?.service_type;
+  const serviceStage = initData?.statuses?.service_stage;
 
   const billingTypesList = billingType?.map((type) => ({
     value: type.uuid,
@@ -58,6 +57,12 @@ const ServiceForm = ({
     value: service.uuid,
     label: service.name,
   }));
+
+  const servicesStageList =
+    serviceStage?.map((stage) => ({
+      value: stage.id,
+      label: stage.name,
+    })) || [];
 
   const statusOptions =
     initData?.statuses?.status
@@ -89,12 +94,18 @@ const ServiceForm = ({
 
   useEffect(() => {
     if (!isAdd && data) {
+      const initialStages = data?.serviceStage?.ids
+        ? data.serviceStage.ids
+        : data?.stages?.map((stage) => stage.id) || [];
+
       form.setFieldsValue({
         ...data,
         billingType: data?.billingType?.uuid,
         serviceType: data?.serviceType?.uuid,
         status: data?.status?.uuid,
-        isComplimentary: data?.isComplimentary === true ? 1 : 0,
+        isComplimentary:
+          data?.isComplimentary === true || data?.isComplimentary === 1,
+        stages: initialStages,
       });
       setSelectedData(data);
     }
@@ -107,15 +118,23 @@ const ServiceForm = ({
   };
 
   const onFinish = (values) => {
-    if (isAdd) {
-      const createValues = {
-        ...values,
-        serviceType: { uuid: values.serviceType },
-        billingType: { uuid: values.billingType },
-        status: { uuid: values.status },
-        isComplimentary: values.isComplimentary === true ? 1 : 0,
-      };
+    const formatPayload = (formValues) => {
+      const { stages, ...rest } = formValues;
 
+      return {
+        ...rest,
+        serviceType: { uuid: formValues.serviceType },
+        billingType: { uuid: formValues.billingType },
+        status: { uuid: formValues.status },
+        isComplimentary: formValues.isComplimentary === true ? 1 : 0,
+        serviceStage: {
+          ids: stages || [],
+        },
+      };
+    };
+
+    if (isAdd) {
+      const createValues = formatPayload(values);
       createService.mutate(createValues, {
         onSuccess: () => {
           form.resetFields();
@@ -128,11 +147,7 @@ const ServiceForm = ({
     }
     if (isEdit) {
       const editValues = {
-        ...values, // merge new form values
-        serviceType: { uuid: values.serviceType },
-        billingType: { uuid: values.billingType },
-        status: { uuid: values.status },
-        isComplimentary: values.isComplimentary === true ? 1 : 0,
+        ...formatPayload(values),
         uuid: data?.uuid,
       };
 
@@ -156,11 +171,11 @@ const ServiceForm = ({
             const defaultStatus = statusOptions?.find(
               (s) => s.label.toLowerCase() === "active",
             )?.value;
-            form.setFieldsValue({ status: defaultStatus });
+            form.setFieldsValue({ status: defaultStatus, stages: [] });
           }
         }}
         onClose={handleClose}
-        size={550}
+        size={600}
         title={
           <div className="flex justify-between items-center">
             <span>
@@ -181,7 +196,6 @@ const ServiceForm = ({
                   Edit
                 </Button>
               )
-
             ) : (
               <FormButtons
                 onClick={() => form.submit()}
@@ -203,6 +217,7 @@ const ServiceForm = ({
             onFinish={onFinish}
             initialValues={{
               isComplimentary: false,
+              stages: [],
             }}
           >
             <Form.Item
@@ -220,7 +235,7 @@ const ServiceForm = ({
               getValueProps={(value) => ({
                 value: isView
                   ? servicesTypesList.find((item) => item.value === value)
-                    ?.label
+                      ?.label
                   : value,
               })}
             >
@@ -251,7 +266,7 @@ const ServiceForm = ({
                   getValueProps={(value) => ({
                     value: isView
                       ? billingTypesList.find((item) => item.value === value)
-                        ?.label
+                          ?.label
                       : value,
                   })}
                 >
@@ -295,7 +310,65 @@ const ServiceForm = ({
               rules={[{ required: true }]}
               className={isView ? "pointer-events-none" : ""}
             >
-              <Checkbox >Complimentary</Checkbox>
+              <Checkbox>Complimentary</Checkbox>
+            </Form.Item>
+
+            <Form.Item
+              label=" Available Stages"
+              name="stages"
+              rules={[
+                {
+                  required: !isView,
+                  message: "Please select at least one stage",
+                },
+              ]}
+            >
+              <Checkbox.Group className="w-full" disabled={isView}>
+                <div className="grid grid-cols-4 gap-2.5">
+                  {servicesStageList.map((stage) => {
+                    const isChecked = form
+                      .getFieldValue("stages")
+                      ?.includes(stage.value);
+
+                    return (
+                      <label
+                        key={stage.value}
+                        className={`flex items-start gap-3 p-3.5 border rounded-xl select-none transition-all duration-200
+              ${isView ? "cursor-default" : "cursor-pointer"}
+              ${
+                isChecked
+                  ? isView
+                    ? "border-blue-300 bg-blue-50/20"
+                    : "border-blue-500 bg-blue-50/40 shadow-sm shadow-blue-100/50"
+                  : isView
+                    ? "border-gray-100 bg-gray-50/30"
+                    : "border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50/50"
+              }
+            `}
+                      >
+                        <div className="pt-0.5">
+                          <Checkbox value={stage.value} />
+                        </div>
+                        <div className="flex flex-col">
+                          <span
+                            className={`text-xs ${
+                              isChecked
+                                ? isView
+                                  ? "text-blue-800/70"
+                                  : "text-blue-900"
+                                : isView
+                                  ? "text-gray-400"
+                                  : "text-gray-700"
+                            }`}
+                          >
+                            {stage.label}
+                          </span>
+                        </div>
+                      </label>
+                    );
+                  })}
+                </div>
+              </Checkbox.Group>
             </Form.Item>
 
             <Form.Item
