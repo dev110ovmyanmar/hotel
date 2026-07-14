@@ -82,10 +82,10 @@ const ListHeader = ({
               setInputValue(value);
               debouncedSearchRef.current(value);
             }}
-            className="w-full md:w-72 lg:w-96 rounded-[5px]!"
+  className="w-full md:w-72 lg:w-96 rounded-[5px]! dark:text-white dark:placeholder-white"
           />
         )}
-        <div className="w-90! md:w-100! xs:flex-1">
+        <div className="w-150! md:w-150! xs:flex-1 ">
           {setStartDate && setEndDate && (
             <RangePicker
               style={{ width: "100%" }}
@@ -101,6 +101,7 @@ const ListHeader = ({
                   setEndDate(null);
                 }
               }}
+                 className="dark:text-white"
             />
           )}  
         </div>
