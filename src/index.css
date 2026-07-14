@@ -676,22 +676,12 @@ span .ant-upload {
   }
 }
 
-.active-reservation-row {
-  background-color: #ebf6e1 !important;
+.active-reservation-row td{
+  background-color: #C7E8A0 !important;
 }
 
-.dark .active-reservation-row {
-  background-color: #dff9c6 !important;
-  color: #141414 !important
-}
-
-.active-reservation-row:hover td {
-  background-color: #7d8079 !important;
-}
-
-.dark .active-reservation-row:hover td {
-  background-color: #d3f9b0 !important;
-  color: #141414 !important;
+.dark .active-reservation-row td{
+  background-color: #2E8B57 !important;
 }
 
 /* Your global.css or component.scss file */

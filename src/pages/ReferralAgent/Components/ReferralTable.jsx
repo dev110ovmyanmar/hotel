@@ -62,12 +62,13 @@ const ReferralTable = ({
           return <div>{chargeValue} %</div>
         }
       },
-      align: "center"
+      align: "end"
     },
     {
       title: "Status",
       dataIndex: ["status", "name"],
       key: "status",
+       align: "center",
       render: (_, record) => <ColorStatusTag status={record?.status} />
     },
     {
