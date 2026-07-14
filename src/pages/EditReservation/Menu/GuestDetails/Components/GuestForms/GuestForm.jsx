@@ -15,7 +15,11 @@ import {
   AutoComplete,
 } from "antd";
 import dayjs from "dayjs";
-import { textColorDarkMode, textWhiteInDarkStyle, validatePhoneNumber } from "../../../../../../utils";
+import {
+  textColorDarkMode,
+  textWhiteInDarkStyle,
+  validatePhoneNumber,
+} from "../../../../../../utils";
 import {
   reservationGuestDetails,
   reservationGuestUpsert,
@@ -94,6 +98,11 @@ const GuestForm = ({
     return (
       initData?.locations?.map((l) => ({ value: l.uuid, label: l.name })) ?? []
     );
+  }, [initData]);
+
+  const defaultCountryUuid = useMemo(() => {
+    return initData?.locations?.find((c) => c.name.toLowerCase() === "myanmar")
+      ?.uuid;
   }, [initData]);
 
   const cityOptions = useMemo(() => {
@@ -238,7 +247,7 @@ const GuestForm = ({
     const formattedNrc = hasNrcParts
       ? `${values.srcNo}/${values.township}(${values.type})${values.number}`
       : values.nrcNo;
-const isChild = values.isAdult === 0;
+    const isChild = values.isAdult === 0;
 
     const payload = {
       ...values,
@@ -255,11 +264,11 @@ const isChild = values.isAdult === 0;
       //   selectedGuestProfileUuid || data?.guest?.uuid
       //     ? { uuid: selectedGuestProfileUuid || data?.guest?.uuid }
       //     : null,
-       guest: isChild
-    ? null
-    : selectedGuestProfileUuid || data?.guest?.uuid
-    ? { uuid: selectedGuestProfileUuid || data?.guest?.uuid }
-    : null,
+      guest: isChild
+        ? null
+        : selectedGuestProfileUuid || data?.guest?.uuid
+          ? { uuid: selectedGuestProfileUuid || data?.guest?.uuid }
+          : null,
     };
 
     const mutation = isAdd ? createReservationGuest : editReservationGuest;
@@ -276,8 +285,6 @@ const isChild = values.isAdult === 0;
       },
     });
   };
-
-  
 
   return (
     <Drawer
@@ -316,7 +323,7 @@ const isChild = values.isAdult === 0;
           isAdult: 1,
           status: activeStatusUuid,
           isPrimary: 1,
-          country: "Myanmar",
+          country: defaultCountryUuid,
         }}
         onValuesChange={(changedValues) => {
           if (changedValues.hasOwnProperty("isAdult")) {
@@ -345,20 +352,28 @@ const isChild = values.isAdult === 0;
             <Row gutter={16}>
               <Col span={12}>
                 <Radio value={1} className="align-top">
-                  <span className={`block font-medium text-slate-800 ${textColorDarkMode}`}>
+                  <span
+                    className={`block font-medium text-slate-800 ${textColorDarkMode}`}
+                  >
                     Save Guest Profile
                   </span>
-                  <span className={`block text-xs text-slate-500 whitespace-normal ${textWhiteInDarkStyle}`}>
+                  <span
+                    className={`block text-xs text-slate-500 whitespace-normal ${textWhiteInDarkStyle}`}
+                  >
                     For guests aged 10 and above
                   </span>
                 </Radio>
               </Col>
               <Col span={12}>
                 <Radio value={0} className="align-top">
-                  <span className={`block font-medium text-slate-800 ${textColorDarkMode}`}>
+                  <span
+                    className={`block font-medium text-slate-800 ${textColorDarkMode}`}
+                  >
                     Child Guest
                   </span>
-                  <span className={`block text-xs text-slate-500 whitespace-normal ${textWhiteInDarkStyle}`}>
+                  <span
+                    className={`block text-xs text-slate-500 whitespace-normal ${textWhiteInDarkStyle}`}
+                  >
                     Temporary local record setup
                   </span>
                 </Radio>
@@ -379,12 +394,18 @@ const isChild = values.isAdult === 0;
             <Row gutter={16}>
               <Col span={12}>
                 <Radio value={1}>
-                  <span className={`font-medium text-slate-800 ${textColorDarkMode}`}>Main Guest</span>
+                  <span
+                    className={`font-medium text-slate-800 ${textColorDarkMode}`}
+                  >
+                    Main Guest
+                  </span>
                 </Radio>
               </Col>
               <Col span={12}>
                 <Radio value={0}>
-                  <span className={`font-medium text-slate-800 ${textColorDarkMode}`}>
+                  <span
+                    className={`font-medium text-slate-800 ${textColorDarkMode}`}
+                  >
                     Share Guest
                   </span>
                 </Radio>

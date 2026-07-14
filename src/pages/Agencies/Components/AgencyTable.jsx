@@ -1,16 +1,20 @@
 import { Dropdown, Space, Table, Tag, Button, Drawer } from "antd";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { EditOutlined, EyeOutlined, FolderAddOutlined, MoreOutlined } from "@ant-design/icons";
-import AgencyForm from './AgencyForm/AgencyForm';
-import { PERMISSIONS } from './../../../variables/permission';
-import usePermission from './../../../hooks/usePermission';
-import ColorStatusTag from './../../../component/ColorStatusTag/ColorStatusTag';
+import {
+  EditOutlined,
+  EyeOutlined,
+  FolderAddOutlined,
+  MoreOutlined,
+} from "@ant-design/icons";
+import AgencyForm from "./AgencyForm/AgencyForm";
+import { PERMISSIONS } from "./../../../variables/permission";
+import usePermission from "./../../../hooks/usePermission";
+import ColorStatusTag from "./../../../component/ColorStatusTag/ColorStatusTag";
 import { FaFileContract } from "react-icons/fa";
 import ImageUpload from "../../../component/ImageUpload/ImageUpload";
 import { useApiMutation } from "../../../hooks/useApiMutation";
 import PriceTag from "../../../component/PriceTag/PriceTag";
-
 
 const AgencyTable = ({
   data,
@@ -19,7 +23,7 @@ const AgencyTable = ({
   total,
   changePage,
   changePerPage,
-  loading
+  loading,
 }) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mode, setMode] = useState(null);
@@ -65,27 +69,28 @@ const AgencyTable = ({
       title: "Charge Value",
       dataIndex: "chargeValue",
       key: "chargeValue",
+      align: "end",
       render: (_, record) => {
         const chargeValue = record?.chargeValue;
         const chargeTypeName = record?.chargeType?.code;
 
         if (chargeTypeName === "flat") {
-          return <div>{chargeValue.toLocaleString()} MMK</div>
+          return <div>{chargeValue.toLocaleString()} MMK</div>;
         } else {
-          return <div>{chargeValue} %</div>
+          return <div>{chargeValue} %</div>;
         }
       },
-      align: "center"
     },
     {
       title: "Status",
       dataIndex: ["status", "name"],
       key: "status",
+      align: "center",
       render: (_, record) => <ColorStatusTag status={record?.status} />,
     },
     {
       title: "Action",
-      fixed:"end",
+      fixed: "end",
       render: (_, record) => {
         const smallStyle = { fontSize: "12px" };
 
@@ -127,28 +132,33 @@ const AgencyTable = ({
             icon: <FaFileContract style={{ fontSize: "12px" }} />,
             // permission: PERMISSIONS.PARTNER_EDIT,
             onClick: () => {
-              navigate(
-                `/partners/agencies/${record?.id}/agency-contract`,
-                { state: { agencyRecord: record } }
-              )
+              navigate(`/partners/agencies/${record?.id}/agency-contract`, {
+                state: { agencyRecord: record },
+              });
             },
           },
         ];
 
-        const items = actions.filter(
-          action => (!action.permission || hasPermission(action.permission)) && !action.hidden
-        ).map(action => ({
-          key: action.key,
-          onClick: action.onClick,
-          label: (
-            <Space size={4} style={smallStyle}
-            // onClick={action.onClick}
-            >
-              {action.icon}
-              <span style={{ fontSize: "14px" }}>{action.label}</span>
-            </Space>
+        const items = actions
+          .filter(
+            (action) =>
+              (!action.permission || hasPermission(action.permission)) &&
+              !action.hidden,
           )
-        }))
+          .map((action) => ({
+            key: action.key,
+            onClick: action.onClick,
+            label: (
+              <Space
+                size={4}
+                style={smallStyle}
+                // onClick={action.onClick}
+              >
+                {action.icon}
+                <span style={{ fontSize: "14px" }}>{action.label}</span>
+              </Space>
+            ),
+          }));
 
         return (
           <Dropdown menu={{ items }} trigger={["click"]}>
@@ -159,12 +169,11 @@ const AgencyTable = ({
     },
   ];
 
-
   return (
     <div id="scrollId" className="w-full h-[63vh] ">
       <Table
         tableLayout="fixed"
-        scroll={{ x: 'max-content' }}
+        scroll={{ x: "max-content" }}
         columns={columns}
         dataSource={data}
         rowKey="uuid"
@@ -192,8 +201,6 @@ const AgencyTable = ({
         setSelectedData={setSelectedData}
         page={page}
       />
-
-
     </div>
   );
 };
