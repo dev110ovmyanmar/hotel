@@ -45,10 +45,10 @@ const CompanyList = () => {
     <div className="w-full px-6 py-2">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
         <ListHeader
-          searchPlaceholder="Search Company ..."
+          searchPlaceholder="Search Companies / Corporates ..."
           keyword={keyword}
           setKeyword={setKeyword}
-          addButtonText="Add New Company"
+          addButtonText="Add New Companies / Corporates"
           onAdd={handleAdd}
           permission={PERMISSIONS.PARTNER_CREATE}
         />

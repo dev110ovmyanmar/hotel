@@ -133,7 +133,7 @@ const ExtraBedRateForm = ({
           form.resetFields();
           setDrawerOpen(false);
           setPage(1);
-          Toast.success("Extra Bed Rate Created Successfully!");
+          Toast.success("ExtraBed Rate Created Successfully!");
         },
       });
     }
@@ -153,7 +153,7 @@ const ExtraBedRateForm = ({
       editExtraBedRates.mutate(editValues, {
         onSuccess: () => {
           setDrawerOpen(false);
-          Toast.success("Extra Bed Rate Updated Successfully!");
+          Toast.success("ExtraBed Rate Updated Successfully!");
         },
       });
     }
@@ -169,10 +169,10 @@ const ExtraBedRateForm = ({
           <div className="flex justify-between items-center">
             <span>
               {mode === "view"
-                ? "Extra Bed Rate Details"
+                ? "ExtraBed Rate Details"
                 : mode === "edit"
-                  ? "Edit Extra Bed Rate"
-                  : "Create Extra Bed Rate"}
+                  ? "Edit ExtraBed Rate"
+                  : "Create ExtraBed Rate"}
             </span>
             {isView ? (
               canEdit && (

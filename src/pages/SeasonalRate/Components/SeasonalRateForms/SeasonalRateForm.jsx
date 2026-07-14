@@ -170,7 +170,7 @@ const SeasonalRateForm = ({
           form.resetFields();
           setDrawerOpen(false);
           setPage(1);
-          Toast.success("Base Rate Created Successfully!");
+          Toast.success("Room Type Rate Created Successfully!");
         },
       });
     }
@@ -188,7 +188,7 @@ const SeasonalRateForm = ({
         onSuccess: () => {
           form.resetFields();
           setDrawerOpen(false);
-          Toast.success("Base Rate Updated Successfully!");
+          Toast.success("Room Type Rate Updated Successfully!");
         },
       });
     }
@@ -209,10 +209,10 @@ const SeasonalRateForm = ({
           <div className="flex justify-between items-center">
             <span>
               {mode === "view"
-                ? "Base Rate Details"
+                ? "Room Type Rate Details"
                 : mode === "edit"
-                  ? "Edit Base Rate"
-                  : "Create Base Rate"}
+                  ? "Edit Room Type Rate"
+                  : "Create Room Type Rate"}
             </span>
             {isView ? (
               canEdit && (
@@ -283,7 +283,7 @@ const SeasonalRateForm = ({
                             .includes(input.toLowerCase()),
                       }}
                       options={roomTypes}
-                      placeholder="Select Base Rate"
+                      placeholder="Select Room Type Rate"
                     />
                   )}
                 </Form.Item>

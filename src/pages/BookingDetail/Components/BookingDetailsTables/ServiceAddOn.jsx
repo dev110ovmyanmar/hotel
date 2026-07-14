@@ -1,6 +1,7 @@
 import React from "react";
 import { Row, Col, Typography, Space, Card, Table } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
+import ColorStatusTag from "../../../../component/ColorStatusTag/ColorStatusTag";
 
 const { Text } = Typography;
 
@@ -22,9 +23,15 @@ const ServiceAddOn = ({ data }) => {
     },
     {
       title: "Add On Status",
-      dataIndex: ["addonStatus", "name"],
+      dataIndex: "addonStatus",
       key: "addonStatus",
       align: "center",
+      render: (status) => {
+        console.log(status,"StatusInAddOn")
+        return (
+          status ? <ColorStatusTag status={status} /> : "-"
+        );
+      },
     },
     {
       title: "Guest",

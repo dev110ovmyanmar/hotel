@@ -45,11 +45,11 @@ const MeanPlanList = () => {
     <div className="w-full px-6 py-2">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
         <ListHeader
-          title="Meal Plan List"
-          searchPlaceholder="Search Meal Plan ..."
+          title="Meal Plans List"
+          searchPlaceholder="Search Meal Plans ..."
           keyword={keyword}
           setKeyword={setKeyword}
-          addButtonText="Add New Meal Plan"
+          addButtonText="Add New Meal Plans"
           onAdd={handleAdd}
           permission={PERMISSIONS.MEAL_PLAN_CREATE}
         />

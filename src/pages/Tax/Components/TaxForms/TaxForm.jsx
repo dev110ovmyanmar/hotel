@@ -131,7 +131,7 @@ const TaxForm = ({
           handleClose();
           setDrawerOpen(false);
           setPage(1);
-          Toast.success("Tax Created Successfully!");
+          Toast.success("Taxes & Service Charges Created Successfully!");
         },
       });
     }
@@ -149,7 +149,7 @@ const TaxForm = ({
         onSuccess: () => {
           handleClose();
           setDrawerOpen(false);
-          Toast.success("Tax Updated Successfully!");
+          Toast.success("Taxes & Service Charges Updated Successfully!");
         },
       });
     }
@@ -180,10 +180,10 @@ const TaxForm = ({
           <div className="flex justify-between items-center">
             <span>
               {mode === "view"
-                ? "Tax Details"
+                ? "Taxes & Service Charges Details"
                 : mode === "edit"
-                  ? "Edit Tax"
-                  : "Create Tax"}
+                  ? "Edit Taxes & Service Charges"
+                  : "Create Taxes & Service Charges"}
             </span>
             {isView ? (
               canEdit && (
