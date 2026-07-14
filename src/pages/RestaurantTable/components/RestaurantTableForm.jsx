@@ -123,10 +123,10 @@ const RestaurantTableForm = ({
     <Drawer
       title={
         isView
-          ? "Restaurant Table Details"
+          ? "Table Management Details"
           : isEdit
-            ? "Edit Restaurant Table"
-            : "Add Restaurant Table"
+            ? "Edit Table Management Table"
+            : "Add Table Management Table"
       }
       size={550}
       onClose={handleClose}

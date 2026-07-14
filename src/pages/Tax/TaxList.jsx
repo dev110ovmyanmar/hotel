@@ -45,11 +45,11 @@ const TaxList = () => {
     <div className="w-full px-6 py-2">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
         <ListHeader
-          title="Tax List"
-          searchPlaceholder="Search Tax ..."
+          title="Taxs & Service Charges List"
+          searchPlaceholder="Search Taxs & Service Charges ..."
           keyword={keyword}
           setKeyword={setKeyword}
-          addButtonText="Add New Tax"
+          addButtonText="Add New Taxs & Service Charges"
           onAdd={handleAdd}
           permission={PERMISSIONS.TAX_CREATE}
         />

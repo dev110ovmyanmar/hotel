@@ -41,10 +41,10 @@ const FacilityList = () => {
     <div className="w-full px-6 py-2">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
         <ListHeader
-          searchPlaceholder="Search Facility ..."
+          searchPlaceholder="Search Events & Facilities ..."
           keyword={keyword}
           setKeyword={setKeyword}
-          addButtonText="Add New Facility"
+          addButtonText="Add New Events & Facilities"
           onAdd={handleAdd}
           permission={PERMISSIONS.FACILITY_CREATE}
         />

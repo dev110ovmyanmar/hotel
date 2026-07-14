@@ -120,7 +120,7 @@ const RoomRestrictionForm = ({
           setDrawerOpen(false);
           setPage(1);
           handleClose();
-          Toast.success("Extra Bed Rate Created Successfully!");
+          Toast.success("ExtraBed Rate Created Successfully!");
         },
       });
     }
@@ -138,7 +138,7 @@ const RoomRestrictionForm = ({
         onSuccess: () => {
           setDrawerOpen(false);
           handleClose();
-          Toast.success("Extra Bed Rate Updated Successfully!");
+          Toast.success("ExtraBed Rate Updated Successfully!");
         },
       });
     }

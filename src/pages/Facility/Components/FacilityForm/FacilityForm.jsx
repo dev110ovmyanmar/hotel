@@ -100,7 +100,7 @@ const FacilityForm = ({
           handleClose();
           setDrawerOpen(false);
           setPage(1);
-          Toast.success("Service Created Successfully!");
+          Toast.success("Events & Facilities Created Successfully!");
         },
       });
     }
@@ -116,7 +116,7 @@ const FacilityForm = ({
         onSuccess: () => {
           handleClose();
           setDrawerOpen(false);
-          Toast.success("facility Updated Successfully!");
+          Toast.success("Events & Facilities Updated Successfully!");
         },
       });
     }
@@ -139,10 +139,10 @@ const FacilityForm = ({
           <div className="flex justify-between items-center">
             <span>
               {mode === "view"
-                ? "Facility Details"
+                ? "Events & Facilities Details"
                 : mode === "edit"
-                  ? "Edit Facility"
-                  : "Create Facility"}
+                  ? "Edit Events & Facilities"
+                  : "Create Events & Facilities"}
             </span>
             {isView ? (
               canEdit && (

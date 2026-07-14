@@ -46,11 +46,11 @@ const AmenitiesList = () => {
     <div className="w-full px-6 py-2">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
         <ListHeader
-          title="Amenitities List"
-          searchPlaceholder="Search Amenitities ..."
+          title="Room Amenities List"
+          searchPlaceholder="Search Room Amenities ..."
           keyword={keyword}
           setKeyword={setKeyword}
-          addButtonText="Add New Amenitities"
+          addButtonText="Add New Room Amenities"
           onAdd={handleAdd}
           permission={PERMISSIONS.AMENITY_CREATE}
         />

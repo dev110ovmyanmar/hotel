@@ -63,10 +63,10 @@ const ServiceInventoryListing = () => {
     <div className="w-full px-6 py-2">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
         <ListHeader
-          searchPlaceholder="Search Items ..."
+          searchPlaceholder="Search Service Inventories ..."
           keyword={keyword}
           setKeyword={setKeyword}
-          addButtonText="Add New Item"
+          addButtonText="Add New Service Inventory"
           onAdd={handleAdd}
           permission={PERMISSIONS.SERVICE_INVENTORY_CREATE}
         />

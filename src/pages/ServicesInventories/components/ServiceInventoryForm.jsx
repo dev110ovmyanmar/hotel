@@ -139,7 +139,7 @@ const ServiceInventoryForm = ({
           form.resetFields();
           setDrawerOpen(false);
           setPage(1);
-          Toast.success("Inventory Created Successfully!");
+          Toast.success("Service Inventories Created Successfully!");
         },
       });
     }
@@ -151,7 +151,7 @@ const ServiceInventoryForm = ({
       editServiceInventory.mutate(editValues, {
         onSuccess: () => {
           setDrawerOpen(false);
-          Toast.success("Inventory Updated Successfully!");
+          Toast.success("Service Inventories Updated Successfully!");
         },
       });
     }

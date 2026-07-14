@@ -117,11 +117,11 @@ const PropertiesListing = () => {
         <ListHeader
           keyword={keyword}
           setKeyword={setKeyword}
-          searchPlaceholder="Search Property..."
+          searchPlaceholder="Search Hotel Profile..."
           onAdd={handleAdd}
           showCreateButton={showCreateButton}
           // showButton={true}
-          addButtonText={"Add Property"}
+          addButtonText={"Add Hotel Profile"}
         />
       </div>
 
