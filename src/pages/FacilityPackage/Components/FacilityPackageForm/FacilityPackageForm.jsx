@@ -182,7 +182,7 @@ const FacilityPackageForm = ({
             handleClose();
             setDrawerOpen(false);
             setPage(1);
-            Toast.success("Facility Package Created Successfully!");
+            Toast.success("Package Created Successfully!");
           }
         }
       });
@@ -202,7 +202,7 @@ const FacilityPackageForm = ({
         onSuccess: () => {
           handleClose();
           setDrawerOpen(false);
-          Toast.success("Facility Package Updated Successfully!");
+          Toast.success("Package Updated Successfully!");
         },
       });
     }
@@ -218,10 +218,10 @@ const FacilityPackageForm = ({
           <div className="flex justify-between items-center">
             <span>
               {mode === "view"
-                ? "Facility Package Details"
+                ? "Package Details"
                 : mode === "edit"
-                  ? "Edit Facility Package"
-                  : "Create Facility Package"}
+                  ? "Edit Package"
+                  : "Create Package"}
             </span>
             {isView ? (
               canEdit && (
@@ -262,7 +262,7 @@ const FacilityPackageForm = ({
             >
               <Input
                 readOnly={isView}
-                placeholder="Enter Facility Package Name"
+                placeholder="Enter Package Name"
               />
             </Form.Item>
 

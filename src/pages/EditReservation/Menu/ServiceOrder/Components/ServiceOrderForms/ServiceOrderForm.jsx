@@ -274,17 +274,26 @@ const ServiceOrderForm = ({
         layout="vertical"
         form={form}
         onFinish={handleSubmit}
-        disabled={isView}
+        readOnly={isView}
         initialValues={{
           orderType: "service",
           quantity: 1,
         }}
       >
         <Form.Item label="Room No" name="roomNo" rules={[{ required: true }]}>
-          <Select placeholder="Select a Room" options={rooms} allowClear />
+          <Select 
+            placeholder="Select a Room" 
+            options={rooms}
+            allowClear={isView? !isView : undefined}
+            open={isView? !isView : undefined}  
+          />
         </Form.Item>
 
-        <Form.Item label="Selection Type" name="orderType">
+        <Form.Item 
+          label="Selection Type" 
+          name="orderType"
+          className={isView? "pointer-events-none": ''}
+          >
           <Radio.Group
             disabled={isView}
             onChange={(e) => {
@@ -326,6 +335,7 @@ const ServiceOrderForm = ({
                       inventoryQuantities: {},
                     })
                   }
+                  open={isView? !isView : undefined} 
                 />
               </Form.Item>
               {serviceInventories.length === 0 && (
@@ -334,11 +344,13 @@ const ServiceOrderForm = ({
                   name="quantity"
                   initialValue={1}
                   rules={[{ required: true }, { type: "number" }]}
+                  className="minus-icon"
                 >
                   <InputNumber
                     {...sharedProps}
                     placeholder="Quantity"
                     style={{ width: "100%" }}
+                    readOnly={isView}
                   />
                 </Form.Item>
               )}

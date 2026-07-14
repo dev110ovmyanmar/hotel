@@ -77,7 +77,7 @@ const FloorForm = ({
           setPage(1);
           setDrawerOpen(false);
           handleClose();
-          Toast.success("Floor Created Successfully!");
+          Toast.success("Floor Rooms Created Successfully!");
           form.resetFields();
         },
       });
@@ -93,7 +93,7 @@ const FloorForm = ({
         onSuccess: () => {
           handleClose();
           setDrawerOpen(false);
-          Toast.success("Floor Updated Successfully!");
+          Toast.success("Floor Rooms Updated Successfully!");
         },
       });
     }
@@ -110,10 +110,10 @@ const FloorForm = ({
           <div className="flex justify-between items-center">
             <span>
               {mode === "view"
-                ? "Floor Details"
+                ? "Floor Rooms Details"
                 : mode === "edit"
-                  ? "Edit Floor"
-                  : "Add Floor"}
+                  ? "Edit Floor Rooms"
+                  : "Add Floor Rooms"}
             </span>
             {isView ? (
               canEdit && (

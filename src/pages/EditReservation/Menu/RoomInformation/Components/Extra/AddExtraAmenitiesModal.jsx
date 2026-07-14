@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Modal, Form, Button, Typography, InputNumber, Checkbox, Popconfirm, Tag, Divider } from 'antd';
+import { Modal, Form, Button, Typography, InputNumber, Checkbox, Popconfirm, Tag, Divider, Card } from 'antd';
 import { CalendarOutlined, DeleteOutlined, EditOutlined, UserOutlined, HomeOutlined, CheckCircleFilled, ClockCircleOutlined } from '@ant-design/icons';
 import { reservationRoomDetails } from '../../../../../../api/reservationSectionApi';
 import {
@@ -15,7 +15,7 @@ import dayjs from 'dayjs';
 import { TbBed } from "react-icons/tb";
 import { LiaBabyCarriageSolid } from "react-icons/lia";
 import { IoPersonOutline } from "react-icons/io5";
-import { darkModeStyle, textColorDarkMode } from '../../../../../../utils';
+import { darkModeStyle, textColorDarkMode, textWhiteInDarkStyle } from '../../../../../../utils';
 
 const { Text } = Typography;
 
@@ -25,15 +25,15 @@ const formatPrice = (num) => num ? `${num}`.replace(/\B(?=(\d{3})+(?!\d))/g, ','
 
 const SECTION_CONFIG = {
     extraBedDays: {
-        label: <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}><TbBed style={{ fontSize: '18px' }} /> Extra Bed</span>,
+        label: <span className='inline-flex items-center gap-3'><TbBed style={{ fontSize: '18px' }} /> Extra Bed</span>,
         extraType: 'extra_bed', color: '#1677ff', bg: '#eff6ff', border: '#bfdbfe'
     },
     extraPersonDays: {
-        label: <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}><IoPersonOutline style={{ fontSize: '18px' }} /> Extra Person</span>,
+        label: <span className='inline-flex items-center gap-3'><IoPersonOutline style={{ fontSize: '18px' }} /> Extra Person</span>,
         extraType: 'extra_person', color: '#1677ff', bg: '#eff6ff', border: '#bfdbfe'
     },
     babyCotDays: {
-        label: <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}><LiaBabyCarriageSolid style={{ fontSize: '18px' }} /> Baby Cot</span>,
+        label: <span className='inline-flex items-center gap-3'><LiaBabyCarriageSolid style={{ fontSize: '18px' }} /> Baby Cot</span>,
         extraType: 'baby_cot', color: '#1677ff', bg: '#eff6ff', border: '#bfdbfe'
     }
 };
@@ -322,38 +322,32 @@ const AddExtraAmenitiesModal = ({
         });
 
         return (
-            <div style={{
-                background: '#ffffff',
-                borderRadius: '10px',
-                border: '1px solid #e8edf3',
-                marginBottom: '16px',
-                overflow: 'hidden',
-                boxShadow: '0 1px 4px rgba(0,0,0,0.04)',
-            }}>
+            <div
+                className="bg-white rounded-[10px] border border-[#e8edf3] mb-4 overflow-hidden shadow-[0_1px_4px_rgba(0,0,0,0.04)]"
+
+            >
                 {/* Section Header */}
-                <div style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    padding: '10px 14px',
-                    background: bg,
-                    borderBottom: `1px solid ${border}`,
-                }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <div style={{ width: '3px', height: '16px', background: color, borderRadius: '2px' }} />
-                        <Text strong style={{ fontSize: '13px', color: '#1e293b' }}>{label}</Text>
+                <div
+                    className={`flex justify-between items-center px-[14px] py-[10px] ${darkModeStyle}`}
+                    style={{
+                        background: bg,
+                        borderBottom: `1px solid ${border}`,
+                    }}
+
+                >
+                    <div className="flex items-center gap-2">
+                        <div
+                            className="w-[3px] h-4 rounded-[2px]"
+                            style={{ background: color }}
+                        />
+                        <Text strong className={`!text-[13px] !text-[#1e293b] ${textColorDarkMode}`}>
+                            {label}
+                        </Text>
                         {existingCount > 0 && (
-                            <span style={{
-                                fontSize: '10px',
-                                fontWeight: 600,
-                                color: '#92400e',
-                                background: '#fef3c7',
-                                border: '1px solid #fde68a',
-                                padding: '1px 7px',
-                                borderRadius: '10px',
-                                letterSpacing: '0.3px',
-                            }}>
-                                {existingCount}　Days
+                            <span
+                                className="text-[10px] font-semibold text-[#92400e] bg-[#fef3c7] border border-[#fde68a] px-[7px] py-[1px] rounded-[10px] tracking-[0.3px]"
+                            >
+                                {existingCount} Days
                             </span>
                         )}
                     </div>
@@ -394,15 +388,20 @@ const AddExtraAmenitiesModal = ({
                             form.setFieldsValue({ [formFieldName]: updatedGroupValues });
                             setZeroQtyErrors(prev => ({ ...prev, [formFieldName]: false }));
                         }}
-                        style={{ fontSize: '12px', color: '#64748b' }}
+                        className="!text-[12px] !text-[#64748b]"
                     >
                         Select All
                     </Checkbox>
                 </div>
 
                 {/* Date Tags & Actions Area */}
-                <div style={{ padding: '12px 14px' }}>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: hasEditableDates ? '12px' : '0' }}>
+                <div className="px-[14px] py-3">
+                    <div
+                        className="flex flex-wrap gap-2"
+                        style={{
+                            marginBottom: hasEditableDates ? "12px" : "0",
+                        }}
+                    >
                         {dailySchedule.map(day => {
                             const isSelected = selectedDatesArray.includes(day.date);
                             const currentQty = formValues?.[formFieldName]?.[day.date] || 0;
@@ -429,33 +428,23 @@ const AddExtraAmenitiesModal = ({
                                 <div
                                     key={day.date}
                                     onClick={() => !isDisabled && handleDateTagClick(day.date, selectedDatesArray, setDatesArray, formFieldName, extraType, matchedAsset, alreadyExists)}
+                                    className="inline-flex flex-col items-stretch rounded-lg text-[11.5px] overflow-hidden transition-all duration-150 select-none"
                                     style={{
-                                        cursor: isDisabled ? 'not-allowed' : 'pointer',
+                                        cursor: isDisabled ? "not-allowed" : "pointer",
                                         opacity: isDisabled ? 0.5 : 1,
-                                        userSelect: 'none',
-                                        display: 'inline-flex',
-                                        flexDirection: 'column',
-                                        alignItems: 'stretch',
-                                        borderRadius: '8px',
-                                        fontSize: '11.5px',
-                                        minWidth: alreadyExists ? '148px' : '110px',
+                                        minWidth: alreadyExists ? "148px" : "110px",
                                         border: `1.5px solid ${tagBorder}`,
                                         background: tagBg,
                                         color: tagColor,
                                         fontWeight: alreadyExists || isSelected ? 600 : 400,
-                                        overflow: 'hidden',
-                                        transition: 'box-shadow 0.15s ease, transform 0.1s ease',
-                                        boxShadow: isSelected || alreadyExists ? '0 2px 6px rgba(0,0,0,0.08)' : 'none',
+                                        boxShadow:
+                                            isSelected || alreadyExists
+                                                ? "0 2px 6px rgba(0,0,0,0.08)"
+                                                : "none",
                                     }}
                                 >
-                                    <div style={{
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'space-between',
-                                        padding: '5px 9px',
-                                        gap: '6px',
-                                    }}>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                                    <div className={` flex items-center justify-between px-[9px] py-[5px] gap-[6px] ${!alreadyExists? `${darkModeStyle}` : null}`}>
+                                        <div className="flex items-center gap-[5px]">
                                             {alreadyExists
                                                 ? <CheckCircleFilled style={{ color: '#f59e0b', fontSize: '12px' }} />
                                                 : isPastDate
@@ -464,24 +453,19 @@ const AddExtraAmenitiesModal = ({
                                             }
                                             <span style={{ fontVariantNumeric: 'tabular-nums' }}>{day.date}</span>
                                             {!alreadyExists && currentQty > 0 && (
-                                                <span style={{
-                                                    marginLeft: '2px',
-                                                    background: color,
-                                                    color: '#fff',
-                                                    borderRadius: '10px',
-                                                    padding: '0 5px',
-                                                    fontSize: '10px',
-                                                    fontWeight: 700,
-                                                }}>
+                                                <span
+                                                    className="ml-[2px] text-white rounded-[10px] px-[5px] text-[10px] font-bold"
+                                                    style={{ background: color }}
+                                                >
                                                     ×{currentQty}
                                                 </span>
                                             )}
                                         </div>
 
                                         {alreadyExists && !isPastDate && (
-                                            <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+                                            <div className="flex items-center gap-[6px]">
                                                 <EditOutlined
-                                                    style={{ color: '#1677ff', cursor: 'pointer', fontSize: '12px' }}
+                                                    className="!text-[#1677ff] cursor-pointer !text-[12px]"
                                                     onClick={(e) => {
                                                         e.stopPropagation();
                                                         handleDateTagClick(day.date, selectedDatesArray, setDatesArray, formFieldName, extraType, matchedAsset, alreadyExists);
@@ -499,7 +483,7 @@ const AddExtraAmenitiesModal = ({
                                                     cancelText="No"
                                                 >
                                                     <DeleteOutlined
-                                                        style={{ color: '#ef4444', cursor: 'pointer', fontSize: '12px' }}
+                                                        className="!text-[#ef4444] cursor-pointer !text-[12px]"
                                                         onClick={(e) => e.stopPropagation()}
                                                     />
                                                 </Popconfirm>
@@ -508,43 +492,37 @@ const AddExtraAmenitiesModal = ({
                                     </div>
 
                                     {alreadyExists ? (
-                                        <div style={{
-                                            display: 'flex',
-                                            justifyContent: 'space-between',
-                                            alignItems: 'center',
-                                            padding: '4px 9px 6px',
-                                            borderTop: '1px dashed #fde68a',
-                                            gap: '6px',
-                                        }}>
-                                            <span style={{
-                                                background: '#fef3c7',
-                                                color: '#b45309',
-                                                padding: '1px 6px',
-                                                borderRadius: '4px',
-                                                fontSize: '10.5px',
-                                                fontWeight: 700,
-                                                border: '1px solid #fde68a',
-                                            }}>
+                                        <div
+                                            className="flex justify-between items-center px-[9px] pt-1 pb-[6px] gap-[6px]"
+                                            style={{
+                                                borderTop: "1px dashed #fde68a",
+                                            }}
+                                        >
+                                            <span className="bg-[#fef3c7] text-[#b45309] px-[6px] py-[1px] rounded text-[10.5px] font-bold border border-[#fde68a]">
                                                 ×{matchedAsset.quantity}
                                             </span>
-                                            <span style={{ color: '#b45309', fontSize: '10.5px', fontWeight: 600 }}>
+                                            <span className="text-[#b45309] text-[10.5px] font-semibold">
                                                 {formatPrice(matchedAsset.unitPrice || matchedAsset.price)} MMK
                                             </span>
                                         </div>
                                     ) : (
-                                        <div style={{
-                                            display: 'flex',
-                                            justifyContent: 'space-between',
-                                            alignItems: 'center',
-                                            padding: '4px 9px 6px',
-                                            borderTop: `1px dashed ${tagBorder}`,
-                                            opacity: currentQty > 0 ? 1 : 0.55,
-                                            gap: '6px',
-                                        }}>
-                                            <span style={{ fontSize: '10px', color: currentQty > 0 ? tagColor : undefined, fontWeight: currentQty > 0 ? 600 : 400 }}>
+                                        <div
+                                            className={`flex justify-between items-center px-[9px] pt-1 pb-[6px] gap-[6px] ${darkModeStyle}`}
+                                            style={{
+                                                borderTop: `1px dashed ${tagBorder}`,
+                                                opacity: currentQty > 0 ? 1 : 0.55,
+                                            }}
+                                        >
+                                            <span
+                                                className="text-[10px]"
+                                                style={{
+                                                    color: currentQty > 0 ? tagColor : undefined,
+                                                    fontWeight: currentQty > 0 ? 600 : 400,
+                                                }}
+                                            >
                                                 Qty: {currentQty > 0 ? currentQty : '—'}
                                             </span>
-                                            <span style={{ fontSize: '10px' }}>MMK: —</span>
+                                            <span className="text-[10px]">MMK: —</span>
                                         </div>
                                     )}
                                 </div>
@@ -554,30 +532,23 @@ const AddExtraAmenitiesModal = ({
 
                     {/* Bulk qty setter */}
                     {hasEditableDates && (
-                        <div style={{
-                            display: 'flex',
-                            alignItems: 'flex-end',
-                            gap: '10px',
-                            background: '#f8fafc',
-                            padding: '10px 12px',
-                            borderRadius: '8px',
-                            border: '1px dashed #cbd5e1',
-                            marginTop: '4px',
-                        }}>
-                            <div style={{ flex: 1 }}>
-                                <Text style={{ fontSize: '11px', color: '#64748b', display: 'block', marginBottom: '4px' }}>
+                        <div
+                            className={`flex items-end gap-2.5 bg-[#f8fafc] px-3 py-2.5 rounded-lg border border-dashed border-[#cbd5e1] mt-1 ${darkModeStyle}`}
+                        >
+                            <div className='flex-1'>
+                                <Text className={`!text-[11px] !text-[#64748b] block mb-[4px] ${textWhiteInDarkStyle}`}>
                                     Bulk set quantity for selected dates
                                 </Text>
                                 <Form.Item
                                     validateStatus={zeroQtyErrors[formFieldName] ? 'error' : ''}
                                     help={zeroQtyErrors[formFieldName] ? '⚠ Quantity is required for selected dates' : ''}
-                                    style={{ marginBottom: 0 }}
+                                    className='!mb-0'
                                 >
                                     <InputNumber
                                         min={1}
                                         defaultValue={1}
                                         placeholder="Enter quantity"
-                                        style={{ width: '180px', borderRadius: '6px' }}
+                                        className="!w-[150px] !rounded-md"
                                         onChange={(val) => applyBulkQuantityToSelected(formFieldName, selectedDatesArray, val)}
                                     />
                                 </Form.Item>
@@ -607,18 +578,21 @@ const AddExtraAmenitiesModal = ({
         deleteExtraMutation.isPending;
 
     // ── JSX ───────────────────────────────────────────────────────────────────
+    const textWhiteDark = `text-[#64748b] ${textWhiteInDarkStyle}`;
+    const textColorDark = `text-[#1e293b] ${textColorDarkMode}`;
+
     return (
         <>
             {/* Primary Modal */}
             <Modal
                 title={
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                        <div style={{ width: '4px', height: '20px', background: 'linear-gradient(180deg,#1677ff,#6366f1)', borderRadius: '3px' }} />
+                    <div className="flex items-center gap-3">
+                        <div className="w-[4px] h-[20px] bg-[linear-gradient(180deg,_#1677ff,_#6366f1)] rounded-[3px]" />
                         <div>
-                            <div style={{ fontWeight: 700, fontSize: '15px', color: '#0f172a', lineHeight: 1.3 }} className={textColorDarkMode}>
+                            <div className={`font-bold text-[15px] text-[#0f172a] leading-[1.3] ${textColorDarkMode}`}>
                                 Extra Bed, Person & Baby Cot
                             </div>
-                            <div style={{ fontWeight: 400, fontSize: '11px', color: '#94a3b8', marginTop: '1px' }}>
+                            <div className="font-normal text-[11px] text-[#94a3b8] mt-px">
                                 Select dates and set quantities per type
                             </div>
                         </div>
@@ -665,31 +639,29 @@ const AddExtraAmenitiesModal = ({
                 }
             >
                 {/* Guest & Room info bar */}
-                <div
-                    style={{
-                        display: 'flex',
-                        gap: '16px',
-                        background: 'linear-gradient(135deg, #f8faff 0%, #f0f4ff 100%)',
-                        padding: '10px 16px',
-                        borderRadius: '8px',
-                        margin: '4px 0 16px 0',
-                        border: '1px solid #e0e7ff',
-                        fontSize: '12.5px',
+
+                <Card
+                    styles={{
+                        body: {
+                            padding: "10px",
+                        },
                     }}
-                    className={darkModeStyle}
+                    className='!mb-3 !rounded-2xl'
                 >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#3730a3' }}>
-                        <UserOutlined style={{ fontSize: '13px' }} />
-                        <span style={{ color: '#64748b' }}>Guest:</span>
-                        <strong style={{ color: '#1e293b' }}>{guestName}</strong>
+                    <div className='flex gap-x-5 !m-0 !p-0'>
+                        <div className="flex items-center gap-2 text-[#3730a3]">
+                            <UserOutlined className='!font-md' />
+                            <span className={textWhiteDark}>Guest:</span>
+                            <strong className={textColorDark}>{guestName}</strong>
+                        </div>
+                        <div className='w-[1px] bg-[#c7d2fe]' />
+                        <div className='flex items-center gap-2 text-[#3730a3]'>
+                            <HomeOutlined className='!font-md' />
+                            <span className={textWhiteDark}>Room Type:</span>
+                            <strong className={textColorDark}>{currentRoomType}</strong>
+                        </div>
                     </div>
-                    <div style={{ width: '1px', background: '#c7d2fe' }} />
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#3730a3' }}>
-                        <HomeOutlined style={{ fontSize: '13px' }} />
-                        <span style={{ color: '#64748b' }}>Room Type:</span>
-                        <strong style={{ color: '#1e293b' }}>{currentRoomType}</strong>
-                    </div>
-                </div>
+                </Card>
 
                 <Form form={form} layout="vertical">
                     {isLoading ? (
@@ -697,7 +669,7 @@ const AddExtraAmenitiesModal = ({
                             <Loader />
                         </div>
                     ) : (
-                        <div style={{ display: 'flex', flexDirection: 'column' }}>
+                        <div className='flex flex-col'>
                             {renderMultiSelectionBlock('extraBedDays', selectedBedDates, setSelectedBedDates)}
                             {renderMultiSelectionBlock('extraPersonDays', selectedPersonDates, setSelectedPersonDates)}
                             {renderMultiSelectionBlock('babyCotDays', selectedCotDates, setSelectedCotDates)}
@@ -712,7 +684,7 @@ const AddExtraAmenitiesModal = ({
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                         <div style={{ width: '4px', height: '18px', background: '#f59e0b', borderRadius: '3px' }} />
                         <div>
-                            <div style={{ fontWeight: 700, fontSize: '14px', color: '#0f172a' }}>Modify Extra</div>
+                            <div style={{ fontWeight: 700, fontSize: '14px', color: '#0f172a' }} className={textWhiteInDarkStyle}>Modify Extra</div>
                             <div style={{ fontWeight: 400, fontSize: '11px', color: '#94a3b8' }}>Update quantity and unit price</div>
                         </div>
                     </div>

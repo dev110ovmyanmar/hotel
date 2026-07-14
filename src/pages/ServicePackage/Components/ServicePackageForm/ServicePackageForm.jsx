@@ -104,7 +104,7 @@ const ServicePackageForm = ({
       onSuccess: () => {
         handleClose();
         setDrawerOpen(false);
-        Toast.success("Service Updated Successfully!");
+        Toast.success("Service Packages Updated Successfully!");
       },
     });
   };
@@ -126,7 +126,7 @@ const ServicePackageForm = ({
           handleClose();
           setDrawerOpen(false);
           setPage(1);
-          Toast.success("Service Created Successfully!");
+          Toast.success("Service Packages Created Successfully!");
         },
       });
     }

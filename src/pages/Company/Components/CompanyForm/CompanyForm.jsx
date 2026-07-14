@@ -121,7 +121,7 @@ const CompanyForm = ({
         onSuccess: () => {
           handleClose();
           setPage(1);
-          Toast.success("Company Created Successfully!");
+          Toast.success("Companies or Corporates Created Successfully!");
         },
       });
     }
@@ -137,7 +137,7 @@ const CompanyForm = ({
         onSuccess: () => {
           setDrawerOpen(false);
           handleClose();
-          Toast.success("Company Updated Successfully!");
+          Toast.success("Companies or Corporates Updated Successfully!");
         },
       });
     }
@@ -163,10 +163,10 @@ const CompanyForm = ({
           <div className="flex justify-between items-center">
             <span>
               {mode === "view"
-                ? "Company Details"
+                ? "Companies / Corporates Details"
                 : mode === "edit"
-                  ? "Edit Company"
-                  : "Add New Company"}
+                  ? "Edit Companies / Corporates"
+                  : "Add New Companies / Corporates"}
             </span>
             {isView ? (
               canEdit && (

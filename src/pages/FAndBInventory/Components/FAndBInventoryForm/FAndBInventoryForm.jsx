@@ -138,7 +138,7 @@ const FAndBInventoryForm = ({
         onSuccess: () => {
           setDrawerOpen(false);
           handleClose();
-          Toast.success("Facility Package Updated Successfully!");
+          Toast.success("FAndB Inventory Updated Successfully!");
         },
       });
     }
@@ -169,10 +169,10 @@ const FAndBInventoryForm = ({
           <div className="flex justify-between items-center">
             <span>
               {mode === "view"
-                ? "Inventory Details"
+                ? "FAndB Inventory Details"
                 : mode === "edit"
-                  ? "Edit Inventory"
-                  : "Create Inventory"}
+                  ? "Edit FAndB Inventory"
+                  : "Create FAndB Inventory"}
             </span>
             {isView ? (
               canEdit && (

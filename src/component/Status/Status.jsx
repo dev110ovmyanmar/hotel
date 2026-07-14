@@ -1,6 +1,6 @@
 import { Form, Select, Input } from 'antd';
 
-const Status = ({ needBlock, isView, statusValue , facilityStatus }) => {
+const Status = ({ needBlock, isView, statusValue }) => {
     const options = statusValue
         ?.filter((item) => (needBlock ? true : item?.code !== "blocked"))
         .map((item) => ({
@@ -10,7 +10,7 @@ const Status = ({ needBlock, isView, statusValue , facilityStatus }) => {
 
     return (
         <Form.Item
-            label={facilityStatus? "Facility Status" : "Status"}
+            label="Status"
             name={["status", "uuid"]}
             rules={[{ required: true, message: "Status is Required" }]}
             getValueProps={(value) => ({

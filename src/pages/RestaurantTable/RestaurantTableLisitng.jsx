@@ -60,11 +60,11 @@ const RestaurantTableListing = () => {
         <div className="w-full">
             <div className="px-6 py-4">
                 <ListHeader
-                    title="Restaurant Table List"
-                    searchPlaceholder="Search Restaurant Table..."
+                    title="Table Management List"
+                    searchPlaceholder="Search Table Management..."
                     keyword={keyword}
                     setKeyword={setKeyword}
-                    addButtonText="Add New Restaurant Table"
+                    addButtonText="Add New Table Management"
                     onAdd={handleAdd}
                     permission={PERMISSIONS.RESTAURANT_TABLE_CREATE}
                 />

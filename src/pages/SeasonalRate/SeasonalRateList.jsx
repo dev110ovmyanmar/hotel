@@ -53,10 +53,10 @@ const SeasonalRateList = () => {
     <div className="w-full px-6 py-2">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
         <ListHeader
-          searchPlaceholder="Search Base Rate ..."
+          searchPlaceholder="Search Room Type Rate ..."
           keyword={keyword}
           setKeyword={setKeyword}
-          addButtonText="Add New Base Rate"
+          addButtonText="Add New Room Type Rate"
           onAdd={handleAdd}
           startDate={startDate}
           endDate={endDate}

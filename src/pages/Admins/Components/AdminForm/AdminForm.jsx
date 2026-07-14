@@ -408,14 +408,12 @@ const AdminForm = ({
                   >
                     <span className="font-bold">Current Permissions</span>
 
-                    {/* {changesNotAllowList?.length <= 0 ? null : ( */}
                     <Button
                       type="primary"
                       onClick={() => adminDrawerFunction("notAllow")}
                     >
                       View
                     </Button>
-                    {/* )} */}
                   </div>
                 )}
 
