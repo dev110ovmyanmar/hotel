@@ -26,7 +26,6 @@ const ReservationsTable = ({
 }) => {
   const navigate = useNavigate();
 
-  // Updated to pass item?.uuid as a clear path parameter
   const handleMenuClick = (item) => {
     if (item?.uuid) {
       navigate(`/reservations/${item.uuid}/room-information`);
@@ -40,6 +39,7 @@ const ReservationsTable = ({
       title: "Guest Name",
       dataIndex: ["guest", "name"],
       key: "guestName",
+      width: 140,
       render: (text) => (
         <span style={{ textTransform: "capitalize" }}>{text || ""}</span>
       ),
@@ -79,7 +79,6 @@ const ReservationsTable = ({
       key: "roomType",
       align: "center",
       width: 120,
-      // render: (text) => <span className="text-indigo-800">{text}</span>,
     },
 
     {
@@ -91,61 +90,38 @@ const ReservationsTable = ({
     },
 
     {
-  title: "Stay Period",
-  align: "center",
-  render: (_, record) => {
-    const arrival = record.checkinDate
-      ? dayjs(record.checkinDate).format("YYYY-MM-DD")
-      : "-";
-    const departure = record.checkoutDate
-      ? dayjs(record.checkoutDate).format("YYYY-MM-DD")
-      : "-";
-    const totalNight = record.totalNight ?? 0;
+      title: "Stay Period",
+      align: "center",
+      width: 110,
+      render: (_, record) => {
+        const arrival = record.checkinDate
+          ? dayjs(record.checkinDate).format("YYYY-MM-DD")
+          : "-";
+        const departure = record.checkoutDate
+          ? dayjs(record.checkoutDate).format("YYYY-MM-DD")
+          : "-";
+        const totalNight = record.totalNight ?? 0;
 
-    return (
-      <div className="flex flex-col items-center justify-center text-sm gap-0.5">
-        <span>{arrival}</span>
-        <span className="text-xs font-light text-gray-500 my-0.5">
-         ( <span className="font-medium text-black mr-1">{totalNight} - </span>
-          {totalNight === 1 ? "night" : "nights"} ) 
-        </span>
-        <span>{departure}</span>
-      </div>
-    );
-  },
-},
+        return (
+          <div className="flex flex-col items-center justify-center text-sm gap-0.5">
+            <span>{arrival}</span>
+            <span className="text-xs font-light text-gray-500 my-0.5">
+              ({" "}
+              <span className="font-medium text-black mr-1">
+                {totalNight} -{" "}
+              </span>
+              {totalNight === 1 ? "night" : "nights"} )
+            </span>
+            <span>{departure}</span>
+          </div>
+        );
+      },
+    },
 
-    // {
-    //   title: "Stay Period",
-    //   align: "center",
-    //   render: (_, record) => {
-    //     const arrival = record.checkinDate
-    //       ? dayjs(record.checkinDate).format("YYYY-MM-DD")
-    //       : "-";
-    //     const departure = record.checkoutDate
-    //       ? dayjs(record.checkoutDate).format("YYYY-MM-DD")
-    //       : "-";
-
-    //     return (
-    //       <div className="flex flex-col items-center justify-center text-sm gap-0.5">
-    //         <span>{arrival}</span>
-    //         <span className="text-xs font-light">to</span>
-    //         <span>{departure}</span>
-    //       </div>
-    //     );
-    //   },
-    // },
-
-    // {
-    //   title: "Night",
-    //   dataIndex: "totalNight",
-    //   key: "totalNight",
-    //   align: "center",
-    //   width: 68,
-    // },
     {
       title: "Contact & Guests",
       key: "contact",
+      width: 110,
       render: (_, record) => (
         <div className="flex flex-col gap-1" style={{ fontSize: "12px" }}>
           <div className="flex items-center gap-1">
@@ -171,7 +147,7 @@ const ReservationsTable = ({
       dataIndex: ["roomStatus", "name"],
       key: "status",
       align: "center",
-      width: 90,
+      width: 120,
       render: (roomStatus) => <ReservationStatusColor status={roomStatus} />,
     },
     {
@@ -179,6 +155,7 @@ const ReservationsTable = ({
       dataIndex: "grandTotal",
       key: "total",
       align: "end",
+      width: 120,
       render: (value) => (
         <div className="flex justify-end items-center gap-1">
           <PriceTag value={value} />

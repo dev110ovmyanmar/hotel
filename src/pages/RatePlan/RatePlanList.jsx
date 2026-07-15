@@ -47,11 +47,11 @@ const RatePlanList = () => {
     <div className="w-full px-6 py-2">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
         <ListHeader
-          title="Rate Plan List"
-          searchPlaceholder="Search Rate Plan ..."
+          title="Rate Plans List"
+          searchPlaceholder="Search Rate Plans ..."
           keyword={keyword}
           setKeyword={setKeyword}
-          addButtonText="Add New Rate Plan"
+          addButtonText="Add New Rate Plans"
           onAdd={handleAdd}
           permission={PERMISSIONS.RATE_PLAN_CREATE}
         />

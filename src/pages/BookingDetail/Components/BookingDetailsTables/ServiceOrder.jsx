@@ -1,6 +1,7 @@
 import React from "react";
 import { Row, Col, Typography, Space, Card, Table } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
+import ColorStatusTag from "../../../../component/ColorStatusTag/ColorStatusTag";
 
 const { Text } = Typography;
 
@@ -28,9 +29,14 @@ const ServiceOrder = ({ data }) => {
     // },
     {
       title: "Order Status",
-      dataIndex: ["orderStatus", "name"],
+      dataIndex: "orderStatus",
       key: "orderStatus",
       align: "center",
+      render: (status) => {
+        return (
+          status ? <ColorStatusTag status={status} /> : "-"
+        );
+      },
     },
     {
       title: "Guest",

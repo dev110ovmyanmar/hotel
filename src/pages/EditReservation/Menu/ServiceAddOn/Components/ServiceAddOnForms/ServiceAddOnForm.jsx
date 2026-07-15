@@ -67,23 +67,69 @@ const ServiceAddOnForm = ({
     invalidateKeys: [["service-addon"]],
   });
 
+  // const currentStatusCode = orderDetails?.addonStatus?.code;
+  // const addonStatus =
+  //   initData?.statuses?.addon_status
+  //     ?.filter((status) => {
+  //       if (isEdit && currentStatusCode === "confirmed") {
+  //         return status.code === "confirmed";
+  //       }
+  //       if (isEdit && currentStatusCode === "cancelled") {
+  //         return status.code === "cancelled";
+  //       }
+  //       if (isEdit && currentStatusCode === "no_show") {
+  //         return status.code === "no_show";
+  //       }
+  //       if (currentStatusCode === "in_progress") {
+  //         return (
+  //           status.code === "in_progress" ||
+  //           status.code === "completed" ||
+  //           status.code === "cancelled" ||
+  //           status.code === "no_show"
+  //         );
+  //       }
+  //       return true;
+  //       return status.code === "pending" || status.code === "in_progress";
+  //     })
+  //     ?.map((status) => ({
+  //       value: status.uuid,
+  //       label: status.name,
+  //     })) || [];
   const currentStatusCode = orderDetails?.addonStatus?.code;
   const addonStatus =
     initData?.statuses?.addon_status
       ?.filter((status) => {
-        if (isEdit && currentStatusCode === "confirmed") {
-          return (
-            status.code === "pending" ||
-            status.code === "in_progress" ||
-            status.code === "confirmed"
-          );
+        if (isEdit) {
+          if (currentStatusCode === "completed") {
+            return status.code === "completed";
+          }
+          if (currentStatusCode === "cancelled") {
+            return status.code === "cancelled";
+          }
+          if (currentStatusCode === "no_show") {
+            return status.code === "no_show";
+          }
+          if (currentStatusCode === "in_progress") {
+            return (
+              status.code === "in_progress" ||
+              status.code === "completed" ||
+              status.code === "cancelled" ||
+              status.code === "no_show"
+            );
+          }
+          return true;
         }
-        return true;
+
+        return status.code === "pending" || status.code === "in_progress";
       })
       ?.map((status) => ({
         value: status.uuid,
         label: status.name,
       })) || [];
+
+  const defaultStatus = initData?.statuses?.addon_status?.find(
+    (status) => status.code === "pending",
+  );
 
   const rooms =
     reservationRoom?.rooms
@@ -98,8 +144,15 @@ const ServiceAddOnForm = ({
         };
       }) || [];
 
+  // const services =
+  //   reservationRoom?.services?.map((service) => ({
+  //     value: service?.uuid,
+  //     label: service?.name,
+  //   })) || [];
   const services =
-    reservationRoom?.services?.map((service) => ({
+  reservationRoom?.services
+    ?.filter((service) => service?.serviceStages?.includes("pre_arrival"))
+    ?.map((service) => ({
       value: service?.uuid,
       label: service?.name,
     })) || [];
@@ -218,6 +271,7 @@ const ServiceAddOnForm = ({
         disabled={isView}
         initialValues={{
           quantity: 1,
+          status: !isEdit ? defaultStatus?.uuid : undefined,
         }}
       >
         {!isAdd && (

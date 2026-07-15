@@ -46,11 +46,11 @@ const LocationList = () => {
     <div className="w-full px-6 py-2">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
         <ListHeader
-          title="Location List"
-          searchPlaceholder="Search Location ..."
+          title="Country List"
+          searchPlaceholder="Search Country  ..."
           keyword={keyword}
           setKeyword={setKeyword}
-          addButtonText="Add New Location"
+          addButtonText="Add New Country"
           onAdd={handleAdd}
           permission={PERMISSIONS.LOCATION_CREATE}
         />
