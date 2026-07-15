@@ -45,8 +45,8 @@ const RoomList = () => {
     <div className="w-full px-6 py-2">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
         <ListHeader
-          title="Room List"
-          searchPlaceholder="Search Room ..."
+          title="Rooms List"
+          searchPlaceholder="Search Rooms ..."
           keyword={keyword}
           setKeyword={setKeyword}
           addButtonText="Add New Room"

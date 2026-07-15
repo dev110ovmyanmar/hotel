@@ -72,6 +72,26 @@
   --ant-border-radius: 5px;
 }
 
+.ant-input::placeholder {
+  color: rgba(0, 0, 0, 0.45); 
+}
+
+/* Dark mode: Changes the placeholder to white when dark mode class is active */
+.dark .ant-input::placeholder {
+  color: #ffffff !important;
+  opacity: 0.8; /* Optional: slightly soften the white if it's too bright */
+}
+
+/* Dark mode styles for RangePicker */
+.dark .ant-picker {
+  background-color: #1f1f1f !important; /* Dark background */
+  border-color: #434343 !important;
+}
+
+.dark .ant-picker-input > input::placeholder {
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
 .ant-select {
   --ant-border-radius: 5px;
 }
