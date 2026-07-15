@@ -76,7 +76,7 @@ const FacilityBookingForm = ({
     "initData",
     "authenticated",
   ])?.statuses;
-  const initDataStatus = initData?.status;
+  const initDataFacilityStatus = initData?.facility_status;
 
   const { data: facilityMetaData } = useApiQuery({
     fetchQueryName: "facilityMetaData",
@@ -115,17 +115,37 @@ const FacilityBookingForm = ({
     },
   });
 
-  useEffect(() => {
-    if (drawerOpen && isAdd && initDataStatus) {
-      form.resetFields();
+  const currentStatus = bookingDetails?.status?.code;
 
+  const facilityStatus = initDataFacilityStatus?.map((item) => ({
+    value: item.uuid,
+    label: item.name,
+    disabled:
+      isView ||
+
+      // Create mode
+      (isAdd &&
+        ["completed", "cancelled"].includes(item?.code)) ||
+
+      (isEdit &&
+        currentStatus === "confirmed" &&
+        item.code === "pending"),
+  }));
+
+  useEffect(() => {
+    if (drawerOpen && isAdd) {
+      form.resetFields();
+    }
+
+    if (drawerOpen && isAdd && initDataFacilityStatus) {
       form.setFieldsValue({
         status: {
-          uuid: initDataStatus.find((item) => item.code === "active")?.uuid,
+          uuid: initDataFacilityStatus?.find((item) => item?.code === "pending")?.uuid,
         },
       });
     }
-  }, [drawerOpen, isAdd, initDataStatus]);
+
+  }, [isAdd, initDataFacilityStatus]);
 
   useEffect(() => {
     const FacilityBookingFormDataView = isView || isEdit;
@@ -150,6 +170,33 @@ const FacilityBookingForm = ({
     }
   }, [isEdit, isView, bookingDetails]);
 
+  useEffect(() => {
+    if (eventTime?.[0] && eventTime?.[1]) {
+      const startTime = eventTime[0];
+      const endTime = eventTime[1];
+
+      const expectedSeconds = endTime.diff(startTime, "second");
+
+      const hours = Math.floor(expectedSeconds / 3600);
+      const minutes = Math.floor((expectedSeconds % 3600) / 60);
+      const seconds = expectedSeconds % 60;
+
+      const uiFormat =
+        `${String(hours).padStart(2, "0")}:` +
+        `${String(minutes).padStart(2, "0")}`;
+
+      const formattedExpectedHours =
+        `${String(hours).padStart(2, "0")}:` +
+        `${String(minutes).padStart(2, "0")}:` +
+        `${String(seconds).padStart(2, "0")}`;
+
+      form.setFieldsValue({
+        expectedHours: uiFormat,
+        expectedHoursBackend: formattedExpectedHours,
+      });
+    }
+  }, [eventTime]);
+
   const handleClose = () => {
     setDrawerOpen(false);
     setSelectedData(null);
@@ -173,7 +220,7 @@ const FacilityBookingForm = ({
         onSuccess: () => {
           form.resetFields();
           setPage(1);
-          setDrawerOpen(false);
+          // setDrawerOpen(false);
           handleClose();
           Toast.success("Facility Booking Created Successfully!");
         },
@@ -195,7 +242,7 @@ const FacilityBookingForm = ({
 
       editFacilityBookings.mutate(editValues, {
         onSuccess: () => {
-          setDrawerOpen(false);
+          // setDrawerOpen(false);
           handleClose();
           Toast.success("FacilityBooking Updated Successfully!");
         },
@@ -352,7 +399,35 @@ const FacilityBookingForm = ({
             />
           </Form.Item>
 
-          <Status isView={isView} statusValue={initDataStatus} />
+          <Form.Item
+            label="Facility Status"
+            name={["status", "uuid"]}
+            className="col-span-1"
+            rules={[
+              { required: true, message: "Please select a Facility Status" },
+            ]}
+            getValueProps={(value) => ({
+              value: isView
+                ? facilityStatus.find((item) => item.value === value)?.label
+                : value,
+            })}
+          >
+            {isView ? (
+              <Input readOnly />
+            ) : (
+              <Select
+                showSearch
+                filterOption={(input, option) =>
+                  (option?.label ?? "")
+                    .toLowerCase()
+                    .includes(input.toLowerCase())
+                }
+                options={facilityStatus}
+                placeholder="Select a Facility Status"
+                disabled={isEdit && (currentStatus === 'completed' || currentStatus === 'cancelled')}
+              />
+            )}
+          </Form.Item>
 
           <Form.Item label="Remark" name="remark">
             <TextArea readOnly={isView} placeholder="Enter Remark" />

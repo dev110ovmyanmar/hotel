@@ -101,14 +101,20 @@ const EventFacilityOrderList = () => {
         loading={isLoading}
       />
 
-      <EventFacilityOrderForm
-        drawerOpen={drawerOpen}
-        setDrawerOpen={setDrawerOpen}
-        mode={mode}
-        reservationId={data?.reservation?.uuid}
-        searchOpen={searchOpen}
-        setSearchOpen={setSearchOpen}
-      />
+      {
+        drawerOpen && (
+          <EventFacilityOrderForm
+            drawerOpen={drawerOpen}
+            setDrawerOpen={setDrawerOpen}
+            selectedData={selectedData}
+            setSelectedData={setSelectedData}
+            mode={mode}
+            reservationId={data?.reservation?.uuid}
+            searchOpen={searchOpen}
+            setSearchOpen={setSearchOpen}
+          />
+        )
+      }
     </div>
   );
 };
