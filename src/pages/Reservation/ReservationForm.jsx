@@ -171,7 +171,7 @@ const ReservationForm = ({
                 </div>
 
                 <div className="flex flex-wrap gap-x-2">
-                    <div className="w-75 flex-auto md:flex-initial">
+                    <div className="w-100 flex-auto md:flex-initial">
                         <Form.Item
                             name="filter"
                             label={

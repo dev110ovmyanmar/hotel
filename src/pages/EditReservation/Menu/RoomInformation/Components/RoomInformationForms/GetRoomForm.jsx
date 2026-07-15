@@ -23,6 +23,8 @@ const GetRoomForm = ({ selectedData, onSelectRoom, onClose, floorUuid }) => {
       "text-[#CF1322] bg-[#FFF1F0] text-xs p-1 px-2 rounded border border-[#FFA39E]",
     "Out of Order":
       "text-[#CF1322] bg-[#FFF1F0] text-xs p-1 px-2 rounded border border-[#FFA39E]",
+      "Out of Service":
+      "text-[#CF1322] bg-[#FFF1F0] text-xs p-1 px-2 rounded border border-[#FFA39E]",
     Cleaning:
       "text-[#389E0D] bg-[#F6FFED] text-xs p-1 px-2 rounded border border-[#B7EB8F]",
   };

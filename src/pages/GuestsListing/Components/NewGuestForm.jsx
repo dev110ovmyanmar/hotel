@@ -294,7 +294,7 @@ const GuestForm = ({
                 />
               </Form.Item>
             </div>
-    
+
             <div className="col-span-12">
               <Form.Item label="Phone" name="phone">
                 <Input

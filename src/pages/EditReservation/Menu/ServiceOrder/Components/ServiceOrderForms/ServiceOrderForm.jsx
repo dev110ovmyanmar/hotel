@@ -92,19 +92,33 @@ const ServiceOrderForm = ({
   const orderStatus =
     initData?.statuses?.order_status
       ?.filter((status) => {
-        if (isEdit && currentStatusCode === "completed") {
-          return (
-            status.code === "pending" ||
-            status.code === "in_progress" ||
-            status.code === "completed"
-          );
+        if (isEdit) {
+          if (currentStatusCode === "completed") {
+            return status.code === "completed";
+          }
+          if (currentStatusCode === "cancelled") {
+            return status.code === "cancelled";
+          }
+          if (currentStatusCode === "in_progress") {
+            return (
+              status.code === "in_progress" ||
+              status.code === "completed" ||
+              status.code === "cancelled"
+            );
+          }
+          return true;
         }
-        return true;
+
+        return status.code === "pending" || status.code === "in_progress";
       })
       ?.map((status) => ({
         value: status.uuid,
         label: status.name,
       })) || [];
+
+  const defaultStatus = initData?.statuses?.order_status?.find(
+    (status) => status.code === "pending",
+  );
 
   const rooms =
     reservationRoom?.rooms
@@ -120,10 +134,16 @@ const ServiceOrderForm = ({
       }) || [];
 
   const services =
-    reservationRoom?.services?.map((service) => ({
-      value: service?.uuid,
-      label: service?.name,
-    })) || [];
+    reservationRoom?.services
+      ?.filter((service) =>
+        service?.serviceStages?.some((stage) =>
+          ["in_house", "pre_departure", "anytime"].includes(stage),
+        ),
+      )
+      ?.map((service) => ({
+        value: service?.uuid,
+        label: service?.name,
+      })) || [];
 
   const servicesPackage =
     reservationRoom?.service_packages?.map((pkg) => ({
@@ -150,6 +170,14 @@ const ServiceOrderForm = ({
         maxLimit: inv.quantityPerService,
       }));
   }, [currentServiceObj]);
+
+  useEffect(() => {
+    if (!isEdit && defaultStatus?.uuid) {
+      form.setFieldsValue({
+        orderStatus: defaultStatus.uuid,
+      });
+    }
+  }, [defaultStatus, isEdit]);
 
   useEffect(() => {
     if (orderDetails && (isView || isEdit)) {
@@ -274,40 +302,53 @@ const ServiceOrderForm = ({
         layout="vertical"
         form={form}
         onFinish={handleSubmit}
-        readOnly={isView}
+        disabled={isView}
         initialValues={{
           orderType: "service",
           quantity: 1,
+          orderStatus: !isEdit ? defaultStatus?.uuid : undefined,
         }}
       >
         <Form.Item label="Room No" name="roomNo" rules={[{ required: true }]}>
-          <Select 
-            placeholder="Select a Room" 
+          <Select
+            placeholder="Select a Room"
             options={rooms}
-            allowClear={isView? !isView : undefined}
-            open={isView? !isView : undefined}  
+            allowClear={isView ? !isView : undefined}
+            open={isView ? !isView : undefined}
           />
         </Form.Item>
 
-        <Form.Item 
-          label="Selection Type" 
-          name="orderType"
-          className={isView? "pointer-events-none": ''}
-          >
+        <Form.Item label="Selection Type" name="orderType">
           <Radio.Group
             disabled={isView}
             onChange={(e) => {
               const currentSelection = e.target.value;
+
+              const targetStatus = isEdit
+                ? orderDetails?.orderStatus?.uuid
+                : defaultStatus?.uuid;
+
               if (currentSelection === "service") {
                 form.setFieldsValue({
+                  // Clear package specific field completely
                   servicePackage: undefined,
-                  quantity: 1,
-                });
-              } else if (currentSelection === "package") {
-                form.setFieldsValue({
+                  // Explicitly clear the service selection input text
                   selectService: undefined,
                   inventoryItems: undefined,
                   quantity: 1,
+                  consumptionType: undefined,
+                  orderStatus: targetStatus,
+                });
+              } else if (currentSelection === "package") {
+                form.setFieldsValue({
+                  // Clear service specific fields completely
+                  selectService: undefined,
+                  inventoryItems: undefined,
+                  // Explicitly clear the package selection field text
+                  servicePackage: undefined,
+                  quantity: 1,
+                  consumptionType: undefined,
+                  orderStatus: targetStatus,
                 });
               }
             }}
@@ -335,7 +376,7 @@ const ServiceOrderForm = ({
                       inventoryQuantities: {},
                     })
                   }
-                  open={isView? !isView : undefined} 
+                  open={isView ? !isView : undefined}
                 />
               </Form.Item>
               {serviceInventories.length === 0 && (
@@ -578,14 +619,20 @@ const ServiceOrderForm = ({
             rules={[
               { required: true, message: "Please select an Order Status" },
             ]}
-            getValueProps={(value) => ({
-              value: isView
-                ? orderStatus.find((item) => item.value === value)?.label
-                : value,
-            })}
+            getValueProps={(value) => {
+              if (isView) {
+                const label =
+                  orderDetails?.orderStatus?.name ||
+                  initData?.statuses?.order_status?.find(
+                    (item) => item.uuid === value,
+                  )?.name;
+                return { value: label || value };
+              }
+              return { value };
+            }}
           >
             {isView ? (
-              <Input readOnly />
+              <Input readOnly className="bg-gray-50" />
             ) : (
               <Select
                 showSearch

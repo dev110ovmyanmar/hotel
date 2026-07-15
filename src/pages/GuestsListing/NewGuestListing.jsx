@@ -68,16 +68,13 @@ const GuestList = () => {
   };
 
   const handleNameClick = (record) => {
-    navigate(
-      `/guest-list/guests/${record?.id}/profile`,
-      {
-        state: { guestDetails: record }
-      }
-    );
+    navigate(`/guest-list/guests/${record?.id}/profile`, {
+      state: { guestDetails: record },
+    });
   };
 
   return (
-    <div className="w-full px-5">
+    <div className="w-full px-6 py-2">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
         <ListHeader
           title="Guest List"
