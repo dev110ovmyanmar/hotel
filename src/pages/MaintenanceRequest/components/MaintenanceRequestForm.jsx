@@ -228,7 +228,7 @@ const MaintenanceRequestForm = ({
                                     >
                                         {
                                             isView ?
-                                                <Input readOnly={isView} readOnly={isView} />
+                                                <Input readOnly={isView} />
                                                 :
                                                 <Select options={roomOptions} disabled={isView || detail?.housekeepingTask} placeholder="Select Room" />
                                         }
@@ -248,7 +248,7 @@ const MaintenanceRequestForm = ({
                                     >
                                         {
                                             isView ?
-                                                <Input readOnly={isView} readOnly={isView} /> :
+                                                <Input readOnly={isView} /> :
                                                 <Select options={issueTypeOptions} disabled={isView} placeholder="Select Issue Type" />
                                         }
                                     </Form.Item>
@@ -269,7 +269,7 @@ const MaintenanceRequestForm = ({
                                     >
                                         {
                                             isView ?
-                                                <Input readOnly={isView} readOnly={isView} /> :
+                                                <Input readOnly={isView} /> :
                                                 <Select options={priorityOptions} disabled={isView} placeholder="Select Priority" />
                                         }
                                     </Form.Item>
@@ -283,7 +283,9 @@ const MaintenanceRequestForm = ({
                                         >
                                             <Select
                                                 options={maintenanceStatusOptions}
-                                                open={true? !true: undefined}
+                                                // open={true? !true: undefined}
+                                                disabled={true}
+
                                             />
                                         </Form.Item>
                                     ) : (
@@ -298,10 +300,11 @@ const MaintenanceRequestForm = ({
                                             })}
                                         >
                                             {
-                                                isView ? <Input readOnly={isView} readOnly={isView} /> :
+                                                isView ? <Input readOnly={isView} /> :
                                                     <Select
                                                         options={maintenanceStatusOptions}
                                                         disabled={isView}
+                                                        // disabled={true}
                                                         placeholder="Select Maintenance Status" />
                                             }
                                         </Form.Item>
@@ -322,7 +325,7 @@ const MaintenanceRequestForm = ({
                                     >
                                         {
                                             isView ?
-                                                <Input readOnly={isView} readOnly={isView} />
+                                                <Input readOnly={isView} />
                                                 :
                                                 <DatePicker className="w-full" disabled={isView} />
 
@@ -387,7 +390,7 @@ const MaintenanceRequestForm = ({
                                     isCreate && (
                                         <Col span={12}>
                                             <Form.Item name="staff" label="Staff">
-                                                <Select options={staffOptions} open={isView? !isView : undefined}
+                                                <Select options={staffOptions} open={isView ? !isView : undefined}
                                                     mode="multiple" placeholder="Select Staff" />
                                             </Form.Item>
                                         </Col>
