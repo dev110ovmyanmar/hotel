@@ -73,22 +73,24 @@
 }
 
 .ant-input::placeholder {
-  color: rgba(0, 0, 0, 0.45); 
+  color: rgba(0, 0, 0, 0.45);
 }
 
 /* Dark mode: Changes the placeholder to white when dark mode class is active */
 .dark .ant-input::placeholder {
   color: #ffffff !important;
-  opacity: 0.8; /* Optional: slightly soften the white if it's too bright */
+  opacity: 0.8;
+  /* Optional: slightly soften the white if it's too bright */
 }
 
 /* Dark mode styles for RangePicker */
 .dark .ant-picker {
-  background-color: #1f1f1f !important; /* Dark background */
+  background-color: #1f1f1f !important;
+  /* Dark background */
   border-color: #434343 !important;
 }
 
-.dark .ant-picker-input > input::placeholder {
+.dark .ant-picker-input>input::placeholder {
   color: rgba(255, 255, 255, 0.8) !important;
 }
 
@@ -696,11 +698,11 @@ span .ant-upload {
   }
 }
 
-.active-reservation-row td{
+.active-reservation-row td {
   background-color: #C7E8A0 !important;
 }
 
-.dark .active-reservation-row td{
+.dark .active-reservation-row td {
   background-color: #2E8B57 !important;
 }
 
@@ -788,4 +790,9 @@ span .ant-upload {
 
 .dark .ant-select-item-option-disabled .ant-select-item-option-content {
   color: rgba(232, 224, 224, 0.25) !important;
+}
+
+/* expanded row's margin */
+.ant-spin .css-dev-only-do-not-override-9injdo .css-var-_r_0_ {
+  margin: 5px !important;
 }
