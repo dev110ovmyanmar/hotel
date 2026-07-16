@@ -124,7 +124,7 @@ const RoomTypeGroup = ({
                                     onChange={() =>
                                         handleStopSellToggle(rt.id, dateStr, avail.stopSell, avail.uuid)
                                     }
-                                    style={{ backgroundColor: avail.stopSell ? '#ff4d4f' : '#52c41a' }}
+                                    style={{ backgroundColor: avail.stopSell ? '#ff4d4f' : '#5CB85C' }}
                                     disabled={isPast || isLoading}
                                     loading={isLoading}
                                 />
@@ -244,7 +244,7 @@ const RoomTypeGroup = ({
                     return (
                         <td
                             key={i}
-                            className={`border-b border-[#dee2e6] text-center text-[13px] font-bold text-red-500 ${cellClass} dark:!text-red-500 ${darkModeStyle}`}
+                            className={`border-b border-[#dee2e6] text-center text-[13px] font-bold text-red-500 ${cellClass} dark:!text-red-500 ${darkModeStyle} `}
                         >
                             {/* {avail.sold} */}
                             {avail.soldRooms}

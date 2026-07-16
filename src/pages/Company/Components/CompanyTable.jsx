@@ -134,7 +134,7 @@ const CompanyTable = ({
             icon: <AiOutlineDropbox style={{ fontSize: "12px" }} />,
             // permission: PERMISSIONS.PARTNER_EDIT,
             onClick: () => {
-              navigate(`/partners/company/${record?.id}/company-contract`, {
+              navigate(`/booking-source/company/${record?.id}/company-contract`, {
                 state: { companyRecord: record },
               });
             },
