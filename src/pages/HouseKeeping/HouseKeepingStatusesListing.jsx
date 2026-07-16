@@ -164,7 +164,7 @@ const HouseKeepingStatusListing = () => {
                             <Pagination
                                 current={page}
                                 pageSize={perPage}
-                                total={houseKeepingStatuses?.pagination?.total || 0}
+                                total={data?.pagination?.total || 0}
                                 onChange={(p, ps) => {
                                     setPage(p);
                                     setPerPage(ps);

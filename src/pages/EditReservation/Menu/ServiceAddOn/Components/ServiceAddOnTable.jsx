@@ -38,7 +38,7 @@ const ServiceAddOnTable = ({ data }) => {
     },
 
     {
-      title: "Qty Unit",
+      title: "Quantity",
       dataIndex: "quantity",
       key: "quantity",
     },

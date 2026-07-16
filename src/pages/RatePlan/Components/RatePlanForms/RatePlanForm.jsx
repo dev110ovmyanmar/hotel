@@ -482,7 +482,7 @@ const RatePlanForm = ({
               initialValue={false}
               rules={[{ required: true, message: "Please select Is Default!" }]}
               tooltip={{
-                title: "If no date-specific base rate exists, the default room type pricing will be used automatically. The default rate cannot be inactivated, as it acts as the system fallback rate for room pricing.",
+                title: "If no date-specific room type rate exists, the default room type pricing will be used automatically. The default rate cannot be inactivated, as it acts as the system fallback rate for room pricing.",
                 icon: <InfoCircleOutlined style={{ color: "#1677ff" }} />,
               }}
             >

@@ -23,6 +23,14 @@ import FormButtons from "../../../../../../component/FormButtons/FormButtons";
 import { queryClient } from "../../../../../../app/queryClient";
 import Toast from "../../../../../../component/Toast/Toast";
 import { EyeOutlined } from "@ant-design/icons";
+import { getFormattedDate } from "../../../../../../utils";
+
+const sharedProps = {
+  mode: "spinner",
+  min: 1,
+  max: 10,
+  style: { width: 150 },
+};
 
 const ServiceOrderForm = ({
   mode,
@@ -32,32 +40,17 @@ const ServiceOrderForm = ({
   onClose,
   onSuccess,
 }) => {
+  const [form] = Form.useForm();
   const isView = mode === "view";
   const isAdd = mode === "add";
   const isEdit = mode === "edit";
 
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
 
-  const consumptionType = initData?.statuses?.consumption_type?.map((item) => ({
-    value: item.uuid,
-    label: item.name,
-  }));
-
-  const orderStatus = initData?.statuses?.order_status?.map((item) => ({
-    value: item.uuid,
-    label: item.name,
-  }));
-
   const reservationUuid = isAdd
     ? serviceData?.uuid
     : serviceData?.reservation?.uuid || serviceData?.reservationUuid;
   const serviceOrderUuid = isAdd ? null : serviceData?.uuid;
-
-  const [form] = Form.useForm();
-
-  const orderType = Form.useWatch("orderType", form);
-  const selectedServiceUuid = Form.useWatch("selectService", form);
-  const quantities = Form.useWatch("inventoryQuantities", form);
 
   const { data: reservationRoom } = useApiQuery({
     fetchQueryFunction: reservationRoomMeta,
@@ -85,17 +78,72 @@ const ServiceOrderForm = ({
     invalidateKeys: [["service-order"]],
   });
 
+  const orderType = Form.useWatch("orderType", form);
+  const selectedServiceUuid = Form.useWatch("selectService", form);
+  const quantities = Form.useWatch("inventoryQuantities", form);
+  const orderStatusValue = Form.useWatch("orderStatus", form);
+
+  const consumptionType = initData?.statuses?.consumption_type?.map((item) => ({
+    value: item.uuid,
+    label: item.name,
+  }));
+
+  const currentStatusCode = orderDetails?.orderStatus?.code;
+  const orderStatus =
+    initData?.statuses?.order_status
+      ?.filter((status) => {
+        if (isEdit) {
+          if (currentStatusCode === "completed") {
+            return status.code === "completed";
+          }
+          if (currentStatusCode === "cancelled") {
+            return status.code === "cancelled";
+          }
+          if (currentStatusCode === "in_progress") {
+            return (
+              status.code === "in_progress" ||
+              status.code === "completed" ||
+              status.code === "cancelled"
+            );
+          }
+          return true;
+        }
+
+        return status.code === "pending" || status.code === "in_progress";
+      })
+      ?.map((status) => ({
+        value: status.uuid,
+        label: status.name,
+      })) || [];
+
+  const defaultStatus = initData?.statuses?.order_status?.find(
+    (status) => status.code === "pending",
+  );
+
   const rooms =
-    reservationRoom?.rooms?.map((room) => ({
-      value: room?.uuid,
-      label: `${room?.room?.roomNo} (${room?.checkinDate} - ${room?.checkoutDate})`,
-    })) || [];
+    reservationRoom?.rooms
+      ?.filter((room) => room?.roomStatus?.code === "checked_in")
+      .map((room) => {
+        const checkin = getFormattedDate(room?.checkinDate);
+        const checkout = getFormattedDate(room?.checkoutDate);
+
+        return {
+          value: room?.uuid,
+          label: `${room?.room?.roomNo} (${checkin} / ${checkout})`,
+        };
+      }) || [];
 
   const services =
-    reservationRoom?.services?.map((service) => ({
-      value: service?.uuid,
-      label: service?.name,
-    })) || [];
+    reservationRoom?.services
+      ?.filter((service) =>
+        service?.serviceStages?.some((stage) =>
+          ["in_house", "pre_departure", "anytime"].includes(stage),
+        ),
+      )
+      ?.map((service) => ({
+        value: service?.uuid,
+        label: service?.name,
+      })) || [];
 
   const servicesPackage =
     reservationRoom?.service_packages?.map((pkg) => ({
@@ -124,40 +172,35 @@ const ServiceOrderForm = ({
   }, [currentServiceObj]);
 
   useEffect(() => {
+    if (!isEdit && defaultStatus?.uuid) {
+      form.setFieldsValue({
+        orderStatus: defaultStatus.uuid,
+      });
+    }
+  }, [defaultStatus, isEdit]);
+
+  useEffect(() => {
     if (orderDetails && (isView || isEdit)) {
       const hasPackage = !!orderDetails?.servicePackage?.uuid;
+
       form.setFieldsValue({
         orderType: hasPackage ? "package" : "service",
         roomNo: orderDetails?.reservationRoom?.uuid,
         selectService: orderDetails?.service?.uuid,
         servicePackage: orderDetails?.servicePackage?.uuid,
-        inventoryItems:
-          orderDetails?.serviceInventory?.serviceInventoryItem?.uuid,
         consumptionType: orderDetails?.consumptionType?.uuid,
         orderStatus: orderDetails?.orderStatus?.uuid,
-        quantity: orderDetails?.quantity || 1,
+        inventoryItems:
+          orderDetails?.serviceOrderItems?.map((item) => ({
+            value: item?.serviceInventoryItem?.uuid,
+            label: item?.serviceInventoryItem?.name,
+            quantity: item?.quantity,
+          })) || [],
+
+        quantity: orderDetails?.serviceOrderItem?.quantity ?? 1,
       });
     }
-  }, [orderDetails, isView, isEdit, form]);
-
-  const sharedProps = {
-    mode: "spinner",
-    min: 0,
-    max: 10,
-    style: { width: 150 },
-  };
-
-  const packages = {
-    mode: "spinner",
-    min: 1,
-    max: 10,
-    style: { width: 150 },
-  };
-
-  const handleClose = () => {
-    form.resetFields();
-    if (onClose) onClose();
-  };
+  }, [orderDetails, isView, isEdit]);
 
   const handleSubmit = (values) => {
     let calculatedServiceUuid = values.selectService;
@@ -207,12 +250,6 @@ const ServiceOrderForm = ({
       const editValues = {
         ...payload,
         uuid: serviceOrderUuid,
-        consumptionType: orderDetails?.consumptionType
-          ? { uuid: orderDetails.consumptionType.uuid }
-          : null,
-        orderStatus: orderDetails?.orderStatus
-          ? { uuid: orderDetails.orderStatus.uuid }
-          : null,
       };
 
       updateServiceOrders.mutate(editValues, {
@@ -223,6 +260,11 @@ const ServiceOrderForm = ({
         },
       });
     }
+  };
+
+  const handleClose = () => {
+    form.resetFields();
+    if (onClose) onClose();
   };
 
   return (
@@ -260,35 +302,53 @@ const ServiceOrderForm = ({
         layout="vertical"
         form={form}
         onFinish={handleSubmit}
-        readOnly={isView}
+        disabled={isView}
         initialValues={{
           orderType: "service",
           quantity: 1,
+          orderStatus: !isEdit ? defaultStatus?.uuid : undefined,
         }}
       >
         <Form.Item label="Room No" name="roomNo" rules={[{ required: true }]}>
-          <Select 
-            placeholder="Select a Room" 
-            options={rooms} 
-            allowClear={isView? !isView : undefined}
-            open={isView? !isView : undefined} 
+          <Select
+            placeholder="Select a Room"
+            options={rooms}
+            allowClear={isView ? !isView : undefined}
+            open={isView ? !isView : undefined}
           />
         </Form.Item>
 
-        <Form.Item label="Selection Type" name="orderType" className={isView? "pointer-events-none": ''}>
+        <Form.Item label="Selection Type" name="orderType">
           <Radio.Group
+            disabled={isView}
             onChange={(e) => {
               const currentSelection = e.target.value;
+
+              const targetStatus = isEdit
+                ? orderDetails?.orderStatus?.uuid
+                : defaultStatus?.uuid;
+
               if (currentSelection === "service") {
                 form.setFieldsValue({
+                  // Clear package specific field completely
                   servicePackage: undefined,
-                  quantity: 1,
-                });
-              } else if (currentSelection === "package") {
-                form.setFieldsValue({
+                  // Explicitly clear the service selection input text
                   selectService: undefined,
                   inventoryItems: undefined,
                   quantity: 1,
+                  consumptionType: undefined,
+                  orderStatus: targetStatus,
+                });
+              } else if (currentSelection === "package") {
+                form.setFieldsValue({
+                  // Clear service specific fields completely
+                  selectService: undefined,
+                  inventoryItems: undefined,
+                  // Explicitly clear the package selection field text
+                  servicePackage: undefined,
+                  quantity: 1,
+                  consumptionType: undefined,
+                  orderStatus: targetStatus,
                 });
               }
             }}
@@ -316,10 +376,9 @@ const ServiceOrderForm = ({
                       inventoryQuantities: {},
                     })
                   }
-                  open={isView? !isView : undefined} 
+                  open={isView ? !isView : undefined}
                 />
               </Form.Item>
-
               {serviceInventories.length === 0 && (
                 <Form.Item
                   label="Quantity"
@@ -329,7 +388,7 @@ const ServiceOrderForm = ({
                   className="minus-icon"
                 >
                   <InputNumber
-                    {...packages}
+                    {...sharedProps}
                     placeholder="Quantity"
                     style={{ width: "100%" }}
                     readOnly={isView}
@@ -552,21 +611,28 @@ const ServiceOrderForm = ({
               />
             )}
           </Form.Item>
+
           <Form.Item
             label="Order Status"
             name="orderStatus"
-            cclassName="col-span-1"
+            className="col-span-1"
             rules={[
-              { required: true, message: "Please select a Order Status" },
+              { required: true, message: "Please select an Order Status" },
             ]}
-            getValueProps={(value) => ({
-              value: isView
-                ? orderStatus.find((item) => item.value === value)?.label
-                : value,
-            })}
+            getValueProps={(value) => {
+              if (isView) {
+                const label =
+                  orderDetails?.orderStatus?.name ||
+                  initData?.statuses?.order_status?.find(
+                    (item) => item.uuid === value,
+                  )?.name;
+                return { value: label || value };
+              }
+              return { value };
+            }}
           >
             {isView ? (
-              <Input readOnly />
+              <Input readOnly className="bg-gray-50" />
             ) : (
               <Select
                 showSearch
@@ -576,7 +642,7 @@ const ServiceOrderForm = ({
                     .includes(input.toLowerCase())
                 }
                 options={orderStatus}
-                placeholder="Select a Order Status"
+                placeholder="Select an Order Status"
               />
             )}
           </Form.Item>

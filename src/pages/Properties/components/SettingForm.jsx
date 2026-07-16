@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { Form, Input, Button, Radio, InputNumber, Switch, Alert } from "antd";
 import Toast from "../../../component/Toast/Toast";
+import { darkModeStyle } from "../../../utils";
 
 const SettingForm = ({ onFinish, initialValues, form }) => {
   const selectedType = Form.useWatch("type", form);
@@ -52,7 +53,7 @@ const SettingForm = ({ onFinish, initialValues, form }) => {
           className="mb-4"
         />
       )}
-      <div className="mt-4 p-4　rounded bg-gray-50">
+      <div>
 
         {selectedType === "string" && (
           <Form.Item name="value" rules={[{ required: true }]}>
@@ -61,8 +62,8 @@ const SettingForm = ({ onFinish, initialValues, form }) => {
         )}
 
         {selectedType === "int" && (
-          <Form.Item name="value" rules={[{ required: true }]}>
-            <InputNumber className="w-full" placeholder="Enter Number" />
+          <Form.Item name="value" rules={[{ required: true }]} >
+            <InputNumber className="w-full" placeholder="Enter Number" style={{width:"100%"}}/>
           </Form.Item>
         )}
 

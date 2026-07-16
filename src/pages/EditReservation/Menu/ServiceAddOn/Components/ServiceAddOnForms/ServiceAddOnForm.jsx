@@ -11,6 +11,14 @@ import {
 import FormButtons from "../../../../../../component/FormButtons/FormButtons";
 import TextArea from "antd/es/input/TextArea";
 import { queryClient } from "./../../../../../../app/queryClient";
+import { getFormattedDate } from "../../../../../../utils";
+
+const sharedProps = {
+  mode: "spinner",
+  min: 1,
+  max: 10,
+  style: { width: 150 },
+};
 
 const ServiceAddOnForm = ({
   mode,
@@ -20,26 +28,20 @@ const ServiceAddOnForm = ({
   onClose,
   onSuccess,
 }) => {
+  const [form] = Form.useForm();
   const isView = mode === "view";
   const isAdd = mode === "add";
   const isEdit = mode === "edit";
+
+  const selectedServiceUuid = Form.useWatch("selectService", form);
+  const initData = queryClient.getQueryData(["initData", "authenticated"]);
 
   const reservationUuid = isAdd
     ? serviceData?.uuid
     : serviceData?.reservation?.uuid || serviceData?.reservationUuid;
   const serviceOrderUuid = isAdd ? null : serviceData?.uuid;
 
-  const [form] = Form.useForm();
-  const selectedServiceUuid = Form.useWatch("selectService", form);
-  const initData = queryClient.getQueryData(["initData", "authenticated"]);
-
-  const addonStatus = initData?.statuses?.addon_status?.map((status) => ({
-    value: status.uuid,
-    label: status.name,
-  }));
-
   const { data: reservationRoom } = useApiQuery({
-    // fetchQueryName: "service-addon",
     fetchQueryFunction: reservationRoomMeta,
     params: {
       reservation: {
@@ -58,7 +60,6 @@ const ServiceAddOnForm = ({
 
   const createServiceOrder = useApiMutation({
     mutationFn: serviceAddonCreate,
-    // invalidateKeys: [["service-addon"]],
   });
 
   const updateAddon = useApiMutation({
@@ -66,14 +67,92 @@ const ServiceAddOnForm = ({
     invalidateKeys: [["service-addon"]],
   });
 
-  const rooms =
-    reservationRoom?.rooms?.map((room) => ({
-      value: room?.uuid,
-      label: `${room?.room?.roomNo} (${room?.checkinDate} - ${room?.checkoutDate})`,
-    })) || [];
+  // const currentStatusCode = orderDetails?.addonStatus?.code;
+  // const addonStatus =
+  //   initData?.statuses?.addon_status
+  //     ?.filter((status) => {
+  //       if (isEdit && currentStatusCode === "confirmed") {
+  //         return status.code === "confirmed";
+  //       }
+  //       if (isEdit && currentStatusCode === "cancelled") {
+  //         return status.code === "cancelled";
+  //       }
+  //       if (isEdit && currentStatusCode === "no_show") {
+  //         return status.code === "no_show";
+  //       }
+  //       if (currentStatusCode === "in_progress") {
+  //         return (
+  //           status.code === "in_progress" ||
+  //           status.code === "completed" ||
+  //           status.code === "cancelled" ||
+  //           status.code === "no_show"
+  //         );
+  //       }
+  //       return true;
+  //       return status.code === "pending" || status.code === "in_progress";
+  //     })
+  //     ?.map((status) => ({
+  //       value: status.uuid,
+  //       label: status.name,
+  //     })) || [];
+  const currentStatusCode = orderDetails?.addonStatus?.code;
+  const addonStatus =
+    initData?.statuses?.addon_status
+      ?.filter((status) => {
+        if (isEdit) {
+          if (currentStatusCode === "completed") {
+            return status.code === "completed";
+          }
+          if (currentStatusCode === "cancelled") {
+            return status.code === "cancelled";
+          }
+          if (currentStatusCode === "no_show") {
+            return status.code === "no_show";
+          }
+          if (currentStatusCode === "in_progress") {
+            return (
+              status.code === "in_progress" ||
+              status.code === "completed" ||
+              status.code === "cancelled" ||
+              status.code === "no_show"
+            );
+          }
+          return true;
+        }
 
+        return status.code === "pending" || status.code === "in_progress";
+      })
+      ?.map((status) => ({
+        value: status.uuid,
+        label: status.name,
+      })) || [];
+
+  const defaultStatus = initData?.statuses?.addon_status?.find(
+    (status) => status.code === "pending",
+  );
+
+  const rooms =
+    reservationRoom?.rooms
+      ?.filter((room) => room?.roomStatus?.code === "confirmed")
+      .map((room) => {
+        const checkin = getFormattedDate(room?.checkinDate);
+        const checkout = getFormattedDate(room?.checkoutDate);
+
+        return {
+          value: room?.uuid,
+          label: `${room?.room?.roomNo} (${checkin} / ${checkout})`,
+        };
+      }) || [];
+
+  // const services =
+  //   reservationRoom?.services?.map((service) => ({
+  //     value: service?.uuid,
+  //     label: service?.name,
+  //   })) || [];
   const services =
-    reservationRoom?.services?.map((service) => ({
+  reservationRoom?.services
+    ?.filter((service) => service?.serviceStages?.includes("pre_arrival"))
+    ?.map((service) => ({
       value: service?.uuid,
       label: service?.name,
     })) || [];
@@ -100,18 +179,6 @@ const ServiceAddOnForm = ({
       });
     }
   }, [orderDetails, isView, isEdit, form]);
-
-  const sharedProps = {
-    mode: "spinner",
-    min: 1,
-    max: 10,
-    style: { width: 150 },
-  };
-
-  const handleClose = () => {
-    form.resetFields();
-    if (onClose) onClose();
-  };
 
   const handleSubmit = (values) => {
     if (isAdd) {
@@ -162,6 +229,12 @@ const ServiceAddOnForm = ({
       });
     }
   };
+
+  const handleClose = () => {
+    form.resetFields();
+    if (onClose) onClose();
+  };
+
   return (
     <Drawer
       destroyOnClose
@@ -198,11 +271,14 @@ const ServiceAddOnForm = ({
         disabled={isView}
         initialValues={{
           quantity: 1,
+          status: !isEdit ? defaultStatus?.uuid : undefined,
         }}
       >
-        <Form.Item label="Room No" name="roomNo">
-          <Select placeholder="Select a Room" options={rooms} allowClear />
-        </Form.Item>
+        {!isAdd && (
+          <Form.Item label="Room No" name="roomNo">
+            <Select placeholder="Select a Room" options={rooms} allowClear />
+          </Form.Item>
+        )}
 
         <div className="grid grid-cols-2 gap-4">
           <Form.Item
@@ -247,7 +323,7 @@ const ServiceAddOnForm = ({
           <InputNumber
             {...sharedProps}
             placeholder="Outlined"
-            style={{ width: "480%" }}
+            style={{ width: "48%" }}
           />
         </Form.Item>
 

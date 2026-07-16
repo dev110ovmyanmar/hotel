@@ -274,6 +274,7 @@ const EventFacilityOrderTable = ({
         drawerOpen={drawerOpen}
         setDrawerOpen={setDrawerOpen}
         selectedData={selectedData}
+        setSelectedData={setSelectedData}
         // onSuccess={refreshData}
       />
     </div>

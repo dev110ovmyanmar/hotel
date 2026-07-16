@@ -121,7 +121,7 @@ const AgencyForm = ({
         onSuccess: () => {
           handleClose();
           setPage(1);
-          Toast.success("Agency Created Successfully!");
+          Toast.success("Travel Agents Created Successfully!");
         },
       });
     }
@@ -137,7 +137,7 @@ const AgencyForm = ({
         onSuccess: () => {
           setDrawerOpen(false);
           handleClose();
-          Toast.success("Agency Updated Successfully!");
+          Toast.success("Travel Agents Updated Successfully!");
         },
       });
     }

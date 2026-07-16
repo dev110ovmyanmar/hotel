@@ -45,11 +45,11 @@ const FloorList = () => {
     <div className="w-full px-6 py-2">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
         <ListHeader
-          title="Floor List"
-          searchPlaceholder="Search Floor ..."
+          title="Floor Rooms List"
+          searchPlaceholder="Search Floor Rooms..."
           keyword={keyword}
           setKeyword={setKeyword}
-          addButtonText="Add New Floor"
+          addButtonText="Add New Floor Rooms"
           onAdd={handleAdd}
           permission={PERMISSIONS.FLOOR_CREATE}
         />

@@ -72,6 +72,26 @@
   --ant-border-radius: 5px;
 }
 
+.ant-input::placeholder {
+  color: rgba(0, 0, 0, 0.45); 
+}
+
+/* Dark mode: Changes the placeholder to white when dark mode class is active */
+.dark .ant-input::placeholder {
+  color: #ffffff !important;
+  opacity: 0.8; /* Optional: slightly soften the white if it's too bright */
+}
+
+/* Dark mode styles for RangePicker */
+.dark .ant-picker {
+  background-color: #1f1f1f !important; /* Dark background */
+  border-color: #434343 !important;
+}
+
+.dark .ant-picker-input > input::placeholder {
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
 .ant-select {
   --ant-border-radius: 5px;
 }
@@ -84,7 +104,7 @@
   --ant-border-radius: 5px;
 }
 
-.ant-form-item-label > label {
+.ant-form-item-label>label {
   --ant-form-label-font-size: 12px;
   font-weight: 500;
   --ant-form-label-color: #474141;
@@ -168,7 +188,7 @@
   --ant-color-text-disabled: rgba(0, 0, 0, 1);
 }
 
-.ant-checkbox-disabled + span {
+.ant-checkbox-disabled+span {
   --ant-color-text-disabled: rgba(0, 0, 0, 1);
 }
 
@@ -198,6 +218,7 @@
   --ant-color-text-disabled: #000000;
   --ant-border-radius-lg: 5px;
 }
+
 .css-var-_r_0_.room-select {
   --ant-line-width: 2px;
 }
@@ -256,12 +277,12 @@ span .ant-upload {
   transition: all 0.3s ease;
 } */
 
-.custom-table-style .ant-table-thead > tr > th {
+.custom-table-style .ant-table-thead>tr>th {
   background-color: #f0f5ff;
   border-bottom: 1px solid #adc6ff;
 }
 
-.custom-table-style .ant-table-tbody > tr > td {
+.custom-table-style .ant-table-tbody>tr>td {
   background-color: #ffffff;
   border-bottom: 1px solid #adc6ff;
 }
@@ -283,36 +304,14 @@ span .ant-upload {
   padding: 8px 25px;
 }
 
-.ant-table-tbody > tr.ant-table-expanded-row {
+.ant-table-tbody>tr.ant-table-expanded-row {
   background-color: #f3f4f6;
 }
 
-:where(.css-dev-only-do-not-override-1t2537o).ant-table-wrapper
-  .ant-table-tbody
-  > tr
-  > th
-  > .ant-table-wrapper:only-child
-  .ant-table,
-:where(.css-dev-only-do-not-override-1t2537o).ant-table-wrapper
-  .ant-table-tbody
-  > tr
-  > td
-  > .ant-table-wrapper:only-child
-  .ant-table,
-:where(.css-dev-only-do-not-override-1t2537o).ant-table-wrapper
-  .ant-table-tbody
-  > tr
-  > th
-  > .ant-table-expanded-row-fixed
-  > .ant-table-wrapper:only-child
-  .ant-table,
-:where(.css-dev-only-do-not-override-1t2537o).ant-table-wrapper
-  .ant-table-tbody
-  > tr
-  > td
-  > .ant-table-expanded-row-fixed
-  > .ant-table-wrapper:only-child
-  .ant-table {
+:where(.css-dev-only-do-not-override-1t2537o).ant-table-wrapper .ant-table-tbody>tr>th>.ant-table-wrapper:only-child .ant-table,
+:where(.css-dev-only-do-not-override-1t2537o).ant-table-wrapper .ant-table-tbody>tr>td>.ant-table-wrapper:only-child .ant-table,
+:where(.css-dev-only-do-not-override-1t2537o).ant-table-wrapper .ant-table-tbody>tr>th>.ant-table-expanded-row-fixed>.ant-table-wrapper:only-child .ant-table,
+:where(.css-dev-only-do-not-override-1t2537o).ant-table-wrapper .ant-table-tbody>tr>td>.ant-table-expanded-row-fixed>.ant-table-wrapper:only-child .ant-table {
   margin-block: 0 !important;
   margin-inline: 0 !important;
   padding: 0 !important;
@@ -406,12 +405,12 @@ span .ant-upload {
 }
 
 /* Dark Mode For Nested Table */
-.dark .custom-table-style .ant-table-thead > tr > th {
+.dark .custom-table-style .ant-table-thead>tr>th {
   background-color: #0f172a;
   border-bottom: 1px solid #9ca8c5;
 }
 
-.dark .custom-table-style .ant-table-tbody > tr > td {
+.dark .custom-table-style .ant-table-tbody>tr>td {
   background-color: #0f172a;
   border-bottom: 1px solid #adc6ff;
 }
@@ -421,7 +420,7 @@ span .ant-upload {
   border-radius: 4px;
 }
 
-.dark .ant-table-tbody > tr.ant-table-expanded-row {
+.dark .ant-table-tbody>tr.ant-table-expanded-row {
   background-color: #0f172a;
 }
 
@@ -673,7 +672,7 @@ span .ant-upload {
     display: none !important;
   }
 
-  body > div:not(.print-page),
+  body>div:not(.print-page),
   header,
   aside,
   .ant-layout,
@@ -697,31 +696,19 @@ span .ant-upload {
   }
 }
 
-.active-reservation-row {
-  background-color: #ebf6e1 !important;
+.active-reservation-row td{
+  background-color: #C7E8A0 !important;
 }
 
-.dark .active-reservation-row {
-  background-color: #dff9c6 !important;
-  color: #141414 !important
-}
-
-.active-reservation-row:hover td {
-  background-color: #7d8079 !important;
-}
-
-.dark .active-reservation-row:hover td {
-  background-color: #d3f9b0 !important;
-  color: #141414 !important;
+.dark .active-reservation-row td{
+  background-color: #2E8B57 !important;
 }
 
 /* Your global.css or component.scss file */
 .ant-card.custom-blue-header {
-  --ant-card-header-bg: linear-gradient(
-    135deg,
-    #215282 0%,
-    #000b60 100%
-  ) !important;
+  --ant-card-header-bg: linear-gradient(135deg,
+      #215282 0%,
+      #000b60 100%) !important;
 }
 
 .hide-required-star .ant-form-item-required::before {
@@ -730,56 +717,75 @@ span .ant-upload {
 
 
 /* Dark Mode for create and edit form */
-.dark .ant-form-item-label > label {
+.dark .ant-form-item-label>label {
   color: white !important;
 }
 
-.dark .ant-form-item-label > label::before{
+.dark .ant-form-item-label>label::before {
   color: red !important
 }
 
-.dark .ant-table-expanded-row .ant-table-thead > tr > th {
+.dark .ant-table-expanded-row .ant-table-thead>tr>th {
   color: black !important;
 }
 
 /*  Modal background */
-.dark .dark-confirm-modal .ant-modal-container{
+.dark .dark-confirm-modal .ant-modal-container {
   background-color: #141414 !important;
   color: #e5e7eb !important;
 }
 
-.dark .dark-confirm-modal .ant-modal-close{
+.dark .dark-confirm-modal .ant-modal-close {
   color: #e5e7eb !important
 }
 
 /* extension */
-.dark .ant-space-item button{
+.dark .ant-space-item button {
   border: 1px solid gray;
 }
 
-.dark .ant-space-item button .ant-btn-icon{
+.dark .ant-space-item button .ant-btn-icon {
   color: white
 }
 
 /* split folio modal */
-.dark .custom-ant-modal .ant-modal-header{
+.dark .custom-ant-modal .ant-modal-header {
   border-bottom: 1px solid rgb(77, 74, 74);
   background-color: #1f1f1f;
 }
 
-.dark .minus-icon .anticon-minus{
-  color:rgb(134, 129, 129)
+.dark .minus-icon .anticon-minus {
+  color: rgb(134, 129, 129)
 }
 
-.dark .ant-form-item-control-input-content input ,
-.dark .ant-form-item-control-input-content div,
-.dark .ant-form-item-control-input-content .ant-picker-input input
-{
-  color: #ffffff;
+/* Input value */
+.dark .ant-form-item-control-input-content input,
+.dark .ant-picker-input input {
+  color: #ffffff !important;
 }
 
-.dark .ant-form-item-control-input-content input::placeholder ,
-.dark .ant-form-item-control-input-content div,
-.dark .ant-form-item-control-input-content .ant-picker-input input::placeholder {
-  color: #878d97 !important; /* Tailwind gray-400 */
+/* Input placeholder */
+.dark .ant-form-item-control-input-content input::placeholder,
+.dark .ant-picker-input input::placeholder {
+  color: #878d97 !important;
+  opacity: 1;
+}
+
+/* Select value */
+.dark .ant-select .ant-select-content {
+  color: #ffffff !important;
+}
+
+/* Select placeholder */
+.dark .ant-select .ant-select-content:not(.ant-select-content-has-value) {
+  color: #878d97 !important;
+}
+
+
+.ant-select-item-option-disabled .ant-select-item-option-content {
+  color: rgba(0, 0, 0, 0.25) !important;
+}
+
+.dark .ant-select-item-option-disabled .ant-select-item-option-content {
+  color: rgba(232, 224, 224, 0.25) !important;
 }

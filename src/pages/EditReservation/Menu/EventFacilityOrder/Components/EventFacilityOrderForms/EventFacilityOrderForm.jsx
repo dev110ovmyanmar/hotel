@@ -22,7 +22,6 @@ import {
 } from "../../../../../../utils";
 import { facilityMeta } from "../../../../../../api/facilityPackageApi";
 import useApiQuery from "../../../../../../hooks/useApiQuery";
-import Status from "../../../../../../component/Status/Status";
 import { queryClient } from "../../../../../../app/queryClient";
 import {
   createFacilityBooking,
@@ -40,6 +39,7 @@ const EventFacilityOrderForm = ({
   drawerOpen,
   setDrawerOpen,
   selectedData,
+  setSelectedData,
   onSuccess,
   reservationId,
   searchOpen,
@@ -58,7 +58,7 @@ const EventFacilityOrderForm = ({
     "initData",
     "authenticated",
   ])?.statuses;
-  const initDataStatus = initData?.facility_status;
+  const initDataFacilityStatus = initData?.facility_status;
 
   const dateFormat = "DD-MM-YYYY";
   const disabledDate = (current) => {
@@ -119,21 +119,53 @@ const EventFacilityOrderForm = ({
     },
   });
 
+  const currentStatus = bookingDetails?.status?.code;
+
+  const facilityStatus = initDataFacilityStatus?.map((item) => ({
+    value: item.uuid,
+    label: item.name,
+    disabled:
+      isView || 
+
+      // Create mode
+      (isAdd &&
+        ["completed", "cancelled"].includes(item?.code)) ||
+
+      (isEdit &&
+        currentStatus === "confirmed" &&
+        item.code === "pending"),
+  }));
+
   useEffect(() => {
-    if (isAdd) {
+    if (drawerOpen && isAdd) {
       form.resetFields();
     }
 
-    // if (isAdd && initDataStatus) {
-    //   form.setFieldsValue({
-    //     status: {
-    //       uuid: initDataStatus?.find((item) => item?.code === "active")?.uuid,
-    //     },
-    //   });
-    // }
+    if (drawerOpen && isAdd && initDataFacilityStatus) {
+      form.setFieldsValue({
+        status: {
+          uuid: initDataFacilityStatus?.find((item) => item?.code === "pending")?.uuid,
+        },
+      });
+    }
 
+  }, [isAdd,initDataFacilityStatus]);
+
+  useEffect(() => {
     const FacilityBookingFormDataView = isView || isEdit;
     if (FacilityBookingFormDataView && bookingDetails) {
+      const startTime = dayjs(bookingDetails.startTime, "HH:mm");
+      const endTime = dayjs(bookingDetails.endTime, "HH:mm");
+
+      const expectedSeconds = endTime.diff(startTime, "second");
+
+      const hours = Math.floor(expectedSeconds / 3600);
+      const minutes = Math.floor((expectedSeconds % 3600) / 60);
+
+      const uiFormat =
+        `${String(hours).padStart(2, "0")}:` +
+        `${String(minutes).padStart(2, "0")}`;
+
       form.setFieldsValue({
         ...bookingDetails,
 
@@ -142,11 +174,10 @@ const EventFacilityOrderForm = ({
         eventDate: dayjs(bookingDetails?.eventDate),
 
         timeRange: [
-          dayjs(bookingDetails?.startTime, "HH:mm"),
-          dayjs(bookingDetails?.endTime, "HH:mm"),
+          startTime, endTime
         ],
 
-        expectedHours: dayjs(bookingDetails?.expectedHours, "HH:mm"),
+        expectedHours: uiFormat,
         reservation: {
           uuid: bookingDetails?.reservation?.uuid,
         },
@@ -155,7 +186,7 @@ const EventFacilityOrderForm = ({
         },
       });
     }
-  }, [bookingDetails, isEdit, isAdd]);
+  },[isEdit,isView,bookingDetails])
 
   useEffect(() => {
     if (eventTime?.[0] && eventTime?.[1]) {
@@ -203,10 +234,12 @@ const EventFacilityOrderForm = ({
     if (isAdd) {
       createFacilityBookings.mutate(modifiedValues, {
         onSuccess: () => {
+          setDrawerOpen(false);
+          setSelectedData(null);
           form.resetFields();
           setPage(1);
           Toast.success("Facility Booking Created Successfully!");
-          setDrawerOpen(false);
+          
         },
       });
     }
@@ -216,6 +249,7 @@ const EventFacilityOrderForm = ({
         onSuccess: () => {
           Toast.success("FacilityBooking Updated Successfully!");
           setDrawerOpen(false);
+          setSelectedData(null)
         },
       });
     }
@@ -269,7 +303,7 @@ const EventFacilityOrderForm = ({
           layout="vertical"
           onFinish={onFinish}
           disabled={isView}
-          initialValues={{ status: "Active", expectedPax: 1 }}
+          initialValues={{ expectedPax: 1 }}
         >
           {isAdd && (
             <div className="flex justify-end mb-4">
@@ -342,7 +376,7 @@ const EventFacilityOrderForm = ({
                 });
               }}
             />
-          </Form.Item>       
+          </Form.Item>
 
           <Form.Item
             label="Event Date"
@@ -406,7 +440,35 @@ const EventFacilityOrderForm = ({
             <Input readOnly={isView} placeholder="Enter Expected Pax" />
           </Form.Item> */}
 
-          <Status isView={isView} statusValue={initDataStatus} facilityStatus={true}/>
+          <Form.Item
+            label="Facility Status"
+            name={["status", "uuid"]}
+            className="col-span-1"
+            rules={[
+              { required: true, message: "Please select a Facility Status" },
+            ]}
+            getValueProps={(value) => ({
+              value: isView
+                ? facilityStatus.find((item) => item.value === value)?.label
+                : value,
+            })}
+          >
+            {isView ? (
+              <Input readOnly />
+            ) : (
+              <Select
+                showSearch
+                filterOption={(input, option) =>
+                  (option?.label ?? "")
+                    .toLowerCase()
+                    .includes(input.toLowerCase())
+                }
+                options={facilityStatus}
+                placeholder="Select a Facility Status"
+                disabled={isEdit && (currentStatus === 'completed' || currentStatus === 'cancelled')}
+              />
+            )}
+          </Form.Item>
 
           <Form.Item label="Remark" name="remark">
             <TextArea readOnly={isView} placeholder="Enter Remark" />

@@ -41,10 +41,10 @@ const FacilityPackageList = () => {
     <div className="w-full px-6 py-2">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
         <ListHeader
-          searchPlaceholder="Search Facility Packages ..."
+          searchPlaceholder="Search Package ..."
           keyword={keyword}
           setKeyword={setKeyword}
-          addButtonText="Add New Facility Package"
+          addButtonText="Add New Package"
           onAdd={handleAdd}
           permission={PERMISSIONS.FACILITY_PACKAGE_CREATE}
         />

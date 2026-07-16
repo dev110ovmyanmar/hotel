@@ -7,8 +7,6 @@ import AddNewServiceOrderForm from "../FolioOperationsForms/AddNewServiceOrderFo
 import AddNewFacilityOrderForm from "../FolioOperationsForms/AddNewFacilityOrderForm";
 import AddPaymentForm from "../../../../../BookingDetail/Components/BookingDetailForms/AddPaymentForm";
 import { queryClient } from "../../../../../../app/queryClient";
-import { reservationMeta } from "../../../../../../api/reservationSectionApi";
-import useApiQuery from "../../../../../../hooks/useApiQuery";
 
 const FolioOperationsButtons = ({ data, folioUuid, reservationId, onPrintAllFolios }) => {
   const [form] = Form.useForm();
@@ -19,27 +17,11 @@ const FolioOperationsButtons = ({ data, folioUuid, reservationId, onPrintAllFoli
   const [folioOpen, setFolioOpen] = useState(false);
 
   const foliosList = folioUuid?.data || [];
-  console.log("DATA", data);
-
-  const { data: reservationMetaData } = useApiQuery({
-    fetchQueryName: "reservation-meta",
-    fetchQueryFunction: reservationMeta,
-    params: {
-      uuid: data?.reservation?.uuid
-    }
-  });
-
-  const paymentMethods = reservationMetaData?.payment_methods || [];
-
 
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
   const providerTypes = initData?.statuses.provider_type;
-  const guests = reservationMetaData?.guests || [];
   const paymentStatuses = initData?.statuses?.payment_status;
   const paymentCompletedStatus = paymentStatuses.find((item) => item?.code == "completed");
-
-
-
 
   const addOrder = [
     {
@@ -136,9 +118,8 @@ const FolioOperationsButtons = ({ data, folioUuid, reservationId, onPrintAllFoli
         onClose={() => setPaymentOpen(false)}
         bookingDetails={data}
         providerTypes={providerTypes}
-        paymentMethodsData={paymentMethods}
         paymentCompletedStatus={paymentCompletedStatus}
-        guests={guests}
+        reservationUuid={data?.uuid}
       />
     </div>
   );

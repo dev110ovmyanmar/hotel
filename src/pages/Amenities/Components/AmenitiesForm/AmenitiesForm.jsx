@@ -103,10 +103,10 @@ const AmenitiesForm = ({
           <div className="flex justify-between items-center">
             <span>
               {mode === "view"
-                ? "Amenitities Details"
+                ? "Room Amenities Details"
                 : mode === "edit"
-                  ? "Edit Amenitities"
-                  : "Add New Amenitities"}
+                  ? "Edit Room Amenities"
+                  : "Add New Room Amenities"}
             </span>
             {isView ? (
               canEdit && (
