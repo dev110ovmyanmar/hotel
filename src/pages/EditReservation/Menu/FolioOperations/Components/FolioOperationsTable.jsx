@@ -78,12 +78,12 @@ const FolioOperationsTable = ({
   const [targetFolioUuid, setTargetFolioUuid] = useState(null);
 
   const lineColumns = [
-    {
-      title: "Date",
-      dataIndex: "postedAt", // Best practice to include dataIndex for Antd columns
-      key: "postedAt",
-      render: (_, record) => record.postedAt ? dayjs(record.postedAt).format("YYYY-MM-DD") : "-",
-    },
+    // {
+    //   title: "Date",
+    //   dataIndex: "postedAt", // Best practice to include dataIndex for Antd columns
+    //   key: "postedAt",
+    //   render: (_, record) => record.postedAt ? dayjs(record.postedAt).format("YYYY-MM-DD") : "-",
+    // },
     {
       title: "Source ID",
       dataIndex: "sourceId", // Fixed: camelCase to match JSON
@@ -166,11 +166,11 @@ const FolioOperationsTable = ({
       key: "folioNo",
       width: 200,
     },
-    {
-      title: "Date",
-      key: "date",
-      render: (_, record) => record.openedAt ? dayjs(record.openedAt).format("YYYY-MM-DD") : "-",
-    },
+    // {
+    //   title: "Date",
+    //   key: "date",
+    //   render: (_, record) => record.openedAt ? dayjs(record.openedAt).format("YYYY-MM-DD") : "-",
+    // },
     {
       title: "Owner Type",
       key: "type",

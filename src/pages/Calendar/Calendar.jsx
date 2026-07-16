@@ -14,6 +14,7 @@ import Loader from '../../component/Loader/Loader';
 import useApiQuery from '../../hooks/useApiQuery';
 import { queryClient } from '../../app/queryClient';
 import { roomMeta } from '../../api/roomApi';
+import { darkModeStyle, borderDarkMode, textWhiteInDarkStyle } from '../../utils';
 
 const STATUS_COLORS = {
   pending: { bg: '#EEC01B', text: '#fff' },
@@ -30,6 +31,7 @@ const Calendar = () => {
   const [currentDate, setCurrentDate] = useState(dayjs());
   const [allData, setAllData] = useState([]);
   const [expandedGroups, setExpandedGroups] = useState(new Set());
+  const [searchInput, setSearchInput] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [filters, setFilters] = useState({ roomType: null, floor: null, statuses: null });
   const [selectedBooking, setSelectedBooking] = useState(null);
@@ -69,7 +71,7 @@ const Calendar = () => {
     month,
     keyword,
     roomType: filters.roomType ? { uuid: filters.roomType } : null,
-    Floor: filters.floor ? { uuid: filters.floor } : null,
+    floor: filters.floor ? { uuid: filters.floor } : null,
     reservationRoomStatus: filters.statuses ? { uuid: filters.statuses } : null,
   }), [month, keyword, filters]);
 
@@ -123,31 +125,19 @@ const Calendar = () => {
   }, [apiData]);
 
   const filteredData = useMemo(() => {
+    if (!searchQuery) return allData;
     return allData
       .map(group => {
-        const typeMatch = !filters.roomType || group.uuid === filters.roomType;
-        const filteredRooms = group.rooms.filter(room => {
-          const selectedFloor = roomMetaData?.floors?.find(f => f.uuid === filters.floor);
-          const floorMatch = !filters.floor || selectedFloor?.name === room.floor;
-          const searchMatch = room.roomNo.toLowerCase().includes(searchQuery.toLowerCase());
-
-          const selectedStatus = reservationRoomStatus.find(s => s.value === filters.statuses);
-          const statusMatch = !filters.statuses ||
-            (room.dates && room.dates.some(b =>
-              b.isBooked && b.booking &&
-              b.booking.roomStatus.toLowerCase() === selectedStatus?.label.replace(/\s+/g, '_').toLowerCase()
-            ));
-
-          return floorMatch && searchMatch && statusMatch;
-        });
-
-        if (typeMatch && filteredRooms.length > 0) {
+        const filteredRooms = group.rooms.filter(room =>
+          room.roomNo.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+        if (filteredRooms.length > 0) {
           return { ...group, rooms: filteredRooms };
         }
         return null;
       })
       .filter(Boolean);
-  }, [allData, filters, searchQuery, roomMetaData]);
+  }, [allData, searchQuery]);
 
   const days = useMemo(() => {
     const start = currentDate.startOf('month');
@@ -242,13 +232,7 @@ const Calendar = () => {
     }
   }, [isLoading, isFetching, currentDate]);
 
-  if (isLoading || isFetching) {
-    return (
-      <div className="h-screen w-full flex items-center justify-center flex-col gap-4">
-        <Loader />
-      </div>
-    );
-  }
+  // The early return for loading was removed so the table shell stays visible
 
   return (
     <div className="flex flex-col h-[calc(100vh-180px)] bg-white overflow-hidden text-[#333]">
@@ -256,8 +240,8 @@ const Calendar = () => {
       <div className="bg-white px-6 py-3 flex justify-between items-center border-b border-[#dee2e6] z-50">
         <div className="flex items-center gap-4">
           <Space>
-            <DoubleLeftOutlined className="text-gray-400 cursor-pointer" onClick={() => setCurrentDate(currentDate.subtract(1, 'year'))} />
-            <LeftOutlined className="text-gray-400 cursor-pointer" onClick={() => setCurrentDate(currentDate.subtract(1, 'month'))} />
+            <DoubleLeftOutlined className={`text-gray-400 cursor-pointer ${(isLoading || isFetching) ? 'pointer-events-none opacity-50' : ''}`} onClick={() => setCurrentDate(currentDate.subtract(1, 'year'))} />
+            <LeftOutlined className={`text-gray-400 cursor-pointer ${(isLoading || isFetching) ? 'pointer-events-none opacity-50' : ''}`} onClick={() => setCurrentDate(currentDate.subtract(1, 'month'))} />
             <DatePicker
               picker="date"
               value={currentDate}
@@ -265,12 +249,13 @@ const Calendar = () => {
               allowClear={false}
               suffixIcon={null}
               variant="borderless"
+              disabled={isLoading || isFetching}
               styles={{ input: { textAlign: 'center' } }}
               className="font-bold text-lg w-30 p-0 cursor-pointer"
               onChange={(date) => date && setCurrentDate(date)}
             />
-            <RightOutlined className="text-gray-400 cursor-pointer" onClick={() => setCurrentDate(currentDate.add(1, 'month'))} />
-            <DoubleRightOutlined className="text-gray-400 cursor-pointer" onClick={() => setCurrentDate(currentDate.add(1, 'year'))} />
+            <RightOutlined className={`text-gray-400 cursor-pointer ${(isLoading || isFetching) ? 'pointer-events-none opacity-50' : ''}`} onClick={() => setCurrentDate(currentDate.add(1, 'month'))} />
+            <DoubleRightOutlined className={`text-gray-400 cursor-pointer ${(isLoading || isFetching) ? 'pointer-events-none opacity-50' : ''}`} onClick={() => setCurrentDate(currentDate.add(1, 'year'))} />
           </Space>
         </div>
 
@@ -282,16 +267,32 @@ const Calendar = () => {
 
         <div className="flex items-center gap-3">
           <Input
-            prefix={<SearchOutlined className="text-gray-400" />}
-            placeholder="Search Room ID..."
+            prefix={
+              !searchInput ? (
+                <SearchOutlined className={`${(isLoading || isFetching) ? 'text-gray-300' : 'text-gray-400'}`} />
+              ) : null
+            }
+            suffix={
+              searchInput ? (
+                <SearchOutlined
+                  className={`cursor-pointer ${(isLoading || isFetching) ? 'text-gray-300' : 'text-blue-500 hover:text-blue-600'}`}
+                  onClick={() => !isLoading && !isFetching && setSearchQuery(searchInput)}
+                />
+              ) : null
+            }
+            placeholder="Search Room No..."
             className="w-64"
-            value={searchQuery}
-            onChange={e => setSearchQuery(e.target.value)}
+            value={searchInput}
+            disabled={isLoading || isFetching}
+            onChange={e => setSearchInput(e.target.value)}
+            onKeyDown={e => e.key === 'Enter' && setSearchQuery(searchInput)}
+            allowClear
+            onClear={() => { setSearchInput(''); setSearchQuery(''); }}
           />
-          <Button type="primary" onClick={() => setCurrentDate(dayjs())}>Today</Button>
-          <Popover content={filterContent} title="Filter Rooms" trigger="click" placement="bottomRight">
+          <Button type="primary" disabled={isLoading || isFetching} onClick={() => setCurrentDate(dayjs())}>Today</Button>
+          <Popover content={filterContent} title="Filter Rooms" trigger={(isLoading || isFetching) ? [] : 'click'} placement="bottomRight">
             <Badge dot={Object.values(filters).some(f => f && f.length > 0)}>
-              <Button icon={<FilterOutlined />}>Filter</Button>
+              <Button icon={<FilterOutlined />} disabled={isLoading || isFetching}>Filter</Button>
             </Badge>
           </Popover>
         </div>
@@ -299,11 +300,16 @@ const Calendar = () => {
 
       {/* GRID CONTAINER */}
       <div className="flex-1 relative overflow-hidden flex flex-col">
+        {(isLoading || isFetching) && (
+          <div className="absolute inset-0 z-[70] flex items-center justify-center">
+            <Loader />
+          </div>
+        )}
         <div className="flex-1 overflow-auto relative pb-[160px]" ref={gridRef} onScroll={handleScroll}>
           <table className="border-separate border-spacing-0 table-fixed">
             <thead>
               <tr>
-                <th className="sticky top-0 left-0 z-[60] bg-[#f8f9fa] border-b border-r border-[#dee2e6] p-4 text-left font-bold" style={{ width: SIDEBAR_WIDTH, minWidth: SIDEBAR_WIDTH, maxWidth: SIDEBAR_WIDTH }}>
+                <th className={`sticky top-0 left-0 z-[60] bg-[#f8f9fa] border-b border-r border-[#dee2e6] p-4 text-left font-bold ${darkModeStyle}`} style={{ width: SIDEBAR_WIDTH, minWidth: SIDEBAR_WIDTH, maxWidth: SIDEBAR_WIDTH }}>
                   Room Type
                 </th>
                 {days.map((day, i) => {
@@ -313,7 +319,7 @@ const Calendar = () => {
                       ${isToday
                         ? 'bg-[#E6F4FF] border-r-2 border-r-[#91CAFF] border-l-2 border-l-[#91CAFF]'
                         : 'bg-[#fcfcfc] border-r'
-                      }`}
+                      } ${darkModeStyle}`}
                       style={{ width: CELL_WIDTH, minWidth: CELL_WIDTH, maxWidth: CELL_WIDTH }}>
                       <div className={`text-[10px] uppercase ${isToday ? 'text-blue-500 font-bold' : 'text-gray-400'}`}>{day.format('MMM')}</div>
                       <div className={`text-base font-bold ${isToday ? 'text-blue-600' : ''}`}>{day.format('D')}</div>
@@ -327,7 +333,7 @@ const Calendar = () => {
               {filteredData.map((group) => (
                 <React.Fragment key={group.name}>
                   <tr className="bg-[#fcfcfc] cursor-pointer hover:bg-gray-100 h-15" onClick={() => toggleGroup(group.name)}>
-                    <td className="sticky left-0 z-40 bg-[#fcfcfc] border-b border-r border-[#dee2e6] p-3 font-bold" style={{ width: SIDEBAR_WIDTH, minWidth: SIDEBAR_WIDTH, maxWidth: SIDEBAR_WIDTH }}>
+                    <td className={`sticky left-0 z-40 bg-gray-300 border-b border-r border-[#dee2e6] p-3 font-bold ${darkModeStyle}`} style={{ width: SIDEBAR_WIDTH, minWidth: SIDEBAR_WIDTH, maxWidth: SIDEBAR_WIDTH, borderTop: '3px solid #6b7280' }}>
                       <div className="flex justify-between items-center">
                         <span className="text-[12px] truncate">{group.name}</span>
                         {expandedGroups.has(group.name) ? <UpOutlined className="!text-[9px] " /> : <DownOutlined className="!text-[9px] " />}
@@ -344,13 +350,12 @@ const Calendar = () => {
                           className={`border-b border-[#dee2e6] text-center p-1
                           ${isToday
                               ? 'bg-[#E6F4FF] border-r-2 border-r-[#91CAFF] border-l-2 border-l-[#91CAFF]'
-                              : 'bg-[#fcfcfc] border-r' // <-- Modify this line for normal days
-                            }
-  `}
-                          style={{ width: CELL_WIDTH, minWidth: CELL_WIDTH, maxWidth: CELL_WIDTH }}>
+                              : 'bg-[#fcfcfc] border-r'
+                            } ${darkModeStyle}`}
+                          style={{ width: CELL_WIDTH, minWidth: CELL_WIDTH, maxWidth: CELL_WIDTH, borderTop: '3px solid #6b7280' }}>
                           <div className={`flex flex-col items-center justify-center`}>
                             <div className="font-bold flex flex-col items-center">
-                              <Input readOnly value={availableRooms} style={{ padding: '0 2px', height: '24px', fontSize: '12px' }} className="!w-5 text-center bg-white" />
+                              <Input readOnly value={availableRooms} style={{ padding: '0 4px', height: '24px', fontSize: '12px' }} className="text-center text-[12px] font-bold text-green-600 px-1 !w-[50px] !border-gray-200 !rounded" />
                             </div>
                           </div>
                         </td>
@@ -359,8 +364,8 @@ const Calendar = () => {
                   </tr>
                   {expandedGroups.has(group.name) && group.rooms.map((room) => (
                     <tr key={room.uuid} className="h-15 hover:bg-gray-50">
-                      <td className="sticky left-0 z-30 bg-[#fcfcfc] border-b border-r border-[#dee2e6] px-4 py-1" style={{ width: SIDEBAR_WIDTH, minWidth: SIDEBAR_WIDTH, maxWidth: SIDEBAR_WIDTH }}>
-                        <div className="font-bold text-[12px] text-gray-700">{room.roomNo}</div>
+                      <td className={`sticky left-0 z-30 bg-[#fcfcfc] border-b border-r border-[#dee2e6] px-4 py-1 ${darkModeStyle}`} style={{ width: SIDEBAR_WIDTH, minWidth: SIDEBAR_WIDTH, maxWidth: SIDEBAR_WIDTH }}>
+                        <div className={`font-bold text-[12px] text-gray-700 ${textWhiteInDarkStyle}`}>{room.roomNo}</div>
                         <div className="text-[9px] text-gray-400 uppercase">{room.floor}</div>
                       </td>
                       {days.map((day, dayIdx) => {
@@ -371,7 +376,7 @@ const Calendar = () => {
                               ${isToday
                                 ? 'bg-[#E6F4FF] border-r-2 border-r-[#91CAFF] border-l-2 border-l-[#91CAFF]'
                                 : 'bg-[#fcfcfc] border-r'
-                              }`
+                              } ${darkModeStyle}`
                             }
                             style={{ width: CELL_WIDTH, minWidth: CELL_WIDTH, maxWidth: CELL_WIDTH }}>
                             {(room.dates || []).map((bookingItem, bIdx) => {
@@ -491,9 +496,9 @@ const Calendar = () => {
                 </React.Fragment>
               ))}
 
-              <tr className="bg-transparent">
-                <td className="sticky left-0 z-40 bg-gray-50/50 border-b border-r border-[#dee2e6] p-3 font-bold" style={{ width: SIDEBAR_WIDTH, minWidth: SIDEBAR_WIDTH, maxWidth: SIDEBAR_WIDTH }}>
-                  <span className="text-[11px] uppercase text-gray-500">Rooms Available</span>
+              <tr className="bg-emerald-50/30">
+                <td className={`sticky left-0 z-40 bg-emerald-50/80 border-b border-r border-[#dee2e6] p-3 font-bold ${darkModeStyle}`} style={{ width: SIDEBAR_WIDTH, minWidth: SIDEBAR_WIDTH, maxWidth: SIDEBAR_WIDTH }}>
+                  <span className={`text-[11px] uppercase text-emerald-700 ${textWhiteInDarkStyle}`}>Rooms Available</span>
                 </td>
                 {dailyStats.map((stat, i) => {
                   const isZero = stat.available === 0;
@@ -501,9 +506,9 @@ const Calendar = () => {
                   return (
                     <td key={i} className={`border-b border-[#dee2e6] text-center p-2 font-bold
                         ${isToday
-                        ? 'bg-[#E6F4FF] border-r-2 border-r-[#91CAFF] border-l-2 border-l-[#91CAFF]'
-                        : 'bg-[#fcfcfc] border-r'
-                      }`} style={{ width: CELL_WIDTH, minWidth: CELL_WIDTH, maxWidth: CELL_WIDTH }}>
+                        ? 'bg-emerald-100/60 border-r-2 border-r-emerald-300 border-l-2 border-l-emerald-300'
+                        : 'bg-emerald-50/30 border-r'
+                      } ${darkModeStyle}`} style={{ width: CELL_WIDTH, minWidth: CELL_WIDTH, maxWidth: CELL_WIDTH }}>
                       <div className={`text-sm ${isZero ? 'text-red-500' : 'text-green-600'}`}>
                         {stat.available}
                       </div>
@@ -511,18 +516,18 @@ const Calendar = () => {
                   );
                 })}
               </tr>
-              <tr className="bg-transparent">
-                <td className="sticky left-0 z-40 bg-gray-50/50 border-b border-r border-[#dee2e6] p-3 font-bold" style={{ width: SIDEBAR_WIDTH, minWidth: SIDEBAR_WIDTH, maxWidth: SIDEBAR_WIDTH }}>
-                  <span className="text-[11px] uppercase text-gray-500">Occupancy %</span>
+              <tr className="bg-blue-50/30">
+                <td className={`sticky left-0 z-40 bg-blue-50/80 border-b border-r border-[#dee2e6] p-3 font-bold ${darkModeStyle}`} style={{ width: SIDEBAR_WIDTH, minWidth: SIDEBAR_WIDTH, maxWidth: SIDEBAR_WIDTH }}>
+                  <span className={`text-[11px] uppercase text-blue-700 ${textWhiteInDarkStyle}`}>Occupancy %</span>
                 </td>
                 {dailyStats.map((stat, i) => {
                   const isToday = checkIsToday(days[i]);
                   return (
                     <td key={i} className={`border-b border-[#dee2e6] text-center p-2
                         ${isToday
-                        ? 'bg-[#E6F4FF] border-r-2 border-r-[#91CAFF] border-l-2 border-l-[#91CAFF]'
-                        : 'bg-[#fcfcfc] border-r'
-                      }`} style={{ width: CELL_WIDTH, minWidth: CELL_WIDTH, maxWidth: CELL_WIDTH }}>
+                        ? 'bg-blue-100/60 border-r-2 border-r-blue-300 border-l-2 border-l-blue-300'
+                        : 'bg-blue-50/30 border-r'
+                      } ${darkModeStyle}`} style={{ width: CELL_WIDTH, minWidth: CELL_WIDTH, maxWidth: CELL_WIDTH }}>
                       <div className="flex flex-col items-center">
                         <div className="text-[11px] font-bold text-gray-700">{stat.occupancy}%</div>
                         <div className="w-full bg-gray-200 h-1 mt-1 rounded-full overflow-hidden">
