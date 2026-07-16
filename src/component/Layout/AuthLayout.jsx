@@ -105,7 +105,7 @@ const AuthLayout = () => {
               <AuthRoutes />
             </Content>
             {/* <Footer className={`text-center text-md bg-white border-t border-gray-300 ${footerColor}`}> */}
-            <Footer className="text-center text-md bg-white border-t border-gray-300">
+            <Footer className="text-center text-md bg-white border-t border-gray-300 dark:!text-[#8A8A8A]">
               Hotel Management @ 2026 Developed by ORIENTAL VIGOUR
             </Footer>
           </Layout>

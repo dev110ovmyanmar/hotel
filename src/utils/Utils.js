@@ -180,7 +180,7 @@ export const validatePhoneNumber = (_, value) => {
 // For Rate and Inventory Calendar's component
 export const darkModeStyle = `
     dark:!bg-[#141414]
-    dark:!border-[#dee2e6] 
+    dark:!border-[#323232]
     dark:!text-gray-200
 `;
 

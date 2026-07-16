@@ -237,7 +237,7 @@ const RateAndInventoryCalendar = () => {
             const formattedDate = dayjs(dateStr).format('D MMM YYYY');
 
             Modal.confirm({
-                rootClassName:"dark-confirm-modal",
+                rootClassName: "dark-confirm-modal",
                 icon: null,
                 title: (
                     <div className="flex justify-between items-center w-full">
@@ -283,7 +283,7 @@ const RateAndInventoryCalendar = () => {
                 return;
             }
             Modal.confirm({
-                rootClassName:"dark-confirm-modal",
+                rootClassName: "dark-confirm-modal",
                 icon: null,
                 title: (
                     <div className="flex justify-between items-center w-full">
@@ -661,10 +661,8 @@ const RateAndInventoryCalendar = () => {
             <div className="flex-1 relative overflow-hidden">
                 {/* Loading overlay — covers only the grid area, below the header */}
                 {isFetching && (
-                    <div className="absolute inset-0 z-[50] flex items-center justify-center bg-white/40 backdrop-blur-sm">
-                        <div className="flex flex-col items-center gap-3 bg-white rounded-2xl shadow-2xl px-10 py-8">
-                            <Loader />
-                        </div>
+                    <div className="absolute inset-0 z-[50] flex items-center justify-center">
+                        <Loader />
                     </div>
                 )}
                 <div className="w-full h-full overflow-auto" ref={gridRef}>

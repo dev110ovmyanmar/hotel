@@ -132,7 +132,7 @@ const AgencyTable = ({
             icon: <FaFileContract style={{ fontSize: "12px" }} />,
             // permission: PERMISSIONS.PARTNER_EDIT,
             onClick: () => {
-              navigate(`/partners/agencies/${record?.id}/agency-contract`, {
+              navigate(`/booking-source/travel-agents/${record?.id}/agency-contract`, {
                 state: { agencyRecord: record },
               });
             },

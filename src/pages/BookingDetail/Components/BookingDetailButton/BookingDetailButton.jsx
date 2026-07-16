@@ -22,24 +22,10 @@ const BookingDetailButton = ({ data }) => {
   const status = reservation?.roomStatus?.code?.toUpperCase();
   const actions = status_actions[status] || [];
 
-  const { data: reservationMetaData } = useApiQuery({
-    fetchQueryName: "reservation-meta",
-    fetchQueryFunction: reservationMeta,
-    params: {
-      uuid: data?.reservation?.uuid
-    }
-  })
-
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
-
   const providerTypes = initData?.statuses.provider_type;
-
-  const paymentMethods = reservationMetaData?.payment_methods || [];
-  const guests = reservationMetaData?.guests || [];
-  const folios = reservationMetaData?.folios || [];
   const paymentStatuses = initData?.statuses?.payment_status;
   const paymentCompletedStatus = paymentStatuses.find((item) => item?.code == "completed");
-  console.log('paymentCompletedStatus', paymentCompletedStatus);
 
   const [form] = Form.useForm();
   const [open, setOpen] = useState(false);
@@ -140,9 +126,8 @@ const BookingDetailButton = ({ data }) => {
         onClose={() => setAddDepositOpen(false)}
         bookingDetails={data}
         providerTypes={providerTypes}
-        paymentMethodsData={paymentMethods}
         paymentCompletedStatus={paymentCompletedStatus}
-        guests={guests}
+        reservationUuid={data?.reservation?.uuid}
       />
 
       <AddReundForm
@@ -150,9 +135,8 @@ const BookingDetailButton = ({ data }) => {
         onClose={() => setRefundOpen(false)}
         bookingDetails={data}
         providerTypes={providerTypes}
-        paymentMethodsData={paymentMethods}
         paymentCompletedStatus={paymentCompletedStatus}
-        guests={guests}
+        reservationUuid={data?.reservation?.uuid}
       />
 
       <AddPaymentForm
@@ -160,9 +144,8 @@ const BookingDetailButton = ({ data }) => {
         onClose={() => setAddPaymentOpen(false)}
         bookingDetails={data}
         providerTypes={providerTypes}
-        paymentMethodsData={paymentMethods}
         paymentCompletedStatus={paymentCompletedStatus}
-        guests={guests}
+        reservationUuid={data?.reservation?.uuid}
       />
 
       <AmendStayForm
