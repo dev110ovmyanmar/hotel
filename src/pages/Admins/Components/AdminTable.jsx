@@ -67,8 +67,8 @@ const AdminTable = ({
     },
     {
       title: "Action",
-      fixed:"end",
-      align:"center",
+      fixed: "end",
+      align: "center",
       render: (_, record) => {
         const smallStyle = { fontSize: "12px" };
 
@@ -124,9 +124,17 @@ const AdminTable = ({
               </Space>
             ),
           }));
-
         return (
-          <Dropdown menu={{ items }} trigger={["click"]}>
+          <Dropdown
+            menu={{
+              items,
+              onClick: ({ key }) => {
+                const action = actions.find(a => a.key === key);
+                action?.onClick?.();
+              },
+            }}
+            trigger={["click"]}
+          >
             <MoreOutlined style={{ fontSize: "16px" }} />
           </Dropdown>
         );
