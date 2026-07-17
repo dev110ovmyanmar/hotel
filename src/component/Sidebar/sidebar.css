@@ -15,30 +15,31 @@
 
 .ant-menu-item-selected,
 .custom-selected-item {
-  background-color: rgba(0, 0, 0, 0.4) !important;
-  /* /* background-color: rgb(12, 73, 100) !important; */
+  background-color: rgba(206, 200, 200, 0.4) !important;
+  backdrop-filter: blur(12px) !important;
   color: var(--white) !important;
   color: var(--balck) !important;
 }
 
 .dark .ant-menu-item-selected,
-.custom-selected-item {
-  background-color: #afadad !important;
+.dark .custom-selected-item {
+  background-color: #212020 !important;
+  backdrop-filter: blur(12px) !important;
   color: var(--balck) !important;
 }
 
 .collapsed-menu .ant-menu-submenu-selected>.ant-menu-submenu-title {
-  background-color: rgba(0, 0, 0, 0.4) !important;
-  color: white !important;
-  /* border-radius: 8px; */
+  background-color: rgba(170, 165, 165, 0.4) !important;
+  backdrop-filter: blur(12px) !important;
 }
 
 .collapsed-menu .ant-menu-submenu-selected .anticon {
-  color: white !important;
+  color: rgb(9, 9, 9) !important;
 }
 
 .dark .collapsed-menu .ant-menu-submenu-selected>.ant-menu-submenu-title {
-  background-color: #afadad !important;
+  background-color: #212020 !important;
+  backdrop-filter: blur(12px) !important; 
 }
 
 .dark .collapsed-menu .ant-menu-submenu-selected .anticon {

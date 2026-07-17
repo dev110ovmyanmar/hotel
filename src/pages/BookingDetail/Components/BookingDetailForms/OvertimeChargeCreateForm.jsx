@@ -19,6 +19,7 @@ import {
 import FormButtons from "../../../../component/FormButtons/FormButtons";
 import FormItem from "antd/es/form/FormItem";
 import TextArea from "antd/es/input/TextArea";
+import { darkModeStyle } from "../../../../utils";
 
 const { Text } = Typography;
 
@@ -70,7 +71,7 @@ const OvertimeChargeCreateForm = ({ open, onClose, reservationId }) => {
         </FormItem>
 
         <FormItem label="Description" name="description">
-          <TextArea className="no-radius-input" />
+          <TextArea className={`no-radius-input ${darkModeStyle}`} />
         </FormItem>
       </Form>
     </Drawer>

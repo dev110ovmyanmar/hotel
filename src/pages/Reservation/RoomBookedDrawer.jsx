@@ -5,6 +5,7 @@ import { useState } from "react";
 import { FaMoon } from "react-icons/fa";
 import { MdOutlineEscalatorWarning, MdPeopleOutline } from "react-icons/md";
 import RoomModalBox from "./RoomModalBox";
+import { darkModeStyle } from "../../utils";
 
 
 const RoomBookedDrawer = ({
@@ -137,8 +138,8 @@ const RoomBookedDrawer = ({
             <div className="!space-y-3">
                 {
                     roomBookValues?.rooms?.map((room) => (
-                        <Card className="!shadow-xl">
-                            <div className="bg-[#e6f4ff] p-4 mb-4">
+                        <Card className="!shadow-xl dark:!bg-[#141414]">
+                            <div className={`bg-[#e6f4ff] p-4 mb-4 ${darkModeStyle} dark:!backdrop-blur-xl dark:!border dark:!border-gray-700`}>
                                 <div className="flex justify-between">
                                     <div className="flex">
                                         <p className="mr-3 text-[#5758d9] font-bold">{room?.roomType?.name}</p>
