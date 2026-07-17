@@ -793,6 +793,53 @@ span .ant-upload {
 }
 
 /* expanded row's margin */
-.ant-spin .css-dev-only-do-not-override-9injdo .css-var-_r_0_ {
+.css-var-_r_0_ .ant-table-css-var .ant-table-wrapper .css-dev-only-do-not-override-ry7cab {
   margin: 5px !important;
+}
+
+/* Nested */
+.expanded-table .ant-table {
+  --dark-nested-border: #3a3f4b;
+  --dark-nested-header: #23262f;
+  --dark-nested-text: #f3f4f6;
+
+  --nested-border: #93C5FD;
+  --nested-header: #F0F5FF;
+
+} 
+
+.expanded-table .ant-table-container {
+  border-bottom: 2px solid;
+  border-color: var(--nested-border) !important;
+}
+
+.expanded-table .ant-table-thead > tr > th {
+  border: 1px solid;
+  background: var(--nested-header) !important;
+  border-color: var(--nested-border) !important;
+}
+
+.expanded-table .ant-table-tbody > tr > td {
+  border: 1px solid;
+  border-color: var(--nested-border) !important;
+}
+
+/* dark mode expanded table */
+.dark .expanded-table .ant-table-container {
+  border: 1px solid;
+  border-color: var(--dark-nested-border) !important;
+}
+
+/* .dark .expanded-table .ant-table-cell {
+  border-color: var(--dark-nested-border) !important;
+} */
+
+.dark .expanded-table .ant-table-thead > tr > th {
+  background: var(--dark-nested-header) !important;
+  border-color: var(--dark-nested-border) !important;
+}
+
+.dark .expanded-table .ant-table-tbody > tr > td {
+  border-color: var(--dark-nested-border) !important;
+  color: var(--dark-nested-text) !important;
 }
