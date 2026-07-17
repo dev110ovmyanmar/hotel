@@ -518,8 +518,9 @@ span .ant-upload {
 }
 
 .service-order-icon-box {
-  background-color: #f3c363;
-  border: 1px solid #c39626;
+  background-color: #28e1c8;
+  backdrop-filter:blur(12px) !important ;
+  border: 1px solid #01332d;
   border-radius: 6px;
   padding: 4px;
   display: flex;
@@ -699,11 +700,17 @@ span .ant-upload {
 }
 
 .active-reservation-row td {
-  background-color: #C7E8A0 !important;
+  background-color: rgba(16, 185, 129, 0.12) !important;
+  backdrop-filter: blur(12px) !important;
+  border-top: 1px solid rgba(16, 185, 129, 0.35) !important;
+  border-bottom: 1px solid rgba(16, 185, 129, 0.35) !important;
 }
 
 .dark .active-reservation-row td {
-  background-color: #2E8B57 !important;
+  background-color: rgba(1, 65, 46, 0.35) !important;
+  backdrop-filter: blur(12px) !important;
+  color: #f8fafc !important;
+  border-bottom: 1px solid rgb(16 185 129 / 0.2) !important;
 }
 
 /* Your global.css or component.scss file */
@@ -806,20 +813,20 @@ span .ant-upload {
   --nested-border: #93C5FD;
   --nested-header: #F0F5FF;
 
-} 
+}
 
 .expanded-table .ant-table-container {
   border-bottom: 2px solid;
   border-color: var(--nested-border) !important;
 }
 
-.expanded-table .ant-table-thead > tr > th {
+.expanded-table .ant-table-thead>tr>th {
   border: 1px solid;
   background: var(--nested-header) !important;
   border-color: var(--nested-border) !important;
 }
 
-.expanded-table .ant-table-tbody > tr > td {
+.expanded-table .ant-table-tbody>tr>td {
   border: 1px solid;
   border-color: var(--nested-border) !important;
 }
@@ -834,12 +841,12 @@ span .ant-upload {
   border-color: var(--dark-nested-border) !important;
 } */
 
-.dark .expanded-table .ant-table-thead > tr > th {
+.dark .expanded-table .ant-table-thead>tr>th {
   background: var(--dark-nested-header) !important;
   border-color: var(--dark-nested-border) !important;
 }
 
-.dark .expanded-table .ant-table-tbody > tr > td {
+.dark .expanded-table .ant-table-tbody>tr>td {
   border-color: var(--dark-nested-border) !important;
   color: var(--dark-nested-text) !important;
 }

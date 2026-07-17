@@ -9,7 +9,7 @@ const ServiceOrder = ({ data }) => {
   const CustomTitle = (
     <Space>
       <div className="service-order-icon-box">
-        <PlusOutlined style={{ color: "#eba00c", fontSize: "18px" }} />
+        <PlusOutlined style={{ color: "#049985", fontSize: "18px" }} />
       </div>
       <Text>Service Order</Text>
     </Space>
