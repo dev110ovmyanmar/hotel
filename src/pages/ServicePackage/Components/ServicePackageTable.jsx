@@ -232,7 +232,7 @@ const ServicePackageTable = ({
 
         {record?.servicePackageItems?.length <= 0 ? null : (
           <Table
-            className="[&_.ant-table-cell]:!border [&_.ant-table-cell]:!border-blue-300 [&_.ant-table-thead>tr>th]:!bg-[#F0F5FF]"
+            className="expanded-table dark:[&_.ant-table-thead>tr>th]:!text-[#F3F4F6]"
             columns={expandColumns}
             dataSource={record.servicePackageItems || []}
             rowKey="uuid"

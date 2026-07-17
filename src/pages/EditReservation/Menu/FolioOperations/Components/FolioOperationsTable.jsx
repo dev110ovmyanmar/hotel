@@ -34,14 +34,13 @@ const SubFolioTable = ({ record, lineColumns, onMoveTo, isTransferring }) => {
   return (
     <div>
       <Table
-        className="nested-folio-table [&_.ant-table-cell]:!border [&_.ant-table-cell]:!border-blue-300 [&_.ant-table-thead>tr>th]:!bg-[#F0F5FF]"
+        className="nested-folio-table expanded-table dark:[&_.ant-table-thead>tr>th]:!text-[#F3F4F6] "
         rowSelection={rowSelection}
         columns={lineColumns}
         dataSource={lines}
         rowKey="id"
         pagination={false}
         size="small"
-        style={{ marginTop: "16px", marginBottom: "16px" }}
         bordered
       />
       <div style={{
