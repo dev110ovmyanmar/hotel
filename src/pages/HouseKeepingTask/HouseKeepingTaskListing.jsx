@@ -9,6 +9,7 @@ import HouseKeepingTaskForm from "./components/HouseKeepingTaskForm";
 import HouseKeepingTaskCard from "./components/HouseKeepingTaskCard";
 import { LIMITS } from "../../variables/constants";
 import ColorStatusTag from "../../component/ColorStatusTag/ColorStatusTag";
+import { PERMISSIONS } from "../../variables/permission";
 
 const HouseKeepingTaskListing = () => {
     const [selectedRow, setSelectedRow] = useState(null);
@@ -65,8 +66,6 @@ const HouseKeepingTaskListing = () => {
             ),
         })),
         [adminMetaData]);
-
-
 
     // Reset to page 1 when searching or changing page size
     useEffect(() => {
@@ -136,6 +135,7 @@ const HouseKeepingTaskListing = () => {
                     onAdd={handleAdd}
                     radioButtonsForTableAndGrid={radioButtonsForTableAndGrid}
                     isHouseKeepingTask={true}
+                    permission={PERMISSIONS.HK_TASK_CREATE}
                 />
             </div>
 
