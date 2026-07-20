@@ -16,7 +16,7 @@ import {
   EyeOutlined,
 } from "@ant-design/icons";
 import ProfileForm from "./ProfileForm";
-import { loadState } from "../../utils/Utils";
+import { loadState, textWhiteInDarkStyle } from "../../utils/Utils";
 import { LOCAL_STORAGE_KEYS } from "../../variables/constants";
 import useApiQuery from "../../hooks/useApiQuery";
 import { useApiMutation } from "../../hooks/useApiMutation";
@@ -186,7 +186,7 @@ const ProfilePage = () => {
 
         {/* User Identity Text */}
         <div className="text-center sm:text-left flex-1">
-          <Title level={2} className="mb-1 !text-gray-800">
+          <Title level={2} className={`mb-1 !text-gray-800 ${textWhiteInDarkStyle}`}>
             {loginAdminDetails?.name || "User Name"}
           </Title>
           <Text className="text-lg text-gray-500 italic">
@@ -198,7 +198,7 @@ const ProfilePage = () => {
       {/* 2. Personal Information Card */}
       <div className="bg-white rounded-xl shadow-sm p-8">
         <div className="flex justify-between items-center mb-8 pb-4 border-b border-gray-50">
-          <Title level={4} className="mb-0 !text-gray-700">
+          <Title level={4} className={`mb-0 !text-gray-700 ${textWhiteInDarkStyle}`}>
             Personal Information
           </Title>
           <Button

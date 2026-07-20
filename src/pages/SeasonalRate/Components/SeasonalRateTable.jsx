@@ -230,7 +230,7 @@ const SeasonalRateTable = ({
       },
     },
   ];
-
+  
   const expandedRowRender = (record) => {
     const processedRates = processData(record?.rates || []);
     return (
@@ -238,7 +238,7 @@ const SeasonalRateTable = ({
         className="expanded-table dark:[&_.ant-table-thead>tr>th]:!text-[#F3F4F6]"
         columns={expandColumns}
         dataSource={processedRates}
-        pagination={false}
+        pagination={processedRates?.length > 10 ? true : false}
         size="small"
         bordered
       />
