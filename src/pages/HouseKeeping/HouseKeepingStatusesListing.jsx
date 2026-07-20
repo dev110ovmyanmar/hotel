@@ -13,6 +13,8 @@ import HouseKeepingStatusTable from "./Components/HouseKeepingStatusTable";
 import HouseKeepingStatusForm from "./Components/HouseKeepingStatusForm";
 import HouseKeepingStatusCard from "./Components/HouseKeepingStatusCard";
 import { LIMITS } from "../../variables/constants";
+import { PERMISSIONS } from "../../variables/permission";
+import usePermission from "../../hooks/usePermission";
 
 const { Option } = Select;
 
@@ -24,6 +26,9 @@ const HouseKeepingStatusListing = () => {
     const [perPage, setPerPage] = useState(LIMITS.PAGE_SIZE);
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [viewMode, setViewMode] = useState("table");
+
+    const { hasPermission } = usePermission();
+    const createPermission = hasPermission(PERMISSIONS.HK_TASK_CREATE);
 
     // API Query with combined params
     const { data, isLoading } = useApiQuery({

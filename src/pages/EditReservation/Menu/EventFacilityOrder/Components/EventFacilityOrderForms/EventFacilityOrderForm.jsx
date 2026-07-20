@@ -16,6 +16,7 @@ import dayjs from "dayjs";
 import SearchEventFacilityOrderForm from "./SearchEventFacilityOrderForm";
 import FormButtons from "../../../../../../component/FormButtons/FormButtons";
 import {
+  darkModeStyle,
   getFormattedDate,
   getFormattedDateTime,
   validatePhoneNumber,
@@ -471,7 +472,7 @@ const EventFacilityOrderForm = ({
           </Form.Item>
 
           <Form.Item label="Remark" name="remark">
-            <TextArea readOnly={isView} placeholder="Enter Remark" />
+            <TextArea readOnly={isView} placeholder="Enter Remark" className={darkModeStyle} />
           </Form.Item>
 
           {/* <Row gutter={16}>

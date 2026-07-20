@@ -73,22 +73,24 @@
 }
 
 .ant-input::placeholder {
-  color: rgba(0, 0, 0, 0.45); 
+  color: rgba(0, 0, 0, 0.45);
 }
 
 /* Dark mode: Changes the placeholder to white when dark mode class is active */
 .dark .ant-input::placeholder {
   color: #ffffff !important;
-  opacity: 0.8; /* Optional: slightly soften the white if it's too bright */
+  opacity: 0.8;
+  /* Optional: slightly soften the white if it's too bright */
 }
 
 /* Dark mode styles for RangePicker */
 .dark .ant-picker {
-  background-color: #1f1f1f !important; /* Dark background */
+  background-color: #1f1f1f !important;
+  /* Dark background */
   border-color: #434343 !important;
 }
 
-.dark .ant-picker-input > input::placeholder {
+.dark .ant-picker-input>input::placeholder {
   color: rgba(255, 255, 255, 0.8) !important;
 }
 
@@ -516,8 +518,9 @@ span .ant-upload {
 }
 
 .service-order-icon-box {
-  background-color: #f3c363;
-  border: 1px solid #c39626;
+  background-color: #28e1c8;
+  backdrop-filter:blur(12px) !important ;
+  border: 1px solid #01332d;
   border-radius: 6px;
   padding: 4px;
   display: flex;
@@ -696,12 +699,18 @@ span .ant-upload {
   }
 }
 
-.active-reservation-row td{
-  background-color: #C7E8A0 !important;
+.active-reservation-row td {
+  background-color: rgba(16, 185, 129, 0.12) !important;
+  backdrop-filter: blur(12px) !important;
+  border-top: 1px solid rgba(16, 185, 129, 0.35) !important;
+  border-bottom: 1px solid rgba(16, 185, 129, 0.35) !important;
 }
 
-.dark .active-reservation-row td{
-  background-color: #2E8B57 !important;
+.dark .active-reservation-row td {
+  background-color: rgba(1, 65, 46, 0.35) !important;
+  backdrop-filter: blur(12px) !important;
+  color: #f8fafc !important;
+  border-bottom: 1px solid rgb(16 185 129 / 0.2) !important;
 }
 
 /* Your global.css or component.scss file */
@@ -788,4 +797,56 @@ span .ant-upload {
 
 .dark .ant-select-item-option-disabled .ant-select-item-option-content {
   color: rgba(232, 224, 224, 0.25) !important;
+}
+
+/* expanded row's margin */
+.css-var-_r_0_ .ant-table-css-var .ant-table-wrapper .css-dev-only-do-not-override-ry7cab {
+  margin: 5px !important;
+}
+
+/* Nested */
+.expanded-table .ant-table {
+  --dark-nested-border: #3a3f4b;
+  --dark-nested-header: #23262f;
+  --dark-nested-text: #f3f4f6;
+
+  --nested-border: #93C5FD;
+  --nested-header: #F0F5FF;
+
+}
+
+.expanded-table .ant-table-container {
+  border-bottom: 2px solid;
+  border-color: var(--nested-border) !important;
+}
+
+.expanded-table .ant-table-thead>tr>th {
+  border: 1px solid;
+  background: var(--nested-header) !important;
+  border-color: var(--nested-border) !important;
+}
+
+.expanded-table .ant-table-tbody>tr>td {
+  border: 1px solid;
+  border-color: var(--nested-border) !important;
+}
+
+/* dark mode expanded table */
+.dark .expanded-table .ant-table-container {
+  border: 1px solid;
+  border-color: var(--dark-nested-border) !important;
+}
+
+/* .dark .expanded-table .ant-table-cell {
+  border-color: var(--dark-nested-border) !important;
+} */
+
+.dark .expanded-table .ant-table-thead>tr>th {
+  background: var(--dark-nested-header) !important;
+  border-color: var(--dark-nested-border) !important;
+}
+
+.dark .expanded-table .ant-table-tbody>tr>td {
+  border-color: var(--dark-nested-border) !important;
+  color: var(--dark-nested-text) !important;
 }

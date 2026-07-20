@@ -17,6 +17,8 @@ import HouseKeepingTaskAssignForm from "./HousKeepingTaskAssignForm";
 import ColorStatusTag from "../../../component/ColorStatusTag/ColorStatusTag";
 import MaintenanceRequestFromHK from "./MaintenanceRequestFromHK";
 import { houseKeepingAndMaintenanceRequestDarkMode } from "../../../utils";
+import { PERMISSIONS } from "../../../variables/permission";
+import usePermission from "../../../hooks/usePermission";
 
 const { TextArea } = Input;
 
@@ -44,6 +46,10 @@ const HouseKeepingTaskForm = ({
     const isView = mode === "view";
     const isEdit = mode === "edit";
     const isCreate = mode === "add";
+
+    const { hasPermission } = usePermission();
+    const viewPermission = hasPermission(PERMISSIONS.HK_TASK_VIEW);
+    const editPermission = hasPermission(PERMISSIONS.HK_TASK_EDIT);
 
     // ===== Options & Meta Data =====
     const initData = queryClient.getQueryData(["initData", "authenticated"]);
@@ -162,7 +168,7 @@ const HouseKeepingTaskForm = ({
         setMaintenanceRequestDrawerOpen(true);
     };
 
-    
+
 
 
     return (
@@ -175,7 +181,7 @@ const HouseKeepingTaskForm = ({
                 extra={
                     isDisableEdit ? null : ( // If disabled, show nothing
                         isView ? (
-                            <Button onClick={() => setMode("edit")} type="primary">Edit</Button>
+                            editPermission && <Button onClick={() => setMode("edit")} type="primary">Edit</Button>
                         ) : (
                             <FormButtons
                                 onClick={() => form.submit()}
@@ -372,6 +378,7 @@ const HouseKeepingTaskForm = ({
 
                             {
                                 (isEdit || isView) ? (
+                                    editPermission &&
                                     <div>
                                         <div className="flex justify-end mt-4">
                                             <button
@@ -384,7 +391,6 @@ const HouseKeepingTaskForm = ({
                                                 <TeamOutlined /> Staff Assigns
                                             </button>
                                         </div>
-
                                         {
                                             isDisableEdit ? null :
                                                 <div className="flex justify-end gap-3 mt-6">

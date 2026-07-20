@@ -8,6 +8,7 @@ import Status from "./../../../component/Status/Status";
 import ColorStatusTag from "./../../../component/ColorStatusTag/ColorStatusTag";
 import { PERMISSIONS } from "../../../variables/permission";
 import usePermission from "../../../hooks/usePermission";
+import PriceTag, { priceFormatter } from "../../../component/PriceTag/PriceTag";
 
 const MeanPlanTable = ({
   data,
@@ -36,23 +37,49 @@ const MeanPlanTable = ({
       render: (text) => <div>{text}</div>,
     },
     {
+      title: "Includes",
+      key: "includes",
+      render: (_, record) => {
+        const meals = [];
+
+        if (record.includesBreakfast) meals.push("Breakfast");
+        if (record.includesLunch) meals.push("Lunch");
+        if (record.includesDinner) meals.push("Dinner");
+
+        return meals.length ? meals.join(", ") : "-";
+      },
+    },
+    {
+      title: "Adult Price (MMK)",
+      dataIndex: "adultPrice",
+      key: "adultPrice",
+      render: (text) => <div className="text-end">{priceFormatter(text)}</div>
+    },
+    {
+      title: "Child Price (MMK)",
+      dataIndex: "childPrice",
+      key: "childPrice",
+      render: (text) => <div className="text-end">{priceFormatter(text)}</div>,
+    },
+    {
       title: "Description",
       dataIndex: "description",
       key: "description",
+      align:"center",
       render: (text) => text || "-",
     },
     {
       title: "Status",
       dataIndex: ["status", "name"],
       key: "status",
-      width:150,
+      width: 150,
       render: (_, record) => <ColorStatusTag status={record?.status} />,
     },
     {
       title: "Action",
       fixed: "end",
       align: "center",
-      width:100,
+      width: 100,
       render: (_, record) => {
         const smallStyle = { fontSize: "12px" };
 

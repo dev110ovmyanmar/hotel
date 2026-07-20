@@ -9,6 +9,8 @@ import useApiQuery from "../../../hooks/useApiQuery";
 import { useApiMutation } from "../../../hooks/useApiMutation";
 import { upsertHouseKeeping, getHouseKeepingDetail, roomMeta } from "../../../api/houesKeepingStatusApi";
 import FormItem from "antd/es/form/FormItem";
+import { PERMISSIONS } from "../../../variables/permission";
+import usePermission from "../../../hooks/usePermission";
 
 const { TextArea } = Input;
 
@@ -27,6 +29,9 @@ const HouseKeepingStatusForm = ({
 
     const isView = mode === "view";
     const isEdit = mode === "edit";
+
+    const { hasPermission } = usePermission();
+    const canEdit = hasPermission(PERMISSIONS.HK_STATUS_EDIT);
 
     // 1. Get Global Options (Clean Statuses and Priority Levels)
     const initData = queryClient.getQueryData(["initData", "authenticated"]);
@@ -105,7 +110,7 @@ const HouseKeepingStatusForm = ({
             onClose={handleClose}
             open={drawerOpen}
             extra={isView ? (
-                <Button type="primary" onClick={() => setMode("edit")}>Edit</Button>
+                canEdit && <Button type="primary" onClick={() => setMode("edit")}>Edit</Button>
             ) : (
                 <FormButtons onClick={() => form.submit()} mode={mode} isPending={upsertMutation.isPending} />
             )}
@@ -128,11 +133,11 @@ const HouseKeepingStatusForm = ({
                                 name="cleanStatus"
                                 rules={[{ required: true, message: 'Required' }]}
                             >
-                                <Select 
-                                    open={isView? !isView: undefined}
-                                    options={cleanStatusOptions} 
-                                    readOnly={isView} 
-                                    placeholder="Select Clean Status" 
+                                <Select
+                                    open={isView ? !isView : undefined}
+                                    options={cleanStatusOptions}
+                                    readOnly={isView}
+                                    placeholder="Select Clean Status"
                                 />
                             </Form.Item>
 
@@ -142,10 +147,10 @@ const HouseKeepingStatusForm = ({
                                 rules={[{ required: true, message: 'Required' }]}
                             >
                                 <Select
-                                    open={isView? !isView: undefined}
+                                    open={isView ? !isView : undefined}
                                     options={priorityOptions}
                                     readOnly={isView}
-                                    placeholder="Select Priority Level" 
+                                    placeholder="Select Priority Level"
                                 />
                             </Form.Item>
 
