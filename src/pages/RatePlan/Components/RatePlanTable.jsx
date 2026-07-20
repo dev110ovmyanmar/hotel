@@ -336,7 +336,7 @@ const RatePlanTable = ({
         columns={expandColumns(record)}
         dataSource={processedRates}
         rowKey="uuid"
-        pagination={false}
+        pagination={processedRates?.length > 10 ? true : false}
         size="small"
         bordered
       />

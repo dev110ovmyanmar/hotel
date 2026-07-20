@@ -32,7 +32,7 @@ const ServiceInventoryTable = ({
           columns={expandColumns}
           dataSource={record.serviceInventoryMappings || []}
           rowKey="uuid"
-          pagination={false}
+          pagination={record.serviceInventoryMappings?.length > 10 ? true : false}
           size="small"
         />
 

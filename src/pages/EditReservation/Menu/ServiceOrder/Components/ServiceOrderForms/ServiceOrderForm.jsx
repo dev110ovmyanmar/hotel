@@ -23,7 +23,7 @@ import FormButtons from "../../../../../../component/FormButtons/FormButtons";
 import { queryClient } from "../../../../../../app/queryClient";
 import Toast from "../../../../../../component/Toast/Toast";
 import { EyeOutlined } from "@ant-design/icons";
-import { getFormattedDate } from "../../../../../../utils";
+import { getFormattedDate, textWhiteInDarkStyle } from "../../../../../../utils";
 
 const sharedProps = {
   mode: "spinner",
@@ -410,7 +410,7 @@ const ServiceOrderForm = ({
                     {serviceInventories?.map((item, index) => (
                       <div
                         key={item.value}
-                        className="flex items-center justify-between py-1 px-3.5 hover:bg-gray-50/70 transition-colors duration-150"
+                        className="flex items-center justify-between py-1 px-3.5 hover:bg-gray-50/70 transition-colors duration-150 dark:hover:bg-gray-900 dark:hover:backdrop-filter-lg"
                       >
                         <Form.Item
                           name={["inventoryItems", index, "value"]}
@@ -430,7 +430,7 @@ const ServiceOrderForm = ({
                         <div className="flex items-center space-x-3 min-w-0 flex-1 pr-4">
                           <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 flex-shrink-0" />
                           <span
-                            className="font-medium text-gray-700 truncate"
+                            className={`font-medium text-gray-700 truncate  ${textWhiteInDarkStyle}`}
                             title={item.label}
                           >
                             {item.label}
@@ -536,7 +536,7 @@ const ServiceOrderForm = ({
                                       width: "100%",
                                     }}
                                   >
-                                    <span style={{ color: "#434343" }}>
+                                    <span style={{ color: "#434343" }} >
                                       • {item?.itemType?.name || "Unknown Item"}
                                     </span>
                                     <span
