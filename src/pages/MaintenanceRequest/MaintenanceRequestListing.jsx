@@ -4,6 +4,7 @@ import ListHeader from "../../component/ListHeader/ListHeader";
 import { getMaintenanceRequests } from "../../api/maintenanceRequestApi";
 import MaintenanceRequestTable from "./components/MaintenancrRequestTable";
 import MaintenanceRequestForm from "./components/MaintenanceRequestForm";
+import { PERMISSIONS } from "../../variables/permission";
 
 import { LIMITS } from "../../variables/constants";
 
@@ -60,6 +61,7 @@ const MaintenanceRequestListing = () => {
                     setKeyword={setKeyword}
                     addButtonText="Add Maintenance Request"
                     onAdd={handleAdd}
+                    permission={PERMISSIONS.MAINTENANCE_REQUEST_CREATE}
                 />
             </div>
 
