@@ -10,6 +10,9 @@ import {
     ClockCircleOutlined
 } from "@ant-design/icons";
 import ColorStatusTag from "../../../component/ColorStatusTag/ColorStatusTag";
+import { PERMISSIONS } from "../../../variables/permission";
+import usePermission from "../../../hooks/usePermission";
+import { MdCalendarViewDay } from "react-icons/md";
 
 const HouseKeepingStatusCard = ({ data, onEdit, onView }) => {
     // --- 1. Business Logic & Mapping ---
@@ -21,6 +24,10 @@ const HouseKeepingStatusCard = ({ data, onEdit, onView }) => {
         out_of_order: "out_of_order",
         out_of_service: "out_of_service",
     };
+
+    const { hasPermission } = usePermission();
+    const viewPermission = hasPermission(PERMISSIONS.HK_STATUS_VIEW);
+    const editPermission = hasPermission(PERMISSIONS.HK_STATUS_EDIT);
 
     const firstItem = Array.isArray(data?.cleanStatus) ? data?.cleanStatus[0] : data?.cleanStatus;
     const statusCode = firstItem?.code || firstItem;
@@ -116,18 +123,24 @@ const HouseKeepingStatusCard = ({ data, onEdit, onView }) => {
 
             {/* Actions Footer */}
             <div className="mt-3 pt-2 border-t border-gray-100 flex items-center justify-end gap-4">
-                <button
-                    onClick={(e) => { e.stopPropagation(); onView(); }}
-                    className="flex items-center gap-1 text-[10px] font-bold hover:text-blue-600 uppercase tracking-wider transition-colors cursor-pointer"
-                >
-                    <EyeOutlined className="text-[11px]" /> View
-                </button>
-                <button
-                    onClick={(e) => { e.stopPropagation(); onEdit(); }}
-                    className="flex items-center gap-1 text-[10px] font-bold hover:text-blue-600 uppercase tracking-wider transition-colors cursor-pointer"
-                >
-                    <EditOutlined className="text-[11px]" /> Edit
-                </button>
+                {
+                    viewPermission &&
+                    <button
+                        onClick={(e) => { e.stopPropagation(); onView(); }}
+                        className="flex items-center gap-1 text-[10px] font-bold hover:text-blue-600 uppercase tracking-wider transition-colors cursor-pointer"
+                    >
+                        <EyeOutlined className="text-[11px]" /> View
+                    </button>
+                }
+                {
+                    editPermission &&
+                    <button
+                        onClick={(e) => { e.stopPropagation(); onEdit(); }}
+                        className="flex items-center gap-1 text-[10px] font-bold hover:text-blue-600 uppercase tracking-wider transition-colors cursor-pointer"
+                    >
+                        <EditOutlined className="text-[11px]" /> Edit
+                    </button>
+                }
             </div>
 
             {/* Sidebar Accent Bar */}

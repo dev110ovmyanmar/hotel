@@ -165,7 +165,7 @@ const FAndBInventoryTable = ({
           columns={expandColumns}
           dataSource={record.menuInventoryMappings || []}
           rowKey="uuid"
-          pagination={false}
+          pagination={record.menuInventoryMappings?.length > 10 ? true : false}
           size="small"
         />
       </>

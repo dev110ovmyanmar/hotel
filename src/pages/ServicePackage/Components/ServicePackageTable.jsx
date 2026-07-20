@@ -236,7 +236,7 @@ const ServicePackageTable = ({
             columns={expandColumns}
             dataSource={record.servicePackageItems || []}
             rowKey="uuid"
-            pagination={false}
+            pagination={record.servicePackageItems?.length > 10 ? true : false}
             size="small"
           />
         )}

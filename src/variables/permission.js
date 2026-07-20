@@ -46,7 +46,7 @@ export const PERMISSIONS = {
   POLICY_EDIT: "policy.edit",
   POLICY_DUPLICATE: "policy.duplicate",
 
-    // Country & City Location
+  // Country & City Location
   LOCATION_VIEW: "location.view",
   LOCATION_LIST: "location.list",
   LOCATION_CREATE: "location.create",
@@ -122,10 +122,10 @@ export const PERMISSIONS = {
   SERVICE_EDIT: "service.edit",
 
   // Service Inventory Item
-  SERVICE_INVENTORY_ITEM_LIST : "inventory.list",
-  SERVICE_INVENTORY_ITEM_VIEW : "inventory.view",
-  SERVICE_INVENTORY_ITEM_CREATE : "inventory.create",
-  SERVICE_INVENTORY_ITEM_EDIT : "inventory.edit",
+  SERVICE_INVENTORY_ITEM_LIST: "inventory.list",
+  SERVICE_INVENTORY_ITEM_VIEW: "inventory.view",
+  SERVICE_INVENTORY_ITEM_CREATE: "inventory.create",
+  SERVICE_INVENTORY_ITEM_EDIT: "inventory.edit",
 
   // Inventory
   SERVICE_INVENTORY_LIST: "service-inventory.list",
@@ -133,17 +133,17 @@ export const PERMISSIONS = {
   SERVICE_INVENTORY_CREATE: "service-inventory.create",
   SERVICE_INVENTORY_EDIT: "service-inventory.edit",
 
-    //Service Packages
+  //Service Packages
   SERVICE_PACKAGE_LIST: "service-package.list",
   SERVICE_PACKAGE_VIEW: "service-package.view",
   SERVICE_PACKAGE_CREATE: "service-package.create",
   SERVICE_PACKAGE_EDIT: "service-package.edit",
 
   // Service Package Item
-  SERVICE_PACKAGE_ITEM_LIST : "service-package.list",
-  SERVICE_PACKAGE_ITEM_VIEW : "service-package.view",
-  SERVICE_PACKAGE_ITEM_CREATE : "service-package.create",
-  SERVICE_PACKAGE_ITEM_EDIT : "service-package.edit",
+  SERVICE_PACKAGE_ITEM_LIST: "service-package.list",
+  SERVICE_PACKAGE_ITEM_VIEW: "service-package.view",
+  SERVICE_PACKAGE_ITEM_CREATE: "service-package.create",
+  SERVICE_PACKAGE_ITEM_EDIT: "service-package.edit",
 
   // Payment
   PAYMENT_LIST: "payment.list",
@@ -199,7 +199,7 @@ export const PERMISSIONS = {
   FACILITY_PACKAGE_CREATE: "facility-package.create",
   FACILITY_PACKAGE_EDIT: "facility-package.edit",
 
-    // Facility Booking
+  // Facility Booking
   FACILITY_BOOKING_LIST: "facility-booking.list",
   FACILITY_BOOKING_VIEW: "facility-booking.view",
   FACILITY_BOOKING_CREATE: "facility-booking.create",
@@ -241,7 +241,7 @@ export const PERMISSIONS = {
   FOOD_AND_BEVERAGE_INVENTORY_CREATE: "fnb-inventory.create",
   FOOD_AND_BEVERAGE_INVENTORY_EDIT: "fnb-inventory.edit",
 
-//F&B Management
+  //F&B Management
   // Menu Category
   MENU_CATEGORY_LIST: "menu-category.list",
   MENU_CATEGORY_VIEW: "menu-category.view",
@@ -278,5 +278,28 @@ export const PERMISSIONS = {
   RESERVATION_ROOM_CREATE: "reservation-room.view",
   RESERVATION_ROOM_SEARCH: "reservation-room.search",
 
+  //HouseKeeping Status
+  HK_STATUS_LIST: "hk-status.list",
+  HK_STATUS_VIEW: "hk-status.view",
+  HK_STATUS_EDIT: "hk-status.edit",
+
+  //HouseKeeping Task
+  HK_TASK_LIST: "hk-task.list",
+  HK_TASK_VIEW: "hk-task.view",
+  HK_TASK_CREATE: "hk-task.create",
+  HK_TASK_EDIT: "hk-task.edit",
+
+  //Maintenance Request
+  MAINTENANCE_REQUEST_LIST: "maintenance-request.list",
+  MAINTENANCE_REQUEST_VIEW: "maintenance-request.view",
+  MAINTENANCE_REQUEST_CREATE: "maintenance-request.create",
+  MAINTENANCE_REQUEST_EDIT: "maintenance-request.edit",
+
+  //Maintenance Task Assignment
+  MAINTENANCE_TASK_ASSIGNMENT_LIST: "maintenance-task-assignment.list",
+  MAINTENANCE_TASK_ASSIGNMENT_VIEW: "maintenance-task-assignment.view",
+  MAINTENANCE_TASK_ASSIGNMENT_CREATE: "maintenance-task-assignment.create",
+  MAINTENANCE_TASK_ASSIGNMENT_EDIT: "maintenance-task-assignment.edit",
 };
+
 

@@ -13,6 +13,8 @@ import {
 } from "../../../api/maintenanceTaskAssignmentApi";
 import Toast from "../../../component/Toast/Toast";
 import ColorStatusTag from "../../../component/ColorStatusTag/ColorStatusTag";
+import { PERMISSIONS } from "../../../variables/permission";
+import usePermission from "../../../hooks/usePermission";
 
 const MaintenanceTaskAssignForm = ({
     drawerOpen,
@@ -24,6 +26,13 @@ const MaintenanceTaskAssignForm = ({
     const [createDrawerOpen, setCreateDrawerOpen] = useState(false);
     const [selectedAssignment, setSelectedAssignment] = useState(null);
     const [isEdit, setIsEdit] = useState(false);
+
+    const { hasPermission } = usePermission();
+
+    const createPermission = hasPermission(PERMISSIONS.MAINTENANCE_TASK_ASSIGNMENT_CREATE);
+    const editPermission = hasPermission(PERMISSIONS.MAINTENANCE_TASK_ASSIGNMENT_EDIT);
+    const viewPermission = hasPermission(PERMISSIONS.MAINTENANCE_TASK_ASSIGNMENT_VIEW);
+
 
     const [deleteModal, setDeleteModal] = useState(false);
     const [itemToDelete, setItemToDelete] = useState(null);
@@ -93,7 +102,7 @@ const MaintenanceTaskAssignForm = ({
         invalidateKeys: [["maintenance-request-detail"], ["maintenance-requests"]],
     })
 
-    const isDisableEdit = detail?.maintenanceStatus?.code === "verified";
+    const isDisableEdit = detail?.maintenanceStatus?.code === "verified" || editPermission === false;
 
     const formatDateTime = (dateSource, timeSource) => {
         // 1. If there is no date, we can't format anything
@@ -214,12 +223,15 @@ const MaintenanceTaskAssignForm = ({
             onClose={() => setDrawerOpen(false)}
             open={drawerOpen}
             extra={isDisableEdit ? null :
-                <Button type="primary"
-                    onClick={() => {
-                        setIsEdit(false);
-                        setSelectedAssignment(null);
-                        setCreateDrawerOpen(true);
-                    }}>Add New Assign</Button>}
+                (createPermission &&
+                    <Button type="primary"
+                        onClick={() => {
+                            setIsEdit(false);
+                            setSelectedAssignment(null);
+                            setCreateDrawerOpen(true);
+                        }}>Add New Assign</Button>
+                )
+            }
         >
             {isAssignDetailLoading ? (
                 <div className="flex h-64 items-center justify-center"><Loader /></div>

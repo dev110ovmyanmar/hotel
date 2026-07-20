@@ -162,7 +162,7 @@ const ExtraBedRateTable = ({ data, page, setPage }) => {
         columns={nestedColumns}
         dataSource={processedRates}
         bordered
-        pagination={false}
+        pagination={processedRates?.length > 10 ? true : false}
         rowKey="id"
         size="small"
       />

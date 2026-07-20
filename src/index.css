@@ -517,18 +517,23 @@ span .ant-upload {
   display: flex;
 }
 
-.service-order-icon-box {
-  background-color: #28e1c8;
-  backdrop-filter:blur(12px) !important ;
-  border: 1px solid #01332d;
-  border-radius: 6px;
-  padding: 4px;
-  display: flex;
-}
-
 .service-card .ant-card-head {
   border-left: 4px solid #28e1c8;
   padding-left: 12px;
+}
+
+.service-order-card .ant-card-head {
+  border-left: 4px solid #2884e1;
+  padding-left: 12px;
+}
+
+.service-order-icon-box {
+  background-color: #b9dae3;
+  backdrop-filter:blur(12px) !important ;
+  border: 1px solid #0c85a0;
+  border-radius: 6px;
+  padding: 4px;
+  display: flex;
 }
 
 /* reservation booking details (food and beverage card) */
@@ -543,6 +548,12 @@ span .ant-upload {
 .food-card .ant-card-head {
   border-left: 4px solid #e58337;
   padding-left: 12px;
+}
+
+.dark .food-card .ant-card-head {
+  border-left: 4px solid #e58337;
+  padding-left: 12px;
+  /* background-color: ; */
 }
 
 /* Folio Summary */
