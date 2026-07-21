@@ -1,10 +1,16 @@
 import { Button, Dropdown, Typography } from "antd";
 import { EditOutlined, EyeOutlined, MoreOutlined } from "@ant-design/icons";
 import ColorStatusTag from "../../../component/ColorStatusTag/ColorStatusTag";
+import { PERMISSIONS } from "../../../variables/permission";
+import usePermission from "../../../hooks/usePermission";
 
 const { Text } = Typography;
 
 const useHouseKeepingStatusColumns = (onEdit, onView) => {
+
+    const { hasPermission } = usePermission();
+    const viewPermission = hasPermission(PERMISSIONS.HK_STATUS_VIEW);
+    const editPermission = hasPermission(PERMISSIONS.HK_STATUS_EDIT);
 
     const hkStatusMap = {
         clean: "clean",
@@ -23,7 +29,7 @@ const useHouseKeepingStatusColumns = (onEdit, onView) => {
             width: 60,
         },
         {
-            title: "Room No.",
+            title: "Room No",
             key: "roomNo",
             // Accessing roomNo from the nested room object
             render: (_, record) => record?.room?.roomNo || "-",
@@ -90,7 +96,7 @@ const useHouseKeepingStatusColumns = (onEdit, onView) => {
             key: "actions",
             width: 100,
             fixed: 'right',
-            align:"center",
+            align: "center",
             render: (_, record) => (
                 <Dropdown
                     menu={{
@@ -99,8 +105,8 @@ const useHouseKeepingStatusColumns = (onEdit, onView) => {
                             if (key === "2") onEdit(record);
                         },
                         items: [
-                            { key: "1", label: "View", icon: <EyeOutlined /> },
-                            { key: "2", label: "Edit", icon: <EditOutlined /> },
+                            viewPermission && { key: "1", label: "View", icon: <EyeOutlined /> },
+                            editPermission && { key: "2", label: "Edit", icon: <EditOutlined /> },
                         ],
                     }}
                     trigger={["click"]}

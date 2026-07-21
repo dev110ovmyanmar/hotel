@@ -13,10 +13,16 @@ import {
     EyeOutlined
 } from "@ant-design/icons";
 import ColorStatusTag from "../../../component/ColorStatusTag/ColorStatusTag";
+import { PERMISSIONS } from "../../../variables/permission";
+import usePermission from "../../../hooks/usePermission";
 
 const HouseKeepingTaskCard = ({ data, onEdit, onView,
     // onViewTaskAssign
 }) => {
+
+    const { hasPermission } = usePermission();
+    const viewPermission = hasPermission(PERMISSIONS.HK_TASK_VIEW);
+    const editPermission = hasPermission(PERMISSIONS.HK_TASK_EDIT);
     // --- Business Logic & Mapping ---
     const hkStatusMap = {
         clean: "clean",
@@ -63,7 +69,7 @@ const HouseKeepingTaskCard = ({ data, onEdit, onView,
             <div className="flex justify-between items-start mb-3">
                 <div className="flex flex-col">
                     <span className="text-[9px] font-bold text-gray-400 uppercase tracking-tight">Room No.</span>
-                    <h3 className="text-xl font-black text-gray-900 leading-tight group-hover:text-blue-600 transition-colors">
+                    <h3 className="text-xl font-black leading-tight group-hover:text-blue-600 transition-colors">
                         {data?.room?.roomNo || "---"}
                     </h3>
                 </div>
@@ -102,20 +108,25 @@ const HouseKeepingTaskCard = ({ data, onEdit, onView,
             {/* 3. Action Footer */}
             <div className="mt-3 pt-2 border-t border-gray-100 flex items-center justify-end">
                 <div className="flex gap-4">
-                    <button
-                        onClick={(e) => { e.stopPropagation(); onView(); }}
-                        className="flex items-center gap-1 text-[10px] font-bold hover:text-blue-600 uppercase tracking-wider cursor-pointer"
-                    >
-                        <EyeOutlined className="text-[11px]" /> View
-                    </button>
+                    {
+                        viewPermission && <button
+                            onClick={(e) => { e.stopPropagation(); onView(); }}
+                            className="flex items-center gap-1 text-[10px] font-bold hover:text-blue-600 uppercase tracking-wider cursor-pointer"
+                        >
+                            <EyeOutlined className="text-[11px]" /> View
+                        </button>
+                    }
                     {
                         data?.housekeepingStatus?.code === 'completed' || data?.housekeepingStatus?.code === 'cancelled' ? null :
-                            <button
-                                onClick={(e) => { e.stopPropagation(); onEdit(); }}
-                                className="flex items-center gap-1 text-[10px] font-bold hover:text-blue-600 uppercase tracking-wider cursor-pointer"
-                            >
-                                <EditOutlined className="text-[11px]" /> Edit
-                            </button>
+                            (
+                                editPermission &&
+                                <button
+                                    onClick={(e) => { e.stopPropagation(); onEdit(); }}
+                                    className="flex items-center gap-1 text-[10px] font-bold hover:text-blue-600 uppercase tracking-wider cursor-pointer"
+                                >
+                                    <EditOutlined className="text-[11px]" /> Edit
+                                </button>
+                            )
                     }
                 </div>
 

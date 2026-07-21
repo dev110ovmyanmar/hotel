@@ -1,10 +1,16 @@
 import { Button, Dropdown, Typography, Tag } from "antd";
 import { EditOutlined, EyeOutlined, MoreOutlined } from "@ant-design/icons";
 import ColorStatusTag from "../../../component/ColorStatusTag/ColorStatusTag";
+import { PERMISSIONS } from "../../../variables/permission";
+import usePermission from "../../../hooks/usePermission";
 
 const { Text } = Typography;
 
 const useHouseKeepingTaskColumns = (onEdit, onView) => {
+    const { hasPermission } = usePermission();
+    const viewPermission = hasPermission(PERMISSIONS.HK_TASK_VIEW);
+    const editPermission = hasPermission(PERMISSIONS.HK_TASK_EDIT);
+
     const hkStatusMap = {
         completed: "completed",
         pending: "pending",
@@ -19,7 +25,7 @@ const useHouseKeepingTaskColumns = (onEdit, onView) => {
             width: 60,
         },
         {
-            title: "Room No.",
+            title: "Room No",
             key: "roomNo",
             // Accessing roomNo from the nested room object
             render: (_, record) => record?.room?.roomNo || "-",
@@ -40,7 +46,7 @@ const useHouseKeepingTaskColumns = (onEdit, onView) => {
             title: "House Keeping Status",
             dataIndex: "housekeepingStatus",
             key: "housekeepingStatus",
-            width:200,
+            width: 200,
             render: (housekeepingStatus) => {
                 // 1. Get the first item from the array
                 const firstItem = Array.isArray(housekeepingStatus) ? housekeepingStatus[0] : housekeepingStatus;
@@ -70,7 +76,7 @@ const useHouseKeepingTaskColumns = (onEdit, onView) => {
             title: "Priority",
             dataIndex: "priorityLevel",
             key: "priorityLevel",
-            width:100,
+            width: 100,
             render: (priorityLevel) => {
                 // Return null or a placeholder if data is missing
                 if (!priorityLevel?.name) return "-";
@@ -93,7 +99,7 @@ const useHouseKeepingTaskColumns = (onEdit, onView) => {
             title: "Request Status",
             dataIndex: "maintenanceRequestStatus",
             key: "maintenanceRequestStatus",
-            width:140,
+            width: 140,
             render: (maintenanceRequestStatus) =>
                 <div className={maintenanceRequestStatus === true ? "text-[#389E0D]" : "text-[#CF1322]"}>
                     {maintenanceRequestStatus === true ? "True" : "False"}
@@ -105,7 +111,7 @@ const useHouseKeepingTaskColumns = (onEdit, onView) => {
             key: "actions",
             width: 90,
             fixed: 'right',
-            align:"center",
+            align: "center",
             render: (_, record) => {
                 const isEditDisabled = ["cancelled", "completed"].includes(record.housekeepingStatus?.code);
 
@@ -123,7 +129,10 @@ const useHouseKeepingTaskColumns = (onEdit, onView) => {
                                 if (key === "1") onView(record);
                                 if (key === "2") onEdit(record);
                             },
-                            items: items,
+                            items: [
+                                viewPermission && { key: "1", label: "View", icon: <EyeOutlined /> },
+                                editPermission && { key: "2", label: "Edit", icon: <EditOutlined /> },
+                            ],
                         }}
                         trigger={["click"]}
                     >

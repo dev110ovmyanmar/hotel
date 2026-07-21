@@ -16,6 +16,7 @@ import dayjs from "dayjs";
 import SearchEventFacilityOrderForm from "./SearchEventFacilityOrderForm";
 import FormButtons from "../../../../../../component/FormButtons/FormButtons";
 import {
+  darkModeStyle,
   getFormattedDate,
   getFormattedDateTime,
   validatePhoneNumber,
@@ -39,6 +40,7 @@ const EventFacilityOrderForm = ({
   drawerOpen,
   setDrawerOpen,
   selectedData,
+  setSelectedData,
   onSuccess,
   reservationId,
   searchOpen,
@@ -118,39 +120,39 @@ const EventFacilityOrderForm = ({
     },
   });
 
-  console.log(bookingDetails,"BookingDetailsStatus")
   const currentStatus = bookingDetails?.status?.code;
 
   const facilityStatus = initDataFacilityStatus?.map((item) => ({
     value: item.uuid,
     label: item.name,
     disabled:
+      isView || 
+
       // Create mode
       (isAdd &&
         ["completed", "cancelled"].includes(item?.code)) ||
 
-      // Edit mode: when current status is Confirmed,
-      // don't allow going back to Pending
       (isEdit &&
         currentStatus === "confirmed" &&
         item.code === "pending"),
   }));
 
-  console.log(bookingDetails, "Bookingdetailsineventfacilityorder")
-
   useEffect(() => {
-    if (isAdd) {
+    if (drawerOpen && isAdd) {
       form.resetFields();
     }
 
-    if (isAdd && initDataFacilityStatus) {
+    if (drawerOpen && isAdd && initDataFacilityStatus) {
       form.setFieldsValue({
         status: {
           uuid: initDataFacilityStatus?.find((item) => item?.code === "pending")?.uuid,
         },
       });
     }
-    console.log(bookingDetails,"BookingDetails")
+
+  }, [isAdd,initDataFacilityStatus]);
+
+  useEffect(() => {
     const FacilityBookingFormDataView = isView || isEdit;
     if (FacilityBookingFormDataView && bookingDetails) {
       const startTime = dayjs(bookingDetails.startTime, "HH:mm");
@@ -185,7 +187,7 @@ const EventFacilityOrderForm = ({
         },
       });
     }
-  }, [bookingDetails, isEdit, isAdd]);
+  },[isEdit,isView,bookingDetails])
 
   useEffect(() => {
     if (eventTime?.[0] && eventTime?.[1]) {
@@ -215,7 +217,6 @@ const EventFacilityOrderForm = ({
   }, [eventTime]);
 
   const onFinish = (values) => {
-    console.log(values, "ONFinishValue")
     const modifiedValues = {
       ...values,
       eventDate: values?.eventDate.format("YYYY-MM-DD"),
@@ -234,10 +235,12 @@ const EventFacilityOrderForm = ({
     if (isAdd) {
       createFacilityBookings.mutate(modifiedValues, {
         onSuccess: () => {
+          setDrawerOpen(false);
+          setSelectedData(null);
           form.resetFields();
           setPage(1);
           Toast.success("Facility Booking Created Successfully!");
-          setDrawerOpen(false);
+          
         },
       });
     }
@@ -247,6 +250,7 @@ const EventFacilityOrderForm = ({
         onSuccess: () => {
           Toast.success("FacilityBooking Updated Successfully!");
           setDrawerOpen(false);
+          setSelectedData(null)
         },
       });
     }
@@ -468,7 +472,7 @@ const EventFacilityOrderForm = ({
           </Form.Item>
 
           <Form.Item label="Remark" name="remark">
-            <TextArea readOnly={isView} placeholder="Enter Remark" />
+            <TextArea readOnly={isView} placeholder="Enter Remark" className={darkModeStyle} />
           </Form.Item>
 
           {/* <Row gutter={16}>

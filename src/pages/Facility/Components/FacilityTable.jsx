@@ -55,8 +55,8 @@ const FacilityTable = ({
     },
     {
       title: "Action",
-      fixed:"end",
-      align:"center",
+      fixed: "end",
+      align: "center",
       render: (_, record) => {
         const smallStyle = { fontSize: "12px" };
 
@@ -90,7 +90,7 @@ const FacilityTable = ({
             permission: PERMISSIONS.FACILITY_PACKAGE_LIST,
             onClick: () => {
               navigate(
-                `/facility-management/facilities/${record?.id}/packages`,
+                `/events-&-facilities/facilities/${record?.id}/packages`,
                 {
                   state: {
                     uuid: record?.uuid,
@@ -122,7 +122,15 @@ const FacilityTable = ({
         }
 
         return (
-          <Dropdown menu={{ items }} trigger={["click"]}>
+          <Dropdown
+            menu={{
+              items,
+              onClick: ({ key }) => {
+                const action = actions.find(a => a.key === key);
+                action?.onClick?.();
+              },
+            }}
+            trigger={["click"]}>
             <MoreOutlined style={{ fontSize: "16px" }} />
           </Dropdown>
         );

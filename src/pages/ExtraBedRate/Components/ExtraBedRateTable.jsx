@@ -158,16 +158,13 @@ const ExtraBedRateTable = ({ data, page, setPage }) => {
     const processedRates = processData(record?.rates || []);
     return (
       <Table
-        // className="custom-table-style"
-        className="[&_.ant-table-cell]:!border [&_.ant-table-cell]:!border-blue-300 [&_.ant-table-thead>tr>th]:!bg-[#F0F5FF]"
+        className="expanded-table dark:[&_.ant-table-thead>tr>th]:!text-[#F3F4F6]"
         columns={nestedColumns}
-        // dataSource={record.rates || []}
         dataSource={processedRates}
         bordered
-        pagination={false}
+        pagination={processedRates?.length > 10 ? true : false}
         rowKey="id"
         size="small"
-        style={{ marginTop: "16px", marginBottom: "16px" }}
       />
     );
   };

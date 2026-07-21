@@ -1,10 +1,15 @@
 import { Button, Dropdown, Typography } from "antd";
 import { EditOutlined, EyeOutlined, MoreOutlined } from "@ant-design/icons";
 import ColorStatusTag from "../../../component/ColorStatusTag/ColorStatusTag";
+import { PERMISSIONS } from "../../../variables/permission";
+import usePermission from "../../../hooks/usePermission";
 
 const { Text } = Typography;
 
 const useMaintenanceRequestColumns = (onEdit, onView) => {
+    const { hasPermission } = usePermission();
+    const viewPermission = hasPermission(PERMISSIONS.MAINTENANCE_REQUEST_VIEW);
+    const editPermission = hasPermission(PERMISSIONS.MAINTENANCE_REQUEST_EDIT);
 
     const maintenanceRequestStatusMap = {
         resolved: "resolved",
@@ -130,7 +135,7 @@ const useMaintenanceRequestColumns = (onEdit, onView) => {
             key: "actions",
             width: 100,
             fixed: 'right',
-            align:"center",
+            align: "center",
             render: (_, record) => {
                 const isEditDisabled = ["verified"].includes(record.maintenanceStatus?.code);
 
@@ -148,7 +153,10 @@ const useMaintenanceRequestColumns = (onEdit, onView) => {
                                 if (key === "1") onView(record);
                                 if (key === "2") onEdit(record);
                             },
-                            items: items,
+                            items: [
+                                viewPermission && { key: "1", label: "View", icon: <EyeOutlined /> },
+                                editPermission && { key: "2", label: "Edit", icon: <EditOutlined /> },
+                            ],
                         }}
                         trigger={["click"]}
                     >

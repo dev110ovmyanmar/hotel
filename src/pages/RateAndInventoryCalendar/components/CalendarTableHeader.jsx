@@ -28,13 +28,13 @@ const CalendarTableHeader = ({ daysMeta, CELL_WIDTH, SIDEBAR_WIDTH }) => (
                     className={`sticky top-0 z-[50] border-b border-[#dee2e6] text-center p-2 ${cellClass} ${darkModeStyle}`}
                     style={{ width: CELL_WIDTH, minWidth: CELL_WIDTH }}
                 >
-                    <div className={`text-[11px] uppercase ${isToday ? 'text-blue-500 font-bold' : 'text-gray-400'}`}>
+                    <div className={`text-[11px] uppercase ${isToday ? 'text-blue-500 font-bold' : 'text-gray-400'} dark:!text-[#777777]`}>
                         {day.format('MMM')}
                     </div>
-                    <div className={`text-[17px] font-bold ${isToday ? 'text-blue-600' : ''}`}>
+                    <div className={`text-[17px] font-bold ${isToday ? 'text-blue-600' : ''} dark:text-gray-100`}>
                         {day.format('D')}
                     </div>
-                    <div className={`text-[12px] ${isToday ? 'text-blue-500 font-bold' : 'text-gray-500'}`}>
+                    <div className={`text-[12px] ${isToday ? 'text-blue-500 font-bold' : 'text-gray-500'} dark:text-[#8AAEFF]`}>
                         {day.format('ddd')}
                     </div>
                 </th>

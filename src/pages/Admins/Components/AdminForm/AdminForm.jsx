@@ -48,12 +48,8 @@ const AdminForm = ({
   const isAdd = mode === "add";
 
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
-  const statusOptions = initData?.statuses?.status
-    ?.filter((item) => item.code !== "blocked")
-    ?.map((status) => ({
-      value: status.uuid,
-      label: status.name,
-    }));
+
+  const initDataStatus = initData?.statuses?.status;
 
   const [adminDrawerOpen, setAdminDrawerOpen] = useState(false);
   const [selectedPermissions, setSelectedPermissions] = useState([]);
@@ -64,7 +60,7 @@ const AdminForm = ({
   const [initialValue, setInitialValue] = useState(null);
   const [finalValues, setFinalValues] = useState(null);
 
-  const roles = initData?.roles?.filter?.(role=>(
+  const roles = initData?.roles?.filter?.(role => (
     role.code !== "super_admin"
   )).map((role) => ({
     value: role.uuid,
@@ -132,23 +128,32 @@ const AdminForm = ({
       },
     });
   };
+  useEffect(() => {
+    if (drawerOpen && isAdd && initDataStatus) {
+      form.resetFields();
+
+      form.setFieldsValue({
+        status: {
+          uuid: initDataStatus.find(
+            item => item.code === "active"
+          )?.uuid,
+        },
+      });
+    }
+  }, [drawerOpen, isAdd, initDataStatus]);
 
   useEffect(() => {
-    if (isEdit && data) {
+    if ((isEdit || isView) && data) {
       form.setFieldsValue({
         ...data,
         role: data?.role?.uuid,
         staff: data?.staff?.uuid,
-        status: data?.status?.uuid,
       });
       setSelectedData(data);
     }
   }, [data]);
 
   useEffect(() => {
-    // if (data?.role?.uuid) {
-    //   setInitialRole(data?.role?.uuid)
-    // }
     if (data) {
       setInitialValue(data);
     }
@@ -187,11 +192,11 @@ const AdminForm = ({
   };
 
   const onFinish = (values) => {
+    console.log(values,"onfinish")
     if (isAdd) {
       const createValues = {
         ...values,
         role: { uuid: values.role },
-        status: { uuid: values.status },
         staff: { uuid: values.staff },
       };
 
@@ -209,7 +214,6 @@ const AdminForm = ({
       const editValues = {
         ...values, // merge new form values
         role: { uuid: values.role },
-        status: { uuid: values.status },
         staff: { uuid: values.staff },
         uuid: data?.uuid,
       };
@@ -240,13 +244,6 @@ const AdminForm = ({
       <Drawer
         open={drawerOpen}
         onClose={handleClose}
-        afterOpenChange={(open) => {
-          if (open && isAdd) {
-            form.resetFields();
-            const defaultStatus = statusOptions?.find((s) => s.label === 'Active')?.value;
-            form.setFieldsValue({ status: defaultStatus });
-          }
-        }}
         size={550}
         title={
           <div className="flex justify-between items-center">
@@ -369,25 +366,7 @@ const AdminForm = ({
               }
             </Form.Item>
 
-            <Form.Item
-              label="Status"
-              name="status"
-              rules={[{ required: true, message: "Status is required" }]}
-              getValueProps={(value) => ({
-                value: isView
-                  ? initDataStatus.find((item) => item.value === value)?.label
-                  : value,
-              })}
-            >
-              {isView ? (
-                <Input readOnly={isView} />
-              ) : (
-                <Select
-                  options={statusOptions}
-                  placeholder="Select Status"
-                />
-              )}
-            </Form.Item>
+            <Status statusValue={initDataStatus} isView={isView} />
 
             {isEdit && (
               <div className="mt-6">

@@ -34,14 +34,13 @@ const SubFolioTable = ({ record, lineColumns, onMoveTo, isTransferring }) => {
   return (
     <div>
       <Table
-        className="nested-folio-table [&_.ant-table-cell]:!border [&_.ant-table-cell]:!border-blue-300 [&_.ant-table-thead>tr>th]:!bg-[#F0F5FF]"
+        className="nested-folio-table expanded-table dark:[&_.ant-table-thead>tr>th]:!text-[#F3F4F6] "
         rowSelection={rowSelection}
         columns={lineColumns}
         dataSource={lines}
         rowKey="id"
         pagination={false}
         size="small"
-        style={{ marginTop: "16px", marginBottom: "16px" }}
         bordered
       />
       <div style={{
@@ -78,12 +77,12 @@ const FolioOperationsTable = ({
   const [targetFolioUuid, setTargetFolioUuid] = useState(null);
 
   const lineColumns = [
-    {
-      title: "Date",
-      dataIndex: "postedAt", // Best practice to include dataIndex for Antd columns
-      key: "postedAt",
-      render: (_, record) => record.postedAt ? dayjs(record.postedAt).format("YYYY-MM-DD") : "-",
-    },
+    // {
+    //   title: "Date",
+    //   dataIndex: "postedAt", // Best practice to include dataIndex for Antd columns
+    //   key: "postedAt",
+    //   render: (_, record) => record.postedAt ? dayjs(record.postedAt).format("YYYY-MM-DD") : "-",
+    // },
     {
       title: "Source ID",
       dataIndex: "sourceId", // Fixed: camelCase to match JSON
@@ -166,11 +165,11 @@ const FolioOperationsTable = ({
       key: "folioNo",
       width: 200,
     },
-    {
-      title: "Date",
-      key: "date",
-      render: (_, record) => record.openedAt ? dayjs(record.openedAt).format("YYYY-MM-DD") : "-",
-    },
+    // {
+    //   title: "Date",
+    //   key: "date",
+    //   render: (_, record) => record.openedAt ? dayjs(record.openedAt).format("YYYY-MM-DD") : "-",
+    // },
     {
       title: "Owner Type",
       key: "type",

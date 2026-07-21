@@ -323,31 +323,60 @@ const GuestUploadDrawer = ({ open, onClose, selectedRow }) => {
         </Row>
         <Divider />
 
-        <Title level={5}>Others</Title>
+        <Title level={5} style={{ marginTop: 24 }}>
+          Others
+        </Title>
+
         {otherDocs.map((doc) => {
-          const isDocFileObject = doc.file instanceof File;
+          const isFileObject = doc.file instanceof File;
+
+          const handlePreviewDoc = (e) => {
+            e.stopPropagation();
+            const src = isFileObject ? URL.createObjectURL(doc.file) : doc.file;
+            setPreviewImage(src);
+            setPreviewOpen(true);
+          };
+
+          const handleEditDoc = (e) => {
+            e.stopPropagation();
+            const uploadInstance = uploadRefs.current[doc.id];
+            if (uploadInstance) {
+              const input = uploadInstance.querySelector('input[type="file"]');
+              if (input) input.click();
+            }
+          };
+
+          const isImage = (file) => {
+            if (typeof file === "string") {
+              return file.match(/\.(jpeg|jpg|png|gif|webp)$/i);
+            }
+            return file.type.startsWith("image/");
+          };
+
+          const isPDF = (file) => {
+            if (typeof file === "string") {
+              return file.match(/\.pdf$/i);
+            }
+            return file.type === "application/pdf";
+          };
+
           return (
-            <Card
-              key={doc.id}
-              style={{ marginBottom: 16 }}
-              bodyStyle={{ padding: 12 }}
-            >
-              <Row gutter={12} align="middle" style={{ position: "relative" }}>
-                <CloseOutlined
-                  onClick={() => handleDeleteConfirm(doc)}
-                  style={{
-                    cursor: "pointer",
-                    position: "absolute",
-                    top: -4,
-                    right: 0,
-                    fontSize: 16,
-                    color: "#ff4d4f",
-                    zIndex: 10,
-                  }}
-                />
-                <Col span={10}>
+            <Card key={doc.id} style={{ marginBottom: 16 }}>
+              <Row gutter={12} align="middle">
+                <Col span={10} style={{ position: "relative" }}>
+                  <CloseOutlined
+                    onClick={() => handleDeleteConfirm(doc)}
+                    style={{
+                      cursor: "pointer",
+                      position: "absolute",
+                      fontSize: 16,
+                      color: "#ff4d4f",
+                      marginLeft: "430px",
+                    }}
+                  />
                   <div ref={(el) => (uploadRefs.current[doc.id] = el)}>
                     <Upload
+                      id={`upload-doc-${doc.id}`}
                       showUploadList={false}
                       beforeUpload={(file) => beforeUpload(file, doc.id)}
                       accept="image/png,image/jpeg,application/pdf"
@@ -364,48 +393,74 @@ const GuestUploadDrawer = ({ open, onClose, selectedRow }) => {
                           alignItems: "center",
                           justifyContent: "center",
                           borderRadius: 5,
-                          background: "#fafafa",
                         }}
                       >
                         {doc.file ? (
-                          (!isDocFileObject &&
-                            typeof doc.file === "string" &&
-                            doc.file.match(/\.pdf$/i)) ||
-                          (isDocFileObject &&
-                            doc.file.type === "application/pdf") ? (
+                          doc.file.type === "application/pdf" ? (
                             <div style={{ textAlign: "center" }}>
                               <FilePdfOutlined
                                 style={{ fontSize: 40, color: "red" }}
                               />
-                              <div style={{ fontSize: 12 }}>PDF File</div>
+                              <div>PDF File</div>
                             </div>
                           ) : (
-                            <img
-                              src={
-                                isDocFileObject
-                                  ? URL.createObjectURL(doc.file)
-                                  : doc.file
-                              }
-                              style={{
-                                width: "100%",
-                                height: "100%",
-                                objectFit: "cover",
-                              }}
-                              alt="doc"
-                            />
+                            <>
+                              {isImage(doc.file) ? (
+                                <img
+                                  src={
+                                    isFileObject
+                                      ? URL.createObjectURL(doc.file)
+                                      : doc.file
+                                  }
+                                  style={{
+                                    width: "160px",
+                                    height: "120px",
+                                    objectFit: "fix",
+                                    backgroundColor: "#ffffff",
+                                  }}
+                                />
+                              ) : (
+                                isPDF(doc.file) && (
+                                  <div
+                                    style={{
+                                      width: "200px",
+                                      height: "130px",
+                                      display: "flex",
+                                      alignItems: "center",
+                                      justifyContent: "center",
+                                    }}
+                                  >
+                                    {/* PDF */}
+                                    <img
+                                      src={
+                                        "data:image/png;base64,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"
+                                      }
+                                      alt="Example"
+                                    />
+                                  </div>
+                                )
+                              )}
+
+                              <GuestPreview
+                                file={doc.file}
+                                onPreview={handlePreviewDoc}
+                                onEdit={handleEditDoc}
+                              />
+                            </>
                           )
                         ) : (
-                          <div style={{ textAlign: "center" }}>
+                          <>
                             <PlusOutlined />
                             <div>Upload</div>
-                          </div>
+                          </>
                         )}
                       </div>
                     </Upload>
                   </div>
                 </Col>
+
                 <Col span={14}>
-                  <Form.Item label="Name" style={{ margin: 0 }} required>
+                  <Form.Item label="Name" required>
                     <Input
                       placeholder="Enter Name"
                       value={doc.name}
