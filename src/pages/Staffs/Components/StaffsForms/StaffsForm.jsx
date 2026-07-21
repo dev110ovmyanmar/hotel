@@ -422,7 +422,7 @@ const StaffsForm = ({
             </Form.Item>
 
             <Form.Item label="Passport" name="passport">
-              <Input placeholder="Enter Passport" readOnly={isView} />
+              <Input placeholder="Enter Passport" readOnly={isView}/>
             </Form.Item>
 
             <Form.Item label="Phone" name="phone">

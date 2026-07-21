@@ -98,7 +98,7 @@ const ReservationsGrid = ({
                 onClick={() => handleMenuClick(item)}
               >
                 <div style={{ marginBottom: 12 }}>
-                  <Space size="middle" style={{ color: "#555" }}>
+                  <Space size="middle" >
                     <span
                       style={{
                         display: "flex",

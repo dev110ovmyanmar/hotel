@@ -67,38 +67,13 @@ const ServiceAddOnForm = ({
     invalidateKeys: [["service-addon"]],
   });
 
-  // const currentStatusCode = orderDetails?.addonStatus?.code;
-  // const addonStatus =
-  //   initData?.statuses?.addon_status
-  //     ?.filter((status) => {
-  //       if (isEdit && currentStatusCode === "confirmed") {
-  //         return status.code === "confirmed";
-  //       }
-  //       if (isEdit && currentStatusCode === "cancelled") {
-  //         return status.code === "cancelled";
-  //       }
-  //       if (isEdit && currentStatusCode === "no_show") {
-  //         return status.code === "no_show";
-  //       }
-  //       if (currentStatusCode === "in_progress") {
-  //         return (
-  //           status.code === "in_progress" ||
-  //           status.code === "completed" ||
-  //           status.code === "cancelled" ||
-  //           status.code === "no_show"
-  //         );
-  //       }
-  //       return true;
-  //       return status.code === "pending" || status.code === "in_progress";
-  //     })
-  //     ?.map((status) => ({
-  //       value: status.uuid,
-  //       label: status.name,
-  //     })) || [];
   const currentStatusCode = orderDetails?.addonStatus?.code;
   const addonStatus =
     initData?.statuses?.addon_status
       ?.filter((status) => {
+        if (isView) {
+          return status.code === currentStatusCode;
+        }
         if (isEdit) {
           if (currentStatusCode === "completed") {
             return status.code === "completed";
@@ -144,28 +119,13 @@ const ServiceAddOnForm = ({
         };
       }) || [];
 
-  // const services =
-  //   reservationRoom?.services?.map((service) => ({
-  //     value: service?.uuid,
-  //     label: service?.name,
-  //   })) || [];
   const services =
-  reservationRoom?.services
-    ?.filter((service) => service?.serviceStages?.includes("pre_arrival"))
-    ?.map((service) => ({
-      value: service?.uuid,
-      label: service?.name,
-    })) || [];
-
-  const currentServiceObj = reservationRoom?.services?.find(
-    (service) => service.uuid === selectedServiceUuid,
-  );
-
-  const servicePackages =
-    currentServiceObj?.servicePackages?.map((pkg) => ({
-      value: pkg?.uuid,
-      label: pkg?.name,
-    })) || [];
+    reservationRoom?.services
+      ?.filter((service) => service?.serviceStages?.includes("pre_arrival"))
+      ?.map((service) => ({
+        value: service?.uuid,
+        label: service?.name,
+      })) || [];
 
   useEffect(() => {
     if (orderDetails && (isView || isEdit)) {
@@ -299,33 +259,18 @@ const ServiceAddOnForm = ({
             />
           </Form.Item>
 
-          <Form.Item label="Service Package" name="servicePackage">
-            <Select
-              showSearch
-              options={servicePackages}
-              placeholder="Select Package"
-              disabled={isView || !selectedServiceUuid}
-              filterOption={(input, option) =>
-                (option?.label ?? "")
-                  .toLowerCase()
-                  .includes(input.toLowerCase())
-              }
-              allowClear
+          <Form.Item
+            label="Quantity"
+            name="quantity"
+            rules={[{ required: true }]}
+          >
+            <InputNumber
+              {...sharedProps}
+              placeholder="Outlined"
+              style={{ width: "100%" }}
             />
           </Form.Item>
         </div>
-
-        <Form.Item
-          label="Quantity"
-          name="quantity"
-          rules={[{ required: true }]}
-        >
-          <InputNumber
-            {...sharedProps}
-            placeholder="Outlined"
-            style={{ width: "48%" }}
-          />
-        </Form.Item>
 
         <Form.Item label="Note" name="note">
           <TextArea />

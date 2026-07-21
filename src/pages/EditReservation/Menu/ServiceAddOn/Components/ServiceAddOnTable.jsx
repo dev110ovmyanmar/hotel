@@ -4,6 +4,7 @@ import { EyeOutlined, EditOutlined } from "@ant-design/icons";
 import ServiceOrderForm from "./ServiceAddOnForms/ServiceAddOnForm";
 import PriceTag from "../../../../../component/PriceTag/PriceTag";
 import dayjs from "dayjs";
+import ColorStatusTag from "../../../../../component/ColorStatusTag/ColorStatusTag";
 
 const ServiceAddOnTable = ({ data }) => {
   const [mode, setMode] = useState("add");
@@ -25,29 +26,38 @@ const ServiceAddOnTable = ({ data }) => {
       title: "Room No",
       dataIndex: ["reservationRoom", "room", "roomNo"],
       key: "roomNo",
+      render: (text) => <div>{text ? text : "-"}</div>,
     },
     {
       title: "Service Name",
       dataIndex: ["service", "name"],
       key: "serviceName",
     },
-    {
-      title: "Service Package",
-      dataIndex: ["servicePackage", "name"],
-      key: "servicePackage",
-    },
 
+    {
+      title: "Status",
+      dataIndex: "addonStatus",
+      key: "status",
+      width: 150,
+      render: (addonStatus) => <ColorStatusTag status={addonStatus} />,
+    },
     {
       title: "Quantity",
       dataIndex: "quantity",
       key: "quantity",
+      width: 100,
     },
     {
-      title: "Price (MMK)",
-      dataIndex: "basePrice",
-      key: "basePrice",
-      render: (text) => <PriceTag value={text} />,
-      width: 100,
+      title: "Price",
+      dataIndex: "totalAmount",
+      key: "totalAmount",
+      render: (value) => (
+        <div className="flex justify-end items-center gap-1">
+          <PriceTag value={value} />
+          <span className=" font-medium">MMK</span>
+        </div>
+      ),
+      width: 150,
       align: "right",
     },
     {
