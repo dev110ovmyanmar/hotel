@@ -33,14 +33,14 @@ export default function Dashboard() {
   const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sun', 'Sat'];
 
   return (
-    <div className="p-6  min-h-screen text-gray-800 font-sans">
-      <h1 className="text-xl font-semibold mb-6 text-gray-900">Dashboard Overview</h1>
+    <div className="p-6  min-h-screen font-sans">
+      <h1 className="text-xl font-semibold mb-6">Dashboard Overview</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         {metrics.map((item, index) => (
           <Card key={index} className="shadow-sm rounded-lg border border-gray-200">
-            <div className="text-sm font-medium text-gray-500 mb-1">{item.title}</div>
-            <div className="text-xl font-bold mb-3 text-gray-900">{item.value}</div>
+            <div className="text-sm font-medium  mb-1">{item.title}</div>
+            <div className="text-xl font-bold mb-3 ">{item.value}</div>
             <span
               className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-xl font-semibold ${
                 item.trend === 'up' 
@@ -58,7 +58,7 @@ export default function Dashboard() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
-        <div className="lg:col-span-2 space-y-6">
+        <div className="lg:col-span-2 space-y-8">
           
           <Card title={<span className="text-base font-semibold">Revenue Trend</span>} className="shadow-sm border border-gray-200">
             <div className="relative h-64 w-full flex flex-col justify-between pt-4">
@@ -149,12 +149,12 @@ export default function Dashboard() {
                   <circle cx="21" cy="21" r="15.915" fill="transparent" stroke="#f5222d" strokeWidth="4" strokeDasharray="5 100" strokeDashoffset="-95"></circle>
                 </svg>
                 <div className="absolute text-center">
-                  <p className="text-xs text-gray-400 m-0">Total Room</p>
-                  <p className="text-xl font-bold text-gray-800 m-0">182</p>
+                  <p className="text-xs m-0">Total Room</p>
+                  <p className="text-xl font-bold  m-0">182</p>
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-x-6 gap-y-2 w-full px-2 text-sm text-gray-600">
+              <div className="grid grid-cols-2 gap-x-6 gap-y-2 w-full px-2 text-sm ">
                 {roomStatus.map((item, index) => (
                   <div key={index} className="flex items-center gap-2">
                     <span className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: item.color }}></span>
@@ -168,16 +168,16 @@ export default function Dashboard() {
           <Card title={<span className="text-base font-semibold">Vip Member</span>} className="shadow-sm border border-gray-200">
             <div className="grid grid-cols-3 text-center py-2">
               <div>
-                <div className="text-xs text-gray-400 mb-1">Arrival</div>
-                <div className="text-lg font-bold text-gray-800">3</div>
+                <div className="text-xs  mb-1">Arrival</div>
+                <div className="text-lg font-bold ">3</div>
               </div>
               <div>
-                <div className="text-xs text-gray-400 mb-1">In-house</div>
-                <div className="text-lg font-bold text-gray-800">3</div>
+                <div className="text-xs  mb-1">In-house</div>
+                <div className="text-lg font-bold ">3</div>
               </div>
               <div>
-                <div className="text-xs text-gray-400 mb-1">Departure</div>
-                <div className="text-lg font-bold text-gray-800">3</div>
+                <div className="text-xs  mb-1">Departure</div>
+                <div className="text-lg font-bold ">3</div>
               </div>
             </div>
           </Card>
@@ -194,7 +194,7 @@ export default function Dashboard() {
                 ))}
               </div>
 
-              <div className="grid grid-cols-2 gap-y-3 text-sm text-gray-600">
+              <div className="grid grid-cols-2 gap-y-3 text-sm ">
                 {housekeeping.map((item, index) => (
                   <div key={index} className="flex items-center gap-2">
                     <span className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: item.color }}></span>

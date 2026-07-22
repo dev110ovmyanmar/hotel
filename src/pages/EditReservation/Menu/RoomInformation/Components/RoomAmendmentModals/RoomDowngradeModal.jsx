@@ -212,7 +212,7 @@ export default function RoomDowngradeModal({
                             }}
                                 className={darkModeStyle}
                             >
-                                <Text type="secondary"><strong style={{ color: '#475569' }}>Room Type:</strong> <span className={textWhiteInDarkStyle}>{currentRoomType}</span></Text>
+                                <Text ><strong >Room Type:</strong> <span className={textWhiteInDarkStyle}>{currentRoomType}</span></Text>
                                 {/* <Text type="secondary"><strong style={{ color: '#475569' }}>Rank :</strong> {record?.roomType?.rank}</Text> */}
 
                                 <div className="grid place-items-center w-fit -mt-1">

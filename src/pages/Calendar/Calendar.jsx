@@ -259,7 +259,7 @@ const Calendar = () => {
           </Space>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 text-blue-500">
           <div className="text-lg font-medium w-full text-center">
             {currentDate ? currentDate.format('DD MMMM YYYY') : ''}
           </div>
