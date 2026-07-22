@@ -1,5 +1,5 @@
 import { Dropdown, Space, Table, Tag, Button } from "antd";
-import { useState } from "react";
+import { Children, useState } from "react";
 import { MoreOutlined } from "@ant-design/icons";
 import MeanPlanForm from "./MealPlanForm/MealPlanForm";
 import { EditOutlined } from "@ant-design/icons";
@@ -50,23 +50,27 @@ const MeanPlanTable = ({
       },
     },
     {
-      title: "Adult Price (MMK)",
-      dataIndex: "adultPrice",
-      key: "adultPrice",
-      render: (text) => <div className="text-end">{priceFormatter(text)}</div>
-    },
-    {
-      title: "Child Price (MMK)",
-      dataIndex: "childPrice",
-      key: "childPrice",
-      render: (text) => <div className="text-end">{priceFormatter(text)}</div>,
-    },
-    {
-      title: "Description",
-      dataIndex: "description",
-      key: "description",
-      align:"center",
-      render: (text) => text || "-",
+      title: "Pricing Rules",
+      render: (record) => {
+        return (
+          <>
+            <div className="flex justify-between">
+              <span>Adult:</span>
+              <span> [{`${priceFormatter(record?.adultPrice)}`}] MMK</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Child:</span>
+              <span>[{`${priceFormatter(record?.childPrice)}`}] MMK</span>
+            </div>
+            <div className="flex justify-between">  
+              <span>Child Free Age Below :</span>
+              <span>[{`${priceFormatter(record?.childFreeAgeBelow)}`}]
+                {record?.childFreeAgeBelow <= 1 ? " Year" : " Years" }
+              </span>
+            </div>
+          </>
+        )
+      }
     },
     {
       title: "Status",

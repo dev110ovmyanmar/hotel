@@ -17,9 +17,11 @@ import { queryClient } from "../../app/queryClient";
 import RoomDetailsTable from "./RoomDetailsTable";
 import RoomConfirmFinish from "./RoomConfirmFinish";
 import RoomModalBox from "./RoomModalBox";
+import RefreshConfirmModal from "./RefreshConfirmModal";
+import { useDispatch } from "react-redux";
+import { setHasUnsavedForm, setIsSubmitted } from "../../services/createReservationSlice";
 
 const ReservationList = () => {
-
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
   const currencyUuid = initData?.property?.currency?.uuid;
 
@@ -35,6 +37,7 @@ const ReservationList = () => {
 
   const navigate = useNavigate();
   const [form] = Form.useForm();
+  const dispatch = useDispatch();
   const [createContactForm] = Form.useForm();
   const [roomBookOpen, setRoomBookOpen] = useState(false);
   const [guestDrawerOpen, setGuestDrawerOpen] = useState(false);
@@ -57,7 +60,10 @@ const ReservationList = () => {
 
   const [roomModalBoxOpen, setRoomModalBoxOpen] = useState(false);
   const [priceKey, setPriceKey] = useState();
-  const [rateKey,setRateKey] = useState();
+  const [rateKey, setRateKey] = useState();
+
+  const [refreshConfirmModalOpen, setRefreshConfirmModalOpen] = useState(false);
+  const [submitted,isSubmitted] = useState(false);
 
 
   const defaultFilter = [
@@ -102,7 +108,9 @@ const ReservationList = () => {
         setGuestDrawerOpen(false);
         setGuestInfoTable(true);
         setClickCreateContact(true);
-        setContactPersonInfo(values)
+        setContactPersonInfo(values);
+        dispatch(setHasUnsavedForm(true))
+
       },
     },
   });
@@ -112,7 +120,9 @@ const ReservationList = () => {
     options: {
       onSuccess: (values) => {
         Toast.success(values);
-        navigate("/reservations/all/")
+        navigate("/reservations/all/");
+        dispatch(setHasUnsavedForm(false));
+        dispatch(setIsSubmitted(true))
       },
     },
   });
@@ -363,31 +373,48 @@ const ReservationList = () => {
     })),
   );
 
+  const refreshDataCleanOk = () => {
+    setSearchReservation(false);
+    setRoomConfirm(false);
+    setGuestInfoTable(false);
+    setSelectedData([]);
+    setSelectedRooms({});
+    setReservationFormValues(null);
+    setSearchButtonDisable(false);
+    setClickCreateContact(false);
+    setCreateContactFinish(false);
+    setContactPersonInfo(null);
+    form.setFieldsValue({
+      filter: defaultFilter,
+      bookedVia: bookedViaOptions?.[0]?.value,
+      sourceType: sourceTypeOptions?.[0]?.value,
+      roomType: null,
+      ratePlan: null
+    });
+    setRefreshConfirmModalOpen(false);
+    dispatch(setHasUnsavedForm(false));
+    dispatch(setIsSubmitted(false))
+  };
+
   return (
     <div className="w-full px-6">
       <div className="flex justify-end mb-3 p-2">
         <Button
           className="!border-blue-500"
           onClick={() => {
-            setSearchReservation(false);
-            setRoomConfirm(false);
-            setGuestInfoTable(false);
-            setSelectedData([]);
-            setSelectedRooms({});
-            setReservationFormValues(null);
-            setSearchButtonDisable(false);
-            setClickCreateContact(false);
-            // setSelectedSourceType(null);
-            form.setFieldsValue({
-              filter: defaultFilter,
-              bookedVia: bookedViaOptions?.[0]?.value,
-              sourceType: sourceTypeOptions?.[0]?.value,
-            });
+            setRefreshConfirmModalOpen(true)
           }}
         >
           <ReloadOutlined className="!text-blue-500" />
-          <span className="!text-blue-500" >Refresh Current Page</span>
+          <span className="!text-blue-500">Refresh Current Page</span>
         </Button>
+
+        <RefreshConfirmModal
+          refreshConfirmModalOpen={refreshConfirmModalOpen}
+          setRefreshConfirmModalOpen={setRefreshConfirmModalOpen}
+          refreshDataCleanOk={refreshDataCleanOk}
+          createContactFinish = {createContactFinish}
+        />
       </div>
 
       <ReservationForm
@@ -469,6 +496,7 @@ const ReservationList = () => {
         createContactFinish={createContactFinish}
         setCreateContactFinish={setCreateContactFinish}
         createContactForm={createContactForm}
+        
       />
 
       <RoomBookedDrawer
