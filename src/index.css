@@ -661,11 +661,11 @@ span .ant-upload {
 }
 
 .custom-tabs .ant-tabs-tab:nth-child(7).ant-tabs-tab-active .ant-tabs-tab-btn {
-  color: #0712a6;
+  color: #474fc5;
 }
 
 .custom-tabs:has(.ant-tabs-tab:nth-child(7).ant-tabs-tab-active) {
-  --ant-tabs-ink-bar-color: #0712a6;
+  --ant-tabs-ink-bar-color: #474fc5;
 }
 
 .ant-tabs-nav-more {
@@ -860,4 +860,8 @@ span .ant-upload {
 .dark .expanded-table .ant-table-tbody>tr>td {
   border-color: var(--dark-nested-border) !important;
   color: var(--dark-nested-text) !important;
+}
+
+.css-var-_r_0_ {
+    --ant-color-text-disabled: #aaaaaa;
 }

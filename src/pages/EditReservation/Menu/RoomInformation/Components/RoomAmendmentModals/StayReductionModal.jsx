@@ -146,11 +146,11 @@ export default function StayReductionModal({
                         // Standard Interactive Decrementer
                         <div className={`bg-slate-50 p-4 rounded-lg mb-5 ${darkModeStyle}`}>
                             <div className="flex justify-between items-center mb-2">
-                                <label className="block text-sm font-medium text-slate-600">
+                                <label className="block text-sm font-medium">
                                     Reduce Stay Duration By
                                 </label>
                                 {/* MAX REDUCTION BADGE */}
-                                <span className="bg-amber-50 text-amber-700 text-xs font-semibold px-2.5 py-0.5 rounded-full border border-amber-100">
+                                <span className="bg-amber-50 text-amber-400 text-xs font-semibold px-2.5 py-0.5 rounded-full border border-amber-100">
                                     Max Reduction: {maxReduction} Day(s)
                                 </span>
                             </div>
@@ -181,12 +181,12 @@ export default function StayReductionModal({
 
                     {/* Timeline Data Footer */}
                     <div className={`bg-slate-50 p-3 px-4 rounded-lg mb-5 border border-slate-200 ${darkModeStyle} ${borderDarkMode}`}>
-                        <div className="text-xs text-slate-500">
-                            Current Checkout <strong className="text-slate-700">{originalCheckout.isValid() ? originalCheckout.format('DD MMM YYYY') : '-'}</strong>
+                        <div className="text-xs ">
+                            Current Checkout - <strong >{originalCheckout.isValid() ? originalCheckout.format('DD MMM YYYY') : '-'}</strong>
                         </div>
                         {maxReduction !== 0 && (
                             <div className="text-sm text-red-600 mt-1">
-                                New Checkout <strong className="text-red-700">{newCheckoutDate.isValid() ? newCheckoutDate.format('DD MMM YYYY') : '-'}</strong>
+                                New Checkout - <strong className="text-red-700">{newCheckoutDate.isValid() ? newCheckoutDate.format('DD MMM YYYY') : '-'}</strong>
                             </div>
                         )}
                     </div>
