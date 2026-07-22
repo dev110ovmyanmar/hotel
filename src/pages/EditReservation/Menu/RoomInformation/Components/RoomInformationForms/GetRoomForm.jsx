@@ -72,7 +72,7 @@ const GetRoomForm = ({ selectedData, onSelectRoom, onClose, floorUuid }) => {
 
   const handleAssignClick = (room) => {
     Modal.confirm({
-      title: "Confirm Room Assign",
+      title:<> <div className={textWhiteInDarkStyle}>Complimentary Reason</div></>,
       content: `Are you sure you want to assign Room ${room.roomNo} (${room.roomType?.name || ""}) to this reservation?`,
       okText: "Confirm",
       okButtonProps: {

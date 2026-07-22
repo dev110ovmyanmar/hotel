@@ -6,6 +6,7 @@ import { availabilitySearch, reservationMeta } from "../../api/reservationSectio
 import { useEffect, useState } from "react";
 import { useApiMutation } from "../../hooks/useApiMutation";
 import { FaMoon } from "react-icons/fa";
+import { values } from "lodash";
 
 const { RangePicker } = DatePicker;
 
@@ -45,6 +46,18 @@ const ReservationForm = ({
     })) || [];
 
 
+    let roomTypeOptions = reservationMetas?.room_types?.filter(item => item?.status.code === "active")
+        .map((item) => ({
+            label: item?.name,
+            value: item.id
+        }));
+
+    let ratePlanOptions = reservationMetas?.rate_plans?.map((item) => ({
+        label: item?.name,
+        value: item.id
+    }));
+
+
     const initData = queryClient.getQueryData(["initData", "authenticated"]);
     const checkInTime = initData?.property?.checkinTime;
     const checkOutTime = initData?.property?.checkoutTime;
@@ -77,8 +90,17 @@ const ReservationForm = ({
             source: {
                 uuid: values.source,
             },
-            totalNight: totalNights
+            totalNight: totalNights,
+            roomType: {
+                ids : values?.roomType
+            },
+            ratePlan: {
+                ids : values?.ratePlan
+            }
+
         };
+
+        console.log(modifiedValues,"ValuesSearchSubmit")
 
         availabilitySearchResults.mutate(modifiedValues);
     };
@@ -274,7 +296,6 @@ const ReservationForm = ({
                                 afterRoomConfirm ?
                                     <Input
                                         readOnly={afterRoomConfirm}
-                                    // className="w-[100%] "
                                     /> :
                                     <Select
                                         options={bookedViaOptions}
@@ -356,6 +377,43 @@ const ReservationForm = ({
                             )
                         }
                     </div>
+
+                    <div className="flex gap-2 sm:flex-wrap">
+                        <div className="w-50 flex-auto ">
+                            <Form.Item
+                                name="roomType"
+                                label={
+                                    <p className="text-gray-100">Room Type</p>
+                                }
+                                className="w-full"   
+                                
+                            >
+                                <Select
+                                    options={roomTypeOptions}
+                                    placeholder="Select Room Type"
+                                    mode="multiple"
+                                />
+                            </Form.Item>
+                        </div>
+
+                        <div className="w-50 flex-auto">
+                            <Form.Item
+                                name="ratePlan"
+                                label={
+                                    <p className="text-gray-100">Rate Plan</p>
+                                }
+                                className="w-full"   
+                            >
+                                <Select
+                                    options={ratePlanOptions}
+                                    placeholder="Select Rate Plan"
+                                    mode="multiple"
+                                />
+                            </Form.Item>
+                        </div>
+                    </div>
+
+
                 </div>
 
                 {/* Mobile Button */}

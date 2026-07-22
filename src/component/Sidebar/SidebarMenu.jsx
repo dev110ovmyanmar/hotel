@@ -1,8 +1,11 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { Menu } from "antd";
 import { useNavigate, useLocation } from "react-router-dom";
 import { authRoutes } from "../Layout/AuthRoutes";
 import usePermission from "../../hooks/usePermission";
+import { useSelector } from "react-redux";
+import LeavePageModal from "../../pages/Reservation/LeavePageModal";
+import { createReservationSelector } from "../../services/createReservationSlice";
 
 const SidebarContent = ({
   onClick,
@@ -14,9 +17,21 @@ const SidebarContent = ({
 
   const { hasPermission, permissions: userPermissions } = usePermission();
 
+  const { hasUnsavedForm , isSubmitted} = useSelector(createReservationSelector);
+
+  const [leavePageModalOpen, setLeavePageModalOpen] = useState(false);
+  const [pendingPath, setPendingPath] = useState(null);
+
   const handleMenuItemClick = (path) => {
-    navigate(path);
-    if (onClick) onClick();
+    if (hasUnsavedForm && !isSubmitted) {
+      setLeavePageModalOpen(true);
+      setPendingPath(path);
+      return
+    }
+    else {
+      navigate(path);
+      if (onClick) onClick();
+    }
   };
 
   /**
@@ -63,7 +78,7 @@ const SidebarContent = ({
   };
 
   // Memoize the items to prevent unnecessary re-renders
-  const menuItems = useMemo(() => getMenuItems(authRoutes), [authRoutes, userPermissions, location.pathname]);
+  const menuItems = useMemo(() => getMenuItems(authRoutes), [authRoutes, userPermissions, location.pathname, hasUnsavedForm, isSubmitted]);
 
   const findParentKey = (items, pathname, parentKey = null) => {
     for (const item of items) {
@@ -96,15 +111,23 @@ const SidebarContent = ({
       : location.pathname;
 
   return (
-    <Menu
-      mode="inline"
-      selectedKeys={[selectedKey]}
-      items={menuItems}
-      className={`
+    <>
+      <Menu
+        mode="inline"
+        selectedKeys={[selectedKey]}
+        items={menuItems}
+        className={`
         ${sideBarMenuColor}
         ${isCollapsed ? "collapsed-menu" : "expanded-menu"}
       `}
-    />
+      />
+
+      <LeavePageModal
+        leavePageModalOpen={leavePageModalOpen}
+        setLeavePageModalOpen={setLeavePageModalOpen}
+        pendingPath={pendingPath}
+      />
+    </>
   );
 };
 
