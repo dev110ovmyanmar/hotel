@@ -13,13 +13,13 @@ const ReservationStatusColor = ({ status }) => {
     booked_bg: "#E6F4FF",
     booked_border: "#91CAFF",
 
-    confirmed: "#389E0D",
-    confirmed_bg: "#F6FFED",
-    confirmed_border: "#B7EB8F",
+    confirmed: "#62ab29",
+    confirmed_bg: "#eaf9db",
+    confirmed_border: "#c5f1c8",
 
-    "checked-in": "#08979C",
-    "checked-in_bg": "#E6FFFB",
-    "checked-in_border": "#87E8DE",
+    "checked-in": "#189094",
+    "checked-in_bg": "#eefcf9",
+    "checked-in_border": "#a7eee7",
 
     "checked-out": "#FF8D28",
     "checked-out_bg": "#FFF4F1",

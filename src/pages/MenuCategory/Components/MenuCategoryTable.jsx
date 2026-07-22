@@ -39,7 +39,7 @@ const MenuCategoryTable = ({
       title: "Display Oder",
       dataIndex: "displayOrder",
       key: "displayOrder",
-      align: "center",
+      align: "right",
     },
 
     {

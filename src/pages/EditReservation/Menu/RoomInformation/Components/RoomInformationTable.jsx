@@ -128,7 +128,7 @@ const RoomInformationTable = ({
   const columns = [
     { title: "ID", dataIndex: "id", key: "id", width: 70 },
     {
-      title: "Room No.",
+      title: "Room No",
       key: "room",
       dataIndex: "room",
       width: 130,

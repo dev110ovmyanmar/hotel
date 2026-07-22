@@ -128,7 +128,7 @@ const ReservationsTable = ({
             <PhoneOutlined /> {record?.guest?.phone}
           </div>
 
-          <div className="flex items-center gap-3 text-gray-500">
+          <div className="flex items-center gap-3 ">
             <span className="flex items-center gap-1">
               <IoPeopleSharp className="text-blue-500" /> {record?.adults}
             </span>

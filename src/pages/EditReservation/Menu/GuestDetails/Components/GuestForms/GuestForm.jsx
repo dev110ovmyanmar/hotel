@@ -52,14 +52,15 @@ const GuestForm = ({
   const { hasPermission } = usePermission();
   const watchedSrNo = Form.useWatch("srcNo", form);
   const guestAgeType = Form.useWatch("isAdult", form);
+  const selectedTitle = Form.useWatch("title", form);
+
 
   const isView = mode === "view";
   const isAdd = mode === "add";
   const isEdit = mode === "edit";
 
   const [selectedCountryUuid, setSelectedCountryUuid] = useState(null);
-  const [selectedGuestProfileUuid, setSelectedGuestProfileUuid] =
-    useState(null);
+  const [selectedGuestProfileUuid, setSelectedGuestProfileUuid] = useState(null);
 
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
 
@@ -176,6 +177,12 @@ const GuestForm = ({
       dob: item?.dob,
       nrc: item?.nrc,
     })) || [];
+
+  const autocompleteGuestOptions = selectedTitle ?
+    guestsOptions.filter(
+      guest => guest.title === selectedTitle
+    ) :
+    guestsOptions;
 
   const [options, setOptions] = useState(guestsOptions);
 
@@ -441,7 +448,7 @@ const GuestForm = ({
               rules={[{ required: true, message: "Name is required" }]}
             >
               <AutoComplete
-                options={guestAgeType === 1 ? guestsOptions : []}
+                options={guestAgeType === 1 ? autocompleteGuestOptions : []}
                 placeholder={
                   guestAgeType === 1
                     ? "Select or type guest name"

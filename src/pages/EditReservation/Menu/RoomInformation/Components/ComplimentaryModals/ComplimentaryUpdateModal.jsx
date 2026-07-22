@@ -7,6 +7,7 @@ import Modal from 'antd/es/modal/Modal';
 import Toast from '../../../../../../component/Toast/Toast';
 import useApiQuery from '../../../../../../hooks/useApiQuery';
 import { reservationRoomList } from '../../../../../../api/reservationSectionApi';
+import { darkModeStyle, textColorDarkMode, textWhiteInDarkStyle } from '../../../../../../utils';
 
 const ComplimentaryUpdateModal = ({
     open,
@@ -207,7 +208,7 @@ const ComplimentaryUpdateModal = ({
                             <Form.Item
                                 name="statusUuid"
                                 className='!mt-5 mb-0'
-                                label={<span className="text-sm font-semibold text-slate-700">Complimentary Reason:</span>}
+                                label={<span className={`text-sm font-semibold text-slate-700 ${textWhiteInDarkStyle}`}>Complimentary Reason:</span>}
                                 rules={[
                                     {
                                         required: true,
@@ -242,13 +243,13 @@ const ComplimentaryUpdateModal = ({
                                 <div className="flex flex-wrap justify-between items-start gap-4 pb-4 border-b border-slate-100 mb-4">
                                     <div className="flex flex-col gap-2">
                                         <div className="flex items-center gap-2">
-                                            <span className="bg-slate-100 font-mono text-xs px-2 py-0.5 rounded text-slate-700 border border-slate-200 font-bold">
+                                            <span className={`bg-slate-100 font-mono text-xs px-2 py-0.5 rounded text-slate-700 border border-slate-200 font-bold ${darkModeStyle}`}>
                                                 Room - {allocation.roomInfo.number}
                                             </span>
-                                            <h3 className="text-sm font-bold text-slate-900">{allocation.roomInfo.type}</h3>
+                                            <h3 className={`text-sm font-bold text-slate-900 ${textWhiteInDarkStyle}`}>{allocation.roomInfo.type}</h3>
                                         </div>
                                         <div className="flex items-center">
-                                            <span className="text-[10px] bg-slate-50 text-slate-500 border border-slate-100 px-2 py-0.5 rounded font-medium">
+                                            <span className={`text-[10px] bg-slate-50 text-slate-500 border border-slate-100 px-2 py-0.5 rounded font-medium ${darkModeStyle}`}>
                                                 🏷️ {allocation.ratePlan.name} ({allocation.ratePlan.code})
                                             </span>
                                         </div>
@@ -269,7 +270,7 @@ const ComplimentaryUpdateModal = ({
                                         🗓️ Stay Dates
                                     </h4>
                                     {allNights.length > 0 && (
-                                        <div className="bg-slate-50 hover:bg-slate-100 border border-slate-200 transition-colors px-3 py-1.5 rounded-md flex items-center">
+                                        <div className={`bg-slate-50 hover:bg-slate-100 border border-slate-200 transition-colors px-3 py-1.5 rounded-md flex items-center ${darkModeStyle}`}>
                                             <Checkbox
                                                 checked={isAllSelected}
                                                 indeterminate={isIndeterminate}
@@ -296,12 +297,14 @@ const ComplimentaryUpdateModal = ({
                                                 className={`flex-none w-28 p-2.5 rounded-lg border text-left transition-all ${isComp
                                                     ? 'bg-emerald-50 border-emerald-300 text-emerald-700 shadow-xs'
                                                     : 'bg-slate-50 border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-100/70'
-                                                    }`}
+                                                    }
+                                                    ${darkModeStyle}
+                                                    `}
                                             >
                                                 <span className="text-[9px] block text-slate-400 font-semibold">
                                                     {night.date}
                                                 </span>
-                                                <span className={`text-xs font-bold block mt-0.5 ${isComp ? 'text-emerald-600' : 'text-slate-800'}`}>
+                                                <span className={`text-xs font-bold block mt-0.5 ${isComp ? `text-emerald-600` : `text-slate-800 ${textWhiteInDarkStyle}`}`}>
                                                     {displayValue.toLocaleString()} MMK
                                                 </span>
                                                 <span className="text-[8px] block mt-1 font-medium opacity-70">
