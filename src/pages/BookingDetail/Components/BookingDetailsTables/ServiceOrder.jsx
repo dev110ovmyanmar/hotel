@@ -31,7 +31,6 @@ const ServiceOrder = ({ data }) => {
       title: "Order Status",
       dataIndex: "orderStatus",
       key: "orderStatus",
-      align: "center",
       render: (status) => {
         return (
           status ? <ColorStatusTag status={status} /> : "-"

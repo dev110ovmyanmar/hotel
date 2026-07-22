@@ -12,7 +12,7 @@ const columns = [
     title: "Id",
     dataIndex: "id",
     key: "id",
-    width: 140,
+    width: 70,
   },
   {
     title: "Date",
@@ -33,6 +33,7 @@ const columns = [
     title: "Amount",
     dataIndex: "amount",
     key: "amount",
+    align:"right",
     render: (value) => {
       return (
         <>

@@ -40,7 +40,7 @@ const columns = [
     title: "Room Status",
     dataIndex: ["room", "status"],
     key: "roomstatus",
-    align: "center",
+    // align: "center",
     render: (status) => {
 
       return (
