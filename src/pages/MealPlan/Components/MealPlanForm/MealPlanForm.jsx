@@ -201,7 +201,7 @@ const MeanPlanForm = ({
             </Form.Item>
 
             <Form.Item
-              label="Includes"
+              label="Meal Includes"
               name="includes"
             >
               <Checkbox.Group 

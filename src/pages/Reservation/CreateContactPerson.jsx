@@ -26,7 +26,7 @@ const CreateGuestForm = ({
   upsertMutation,
   createContactFinish,
   setCreateContactFinish,
-  createContactForm
+  createContactForm,
 }) => {
   const phoneValue = Form.useWatch("phone", createContactForm);
   const secondPhoneValue = Form.useWatch("secondaryphone", createContactForm);
@@ -67,12 +67,7 @@ const CreateGuestForm = ({
   const onClick = () => {
     setCreateContactFinish(true);
     createContactForm.validateFields().then((values) => {
-      //       {
-      //     "title": "Mr",
-      //     "name": "f2c7bdf7c2a249e9a4ac28925625d59b",
-      //     "phone": "09123456789"
-      // }
-
+      
       let payload = {
         title: values.title,
         phone: values.phone,

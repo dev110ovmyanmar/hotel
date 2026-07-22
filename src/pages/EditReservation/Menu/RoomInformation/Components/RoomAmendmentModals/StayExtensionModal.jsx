@@ -181,12 +181,12 @@ export default function StayExtensionModal({ isOpen,
 
                     {/* Timeline Data Footer */}
                     <div className={`bg-slate-50 p-3 px-4 rounded-lg mb-5 border border-slate-200 ${darkModeStyle} ${borderDarkMode}`}>
-                        <div className="text-xs text-slate-500">
-                            Current Checkout <strong className="text-slate-700">{originalCheckout.isValid() ? originalCheckout.format('DD MMM YYYY') : '-'}</strong>
+                        <div className="text-xs">
+                            Current Checkout - <strong >{originalCheckout.isValid() ? originalCheckout.format('DD MMM YYYY') : '-'}</strong>
                         </div>
                         {maxDayExtension !== 0 && (
-                            <div className="text-sm text-blue-600 mt-1">
-                                New Checkout <strong className="text-blue-700">{newCheckoutDate.format('DD MMM YYYY')}</strong>
+                            <div className="text-sm mt-1">
+                                New Checkout - <strong >{newCheckoutDate.format('DD MMM YYYY')}</strong>
                             </div>
                         )}
                     </div>
