@@ -202,7 +202,7 @@ const AddRefundForm = ({
         >
           {/* --- METHOD TITLE LABEL --- */}
           <div className="flex items-center !mb-3">
-            <Title level={5} className="!mb-0 text-slate-700">Select Refund Method</Title>
+            <Title level={5} className="!mb-0">Select Refund Method</Title>
             <span className="text-red-500 ml-1 mt-1 font-bold">*</span>
           </div>
 
@@ -281,7 +281,7 @@ const AddRefundForm = ({
           <Row gutter={16}>
             <Col span={12}>
               <Form.Item
-                label={<span className="text-slate-600 font-medium">Folio No</span>}
+                label={<span className=" font-medium">Folio No</span>}
                 name="folio"
                 rules={[{ required: true, message: "Required" }]}
               >
@@ -294,7 +294,7 @@ const AddRefundForm = ({
             </Col>
             <Col span={12}>
               <Form.Item
-                label={<span className="text-slate-600 font-medium">Guest</span>}
+                label={<span className=" font-medium">Guest</span>}
                 name="guest"
               >
                 <Select
@@ -311,7 +311,7 @@ const AddRefundForm = ({
           <Row gutter={16}>
             <Col span={12}>
               <Form.Item
-                label={<span className="text-slate-600 font-medium">Amount</span>}
+                label={<span className=" font-medium">Amount</span>}
                 name="amount"
                 rules={[
                   { required: true, message: "Amount required" },
