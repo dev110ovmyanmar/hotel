@@ -43,15 +43,35 @@ const ExtraBedRateTable = ({ data, page, setPage }) => {
       key: "endDate",
       align: "center",
     },
+
     {
-      title: "Age Type",
-      dataIndex: ["ageType", "name"],
+      title: "Extra Type",
+      dataIndex: ["extraType", "name"],
       align: "center",
-      key: "ageType",
+      key: "extraType",
       onCell: (record) => ({
-        rowSpan: record.ageTypeRowSpan, // New rowSpan logic
+        rowSpan: record.extraTypeRowSpan,
         style: { verticalAlign: "middle" },
       }),
+      render: (text, record) => {
+        if (
+          record.extraType?.code === "extra_person" ||
+          record.code === "extra_person"
+        ) {
+          const minAge = record.minAge;
+          const maxAge = record.maxAge;
+
+          if (minAge !== undefined && maxAge !== undefined) {
+            const ageText =
+              minAge === maxAge
+                ? `(${minAge})`
+                : `(${minAge} - ${maxAge}) years`;
+            return `${text} ${ageText}`;
+          }
+        }
+
+        return text;
+      },
     },
     {
       title: "Price (MMK)",

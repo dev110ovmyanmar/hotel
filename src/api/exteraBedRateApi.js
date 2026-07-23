@@ -14,16 +14,16 @@ export const ratePlanMeta = async (params) => {
 
 // extra bed rate
 export const fetchExtraBedRate = async (params) => {
-  const { data } = await apiClient.get("/extra-bed-rates", { params });
+  const { data } = await apiClient.get("/extra-rates", { params });
   return data.response;
 };
 
 export const upsertExtraBedRate = async (params) => {
-  const { data } = await apiClient.post("/extra-bed-rate/upsert", params);
+  const { data } = await apiClient.post("/extra-rate/upsert", params);
   return data.response;
 };
 
 export const extraBedRateDetails = async (params) => {
-  const { data } = await apiClient.get("/extra-bed-rate", { params });
+  const { data } = await apiClient.get("/extra-rate", { params });
   return data.response;
 };
