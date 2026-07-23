@@ -25,7 +25,7 @@ const ServiceAddOn = ({ data }) => {
       title: "Add On Status",
       dataIndex: "addonStatus",
       key: "addonStatus",
-      align: "center",
+      // align: "center",
       render: (status) => {
         console.log(status,"StatusInAddOn")
         return (

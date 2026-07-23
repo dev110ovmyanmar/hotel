@@ -187,8 +187,8 @@ export default function AddRoomWithExtensionDateModal({
 
                             {/* Timeline Data Footer */}
                             <div className={`bg-slate-50 p-3 px-4 rounded-lg mb-5 border border-slate-200 ${darkModeStyle} ${borderDarkMode}`}>
-                                <div className="text-xs text-slate-500">
-                                    Current Checkout <strong className={`text-slate-700 ${textWhiteInDarkStyle}`}>{originalCheckout ? originalCheckout?.format('DD MMM YYYY') : '-'}</strong>
+                                <div className="text-xs ">
+                                    Current Checkout - <strong className={`text-slate-700 ${textWhiteInDarkStyle}`}>{originalCheckout ? originalCheckout?.format('DD MMM YYYY') : '-'}</strong>
                                 </div>
                                 {maxDayExtension !== 0 && (
                                     <div className="text-sm text-blue-600 mt-1">

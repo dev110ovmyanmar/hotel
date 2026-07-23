@@ -333,7 +333,7 @@ const AddPaymentForm = ({
                                             <Option value={paymentCompletedStatus.uuid}>
                                                 <div className="flex items-center gap-2">
                                                     <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
-                                                    <span className="text-slate-700 font-medium">
+                                                    <span className=" font-medium">
                                                         {paymentCompletedStatus.name}
                                                     </span>
                                                 </div>
