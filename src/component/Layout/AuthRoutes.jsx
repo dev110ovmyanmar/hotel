@@ -380,7 +380,7 @@ export const authRoutes = [
         component: <ExtraBedRateList />,
         icon: <IoBedOutline style={{ fontSize: "20px" }} />,
         isPrivate: true,
-        permission: PERMISSIONS.EXTRA_BED_RATE_LIST,
+        permission: PERMISSIONS.EXTRA_RATE_LIST,
       },
     ],
   },

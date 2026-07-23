@@ -63,7 +63,7 @@ const ExtraBedRateForm = ({
   const { RangePicker } = DatePicker;
 
   const { hasPermission } = usePermission();
-  const canEdit = hasPermission(PERMISSIONS.EXTRA_BED_RATE_EDIT);
+  const canEdit = hasPermission(PERMISSIONS.EXTRA_RATE_EDIT);
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
 
   const disabledDate = (current) => {
@@ -201,10 +201,10 @@ const ExtraBedRateForm = ({
           <div className="flex justify-between items-center">
             <span>
               {mode === "view"
-                ? "ExtraBed Rate Details"
+                ? "Extra Rate Details"
                 : mode === "edit"
-                  ? "Edit ExtraBed Rate"
-                  : "Create ExtraBed Rate"}
+                  ? "Edit Extra Rate"
+                  : "Create Extra Rate"}
             </span>
             {isView ? (
               canEdit && (
