@@ -529,7 +529,7 @@ span .ant-upload {
 
 .service-order-icon-box {
   background-color: #b9dae3;
-  backdrop-filter:blur(12px) !important ;
+  backdrop-filter: blur(12px) !important;
   border: 1px solid #0c85a0;
   border-radius: 6px;
   padding: 4px;
@@ -863,5 +863,44 @@ span .ant-upload {
 }
 
 .css-var-_r_0_ {
-    --ant-color-text-disabled: #aaaaaa;
+  --ant-color-text-disabled: #aaaaaa;
+}
+
+.close-icon-hide .ant-select-selection-item-remove {
+  display: none !important;
+}
+
+.close-icon-hide .ant-select-input {
+  caret-color: transparent;
+  pointer-events: none;
+}
+
+.date-picker-disabled .ant-picker-input input {
+  color: rgb(74, 73, 73) !important;
+  -webkit-text-fill-color: rgb(74, 73, 73) !important;
+}
+
+.dark .date-picker-disabled .ant-picker-input input {
+  color: rgb(121, 120, 120) !important;
+  -webkit-text-fill-color: white !important;
+}
+
+@media (max-width: 1024px) {
+  .reservation-form .ant-form-item {
+    margin-bottom: 4px !important;
+  }
+
+  .reservation-form .ant-form-item .ant-form-item-label {
+    padding-bottom: 0 !important;
+    margin-bottom: 0 !important;
+  }
+
+  .reservation-form .ant-form-item .ant-form-item-label>label {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .reservation-form .ant-form-item .ant-form-item-label>label p {
+    margin: 0 !important;
+  }
 }
