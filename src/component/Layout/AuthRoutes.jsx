@@ -375,8 +375,8 @@ export const authRoutes = [
       },
       {
         key: 4.6,
-        path: "/rates-&-revenue/extabed-rate/",
-        label: "ExtraBed Rate",
+        path: "/rates-&-revenue/exta-rate/",
+        label: "Extra Rate",
         component: <ExtraBedRateList />,
         icon: <IoBedOutline style={{ fontSize: "20px" }} />,
         isPrivate: true,

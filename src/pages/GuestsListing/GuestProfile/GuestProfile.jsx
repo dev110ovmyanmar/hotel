@@ -25,6 +25,21 @@ import { getGuestDetail } from "../../../api/guestApi";
 import { useLocation } from "react-router-dom";
 import GuestForm from "../Components/NewGuestForm";
 
+const calculateAge = (dobString) => {
+  if (!dobString) return null;
+  const birthDate = new Date(dobString);
+  const today = new Date();
+  
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const monthDiff = today.getMonth() - birthDate.getMonth();
+
+  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+    age--;
+  }
+
+  return age >= 0 ? age : null;
+};
+
 const GuestProfile = () => {
   // State to track which tab is active
   const { state } = useLocation();
@@ -64,11 +79,13 @@ const GuestProfile = () => {
     }
   };
 
+  
+
   return (
     <>
       <div className="min-h-screen px-8 py-6 font-sans text-slate-700 dark:!text-[#D9D9D9] bg-slate-50 dark:bg-[#141414]">
         {/* Header Card */}
-        <div className="bg-[#a2dea2] rounded-xl shadow-sm border border-slate-200 p-6 mb-6">
+        <div className="bg-[linear-gradient(to_bottom_right,#22C1C3,#E8D3F5,#65BF96,#53B9C6,#B2D6E6,#FEEDFF)] rounded-xl shadow-sm border border-slate-200 p-6 mb-6">
         {/* <div className="bg-gradient-to-r from-[#a2dea2] via-[#d4d94c] to-[#fae632] rounded-xl shadow-sm border border-slate-200 p-6 mb-6"> */}
           <div className="flex justify-between items-start">
             <div className="flex gap-6">
@@ -95,9 +112,12 @@ const GuestProfile = () => {
                 <p className="text-sm text-slate-500 mb-2">
                   Guest Id: GST0410PQCP
                 </p>
-                <div className="flex items-center gap-2 text-sm mb-3 dark:!text-[#000000]">
-                  <Cake size={14} /> 26
-                </div>
+               
+                {guestDetailDatas?.dob && (
+                  <div className="flex items-center gap-2 text-sm mb-3 dark:!text-[#000000]">
+                    <Cake size={14} /> {calculateAge(guestDetailDatas?.dob)}
+                  </div>
+                )}
                 <div className="flex flex-col gap-1">
                   <div className="flex items-center gap-2 text-sm text-slate-500">
                     {guestDetailDatas?.phone ? (
@@ -127,7 +147,7 @@ const GuestProfile = () => {
               </div>
             </div>
             <button
-              className="flex items-center gap-1 md:gap-2 border border-blue-600 text-blue-600 px-1 md:px-1 lg:px-3 py-1 md:py-1 lg:py- rounded-lg hover:bg-blue-50 transition font-medium cursor-pointer"
+              className="flex items-center gap-1 md:gap-2 border border-blue-600 text-blue-600 px-1 md:px-1 lg:px-3 py-1 md:py-1 lg:py- rounded-lg bg-gray-200 hover:bg-blue-50 transition font-medium cursor-pointer"
               onClick={() => setDrawerOpen(true)}
             >
               {/* <Edit2 size={16} />  */}

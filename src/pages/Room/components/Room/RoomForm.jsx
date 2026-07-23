@@ -57,8 +57,8 @@ const RoomForm = ({
 
   const roomType = roomMetaData?.room_types?.map((type) => ({
     value: type.uuid,
-    // label: `${type.name} (${type.availableRooms}/${type.totalRooms})`,
-    label: `${type.name} (Remaining: ${type.remainingRooms}, Total: ${type.totalRooms})`,
+    // label: `${type.name} (Remaining: ${type.remainingRooms}, Total: ${type.totalRooms})`,
+    label: type.name,
   }));
 
   const floors = roomMetaData?.floors?.map((floor) => ({
@@ -156,13 +156,6 @@ const RoomForm = ({
       });
     }
   };
-
-  // const handleClose = () => {
-  //   setDrawerOpen(false);
-  //   form.resetFields();
-  //   setMode("add");
-  //   setSelectedData(null);
-  // };
 
   const attributeColumns = [
     {
@@ -319,7 +312,9 @@ const RoomForm = ({
             </Form.Item>
 
             {!isAdd && (
-              <Card className={`mt-5 shadow-sm  border border-gray-100 bg-gray-100! ${roomAndRoomTypeDarkMode}`}>
+              <Card
+                className={`mt-5 shadow-sm  border border-gray-100 bg-gray-100! ${roomAndRoomTypeDarkMode}`}
+              >
                 <div className="flex justify-between text-sm items-center font-semibold mb-2">
                   <span>Room Attributes already exits for this room</span>
 

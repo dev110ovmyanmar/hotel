@@ -29,6 +29,20 @@ import {
   priceParser,
 } from "../../../../component/PriceTag/PriceTag";
 
+const sharedProps = {
+  mode: "spinner",
+  min: 1,
+  defaultValue: 1,
+  style: { width: 150 },
+};
+
+const sharedProp = {
+  mode: "spinner",
+  min: 2,
+  defaultValue: 2,
+  style: { width: 150 },
+};
+
 const ExtraBedRateForm = ({
   mode,
   setMode,
@@ -40,6 +54,7 @@ const ExtraBedRateForm = ({
   setPage,
 }) => {
   const [form] = Form.useForm();
+  const selectedExtraTypeUuid = Form.useWatch("extraType", form);
 
   const isView = mode === "view";
   const isEdit = mode === "edit";
@@ -55,10 +70,17 @@ const ExtraBedRateForm = ({
     return current && current < dayjs().startOf("day");
   };
 
-  const ageList = initData?.statuses?.age_type?.map((ageType) => ({
-    value: ageType.uuid,
-    label: ageType.name,
+  const extraList = initData?.statuses?.extra_type?.map((extraType) => ({
+    value: extraType.uuid,
+    label: extraType.name,
   }));
+
+  const selectedExtraTypeObj = extraList?.find(
+    (item) => item.value === selectedExtraTypeUuid,
+  );
+  const isExtraPerson = selectedExtraTypeObj?.label
+    ?.toLowerCase()
+    .includes("extra person");
 
   const { data: ratePlanMetaData } = useApiQuery({
     fetchQueryName: "ratePlanMetaData",
@@ -100,9 +122,11 @@ const ExtraBedRateForm = ({
         ...data,
         roomTypeUuid: data?.roomType?.uuid,
         ratePlanUuid: data?.ratePlan?.uuid,
-        ageType: data?.ageType?.uuid,
+        extraType: data?.extraType?.uuid,
         // startDate: data?.startDate ? dayjs(data.startDate) : null,
         // endDate: data?.endDate ? dayjs(data.endDate) : null,
+        minAge: data?.minAge ?? null,
+        maxAge: data?.maxAge ?? null,
         dateRange: [
           data.startDate ? dayjs(data.startDate) : null,
           data.endDate ? dayjs(data.endDate) : null,
@@ -112,6 +136,11 @@ const ExtraBedRateForm = ({
       setSelectedData(data);
     }
   }, [data]);
+  const handleClose = () => {
+    setDrawerOpen(false);
+    setSelectedData(null);
+    form.resetFields();
+  };
 
   const onFinish = (values) => {
     const [start, end] = values.dateRange || [];
@@ -119,7 +148,7 @@ const ExtraBedRateForm = ({
     if (isAdd) {
       const createValues = {
         ...values,
-        ageType: { uuid: values.ageType },
+        extraType: { uuid: values.extraType },
         roomType: { uuid: values.roomTypeUuid },
         ratePlan: { uuid: values.ratePlanUuid },
         // startDate: getFormattedDate(values.startDate, false),
@@ -131,6 +160,7 @@ const ExtraBedRateForm = ({
       createExtraBedRates.mutate(createValues, {
         onSuccess: () => {
           form.resetFields();
+          handleClose();
           setDrawerOpen(false);
           setPage(1);
           Toast.success("ExtraBed Rate Created Successfully!");
@@ -140,7 +170,7 @@ const ExtraBedRateForm = ({
     if (isEdit) {
       const editValues = {
         ...values,
-        ageType: { uuid: values?.ageType },
+        extraType: { uuid: values?.extraType },
         roomType: { uuid: values.roomTypeUuid },
         ratePlan: { uuid: values.ratePlanUuid },
         // startDate: getFormattedDate(values.startDate, false),
@@ -153,6 +183,7 @@ const ExtraBedRateForm = ({
       editExtraBedRates.mutate(editValues, {
         onSuccess: () => {
           setDrawerOpen(false);
+          handleClose();
           Toast.success("ExtraBed Rate Updated Successfully!");
         },
       });
@@ -163,7 +194,8 @@ const ExtraBedRateForm = ({
     <div>
       <Drawer
         open={drawerOpen}
-        onClose={() => setDrawerOpen(false)}
+        // onClose={() => setDrawerOpen(false)}
+        onClose={handleClose}
         size={550}
         title={
           <div className="flex justify-between items-center">
@@ -202,6 +234,10 @@ const ExtraBedRateForm = ({
           layout="vertical"
           style={{ width: "100%" }}
           onFinish={onFinish}
+          initialValues={{
+            minAge: 1,
+            maxAge: 2,
+          }}
         >
           <Form.Item
             label="Room Type"
@@ -256,12 +292,12 @@ const ExtraBedRateForm = ({
           </Form.Item>
 
           <Form.Item
-            label="Age Type"
-            name="ageType"
+            label="Extra Type"
+            name="extraType"
             rules={[{ required: true }]}
             getValueProps={(value) => ({
               value: isView
-                ? ageList.find((item) => item.value === value)?.label
+                ? extraList?.find((item) => item.value === value)?.label
                 : value,
             })}
           >
@@ -269,12 +305,77 @@ const ExtraBedRateForm = ({
               <Input readOnly={isView} />
             ) : (
               <Select
-                options={ageList}
+                options={extraList}
                 open={isView ? false : undefined}
                 placeholder="Select age type"
               />
             )}
           </Form.Item>
+
+          {isExtraPerson && (
+            <Row gutter={16}>
+              <Col span={12}>
+                <Form.Item
+                  label="Min Age"
+                  name="minAge"
+                  dependencies={["maxAge"]}
+                  rules={[
+                    { required: true, message: "Please enter min age" },
+                    {
+                      type: "number",
+                      min: 0,
+                      message: "Age must be 0 or greater",
+                    },
+                  ]}
+                >
+                  <InputNumber
+                    {...sharedProps}
+                    readOnly={isView}
+                    placeholder="Min age"
+                    style={{ width: "100%" }}
+                  />
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item
+                  label="Max Age"
+                  name="maxAge"
+                  dependencies={["minAge"]}
+                  rules={[
+                    { required: true, message: "Please enter max age" },
+                    ({ getFieldValue }) => ({
+                      validator(_, value) {
+                        const minAge = getFieldValue("minAge");
+
+                        if (
+                          value === undefined ||
+                          value === null ||
+                          minAge === undefined ||
+                          minAge === null ||
+                          value > minAge
+                        ) {
+                          return Promise.resolve();
+                        }
+
+                        return Promise.reject(
+                          new Error(
+                            "Max age must be strictly greater than Min age",
+                          ),
+                        );
+                      },
+                    }),
+                  ]}
+                >
+                  <InputNumber
+                    {...sharedProp}
+                    readOnly={isView}
+                    placeholder="Max age"
+                    style={{ width: "100%" }}
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
+          )}
           <Form.Item
             label="Price"
             name="price"
@@ -299,7 +400,7 @@ const ExtraBedRateForm = ({
           >
             <RangePicker
               disabledDate={disabledDate}
-              open={isView? !isView : undefined}
+              open={isView ? !isView : undefined}
               inputReadOnly={isView}
               suffixIcon={isView ? null : undefined}
               className="w-full flex"
