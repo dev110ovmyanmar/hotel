@@ -39,7 +39,7 @@ const AgencyTable = ({
       title: "ID",
       render: (_, record) => <div>{record?.id}</div>,
       width: 70,
-      align: "center",
+      // align: "center",
     },
     {
       title: "Name",

@@ -85,7 +85,7 @@ const GuestProfile = () => {
     <>
       <div className="min-h-screen px-8 py-6 font-sans text-slate-700 dark:!text-[#D9D9D9] bg-slate-50 dark:bg-[#141414]">
         {/* Header Card */}
-        <div className="bg-[linear-gradient(to_bottom_right,#22C1C3,#E8D3F5,#65BF96,#53B9C6,#B2D6E6,#FEEDFF)] rounded-xl shadow-sm border border-slate-200 p-6 mb-6">
+        <div className="bg-[linear-gradient(to_bottom_right,#22C1C3,#E8D3F5,#A4DEC4,#9ADAE3,#B2D6E6,#FEEDFF)] rounded-xl shadow-sm border border-slate-200 p-6 mb-6">
         {/* <div className="bg-gradient-to-r from-[#a2dea2] via-[#d4d94c] to-[#fae632] rounded-xl shadow-sm border border-slate-200 p-6 mb-6"> */}
           <div className="flex justify-between items-start">
             <div className="flex gap-6">

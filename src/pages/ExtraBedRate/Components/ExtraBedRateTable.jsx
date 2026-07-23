@@ -185,6 +185,7 @@ const ExtraBedRateTable = ({ data, page, setPage }) => {
         pagination={processedRates?.length > 10 ? true : false}
         rowKey="id"
         size="small"
+        style={{ marginTop: "16px", marginBottom: "16px" }}
       />
     );
   };
