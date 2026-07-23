@@ -90,7 +90,7 @@ const ExtraBedRateTable = ({ data, page, setPage }) => {
             key: "view",
             label: "View",
             icon: <EyeOutlined style={{ fontSize: "12px" }} />,
-            permission: PERMISSIONS.EXTRA_BED_RATE_VIEW,
+            permission: PERMISSIONS.EXTRA_RATE_VIEW,
             onClick: () => {
               setDrawerOpen(true);
               setMode("view");
@@ -101,7 +101,7 @@ const ExtraBedRateTable = ({ data, page, setPage }) => {
             key: "edit",
             label: "Edit",
             icon: <EditOutlined style={{ fontSize: "12px" }} />,
-            permission: PERMISSIONS.EXTRA_BED_RATE_EDIT,
+            permission: PERMISSIONS.EXTRA_RATE_EDIT,
             onClick: () => {
               setDrawerOpen(true);
               setMode("edit");

@@ -55,7 +55,7 @@ const ExtraBedRateList = () => {
           endDate={endDate}
           setStartDate={setStartDate}
           setEndDate={setEndDate}
-          permission={PERMISSIONS.EXTRA_BED_RATE_CREATE}
+          permission={PERMISSIONS.EXTRA_RATE_CREATE}
         />
       </div>
 

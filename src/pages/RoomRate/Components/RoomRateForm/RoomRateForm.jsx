@@ -198,6 +198,12 @@ const RoomRateForm = ({
     }
   }, [roomRateDetailData, isAdd, form, roomRateUuid]);
 
+    const handleClose = () => {
+    setDrawerOpen(false);
+    setSelectedData(null);
+    form.resetFields();
+  };
+
   const onFinish = (values) => {
     const weekdaysObj = days.reduce((acc, { key }) => {
       const isEnabled = values[`enable_${key}`];
@@ -226,6 +232,7 @@ const RoomRateForm = ({
       upsertRoomRates.mutate(payload, {
         onSuccess: () => {
           form.resetFields();
+          handleClose();
           setDrawerOpen(false);
           setPage(1);
           Toast.success("Room Rate Created Successfully!");
@@ -237,6 +244,7 @@ const RoomRateForm = ({
       upsertRoomRates.mutate(payload, {
         onSuccess: () => {
           setDrawerOpen(false);
+          handleClose();
           Toast.success("Room Rate Updated Successfully!");
         },
       });
@@ -247,9 +255,10 @@ const RoomRateForm = ({
     <div>
       <Drawer
         open={drawerOpen}
-        onClose={() => {
-          setDrawerOpen(false);
-        }}
+        // onClose={() => {
+        //   setDrawerOpen(false);
+        // }}
+        onClose={handleClose}
         size={550}
         title={
           <div className="flex justify-between items-center">

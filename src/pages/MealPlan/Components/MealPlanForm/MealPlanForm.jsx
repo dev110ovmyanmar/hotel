@@ -1,19 +1,30 @@
 import React, { useEffect, useState } from "react";
-import { Form, Input, Button, Drawer, Space, Select, Checkbox, Row, Col, InputNumber } from "antd";
+import {
+  Form,
+  Input,
+  Button,
+  Drawer,
+  Space,
+  Select,
+  Checkbox,
+  Row,
+  Col,
+  InputNumber,
+} from "antd";
 import Toast from "../../../../component/Toast/Toast";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
 import useApiQuery from "../../../../hooks/useApiQuery";
 import FormButtons from "./../../../../component/FormButtons/FormButtons";
-import {
-  upsertMealPlan,
-  mealPlanDetails,
-} from "../../../../api/mealPlanApi";
+import { upsertMealPlan, mealPlanDetails } from "../../../../api/mealPlanApi";
 import { queryClient } from "./../../../../app/queryClient";
 import Loader from "../../../../component/Loader/Loader";
 import { PERMISSIONS } from "../../../../variables/permission";
 import usePermission from "../../../../hooks/usePermission";
 import Status from "../../../../component/Status/Status";
-import PriceTag, { priceFormatter, priceParser } from "../../../../component/PriceTag/PriceTag";
+import PriceTag, {
+  priceFormatter,
+  priceParser,
+} from "../../../../component/PriceTag/PriceTag";
 
 const { TextArea } = Input;
 
@@ -42,7 +53,7 @@ const MeanPlanForm = ({
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
 
   const statuses = initData?.statuses?.status;
-  console.log(statuses, "statuses")
+  console.log(statuses, "statuses");
   // const statuses = initData?.statuses?.status
   //   ?.filter((item) => item.code !== "blocked")
   //   ?.map((status) => ({
@@ -53,7 +64,7 @@ const MeanPlanForm = ({
   const upsertMealPlans = useApiMutation({
     mutationFn: upsertMealPlan,
     invalidateKeys: [["mealPlans"]],
-    shouldInvalidate: isEdit ? true : page === 1
+    shouldInvalidate: isEdit ? true : page === 1,
   });
 
   const { data, isLoading, error } = useApiQuery({
@@ -71,9 +82,9 @@ const MeanPlanForm = ({
         adultPrice: 0,
         childPrice: 0,
         status: {
-          uuid: statuses?.find(item => item?.code === "active")?.uuid
+          uuid: statuses?.find((item) => item?.code === "active")?.uuid,
         },
-        childFreeAgeBelow: 5
+        childFreeAgeBelow: 5,
       });
     }
   }, [isAdd]);
@@ -90,20 +101,20 @@ const MeanPlanForm = ({
         ...data,
         includes,
         status: {
-          uuid : data?.status?.uuid,
-        }
+          uuid: data?.status?.uuid,
+        },
       });
     }
   }, [data, isEdit, isView, form]);
 
   const onFinish = (values) => {
-    console.log(values, "ValuesOnFinsih")
+    console.log(values, "ValuesOnFinsih");
     const payload = {
       ...values,
-      includesBreakfast: values?.includes.includes('breakfast') || false,
-      includesLunch: values?.includes.includes('lunch') || false,
-      includesDinner: values?.includes.includes('dinner') || false
-    }
+      includesBreakfast: values?.includes.includes("breakfast") || false,
+      includesLunch: values?.includes.includes("lunch") || false,
+      includesDinner: values?.includes.includes("dinner") || false,
+    };
 
     if (isAdd) {
       upsertMealPlans.mutate(payload, {
@@ -130,14 +141,14 @@ const MeanPlanForm = ({
     }
   };
 
-  const onChange = checkedValues => {
-    console.log('checked = ', checkedValues);
+  const onChange = (checkedValues) => {
+    console.log("checked = ", checkedValues);
   };
 
   const options = [
-    { label: 'Breakfast', value: 'breakfast', className: 'label-1' },
-    { label: 'Lunch', value: 'lunch', className: 'label-2' },
-    { label: 'Dinner', value: 'dinner', className: 'label-3' },
+    { label: "Breakfast", value: "breakfast", className: "label-1" },
+    { label: "Lunch", value: "lunch", className: "label-2" },
+    { label: "Dinner", value: "dinner", className: "label-3" },
   ];
 
   return (
@@ -195,19 +206,18 @@ const MeanPlanForm = ({
             <Form.Item
               label="Name"
               name="name"
-              rules={[{ required: true, message: "Meal Plan Name is Required" }]}
+              rules={[
+                { required: true, message: "Meal Plan Name is Required" },
+              ]}
             >
               <Input readOnly={isView} placeholder="Enter Meal Plan Name" />
             </Form.Item>
 
-            <Form.Item
-              label="Meal Includes"
-              name="includes"
-            >
-              <Checkbox.Group 
-                options={options} 
+            <Form.Item label="Meal Includes" name="includes">
+              <Checkbox.Group
+                options={options}
                 onChange={onChange}
-                className={isView? "pointer-events-none" : ""}
+                className={isView ? "pointer-events-none" : ""}
               />
             </Form.Item>
 
@@ -216,15 +226,18 @@ const MeanPlanForm = ({
                 <Form.Item
                   label="Adult Price"
                   name="adultPrice"
-                  rules={[{
-                    required: mealChecked,
-                    message: "Enter Adult Price"
-                  }]}
+                  rules={[
+                    {
+                      required: mealChecked,
+                      message: "Enter Adult Price",
+                    },
+                  ]}
                 >
                   <InputNumber
                     style={{ width: "100%" }}
                     min={0}
                     readOnly={isView}
+                    suffix="MMK"
                     placeholder="Enter Adult Price"
                     formatter={priceFormatter}
                     parser={priceParser}
@@ -236,16 +249,19 @@ const MeanPlanForm = ({
                 <Form.Item
                   label="Child Price"
                   name="childPrice"
-                  rules={[{
-                    required: mealChecked,
-                    message: "Enter Child Price"
-                  }]}
+                  rules={[
+                    {
+                      required: mealChecked,
+                      message: "Enter Child Price",
+                    },
+                  ]}
                 >
                   <InputNumber
                     style={{ width: "100%" }}
                     min={0}
                     readOnly={isView}
                     placeholder="Enter Child Price"
+                    suffix="MMK"
                     formatter={priceFormatter}
                     parser={priceParser}
                   />
@@ -257,7 +273,6 @@ const MeanPlanForm = ({
               label="Child Free Age Below"
               name="childFreeAgeBelow"
               min={5}
-
             >
               <InputNumber
                 style={{ width: "100%" }}
@@ -295,17 +310,17 @@ const MeanPlanForm = ({
             </Form.Item> */}
 
             <Form.Item label="Description" name="description">
-              <Input.TextArea rows={2}
+              <Input.TextArea
+                rows={2}
                 readOnly={isView}
                 style={{ cursor: isView ? "default" : "text" }}
                 placeholder="Enter Description"
               />
             </Form.Item>
           </Form>
-        )
-        }
-      </Drawer >
-    </div >
+        )}
+      </Drawer>
+    </div>
   );
 };
 
