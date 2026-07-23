@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { useApiMutation } from "../../hooks/useApiMutation";
 import { FaMoon } from "react-icons/fa";
 import { values } from "lodash";
+import { darkModeStyle } from "../../utils";
 
 const { RangePicker } = DatePicker;
 
@@ -29,6 +30,12 @@ const ReservationForm = ({
     const sourceTypeValue = Form.useWatch("sourceType", form); // Added this line to watch sourceType
 
     const [selectedSourceType, setSelectedSourceType] = useState(null);
+    const selectedRoomTypes = Form.useWatch("roomType", form);
+    const selectedRatePlans = Form.useWatch("ratePlan", form);
+
+    const hasSelectedData =
+        (selectedRoomTypes?.length ?? 0) > 0 ||
+        (selectedRatePlans?.length ?? 0) > 0;
 
     const { data: reservationMetas } = useApiQuery({
         fetchQueryName: "reservation-meta",
@@ -92,15 +99,15 @@ const ReservationForm = ({
             },
             totalNight: totalNights,
             roomType: {
-                ids : values?.roomType
+                ids: values?.roomType
             },
             ratePlan: {
-                ids : values?.ratePlan
+                ids: values?.ratePlan
             }
 
         };
 
-        console.log(modifiedValues,"ValuesSearchSubmit")
+        console.log(modifiedValues, "ValuesSearchSubmit")
 
         availabilitySearchResults.mutate(modifiedValues);
     };
@@ -166,6 +173,7 @@ const ReservationForm = ({
                     setSearchReservation(false);
                     setSelectedData([]);
                 }}
+                className="reservation-form"
             >
                 <div className="flex justify-between">
                     <h1 className="text-lg font-bold text-[#ffffff] my-2">New Reservation</h1>
@@ -221,7 +229,7 @@ const ReservationForm = ({
                                     });
                                 }}
                                 disabled={afterRoomConfirm}
-                                className={afterRoomConfirm ? "!w-full !bg-gray-100" : "!w-full"}
+                                className={afterRoomConfirm ? `!w-full !bg-gray-100 ${darkModeStyle} date-picker-disabled` : "!w-full"}
 
                             />
                         </Form.Item>
@@ -243,38 +251,6 @@ const ReservationForm = ({
                             </div>
                         </Form.Item>
                     </div>
-
-                    {/* <div className="w-50 md:w-42 lg:w-40 flex-auto md:flex-initial">
-                        <Form.Item
-                            name="bookedVia"
-                            label={
-                                <p className="text-gray-100">Booking Source</p>
-                            }
-                            rules={[{ required: true, message: "Please Select Booking Source" }]}
-                            getValueProps={(value) => {
-                                return {
-                                    value: afterRoomConfirm ?
-                                        bookedViaOptions?.find(item => item.value === value)?.label :
-                                        value
-                                }
-                            }}
-                        >
-
-                            {
-                                afterRoomConfirm ?
-                                    <Input
-                                        readOnly={afterRoomConfirm}
-                                    // className="w-[100%] "
-                                    /> :
-                                    <Select
-                                        options={bookedViaOptions}
-                                        // className="w-[100%] "
-                                        placeholder="Select Booked Via"
-                                    >
-                                    </Select>
-                            }
-                        </Form.Item>
-                    </div> */}
 
                     <div className="w-50 md:w-42 lg:w-40 flex-auto md:flex-initial">
                         <Form.Item
@@ -377,43 +353,56 @@ const ReservationForm = ({
                             )
                         }
                     </div>
+                </div>
 
-                    <div className="flex gap-2 sm:flex-wrap">
-                        <div className="w-50 flex-auto ">
+                <div className="flex gap-2 sm:flex-wrap w-[80%] lg:w-[75%] sm:w-[100%]">
+                    {
+                        (!afterRoomConfirm || selectedRoomTypes?.length > 0) &&
+                        <div className="w-70 lg:w-65 sm:w-100 flex-auto">
                             <Form.Item
                                 name="roomType"
                                 label={
                                     <p className="text-gray-100">Room Type</p>
                                 }
-                                className="w-full"   
-                                
+                                className="w-full"
                             >
                                 <Select
                                     options={roomTypeOptions}
                                     placeholder="Select Room Type"
                                     mode="multiple"
+                                    open={afterRoomConfirm ? !afterRoomConfirm : undefined}
+                                    className={afterRoomConfirm ? "close-icon-hide" : ""}
+                                    showSearch={!afterRoomConfirm}
+                                    suffixIcon={afterRoomConfirm ? null : undefined}
+                                    optionFilterProp="label"
                                 />
                             </Form.Item>
                         </div>
+                    }
 
-                        <div className="w-50 flex-auto">
+                    {
+                        (!afterRoomConfirm || selectedRatePlans?.length > 0) &&
+                        <div className="w-10 lg:w-15 sm:w-100 flex-auto">
                             <Form.Item
                                 name="ratePlan"
                                 label={
                                     <p className="text-gray-100">Rate Plan</p>
                                 }
-                                className="w-full"   
+                                className="w-full"
                             >
                                 <Select
                                     options={ratePlanOptions}
                                     placeholder="Select Rate Plan"
                                     mode="multiple"
+                                    open={afterRoomConfirm ? !afterRoomConfirm : undefined}
+                                    className={afterRoomConfirm ? "close-icon-hide" : ""}
+                                    showSearch={!afterRoomConfirm}
+                                    suffixIcon={afterRoomConfirm ? null : undefined}
+                                    optionFilterProp="label"
                                 />
                             </Form.Item>
                         </div>
-                    </div>
-
-
+                    }
                 </div>
 
                 {/* Mobile Button */}

@@ -24,7 +24,7 @@ const ListHeader = ({
   endDate,
   setStartDate,
   setEndDate,
-  isHouseKeepingTask,
+  isHouseKeepingTask
 }) => {
   const { hasPermission } = usePermission(); // permission checker
   const canCreate = hasPermission(permission);
@@ -32,18 +32,15 @@ const ListHeader = ({
 
   const { collapsed, openDrawer } = useSelector(appSelector);
   const isCollapsed = collapsed && !openDrawer;
-  // const isMediumScreen = window?.innerWidth >= 766;
-  // const isSmallScreen = window?.innerWidth <= 768;
   const [screenWidth, setScreenWidth] = useState(window.innerWidth);
 
-useEffect(() => {
-  const handleResize = () => setScreenWidth(window.innerWidth);
-  window.addEventListener("resize", handleResize);
-  return () => window.removeEventListener("resize", handleResize);
-}, []);
+  useEffect(() => {
+    const handleResize = () => setScreenWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
-const isMediumScreen = screenWidth >= 766;
-const isSmallScreen = screenWidth <= 768;
+  const isSmallScreen = screenWidth <= 768;
 
   const [inputValue, setInputValue] = useState(keyword || "");
   const debouncedSearchRef = useRef(null);
@@ -65,18 +62,12 @@ const isSmallScreen = screenWidth <= 768;
     setCreateDrawerOpen(true);
   };
 
-  // const containerClass =
-  //   !isCollapsed && !isMediumScreen
-  //     ? "flex-col gap-y-3 items-start"
-  //     : isSmallScreen
-  //       ? "flex-col gap-y-3 items-start"
-  //       : "flex-row justify-between items-center w-full";
+
   const containerClass = isSmallScreen
-  ? "flex-col gap-y-3 items-start"
-  : "flex-row justify-between items-center w-full";
+    ? "flex-col items-start"
+    : "flex-row justify-between items-center w-full";
 
   return (
-    // <div className={`flex ${containerClass}`}>
     <div className={`flex flex-wrap ${containerClass}`}>
       <div
         className={
@@ -97,11 +88,9 @@ const isSmallScreen = screenWidth <= 768;
               debouncedSearchRef.current(value);
             }}
             className="w-50! md:w-70! lg:w-95! rounded-[5px]! dark:text-white dark:placeholder-white"
-          // className="w-full md:w-70 lg:w-95 rounded-[5px] dark:text-white dark:placeholder-white"
           />
         )}
-         <div className="w-50! md:w-60! lg:w-60! xs:flex-1 ">
-         {/* <div className="w-full md:w-60 lg:w-70 xs:flex-1"> */}
+        <div className="w-50! md:w-60! lg:w-60! xs:flex-1 ">
           {setStartDate && setEndDate && (
             <RangePicker
               style={{ width: "100%" }}
@@ -123,14 +112,11 @@ const isSmallScreen = screenWidth <= 768;
         </div>
       </div>
 
-      {/* <div className="flex justify-end md:flex-1"> */}
-      <div className="flex justify-end md:flex-1 w-full md:w-auto">
-        <div
-          className={`flex justify-end flex-1 ${isHouseKeepingTask ? "mr-2" : ""}`}
-        >
+      <div className={isSmallScreen ? "flex my-2" : "flex justify-end md:flex-1 w-full md:w-auto"}>
+        <div className={isHouseKeepingTask ? "mr-3" : ""}>
           {radioButtonsForTableAndGrid}
         </div>
-        <div>
+        <div >
           {canCreate && showCreateButton && (
             <Button
               type="primary"
