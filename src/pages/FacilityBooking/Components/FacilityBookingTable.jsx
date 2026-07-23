@@ -40,7 +40,6 @@ const FacilityBookingTable = ({
       title: "ID",
       render: (_, record) => <div>{record?.id}</div>,
       width: 70,
-      align: "center",
     },
     {
       title: "Guest Name",
@@ -49,7 +48,7 @@ const FacilityBookingTable = ({
       render: (text) => <div>{text}</div>,
     },
     {
-      title: "Guest Phone No.",
+      title: "Guest Phone No",
       dataIndex: "guestPhone",
       key: "guestPhone",
       width: 150,
@@ -120,7 +119,7 @@ const FacilityBookingTable = ({
       title: "Status",
       dataIndex: ["status", "name"],
       key: "status",
-      width: 80,
+      width: 110,
       render: (_, record) => <ColorStatusTag status={record?.status} />,
     },
     {

@@ -34,6 +34,7 @@ const ServiceInventoryTable = ({
           rowKey="uuid"
           pagination={record.serviceInventoryMappings?.length > 10 ? true : false}
           size="small"
+          style={{ marginTop: "16px", marginBottom: "16px" }}
         />
 
       </>

@@ -328,7 +328,7 @@ const EventFacilityOrderForm = ({
           </Form.Item>
 
           <Form.Item
-            label="Guest Phone No."
+            label="Guest Phone No"
             name="guestPhone"
             rules={[{ required: true }]}
           >
