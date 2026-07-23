@@ -241,7 +241,7 @@ const ServiceAddOnForm = ({
         )}
 
         <div className="grid grid-cols-2 gap-4">
-          <Form.Item
+          {/* <Form.Item
             label="Select Service"
             name="selectService"
             rules={[{ required: true, message: "Please select a service" }]}
@@ -257,6 +257,31 @@ const ServiceAddOnForm = ({
                   .includes(input.toLowerCase())
               }
             />
+          </Form.Item> */}
+          <Form.Item
+            label="Select Service"
+            name="selectService"
+            rules={[{ required: true, message: "Please select a service" }]}
+            getValueProps={(value) => ({
+              value: isView
+                ? services.find((item) => item.value === value)?.label
+                : value,
+            })}
+          >
+            {isView ? (
+              <Input readOnly={isView} />
+            ) : (
+              <Select
+                showSearch={{
+                  filterOption: (input, option) =>
+                    (option?.label ?? "")
+                      .toLowerCase()
+                      .includes(input.toLowerCase()),
+                }}
+                options={services}
+                placeholder="Select Service"
+              />
+            )}
           </Form.Item>
 
           <Form.Item

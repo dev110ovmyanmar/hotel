@@ -50,13 +50,13 @@ export default function useGuestColumns(
       },
     },
     {
-      title: "Phone No.",
+      title: "Phone No",
       dataIndex: "phone",
       key: "phone",
       render: (text) => text || "-",
     },
     {
-      title: "NRC No.",
+      title: "NRC No",
       dataIndex: "nrcNo",
       key: "nrcNo",
       render: (text) => text || "-",

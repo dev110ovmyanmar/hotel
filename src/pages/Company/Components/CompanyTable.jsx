@@ -35,7 +35,6 @@ const CompanyTable = ({
       title: "ID",
       render: (_, record) => <div>{record?.id}</div>,
       width: 70,
-      align: "center",
     },
     {
       title: "Name",

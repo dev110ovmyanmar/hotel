@@ -133,7 +133,7 @@ const EventFacilityOrderTable = ({
       render: (text) => <div>{text}</div>,
     },
     {
-      title: "Guest Phone No.",
+      title: "Guest Phone No",
       dataIndex: "guestPhone",
       key: "guestPhone",
       width: 150,

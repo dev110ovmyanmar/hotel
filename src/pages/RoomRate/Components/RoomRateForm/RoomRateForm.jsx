@@ -166,82 +166,82 @@ const RoomRateForm = ({
   // };
 
   useEffect(() => {
-  if (!isAdd && roomRateDetailData) {
-    const weekdayValues = {};
-    const enableFlags = {};
+    if (!isAdd && roomRateDetailData) {
+      const weekdayValues = {};
+      const enableFlags = {};
+
+      days.forEach(({ key }) => {
+        const dayPrice = roomRateDetailData?.weekdays?.[key] ?? null;
+        weekdayValues[key] = dayPrice;
+        enableFlags[`enable_${key}`] = dayPrice !== null;
+      });
+
+      form.setFieldsValue({
+        ...roomRateDetailData,
+        uuid: roomRateDetailData?.uuid,
+        roomType: {
+          uuid: roomRateDetailData?.roomType?.uuid,
+        },
+        price: roomRateDetailData?.price,
+        durationHours: roomRateDetailData?.durationHours,
+        status: roomRateDetailData?.status?.uuid,
+        ...weekdayValues,
+        ...enableFlags,
+      });
+
+      setSelectedData(roomRateDetailData);
+    } else if (isAdd) {
+      form.resetFields();
+      if (roomRateUuid) {
+        form.setFieldsValue({ roomType: { uuid: roomRateUuid } });
+      }
+    }
+  }, [roomRateDetailData, isAdd, form, roomRateUuid]);
+
+  const onFinish = (values) => {
+    const weekdaysObj = days.reduce((acc, { key }) => {
+      const isEnabled = values[`enable_${key}`];
+      acc[key] =
+        isEnabled && values[key] !== undefined && values[key] !== null
+          ? values[key]
+          : null;
+      return acc;
+    }, {});
+
+    const payload = {
+      ...values,
+      ...(isEdit && { uuid: roomRateDetailData?.uuid }),
+      ratePlan: { uuid: activeRatePlanUuid },
+      roomType: values?.roomType,
+      status: { uuid: values?.status },
+      weekdays: weekdaysObj,
+    };
 
     days.forEach(({ key }) => {
-      const dayPrice = roomRateDetailData?.weekdays?.[key] ?? null;
-      weekdayValues[key] = dayPrice;
-      enableFlags[`enable_${key}`] = dayPrice !== null;
+      delete payload[key];
+      delete payload[`enable_${key}`];
     });
 
-    form.setFieldsValue({
-      ...roomRateDetailData,
-      uuid: roomRateDetailData?.uuid,
-      roomType: {
-        uuid: roomRateDetailData?.roomType?.uuid,
-      },
-      price: roomRateDetailData?.price,
-      durationHours: roomRateDetailData?.durationHours,
-      status: roomRateDetailData?.status?.uuid,
-      ...weekdayValues, 
-      ...enableFlags, 
-    });
-
-    setSelectedData(roomRateDetailData);
-  } else if (isAdd) {
-    form.resetFields();
-    if (roomRateUuid) {
-      form.setFieldsValue({ roomType: { uuid: roomRateUuid } });
+    if (isAdd) {
+      upsertRoomRates.mutate(payload, {
+        onSuccess: () => {
+          form.resetFields();
+          setDrawerOpen(false);
+          setPage(1);
+          Toast.success("Room Rate Created Successfully!");
+        },
+      });
     }
-  }
-}, [roomRateDetailData, isAdd, form, roomRateUuid]);
 
-const onFinish = (values) => {
-  const weekdaysObj = days.reduce((acc, { key }) => {
-    const isEnabled = values[`enable_${key}`];
-    acc[key] = isEnabled && values[key] !== undefined && values[key] !== null 
-      ? values[key] 
-      : null;
-    return acc;
-  }, {});
-
-  const payload = {
-    ...values,
-    ...(isEdit && { uuid: roomRateDetailData?.uuid }),
-    ratePlan: { uuid: activeRatePlanUuid },
-    roomType: values?.roomType,
-    status: { uuid: values?.status },
-    weekdays: weekdaysObj,
+    if (isEdit) {
+      upsertRoomRates.mutate(payload, {
+        onSuccess: () => {
+          setDrawerOpen(false);
+          Toast.success("Room Rate Updated Successfully!");
+        },
+      });
+    }
   };
-
-  days.forEach(({ key }) => {
-    delete payload[key];
-    delete payload[`enable_${key}`];
-  });
-
-  if (isAdd) {
-    upsertRoomRates.mutate(payload, {
-      onSuccess: () => {
-        form.resetFields();
-        setDrawerOpen(false);
-        setPage(1);
-        Toast.success("Room Rate Created Successfully!");
-      },
-    });
-  }
-
-  if (isEdit) {
-    upsertRoomRates.mutate(payload, {
-      onSuccess: () => {
-        setDrawerOpen(false);
-        Toast.success("Room Rate Updated Successfully!");
-      },
-    });
-  }
-};
-
 
   return (
     <div>
@@ -376,7 +376,10 @@ const onFinish = (values) => {
 
           <Row gutter={16}>
             <Col span={12}>
-              <Form.Item label="Days of Week" className={`mb-4 ${isView? "pointer-events-none" : ""}`}>
+              <Form.Item
+                label="Days of Week"
+                className={`mb-4 ${isView ? "pointer-events-none" : ""}`}
+              >
                 <div className="flex flex-wrap gap-x-3 gap-y-2 p-0.5">
                   {days.map((day) => (
                     <div
@@ -421,6 +424,8 @@ const onFinish = (values) => {
                       min={0}
                       readOnly={!isEnabled || isView}
                       suffix="MMK"
+                      formatter={priceFormatter}
+                      parser={priceParser}
                     />
                   </Form.Item>
                 </Col>
