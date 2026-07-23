@@ -261,10 +261,10 @@ export const PERMISSIONS = {
   MENU_MODIFIER_EDIT: "menu.edit",
 
   // Extra bed rate
-  EXTRA_BED_RATE_LIST: "extra-bed-rate.list",
-  EXTRA_BED_RATE_VIEW: "extra-bed-rate.view",
-  EXTRA_BED_RATE_CREATE: "extra-bed-rate.create",
-  EXTRA_BED_RATE_EDIT: "extra-bed-rate.edit",
+  EXTRA_RATE_LIST: "extra-rate.list",
+  EXTRA_RATE_VIEW: "extra-rate.view",
+  EXTRA_RATE_CREATE: "extra-rate.create",
+  EXTRA_RATE_EDIT: "extra-rate.edit",
 
   //Room restriction
   ROOM_RESTRICTION_LIST: "room-restriction.list",
