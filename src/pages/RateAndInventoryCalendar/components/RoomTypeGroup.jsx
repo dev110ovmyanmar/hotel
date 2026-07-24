@@ -5,6 +5,8 @@ import RatePlanRows from './RatePlanRows';
 import RoomRow from './RoomRow';
 import { darkModeStyle, textWhiteInDarkStyle } from '../../../utils';
 
+const todayDarkModeStyle = 'dark:!bg-[#1e3a5f] dark:!border-r-[#3B82F6] dark:!border-l-[#3B82F6] dark:!text-gray-200';
+
 const CELL_WIDTH = 100;
 
 /**
@@ -77,12 +79,12 @@ const RoomTypeGroup = ({
                         )}
                     </div>
                 </td>
-                {daysMeta.map(({ dateStr, cellClass }, i) => {
+                {daysMeta.map(({ dateStr, cellClass, isToday }, i) => {
                     const avail = getAvailability(rt.id, dateStr);
                     return (
                         <td
                             key={i}
-                            className={`border-b border-[#dee2e6] text-center p-0 relative ${cellClass} ${darkModeStyle}`}
+                            className={`border-b border-[#dee2e6] text-center p-0 relative ${cellClass} ${isToday ? todayDarkModeStyle : darkModeStyle}`}
                             style={{ width: CELL_WIDTH, borderTop: '3px solid #6b7280' }}
                         >
                             <div
@@ -92,11 +94,11 @@ const RoomTypeGroup = ({
                                 }}
                                 className={`mx-auto flex items-center justify-center transition-all
                                     w-full h-[40px] text-[11px] font-semibold cursor-pointer
-                                     ${avail.stopSell
+                                     ${!isToday && (avail.stopSell
                                         ? 'bg-red-100'
-                                        : 'bg-green-100'
+                                        : 'bg-green-100')
                                     }
-                                    ${darkModeStyle}
+                                    ${isToday ? todayDarkModeStyle : darkModeStyle}
                                     `
                                 }
                             >
@@ -112,11 +114,11 @@ const RoomTypeGroup = ({
                 <td className={`sticky left-0 z-40 bg-[#fcfcfc] border-r border-[#dee2e6] px-3 text-black text-[13px] pl-4 ${darkModeStyle}`}>
                     Stop Sell
                 </td>
-                {daysMeta.map(({ dateStr, cellClass, isPast }, i) => {
+                {daysMeta.map(({ dateStr, cellClass, isPast, isToday }, i) => {
                     const avail = getAvailability(rt.id, dateStr);
                     const isLoading = loadingStates.stopSell[avail?.uuid];
                     return (
-                        <td key={i} className={`border-b border-[#dee2e6] text-center p-0 ${cellClass} ${darkModeStyle}`}>
+                        <td key={i} className={`border-b border-[#dee2e6] text-center p-0 ${cellClass} ${isToday ? todayDarkModeStyle : darkModeStyle}`}>
                             {avail?.uuid ? (
                                 <Switch
                                     size="small"
@@ -139,12 +141,12 @@ const RoomTypeGroup = ({
                 <td className={`sticky left-0 z-40 bg-[#fcfcfc] border-r border-[#dee2e6] px-3 text-black text-[13px] pl-4 ${darkModeStyle} `}>
                     Total Rooms
                 </td>
-                {daysMeta.map(({ dateStr, cellClass }, i) => {
+                {daysMeta.map(({ dateStr, cellClass, isToday }, i) => {
                     const total = getAvailability(rt.id, dateStr).totalRooms ?? 0;
                     return (
                         <td
                             key={i}
-                            className={`border-b border-[#dee2e6] text-center text-[13px] font-bold ${cellClass} ${darkModeStyle}`}
+                            className={`border-b border-[#dee2e6] text-center text-[13px] font-bold ${cellClass} ${isToday ? todayDarkModeStyle : darkModeStyle}`}
                         >
                             {total || '-'}
                         </td>
@@ -157,7 +159,7 @@ const RoomTypeGroup = ({
                 <td className={`sticky left-0 z-40 bg-[#fcfcfc] border-r border-[#dee2e6] px-3 text-black text-[13px] pl-4 ${darkModeStyle}`}>
                     Room Available
                 </td>
-                {daysMeta.map(({ dateStr, cellClass, isPast }, i) => {
+                {daysMeta.map(({ dateStr, cellClass, isPast, isToday }, i) => {
                     const avail = getAvailability(rt.id, dateStr);
                     const isEditing = editingCell?.rtId === rt.id && editingCell?.dateStr === dateStr;
                     const isLoading = loadingStates.availability[avail?.uuid];
@@ -168,7 +170,7 @@ const RoomTypeGroup = ({
                     return (
                         <td
                             key={i}
-                            className={`border-b border-[#dee2e6] text-center text-[13px] font-bold text-green-600 ${cellClass} ${darkModeStyle}`}
+                            className={`border-b border-[#dee2e6] text-center text-[13px] font-bold text-green-600 ${cellClass} ${isToday ? todayDarkModeStyle : darkModeStyle}`}
                         >
                             {avail?.uuid && !isPast ? (
                                 <Tooltip
@@ -239,12 +241,12 @@ const RoomTypeGroup = ({
                 <td className={`sticky left-0 z-40 bg-[#fcfcfc] border-b border-r border-[#dee2e6] px-3 text-black text-[13px] pl-4 ${darkModeStyle}`}>
                     Sold Rooms
                 </td>
-                {daysMeta.map(({ dateStr, cellClass }, i) => {
+                {daysMeta.map(({ dateStr, cellClass, isToday }, i) => {
                     const avail = getAvailability(rt.id, dateStr);
                     return (
                         <td
                             key={i}
-                            className={`border-b border-[#dee2e6] text-center text-[13px] font-bold text-red-500 ${cellClass} dark:!text-red-500 ${darkModeStyle} `}
+                            className={`border-b border-[#dee2e6] text-center text-[13px] font-bold text-red-500 ${cellClass} dark:!text-red-500 ${isToday ? todayDarkModeStyle : darkModeStyle}`}
                         >
                             {/* {avail.sold} */}
                             {avail.soldRooms}

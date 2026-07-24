@@ -1,6 +1,8 @@
 import React from 'react';
 import { darkModeStyle, textWhiteInDarkStyle } from '../../../utils';
 
+const todayDarkModeStyle = 'dark:!bg-[#1e3a5f] dark:!border-r-[#3B82F6] dark:!border-l-[#3B82F6] dark:!text-gray-200';
+
 /**
  * CalendarFooter
  * Renders the sticky <tfoot> with Total Available and Occupancy % rows.
@@ -26,7 +28,7 @@ const CalendarFooter = ({ dailyStats, daysMeta, CELL_WIDTH, SIDEBAR_WIDTH }) => 
             {dailyStats.map((stat, i) => (
                 <td
                     key={i}
-                    className={`border-b border-[#dee2e6] text-center p-2 font-bold bg-gray-200 ${daysMeta[i].cellClass} ${darkModeStyle}`}
+                    className={`border-b border-[#dee2e6] text-center p-2 font-bold bg-gray-200 text-white ${daysMeta[i].cellClass} ${daysMeta[i].isToday ? todayDarkModeStyle : darkModeStyle}`}
                     style={{ width: CELL_WIDTH, minWidth: CELL_WIDTH }}
                 >
                     <div className={`text-sm ${stat.available === 0 ? 'text-red-500' : 'text-green-600'}`}>
@@ -48,7 +50,7 @@ const CalendarFooter = ({ dailyStats, daysMeta, CELL_WIDTH, SIDEBAR_WIDTH }) => 
             {dailyStats.map((stat, i) => (
                 <td
                     key={i}
-                    className={`border-b border-[#dee2e6] text-center p-2 bg-gray-200 text-white ${daysMeta[i].cellClass} ${darkModeStyle}`}
+                    className={`border-b border-[#dee2e6] text-center p-2  bg-gray-200 text-white ${daysMeta[i].cellClass} ${daysMeta[i].isToday ? todayDarkModeStyle : darkModeStyle}`}
                     style={{ width: CELL_WIDTH, minWidth: CELL_WIDTH }}
                 >
                     <div className="flex flex-col items-center">
