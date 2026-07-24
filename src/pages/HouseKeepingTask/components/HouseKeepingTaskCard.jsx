@@ -69,7 +69,7 @@ const HouseKeepingTaskCard = ({ data, onEdit, onView,
             <div className="flex justify-between items-start mb-3">
                 <div className="flex flex-col">
                     <span className="text-[9px] font-bold text-gray-400 uppercase tracking-tight">Room No.</span>
-                    <h3 className="text-xl font-black text-gray-900 leading-tight group-hover:text-blue-600 transition-colors">
+                    <h3 className="text-xl font-black leading-tight group-hover:text-blue-600 transition-colors">
                         {data?.room?.roomNo || "---"}
                     </h3>
                 </div>

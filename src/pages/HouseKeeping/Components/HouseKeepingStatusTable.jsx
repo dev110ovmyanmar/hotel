@@ -24,7 +24,7 @@ const HouseKeepingStatusTable = ({
                 columns={columns}
                 dataSource={dataSource}
                 rowKey="uuid"
-                className="mx-5"
+                // className="mx-5"
                 pagination={{
                     current: page,
                     pageSize: perPage,

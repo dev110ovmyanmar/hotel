@@ -252,8 +252,8 @@ const AddPaymentForm = ({
                                                             form.validateFields(["paymentMethod"]);
                                                         }}
                                                         className={`text-center rounded-lg relative transition-all duration-200 cursor-pointer ${selectedMethod === method.uuid
-                                                            ? "border-2 border-blue-500 shadow-sm bg-blue-50/10"
-                                                            : "border border-slate-200 hover:border-slate-300"
+                                                            ? "!border-2 !border-blue-500 !shadow-sm dark:!bg-gray-900 dark:!backdrop-filter-md"
+                                                            : "!border !border-slate-200 hover:border-slate-300"
                                                             }`}
                                                         bodyStyle={{ padding: "12px 6px" }}
                                                     >
@@ -333,7 +333,7 @@ const AddPaymentForm = ({
                                             <Option value={paymentCompletedStatus.uuid}>
                                                 <div className="flex items-center gap-2">
                                                     <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
-                                                    <span className="text-slate-700 font-medium">
+                                                    <span className=" font-medium">
                                                         {paymentCompletedStatus.name}
                                                     </span>
                                                 </div>

@@ -26,6 +26,13 @@ const ReservationsTable = ({
 }) => {
   const navigate = useNavigate();
 
+  const tableData = (data || []).map((item) => ({
+    ...item,
+    childCount: item.children,
+    children: undefined,
+  }));
+  console.log(tableData);
+
   const handleMenuClick = (item) => {
     if (item?.uuid) {
       navigate(`/reservations/${item.uuid}/room-information`);
@@ -128,14 +135,14 @@ const ReservationsTable = ({
             <PhoneOutlined /> {record?.guest?.phone}
           </div>
 
-          <div className="flex items-center gap-3 text-gray-500">
+          <div className="flex items-center gap-3 ">
             <span className="flex items-center gap-1">
               <IoPeopleSharp className="text-blue-500" /> {record?.adults}
             </span>
 
-            {record?.children && (
+            {record?.childCount > 0 && (
               <span className="flex items-center gap-1">
-                <FaChild className="text-pink-500" /> {record.children}
+                <FaChild className="text-pink-500" /> {record.childCount}
               </span>
             )}
           </div>
@@ -192,7 +199,9 @@ const ReservationsTable = ({
         tableLayout="fixed"
         scroll={{ x: 1000 }}
         columns={columns}
-        dataSource={data}
+        // dataSource={Array.isArray(data) ? data : []}
+        dataSource={tableData}
+        // dataSource={[]}
         pagination={{
           current: page,
           pageSize: perPage,

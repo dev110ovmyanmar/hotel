@@ -25,7 +25,7 @@ const useHouseKeepingTaskColumns = (onEdit, onView) => {
             width: 60,
         },
         {
-            title: "Room No.",
+            title: "Room No",
             key: "roomNo",
             // Accessing roomNo from the nested room object
             render: (_, record) => record?.room?.roomNo || "-",
@@ -114,6 +114,8 @@ const useHouseKeepingTaskColumns = (onEdit, onView) => {
             align: "center",
             render: (_, record) => {
                 const isEditDisabled = ["cancelled", "completed"].includes(record.housekeepingStatus?.code);
+                const houseKeepingStatus = record?.housekeepingStatus?.code === "cancelled" ||
+                    record?.housekeepingStatus?.code === "completed";
 
                 const items = [
                     { key: "1", label: "View", icon: <EyeOutlined /> },
@@ -131,7 +133,7 @@ const useHouseKeepingTaskColumns = (onEdit, onView) => {
                             },
                             items: [
                                 viewPermission && { key: "1", label: "View", icon: <EyeOutlined /> },
-                                editPermission && { key: "2", label: "Edit", icon: <EditOutlined /> },
+                                editPermission && houseKeepingStatus || { key: "2", label: "Edit", icon: <EditOutlined /> },
                             ],
                         }}
                         trigger={["click"]}

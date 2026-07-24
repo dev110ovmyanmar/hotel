@@ -36,7 +36,7 @@ const { TextArea } = Input;
 
 // Color Configuration Map for Segmented Tabs
 const CHANNEL_COLORS = {
-  all: { bg: "#f1f5f9", text: "#475569" }, // Slate
+  all: { bg: "#f1f5f9", text: "#727e8f" }, // Slate
   cash: { bg: "#dcfce7", text: "#15803d" }, // Emerald Green
   card: { bg: "#dbeafe", text: "#1d4ed8" }, // Blue
   wallet: { bg: "#fae8ff", text: "#a21caf" }, // Fuchsia/Purple
@@ -272,7 +272,7 @@ const AddDepoistForm = ({
                               form.validateFields(["paymentMethod"]);
                             }}
                             className={`text-center rounded-lg relative transition-all duration-200 cursor-pointer ${selectedMethod === method.uuid
-                              ? "border-2 border-blue-500 shadow-sm bg-blue-50/10"
+                              ? "!border-2 !border-blue-500 shadow-sm "
                               : "border border-slate-200 hover:border-slate-300"
                               }`}
                             bodyStyle={{ padding: "12px 6px" }}
@@ -314,7 +314,7 @@ const AddDepoistForm = ({
             <Row gutter={16}>
               <Col span={12}>
                 <Form.Item
-                  label={<span className="text-slate-600 font-medium">Folio No</span>}
+                  label={<span className="font-medium">Folio No</span>}
                   name="folio"
                   rules={[{ required: true, message: "Required" }]}
                 >
@@ -327,7 +327,7 @@ const AddDepoistForm = ({
               </Col>
               <Col span={12}>
                 <Form.Item
-                  label={<span className="text-slate-600 font-medium">Guest</span>}
+                  label={<span className=" font-medium">Guest</span>}
                   name="guest"
                 >
                   <Select
@@ -349,7 +349,7 @@ const AddDepoistForm = ({
             <Row gutter={16}>
               <Col span={12}>
                 <Form.Item
-                  label={<span className="text-slate-600 font-medium">Status</span>}
+                  label={<span className=" font-medium">Status</span>}
                   name="paymentStatus"
                   rules={[{ required: true, message: "Required" }]}
                 >
@@ -358,7 +358,7 @@ const AddDepoistForm = ({
                       <Option value={paymentCompletedStatus.uuid}>
                         <div className="flex items-center gap-2">
                           <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
-                          <span className="text-slate-700 font-medium">
+                          <span className=" font-medium">
                             {paymentCompletedStatus.name}
                           </span>
                         </div>
@@ -369,7 +369,7 @@ const AddDepoistForm = ({
               </Col>
               <Col span={12}>
                 <Form.Item
-                  label={<span className="text-slate-600 font-medium">Amount</span>}
+                  label={<span className=" font-medium">Amount</span>}
                   name="amount"
                   rules={[
                     { required: true, message: "Amount required" },
@@ -393,7 +393,7 @@ const AddDepoistForm = ({
               <Col span={12}>
                 <Form.Item
                   label={
-                    <span className="text-slate-600 font-medium">Payment Date</span>
+                    <span className=" font-medium">Payment Date</span>
                   }
                   name="paymentDate"
                 >
@@ -407,7 +407,7 @@ const AddDepoistForm = ({
               <Col span={12}>
                 <Form.Item
                   label={
-                    <span className="text-slate-600 font-medium">
+                    <span className=" font-medium">
                       Transaction No
                     </span>
                   }
@@ -426,7 +426,7 @@ const AddDepoistForm = ({
               <Col span={12}>
                 <Form.Item
                   label={
-                    <span className="text-slate-600 font-medium">
+                    <span className=" font-medium">
                       External Reference
                     </span>
                   }

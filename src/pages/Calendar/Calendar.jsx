@@ -27,6 +27,10 @@ const STATUS_COLORS = {
 };
 
 
+// Dark style for today cells — no bg override so our blue bg wins
+const todayDarkStyle = `dark:!border-[#3B82F6] dark:!text-gray-200`;
+const todayDarkModeStyle = 'dark:!bg-[#1e3a5f] dark:!border-r-[#3B82F6] dark:!border-l-[#3B82F6] dark:!text-gray-200';
+
 const Calendar = () => {
   const [currentDate, setCurrentDate] = useState(dayjs());
   const [allData, setAllData] = useState([]);
@@ -38,6 +42,8 @@ const Calendar = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const gridRef = useRef(null);
   const statsScrollRef = useRef(null);
+  const [filterOpen, setFilterOpen] = useState(false);
+  const [localFilters, setLocalFilters] = useState({ roomType: null, floor: null, statuses: null });
 
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
   const reservationRoomStatus = useMemo(
@@ -125,18 +131,13 @@ const Calendar = () => {
   }, [apiData]);
 
   const filteredData = useMemo(() => {
-    if (!searchQuery) return allData;
-    return allData
-      .map(group => {
-        const filteredRooms = group.rooms.filter(room =>
-          room.roomNo.toLowerCase().includes(searchQuery.toLowerCase())
-        );
-        if (filteredRooms.length > 0) {
-          return { ...group, rooms: filteredRooms };
-        }
-        return null;
-      })
-      .filter(Boolean);
+    // When searching, the API already returns server-filtered results
+    // (by guest name / reservation ID). Don't re-filter on the frontend.
+    if (searchQuery) return allData;
+
+    // No search — apply local filters only (roomType, floor, status handled server-side too,
+    // but allData is already the API response so just return it as-is)
+    return allData;
   }, [allData, searchQuery]);
 
   const days = useMemo(() => {
@@ -177,39 +178,56 @@ const Calendar = () => {
   };
 
   const filterContent = (
-    <div className="w-72 p-1 flex flex-col gap-4">
+    <div style={{ width: 288, padding: '4px 0', display: 'flex', flexDirection: 'column', gap: 16 }}>
       <div>
-        <div className="text-[11px] font-bold text-gray-400 uppercase mb-2">Room Type</div>
+        <div style={{ fontSize: 11, fontWeight: 700, color: '#9ca3af', textTransform: 'uppercase', marginBottom: 8 }}>Room Type</div>
         <Select
-          allowClear className="w-full" placeholder="All Types"
-          value={filters.roomType}
-          onChange={(v) => setFilters(prev => ({ ...prev, roomType: v }))}
+          allowClear className="w-full" style={{ width: '100%' }} placeholder="All Types"
+          value={localFilters.roomType}
+          onChange={(v) => setLocalFilters(prev => ({ ...prev, roomType: v }))}
           options={roomTypeOptions}
         />
       </div>
       <div>
-        <div className="text-[11px] font-bold text-gray-400 uppercase mb-2">Floor</div>
+        <div style={{ fontSize: 11, fontWeight: 700, color: '#9ca3af', textTransform: 'uppercase', marginBottom: 8 }}>Floor</div>
         <Select
-          allowClear className="w-full" placeholder="All Floors"
-          value={filters.floor}
-          onChange={(v) => setFilters(prev => ({ ...prev, floor: v }))}
+          allowClear className="w-full" style={{ width: '100%' }} placeholder="All Floors"
+          value={localFilters.floor}
+          onChange={(v) => setLocalFilters(prev => ({ ...prev, floor: v }))}
           options={floorOptions}
         />
       </div>
       <div>
-        <div className="text-[11px] font-bold text-gray-400 uppercase mb-2">Booking Status</div>
+        <div style={{ fontSize: 11, fontWeight: 700, color: '#9ca3af', textTransform: 'uppercase', marginBottom: 8 }}>Booking Status</div>
         <Select
-          allowClear className="w-full" placeholder="All Statuses"
-          value={filters.statuses}
-          onChange={(v) => setFilters(prev => ({ ...prev, statuses: v }))}
+          allowClear className="w-full" style={{ width: '100%' }} placeholder="All Statuses"
+          value={localFilters.statuses}
+          onChange={(v) => setLocalFilters(prev => ({ ...prev, statuses: v }))}
           options={reservationRoomStatus}
         />
       </div>
-      <Divider className="my-2" />
-      <Button type="text" danger block icon={<CloseCircleOutlined />}
-        onClick={() => setFilters({ roomType: null, floor: null, statuses: null })}>
-        Reset All Filters
-      </Button>
+      <Divider style={{ margin: '4px 0' }} />
+      <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: 8 }}>
+        <Button
+          type="default"
+          onClick={() => {
+            setLocalFilters({ roomType: null, floor: null, statuses: null });
+            setFilters({ roomType: null, floor: null, statuses: null });
+            setFilterOpen(false);
+          }}
+        >
+          Cancel
+        </Button>
+        <Button
+          type="primary"
+          onClick={() => {
+            setFilters(localFilters);
+            setFilterOpen(false);
+          }}
+        >
+          Apply
+        </Button>
+      </div>
     </div>
   );
 
@@ -259,7 +277,7 @@ const Calendar = () => {
           </Space>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 text-blue-500">
           <div className="text-lg font-medium w-full text-center">
             {currentDate ? currentDate.format('DD MMMM YYYY') : ''}
           </div>
@@ -290,7 +308,17 @@ const Calendar = () => {
             onClear={() => { setSearchInput(''); setSearchQuery(''); }}
           />
           <Button type="primary" disabled={isLoading || isFetching} onClick={() => setCurrentDate(dayjs())}>Today</Button>
-          <Popover content={filterContent} title="Filter Rooms" trigger={(isLoading || isFetching) ? [] : 'click'} placement="bottomRight">
+          <Popover
+            content={filterContent}
+            title="Filter Rooms"
+            trigger="click"
+            placement="bottomRight"
+            open={filterOpen && !isLoading && !isFetching}
+            onOpenChange={(v) => {
+              if (v) setLocalFilters({ ...filters });
+              setFilterOpen(v);
+            }}
+          >
             <Badge dot={Object.values(filters).some(f => f && f.length > 0)}>
               <Button icon={<FilterOutlined />} disabled={isLoading || isFetching}>Filter</Button>
             </Badge>
@@ -315,15 +343,36 @@ const Calendar = () => {
                 {days.map((day, i) => {
                   const isToday = checkIsToday(day);
                   return (
-                    <th key={i} className={`sticky top-0 z-[50] border-b border-[#dee2e6] text-center p-2
+                    <th key={i} className={`sticky top-0 z-[50] border-b text-center p-2
                       ${isToday
-                        ? 'bg-[#E6F4FF] border-r-2 border-r-[#91CAFF] border-l-2 border-l-[#91CAFF]'
-                        : 'bg-[#fcfcfc] border-r'
-                      } ${darkModeStyle}`}
+                        ? `bg-[#DBEAFE] dark:!bg-[#1e3a5f] border-r-2 border-r-[#3B82F6] border-l-2 border-l-[#3B82F6] ${todayDarkStyle}`
+                        : `bg-[#fcfcfc] border-r border-[#dee2e6] ${darkModeStyle}`
+                      }`}
                       style={{ width: CELL_WIDTH, minWidth: CELL_WIDTH, maxWidth: CELL_WIDTH }}>
-                      <div className={`text-[10px] uppercase ${isToday ? 'text-blue-500 font-bold' : 'text-gray-400'}`}>{day.format('MMM')}</div>
-                      <div className={`text-base font-bold ${isToday ? 'text-blue-600' : ''}`}>{day.format('D')}</div>
-                      <div className={`text-[11px] ${isToday ? 'text-blue-500 font-bold' : 'text-gray-500'}`}>{day.format('ddd')}</div>
+                      <div className={`text-[10px] uppercase font-semibold ${isToday ? 'text-blue-500' : 'text-gray-400'}`}>{day.format('MMM')}</div>
+                      {isToday ? (
+                        <>
+                          <div
+                            style={{
+                              width: 30, height: 30,
+                              borderRadius: '50%',
+                              backgroundColor: '#2563EB',
+                              color: '#fff',
+                              display: 'flex', alignItems: 'center', justifyContent: 'center',
+                              fontSize: 14, fontWeight: 700,
+                              margin: '2px auto',
+                              boxShadow: '0 2px 8px rgba(37,99,235,0.45)'
+                            }}
+                          >{day.format('D')}</div>
+                          <div className="text-[11px] text-blue-500 font-bold">{day.format('ddd')}</div>
+                          <div style={{ fontSize: 9, fontWeight: 700, color: '#2563EB', letterSpacing: 1, textTransform: 'uppercase' }}>Today</div>
+                        </>
+                      ) : (
+                        <>
+                          <div className="text-base font-bold text-gray-700">{day.format('D')}</div>
+                          <div className="text-[11px] text-gray-500">{day.format('ddd')}</div>
+                        </>
+                      )}
                     </th>
                   );
                 })}
@@ -333,7 +382,7 @@ const Calendar = () => {
               {filteredData.map((group) => (
                 <React.Fragment key={group.name}>
                   <tr className="bg-[#fcfcfc] cursor-pointer hover:bg-gray-100 h-15" onClick={() => toggleGroup(group.name)}>
-                    <td className={`sticky left-0 z-40 bg-gray-300 border-b border-r border-[#dee2e6] p-3 font-bold ${darkModeStyle}`} style={{ width: SIDEBAR_WIDTH, minWidth: SIDEBAR_WIDTH, maxWidth: SIDEBAR_WIDTH, borderTop: '3px solid #6b7280' }}>
+                    <td className={`sticky left-0 z-40 bg-gray-200 border-b border-r border-[#dee2e6] p-3 font-bold ${darkModeStyle}`} style={{ width: SIDEBAR_WIDTH, minWidth: SIDEBAR_WIDTH, maxWidth: SIDEBAR_WIDTH, borderTop: '3px solid #6b7280' }}>
                       <div className="flex justify-between items-center">
                         <span className="text-[12px] truncate">{group.name}</span>
                         {expandedGroups.has(group.name) ? <UpOutlined className="!text-[9px] " /> : <DownOutlined className="!text-[9px] " />}
@@ -344,16 +393,15 @@ const Calendar = () => {
                       const dayStr = day.format('YYYY-MM-DD');
                       const dateData = (group.dates || []).find(d => d.date === dayStr);
                       const availableRooms = dateData?.availability?.availableRooms;
-                      console.log("Available", availableRooms);
                       return (
                         <td key={i}
                           className={`border-b border-[#dee2e6] text-center p-1
                           ${isToday
-                              ? 'bg-[#E6F4FF] border-r-2 border-r-[#91CAFF] border-l-2 border-l-[#91CAFF]'
-                              : 'bg-[#fcfcfc] border-r'
-                            } ${darkModeStyle}`}
+                              ? `bg-[#DBEAFE] dark:!bg-[#1e3a5f] border-r-2 border-r-[#3B82F6] border-l-2 border-l-[#3B82F6] ${todayDarkStyle}`
+                              : `bg-gray-200 border-r ${darkModeStyle}`
+                            }`}
                           style={{ width: CELL_WIDTH, minWidth: CELL_WIDTH, maxWidth: CELL_WIDTH, borderTop: '3px solid #6b7280' }}>
-                          <div className={`flex flex-col items-center justify-center`}>
+                          <div className={`flex flex-col  items-center justify-center`}>
                             <div className="font-bold flex flex-col items-center">
                               <Input readOnly value={availableRooms} style={{ padding: '0 4px', height: '24px', fontSize: '12px' }} className="text-center text-[12px] font-bold text-green-600 px-1 !w-[50px] !border-gray-200 !rounded" />
                             </div>
@@ -374,9 +422,9 @@ const Calendar = () => {
                           <td key={dayIdx}
                             className={`border-b border-[#dee2e6] p-0 relative transition-colors
                               ${isToday
-                                ? 'bg-[#E6F4FF] border-r-2 border-r-[#91CAFF] border-l-2 border-l-[#91CAFF]'
-                                : 'bg-[#fcfcfc] border-r'
-                              } ${darkModeStyle}`
+                                ? `bg-[#DBEAFE] dark:!bg-[#1e3a5f] border-r-2 border-r-[#3B82F6] border-l-2 border-l-[#3B82F6] ${todayDarkStyle}`
+                                : `bg-[#fcfcfc] border-r ${darkModeStyle}`
+                              }`
                             }
                             style={{ width: CELL_WIDTH, minWidth: CELL_WIDTH, maxWidth: CELL_WIDTH }}>
                             {(room.dates || []).map((bookingItem, bIdx) => {
@@ -496,9 +544,9 @@ const Calendar = () => {
                 </React.Fragment>
               ))}
 
-              <tr className="bg-emerald-50/30">
-                <td className={`sticky left-0 z-40 bg-emerald-50/80 border-b border-r border-[#dee2e6] p-3 font-bold ${darkModeStyle}`} style={{ width: SIDEBAR_WIDTH, minWidth: SIDEBAR_WIDTH, maxWidth: SIDEBAR_WIDTH }}>
-                  <span className={`text-[11px] uppercase text-emerald-700 ${textWhiteInDarkStyle}`}>Rooms Available</span>
+              <tr className="bg-gray-50/80">
+                <td className={`sticky left-0 z-40 bg-[#1677FF] border-b border-r border-[#dee2e6] p-3 font-bold ${darkModeStyle}`} style={{ width: SIDEBAR_WIDTH, minWidth: SIDEBAR_WIDTH, maxWidth: SIDEBAR_WIDTH }}>
+                  <span className={`text-[11px] uppercase !text-[#FFFFFF] font-bold ${textWhiteInDarkStyle}`}>Rooms Available</span>
                 </td>
                 {dailyStats.map((stat, i) => {
                   const isZero = stat.available === 0;
@@ -506,9 +554,9 @@ const Calendar = () => {
                   return (
                     <td key={i} className={`border-b border-[#dee2e6] text-center p-2 font-bold
                         ${isToday
-                        ? 'bg-emerald-100/60 border-r-2 border-r-emerald-300 border-l-2 border-l-emerald-300'
-                        : 'bg-emerald-50/30 border-r'
-                      } ${darkModeStyle}`} style={{ width: CELL_WIDTH, minWidth: CELL_WIDTH, maxWidth: CELL_WIDTH }}>
+                        ? 'bg-[#DBEAFE] border-r-2 border-r-[#3B82F6] border-l-2 border-l-[#3B82F6]'
+                        : 'bg-[#c4c9d4] border-r'
+                      } ${isToday ? todayDarkModeStyle : darkModeStyle}`} style={{ width: CELL_WIDTH, minWidth: CELL_WIDTH, maxWidth: CELL_WIDTH }}>
                       <div className={`text-sm ${isZero ? 'text-red-500' : 'text-green-600'}`}>
                         {stat.available}
                       </div>
@@ -516,18 +564,18 @@ const Calendar = () => {
                   );
                 })}
               </tr>
-              <tr className="bg-blue-50/30">
-                <td className={`sticky left-0 z-40 bg-blue-50/80 border-b border-r border-[#dee2e6] p-3 font-bold ${darkModeStyle}`} style={{ width: SIDEBAR_WIDTH, minWidth: SIDEBAR_WIDTH, maxWidth: SIDEBAR_WIDTH }}>
-                  <span className={`text-[11px] uppercase text-blue-700 ${textWhiteInDarkStyle}`}>Occupancy %</span>
+              <tr className="bg-gray-50/80">
+                <td className={`sticky left-0 z-40 bg-[#1677FF] border-b border-r border-[#dee2e6] p-3 font-bold ${darkModeStyle}`} style={{ width: SIDEBAR_WIDTH, minWidth: SIDEBAR_WIDTH, maxWidth: SIDEBAR_WIDTH }}>
+                  <span className={`text-[11px] uppercase !text-[#FFFFFF] font-bold ${textWhiteInDarkStyle}`}>Occupancy %</span>
                 </td>
                 {dailyStats.map((stat, i) => {
                   const isToday = checkIsToday(days[i]);
                   return (
                     <td key={i} className={`border-b border-[#dee2e6] text-center p-2
                         ${isToday
-                        ? 'bg-blue-100/60 border-r-2 border-r-blue-300 border-l-2 border-l-blue-300'
-                        : 'bg-blue-50/30 border-r'
-                      } ${darkModeStyle}`} style={{ width: CELL_WIDTH, minWidth: CELL_WIDTH, maxWidth: CELL_WIDTH }}>
+                        ? 'bg-[#DBEAFE] border-r-2 border-r-[#3B82F6] border-l-2 border-l-[#3B82F6]'
+                        : 'bg-[#c4c9d4] border-r'
+                      } ${isToday ? todayDarkModeStyle : darkModeStyle}`} style={{ width: CELL_WIDTH, minWidth: CELL_WIDTH, maxWidth: CELL_WIDTH }}>
                       <div className="flex flex-col items-center">
                         <div className="text-[11px] font-bold text-gray-700">{stat.occupancy}%</div>
                         <div className="w-full bg-gray-200 h-1 mt-1 rounded-full overflow-hidden">

@@ -120,7 +120,7 @@ const NoteCard = ({ borderColor, tags, content, meta, isStarred }) => (
       </div>
     </div>
     
-    <p className="text-sm text-slate-700 leading-relaxed font-medium mb-4">
+    <p className="text-sm  leading-relaxed font-medium mb-4">
       {content}
     </p>
     

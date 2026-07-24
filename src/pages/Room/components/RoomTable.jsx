@@ -28,7 +28,7 @@ const RoomTable = ({
       width: 70,
     },
     {
-      title: "Room No.",
+      title: "Room No",
       dataIndex: "roomNo",
       key: "roomNo",
       render: (text) => <div>{text}</div>,

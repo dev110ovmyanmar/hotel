@@ -156,7 +156,7 @@ const ChangeStatusForm = ({ reservationDetails, open, onClose }) => {
               </div>
 
               {/* Description text placed write under title description text */}
-              <span className="text-xs text-gray-600 font-normal mt-0.5 pl-4 block leading-normal">
+              <span className="text-xs  font-normal mt-0.5 pl-4 block leading-normal">
                 {design.desc}
               </span>
             </div>

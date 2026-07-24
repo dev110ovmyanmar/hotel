@@ -164,10 +164,10 @@ const ServiceInventoryForm = ({
   };
 
   const DrawerTitle = isView
-    ? "Inventory Details"
+    ? "Details Inventory "
     : isEdit
-      ? "Inventory Edit"
-      : "Inventory Create";
+      ? "Edit Inventory "
+      : "Create Inventory ";
 
   const sharedPropsforStock = {
     mode: "spinner",

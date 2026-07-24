@@ -336,9 +336,10 @@ const RatePlanTable = ({
         columns={expandColumns(record)}
         dataSource={processedRates}
         rowKey="uuid"
-        pagination={false}
+        pagination={processedRates?.length > 10 ? true : false}
         size="small"
         bordered
+        style={{ marginTop: "16px", marginBottom: "16px" }}
       />
     );
   };
@@ -438,7 +439,6 @@ const RatePlanTable = ({
                     flexDirection: "column",
                     gap: "8px",
                   }}
-                  
                 >
                   {getWeekdayList(selectedWeekDayData.weekdays).map((day) => (
                     <div
@@ -448,9 +448,13 @@ const RatePlanTable = ({
                         justifyContent: "space-between",
                         fontSize: "13px",
                       }}
-                      
                     >
-                      <span style={{ color: "#595959" }} className={textGrayInDarkStyle}>{day.label}</span>
+                      <span
+                        style={{ color: "#595959" }}
+                        className={textGrayInDarkStyle}
+                      >
+                        {day.label}
+                      </span>
                       <span style={{ fontWeight: 500 }}>
                         <PriceTag value={day.val} currency="MMK" />
                       </span>

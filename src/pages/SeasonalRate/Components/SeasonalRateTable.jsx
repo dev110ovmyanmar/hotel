@@ -11,6 +11,7 @@ import SeasonalRateForm from "./SeasonalRateForms/SeasonalRateForm";
 import { PERMISSIONS } from "../../../variables/permission";
 import PriceTag from "../../../component/PriceTag/PriceTag";
 import { TableColumns } from "../../../component/TableColumns/TableColumns";
+import { textGrayInDarkStyle, textWhiteInDarkStyle } from "../../../utils";
 
 const SeasonalRateTable = ({
   data,
@@ -238,9 +239,10 @@ const SeasonalRateTable = ({
         className="expanded-table dark:[&_.ant-table-thead>tr>th]:!text-[#F3F4F6]"
         columns={expandColumns}
         dataSource={processedRates}
-        pagination={false}
+        pagination={processedRates?.length > 10 ? true : false}
         size="small"
         bordered
+        style={{ marginTop: "16px", marginBottom: "16px" }}
       />
     );
   };
@@ -299,10 +301,15 @@ const SeasonalRateTable = ({
                 justifyContent: "space-between",
                 alignItems: "center",
                 marginBottom: "12px",
-                marginTop: "20px"
+                marginTop: "20px",
               }}
             >
-              <span style={{ color: "#5b5959" }}>Base Price</span>
+              <span
+                style={{ color: "#5b5959" }}
+                className={textGrayInDarkStyle}
+              >
+                Base Price
+              </span>
               <div
                 style={{
                   display: "flex",
@@ -326,7 +333,7 @@ const SeasonalRateTable = ({
                     marginBottom: "12px",
                     color: "#262626",
                   }}
-                  className="dark:!text-gray-200"
+                  className="dark:!text-gray-100"
                 >
                   Weekday Rates
                 </p>
@@ -344,10 +351,15 @@ const SeasonalRateTable = ({
                         justifyContent: "space-between",
                         alignItems: "center",
                         marginBottom: "12px",
-                        marginTop: "10px"
+                        marginTop: "10px",
                       }}
                     >
-                      <span style={{ color: "#595959" }}>{day.label}</span>
+                      <span
+                        style={{ color: "#595959" }}
+                        className={textGrayInDarkStyle}
+                      >
+                        {day.label}
+                      </span>
                       <div
                         style={{
                           display: "flex",

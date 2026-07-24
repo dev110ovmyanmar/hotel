@@ -249,14 +249,13 @@ const RoomInventoryTable = ({
   ];
 
   const expandedRowRender = (record) => {
-    console.log(record, "record");
     return (
       <Table
         className="expanded-table dark:[&_.ant-table-thead>tr>th]:!text-[#F3F4F6]"
         columns={expandColumns}
         dataSource={record?.calendars}
         rowKey="uuid"
-        pagination={false}
+        pagination={record?.calendars.length > 10 ? true : false}
         size="small"
         style={{ marginTop: "16px", marginBottom: "16px" }}
       />

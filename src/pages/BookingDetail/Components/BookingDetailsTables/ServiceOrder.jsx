@@ -9,7 +9,7 @@ const ServiceOrder = ({ data }) => {
   const CustomTitle = (
     <Space>
       <div className="service-order-icon-box">
-        <PlusOutlined style={{ color: "#049985", fontSize: "18px" }} />
+        <PlusOutlined style={{ color: "#1278ec", fontSize: "18px" }} />
       </div>
       <Text>Service Order</Text>
     </Space>
@@ -17,21 +17,14 @@ const ServiceOrder = ({ data }) => {
 
   const columns = [
     {
-      title: "Service Package",
-      dataIndex: ["servicePackage", "name"],
-      key: "servicePackage",
+      title: "Service ",
+      dataIndex: ["service", "name"],
+      key: "service",
     },
-    // {
-    //   title: "No",
-    //   dataIndex: "no",
-    //   key: "no",
-    //   align: "center",
-    // },
     {
       title: "Order Status",
       dataIndex: "orderStatus",
       key: "orderStatus",
-      align: "center",
       render: (status) => {
         return (
           status ? <ColorStatusTag status={status} /> : "-"
@@ -44,12 +37,12 @@ const ServiceOrder = ({ data }) => {
       key: "guest",
     },
   ];
-
+  console.log(data,"DataInServiceOrder")
   return (
     <>
       {
         data?.length !== 0 && (
-          <Card title={CustomTitle} className="service-card line-height">
+          <Card title={CustomTitle} className="service-order-card line-height">
             <Table
               columns={columns}
               dataSource={data}

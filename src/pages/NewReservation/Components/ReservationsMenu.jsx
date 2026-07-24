@@ -174,7 +174,7 @@ const ReservationMenu = ({ onStatusChange, onViewChange }) => {
           })}
         />
       </div>
-      <div className="w-full px-6 mt-5">
+      <div className="w-full px-6">
         <ReservationSearchBar
           searchPlaceholder="Search ....."
           keyword={keyword}

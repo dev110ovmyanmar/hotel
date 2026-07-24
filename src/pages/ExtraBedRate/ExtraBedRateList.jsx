@@ -46,16 +46,16 @@ const ExtraBedRateList = () => {
     <div className="w-full px-6 py-2">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
         <ListHeader
-          searchPlaceholder="Search ExtraBed Rate ..."
+          searchPlaceholder="Search Extra Rate ..."
           keyword={keyword}
           setKeyword={setKeyword}
-          addButtonText="Add New ExtraBed Rate"
+          addButtonText="Add New Extra Rate"
           onAdd={handleAdd}
           startDate={startDate}
           endDate={endDate}
           setStartDate={setStartDate}
           setEndDate={setEndDate}
-          permission={PERMISSIONS.EXTRA_BED_RATE_CREATE}
+          permission={PERMISSIONS.EXTRA_RATE_CREATE}
         />
       </div>
 

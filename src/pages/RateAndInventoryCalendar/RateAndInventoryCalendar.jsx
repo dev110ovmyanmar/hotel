@@ -142,7 +142,7 @@ const RateAndInventoryCalendar = () => {
                 isToday: dateStr === todayStr,
                 cellClass:
                     dateStr === todayStr
-                        ? 'bg-[#E6F4FF] border-r-2 border-r-[#91CAFF] border-l-2 border-l-[#91CAFF]'
+                        ? 'bg-[#DBEAFE] dark:!bg-[#1e3a5f] border-r-2 !border-r-[#3B82F6] border-l-2 !border-l-[#3B82F6] dark:!border-[#3B82F6]'
                         : 'bg-[#fcfcfc] border-r',
             };
         });
