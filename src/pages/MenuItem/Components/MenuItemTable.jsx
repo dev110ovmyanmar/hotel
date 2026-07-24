@@ -70,14 +70,14 @@ const MenuItemTable = ({
     },
 
     {
-      title: "Selling Price (MMK)",
+      title: "Purchasing  Price (MMK)",
       dataIndex: "cost",
       key: "cost",
       align: "end",
       render: (price) => <PriceTag value={price} />,
     },
     {
-      title: "Purchasing Price (MMK)",
+      title: "Selling Price (MMK)",
       dataIndex: "price",
       key: "price",
       align: "end",
@@ -208,19 +208,19 @@ const MenuItemTable = ({
       <div className="nested-table-container">
         <div className="flex justify-between items-center mb-3">
           {canCreate && (
-          <Button
-            className="py-4! rounded-[5px]!"
-            type="primary"
-            size="small"
-            icon={<PlusOutlined />}
-            onClick={() => {
-              setSelectedItem({ menuUuid: record?.uuid });
-              setMode("item-add");
-              setItemDrawerOpen(true);
-            }}
-          >
-            F&B Inventory Item
-          </Button>
+            <Button
+              className="py-4! rounded-[5px]!"
+              type="primary"
+              size="small"
+              icon={<PlusOutlined />}
+              onClick={() => {
+                setSelectedItem({ menuUuid: record?.uuid });
+                setMode("item-add");
+                setItemDrawerOpen(true);
+              }}
+            >
+              F&B Inventory Item
+            </Button>
           )}
         </div>
 
@@ -230,7 +230,9 @@ const MenuItemTable = ({
             columns={expandColumns}
             dataSource={record.menuInventoryMappings || []}
             rowKey="uuid"
-            pagination={record.menuInventoryMappings?.length > 10 ? true : false}
+            pagination={
+              record.menuInventoryMappings?.length > 10 ? true : false
+            }
             size="small"
           />
         )}

@@ -271,7 +271,7 @@ const EventFacilityOrderForm = ({
       <Drawer
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
-        size={650}
+        size={700}
         title={
           <div className="flex justify-between items-center">
             <span>
