@@ -143,7 +143,6 @@ const ExtraBedRateTable = ({ data, page, setPage }) => {
     const calculateSpan = (keyPath) => {
       let i = 0;
       while (i < newData.length) {
-        // Access nested properties like ['ratePlan', 'name']
         const getValue = (obj) => keyPath.reduce((acc, key) => acc?.[key], obj);
 
         let currentVal = getValue(newData[i]);
@@ -202,14 +201,7 @@ const ExtraBedRateTable = ({ data, page, setPage }) => {
       dataIndex: ["roomType", "name"],
       key: "roomType",
       align: "left",
-    },
-    // {
-    //   title: "Base Price (MMK)",
-    //   dataIndex: ["roomType", "basePrice"],
-    //   key: "basePrice",
-    //   render: (price) => price?.toLocaleString(),
-    //   align: "end",
-    // },
+    },   
   ];
 
   return (

@@ -47,7 +47,7 @@ const RoomInformationDetailsForm = ({
     <Drawer
       open={drawerOpen}
       onClose={handleClose}
-      width={650}
+      size={650}
       title={
         <div className="flex justify-between items-center">
           <span className={`font-semibold text-lg text-slate-800 ${textWhiteInDarkStyle}`}>

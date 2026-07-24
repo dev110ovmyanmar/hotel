@@ -226,6 +226,7 @@ const RoomRestrictionTable = ({ data, page, setPage }) => {
         pagination={false}
         size="small"
         bordered
+        rowKey="uuid"
         style={{ marginTop: "16px", marginBottom: "16px" }}
       />
     );

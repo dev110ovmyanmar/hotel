@@ -242,6 +242,7 @@ const SeasonalRateTable = ({
         pagination={processedRates?.length > 10 ? true : false}
         size="small"
         bordered
+        rowKey="uuid"
         style={{ marginTop: "16px", marginBottom: "16px" }}
       />
     );

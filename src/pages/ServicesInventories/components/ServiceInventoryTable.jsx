@@ -18,7 +18,7 @@ const ServiceInventoryTable = ({
 
   const expandColumns = [
     { title: "ID", dataIndex: "id", key: "id" , align:"center"},
-    { title: "Service Name", dataIndex: ["service", "name"], key: "name", align: "center" },
+    { title: "Service Name", dataIndex: ["service", "name"], key: "name"},
     { title: "Quantity", dataIndex: "quantityPerService", key: "quantityPerService", align: "center" },
     { title: "Unit", dataIndex: ["unit", "name"], key: "unit", align: "center" },
   ];
