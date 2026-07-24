@@ -441,7 +441,7 @@ export const authRoutes = [
     nested: [
       {
         key: 5.1,
-        path: "/rooms",
+        path: "/rooms/room-lists",
         label: "Rooms",
         icon: <MdOutlineKingBed style={{ fontSize: "20px" }} />,
         component: <Room />,

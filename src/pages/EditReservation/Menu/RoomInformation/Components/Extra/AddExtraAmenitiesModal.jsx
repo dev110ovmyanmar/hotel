@@ -601,7 +601,7 @@ const AddExtraAmenitiesModal = ({
                 open={isOpen}
                 onCancel={handleCloseReset}
                 width={780}
-                destroyOnClose
+                destroyOnHidden
                 styles={{
                     header: { paddingBottom: '12px', borderBottom: '1px solid #f1f5f9' },
                     body: {

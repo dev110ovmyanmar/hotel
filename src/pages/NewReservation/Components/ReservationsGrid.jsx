@@ -18,7 +18,7 @@ import {
   PrinterOutlined,
 } from "@ant-design/icons";
 import { FaChild, FaGift, FaMoon } from "react-icons/fa";
-import { IoCalendarOutline, IoPeopleSharp } from "react-icons/io5";
+import { IoCalendarOutline, IoDocumentTextOutline, IoPeopleSharp } from "react-icons/io5";
 import PriceTag from "../../../component/PriceTag/PriceTag";
 import ReservationStatusColor from "./../../../component/ReservationStatusColor/ReservationStatusColor";
 import dayjs from "dayjs";
@@ -106,7 +106,7 @@ const ReservationsGrid = ({
                         gap: "6px",
                       }}
                     >
-                      <IoCalendarOutline className="text-indigo-700" />{" "}
+                      <IoDocumentTextOutline className="text-indigo-700 text-lg" />{" "}
                       {item?.ratePlan?.name}
                     </span>
                     <span

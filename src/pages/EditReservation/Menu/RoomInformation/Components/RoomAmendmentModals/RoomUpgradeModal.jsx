@@ -185,8 +185,8 @@ export default function RoomUpgradeModal({
             }
             open={isOpen}
             onCancel={handleCloseReset}
-            width={500}
-            destroyOnClose
+            width={500}  
+            destroyOnHidden         
             footer={footerContent}
         >
             {
