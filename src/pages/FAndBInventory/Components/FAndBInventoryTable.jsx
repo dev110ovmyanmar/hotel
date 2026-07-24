@@ -41,13 +41,7 @@ const FAndBInventoryTable = ({
       dataIndex: ["category", "name"],
       key: "category",
     },
-    // {
-    //   title: "Supplier",
-    //   dataIndex: ["supplier", "name"],
-    //   key: "supplier",
-    // },
     {
-      // title: "Reorder Level",
       title: "Stock Quantity",
       dataIndex: "reorderLevel",
       key: "reorderLevel",
@@ -67,13 +61,13 @@ const FAndBInventoryTable = ({
       render: (_, record) => <ColorStatusTag status={record?.status} />,
     },
     {
-      title: "Selling Price (MMK)",
+      title: "Purchase Price (MMK)",
       dataIndex: "unitPrice",
       key: "unitPrice",
       render: (text) => <PriceTag value={text} />,
     },
     {
-      title: "Purchase Price (MMK)",
+      title: "Selling  Price (MMK)",
       dataIndex: "unitCost",
       key: "unitCost",
       render: (text) => <PriceTag value={text} />,
@@ -111,7 +105,6 @@ const FAndBInventoryTable = ({
           },
         ];
 
-        // Filter actions by permission
         const items = actions
           .filter(
             (action) => !action.permission || hasPermission(action.permission),
@@ -136,12 +129,12 @@ const FAndBInventoryTable = ({
   ];
 
   const expandColumns = [
-    { title: "ID", dataIndex: "id", key: "id", align: "center" },
+    { title: "ID", dataIndex: "id", key: "id", align: "center", width:100 },
     {
       title: "Menu Item",
       dataIndex: ["menuItem", "name"],
       key: "name",
-      align: "center",
+      width:550
     },
     {
       title: "Quantity",
@@ -153,7 +146,6 @@ const FAndBInventoryTable = ({
       title: "Unit",
       dataIndex: ["unit", "name"],
       key: "unit",
-      align: "center",
     },
   ];
 

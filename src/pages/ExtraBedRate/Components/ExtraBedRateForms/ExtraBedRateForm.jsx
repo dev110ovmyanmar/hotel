@@ -32,14 +32,12 @@ import {
 const sharedProps = {
   mode: "spinner",
   min: 1,
-  defaultValue: 1,
   style: { width: 150 },
 };
 
 const sharedProp = {
   mode: "spinner",
   min: 2,
-  defaultValue: 2,
   style: { width: 150 },
 };
 
@@ -122,9 +120,7 @@ const ExtraBedRateForm = ({
         ...data,
         roomTypeUuid: data?.roomType?.uuid,
         ratePlanUuid: data?.ratePlan?.uuid,
-        extraType: data?.extraType?.uuid,
-        // startDate: data?.startDate ? dayjs(data.startDate) : null,
-        // endDate: data?.endDate ? dayjs(data.endDate) : null,
+        extraType: data?.extraType?.uuid,        
         minAge: data?.minAge ?? null,
         maxAge: data?.maxAge ?? null,
         dateRange: [
@@ -150,9 +146,7 @@ const ExtraBedRateForm = ({
         ...values,
         extraType: { uuid: values.extraType },
         roomType: { uuid: values.roomTypeUuid },
-        ratePlan: { uuid: values.ratePlanUuid },
-        // startDate: getFormattedDate(values.startDate, false),
-        // endDate: getFormattedDate(values.endDate, false),
+        ratePlan: { uuid: values.ratePlanUuid },       
         startDate: start ? getFormattedDate(start, false) : null,
         endDate: end ? getFormattedDate(end, false) : null,
       };
@@ -172,9 +166,7 @@ const ExtraBedRateForm = ({
         ...values,
         extraType: { uuid: values?.extraType },
         roomType: { uuid: values.roomTypeUuid },
-        ratePlan: { uuid: values.ratePlanUuid },
-        // startDate: getFormattedDate(values.startDate, false),
-        // endDate: getFormattedDate(values.endDate, false),
+        ratePlan: { uuid: values.ratePlanUuid },       
         startDate: start ? getFormattedDate(start, false) : null,
         endDate: end ? getFormattedDate(end, false) : null,
         uuid: data?.uuid,
@@ -194,7 +186,6 @@ const ExtraBedRateForm = ({
     <div>
       <Drawer
         open={drawerOpen}
-        // onClose={() => setDrawerOpen(false)}
         onClose={handleClose}
         size={550}
         title={

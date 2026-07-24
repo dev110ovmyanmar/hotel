@@ -21,9 +21,10 @@ const ServicePackageTable = ({
   loading,
 }) => {
   const { hasPermission } = usePermission();
-  const canCreateNested = hasPermission(PERMISSIONS.SERVICE_PACKAGE_ITEM_CREATE);
+  const canCreateNested = hasPermission(
+    PERMISSIONS.SERVICE_PACKAGE_ITEM_CREATE,
+  );
   const rowExpandList = hasPermission(PERMISSIONS.SERVICE_PACKAGE_ITEM_LIST);
-
 
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [itemDrawerOpen, setItemDrawerOpen] = useState(false);
@@ -120,25 +121,12 @@ const ServicePackageTable = ({
       title: "Item Name",
       dataIndex: ["item", "name"],
       key: "name",
-      align: "center",
     },
     {
       title: "Quantity",
       dataIndex: "quantity",
       key: "quantity",
       align: "center",
-    },
-    {
-      title: "Description",
-      dataIndex: ["item", "description"],
-      key: "description",
-      align: "center",
-    },
-    {
-      title: "Base Price (MMK)",
-      dataIndex: ["item", "basePrice"],
-      key: "basePrice",
-      align: "end",
     },
     {
       title: "Is Complimentary",
@@ -150,6 +138,13 @@ const ServicePackageTable = ({
           {text === true ? "True" : "False"}
         </div>
       ),
+    },
+    {
+      title: "Base Price (MMK)",
+      dataIndex: ["item", "basePrice"],
+      key: "basePrice",
+      align: "right",
+      render: (text) => <PriceTag value={text} />,
     },
     {
       title: "Action",
@@ -209,26 +204,23 @@ const ServicePackageTable = ({
   const expandedRowRender = (record) => {
     return (
       <div className="nested-table-container">
-        {
-          canCreateNested && (
-            <div className="flex justify-between items-center mb-3">
-              <Button
-                className="py-4! rounded-[5px]!"
-                type="primary"
-                size="small"
-                icon={<PlusOutlined />}
-                onClick={() => {
-                  setSelectedItem({ servicePackage: { uuid: record?.uuid } });
-                  setMode("item-add");
-                  setItemDrawerOpen(true);
-                }}
-              >
-                Package Item
-              </Button>
-            </div>
-          )
-        }
-
+        {canCreateNested && (
+          <div className="flex justify-between items-center mb-3">
+            <Button
+              className="py-4! rounded-[5px]!"
+              type="primary"
+              size="small"
+              icon={<PlusOutlined />}
+              onClick={() => {
+                setSelectedItem({ servicePackage: { uuid: record?.uuid } });
+                setMode("item-add");
+                setItemDrawerOpen(true);
+              }}
+            >
+              Package Item
+            </Button>
+          </div>
+        )}
 
         {record?.servicePackageItems?.length <= 0 ? null : (
           <Table
@@ -253,7 +245,9 @@ const ServicePackageTable = ({
         expandable={{
           expandedRowRender,
           defaultExpandedRowKeys: ["0"],
-          rowExpandable: (record) => rowExpandList && record?.servicePackageItems?.length > 0 || canCreateNested
+          rowExpandable: (record) =>
+            (rowExpandList && record?.servicePackageItems?.length > 0) ||
+            canCreateNested,
         }}
         dataSource={data}
         loading={loading}

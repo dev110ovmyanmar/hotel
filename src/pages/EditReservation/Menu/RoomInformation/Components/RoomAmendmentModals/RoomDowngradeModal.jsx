@@ -187,7 +187,7 @@ export default function RoomDowngradeModal({
             open={isOpen}
             onCancel={handleCloseReset}
             width={500}
-            destroyOnClose
+            destroyOnHidden
             footer={footerContent}
         >
             {
