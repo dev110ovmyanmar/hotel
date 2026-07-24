@@ -862,9 +862,9 @@ span .ant-upload {
   color: var(--dark-nested-text) !important;
 }
 
-.css-var-_r_0_ {
-  --ant-color-text-disabled: #aaaaaa;
-}
+/* .css-var-_r_0_ {
+  --ant-color-text-disabled: #ffffff;
+} */
 
 .close-icon-hide .ant-select-selection-item-remove {
   display: none !important;

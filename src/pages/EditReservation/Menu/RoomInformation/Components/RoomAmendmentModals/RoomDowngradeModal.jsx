@@ -302,8 +302,6 @@ export default function RoomDowngradeModal({
                                                 )
                                             })}
 
-                                            {/* </Row> */}
-                                            {/* </Col> */}
                                         </Row>
 
                                         <Form.Item name="roomType" hidden>
@@ -312,7 +310,6 @@ export default function RoomDowngradeModal({
 
                                         {
                                             selectedRoom &&
-                                            // <Col span={12}>
                                             <>
                                                 <Row gutter={16}>
                                                     <Col span={12}>
@@ -369,7 +366,6 @@ export default function RoomDowngradeModal({
                                                     </Checkbox>
                                                 </Form.Item>
                                             </>
-                                            // </Col>
                                         }
                                     </Form>
                                 ) :

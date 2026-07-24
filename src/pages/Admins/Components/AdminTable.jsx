@@ -36,7 +36,7 @@ const AdminTable = ({
 
   const columns = [
     {
-      title: "No",
+      title: "ID",
       render: (_, record) => <div>{record?.id}</div>,
       width: 70,
     },

@@ -28,6 +28,7 @@ const MenuCategoryTable = ({
     {
       title: "ID",
       render: (_, record) => <div>{record?.id}</div>,
+      width: 70,
     },
     {
       title: "Name",

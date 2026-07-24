@@ -43,15 +43,35 @@ const ExtraBedRateTable = ({ data, page, setPage }) => {
       key: "endDate",
       align: "center",
     },
+
     {
-      title: "Age Type",
-      dataIndex: ["ageType", "name"],
+      title: "Extra Type",
+      dataIndex: ["extraType", "name"],
       align: "center",
-      key: "ageType",
+      key: "extraType",
       onCell: (record) => ({
-        rowSpan: record.ageTypeRowSpan, // New rowSpan logic
+        rowSpan: record.extraTypeRowSpan,
         style: { verticalAlign: "middle" },
       }),
+      render: (text, record) => {
+        if (
+          record.extraType?.code === "extra_person" ||
+          record.code === "extra_person"
+        ) {
+          const minAge = record.minAge;
+          const maxAge = record.maxAge;
+
+          if (minAge !== undefined && maxAge !== undefined) {
+            const ageText =
+              minAge === maxAge
+                ? `(${minAge})`
+                : `(${minAge} - ${maxAge}) years`;
+            return `${text} ${ageText}`;
+          }
+        }
+
+        return text;
+      },
     },
     {
       title: "Price (MMK)",
@@ -70,7 +90,7 @@ const ExtraBedRateTable = ({ data, page, setPage }) => {
             key: "view",
             label: "View",
             icon: <EyeOutlined style={{ fontSize: "12px" }} />,
-            permission: PERMISSIONS.EXTRA_BED_RATE_VIEW,
+            permission: PERMISSIONS.EXTRA_RATE_VIEW,
             onClick: () => {
               setDrawerOpen(true);
               setMode("view");
@@ -81,7 +101,7 @@ const ExtraBedRateTable = ({ data, page, setPage }) => {
             key: "edit",
             label: "Edit",
             icon: <EditOutlined style={{ fontSize: "12px" }} />,
-            permission: PERMISSIONS.EXTRA_BED_RATE_EDIT,
+            permission: PERMISSIONS.EXTRA_RATE_EDIT,
             onClick: () => {
               setDrawerOpen(true);
               setMode("edit");
@@ -165,6 +185,7 @@ const ExtraBedRateTable = ({ data, page, setPage }) => {
         pagination={processedRates?.length > 10 ? true : false}
         rowKey="id"
         size="small"
+        style={{ marginTop: "16px", marginBottom: "16px" }}
       />
     );
   };

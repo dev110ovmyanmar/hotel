@@ -36,13 +36,32 @@ const HouseKeepingStatusForm = ({
     // 1. Get Global Options (Clean Statuses and Priority Levels)
     const initData = queryClient.getQueryData(["initData", "authenticated"]);
 
+    const currentStatus = selectedRow?.cleanStatus?.code;
+
+    const disabledStatuses = {
+        clean: [
+            "in_progress",
+            "out_of_order",
+            "out_of_service",
+        ],
+        inspected: [
+            "clean",
+            "in_progress",
+            "out_of_order",
+            "out_of_service",
+        ],
+    };
+
     const cleanStatusOptions = useMemo(() =>
-        initData?.statuses?.clean_status?.map(s => ({ value: s.uuid, label: s.name })) || [], [initData]);
+        initData?.statuses?.clean_status?.map(s => ({
+            value: s.uuid,
+            label: s.name,
+            disabled:  disabledStatuses[currentStatus]?.includes(s.code)
+
+        })) || [], [initData,currentStatus]);
 
     const priorityOptions = useMemo(() =>
         initData?.statuses?.priority_level?.map(p => ({ value: p.uuid, label: p.name })) || [], [initData]);
-
-    console.log(priorityOptions, "priorityOptions")
     // 2. API Query for single Detail
     const { data: houseKeepingStatusDetail, isLoading } = useApiQuery({
         fetchQueryName: "housekeeping-detail",
@@ -138,6 +157,7 @@ const HouseKeepingStatusForm = ({
                                     options={cleanStatusOptions}
                                     readOnly={isView}
                                     placeholder="Select Clean Status"
+                                    disabled={currentStatus === "in_progress" || currentStatus === "out_of_order" || currentStatus === "out_of_service" || currentStatus === "dirty"}
                                 />
                             </Form.Item>
 

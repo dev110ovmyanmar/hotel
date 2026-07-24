@@ -18,7 +18,7 @@ import isSameOrBeforePlugin from "dayjs/plugin/isSameOrBefore";
 dayjs.extend(isSameOrBeforePlugin);
 
 const RoomRestrictionTable = ({ data, page, setPage }) => {
-    const { hasPermission } = usePermission();
+  const { hasPermission } = usePermission();
 
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mode, setMode] = useState(null);
@@ -226,6 +226,7 @@ const RoomRestrictionTable = ({ data, page, setPage }) => {
         pagination={false}
         size="small"
         bordered
+        style={{ marginTop: "16px", marginBottom: "16px" }}
       />
     );
   };

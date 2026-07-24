@@ -59,7 +59,36 @@ const HouseKeepingTaskForm = ({
 
     const priorityOptions = useMemo(() => mapOptions(initData?.statuses?.priority_level), [initData]);
     const taskTypeOptions = useMemo(() => mapOptions(initData?.statuses?.task_type), [initData]);
-    const hkStatusOptions = useMemo(() => mapOptions(initData?.statuses?.housekeeping_status), [initData]);
+    // const hkStatusOptions = useMemo(() => mapOptions(initData?.statuses?.housekeeping_status), [initData]);
+
+    const editCurrentStatus = selectedRow?.housekeepingStatus?.code;
+    const hkStatusOptions = initData?.statuses?.housekeeping_status?.map((item) => {
+        console.log(item, "ItemHKStatus")
+        return (
+            {
+                value: item.uuid,
+                label: item.name,
+                disabled:
+                    isView ||
+
+                    (
+                        isEdit &&
+                        (
+                            (
+                                editCurrentStatus === "pending" &&
+                                ["in_progress", "completed"].includes(item.code)
+                            ) ||
+                            (
+                                editCurrentStatus === "in_progress" &&
+                                ["pending", "cancelled"].includes(item.code)
+                            )
+                        )
+                    )
+
+            }
+        )
+    });
+
 
     // ===== Fetch Detail =====
     const { data: detail, isLoading } = useApiQuery({
@@ -70,7 +99,6 @@ const HouseKeepingTaskForm = ({
     });
 
     const statusCode = detail?.housekeepingStatus?.code;
-    // console.log("StatusCode", statusCode);
     const isDisableEdit = statusCode === "completed" || statusCode === "cancelled";
 
     // ===== Fill Form =====
@@ -167,9 +195,6 @@ const HouseKeepingTaskForm = ({
     const handleNext = () => {
         setMaintenanceRequestDrawerOpen(true);
     };
-
-
-
 
     return (
         <>

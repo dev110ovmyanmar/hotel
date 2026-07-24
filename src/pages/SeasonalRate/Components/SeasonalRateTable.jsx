@@ -231,7 +231,7 @@ const SeasonalRateTable = ({
       },
     },
   ];
-  
+
   const expandedRowRender = (record) => {
     const processedRates = processData(record?.rates || []);
     return (
@@ -242,6 +242,7 @@ const SeasonalRateTable = ({
         pagination={processedRates?.length > 10 ? true : false}
         size="small"
         bordered
+        style={{ marginTop: "16px", marginBottom: "16px" }}
       />
     );
   };
@@ -300,10 +301,15 @@ const SeasonalRateTable = ({
                 justifyContent: "space-between",
                 alignItems: "center",
                 marginBottom: "12px",
-                marginTop: "20px"
+                marginTop: "20px",
               }}
             >
-              <span style={{ color: "#5b5959" }} className={textGrayInDarkStyle}>Base Price</span>
+              <span
+                style={{ color: "#5b5959" }}
+                className={textGrayInDarkStyle}
+              >
+                Base Price
+              </span>
               <div
                 style={{
                   display: "flex",
@@ -345,10 +351,15 @@ const SeasonalRateTable = ({
                         justifyContent: "space-between",
                         alignItems: "center",
                         marginBottom: "12px",
-                        marginTop: "10px"
+                        marginTop: "10px",
                       }}
                     >
-                      <span style={{ color: "#595959" }} className={textGrayInDarkStyle}>{day.label}</span>
+                      <span
+                        style={{ color: "#595959" }}
+                        className={textGrayInDarkStyle}
+                      >
+                        {day.label}
+                      </span>
                       <div
                         style={{
                           display: "flex",
