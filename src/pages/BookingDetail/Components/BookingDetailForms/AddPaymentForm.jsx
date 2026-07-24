@@ -252,8 +252,8 @@ const AddPaymentForm = ({
                                                             form.validateFields(["paymentMethod"]);
                                                         }}
                                                         className={`text-center rounded-lg relative transition-all duration-200 cursor-pointer ${selectedMethod === method.uuid
-                                                            ? "border-2 border-blue-500 shadow-sm bg-blue-50/10"
-                                                            : "border border-slate-200 hover:border-slate-300"
+                                                            ? "!border-2 !border-blue-500 !shadow-sm dark:!bg-gray-900 dark:!backdrop-filter-md"
+                                                            : "!border !border-slate-200 hover:border-slate-300"
                                                             }`}
                                                         bodyStyle={{ padding: "12px 6px" }}
                                                     >

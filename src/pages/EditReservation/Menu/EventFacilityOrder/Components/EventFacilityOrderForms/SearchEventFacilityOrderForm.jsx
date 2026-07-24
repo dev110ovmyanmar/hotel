@@ -29,6 +29,7 @@ const SearchEventFacilityOrderForm = ({
   facilityPackagesOptions,
 }) => {
   const [form] = Form.useForm();
+  const hasStartTime = Form.useWatch("startTime", form);
   const [showTable, setShowTable] = useState(false);
   const [tableData, setTableData] = useState([]);
 
@@ -40,6 +41,8 @@ const SearchEventFacilityOrderForm = ({
   const [selectedBooking, setSelectedBooking] = useState();
 
   const [isSearched, setIsSearched] = useState(false);
+
+
 
   const { data: bookingSearch, isPending: bookingSearchPending } = useApiQuery({
     fetchQueryName: searchValues?.eventDate ? ["facility-booking-search", searchValues] : ["facility-booking-search"],
@@ -245,7 +248,16 @@ const SearchEventFacilityOrderForm = ({
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="End Time" name="endTime">
+              <Form.Item
+                label="End Time"
+                name="endTime"
+                rules={[
+                  {
+                    required: hasStartTime ? true : false,
+                    message: "Select End Time"
+                  }
+                ]}
+              >
                 <TimePicker className="w-full" format="HH:mm" />
               </Form.Item>
             </Col>
@@ -279,19 +291,21 @@ const SearchEventFacilityOrderForm = ({
         </Form>
       </div>
 
-      {showTable && (
-        <div className="mt-6">
-          <Table
-            columns={columns}
-            dataSource={tableData}
-            rowKey="id"
-            pagination={false}
-            size="small"
-            className="custom-table-font"
-          />
+      {
+        showTable && (
+          <div className="mt-6">
+            <Table
+              columns={columns}
+              dataSource={tableData}
+              rowKey="id"
+              pagination={false}
+              size="small"
+              className="custom-table-font"
+            />
 
-        </div>
-      )}
+          </div>
+        )
+      }
 
       <SearchByModal
         open={openSearchModal}
@@ -299,7 +313,7 @@ const SearchEventFacilityOrderForm = ({
         onOk={handleOk}
         confirmLoading={facilityBookingAttachs.isPending}
       />
-    </Drawer>
+    </Drawer >
   );
 };
 
