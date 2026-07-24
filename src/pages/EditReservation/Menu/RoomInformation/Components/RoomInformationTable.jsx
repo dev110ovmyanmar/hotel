@@ -42,6 +42,12 @@ const RoomInformationTable = ({
   changePerPage,
   reservationUuid,
 }) => {
+
+  const formattedData = data.map(item => ({
+  ...item,
+  children: Array.isArray(item.children) ? item.children : null
+}));
+
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [detailsDrawerOpen, setDetailsDrawerOpen] = useState(false);
   const [guestOpen, setGuestOpen] = useState(false);
@@ -306,7 +312,7 @@ const RoomInformationTable = ({
         tableLayout="fixed"
         scroll={{ x: 1000 }}
         columns={columns}
-        dataSource={data}
+        dataSource={formattedData}
         rowKey="uuid"
         rowClassName={(record) =>
           record?.uuid === reservationUuid?.reservationRoom?.uuid
