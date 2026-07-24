@@ -1,6 +1,7 @@
 import React from "react";
 import { Row, Col, Typography, Card, Space, Table } from "antd";
 import { IoCalendarClearOutline } from "react-icons/io5";
+import ColorStatusTag from "../../../../component/ColorStatusTag/ColorStatusTag";
 
 const { Text } = Typography;
 
@@ -30,6 +31,16 @@ const EventFacility = ({ data }) => {
       title: "Guest Name",
       dataIndex: "guestName",
       key: "guestName",
+    },
+    {
+      title: "Facility Package Status",
+      dataIndex: "status",
+      key: "facilityPackageStatus",
+      render: (status) => {
+        return (
+          status ? <ColorStatusTag status={status} /> : "-"
+        );
+      },
     },
   ];
   return (

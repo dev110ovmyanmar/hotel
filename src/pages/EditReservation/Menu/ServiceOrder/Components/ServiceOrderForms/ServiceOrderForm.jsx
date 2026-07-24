@@ -283,6 +283,7 @@ const ServiceOrderForm = ({
                 : "Add Service Order"}
           </span>
           {isView ? (
+            serviceData?.orderStatus?.code !== "completed" &&
             <Button type="primary" onClick={() => setMode("edit")}>
               Edit
             </Button>
@@ -453,12 +454,12 @@ const ServiceOrderForm = ({
                               },
                               ...(item.maxLimit
                                 ? [
-                                    {
-                                      type: "number",
-                                      max: item.maxLimit,
-                                      message: `Max is ${item.maxLimit}`,
-                                    },
-                                  ]
+                                  {
+                                    type: "number",
+                                    max: item.maxLimit,
+                                    message: `Max is ${item.maxLimit}`,
+                                  },
+                                ]
                                 : []),
                             ]}
                           >
