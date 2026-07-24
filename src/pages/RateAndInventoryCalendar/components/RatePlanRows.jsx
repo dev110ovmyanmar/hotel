@@ -4,6 +4,8 @@ import { Baby, PersonStanding } from 'lucide-react';
 import { Tooltip } from 'antd';
 import { darkModeStyle } from '../../../utils';
 
+const todayDarkModeStyle = 'dark:!bg-[#1e3a5f] dark:!border-r-[#3B82F6] dark:!border-l-[#3B82F6] dark:!text-gray-200';
+
 /**
  * RatePlanRows
  * Renders all rows for a single rate plan when a room type is expanded:
@@ -31,8 +33,8 @@ const RatePlanRows = ({ rp, rt, daysMeta, getRateData, handleRestrictionEditOpen
                     {rp.name}
                 </div>
             </td>
-            {daysMeta.map(({ cellClass }, dayIdx) => (
-                <td key={dayIdx} className={`border-b border-[#dee2e6] ${cellClass} ${darkModeStyle}`} />
+            {daysMeta.map(({ cellClass, isToday }, dayIdx) => (
+                <td key={dayIdx} className={`border-b border-[#dee2e6] ${cellClass} ${isToday ? todayDarkModeStyle : darkModeStyle}`} />
             ))}
         </tr>
 
@@ -41,7 +43,7 @@ const RatePlanRows = ({ rp, rt, daysMeta, getRateData, handleRestrictionEditOpen
             <td className={`sticky left-0 z-30 bg-[#f9f9f9] border-b border-r border-[#dee2e6] px-4 py-1 ${darkModeStyle}`}>
                 <div className="text-[12px] text-gray-500 pl-4">Price</div>
             </td>
-            {daysMeta.map(({ dateStr, cellClass, isPast }, dayIdx) => {
+            {daysMeta.map(({ dateStr, cellClass, isPast, isToday }, dayIdx) => {
                 const rateData = getRateData(rt.id, rp.id, dateStr);
                 const price = rateData?.price ?? null;
                 const r = rateData?.restriction;
@@ -50,9 +52,9 @@ const RatePlanRows = ({ rp, rt, daysMeta, getRateData, handleRestrictionEditOpen
                 return (
                     <td
                         key={dayIdx}
-                        className={`border-b border-[#dee2e6] text-center p-1 ${cellClass} cursor-pointer ${hasStopSellRatePlan && !isPast ? 'bg-red-100' : 'bg-green-100'
+                        className={`border-b border-[#dee2e6] text-center p-1 ${cellClass} cursor-pointer ${!isToday && (hasStopSellRatePlan && !isPast ? 'bg-red-100' : 'bg-green-100')
                             }
-                           ${darkModeStyle} 
+                           ${isToday ? todayDarkModeStyle : darkModeStyle}
                             `}
                         onClick={() =>
                             handleRestrictionEditOpen(
@@ -93,7 +95,7 @@ const RatePlanRows = ({ rp, rt, daysMeta, getRateData, handleRestrictionEditOpen
                 const hasAdult = extraBed?.adult != null;
                 const hasChild = extraBed?.child != null;
                 return (
-                    <td key={dayIdx} className={`border-b border-[#dee2e6] text-center p-1 ${cellClass} ${darkModeStyle}`}>
+                    <td key={dayIdx} className={`border-b border-[#dee2e6] text-center p-1 ${cellClass} ${isToday ? todayDarkModeStyle : darkModeStyle}`}>
                         {hasAdult || hasChild ? (
                             <div className="flex flex-col items-center gap-0.5">
                                 {hasAdult && (
@@ -122,7 +124,7 @@ const RatePlanRows = ({ rp, rt, daysMeta, getRateData, handleRestrictionEditOpen
             <td className={`sticky left-0 z-30 bg-[#f9f9f9] border-b border-r border-[#dee2e6] px-4 py-1 ${darkModeStyle}`}>
                 <div className="text-[12px] text-gray-500 pl-4">Room Restriction</div>
             </td>
-            {daysMeta.map(({ dateStr, cellClass }, dayIdx) => {
+            {daysMeta.map(({ dateStr, cellClass, isToday }, dayIdx) => {
                 const r = getRateData(rt.id, rp.id, dateStr)?.restriction;
                 const stopSellTag = r?.stopSell ? 'Stop' : null;
                 const stayTag = (() => {
@@ -136,7 +138,7 @@ const RatePlanRows = ({ rp, rt, daysMeta, getRateData, handleRestrictionEditOpen
                 const closureTags = [r?.cta && 'CTA', r?.ctd && 'CTD'].filter(Boolean);
                 const hasAnyTag = stopSellTag || stayTag || closureTags.length > 0;
                 return (
-                    <td key={dayIdx} className={`border-b border-[#dee2e6] text-center p-1 ${cellClass} ${darkModeStyle}`}>
+                    <td key={dayIdx} className={`border-b border-[#dee2e6] text-center p-1 ${cellClass} ${isToday ? todayDarkModeStyle : darkModeStyle}`}>
                         {hasAnyTag ? (
                             <div className="flex flex-col gap-0.5 items-center">
                                 {stopSellTag && (
