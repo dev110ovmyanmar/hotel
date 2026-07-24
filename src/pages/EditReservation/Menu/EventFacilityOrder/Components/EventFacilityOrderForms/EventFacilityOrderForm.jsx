@@ -126,7 +126,7 @@ const EventFacilityOrderForm = ({
     value: item.uuid,
     label: item.name,
     disabled:
-      isView || 
+      isView ||
 
       // Create mode
       (isAdd &&
@@ -150,7 +150,7 @@ const EventFacilityOrderForm = ({
       });
     }
 
-  }, [isAdd,initDataFacilityStatus]);
+  }, [isAdd, initDataFacilityStatus]);
 
   useEffect(() => {
     const FacilityBookingFormDataView = isView || isEdit;
@@ -187,7 +187,7 @@ const EventFacilityOrderForm = ({
         },
       });
     }
-  },[isEdit,isView,bookingDetails])
+  }, [isEdit, isView, bookingDetails])
 
   useEffect(() => {
     if (eventTime?.[0] && eventTime?.[1]) {
@@ -240,7 +240,7 @@ const EventFacilityOrderForm = ({
           form.resetFields();
           setPage(1);
           Toast.success("Facility Booking Created Successfully!");
-          
+
         },
       });
     }
@@ -271,7 +271,7 @@ const EventFacilityOrderForm = ({
       <Drawer
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
-        size={650}
+        size={700}
         title={
           <div className="flex justify-between items-center">
             <span>
@@ -282,6 +282,7 @@ const EventFacilityOrderForm = ({
                   : "Create Facility Order"}
             </span>
             {isView ? (
+              selectedData?.status?.code !== "completed" &&
               <Button type="primary" onClick={() => setMode("edit")}>
                 Edit
               </Button>

@@ -14,7 +14,11 @@ import {
 import dayjs from "dayjs";
 import { getFormattedDate } from "../../../../../../utils";
 import useApiQuery from "../../../../../../hooks/useApiQuery";
-import { facilityBookingAttach, facilityBookingSearch, fetchFacilityBooking } from "../../../../../../api/booking";
+import {
+  facilityBookingAttach,
+  facilityBookingSearch,
+  fetchFacilityBooking,
+} from "../../../../../../api/booking";
 import ColorStatusTag from "../../../../../../component/ColorStatusTag/ColorStatusTag";
 import SearchByModal from "../SearchByModal";
 import { useApiMutation } from "../../../../../../hooks/useApiMutation";
@@ -29,6 +33,7 @@ const SearchEventFacilityOrderForm = ({
   facilityPackagesOptions,
 }) => {
   const [form] = Form.useForm();
+  const hasStartTime = Form.useWatch("startTime", form);
   const [showTable, setShowTable] = useState(false);
   const [tableData, setTableData] = useState([]);
 
@@ -42,7 +47,9 @@ const SearchEventFacilityOrderForm = ({
   const [isSearched, setIsSearched] = useState(false);
 
   const { data: bookingSearch, isPending: bookingSearchPending } = useApiQuery({
-    fetchQueryName: searchValues?.eventDate ? ["facility-booking-search", searchValues] : ["facility-booking-search"],
+    fetchQueryName: searchValues?.eventDate
+      ? ["facility-booking-search", searchValues]
+      : ["facility-booking-search"],
     fetchQueryFunction: () => {
       if (!searchValues?.eventDate) return null;
       return facilityBookingSearch(searchValues);
@@ -54,7 +61,7 @@ const SearchEventFacilityOrderForm = ({
 
   useEffect(() => {
     setTableData(bookingSearch);
-  }, [bookingSearch])
+  }, [bookingSearch]);
 
   const onFinish = (values) => {
     const modifiedValues = {
@@ -62,9 +69,9 @@ const SearchEventFacilityOrderForm = ({
       startTime: values?.startTime?.format("HH:mm:ss"),
       endTime: values?.endTime?.format("HH:mm:ss"),
       facilityPackage: {
-        uuid: values?.facilityPackage
+        uuid: values?.facilityPackage,
       },
-      eventDate: values?.eventDate?.format("YYYY-MM-DD")
+      eventDate: values?.eventDate?.format("YYYY-MM-DD"),
     };
 
     setSearchValues(modifiedValues);
@@ -76,73 +83,62 @@ const SearchEventFacilityOrderForm = ({
     {
       title: "ID",
       render: (_, record) => <div>{record?.id}</div>,
-      width: 70,
+      width: 50,
       align: "center",
     },
     {
-      title: "Guest Name",
-      dataIndex: "guestName",
-      key: "guestName",
-      render: (text) => <div>{text}</div>,
-    },
-    {
-      title: "Guest Phone",
-      dataIndex: "guestPhone",
-      key: "guestPhone",
-      render: (text) => <div>{text}</div>,
+      title: "Guest Name & Phone No",
+      key: "guestInfo",
+      render: (_, record) => (
+        <div>
+          <div>{record.guestName}</div>
+          <div>{record.guestPhone}</div>
+        </div>
+      ),
     },
     {
       title: "Event Name",
       dataIndex: "eventName",
       key: "eventName",
+      width: 100,
       render: (text) => <div>{text}</div>,
     },
-    // {
-    //   title: "Total Price",
-    //   dataIndex: "totalPrice",
-    //   key: "totalPrice",
-    //   render: (text) => <div>{text ? text : "-"}</div>,
-    // },
     {
-      title: "Event Date",
-      dataIndex: "eventDate",
-      key: "eventDate",
-      render: (text) => <div>{text ? dayjs(text, "YYYY-MM-DD").format("DD-MM-YYYY") : "-"}</div>,
-    },
-    {
-      title: "Start Time",
-      dataIndex: "startTime",
-      key: "startTime",
-      render: (text) => {
-        console.log(text, "TextINStartTime")
-        return <div>{text ? dayjs(text, "HH:mm").format("HH:mm") : "-"}</div>
-      },
-    },
-    {
-      title: "End Time",
-      dataIndex: "endTime",
-      key: "endTime",
-      render: (text) => <div>{text ? dayjs(text, "HH:mm").format("HH:mm") : "-"}</div>,
-    },
-    {
-      title: "Expected Hours",
-      dataIndex: "expectedHours",
-      key: "expectedHours",
+      title: "Event Details",
+      key: "eventDetails",
+      width: 100,
       render: (_, record) => {
-        const startTime = dayjs(record.startTime, "HH:mm:ss");
-        const endTime = dayjs(record.endTime, "HH:mm:ss");
+        const dateStr = record.eventDate
+          ? dayjs(record.eventDate, "YYYY-MM-DD").format("DD-MM-YYYY")
+          : "-";
 
-        const totalSeconds = endTime.diff(startTime, "second");
+        const startTimeStr = record.startTime
+          ? dayjs(record.startTime, "HH:mm").format("HH:mm")
+          : null;
+        const endTimeStr = record.endTime
+          ? dayjs(record.endTime, "HH:mm").format("HH:mm")
+          : null;
 
-        const hours = Math.floor(totalSeconds / 3600);
-        const minutes = Math.floor((totalSeconds % 3600) / 60);
-        const seconds = totalSeconds % 60;
+        let timeStr = "-";
+        if (startTimeStr && endTimeStr) {
+          timeStr = `${startTimeStr} - ${endTimeStr}`;
+        } else if (startTimeStr) {
+          timeStr = startTimeStr;
+        } else if (endTimeStr) {
+          timeStr = endTimeStr;
+        }
 
-        const text = `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
-        return <div>{text}</div>;
-
+        return (
+          <div>
+            <div>
+              <strong> {dateStr}</strong>
+            </div>
+            <div>{timeStr}</div>
+          </div>
+        );
       },
     },
+
     {
       title: "Expected Pax",
       dataIndex: "expectedPax",
@@ -155,40 +151,33 @@ const SearchEventFacilityOrderForm = ({
       key: "status",
       render: (_, record) => <ColorStatusTag status={record?.status} />,
     },
-    // {
-    //   title: "Remark",
-    //   dataIndex: "remark",
-    //   key: "remark",
-    //   render: (text) => <div>{text ? text : "-"}</div>,
-    // },
+
     {
       key: "action",
       fixed: "end",
       align: "center",
       render: (_, record) => {
         return (
-          (
-            <Button
-              type="primary"
-              size="small"
-              onClick={() => {
-                setOpenSearchModal(true);
-                setReservationIdList({
-                  ...record,
-                  reservation: {
-                    uuid: reservationId
-                  }
-                });
-                setSelectedBooking({
-                  facilityBookingUuid: record.uuid,
-                });
-              }
-              }
-            >
-              + Add
-            </Button >
-          )
-        )
+          <Button
+            type="primary"
+            size="small"
+            style={{ borderRadius: "3px" }}
+            onClick={() => {
+              setOpenSearchModal(true);
+              setReservationIdList({
+                ...record,
+                reservation: {
+                  uuid: reservationId,
+                },
+              });
+              setSelectedBooking({
+                facilityBookingUuid: record.uuid,
+              });
+            }}
+          >
+            + Add
+          </Button>
+        );
       },
     },
   ];
@@ -200,18 +189,17 @@ const SearchEventFacilityOrderForm = ({
     // shouldInvalidate: isEdit ? true : page === 1,
   });
 
-  console.log(reservationId, "reservationUuid")
+  console.log(reservationId, "reservationUuid");
 
   const handleOk = () => {
     if (selectedBooking) {
-
       const modifiedValues = {
         reservation: {
-          uuid: reservationId
+          uuid: reservationId,
         },
         facilityBooking: {
-          uuid: selectedBooking?.facilityBookingUuid
-        }
+          uuid: selectedBooking?.facilityBookingUuid,
+        },
       };
       facilityBookingAttachs.mutate(modifiedValues, {
         onSuccess: () => {
@@ -219,9 +207,9 @@ const SearchEventFacilityOrderForm = ({
           setOpenSearchModal(false);
           setDrawerOpen(false);
           onClose(false);
-        }
-      })
-    };
+        },
+      });
+    }
   };
 
   return (
@@ -229,7 +217,7 @@ const SearchEventFacilityOrderForm = ({
       title="Search By"
       open={open}
       onClose={onClose}
-      width={600}
+      width={650}
       destroyOnClose
     >
       <div className="border border-gray-200 shadow-sm rounded-lg p-4 ">
@@ -245,7 +233,16 @@ const SearchEventFacilityOrderForm = ({
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="End Time" name="endTime">
+              <Form.Item
+                label="End Time"
+                name="endTime"
+                rules={[
+                  {
+                    required: hasStartTime ? true : false,
+                    message: "Select End Time",
+                  },
+                ]}
+              >
                 <TimePicker className="w-full" format="HH:mm" />
               </Form.Item>
             </Col>
@@ -269,10 +266,7 @@ const SearchEventFacilityOrderForm = ({
           </Row>
 
           <div className="flex justify-end gap-2">
-            <Button
-              type="primary"
-              htmlType="submit"
-            >
+            <Button type="primary" htmlType="submit">
               Search
             </Button>
           </div>
@@ -289,7 +283,6 @@ const SearchEventFacilityOrderForm = ({
             size="small"
             className="custom-table-font"
           />
-
         </div>
       )}
 

@@ -17,16 +17,10 @@ const ServiceOrder = ({ data }) => {
 
   const columns = [
     {
-      title: "Service Package",
-      dataIndex: ["servicePackage", "name"],
-      key: "servicePackage",
+      title: "Service ",
+      dataIndex: ["service", "name"],
+      key: "service",
     },
-    // {
-    //   title: "No",
-    //   dataIndex: "no",
-    //   key: "no",
-    //   align: "center",
-    // },
     {
       title: "Order Status",
       dataIndex: "orderStatus",
@@ -43,7 +37,7 @@ const ServiceOrder = ({ data }) => {
       key: "guest",
     },
   ];
-
+  console.log(data,"DataInServiceOrder")
   return (
     <>
       {

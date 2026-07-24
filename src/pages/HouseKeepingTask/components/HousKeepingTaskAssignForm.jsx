@@ -14,6 +14,7 @@ import {
 } from "../../../api/houseKeepingTaskAssignApi";
 import Toast from "../../../component/Toast/Toast";
 import ColorStatusTag from "../../../component/ColorStatusTag/ColorStatusTag";
+import { darkModeStyle } from "../../../utils";
 
 const HouseKeepingTaskAssignForm = ({
     drawerOpen,
@@ -28,7 +29,6 @@ const HouseKeepingTaskAssignForm = ({
 
     const [deleteModal, setDeleteModal] = useState(false);
     const [itemToDelete, setItemToDelete] = useState(null);
-
 
     const detail = houseKeepingTaskDetail;
 
@@ -222,7 +222,7 @@ const HouseKeepingTaskAssignForm = ({
                 isAssignDetailLoading ? (
                     <div className="flex h-64 items-center justify-center" > <Loader /></div>
                 ) : !detail?.housekeepingTaskAssignments?.length ? (
-                    <div className="flex flex-col items-center justify-center h-64 border-2 border-dashed border-gray-100 rounded-xl bg-gray-50/50">
+                    <div className={`flex flex-col items-center justify-center h-64 border-2 border-dashed border-gray-100 rounded-xl bg-gray-50/50 ${darkModeStyle}`}>
                         <TeamOutlined className="text-gray-300 text-3xl mb-2" />
                         <p className="text-gray-400 font-bold uppercase text-[10px]">No assigns found</p>
                     </div>
@@ -257,7 +257,7 @@ const HouseKeepingTaskAssignForm = ({
                                         <div className="absolute top-1 right-1 flex items-center gap-2">
                                             {!isDisableEdit && (
                                                 <button
-                                                    className="p-1 hover:bg-gray-100 rounded-full transition-colors"
+                                                    className="p-1 hover:bg-gray-100 rounded-full transition-colors cursor-pointer dark:hover:bg-[#141414] dark:hover:!backdrop-blur-lg"
                                                     onClick={(e) => {
                                                         e.stopPropagation();
                                                         setIsEdit(true);
@@ -273,7 +273,7 @@ const HouseKeepingTaskAssignForm = ({
                                                 item.startedAt ? null :
                                                     (
                                                         <button
-                                                            className="p-1 rounded-full text-red-500 transition-colors enabled:hover:bg-red-50"
+                                                            className="p-1 rounded-full text-red-500 transition-colors cursor-pointer enabled:hover:bg-red-50 dark:hover:!bg-[#141414] dark:hover:!backdrop-blur-lg"
                                                             // onClick={(e) => handleDelete(e, item)}
                                                             onClick={(e) => openDeleteModal(e, item)}
                                                         >
