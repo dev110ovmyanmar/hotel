@@ -313,7 +313,7 @@ const AgencyForm = ({
                   placeholder="Enter Charge Value"
                   formatter={priceFormatter}
                   parser={priceParser}
-                  maxLength={12}
+                  maxLength={15}
                 />
               </Form.Item>
             </Col>
