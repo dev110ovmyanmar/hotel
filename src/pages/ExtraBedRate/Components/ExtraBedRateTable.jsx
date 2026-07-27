@@ -18,13 +18,11 @@ const ExtraBedRateTable = ({ data, page, setPage }) => {
       title: "ID",
       render: (_, record) => <div>{record?.id}</div>,
       width: 70,
-      align: "center",
     },
     {
       title: "Rate Plan",
       dataIndex: ["ratePlan", "name"],
       key: "ratePlan",
-      align: "center",
       width: 150,
       onCell: (record) => ({
         rowSpan: record.ratePlanRowSpan,
@@ -47,7 +45,6 @@ const ExtraBedRateTable = ({ data, page, setPage }) => {
     {
       title: "Extra Type",
       dataIndex: ["extraType", "name"],
-      align: "center",
       key: "extraType",
       onCell: (record) => ({
         rowSpan: record.extraTypeRowSpan,
@@ -143,7 +140,6 @@ const ExtraBedRateTable = ({ data, page, setPage }) => {
     const calculateSpan = (keyPath) => {
       let i = 0;
       while (i < newData.length) {
-        // Access nested properties like ['ratePlan', 'name']
         const getValue = (obj) => keyPath.reduce((acc, key) => acc?.[key], obj);
 
         let currentVal = getValue(newData[i]);
@@ -202,14 +198,7 @@ const ExtraBedRateTable = ({ data, page, setPage }) => {
       dataIndex: ["roomType", "name"],
       key: "roomType",
       align: "left",
-    },
-    // {
-    //   title: "Base Price (MMK)",
-    //   dataIndex: ["roomType", "basePrice"],
-    //   key: "basePrice",
-    //   render: (price) => price?.toLocaleString(),
-    //   align: "end",
-    // },
+    },   
   ];
 
   return (

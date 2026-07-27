@@ -31,15 +31,13 @@ import {
 
 const sharedProps = {
   mode: "spinner",
-  min: 1,
-  defaultValue: 1,
+  min: 0,
   style: { width: 150 },
 };
 
 const sharedProp = {
   mode: "spinner",
-  min: 2,
-  defaultValue: 2,
+  min: 1,
   style: { width: 150 },
 };
 
@@ -123,8 +121,6 @@ const ExtraBedRateForm = ({
         roomTypeUuid: data?.roomType?.uuid,
         ratePlanUuid: data?.ratePlan?.uuid,
         extraType: data?.extraType?.uuid,
-        // startDate: data?.startDate ? dayjs(data.startDate) : null,
-        // endDate: data?.endDate ? dayjs(data.endDate) : null,
         minAge: data?.minAge ?? null,
         maxAge: data?.maxAge ?? null,
         dateRange: [
@@ -151,8 +147,6 @@ const ExtraBedRateForm = ({
         extraType: { uuid: values.extraType },
         roomType: { uuid: values.roomTypeUuid },
         ratePlan: { uuid: values.ratePlanUuid },
-        // startDate: getFormattedDate(values.startDate, false),
-        // endDate: getFormattedDate(values.endDate, false),
         startDate: start ? getFormattedDate(start, false) : null,
         endDate: end ? getFormattedDate(end, false) : null,
       };
@@ -173,8 +167,6 @@ const ExtraBedRateForm = ({
         extraType: { uuid: values?.extraType },
         roomType: { uuid: values.roomTypeUuid },
         ratePlan: { uuid: values.ratePlanUuid },
-        // startDate: getFormattedDate(values.startDate, false),
-        // endDate: getFormattedDate(values.endDate, false),
         startDate: start ? getFormattedDate(start, false) : null,
         endDate: end ? getFormattedDate(end, false) : null,
         uuid: data?.uuid,
@@ -194,7 +186,6 @@ const ExtraBedRateForm = ({
     <div>
       <Drawer
         open={drawerOpen}
-        // onClose={() => setDrawerOpen(false)}
         onClose={handleClose}
         size={550}
         title={
@@ -235,8 +226,8 @@ const ExtraBedRateForm = ({
           style={{ width: "100%" }}
           onFinish={onFinish}
           initialValues={{
-            minAge: 1,
-            maxAge: 2,
+            minAge: 0,
+            maxAge: 1,
           }}
         >
           <Form.Item

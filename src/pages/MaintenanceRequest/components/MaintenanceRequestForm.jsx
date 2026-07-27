@@ -55,8 +55,20 @@ const MaintenanceRequestForm = ({
         [initData]);
     const issueTypeOptions = useMemo(() => mapOptions(initData?.statuses?.issue_type),
         [initData]);
-    const maintenanceStatusOptions = useMemo(() => mapOptions(initData?.statuses?.maintenance_status),
-        [initData]);
+    // const maintenanceStatusOptions = useMemo(() => mapOptions(initData?.statuses?.maintenance_status),
+    //     [initData]);
+
+    const currentStatus = selectedRow?.maintenanceStatus?.code;
+    const maintenanceStatusOptions = initData?.statuses?.maintenance_status?.map(item => (
+        {
+            value: item.uuid,
+            label: item.name,
+            disabled: isEdit && (
+                currentStatus === "resolved" &&
+                ["reported", "assigned", "in_progress"].includes(item?.code) 
+            )
+        }
+    ));
 
     const { data: adminMetaData } = useApiQuery({
         fetchQueryName: "admin-meta",
@@ -290,7 +302,6 @@ const MaintenanceRequestForm = ({
                                         >
                                             <Select
                                                 options={maintenanceStatusOptions}
-                                                // open={true? !true: undefined}
                                                 disabled={true}
 
                                             />
@@ -310,8 +321,10 @@ const MaintenanceRequestForm = ({
                                                 isView ? <Input readOnly={isView} /> :
                                                     <Select
                                                         options={maintenanceStatusOptions}
-                                                        disabled={isView}
-                                                        // disabled={true}
+                                                        disabled={currentStatus === "in_progress" ||
+                                                            currentStatus === "reported" ||
+                                                            currentStatus === "assigned"
+                                                        }
                                                         placeholder="Select Maintenance Status" />
                                             }
                                         </Form.Item>

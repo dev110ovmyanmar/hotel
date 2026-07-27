@@ -254,7 +254,6 @@ const FacilityBookingForm = ({
     mode: "spinner",
     min: 1,
     max: 10,
-    defaultValue: 1,
     style: { width: 150 },
   };
 

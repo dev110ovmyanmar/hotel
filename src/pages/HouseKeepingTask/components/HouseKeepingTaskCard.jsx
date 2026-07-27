@@ -42,16 +42,19 @@ const HouseKeepingTaskCard = ({ data, onEdit, onView,
         name: firstItem?.name || statusCode
     };
 
+    const textClass =
+        "!text-xs lg:!font-[11px] 2xl:!text-sm";
+
     // --- UI Helpers ---
     const TightRow = ({ icon: Icon, label, value, isDate = false }) => (
-        <div className="grid grid-cols-[90px_10px_1fr] items-center py-1 border-b border-gray-50 last:border-0">
+        <div className="grid grid-cols-[130px_10px_1fr] items-center py-1 border-b border-gray-50 last:border-0">
             <div className="flex items-center gap-1.5">
-                {Icon && <Icon className="text-[10px]" />}
-                <span className="text-[11px] font-bold">{label}</span>
+                {Icon && <Icon className={textClass} />}
+                <span className={`${textClass}`}>{label}</span>
             </div>
-            <span className="text-[11px] font-bold">:</span>
+            <span className={`${textClass} font-bold ms-2`}>:</span>
             <div className="flex items-center pl-2 border-l border-gray-100 ml-1 min-w-0">
-                <span className={`text-[11px] truncate ${isDate ? 'font-mono' : 'font-bold'}`}>
+                <span className={`${textClass} truncate ${isDate ? 'font-mono' : 'font-bold'}`}>
                     {value || "---"}
                 </span>
             </div>
@@ -68,7 +71,7 @@ const HouseKeepingTaskCard = ({ data, onEdit, onView,
             {/* 1. Header: Room ID & Main Status */}
             <div className="flex justify-between items-start mb-3">
                 <div className="flex flex-col">
-                    <span className="text-[9px] font-bold text-gray-400 uppercase tracking-tight">Room No.</span>
+                    <span className="!text-[10px] lg:!text-[11px] 2xl:!text-[12px] font-bold text-gray-400 uppercase tracking-tight">Room No.</span>
                     <h3 className="text-xl font-black leading-tight group-hover:text-blue-600 transition-colors">
                         {data?.room?.roomNo || "---"}
                     </h3>
@@ -76,19 +79,19 @@ const HouseKeepingTaskCard = ({ data, onEdit, onView,
                 <div className="flex flex-col items-end gap-1.5">
                     <ColorStatusTag status={statusForTag} />
                     {data?.priorityLevel?.code === 'high' && (
-                        <div className="px-1.5 py-0.5 rounded-sm bg-red-50 text-red-600 text-[8px] font-black border border-red-100">
-                            High Priority
+                        <div className="px-1.5 py-0.5 rounded-sm bg-red-50 text-red-600 text-[10px] font-black border border-red-100">
+                            High 
                         </div>
                     )}
                     {data?.priorityLevel?.code === 'urgent' && (
-                        <div className="px-1.5 py-0.5 rounded-sm bg-red-50 text-red-600 text-[8px] font-black border border-red-100">
-                            Urgent Priority
+                        <div className="px-1.5 py-0.5 rounded-sm bg-red-50 text-red-600 text-[10px] font-black border border-red-100">
+                            Urgent 
                         </div>
                     )}
 
                     {(data?.priorityLevel?.code === 'low' || data?.priorityLevel?.code === 'normal') && (
-                        <div className="px-1.5 py-0.5 rounded-sm bg-green-50 text-green-600 text-[8px] font-black border border-green-100">
-                            {data?.priorityLevel?.code === 'low' ? 'Low Priority' : 'Normal Priority'}
+                        <div className="px-1.5 py-0.5 rounded-sm bg-green-50 text-green-600 text-[10px] font-black border border-green-100">
+                            {data?.priorityLevel?.code === 'low' ? 'Low' : 'Normal'}
                         </div>
                     )}
                 </div>

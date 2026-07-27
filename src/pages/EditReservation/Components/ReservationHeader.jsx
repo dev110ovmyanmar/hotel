@@ -41,7 +41,7 @@ const ReservationHeader = ({ data }) => {
             <div className="flex items-center gap-2 py-1 rounded-lg mt-2.5">
               <FaChild className="text-pink-500 text-base" />
               <span className="text-[10px] md:text-[10px] lg:text-[13px] font-medium text-[#ffffff]">
-                {reservation.children}
+                {reservation?.children} {""}
                 {reservation?.children === 1 ? "Child" : "Children"}
               </span>
             </div>

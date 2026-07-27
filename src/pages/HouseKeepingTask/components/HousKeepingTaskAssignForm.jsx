@@ -203,7 +203,7 @@ const HouseKeepingTaskAssignForm = ({
                     <ColorStatusTag status={statusForTag} />
                 </div>
             }
-            width={550}
+            size={550}
             onClose={() => setDrawerOpen(false)}
             open={drawerOpen}
             extra={

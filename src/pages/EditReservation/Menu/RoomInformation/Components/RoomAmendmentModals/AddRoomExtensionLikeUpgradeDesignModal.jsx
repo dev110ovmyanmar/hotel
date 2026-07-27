@@ -237,7 +237,7 @@ export default function AddRoomExtensionLikeUpgradeDesignModal({
             open={isOpen}
             onCancel={handleCloseReset}
             width={500}
-            destroyOnClose
+            destroyOnHidden
             footer={footerContent}
         >
             {

@@ -209,7 +209,8 @@ const EventFacilityOrderTable = ({
             },
           },
           ...(
-            record?.status?.code !== "completed" ?
+            record?.status?.code !== "completed" &&
+            record?.status?.code !== "cancelled" ?
               [{
                 key: "edit",
                 label: "Edit",

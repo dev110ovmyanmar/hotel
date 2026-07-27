@@ -97,7 +97,6 @@ const RoomRestrictionTable = ({ data, page, setPage }) => {
       title: "Rate Plan",
       dataIndex: ["ratePlan", "name"],
       key: "ratePlan",
-      align: "center",
       onCell: (record) => ({
         rowSpan: record.rowSpan,
         style: { verticalAlign: "middle" },
@@ -226,6 +225,7 @@ const RoomRestrictionTable = ({ data, page, setPage }) => {
         pagination={false}
         size="small"
         bordered
+        rowKey="uuid"
         style={{ marginTop: "16px", marginBottom: "16px" }}
       />
     );

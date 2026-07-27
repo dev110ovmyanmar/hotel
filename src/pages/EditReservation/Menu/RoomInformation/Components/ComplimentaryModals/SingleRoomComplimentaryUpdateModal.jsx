@@ -130,7 +130,7 @@ const SingleRoomComplimentaryUpdateModal = ({
         let savings = 0;
 
         (nights || []).forEach(n => {
-            const priceVal = parseFloat(n.price) || 0;
+            const priceVal = parseFloat(n.originalPrice) || 0;
             gross += priceVal;
             if ((compDates || []).includes(n.date)) {
                 savings += priceVal;
@@ -217,7 +217,7 @@ const SingleRoomComplimentaryUpdateModal = ({
 
                     {!isModificationAllowed && (
                         <Alert
-                            message="Modifications Restricted"
+                            title="Modifications Restricted"
                             description={
                                 <ul className="list-disc list-inside text-xs space-y-1 mt-1">
                                     {!isStatusValid && <li>Room status must be checked-in (Current status: {reservationData?.roomStatus?.name || "N/A"}).</li>}
@@ -315,7 +315,7 @@ const SingleRoomComplimentaryUpdateModal = ({
                                     const isComp = roomAllocation.compDates.includes(night.date);
                                     const disabledDate = !isModificationAllowed;
                                     // || isPastOrToday(night.date);
-                                    const displayValue = isComp ? 0 : parseFloat(night.price);
+                                    const displayValue = isComp ? 0 : parseFloat(night.originalPrice);
 
                                     return (
                                         <button
@@ -355,4 +355,5 @@ const SingleRoomComplimentaryUpdateModal = ({
 }
 
 export default SingleRoomComplimentaryUpdateModal;
+
 

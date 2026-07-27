@@ -51,6 +51,7 @@ const MeanPlanTable = ({
     },
     {
       title: "Pricing Rules",
+      width:350,
       render: (record) => {
         return (
           <>
