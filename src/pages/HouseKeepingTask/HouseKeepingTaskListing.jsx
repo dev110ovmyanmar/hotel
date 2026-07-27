@@ -22,7 +22,7 @@ const HouseKeepingTaskListing = () => {
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(LIMITS.PAGE_SIZE);
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [viewMode, setViewMode] = useState("table");
+  const [viewMode, setViewMode] = useState("card");
   const [taskAssignDrawerOpen, setTaskAssignDrawerOpen] = useState(false);
 
   // --- Unified Data Fetching (Pagination for both Table and Grid) ---
@@ -112,26 +112,24 @@ const HouseKeepingTaskListing = () => {
     <div className="inline-flex items-center gap-1 rounded-lg bg-transparent">
       <button
         type="button"
-        onClick={() => setViewMode("table")}
-        className={`p-2 rounded-sm transition-all duration-200 flex items-center justify-center ${
-          viewMode === "table"
-            ? "bg-[#1677ff]  shadow-sm text-gray-100!"
+        onClick={() => setViewMode("card")}
+        className={`p-2 rounded-sm transition-all duration-200 flex items-center justify-center ${viewMode === "card"
+            ? "bg-[#1677ff] shadow-sm text-gray-100!"
             : "hover:text-gray-500 hover:bg-gray-200!"
-        }`}
+          }`}
       >
-        <UnorderedListOutlined className="text-sm!" />
+        <AppstoreOutlined className="text-sm! " />
       </button>
 
       <button
         type="button"
-        onClick={() => setViewMode("card")}
-        className={`p-2 rounded-sm transition-all duration-200 flex items-center justify-center ${
-          viewMode === "card"
-            ? "bg-[#1677ff] shadow-sm text-gray-100!"
+        onClick={() => setViewMode("table")}
+        className={`p-2 rounded-sm transition-all duration-200 flex items-center justify-center ${viewMode === "table"
+            ? "bg-[#1677ff]  shadow-sm text-gray-100!"
             : "hover:text-gray-500 hover:bg-gray-200!"
-        }`}
+          }`}
       >
-        <AppstoreOutlined className="text-sm! " />
+        <UnorderedListOutlined className="text-sm!" />
       </button>
     </div>
   );
@@ -164,13 +162,13 @@ const HouseKeepingTaskListing = () => {
             changePerPage={setPerPage}
             onView={(rec) => handleAction(rec, "view")}
             onEdit={(rec) => handleAction(rec, "edit")}
-            // onViewTaskAssign={(rec) => handleViewTaskAssign(rec)}
+          // onViewTaskAssign={(rec) => handleViewTaskAssign(rec)}
           />
         </div>
       ) : (
         <Spin spinning={isListLoading}>
           <div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 min-h-[400px]">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 min-h-[400px]">
               {listData?.data?.map((item) => (
                 <HouseKeepingTaskCard
                   key={item.uuid}

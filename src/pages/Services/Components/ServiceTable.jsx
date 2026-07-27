@@ -21,7 +21,9 @@ const ServiceTable = ({
   loading,
 }) => {
   const { hasPermission } = usePermission();
-  const canCreateNested = hasPermission(PERMISSIONS.SERVICE_INVENTORY_ITEM_CREATE);
+  const canCreateNested = hasPermission(
+    PERMISSIONS.SERVICE_INVENTORY_ITEM_CREATE,
+  );
   const rowExpandList = hasPermission(PERMISSIONS.SERVICE_INVENTORY_ITEM_LIST);
 
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -59,13 +61,7 @@ const ServiceTable = ({
         </div>
       ),
     },
-    {
-      title: "Price (MMK)",
-      dataIndex: "basePrice",
-      key: "basePrice",
-      align: "end",
-      render: (text) => <PriceTag value={text} />,
-    },
+
     {
       title: "Status",
       dataIndex: ["status", "name"],
@@ -78,7 +74,13 @@ const ServiceTable = ({
       dataIndex: ["billingType", "name"],
       key: "billingType",
     },
-
+    {
+      title: "Price (MMK)",
+      dataIndex: "basePrice",
+      key: "basePrice",
+      align: "end",
+      render: (text) => <PriceTag value={text} />,
+    },
     {
       title: "Action",
       fixed: "end",
@@ -141,7 +143,6 @@ const ServiceTable = ({
       title: "Item Name",
       dataIndex: ["serviceInventoryItem", "name"],
       key: "name",
-      align: "center",
     },
     {
       title: "Quantity",
@@ -213,27 +214,23 @@ const ServiceTable = ({
   const expandedRowRender = (record) => {
     return (
       <div className="nested-table-container">
-
-        {
-          canCreateNested && (
-            <div className="flex justify-between items-center mb-3">
-              <Button
-                className="py-4! rounded-[5px]!"
-                type="primary"
-                size="small"
-                icon={<PlusOutlined />}
-                onClick={() => {
-                  setSelectedItem({ serviceUuid: record?.uuid });
-                  setMode("item-add");
-                  setItemDrawerOpen(true);
-                }}
-              >
-                Inventory Item
-              </Button>
-            </div>
-          )
-        }
-
+        {canCreateNested && (
+          <div className="flex justify-between items-center mb-3">
+            <Button
+              className="py-4! rounded-[5px]!"
+              type="primary"
+              size="small"
+              icon={<PlusOutlined />}
+              onClick={() => {
+                setSelectedItem({ serviceUuid: record?.uuid });
+                setMode("item-add");
+                setItemDrawerOpen(true);
+              }}
+            >
+              Inventory Item
+            </Button>
+          </div>
+        )}
 
         {record?.serviceInventoryMappings <= 0 ? null : (
           <Table
@@ -241,7 +238,9 @@ const ServiceTable = ({
             columns={expandColumns}
             dataSource={record.serviceInventoryMappings || []}
             rowKey="uuid"
-            pagination={record.serviceInventoryMappings?.length > 10 ? true : false}
+            pagination={
+              record.serviceInventoryMappings?.length > 10 ? true : false
+            }
             size="small"
           />
         )}
@@ -258,7 +257,9 @@ const ServiceTable = ({
         expandable={{
           expandedRowRender,
           defaultExpandedRowKeys: ["0"],
-          rowExpandable: (record) => rowExpandList && record?.serviceInventoryMappings?.length > 0 || canCreateNested
+          rowExpandable: (record) =>
+            (rowExpandList && record?.serviceInventoryMappings?.length > 0) ||
+            canCreateNested,
         }}
         dataSource={data}
         loading={loading}

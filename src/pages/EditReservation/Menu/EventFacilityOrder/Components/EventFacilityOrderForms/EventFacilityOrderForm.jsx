@@ -271,7 +271,7 @@ const EventFacilityOrderForm = ({
       <Drawer
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
-        size={650}
+        size={700}
         title={
           <div className="flex justify-between items-center">
             <span>
@@ -283,6 +283,7 @@ const EventFacilityOrderForm = ({
             </span>
             {isView ? (
               selectedData?.status?.code !== "completed" &&
+              selectedData?.status?.code !== "cancelled" &&
               <Button type="primary" onClick={() => setMode("edit")}>
                 Edit
               </Button>

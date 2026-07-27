@@ -89,7 +89,7 @@ const MaintenanceTaskAssignForm = ({
     // 5. Mutations
     const createMutation = useApiMutation({
         mutationFn: createMaintenanceTaskAssignment,
-        invalidateKeys: [["maintenance-request-detail"]],
+        invalidateKeys: [["maintenance-request-detail"],["maintenance-requests"]],
     });
 
     const updateMutation = useApiMutation({

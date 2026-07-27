@@ -10,21 +10,12 @@ const columns = [
     dataIndex: ["roomType", "name"],
     key: "roomType",
   },
-  // {
-  //   title: "No",
-  //   dataIndex: "no",
-  //   key: "no",
-  //   align: "center",
-  // },
   {
     title: "Reservation Status",
     dataIndex: "roomStatus",
     key: "roomStatus",
     render: (status) => {
-
-      return (
-        status ? <ColorStatusTag status={status} /> : "-"
-      );
+      return status ? <ColorStatusTag status={status} /> : "-";
     },
   },
   {
@@ -33,24 +24,25 @@ const columns = [
     key: "room",
     align: "center",
     render: (text) => {
-      return text ? text : "-"
-    }
+      return text ? text : "-";
+    },
   },
   {
     title: "Room Status",
     dataIndex: ["room", "status"],
     key: "roomstatus",
-    // align: "center",
     render: (status) => {
-
-      return (
-        status ? <ColorStatusTag status={status} /> : "-"
-      );
+      return status ? <ColorStatusTag status={status} /> : "-";
     },
   },
 ];
 
 const RoomStatusTable = ({ data }) => {
+  const formattedData = data.map((item) => ({
+    ...item,
+    children: Array.isArray(item.children) ? item.children : null,
+  }));
+
   const CustomTitle = (
     <Space>
       <div className="room-icon-box">
@@ -61,22 +53,17 @@ const RoomStatusTable = ({ data }) => {
   );
   return (
     <>
-      {
-        data?.length !== 0 && (
-          <Card
-            title={CustomTitle}
-            className="room-card"
-          // extra={<Tag color="blue">Reserved - 2 Rooms</Tag>}
-          >
-            <Table
-              columns={columns}
-              dataSource={data}
-              size="small"
-              pagination={false}
-            />
-          </Card>
-        )
-      }
+      {data?.length !== 0 && (
+        <Card title={CustomTitle} className="room-card">
+          <Table
+            columns={columns}
+            dataSource={formattedData}
+            size="small"
+            pagination={false}
+            rowKey="uuid"
+          />
+        </Card>
+      )}
     </>
   );
 };
