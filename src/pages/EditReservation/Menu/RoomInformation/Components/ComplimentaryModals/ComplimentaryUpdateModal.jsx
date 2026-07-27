@@ -129,7 +129,7 @@ const ComplimentaryUpdateModal = ({
         let savings = 0;
 
         nights.forEach(n => {
-            const priceVal = parseFloat(n.price) || 0;
+            const priceVal = parseFloat(n?.originalPrice) || 0;
             gross += priceVal;
             if (compDates.includes(n.date)) {
                 savings += priceVal;
@@ -287,7 +287,7 @@ const ComplimentaryUpdateModal = ({
                                 <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-slate-300">
                                     {allNights.map((night) => {
                                         const isComp = allocation.compDates.includes(night.date);
-                                        const displayValue = isComp ? 0 : parseFloat(night.price);
+                                        const displayValue = isComp ? 0 : parseFloat(night.originalPrice);
 
                                         return (
                                             <button
