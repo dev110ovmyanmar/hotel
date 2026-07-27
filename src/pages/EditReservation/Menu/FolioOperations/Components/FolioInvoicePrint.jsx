@@ -40,9 +40,10 @@ const FolioInvoicePrint = React.forwardRef(({ folios, folio, reservation, proper
     (f.folioLines || []).forEach((line) => {
       const amt = Number(line.grandTotal) || 0;
       if (line.postingType === "debit") grandDebit += amt;
-      // else if (line.postingType === "credit") grandCredit += amt;
+      else if (line.postingType === "credit") grandCredit += amt;
     })
   );
+  const grandBalance = grandDebit - grandCredit;
 
   const currency = foliosList[0]?.currency?.code || "MMK";
   const property = foliosList[0]?.property;
@@ -66,19 +67,21 @@ const FolioInvoicePrint = React.forwardRef(({ folios, folio, reservation, proper
 
   const cols = showFolioColumn
     ? [
-      { name: "Date", width: "12%", align: "center" },
-      { name: "Folio", width: "15%", align: "center" },
-      { name: "Ref#", width: "10%", align: "center" },
-      { name: "Description", width: "33%", align: "left" },
-      { name: "Remark", width: "20%", align: "left" },
-      { name: "Debit", width: "30%", align: "right" },
+      { name: "Date", width: "10%", align: "center" },
+      { name: "Folio", width: "12%", align: "center" },
+      { name: "Ref#", width: "8%", align: "center" },
+      { name: "Description", width: "35%", align: "left" },
+      { name: "Debit", width: "15%", align: "right" },
+      { name: "Credit", width: "15%", align: "right" },
+      { name: "Balance", width: "15%", align: "right" },
     ]
     : [
-      { name: "Date", width: "12%", align: "center" },
-      { name: "Ref#", width: "10%", align: "center" },
-      { name: "Description", width: "43%", align: "left" },
-      { name: "Remark", width: "25%", align: "left" },
-      { name: "Debit", width: "30%", align: "right" },
+      { name: "Date", width: "10%", align: "center" },
+      { name: "Ref#", width: "8%", align: "center" },
+      { name: "Description", width: "42%", align: "left" },
+      { name: "Debit", width: "15%", align: "right" },
+      { name: "Credit", width: "15%", align: "right" },
+      { name: "Balance", width: "15%", align: "right" },
     ];
 
   return (
@@ -345,13 +348,10 @@ const FolioInvoicePrint = React.forwardRef(({ folios, folio, reservation, proper
                 allLines.map((line, idx) => {
                   const folIdx = line._folIdx;
                   const refVal = "-";
-                  // const refVal = line.sourceId || "-";
-                  // line.itemType === "room_charge" || line.sourceType === "reservation_room_rate"
-                  //   ? "AUTO"
-                  //   : line.sourceId || "—";
                   const amt = Number(line.grandTotal) || 0;
-                  // const isDebit = line.postingType === "debit";
-                  // const isCredit = line.postingType === "credit";
+                  const isDebit = line.postingType === "debit";
+                  const isCredit = line.postingType === "credit";
+                  const balance = isDebit ? amt : isCredit ? -amt : 0;
                   const isEven = idx % 2 === 0;
 
                   return (
@@ -365,10 +365,15 @@ const FolioInvoicePrint = React.forwardRef(({ folios, folio, reservation, proper
                         <td style={{ ...td("center", false), color: INK_MUTED }}>{line._folioId}</td>
                       )}
                       <td style={{ ...td("center", true), color: INK_MUTED }}>{refVal}</td>
-                      <td style={{ ...td("left"), color: INK, fontWeight: "500" }}>{line.itemNameSnapshot || line.descriptionSnapshot || line.description || "—"}</td>
-                      <td style={{ ...td("left"), color: INK_MUTED, fontSize: "13px" }}>{line.remark || "—"}</td>
+                      <td style={{ ...td("left"), color: INK, fontWeight: "500" }}>{line.descriptionSnapshot || "—"}</td>
                       <td style={{ ...td("right", true), textAlign: "right", fontFamily: FONT_MONO, fontSize: "13.5px", color: "#1a3a5c" }}>
-                        {fmt(amt)}
+                        {isDebit ? fmt(amt) : "-"}
+                      </td>
+                      <td style={{ ...td("right", true), textAlign: "right", fontFamily: FONT_MONO, fontSize: "13.5px", color: "#1a3a5c" }}>
+                        {isCredit ? fmt(amt) : "-"}
+                      </td>
+                      <td style={{ ...td("right", true), textAlign: "right", fontFamily: FONT_MONO, fontSize: "13.5px", color: "#1a3a5c" }}>
+                        {fmt(balance)}
                       </td>
                     </tr>
                   );
@@ -381,7 +386,9 @@ const FolioInvoicePrint = React.forwardRef(({ folios, folio, reservation, proper
           <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "0", borderTop: `1.5px solid ${BLUE}` }}>
             <table style={{ borderCollapse: "collapse", minWidth: "280px" }}>
               <tbody>
-                <SumRow label="Total Charges" value={`${fmt(grandDebit)} ${currency}`} />
+                <SumRow label="Total Debit" value={`${fmt(grandDebit)} ${currency}`} />
+                <SumRow label="Total Credit" value={`${fmt(grandCredit)} ${currency}`} />
+                <SumRow label="Balance" value={`${fmt(grandBalance)} ${currency}`} bold />
               </tbody>
             </table>
           </div>
