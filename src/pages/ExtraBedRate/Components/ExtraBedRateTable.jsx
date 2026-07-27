@@ -18,13 +18,11 @@ const ExtraBedRateTable = ({ data, page, setPage }) => {
       title: "ID",
       render: (_, record) => <div>{record?.id}</div>,
       width: 70,
-      align: "center",
     },
     {
       title: "Rate Plan",
       dataIndex: ["ratePlan", "name"],
       key: "ratePlan",
-      align: "center",
       width: 150,
       onCell: (record) => ({
         rowSpan: record.ratePlanRowSpan,
@@ -47,7 +45,6 @@ const ExtraBedRateTable = ({ data, page, setPage }) => {
     {
       title: "Extra Type",
       dataIndex: ["extraType", "name"],
-      align: "center",
       key: "extraType",
       onCell: (record) => ({
         rowSpan: record.extraTypeRowSpan,

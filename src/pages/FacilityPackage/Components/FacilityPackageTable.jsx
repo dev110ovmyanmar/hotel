@@ -65,20 +65,6 @@ const FacilityPackageTable = ({
       key: "basePrice",
       render: (text) => <PriceTag value={text} />,
     },
-    // {
-    //   title: "Extra Hour Price (MMK)",
-    //   dataIndex: "extraHourPrice",
-    //   key: "extraHourPrice",
-    //   align: "end",
-    //   render: (text) => <PriceTag value={text} />,
-    // },
-    // {
-    //   title: "Extra Pax Price (MMK)",
-    //   dataIndex: "extraPaxPrice",
-    //   key: "extraPaxPrice",
-    //   align: "end",
-    //   render: (text) => <PriceTag value={text} />,
-    // },
     {
       title: "Status",
       dataIndex: "status",

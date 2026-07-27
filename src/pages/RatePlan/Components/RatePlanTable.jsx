@@ -246,13 +246,11 @@ const RatePlanTable = ({
       dataIndex: ["roomType", "name"],
       key: "roomType",
       render: (text) => <div>{text}</div>,
-      align: "center",
     },
     {
       title: "Price (MMK)",
       dataIndex: "price",
-      key: "price",
-      // render: (text) => <PriceTag value={text} />,
+      key: "price",   
       render: (text, record) => {
         const hasWeekdays =
           record.weekdays &&

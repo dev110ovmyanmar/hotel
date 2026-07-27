@@ -29,7 +29,6 @@ import Toast from "../../../../../../component/Toast/Toast";
 const NoteDrawer = ({ mode, open, onClose, selectedData, onSuccess }) => {
   const location = useLocation();
   const uuid = location.state?.bookingId;
-  // const uuid =location.state?.
   const [form] = Form.useForm();
 
   const [editingKey, setEditingKey] = useState("");
@@ -49,7 +48,6 @@ const NoteDrawer = ({ mode, open, onClose, selectedData, onSuccess }) => {
         perPage: perPage,
       },
       keyword,
-      // reservation: { uuid: uuid },
       reservationRoom: { uuid: selectedData?.uuid },
     },
   });
@@ -66,7 +64,6 @@ const NoteDrawer = ({ mode, open, onClose, selectedData, onSuccess }) => {
   const onFinish = (values) => {
     const payload = {
       note: values.noteContent,
-      // reservation: { uuid: uuid },
       reservationRoom: { uuid: selectedData?.uuid },
     };
 
@@ -83,7 +80,6 @@ const NoteDrawer = ({ mode, open, onClose, selectedData, onSuccess }) => {
     const payload = {
       note: editValue,
       uuid: record?.uuid,
-      // reservation: { uuid },
       reservationRoom: { uuid: selectedData?.uuid || selectedData?.roomUuid },
     };
 
@@ -169,7 +165,7 @@ const NoteDrawer = ({ mode, open, onClose, selectedData, onSuccess }) => {
       open={open}
       onClose={onClose}
       title="Room Notes"
-      width={500}
+      size={500}
       extra={
         !isView && (
           <Button
