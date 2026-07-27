@@ -112,7 +112,8 @@ const MenuModifierTable = ({
         columns={columns}
         dataSource={data}
         loading={loading}
-        rowKey="roomrate"
+        // rowKey="roomrate"
+        rowKey="uuid"
         pagination={{
           current: page,
           pageSize: perPage,

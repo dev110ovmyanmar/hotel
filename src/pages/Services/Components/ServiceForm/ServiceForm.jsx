@@ -109,7 +109,7 @@ const ServiceForm = ({
       });
       setSelectedData(data);
     }
-  }, [data]);
+  }, [data, form]);
 
   const handleClose = () => {
     setDrawerOpen(false);
