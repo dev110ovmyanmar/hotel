@@ -217,7 +217,7 @@ const SingleRoomComplimentaryUpdateModal = ({
 
                     {!isModificationAllowed && (
                         <Alert
-                            message="Modifications Restricted"
+                            title="Modifications Restricted"
                             description={
                                 <ul className="list-disc list-inside text-xs space-y-1 mt-1">
                                     {!isStatusValid && <li>Room status must be checked-in (Current status: {reservationData?.roomStatus?.name || "N/A"}).</li>}

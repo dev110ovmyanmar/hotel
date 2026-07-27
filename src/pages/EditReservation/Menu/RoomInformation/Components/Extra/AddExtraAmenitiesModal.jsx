@@ -388,7 +388,7 @@ const AddExtraAmenitiesModal = ({
                             form.setFieldsValue({ [formFieldName]: updatedGroupValues });
                             setZeroQtyErrors(prev => ({ ...prev, [formFieldName]: false }));
                         }}
-                        className="!text-[12px] !text-[#64748b]"
+                        className="!text-[12px]"
                     >
                         Select All
                     </Checkbox>

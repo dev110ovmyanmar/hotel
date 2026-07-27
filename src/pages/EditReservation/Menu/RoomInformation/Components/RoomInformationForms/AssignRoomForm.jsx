@@ -197,7 +197,7 @@ const AssignRoomForm = ({
 
         {currentRoomNo && (
           <Alert
-            message={
+            title={
               <span>
                 Currently assigned to Room:
                 <Tag color="blue" className="font-bold text-lg ml-1">
@@ -211,7 +211,7 @@ const AssignRoomForm = ({
         )}
         {showRoomResults && (
           <div>
-            <Divider orientation="left">Available Rooms</Divider>
+            <Divider titlePlacement="left">Available Rooms</Divider>
             <GetRoomForm
               key={searchKey}
               open={showRoomResults}

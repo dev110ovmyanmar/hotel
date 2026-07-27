@@ -118,7 +118,6 @@ const SeasonalRateTable = ({
     { title: "ID", dataIndex: "id", key: "id", align: "center" },
     {
       title: "Rate Plan",
-      align: "center",
       dataIndex: ["ratePlan", "name"],
       key: "ratePlan",
       onCell: (record) => ({
@@ -130,7 +129,6 @@ const SeasonalRateTable = ({
       title: "Season Name",
       dataIndex: ["rateCategory", "name"],
       key: "rateCategory",
-      align: "center",
       onCell: (record) => ({
         rowSpan: record.rateCategoryRowSpan,
         style: { verticalAlign: "middle" },

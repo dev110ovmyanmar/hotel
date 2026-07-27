@@ -33,8 +33,8 @@ export default function Dashboard() {
   const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sun', 'Sat'];
 
   return (
-    <div className="p-6  min-h-screen font-sans">
-      <h1 className="text-xl font-semibold mb-6">Dashboard Overview</h1>
+    <div className="px-6 py-3 min-h-screen font-sans">
+      {/* <h1 className="text-xl font-semibold mb-6">Dashboard Overview</h1> */}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         {metrics.map((item, index) => (
