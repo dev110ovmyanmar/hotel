@@ -24,11 +24,16 @@ const SubFolioTable = ({ record, lineColumns, onMoveTo, isTransferring }) => {
     setSelectedRowKeys([]);
   }, [lines]);
 
+  const isFolioClosed = record.closedAt !== null && record.closedAt !== undefined;
+
   const rowSelection = {
     selectedRowKeys,
     onChange: (selectedKeys) => {
       setSelectedRowKeys(selectedKeys);
     },
+    getCheckboxProps: () => ({
+      disabled: isFolioClosed,
+    }),
   };
 
   // Calculate totals
@@ -119,7 +124,7 @@ const FolioOperationsTable = ({
       title: "Description",
       dataIndex: "descriptionSnapshot", // Fixed: 'description' is null, 'descriptionSnapshot' contains the text
       key: "descriptionSnapshot",
-      render: (_, record) => record.descriptionSnapshot || record.description || "-",
+      render: (_, record) => record.descriptionSnapshot || "-",
     },
     {
       title: "Quantity",
@@ -310,6 +315,7 @@ const FolioOperationsTable = ({
               ?.filter((folio) => !selectedFolio || folio.id !== selectedFolio.id)
               ?.map((folio) => {
                 const isSelected = targetFolioUuid === folio.uuid;
+                const isClosed = folio.closedAt !== null && folio.closedAt !== undefined;
                 const currency = folio.currency?.code || "MMK";
                 const amountText = folio.grandTotal !== undefined
                   ? `${Number(folio.grandTotal).toLocaleString()} ${currency}`
@@ -318,25 +324,34 @@ const FolioOperationsTable = ({
                 return (
                   <div
                     key={folio.id}
-                    onClick={() => setTargetFolioUuid(folio.uuid)}
+                    onClick={() => !isClosed && setTargetFolioUuid(folio.uuid)}
                     className={`
-                      group relative flex items-center justify-between p-3 rounded-xl border transition-all duration-200 cursor-pointer mx-2
-                      ${isSelected
-                        ? 'border-blue-500 bg-blue-50/40 shadow-sm ring-1 ring-blue-500'
-                        : 'border-gray-200 hover:border-blue-300 hover:bg-gray-50/50'
+                      group relative flex items-center justify-between p-3 rounded-xl border transition-all duration-200 mx-2
+                      ${isClosed
+                        ? 'border-gray-200 bg-gray-50/50 opacity-60 cursor-not-allowed'
+                        : isSelected
+                          ? 'border-blue-500 bg-blue-50/40 shadow-sm ring-1 ring-blue-500 cursor-pointer'
+                          : 'border-gray-200 hover:border-blue-300 hover:bg-gray-50/50 cursor-pointer'
                       }
                     `}
                   >
                     <div className="flex items-center gap-3">
-                      <Radio
-                        checked={isSelected}
-                        value={folio.uuid}
-                        className="m-0 pointer-events-none"
-                      />
-                      <div className="flex flex-col">
-                        <span className={`font-semibold text-sm text-gray-800 group-hover:text-blue-600 transition-colors ${textColorDarkMode}`}>
+                      {!isClosed && (
+                        <Radio
+                          checked={isSelected}
+                          value={folio.uuid}
+                          className="m-0 pointer-events-none"
+                        />
+                      )}
+                      <div className="flex items-center gap-2">
+                        <span className={`font-semibold text-sm ${isClosed ? 'text-gray-400' : 'text-gray-800 group-hover:text-blue-600'} transition-colors ${textColorDarkMode}`}>
                           {folio.folioNo}
                         </span>
+                        {isClosed && (
+                          <span className="text-xs text-gray-500 bg-gray-200 border border-gray-300 rounded-full px-2 py-0.5">
+                            It is paid
+                          </span>
+                        )}
                       </div>
                     </div>
                   </div>
