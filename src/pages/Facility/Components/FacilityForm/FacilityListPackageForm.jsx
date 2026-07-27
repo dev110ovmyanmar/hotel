@@ -29,7 +29,7 @@ const FacilityListPackageForm = ({
         ...selectedData,
       });
     }
-  }, [selectedData]);
+  }, [drawerOpen,selectedData,form]);
 
   return (
     <div>
