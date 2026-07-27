@@ -70,12 +70,6 @@ const MaintenanceRequestForm = ({
         }
     ));
 
-    const isAssignedToVertified = initData?.statuses?.maintenance_status?.find(item => (
-        item?.uuid === watchAssignedToVertified
-    ));
-
-    console.log(isAssignedToVertified, "isAssignedToVertif")
-
     const { data: adminMetaData } = useApiQuery({
         fetchQueryName: "admin-meta",
         fetchQueryFunction: adminMeta,

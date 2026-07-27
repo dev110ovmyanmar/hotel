@@ -29,6 +29,7 @@ import ImageUpload from "../../../../component/ImageUpload/ImageUpload";
 import { fetchCompanyUpload } from "../../../../api/partnerApi";
 import { deleteImageUpload } from "../../../../api/deleteImageApi";
 import { PERMISSIONS } from "../../../../variables/permission";
+import { priceFormatter, priceParser } from "../../../../component/PriceTag/PriceTag";
 
 const CompanyContractForm = ({
   mode,
@@ -291,6 +292,9 @@ const CompanyContractForm = ({
                   })()}
                   readOnly={isView}
                   placeholder="Enter Charge Value"
+                  formatter={priceFormatter}
+                  parser={priceParser}
+                  maxLength={15}
                 />
               </Form.Item>
             </Col>
@@ -306,7 +310,7 @@ const CompanyContractForm = ({
               >
                 <RangePicker
                   disabledDate={disabledDate}
-                  open={isView? !isView : undefined}
+                  open={isView ? !isView : undefined}
                   inputReadOnly={isView}
                   suffixIcon={isView ? null : undefined}
                   style={{ width: '100%' }}
