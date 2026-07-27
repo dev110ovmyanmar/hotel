@@ -91,7 +91,7 @@ const RoomInformationList = () => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    return checkin > today && item.roomStatus?.code == "confirmed";
+    return checkin > today && ["confirmed"].includes(item.roomStatus?.code);
   });
 
   const disableComplimentaryUpdateButton = upcomingReservations?.length == 0;

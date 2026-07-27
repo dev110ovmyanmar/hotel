@@ -130,7 +130,7 @@ const SingleRoomComplimentaryUpdateModal = ({
         let savings = 0;
 
         (nights || []).forEach(n => {
-            const priceVal = parseFloat(n.price) || 0;
+            const priceVal = parseFloat(n.originalPrice) || 0;
             gross += priceVal;
             if ((compDates || []).includes(n.date)) {
                 savings += priceVal;
@@ -315,7 +315,7 @@ const SingleRoomComplimentaryUpdateModal = ({
                                     const isComp = roomAllocation.compDates.includes(night.date);
                                     const disabledDate = !isModificationAllowed;
                                     // || isPastOrToday(night.date);
-                                    const displayValue = isComp ? 0 : parseFloat(night.price);
+                                    const displayValue = isComp ? 0 : parseFloat(night.originalPrice);
 
                                     return (
                                         <button
@@ -355,4 +355,5 @@ const SingleRoomComplimentaryUpdateModal = ({
 }
 
 export default SingleRoomComplimentaryUpdateModal;
+
 
