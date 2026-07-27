@@ -199,9 +199,8 @@ const ReservationsTable = ({
         tableLayout="fixed"
         scroll={{ x: 1000 }}
         columns={columns}
-        // dataSource={Array.isArray(data) ? data : []}
-        dataSource={tableData}
-        // dataSource={[]}
+        dataSource={tableData} 
+        rowKey="uuid"      
         pagination={{
           current: page,
           pageSize: perPage,

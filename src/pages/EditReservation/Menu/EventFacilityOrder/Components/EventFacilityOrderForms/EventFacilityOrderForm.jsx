@@ -262,7 +262,6 @@ const EventFacilityOrderForm = ({
     mode: "spinner",
     min: 1,
     max: 10,
-    defaultValue: 1,
     style: { width: 150 },
   };
 
@@ -283,6 +282,7 @@ const EventFacilityOrderForm = ({
             </span>
             {isView ? (
               selectedData?.status?.code !== "completed" &&
+              selectedData?.status?.code !== "cancelled" &&
               <Button type="primary" onClick={() => setMode("edit")}>
                 Edit
               </Button>

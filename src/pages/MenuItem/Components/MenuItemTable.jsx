@@ -145,7 +145,6 @@ const MenuItemTable = ({
       title: "F&B Inventory Name",
       dataIndex: ["fnbInventoryItem", "name"],
       key: "name",
-      align: "center",
     },
     {
       title: "Quantity",

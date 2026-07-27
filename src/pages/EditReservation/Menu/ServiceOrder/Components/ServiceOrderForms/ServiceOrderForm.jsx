@@ -384,7 +384,6 @@ const ServiceOrderForm = ({
                 <Form.Item
                   label="Quantity"
                   name="quantity"
-                  initialValue={1}
                   rules={[{ required: true }, { type: "number" }]}
                   className="minus-icon"
                 >
@@ -399,7 +398,7 @@ const ServiceOrderForm = ({
             </div>
 
             {selectedServiceUuid && (
-              <div mb-5>
+              <div >
                 <label className="text-xs font-bold text-gray-600 uppercase tracking-wider block">
                   {serviceInventories.length > 0
                     ? "Service Inventory Items"
@@ -444,7 +443,6 @@ const ServiceOrderForm = ({
                         <div className="flex-shrink-0">
                           <Form.Item
                             name={["inventoryItems", index, "quantity"]}
-                            initialValue={1}
                             className="!mb-0"
                             rules={[
                               { required: true, message: "Required" },
