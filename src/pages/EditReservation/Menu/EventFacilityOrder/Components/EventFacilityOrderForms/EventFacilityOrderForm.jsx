@@ -283,6 +283,7 @@ const EventFacilityOrderForm = ({
             </span>
             {isView ? (
               selectedData?.status?.code !== "completed" &&
+              selectedData?.status?.code !== "cancelled" &&
               <Button type="primary" onClick={() => setMode("edit")}>
                 Edit
               </Button>
