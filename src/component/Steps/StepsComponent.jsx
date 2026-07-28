@@ -3,26 +3,33 @@ import { Divider, Steps } from 'antd';
 const StepsComponent = ({
   stepValue
 }) => {
-  
+  const textClass = `
+        text-md
+        sm:text-xs
+        md:text-xs
+        lg:text-sm
+        xl:text-md
+        2xl:text-lg
+    `;
   return (
     <>
       <Steps
         current={stepValue}
         items={[
           {
-            title:'Check Booking',
+            title: <span className={textClass}>Check Booking</span>,
           },
           {
-            title: 'Room Charge',
+            title: <span className={textClass}>Room Charge</span>,
           },
           {
-            title:"Unsettled Folios",
+            title: <span className={textClass}>Unsettled Folios</span>,
           },
           {
-            title: 'Night Audit Posting',
+            title:<span className={textClass}>Night Audit Posting</span>,
           },
           {
-            title: 'Create New Day',
+            title: <span className={textClass}>Create New Day</span>,
           },
         ]}
       />

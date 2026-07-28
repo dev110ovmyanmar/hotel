@@ -24,16 +24,20 @@ import useApiQuery from "../../../hooks/useApiQuery";
 import { getGuestDetail } from "../../../api/guestApi";
 import { useLocation } from "react-router-dom";
 import GuestForm from "../Components/NewGuestForm";
+import GuestProfileBG from "../../../assets/images/Guestprofile.png";
 
 const calculateAge = (dobString) => {
   if (!dobString) return null;
   const birthDate = new Date(dobString);
   const today = new Date();
-  
+
   let age = today.getFullYear() - birthDate.getFullYear();
   const monthDiff = today.getMonth() - birthDate.getMonth();
 
-  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+  if (
+    monthDiff < 0 ||
+    (monthDiff === 0 && today.getDate() < birthDate.getDate())
+  ) {
     age--;
   }
 
@@ -79,14 +83,17 @@ const GuestProfile = () => {
     }
   };
 
-  
-
   return (
     <>
-      <div className="min-h-screen px-8 py-6 font-sans text-slate-700 dark:!text-[#D9D9D9] bg-slate-50 dark:bg-[#141414]">
+      <div className="min-h-screen px-8 py-6 font-sans text-slate-700 dark:!text-[#D9D9D9] dark:bg-[#141414]">
         {/* Header Card */}
-        <div className="bg-[linear-gradient(to_bottom_right,#22C1C3,#E8D3F5,#A4DEC4,#9ADAE3,#B2D6E6,#FEEDFF)] rounded-xl shadow-sm border border-slate-200 p-6 mb-6">
-        {/* <div className="bg-gradient-to-r from-[#a2dea2] via-[#d4d94c] to-[#fae632] rounded-xl shadow-sm border border-slate-200 p-6 mb-6"> */}
+        <div
+          className="rounded-xl  p-6 mb-6 bg-cover bg-center  min-h-[200px] "
+          style={{
+            backgroundImage: `url(${GuestProfileBG})`,
+          }}
+        >
+          {/* <div className="bg-gradient-to-r from-[#a2dea2] via-[#d4d94c] to-[#fae632] rounded-xl shadow-sm border border-slate-200 p-6 mb-6"> */}
           <div className="flex justify-between items-start">
             <div className="flex gap-6">
               <img
@@ -112,7 +119,7 @@ const GuestProfile = () => {
                 <p className="text-sm text-slate-500 mb-2">
                   Guest Id: GST0410PQCP
                 </p>
-               
+
                 {guestDetailDatas?.dob && (
                   <div className="flex items-center gap-2 text-sm mb-3 dark:!text-[#000000]">
                     <Cake size={14} /> {calculateAge(guestDetailDatas?.dob)}

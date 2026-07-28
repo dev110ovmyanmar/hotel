@@ -53,7 +53,7 @@ const HouseKeepingTaskCard = ({ data, onEdit, onView,
                 <span className={`${textClass}`}>{label}</span>
             </div>
             <span className={`${textClass} font-bold ms-2`}>:</span>
-            <div className="flex items-center pl-2 border-l border-gray-100 ml-1 min-w-0">
+            <div className="flex items-center pl-2 ml-1 min-w-0">
                 <span className={`${textClass} truncate ${isDate ? 'font-mono' : 'font-bold'}`}>
                     {value || "---"}
                 </span>
