@@ -181,7 +181,7 @@ const HouseKeepingTaskListing = () => {
             </div>
 
             {/* Standard Pagination for Grid View */}
-            <div className="mt-8 flex justify-center sm:justify-end bg-white p-4 rounded border border-gray-200 shadow-sm">
+            <div className="mt-8 flex justify-center sm:justify-end bg-white p-4 ">
               <Pagination
                 current={page}
                 pageSize={perPage}
