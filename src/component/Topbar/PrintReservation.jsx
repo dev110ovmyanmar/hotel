@@ -11,17 +11,17 @@ const generateContent = (data) => `
     <div class="form-border">
       <div class="form-title">Guest Registration Form</div>
 
-      ${renderRow("Name", data?.guestName)}
-      ${renderRow("Arrival Date", data?.checkin, "Departure Date", data?.checkout)}
-      ${renderRow("No of Night", data?.noOfNights, "No of Pax", data?.noOfPax)}
+      ${renderRow("Name", data?.guest?.name)}
+      ${renderRow("Arrival Date", data?.checkinDate, "Departure Date", data?.checkoutDate)}
+      ${renderRow("No of Night", data?.totalNight, "No of Pax", data?.noOfPax)}
       ${renderRow("Adult", data?.adults, "Child", data?.children)}
-      ${renderRow("Room Type", data?.roomType, "Room No", data?.roomNo)}
-      ${renderRow("Room Rate", data?.roomRate)}
-      ${renderRow("Passport", data?.passport, "Travel Type", data?.travelType)}
-      ${renderRow("NRC", data?.nrc, "Source Type", data?.sourceType)}
+      ${renderRow("Room Type", data?.roomType?.name, "Room No", data?.room?.roomNo)}
+      ${renderRow("Room Rate", data?.ratePlan?.name)}
+      ${renderRow("Passport", data?.guest?.passport, "Travel Type", data?.travelType)}
+      ${renderRow("NRC", data?.guest?.nrcNo, "Source Type", data?.reservation?.sourceType?.name)}
       ${renderRow("License", data?.license, "HK Receive Name", data?.hkReceiveName)}
       ${renderRow("Smart Card", data?.smartCard, "HK Receive Time", data?.hkReceiveTime)}
-      ${renderRow("Mobile Phone", data?.mobilePhone, "FO Name", data?.foName)}
+      ${renderRow("Mobile Phone", data?.guest?.phone, "FO Name", data?.foName)}
       ${renderRow("More Information", data?.moreInformation)}
       ${renderRow("Mobile Banking Transfer", data?.mobileTransferAmount, "Cash", data?.cashAmount)}
 
@@ -38,6 +38,11 @@ const generateContent = (data) => `
         </div>
 
         <div>
+         ${data?.guest?.name
+            ? `<div class="signature-name">${data.guest.name}</div>`
+            : ""
+          }
+
           <div>Guest's Signature</div>
           <div class="signature-line"></div>
         </div>
@@ -45,7 +50,7 @@ const generateContent = (data) => `
     </div>
   </div>
 `;
- 
+
 const styles = `
 {
     box-sizing: border-box;
