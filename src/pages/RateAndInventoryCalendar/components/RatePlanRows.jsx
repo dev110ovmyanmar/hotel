@@ -90,7 +90,7 @@ const RatePlanRows = ({ rp, rt, daysMeta, getRateData, handleRestrictionEditOpen
             <td className={`sticky left-0 z-30 bg-[#f9f9f9] border-b border-r border-[#dee2e6] px-4 py-1 ${darkModeStyle}`}>
                 <div className="text-[12px] text-gray-500 pl-4">Extra Bed</div>
             </td>
-            {daysMeta.map(({ dateStr, cellClass }, dayIdx) => {
+            {daysMeta.map(({ dateStr, cellClass, isToday }, dayIdx) => {
                 const extraBed = getRateData(rt.id, rp.id, dateStr)?.extraBed;
                 const hasAdult = extraBed?.adult != null;
                 const hasChild = extraBed?.child != null;

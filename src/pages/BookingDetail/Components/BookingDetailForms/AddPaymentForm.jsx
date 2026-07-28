@@ -137,7 +137,7 @@ const AddPaymentForm = ({
 
     const { mutate: createFolioPayment, isPending } = useApiMutation({
         mutationFn: createFolioAddPayment,
-        invalidateKeys: [["reservation-details"]],
+        invalidateKeys: [["reservation-details"], ["folios"]],
         options: {
             onSuccess: () => {
                 onClose();

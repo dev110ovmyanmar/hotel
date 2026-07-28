@@ -60,6 +60,7 @@ const AuthLayout = () => {
 
   const showConfirm = () => {
     confirm({
+      icon:null,
       title: "Session Expired!",
       content: "Your session has been expired, please login again.",
       onOk() {
