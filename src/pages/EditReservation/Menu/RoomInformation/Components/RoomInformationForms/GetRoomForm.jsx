@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Spin, Empty, Modal } from "antd"; // Import Modal from antd
+import { Button, Spin, Empty, Modal } from "antd"; 
 import dayjs from "dayjs";
 import {
   reservationRoomAssign,
@@ -9,7 +9,10 @@ import { LIMITS } from "../../../../../../variables/constants";
 import useApiQuery from "../../../../../../hooks/useApiQuery";
 import { useApiMutation } from "../../../../../../hooks/useApiMutation";
 import Toast from "../../../../../../component/Toast/Toast";
-import { textColorDarkMode, textWhiteInDarkStyle } from "../../../../../../utils";
+import {
+  textColorDarkMode,
+  textWhiteInDarkStyle,
+} from "../../../../../../utils";
 
 const GetRoomForm = ({ selectedData, onSelectRoom, onClose, floorUuid }) => {
   const statusColorMap = {
@@ -23,7 +26,7 @@ const GetRoomForm = ({ selectedData, onSelectRoom, onClose, floorUuid }) => {
       "text-[#CF1322] bg-[#FFF1F0] text-xs p-1 px-2 rounded border border-[#FFA39E]",
     "Out of Order":
       "text-[#CF1322] bg-[#FFF1F0] text-xs p-1 px-2 rounded border border-[#FFA39E]",
-      "Out of Service":
+    "Out of Service":
       "text-[#CF1322] bg-[#FFF1F0] text-xs p-1 px-2 rounded border border-[#FFA39E]",
     Cleaning:
       "text-[#389E0D] bg-[#F6FFED] text-xs p-1 px-2 rounded border border-[#B7EB8F]",
@@ -72,8 +75,14 @@ const GetRoomForm = ({ selectedData, onSelectRoom, onClose, floorUuid }) => {
 
   const handleAssignClick = (room) => {
     Modal.confirm({
-      title:<> <div className={textWhiteInDarkStyle}>Complimentary Reason</div></>,
-      content: `Are you sure you want to assign Room ${room.roomNo} (${room.roomType?.name || ""}) to this reservation?`,
+      icon: null,
+      title: (
+        <>
+          {" "}
+          <div className={textWhiteInDarkStyle}>Confirm Assign Room</div>
+        </>
+      ),
+      content: `Are you sure you want to assign Room  ${room.roomNo} (${room.roomType?.name || ""}) to this reservation?`,
       okText: "Confirm",
       okButtonProps: {
         className: "bg-blue-600 hover:bg-blue-500 text-white border-none",
@@ -82,7 +91,7 @@ const GetRoomForm = ({ selectedData, onSelectRoom, onClose, floorUuid }) => {
       onOk: () => {
         executeRoomAssignment(room);
       },
-      rootClassName:'dark-confirm-modal'
+      rootClassName: "dark-confirm-modal",
     });
   };
 
@@ -102,10 +111,14 @@ const GetRoomForm = ({ selectedData, onSelectRoom, onClose, floorUuid }) => {
             className="flex justify-between items-center p-3 border border-gray-100 shadow-sm rounded-lg hover:border-blue-300 transition-all bg-white"
           >
             <div className="flex flex-col">
-              <span className={`font-bold text-gray-800 text-sm ${textColorDarkMode}`}>
+              <span
+                className={`font-bold text-gray-800 text-sm ${textColorDarkMode}`}
+              >
                 Room {room.roomNo}
               </span>
-              <span className={`text-[11px] text-gray-500 ${textWhiteInDarkStyle}`}>
+              <span
+                className={`text-[11px] text-gray-500 ${textWhiteInDarkStyle}`}
+              >
                 {room.roomType?.name}
               </span>
             </div>

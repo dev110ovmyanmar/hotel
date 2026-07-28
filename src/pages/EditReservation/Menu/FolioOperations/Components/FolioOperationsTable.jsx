@@ -24,25 +24,51 @@ const SubFolioTable = ({ record, lineColumns, onMoveTo, isTransferring }) => {
     setSelectedRowKeys([]);
   }, [lines]);
 
+  const isFolioClosed = record.closedAt !== null && record.closedAt !== undefined;
+
   const rowSelection = {
     selectedRowKeys,
     onChange: (selectedKeys) => {
       setSelectedRowKeys(selectedKeys);
     },
+    getCheckboxProps: () => ({
+      disabled: isFolioClosed,
+    }),
   };
+
+  // Calculate totals
+  const totalDebit = lines
+    .filter((line) => line.postingType === "debit")
+    .reduce((sum, line) => sum + (Number(line.grandTotal) || 0), 0);
+
+  const totalCredit = lines
+    .filter((line) => line.postingType === "credit")
+    .reduce((sum, line) => sum + (Number(line.grandTotal) || 0), 0);
+
+  const totalBalance = totalDebit - totalCredit;
+
+  const summary = () => (
+    <Table.Summary fixed>
+      <Table.Summary.Row className="bg-gray-50 font-semibold">
+        <Table.Summary.Cell index={0} />
+        <Table.Summary.Cell index={1} />
+        <Table.Summary.Cell index={2} />
+        <Table.Summary.Cell index={3} >Total </Table.Summary.Cell>
+        <Table.Summary.Cell index={3} align="right">
+          {totalDebit > 0 ? `${totalDebit.toLocaleString()}` : "-"}
+        </Table.Summary.Cell>
+        <Table.Summary.Cell index={4} align="right">
+          {totalCredit > 0 ? `${totalCredit.toLocaleString()}` : "-"}
+        </Table.Summary.Cell>
+        <Table.Summary.Cell index={6} align="right">
+          {`${totalBalance.toLocaleString()}`}
+        </Table.Summary.Cell>
+      </Table.Summary.Row>
+    </Table.Summary>
+  );
 
   return (
     <div>
-      <Table
-        className="nested-folio-table expanded-table dark:[&_.ant-table-thead>tr>th]:!text-[#F3F4F6] "
-        rowSelection={rowSelection}
-        columns={lineColumns}
-        dataSource={lines}
-        rowKey="id"
-        pagination={false}
-        size="small"
-        bordered
-      />
       <div style={{
         display: "flex",
         justifyContent: "end",
@@ -60,6 +86,17 @@ const SubFolioTable = ({ record, lineColumns, onMoveTo, isTransferring }) => {
           Move To
         </Button>
       </div>
+      <Table
+        className="nested-folio-table expanded-table dark:[&_.ant-table-thead>tr>th]:!text-[#F3F4F6] "
+        rowSelection={rowSelection}
+        columns={lineColumns}
+        dataSource={lines}
+        rowKey="id"
+        pagination={false}
+        size="small"
+        bordered
+        summary={summary}
+      />
     </div>
   );
 };
@@ -77,35 +114,17 @@ const FolioOperationsTable = ({
   const [targetFolioUuid, setTargetFolioUuid] = useState(null);
 
   const lineColumns = [
-    // {
-    //   title: "Date",
-    //   dataIndex: "postedAt", // Best practice to include dataIndex for Antd columns
-    //   key: "postedAt",
-    //   render: (_, record) => record.postedAt ? dayjs(record.postedAt).format("YYYY-MM-DD") : "-",
-    // },
     {
-      title: "Source ID",
-      dataIndex: "sourceId", // Fixed: camelCase to match JSON
-      key: "sourceId",
-      render: (_, record) => record.sourceId || "-",
-    },
-    {
-      title: "Source Type",
-      dataIndex: "sourceType", // Fixed: camelCase to match JSON
-      key: "sourceType",
-      render: (_, record) => record.sourceType || "-",
-    },
-    {
-      title: "Remark",
-      dataIndex: "remark",
-      key: "remark",
-      render: (_, record) => record.remark || "-",
+      title: "No",
+      dataIndex: "lineNo",
+      key: "lineNo",
+      render: (_, record, index) => index + 1,
     },
     {
       title: "Description",
       dataIndex: "descriptionSnapshot", // Fixed: 'description' is null, 'descriptionSnapshot' contains the text
       key: "descriptionSnapshot",
-      render: (_, record) => record.descriptionSnapshot || record.description || "-",
+      render: (_, record) => record.descriptionSnapshot || "-",
     },
     {
       title: "Quantity",
@@ -118,44 +137,42 @@ const FolioOperationsTable = ({
           : "-",
     },
     {
-      title: "Unit Price",
-      dataIndex: "unitPrice",
-      key: "unitPrice",
-      align: "right",
-      render: (_, record) => {
-        const val = record.unitPrice;
-        const currency = record.currency?.code || "MMK"; // Dynamically fall back to MMK
-        return val !== undefined && val !== null
-          ? `${Number(val).toLocaleString()} ${currency}`
-          : "-";
-      },
-    },
-    {
-      title: "Tax Amount",
-      dataIndex: "taxTotal", // Fixed: key is 'taxTotal' in JSON
-      key: "taxTotal",
-      align: "right",
-      render: (_, record) => {
-        const val = record.taxTotal;
-        const currency = record.currency?.code || "MMK";
-        return val !== undefined && val !== null
-          ? `${Number(val).toLocaleString()} ${currency}`
-          : "-";
-      },
-    },
-    {
-      title: "Total Amount",
-      dataIndex: "grandTotal", // Fixed: key is 'grandTotal' in JSON
+      title: "Debit (MMK)",
+      dataIndex: "grandTotal",
       key: "grandTotal",
       align: "right",
       render: (_, record) => {
+        if (record.postingType !== "debit") return "-";
         const val = record.grandTotal;
-        const currency = record.currency?.code || "MMK";
         return val !== undefined && val !== null
-          ? `${Number(val).toLocaleString()} ${currency}`
+          ? `${Number(val).toLocaleString()}`
           : "-";
       },
     },
+    {
+      title: "Credit (MMK)",
+      dataIndex: "grandTotal",
+      key: "grandTotal",
+      align: "right",
+      render: (_, record) => {
+        if (record.postingType !== "credit") return "-";
+        const val = record.grandTotal;
+        return val !== undefined && val !== null
+          ? `${Number(val).toLocaleString()}`
+          : "-";
+      },
+    },
+    {
+      title: "Balance (MMK)",
+      key: "balance",
+      align: "right",
+      render: (_, record) => {
+        const val = record.grandTotal;
+        if (val === undefined || val === null) return "-";
+        const balance = record.postingType === "credit" ? -val : val;
+        return `${Number(balance).toLocaleString()}`;
+      },
+    }
   ];
 
   const columns = [
@@ -165,26 +182,10 @@ const FolioOperationsTable = ({
       key: "folioNo",
       width: 200,
     },
-    // {
-    //   title: "Date",
-    //   key: "date",
-    //   render: (_, record) => record.openedAt ? dayjs(record.openedAt).format("YYYY-MM-DD") : "-",
-    // },
     {
       title: "Owner Type",
       key: "type",
       render: (_, record) => record.folioOwnerType?.name || "-",
-    },
-    {
-      title: "Amount",
-      key: "amount",
-      align: "right",
-      render: (_, record) => {
-        const currency = record.currency?.code || "MMK";
-        return record.grandTotal !== undefined
-          ? `${Number(record.grandTotal).toLocaleString()} ${currency}`
-          : "-";
-      },
     },
     {
       title: "Action",
@@ -314,6 +315,7 @@ const FolioOperationsTable = ({
               ?.filter((folio) => !selectedFolio || folio.id !== selectedFolio.id)
               ?.map((folio) => {
                 const isSelected = targetFolioUuid === folio.uuid;
+                const isClosed = folio.closedAt !== null && folio.closedAt !== undefined;
                 const currency = folio.currency?.code || "MMK";
                 const amountText = folio.grandTotal !== undefined
                   ? `${Number(folio.grandTotal).toLocaleString()} ${currency}`
@@ -322,25 +324,34 @@ const FolioOperationsTable = ({
                 return (
                   <div
                     key={folio.id}
-                    onClick={() => setTargetFolioUuid(folio.uuid)}
+                    onClick={() => !isClosed && setTargetFolioUuid(folio.uuid)}
                     className={`
-                      group relative flex items-center justify-between p-3 rounded-xl border transition-all duration-200 cursor-pointer mx-2
-                      ${isSelected
-                        ? 'border-blue-500 bg-blue-50/40 shadow-sm ring-1 ring-blue-500'
-                        : 'border-gray-200 hover:border-blue-300 hover:bg-gray-50/50'
+                      group relative flex items-center justify-between p-3 rounded-xl border transition-all duration-200 mx-2
+                      ${isClosed
+                        ? 'border-gray-200 bg-gray-50/50 opacity-60 cursor-not-allowed'
+                        : isSelected
+                          ? 'border-blue-500 bg-blue-50/40 shadow-sm ring-1 ring-blue-500 cursor-pointer'
+                          : 'border-gray-200 hover:border-blue-300 hover:bg-gray-50/50 cursor-pointer'
                       }
                     `}
                   >
                     <div className="flex items-center gap-3">
-                      <Radio
-                        checked={isSelected}
-                        value={folio.uuid}
-                        className="m-0 pointer-events-none"
-                      />
-                      <div className="flex flex-col">
-                        <span className={`font-semibold text-sm text-gray-800 group-hover:text-blue-600 transition-colors ${textColorDarkMode}`}>
+                      {!isClosed && (
+                        <Radio
+                          checked={isSelected}
+                          value={folio.uuid}
+                          className="m-0 pointer-events-none"
+                        />
+                      )}
+                      <div className="flex items-center gap-2">
+                        <span className={`font-semibold text-sm ${isClosed ? 'text-gray-400' : 'text-gray-800 group-hover:text-blue-600'} transition-colors ${textColorDarkMode}`}>
                           {folio.folioNo}
                         </span>
+                        {isClosed && (
+                          <span className="text-xs text-gray-500 bg-gray-200 border border-gray-300 rounded-full px-2 py-0.5">
+                            It is paid
+                          </span>
+                        )}
                       </div>
                     </div>
                   </div>

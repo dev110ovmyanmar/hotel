@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Table, Tag, Space, Dropdown, Button } from "antd";
 import { useNavigate } from "react-router-dom";
 import {
@@ -14,6 +14,7 @@ import { IoPeopleSharp } from "react-icons/io5";
 import PriceTag from "../../../component/PriceTag/PriceTag";
 import ReservationStatusColor from "../../../component/ReservationStatusColor/ReservationStatusColor";
 import dayjs from "dayjs";
+import PrintReservation from "../../../component/Topbar/PrintReservation";
 
 const ReservationsTable = ({
   data,
@@ -25,13 +26,14 @@ const ReservationsTable = ({
   changePerPage,
 }) => {
   const navigate = useNavigate();
+  const [printOpen, setPrintOpen] = useState(false);
+  const [selectedReservation, setSelectedReservation] = useState();
 
   const tableData = (data || []).map((item) => ({
     ...item,
     childCount: item.children,
     children: undefined,
   }));
-  console.log(tableData);
 
   const handleMenuClick = (item) => {
     if (item?.uuid) {
@@ -186,7 +188,11 @@ const ReservationsTable = ({
           <Button
             type="text"
             icon={<PrinterOutlined />}
-            onClick={() => handleMenuClick(record.uuid)}
+            onClick={() => {
+              handleMenuClick(record.uuid),
+              setPrintOpen(true),
+              setSelectedReservation(record)
+            }}
           />
         </div>
       ),
@@ -199,9 +205,8 @@ const ReservationsTable = ({
         tableLayout="fixed"
         scroll={{ x: 1000 }}
         columns={columns}
-        // dataSource={Array.isArray(data) ? data : []}
-        dataSource={tableData}
-        // dataSource={[]}
+        dataSource={tableData} 
+        rowKey="uuid"      
         pagination={{
           current: page,
           pageSize: perPage,
@@ -214,6 +219,12 @@ const ReservationsTable = ({
         }}
         loading={loading}
         bordered={false}
+      />
+
+      <PrintReservation
+        open={printOpen}
+        onClose={() => setPrintOpen(false)}
+        data={selectedReservation}
       />
     </div>
   );

@@ -19,7 +19,6 @@ const LocationTable = ({ data, page, setPage, perPage, total, changePage, change
       dataIndex: "id",
       key: "id",
       width: 70,
-      align: "center"
     },
     {
       title: "Country",
