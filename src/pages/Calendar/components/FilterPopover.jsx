@@ -12,7 +12,7 @@ const FilterPopover = ({
 }) => (
   <div style={{ width: 288, padding: '4px 0', display: 'flex', flexDirection: 'column', gap: 16 }}>
     <div>
-      <div style={{ fontSize: 11, fontWeight: 700, color: '#9ca3af', textTransform: 'uppercase', marginBottom: 8 }}>Room Type</div>
+      <div style={{ fontSize: 11, fontWeight: 700,textTransform: 'uppercase', marginBottom: 8 }}>Room Type</div>
       <Select
         allowClear className="w-full" style={{ width: '100%' }} placeholder="All Types"
         value={localFilters.roomType}
@@ -21,7 +21,7 @@ const FilterPopover = ({
       />
     </div>
     <div>
-      <div style={{ fontSize: 11, fontWeight: 700, color: '#9ca3af', textTransform: 'uppercase', marginBottom: 8 }}>Floor</div>
+      <div style={{ fontSize: 11, fontWeight: 700,  textTransform: 'uppercase', marginBottom: 8 }}>Floor</div>
       <Select
         allowClear className="w-full" style={{ width: '100%' }} placeholder="All Floors"
         value={localFilters.floor}
@@ -30,7 +30,7 @@ const FilterPopover = ({
       />
     </div>
     <div>
-      <div style={{ fontSize: 11, fontWeight: 700, color: '#9ca3af', textTransform: 'uppercase', marginBottom: 8 }}>Booking Status</div>
+      <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', marginBottom: 8 }}>Booking Status</div>
       <Select
         allowClear className="w-full" style={{ width: '100%' }} placeholder="All Statuses"
         value={localFilters.statuses}

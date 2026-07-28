@@ -242,8 +242,8 @@ const Calendar = () => {
                         </>
                       ) : (
                         <>
-                          <div className="text-base font-bold text-gray-700">{day.format('D')}</div>
-                          <div className="text-[11px] text-gray-500">{day.format('ddd')}</div>
+                          <div className="text-base font-bold ">{day.format('D')}</div>
+                          <div className="text-[11px] ">{day.format('ddd')}</div>
                         </>
                       )}
                     </th>
