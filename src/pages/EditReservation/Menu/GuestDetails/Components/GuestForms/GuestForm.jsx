@@ -670,7 +670,8 @@ const GuestForm = ({
                 <Form.Item label="City" name="city">
                   <Select
                     options={cityOptions}
-                    disabled={isView || !selectedCountryUuid}
+                    // disabled={isView || !selectedCountryUuid}
+                    disabled={isView}
                     showSearch
                     placeholder="Select City"
                   />

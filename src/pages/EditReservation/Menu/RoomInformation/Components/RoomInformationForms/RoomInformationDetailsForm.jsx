@@ -4,7 +4,12 @@ import dayjs from "dayjs";
 import { Gift } from "lucide-react";
 import { useApiMutation } from "../../../../../../hooks/useApiMutation";
 import { reservationRoomDetails } from "../../../../../../api/reservationSectionApi";
-import { darkModeStyle, textBlackInDarkStyle, textColorDarkMode, textWhiteInDarkStyle } from "../../../../../../utils";
+import {
+  darkModeStyle,
+  textBlackInDarkStyle,
+  textColorDarkMode,
+  textWhiteInDarkStyle,
+} from "../../../../../../utils";
 
 const STATUS_CONFIG = {
   Confirmed: { tagColor: "success" },
@@ -50,7 +55,9 @@ const RoomInformationDetailsForm = ({
       size={650}
       title={
         <div className="flex justify-between items-center">
-          <span className={`font-semibold text-lg text-slate-800 ${textWhiteInDarkStyle}`}>
+          <span
+            className={`font-semibold text-lg text-slate-800 ${textWhiteInDarkStyle}`}
+          >
             Room Information Details
           </span>
           <Button className="custom-blue-btn" onClick={handleClose}>
@@ -62,18 +69,22 @@ const RoomInformationDetailsForm = ({
       <div className="space-y-6">
         {/* Reservation Quick Metrics Card */}
         <div className="bg-white rounded-2xl shadow-md border border-slate-100 overflow-hidden w-full max-w-xl dark:border-gray-500">
-          <div className={`relative grid grid-cols-2 gap-2 px-6 py-4 bg-gradient-to-r from-slate-50 to-white dark:from-[#1f1f1f] dark:to-[#1f1f1f]`}>
+          <div
+            className={`relative grid grid-cols-2 gap-2 px-6 py-4 bg-gradient-to-r from-slate-50 to-white dark:from-[#1f1f1f] dark:to-[#1f1f1f]`}
+          >
             <div>
               <span className="flex items-center gap-2 text-[11px] font-semibold text-amber-600 uppercase tracking-wider">
                 <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
                 Check-In
               </span>
-              <div className={`text-slate-900 font-bold text-lg ${textWhiteInDarkStyle}`}>
+              <div
+                className={`text-slate-900 font-bold text-lg ${textWhiteInDarkStyle}`}
+              >
                 {d?.checkinDate
                   ? dayjs(d.checkinDate).format("DD MMM YYYY")
                   : "--"}
               </div>
-              <div className={`text-slate-400 text-xs ${textBlackInDarkStyle}`}>
+              <div className="text-slate-400 text-xs">
                 {d?.checkinDate ? dayjs(d.checkinDate).format("dddd") : "—"}
               </div>
             </div>
@@ -83,7 +94,9 @@ const RoomInformationDetailsForm = ({
                 Check-Out
                 <span className="w-2 h-2 rounded-full bg-indigo-500" />
               </span>
-              <div className={`text-slate-900 font-bold text-lg ${textWhiteInDarkStyle}`}>
+              <div
+                className={`text-slate-900 font-bold text-lg ${textWhiteInDarkStyle}`}
+              >
                 {d?.checkoutDate
                   ? dayjs(d.checkoutDate).format("DD MMM YYYY")
                   : "--"}
@@ -102,7 +115,9 @@ const RoomInformationDetailsForm = ({
 
           <div className="px-6 py-4 space-y-4">
             <div className="flex justify-between items-center">
-              <div className={`font-bold text-slate-800 text-base ${textColorDarkMode}`}>
+              <div
+                className={`font-bold text-slate-800 text-base ${textColorDarkMode}`}
+              >
                 {d?.room === null ? (
                   <span className="text-blue-400 text-sm px-3 py-1 rounded-full bg-blue-50 font-normal">
                     Assign Room
@@ -120,20 +135,32 @@ const RoomInformationDetailsForm = ({
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-              <div className={`bg-slate-50 rounded-xl p-3 border border-slate-100 ${darkModeStyle}`}>
-                <span className={`text-xs text-slate-400 font-medium ${textColorDarkMode}`}>
+              <div
+                className={`bg-slate-50 rounded-xl p-3 border border-slate-100 ${darkModeStyle}`}
+              >
+                <span
+                  className={`text-xs text-slate-400 font-medium ${textColorDarkMode}`}
+                >
                   Room Type
                 </span>
-                <div className={`text-sm font-semibold text-slate-700 mt-1 ${textWhiteInDarkStyle}`}>
+                <div
+                  className={`text-sm font-semibold text-slate-700 mt-1 ${textWhiteInDarkStyle}`}
+                >
                   {d?.roomType?.name || "—"}
                 </div>
               </div>
 
-              <div className={`bg-slate-50 rounded-xl p-3 border border-slate-100 ${darkModeStyle}`}>
-                <span className={`text-xs text-slate-400 font-medium ${textColorDarkMode}`}>
+              <div
+                className={`bg-slate-50 rounded-xl p-3 border border-slate-100 ${darkModeStyle}`}
+              >
+                <span
+                  className={`text-xs text-slate-400 font-medium ${textColorDarkMode}`}
+                >
                   Rate Plan
                 </span>
-                <div className={`text-sm font-semibold text-slate-700 mt-1 ${textWhiteInDarkStyle}`}>
+                <div
+                  className={`text-sm font-semibold text-slate-700 mt-1 ${textWhiteInDarkStyle}`}
+                >
                   {d?.ratePlan?.name || "—"}
                 </div>
               </div>
@@ -143,12 +170,14 @@ const RoomInformationDetailsForm = ({
 
         {/* Financial Summary Card */}
         <div className="bg-white rounded-xl p-5 shadow-sm border border-slate-100 dark:border-gray-500">
-          <h3 className={`font-semibold text-base text-slate-800 mb-4 ${textColorDarkMode}`}>
+          <h3
+            className={`font-semibold text-base text-slate-800 mb-4 ${textColorDarkMode}`}
+          >
             Payment Summary
           </h3>
           <div className="space-y-3 text-sm">
             <div className={textWhiteDark}>
-              <span >Adults</span>
+              <span>Adults</span>
               <span className="font-medium">{d?.adults || 0} Guests</span>
             </div>
             <div className={textWhiteDark}>
@@ -201,12 +230,16 @@ const RoomInformationDetailsForm = ({
         {/* Daily Breakdown Table Component - Only renders if there are rates available */}
         {d?.reservationRoomRates && d.reservationRoomRates.length > 0 && (
           <div className="bg-white rounded-xl p-5 shadow-sm border border-slate-100 dark:border-gray-500">
-            <h3 className={`font-semibold text-base text-slate-800 mb-4 ${textColorDarkMode}`}>
+            <h3
+              className={`font-semibold text-base text-slate-800 mb-4 ${textColorDarkMode}`}
+            >
               Daily Breakdown
             </h3>
             <div className="overflow-hidden rounded-xl border border-slate-100 shadow-sm dark:border-gray-500">
               <table className="w-full text-sm">
-                <thead className={`bg-slate-50 text-slate-600 font-medium border-b ${darkModeStyle}`}>
+                <thead
+                  className={`bg-slate-50 text-slate-600 font-medium border-b ${darkModeStyle}`}
+                >
                   <tr>
                     <th className="p-3 text-left">Date</th>
                     <th className="p-3 text-left">Extra</th>
@@ -215,11 +248,14 @@ const RoomInformationDetailsForm = ({
                 </thead>
                 <tbody className="divide-y divide-slate-100 text-slate-700">
                   {d.reservationRoomRates.map((r) => (
-                    <tr key={r.uuid} className={`hover:bg-slate-50/80 dark:hover:bg-slate-700/40 transition ${textWhiteInDarkStyle}`}>
+                    <tr
+                      key={r.uuid}
+                      className={`hover:bg-slate-50/80 dark:hover:bg-slate-700/40 transition ${textWhiteInDarkStyle}`}
+                    >
                       <td className="p-3 font-medium">
                         {dayjs(r.date).format("DD-MM-YYYY")}
                       </td>
-                      <td className='p-3 text-xs'>
+                      <td className="p-3 text-xs">
                         {r?.reservationRoomExtras?.length > 0 ? (
                           r.reservationRoomExtras.map((extra) => {
                             const quantity = extra.quantity
@@ -261,7 +297,9 @@ const RoomInformationDetailsForm = ({
                                   0,
                                 ) || 0;
                               const total =
-                                (r.grandTotal || 0) + (r.tax || 0) + extrasTotal;
+                                (r.grandTotal || 0) +
+                                (r.tax || 0) +
+                                extrasTotal;
                               return `${total.toLocaleString()} MMK`;
                             })()}
                           </span>

@@ -133,7 +133,7 @@ const SearchEventFacilityOrderForm = ({
             <div>
               <strong> {dateStr}</strong>
             </div>
-            <div>{timeStr}</div>
+            <div>({timeStr})</div>
           </div>
         );
       },

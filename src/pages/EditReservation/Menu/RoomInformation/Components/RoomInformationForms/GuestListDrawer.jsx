@@ -79,26 +79,38 @@ const GuestListDrawer = ({
       render: (_, record) => (
         <Space>
           <Tooltip title="View Details">
-            <Button
+            {/* <Button
               size="small"
               type="text"
               icon={<EyeOutlined />}
               onClick={() => handleView(record)}
+            /> */}
+            <EyeOutlined
+              style={{ fontSize: "14px" }}
+              onClick={() => handleView(record)}
             />
           </Tooltip>
           <Tooltip title="Edit Guest">
-            <Button
+            {/* <Button
               size="small"
               type="text"
               icon={<EditOutlined />}
               onClick={() => handleEdit(record)}
+            /> */}
+            <EditOutlined
+              style={{ fontSize: "14px" }}
+              onClick={() => handleEdit(record)}
             />
           </Tooltip>
           <Tooltip title="File Upload">
-            <Button
+            {/* <Button
               size="small"
               type="text"
               icon={<UploadOutlined />}
+              onClick={() => handleUpload(record)}
+            /> */}
+            <UploadOutlined
+              style={{ fontSize: "14px" }}
               onClick={() => handleUpload(record)}
             />
           </Tooltip>

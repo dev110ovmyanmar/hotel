@@ -288,6 +288,7 @@ const ServiceAddOnForm = ({
             label="Quantity"
             name="quantity"
             rules={[{ required: true }]}
+            className="minus-icon"
           >
             <InputNumber
               {...sharedProps}
