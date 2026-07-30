@@ -24,6 +24,8 @@ import useApiQuery from "../../../hooks/useApiQuery";
 import { getGuestDetail } from "../../../api/guestApi";
 import { useLocation } from "react-router-dom";
 import GuestForm from "../Components/NewGuestForm";
+import { getGuestNotes } from "../../../api/guestNoteApi";
+import { reservationRoomList } from "../../../api/reservationSectionApi";
 import GuestProfileBG from "../../../assets/images/Guestprofile.png";
 
 const calculateAge = (dobString) => {
@@ -34,10 +36,7 @@ const calculateAge = (dobString) => {
   let age = today.getFullYear() - birthDate.getFullYear();
   const monthDiff = today.getMonth() - birthDate.getMonth();
 
-  if (
-    monthDiff < 0 ||
-    (monthDiff === 0 && today.getDate() < birthDate.getDate())
-  ) {
+  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
     age--;
   }
 
@@ -46,20 +45,37 @@ const calculateAge = (dobString) => {
 
 const GuestProfile = () => {
   // State to track which tab is active
-  const { state } = useLocation();
 
+  const { state } = useLocation();
   const { data: guestDetailDatas } = useApiQuery({
     fetchQueryName: "guest-detail",
     fetchQueryFunction: getGuestDetail,
     params: {
       uuid: state?.guestDetails?.uuid,
+      isProfile: 1
     },
   });
+
 
   const [activeTab, setActiveTab] = useState("1");
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedData, setSelectedData] = useState(guestDetailDatas);
   const [mode, setMode] = useState("edit");
+
+  // Stay History
+  const { data: stayHistoryList } = useApiQuery({
+    fetchQueryName: "reservation-room",
+    fetchQueryFunction: reservationRoomList,
+    params: {
+      guest: {
+        uuid: state?.guestDetails?.uuid,
+      },
+    },
+    options: {
+      // enabled: !!bookingId && bookingId.trim().length >= 32,
+    },
+  });
+
 
   const tabItems = [
     { key: "1", label: "Personal Information" },
@@ -74,26 +90,27 @@ const GuestProfile = () => {
       case "1":
         return <PersonalInformation personalInfo={guestDetailDatas} />;
       case "2":
-        return <StayHistory />;
+        return <StayHistory stayHistory={stayHistoryList?.data} />;
       // case "3": return <PreferencesLoyalty />;
       case "3":
-        return <GuestNotes />;
+        return <GuestNotes guestUuid={guestDetailDatas?.uuid} />;
       default:
         return <PersonalInformation />;
-    }
+    }c
   };
+
+
 
   return (
     <>
-      <div className="min-h-screen px-8 py-6 font-sans text-slate-700 dark:!text-[#D9D9D9] dark:bg-[#141414]">
+      <div className="min-h-screen px-8 py-6 font-sans text-slate-700 dark:!text-[#D9D9D9] bg-slate-50 dark:bg-[#141414]">
         {/* Header Card */}
         <div
           className="rounded-xl  p-6 mb-6 bg-cover bg-center  min-h-[200px] "
           style={{
             backgroundImage: `url(${GuestProfileBG})`,
           }}
-        >
-          {/* <div className="bg-gradient-to-r from-[#a2dea2] via-[#d4d94c] to-[#fae632] rounded-xl shadow-sm border border-slate-200 p-6 mb-6"> */}
+        >          
           <div className="flex justify-between items-start">
             <div className="flex gap-6">
               <img
@@ -113,11 +130,12 @@ const GuestProfile = () => {
                     <BadgeCheck size={12} /> VIP
                   </span>
                   <span className="bg-blue-50 text-blue-600 text-xs px-3 py-1 rounded-md border border-blue-100 flex items-center gap-1">
-                    <Calendar size={12} /> 28 Days
+                    <Calendar size={12} />
+                    {guestDetailDatas?.totalStay} {guestDetailDatas?.totalStay <= 1 ? "Day" : "Days"}
                   </span>
                 </div>
                 <p className="text-sm text-slate-500 mb-2">
-                  Guest Id: GST0410PQCP
+                  Guest Id: {guestDetailDatas?.id}
                 </p>
 
                 {guestDetailDatas?.dob && (
@@ -171,12 +189,12 @@ const GuestProfile = () => {
           <StatCard
             icon={<Calendar className="text-blue-500" />}
             label="Total Stays"
-            value="28 Days"
+            value={`${guestDetailDatas?.totalStay} ${guestDetailDatas?.totalStay <= 1 ? "Day" : "Days"}`}
           />
           <StatCard
             icon={<DollarSign className="text-green-500" />}
             label="Total Spent"
-            value="150,000 MMK"
+            value={guestDetailDatas?.totalSpend ? `${guestDetailDatas?.totalSpend} MMK` : ""}
           />
           <StatCard
             icon={<Star className="text-blue-900" />}
@@ -186,7 +204,7 @@ const GuestProfile = () => {
           <StatCard
             icon={<Clock className="text-slate-500" />}
             label="Last Stay"
-            value="Jan 5, 2026"
+            value={guestDetailDatas?.lastStay}
           />
         </div>
 

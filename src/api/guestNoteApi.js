@@ -26,6 +26,14 @@ export const upsertGuestNote = async (params) => {
   return data.response;
 };
 
+// Delete Guest Note
+export const deleteGuestNote = async (params) => {
+    const { data } = await apiClient.delete(
+        "/guest-note/delete",
+        {data: params}
+    );
+    return data.response;
+}
 
 
 

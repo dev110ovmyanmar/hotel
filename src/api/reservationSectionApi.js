@@ -39,7 +39,6 @@ export const reservationList = async (params) => {
 };
 
 export const reservationDetails = async (params) => {
-  console.log(params, "params")
   const { data } = await apiClient.get("/reservation", { params });
   return data.response;
 };
