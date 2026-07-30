@@ -172,7 +172,7 @@ export default function StayReductionModal({
                                     onClick={() => setDaysToSubtract(prev => prev + 1)}
                                     disabled={daysToSubtract >= maxReduction}
                                 />
-                                <span className="text-sm text-slate-500 font-medium">
+                                <span className="text-sm font-medium">
                                     Day(s) Less
                                 </span>
                             </Space>

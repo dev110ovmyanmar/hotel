@@ -39,6 +39,10 @@ import {
   textColorDarkMode,
   textWhiteInDarkStyle,
 } from "../../../../../../utils";
+import {
+  priceFormatter,
+  priceParser,
+} from "../../../../../../component/PriceTag/PriceTag";
 
 const { Text } = Typography;
 
@@ -845,7 +849,7 @@ const AddExtraAmenitiesModal = ({ isOpen, onClose, record }) => {
                 padding: "0 22px",
                 background:
                   !isSaveEnabled || isAnythingPending ? undefined : "#1677ff",
-                fontWeight: 600,
+               
               }}
             >
               Save Changes
@@ -1006,6 +1010,8 @@ const AddExtraAmenitiesModal = ({ isOpen, onClose, record }) => {
                 min={0}
                 style={{ width: "100%", borderRadius: "7px" }}
                 placeholder="Enter unit price"
+                formatter={priceFormatter}
+                parser={priceParser}
               />
             </Form.Item>
           </Form>
