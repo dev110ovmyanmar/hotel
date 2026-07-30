@@ -23,7 +23,10 @@ import FormButtons from "../../../../../../component/FormButtons/FormButtons";
 import { queryClient } from "../../../../../../app/queryClient";
 import Toast from "../../../../../../component/Toast/Toast";
 import { EyeOutlined } from "@ant-design/icons";
-import { getFormattedDate, textWhiteInDarkStyle } from "../../../../../../utils";
+import {
+  getFormattedDate,
+  textWhiteInDarkStyle,
+} from "../../../../../../utils";
 
 const sharedProps = {
   mode: "spinner",
@@ -283,10 +286,11 @@ const ServiceOrderForm = ({
                 : "Add Service Order"}
           </span>
           {isView ? (
-            serviceData?.orderStatus?.code !== "completed" &&
-            <Button type="primary" onClick={() => setMode("edit")}>
-              Edit
-            </Button>
+            serviceData?.orderStatus?.code !== "completed" && (
+              <Button type="primary" onClick={() => setMode("edit")}>
+                Edit
+              </Button>
+            )
           ) : (
             <FormButtons
               onClick={() => form.submit()}
@@ -354,8 +358,18 @@ const ServiceOrderForm = ({
               }
             }}
           >
-            <Radio value="service">Service</Radio>
-            <Radio value="package">Package</Radio>
+            {/* <Radio value="service">Service</Radio> */}
+            {/* <Radio value="package">Package</Radio> */}
+            <Radio value="service">
+              <span className={isView ? textWhiteInDarkStyle : ""}>
+                Service
+              </span>
+            </Radio>
+            <Radio value="package">
+              <span className={isView ? textWhiteInDarkStyle : ""}>
+                Package
+              </span>
+            </Radio>
           </Radio.Group>
         </Form.Item>
 
@@ -389,7 +403,6 @@ const ServiceOrderForm = ({
                 >
                   <InputNumber
                     {...sharedProps}
-                    placeholder="Quantity"
                     style={{ width: "100%" }}
                     readOnly={isView}
                   />
@@ -398,8 +411,8 @@ const ServiceOrderForm = ({
             </div>
 
             {selectedServiceUuid && (
-              <div >
-                <label className="text-xs font-bold text-gray-600 uppercase tracking-wider block">
+              <div>
+                <label className="text-xs font-bold uppercase tracking-wider block">
                   {serviceInventories.length > 0
                     ? "Service Inventory Items"
                     : ""}
@@ -435,7 +448,7 @@ const ServiceOrderForm = ({
                           >
                             {item.label}
                           </span>
-                          <span className="inline-flex items-center  text-xs font-medium  text-gray-600  flex-shrink-0">
+                          <span className="inline-flex items-center  text-xs font-medium  text-gray-500  flex-shrink-0">
                             ( Max: {item.maxLimit ?? "N/A"} )
                           </span>
                         </div>
@@ -452,12 +465,12 @@ const ServiceOrderForm = ({
                               },
                               ...(item.maxLimit
                                 ? [
-                                  {
-                                    type: "number",
-                                    max: item.maxLimit,
-                                    message: `Max is ${item.maxLimit}`,
-                                  },
-                                ]
+                                    {
+                                      type: "number",
+                                      max: item.maxLimit,
+                                      message: `Max is ${item.maxLimit}`,
+                                    },
+                                  ]
                                 : []),
                             ]}
                           >
@@ -465,7 +478,7 @@ const ServiceOrderForm = ({
                               {...sharedProps}
                               min={0}
                               max={item.maxLimit}
-                              placeholder="Qty"
+                              placeholder="Qty:"
                               className="w-24 h-8 rounded-lg text-center"
                             />
                           </Form.Item>
@@ -535,7 +548,7 @@ const ServiceOrderForm = ({
                                       width: "100%",
                                     }}
                                   >
-                                    <span style={{ color: "#434343" }} >
+                                    <span>
                                       • {item?.itemType?.name || "Unknown Item"}
                                     </span>
                                     <span
@@ -571,12 +584,18 @@ const ServiceOrderForm = ({
                   }}
                 />
               </Form.Item>
+
               <Form.Item
                 label="Quantity"
                 name="quantity"
                 rules={[{ required: true }, { type: "number" }]}
+                className="minus-icon"
               >
-                <InputNumber {...sharedProps} style={{ width: "100%" }} />
+                <InputNumber
+                  {...sharedProps}
+                  style={{ width: "100%" }}
+                  // readOnly={isView}
+                />
               </Form.Item>
             </>
           )}

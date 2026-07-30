@@ -775,7 +775,7 @@ span .ant-upload {
 }
 
 .dark .minus-icon .anticon-minus {
-  color: rgb(134, 129, 129)
+  color: rgb(213, 208, 208)
 }
 
 /* Input value */
@@ -903,4 +903,8 @@ span .ant-upload {
   .reservation-form .ant-form-item .ant-form-item-label>label p {
     margin: 0 !important;
   }
+}
+
+.small-upload-icon {
+  font-size: 6px;
 }

@@ -192,9 +192,12 @@ const FolioOperationsTable = ({
       key: "action",
       render: (_, record) => {
         return (
-          <Button onClick={() => onPrintFolio && onPrintFolio(record)}>
-            <PrinterOutlined />
-          </Button>
+          // <Button onClick={() => onPrintFolio && onPrintFolio(record)}>
+          //   <PrinterOutlined />
+          // </Button>
+          //  <Button onClick={() => onPrintFolio && onPrintFolio(record)}>
+            <PrinterOutlined onClick={() => onPrintFolio && onPrintFolio(record)}/>
+          // </Button>
         )
       }
     }
