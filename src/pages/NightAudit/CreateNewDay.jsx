@@ -5,18 +5,19 @@ import { IoIosCheckmarkCircle, IoIosCheckmarkCircleOutline } from "react-icons/i
 import HaveANiceDay from "./HaveANiceDay";
 import { useEffect, useState } from "react";
 import emailjs from '@emailjs/browser';
-
-
+import { useSelector } from "react-redux";
+import { appSelector } from "../../services/appSlice";
 
 const CreateNewDay = ({
     createNewDayClick
 }) => {
-
     const disabledDate = (current) => {
         return current && current <= dayjs().startOf("day")
     };
 
     const [form] = Form.useForm();
+    const { collapsed, openDrawer } = useSelector(appSelector);
+    const isCollapsed = collapsed && !openDrawer;
 
     const selectedDate = Form.useWatch("nextWorkingDate", form);
 
@@ -35,52 +36,56 @@ const CreateNewDay = ({
         }
     }, [haveNiceDay]);
 
-   
-
-    
-
     return (
         <>
-            <div className="flex justify-center">
-                <Card
-                    title="Create New Day"
-                    className="w-[50%]"
+
+
+            {haveNiceDay ? (
+                <div
+                    className={`fixed top-16 right-0 bottom-0 ${isCollapsed ? "left-20" : "left-60"
+                        }`}
                 >
-                    <Form
-                        form={form}
-                        layout="vertical"
-                        initialValues={{
-                            nextWorkingDate: nextDay
-                        }}
+                    <div className="w-full h-full">
+                        <HaveANiceDay />
+                    </div>
+                </div>
+            )
+                :
+                <div className="flex justify-center">
+                    <Card
+                        title="Create New Day"
+                        className="w-[50%]"
                     >
-                        <Form.Item
-                            label="Next Working Date"
-                            name="nextWorkingDate"
+                        <Form
+                            form={form}
+                            layout="vertical"
+                            initialValues={{
+                                nextWorkingDate: nextDay
+                            }}
                         >
-                            <DatePicker
-                                style={{ width: "100%" }}
-                                disabledDate={disabledDate}
-                                showToday={false}
-                                format="DD-MM-YYYY"
-                            />
-                        </Form.Item>
-
-                        <div className="flex justify-end">
-                            <Button
-                                type="primary"
-                                onClick={() => setHaveNiceDay(true)}
+                            <Form.Item
+                                label="Next Working Date"
+                                name="nextWorkingDate"
                             >
-                                Next
-                            </Button>
-                        </div>
-                    </Form>
-                </Card>
-            </div>
+                                <DatePicker
+                                    style={{ width: "100%" }}
+                                    disabledDate={disabledDate}
+                                    showToday={false}
+                                    format="DD-MM-YYYY"
+                                />
+                            </Form.Item>
 
-            {
-                haveNiceDay ?
-                    <HaveANiceDay /> :
-                    null
+                            <div className="flex justify-end">
+                                <Button
+                                    type="primary"
+                                    onClick={() => setHaveNiceDay(true)}
+                                >
+                                    Next
+                                </Button>
+                            </div>
+                        </Form>
+                    </Card>
+                </div>
             }
         </>
     )

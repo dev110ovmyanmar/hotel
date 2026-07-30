@@ -63,6 +63,10 @@ const BookingDetailList = () => {
 
   const reservationBooked = data?.reservationRoom?.roomStatus?.code === "booked";
 
+  const reservationCheckIn = data?.reservationRoom?.roomStatus?.code === "checked_in";
+  const reservationCheckOut = data?.reservationRoom?.roomStatus?.code === "checked_out";
+
+
   return (
     <div className="w-full px-6 py-2">
       <ReservationHeader data={data || {}} />
@@ -87,14 +91,11 @@ const BookingDetailList = () => {
               <ServiceAddOn data={data?.reservation?.reservationAddOns} />
             </Col>
             <Col span={24}>
-              <ServiceOrder data={data?.reservation?.serviceOrders} />
+              <ServiceOrder data={data?.reservation?.serviceOrders} serviceOrderStatus={reservationCheckIn || reservationCheckOut}/>
             </Col>
             <Col span={24}>
               <EventFacility data={data?.reservation?.facilityBookings} />
             </Col>
-            {/* <Col span={24}>
-              <FoodBeverageOrder />
-            </Col> */}
           </Row>
         </Col>
 

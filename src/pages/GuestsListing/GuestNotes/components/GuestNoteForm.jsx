@@ -20,7 +20,7 @@ const GuestNoteForm = ({
     setSelectedRow,
     setPage,
     page,
-    // guestUuid,
+    guestUuid,
     // guestName,
 }) => {
     const [form] = Form.useForm();
@@ -28,8 +28,6 @@ const GuestNoteForm = ({
     const isView = mode === "view";
     const isEdit = mode === "edit";
     const isAdd = mode === "add";
-
-    const { state } = useLocation();
 
     // 1. Fetch Detail API - Ensure we handle data.response based on your JSON structure
     const { data, isLoading } = useApiQuery({
@@ -57,7 +55,7 @@ const GuestNoteForm = ({
     const createNote = useApiMutation({
         mutationFn: upsertGuestNote,
         invalidateKeys: [["guestNotes"]],
-        shouldInvalidate: page === 1,
+        // shouldInvalidate: page === 1,
     });
 
     const updateNote = useApiMutation({
@@ -71,7 +69,7 @@ const GuestNoteForm = ({
             uuid: isEdit ? selectedRow?.uuid : null,
             note: values.note,
             guest: {
-                uuid: isAdd ? state?.guestRecord?.uuid : selectedRow?.guest?.uuid
+                uuid: isAdd ? guestUuid : selectedRow?.guest?.uuid
             },
         };
 

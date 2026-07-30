@@ -392,6 +392,9 @@ const ServiceOrderForm = ({
                     })
                   }
                   open={isView ? !isView : undefined}
+                  showSearch
+                  optionFilterProp="label"
+
                 />
               </Form.Item>
               {serviceInventories.length === 0 && (
@@ -465,12 +468,12 @@ const ServiceOrderForm = ({
                               },
                               ...(item.maxLimit
                                 ? [
-                                    {
-                                      type: "number",
-                                      max: item.maxLimit,
-                                      message: `Max is ${item.maxLimit}`,
-                                    },
-                                  ]
+                                  {
+                                    type: "number",
+                                    max: item.maxLimit,
+                                    message: `Max is ${item.maxLimit}`,
+                                  },
+                                ]
                                 : []),
                             ]}
                           >
@@ -582,6 +585,9 @@ const ServiceOrderForm = ({
                       </Popover>
                     );
                   }}
+                  showSearch
+                  optionFilterProp="label"
+
                 />
               </Form.Item>
 
@@ -594,7 +600,7 @@ const ServiceOrderForm = ({
                 <InputNumber
                   {...sharedProps}
                   style={{ width: "100%" }}
-                  // readOnly={isView}
+                // readOnly={isView}
                 />
               </Form.Item>
             </>
