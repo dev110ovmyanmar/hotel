@@ -100,9 +100,25 @@ const ColorStatusTag = ({ status }) => {
     partially_paid_bg: "#FFF4F1",
     partially_paid_border: "#FFBD9F",
 
+    partial: "#FF8D28",
+    partial_bg: "#FFF4F1",
+    partial_border: "#FFBD9F",
+
     void: "#CF1322",
     void_bg: "#FFF1F0",
     void_border: "#FFA39E",
+
+    unpaid : "#D4A106",
+    unpaid_bg : "#FDFFE0",
+    unpaid_border : "#F4E34F",
+
+    overdue : "#CF1322",
+    overdue_bg: "#FFF1F0",
+    overdue_border: "#FFA39E",
+
+    written_off : "#333333",
+    written_off_bg : "#F5F5F5",
+    written_off_border : "#D9D9D9",
 
     open: "#0958D9",
     open_bg: "#E6F4FF",

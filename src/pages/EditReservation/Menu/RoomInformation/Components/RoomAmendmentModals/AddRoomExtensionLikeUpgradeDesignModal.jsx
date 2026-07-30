@@ -263,7 +263,7 @@ export default function AddRoomExtensionLikeUpgradeDesignModal({
                                 }}
                                     className={darkModeStyle}
                                 >
-                                    <Text type="secondary"><strong style={{ color: '#475569' }}>Room Type:</strong> <span className={textWhiteInDarkStyle}>{currentRoomType}</span></Text>
+                                    <Text><strong>Room Type:</strong> <span className={textWhiteInDarkStyle}>{currentRoomType}</span></Text>
 
                                     <div className="grid place-items-center w-fit -mt-1">
                                         <FaStar className='text-amber-200  text-3xl col-start-1 row-start-1' />

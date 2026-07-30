@@ -5,7 +5,7 @@ import ColorStatusTag from "../../../../component/ColorStatusTag/ColorStatusTag"
 
 const { Text } = Typography;
 
-const ServiceOrder = ({ data }) => {
+const ServiceOrder = ({ data , serviceOrderStatus}) => {
   const CustomTitle = (
     <Space>
       <div className="service-order-icon-box">
@@ -41,7 +41,7 @@ const ServiceOrder = ({ data }) => {
   return (
     <>
       {
-        data?.length !== 0 && (
+        data?.length !== 0 && serviceOrderStatus && (
           <Card title={CustomTitle} className="service-order-card line-height">
             <Table
               columns={columns}
