@@ -1,4 +1,13 @@
-import { Button, Drawer, Form, Input, InputNumber, Select, Row, Col } from "antd";
+import {
+  Button,
+  Drawer,
+  Form,
+  Input,
+  InputNumber,
+  Select,
+  Row,
+  Col,
+} from "antd";
 import React, { useEffect } from "react";
 import FormButtons from "../../../../component/FormButtons/FormButtons";
 import useApiQuery from "../../../../hooks/useApiQuery";
@@ -33,20 +42,31 @@ const ItemsForm = ({
     fetchQueryFunction: getServiceMeta,
   });
 
+  // const serviceInventoryOptions = serviceMetaData?.service_inventory_items?.map(
+  //   (item) => ({
+  //     value: item.uuid,
+  //     label: <span>
+  //       {item?.name}
+  //       {item?.unit?.shortName && ` (${item.unit.shortName})`}
+  //     </span>,
+  //   }),
+  // );
+
   const serviceInventoryOptions = serviceMetaData?.service_inventory_items?.map(
-    (item) => ({
-      value: item.uuid,
-      label: <span>
-        {item?.name}
-        {item?.unit?.shortName && ` (${item.unit.shortName})`}
-      </span>,
-    }),
+    (item) => {
+      const unitText = item?.unit?.shortName ? ` (${item.unit.shortName})` : "";
+
+      return {
+        value: item.uuid,
+        label: `${item?.name || ""}${unitText}`,
+      };
+    },
   );
 
   const onServiceItemChange = (selectedUuid) => {
     // Find the selected item from your original metadata list
     const selectedItem = serviceMetaData?.service_inventory_items?.find(
-      (item) => item.uuid === selectedUuid
+      (item) => item.uuid === selectedUuid,
     );
 
     // Update the 'unit' field in the form with the unit's uuid
@@ -174,6 +194,9 @@ const ItemsForm = ({
           layout="vertical"
           style={{ width: "100%" }}
           onFinish={onFinish}
+          initialValues={{
+            quantityPerService: 1,
+          }}
         >
           <Row gutter={16}>
             <Col span={12}>
@@ -183,8 +206,9 @@ const ItemsForm = ({
                 rules={[{ required: true, message: "Item is Required" }]}
                 getValueProps={(value) => ({
                   value: isView
-                    ? serviceInventoryOptions.find((item) => item.value === value)
-                      ?.label
+                    ? serviceInventoryOptions.find(
+                        (item) => item.value === value,
+                      )?.label
                     : value,
                 })}
               >

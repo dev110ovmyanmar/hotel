@@ -389,6 +389,7 @@ const FacilityBookingForm = ({
             label="Expected Pax"
             name="expectedPax"
             rules={[{ required: true, message: "Expected Pax is Required" }]}
+            className="minus-icon"
           >
             <InputNumber
               {...childSharedProps}

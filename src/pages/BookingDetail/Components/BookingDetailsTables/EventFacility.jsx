@@ -9,7 +9,9 @@ const EventFacility = ({ data }) => {
   const CustomTitle = (
     <Space>
       <div className="event-icon-box">
-        <IoCalendarClearOutline style={{ color: "#6923c5", fontSize: "18px" }} />
+        <IoCalendarClearOutline
+          style={{ color: "#6923c5", fontSize: "18px" }}
+        />
       </div>
       <Text>Event Facility</Text>
     </Space>
@@ -25,7 +27,6 @@ const EventFacility = ({ data }) => {
       title: "Event Name",
       dataIndex: "eventName",
       key: "eventName",
-      align: "center",
     },
     {
       title: "Guest Name",
@@ -37,26 +38,22 @@ const EventFacility = ({ data }) => {
       dataIndex: "status",
       key: "facilityPackageStatus",
       render: (status) => {
-        return (
-          status ? <ColorStatusTag status={status} /> : "-"
-        );
+        return status ? <ColorStatusTag status={status} /> : "-";
       },
     },
   ];
   return (
     <>
-      {
-        data.length !== 0 && (
-          <Card title={CustomTitle} className="event-card line-height">
-            <Table
-              columns={columns}
-              dataSource={data}
-              size="small"
-              pagination={false}
-            />
-          </Card>
-        )
-      }
+      {data.length !== 0 && (
+        <Card title={CustomTitle} className="event-card line-height">
+          <Table
+            columns={columns}
+            dataSource={data}
+            size="small"
+            pagination={false}
+          />
+        </Card>
+      )}
     </>
   );
 };

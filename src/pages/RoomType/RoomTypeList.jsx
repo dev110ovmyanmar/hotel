@@ -46,7 +46,7 @@ const RoomTypeList = () => {
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
         <ListHeader
           title="Room Type List"
-          searchPlaceholder="Search Room Type ..."
+          searchPlaceholder="Search Room Types ..."
           keyword={keyword}
           setKeyword={setKeyword}
           addButtonText="Add New Room Type"
