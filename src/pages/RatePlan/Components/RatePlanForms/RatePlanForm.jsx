@@ -488,7 +488,7 @@ const RatePlanForm = ({
                 label="Is Default"
                 name="isDefault"
                 valuePropName="checked"
-                initialValue={false}
+                initialValue={isDisableDefault ? true : false}
                 rules={[
                   { required: true, message: "Please select Is Default!" },
                 ]}

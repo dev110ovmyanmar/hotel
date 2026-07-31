@@ -48,8 +48,8 @@ const SubFolioTable = ({ record, lineColumns, onMoveTo, isTransferring }) => {
   const totalBalance = totalDebit - totalCredit;
 
   const summary = () => (
-    <Table.Summary fixed>
-      <Table.Summary.Row className="bg-gray-50 font-semibold">
+    <Table.Summary fixed className="bg-gray-50 font-semibold" {...darkModeStyle} {...textWhiteInDarkStyle} {...textColorDarkMode}>
+      <Table.Summary.Row>
         <Table.Summary.Cell index={0} />
         <Table.Summary.Cell index={1} />
         <Table.Summary.Cell index={2} />
@@ -196,7 +196,7 @@ const FolioOperationsTable = ({
           //   <PrinterOutlined />
           // </Button>
           //  <Button onClick={() => onPrintFolio && onPrintFolio(record)}>
-            <PrinterOutlined onClick={() => onPrintFolio && onPrintFolio(record)}/>
+          <PrinterOutlined onClick={() => onPrintFolio && onPrintFolio(record)} />
           // </Button>
         )
       }
