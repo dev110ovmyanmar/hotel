@@ -314,13 +314,40 @@ const ServiceOrderForm = ({
           orderStatus: !isEdit ? defaultStatus?.uuid : undefined,
         }}
       >
-        <Form.Item label="Room No" name="roomNo" rules={[{ required: true }]}>
+        {/* <Form.Item label="Room No" name="roomNo" rules={[{ required: true }]}>
           <Select
             placeholder="Select a Room"
             options={rooms}
             allowClear={isView ? !isView : undefined}
             open={isView ? !isView : undefined}
           />
+        </Form.Item> */}
+        <Form.Item
+          label="Room No"
+          name="roomNo"
+          rules={[{ required: true }]}
+          getValueProps={(value) => ({
+            value: isView
+              ? rooms.find((item) => item.value === value)?.label
+              : value,
+          })}
+        >
+          {isView ? (
+            <Input readOnly={isView} />
+          ) : (
+            <Select
+              showSearch={{
+                filterOption: (input, option) =>
+                  (option?.label ?? "")
+                    .toLowerCase()
+                    .includes(input.toLowerCase()),
+              }}
+              options={rooms}
+              placeholder="Select a Room"
+              allowClear={isView ? !isView : undefined}
+              open={isView ? !isView : undefined}
+            />
+          )}
         </Form.Item>
 
         <Form.Item label="Selection Type" name="orderType">
@@ -376,7 +403,7 @@ const ServiceOrderForm = ({
         {orderType === "service" && (
           <>
             <div className="grid grid-cols-2 gap-4">
-              <Form.Item
+              {/* <Form.Item
                 name="selectService"
                 label="Select Service"
                 className="w-67"
@@ -392,10 +419,39 @@ const ServiceOrderForm = ({
                     })
                   }
                   open={isView ? !isView : undefined}
-                  showSearch
-                  optionFilterProp="label"
-
                 />
+              </Form.Item> */}
+              <Form.Item
+                label="Select Service"
+                name="selectService"
+                rules={[{ required: true }]}
+                getValueProps={(value) => ({
+                  value: isView
+                    ? services.find((item) => item.value === value)?.label
+                    : value,
+                })}
+              >
+                {isView ? (
+                  <Input readOnly={isView} />
+                ) : (
+                  <Select
+                    showSearch={{
+                      filterOption: (input, option) =>
+                        (option?.label ?? "")
+                          .toLowerCase()
+                          .includes(input.toLowerCase()),
+                    }}
+                    options={services}
+                    placeholder="Select a Service"
+                    open={isView ? !isView : undefined}
+                    onChange={(v) =>
+                      form.setFieldsValue({
+                        selectService: v,
+                        inventoryQuantities: {},
+                      })
+                    }
+                  />
+                )}
               </Form.Item>
               {serviceInventories.length === 0 && (
                 <Form.Item
@@ -459,7 +515,8 @@ const ServiceOrderForm = ({
                         <div className="flex-shrink-0">
                           <Form.Item
                             name={["inventoryItems", index, "quantity"]}
-                            className="!mb-0"
+                            initialValue={0}
+                            className="!mb-0 minus-icon"
                             rules={[
                               { required: true, message: "Required" },
                               {
@@ -468,12 +525,12 @@ const ServiceOrderForm = ({
                               },
                               ...(item.maxLimit
                                 ? [
-                                  {
-                                    type: "number",
-                                    max: item.maxLimit,
-                                    message: `Max is ${item.maxLimit}`,
-                                  },
-                                ]
+                                    {
+                                      type: "number",
+                                      max: item.maxLimit,
+                                      message: `Max is ${item.maxLimit}`,
+                                    },
+                                  ]
                                 : []),
                             ]}
                           >
@@ -498,7 +555,7 @@ const ServiceOrderForm = ({
         <div className="grid grid-cols-2 gap-4">
           {orderType === "package" && (
             <>
-              <Form.Item
+              {/* <Form.Item
                 name="servicePackage"
                 label="Select Package"
                 rules={[
@@ -585,10 +642,35 @@ const ServiceOrderForm = ({
                       </Popover>
                     );
                   }}
-                  showSearch
-                  optionFilterProp="label"
-
                 />
+              </Form.Item> */}
+
+              <Form.Item
+                name="servicePackage"
+                label="Select Package"
+                rules={[
+                  { required: true, message: "Please select a package!" },
+                ]}
+                getValueProps={(value) => ({
+                  value: isView
+                    ? servicesPackage.find((item) => item.value === value)?.label
+                    : value,
+                })}
+              >
+                {isView ? (
+                  <Input readOnly={isView} />
+                ) : (
+                  <Select
+                    showSearch={{
+                      filterOption: (input, option) =>
+                        (option?.label ?? "")
+                          .toLowerCase()
+                          .includes(input.toLowerCase()),
+                    }}
+                    placeholder="Select a package"
+                    options={servicesPackage}
+                  />
+                )}
               </Form.Item>
 
               <Form.Item
@@ -600,7 +682,7 @@ const ServiceOrderForm = ({
                 <InputNumber
                   {...sharedProps}
                   style={{ width: "100%" }}
-                // readOnly={isView}
+                  // readOnly={isView}
                 />
               </Form.Item>
             </>

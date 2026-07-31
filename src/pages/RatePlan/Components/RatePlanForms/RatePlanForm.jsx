@@ -12,6 +12,8 @@ import {
   InputNumber,
   Tooltip,
   Divider,
+  Radio,
+  Space,
 } from "antd";
 import Toast from "../../../../component/Toast/Toast";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
@@ -143,6 +145,7 @@ const RatePlanForm = ({
         channels: selectedChannels,
         isDefault: data?.isDefault,
         description: data?.description,
+        mealPricingMode: data?.mealPricingMode,
       });
     }
   }, [data]);
@@ -181,6 +184,7 @@ const RatePlanForm = ({
       channelVisibility: channelVisibility,
       isDefault: values.isDefault === true ? 1 : 0,
       description: values.description,
+      mealPricingMode: values.mealPricingMode,
     };
 
     roomTypes.forEach((rt) => delete createValues[rt.value]);
@@ -284,7 +288,10 @@ const RatePlanForm = ({
             layout="vertical"
             style={{ width: "100%" }}
             onFinish={onFinish}
-          // disabled={isView}
+            // disabled={isView}
+            initialValues={{
+              mealPricingMode: "included",
+            }}
           >
             <Row gutter={24}>
               <Col span={16}>
@@ -464,7 +471,7 @@ const RatePlanForm = ({
               ]}
               className={isView ? "pointer-events-none" : ""}
             >
-              <Checkbox.Group options={channelOptions}  />
+              <Checkbox.Group options={channelOptions} />
             </Form.Item>
 
             <Form.Item label="Description" name="description">
@@ -475,36 +482,62 @@ const RatePlanForm = ({
               />
             </Form.Item>
 
-            <Form.Item
-              label="Is Default"
-              name="isDefault"
-              valuePropName="checked"
-              initialValue={false}
-              rules={[{ required: true, message: "Please select Is Default!" }]}
-              tooltip={{
-                title: "If no date-specific room type rate exists, the default room type pricing will be used automatically. The default rate cannot be inactivated, as it acts as the system fallback rate for room pricing.",
-                icon: <InfoCircleOutlined style={{ color: "#1677ff" }} />,
-              }}
-            >
-              <Switch
-                disabled={isView || isDisableDefault}
-                checkedChildren="True"
-                unCheckedChildren="False"
-              />
-            </Form.Item>
+            <div className="grid grid-cols-2 gap-6">
+              {" "}
+              <Form.Item
+                label="Is Default"
+                name="isDefault"
+                valuePropName="checked"
+                initialValue={false}
+                rules={[
+                  { required: true, message: "Please select Is Default!" },
+                ]}
+                tooltip={{
+                  title:
+                    "If no date-specific room type rate exists, the default room type pricing will be used automatically. The default rate cannot be inactivated, as it acts as the system fallback rate for room pricing.",
+                  icon: <InfoCircleOutlined style={{ color: "#1677ff" }} />,
+                }}
+              >
+                <Switch
+                  disabled={isView || isDisableDefault}
+                  checkedChildren="True"
+                  unCheckedChildren="False"
+                />
+              </Form.Item>
+              <Form.Item
+                label="Meal Pricing"
+                name="mealPricingMode"
+                rules={[
+                  {
+                    required: true,
+                  },
+                ]}
+              >
+                <Radio.Group disabled={isView}>
+                  <Space direction="horizontal">
+                    <Radio value="included"> Included in Room Rate</Radio>
+                    <Radio value="separate"> Charge Separately</Radio>
+                  </Space>
+                </Radio.Group>
+              </Form.Item>
+            </div>
 
             {isAdd && (
               <div className="border-2 px-4  py-4 rounded mb-2">
                 {isAdd && (
                   <div className="mb-3">
                     <div className="mb-2">
-                      <span className={`text-gray-900 text-[16px] font-semibold ${textWhiteInDarkStyle}`}>
+                      <span
+                        className={`text-gray-900 text-[16px] font-semibold ${textWhiteInDarkStyle}`}
+                      >
                         Let's map room types to this rate plan
                       </span>
                     </div>
 
                     <div>
-                      <span className={`text-gray-900 text-[15px] italic ${textWhiteInDarkStyle}`}>
+                      <span
+                        className={`text-gray-900 text-[15px] italic ${textWhiteInDarkStyle}`}
+                      >
                         Map the following rate plans
                       </span>
                     </div>
@@ -563,4 +596,3 @@ const RatePlanForm = ({
 };
 
 export default RatePlanForm;
-
