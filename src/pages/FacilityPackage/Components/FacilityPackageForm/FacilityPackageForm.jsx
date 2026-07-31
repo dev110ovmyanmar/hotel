@@ -254,6 +254,9 @@ const FacilityPackageForm = ({
             layout="vertical"
             style={{ width: "100%" }}
             onFinish={onFinish}
+             initialValues={{
+            includedPax:0,
+          }}
           >
             <Form.Item
               label="Name"
@@ -299,6 +302,7 @@ const FacilityPackageForm = ({
                 rules={[
                   { required: true, message: "Included Pax is Required" },
                 ]}
+                className="minus-icon"
               >
                 <InputNumber
                   className="!w-full"

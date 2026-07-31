@@ -46,7 +46,7 @@ const RoomAttributeList = () => {
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
         <ListHeader
           title="Room Attribute List"
-          searchPlaceholder="Search Room Attribute ..."
+          searchPlaceholder="Search Room Attributes ..."
           keyword={keyword}
           setKeyword={setKeyword}
           addButtonText="Add New Room Attribute"

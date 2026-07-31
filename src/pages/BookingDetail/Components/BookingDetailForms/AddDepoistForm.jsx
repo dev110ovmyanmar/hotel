@@ -442,7 +442,7 @@ const AddDepoistForm = ({
 
             {/* --- REMARK FIELD --- */}
             <Form.Item
-              label={<span className="text-slate-600 font-medium">Remark</span>}
+              label={<span className="font-medium">Remark</span>}
               name="remark"
             >
               <TextArea

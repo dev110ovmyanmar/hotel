@@ -357,8 +357,8 @@ const ServiceForm = ({
                                   ? "text-blue-800/70"
                                   : "text-blue-900"
                                 : isView
-                                  ? "text-gray-200"
-                                  : "text-gray-700"
+                                  ? ""
+                                  : ""
                             }`}
                           >
                             {stage.label}

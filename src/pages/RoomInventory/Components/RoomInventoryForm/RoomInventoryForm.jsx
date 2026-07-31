@@ -147,6 +147,7 @@ const RoomInventoryForm = ({
               rules={[
                 { required: true, message: "Available Rooms is Required" },
               ]}
+              className="minus-icon"
             >
               <InputNumber
                 {...sharedProps}

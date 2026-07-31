@@ -33,7 +33,6 @@ const PersonalInformation = ({
       <DataRow label="Gender" value={personalInfo?.gender?.name? personalInfo?.gender?.name : "-"} />
       <DataRow label="Date of Birth" value={personalInfo?.dob ? personalInfo?.dob : "-"} />
       <DataRow label="Nationality" value={personalInfo?.nationality ? personalInfo?.nationality : "-"} />
-      <DataRow label="Father Name" value="" />
       <DataRow label="ID Type" value="NRC" />
       <DataRow label="ID Number" value={personalInfo?.nrcNo ? personalInfo?.nrcNo : "-"}/>
       <DataRow label="Passport Number" value={personalInfo?.passport ? personalInfo?.passport : "-" } />
@@ -48,11 +47,8 @@ const PersonalInformation = ({
     </InfoSection> */}
 
     <InfoSection title="Address" icon={<MapPin size={18} />}>
-      <DataRow label="Address" value={personalInfo?.address ? personalInfo?.address : "-"} />
-      <DataRow label="City" value={personalInfo?.city?.name ? personalInfo?.city?.name : "-"} />
-      <DataRow label="State" value="" />
-      <DataRow label="ZIP Code" value="10022" />
       <DataRow label="Country" value={personalInfo?.country?.name ? personalInfo?.country?.name : "-"} />
+      <DataRow label="City" value={personalInfo?.city?.name ? personalInfo?.city?.name : "-"} />
     </InfoSection>
 
     <InfoSection title="Emergency Contact" icon={<Asterisk size={18} />}>
