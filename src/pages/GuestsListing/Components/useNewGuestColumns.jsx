@@ -105,13 +105,6 @@ export default function useGuestColumns(
             onClick: () => onEdit(record),
           },
           {
-            key: "guest-notes",
-            label: "Guest Notes",
-            icon: <FileTextOutlined style={{ fontSize: "12px" }} />,
-            permission: PERMISSIONS.GUEST_NOTE_VIEW,
-            onClick: () => onViewNotes(record),
-          },
-          {
             key: "manage-files",
             label: "Manage Files",
             icon: <UploadOutlined style={{ fontSize: "12px" }} />,

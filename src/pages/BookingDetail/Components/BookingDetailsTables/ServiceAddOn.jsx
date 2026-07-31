@@ -25,9 +25,7 @@ const ServiceAddOn = ({ data }) => {
       title: "Add On Status",
       dataIndex: "addonStatus",
       key: "addonStatus",
-      // align: "center",
       render: (status) => {
-        console.log(status,"StatusInAddOn")
         return (
           status ? <ColorStatusTag status={status} /> : "-"
         );
@@ -46,9 +44,7 @@ const ServiceAddOn = ({ data }) => {
         <Card title={CustomTitle} className="service-card line-height">
           <Table
             columns={columns}
-            dataSource={data?.filter(
-              item => item?.addonStatus?.code !== "completed"
-            )}
+            dataSource={data}
             size="small"
             pagination={false}
           />

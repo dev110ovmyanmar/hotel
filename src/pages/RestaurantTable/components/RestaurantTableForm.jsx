@@ -157,6 +157,9 @@ const RestaurantTableForm = ({
           layout="vertical"
           onFinish={onFinish}
           className="w-full"
+          initialValues={{
+            capacity: 1,
+          }}
         >
           <div className="grid grid-cols-12 gap-x-4">
             <div className="col-span-6">
@@ -175,6 +178,7 @@ const RestaurantTableForm = ({
               <Form.Item
                 label="Restaurant Table (Seats)"
                 name="capacity"
+                className="minus-icon"
                 rules={[{ required: true, message: "Please input capacity" }]}
               >
                 <InputNumber

@@ -175,6 +175,9 @@ const FacilityForm = ({
             layout="vertical"
             style={{ width: "100%" }}
             onFinish={onFinish}
+             initialValues={{
+            capacity: 1,
+          }}
           >
             <Form.Item
               label="Name"
@@ -189,7 +192,8 @@ const FacilityForm = ({
               name="capacity" 
               readOnly={isView}
               rules={[{ required: true, message: "Capacity is Required" }]}
-            >
+              className="minus-icon"
+           >
               {/* <Input placeholder="Enter Capacity" /> */}
               <InputNumber
                 // type="number"

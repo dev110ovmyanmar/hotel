@@ -523,14 +523,14 @@ span .ant-upload {
 }
 
 .service-order-card .ant-card-head {
-  border-left: 4px solid #2884e1;
+  border-left: 4px solid #55a8fc;
   padding-left: 12px;
 }
 
 .service-order-icon-box {
-  background-color: #b9dae3;
+  background-color: #f7fafd;
   backdrop-filter: blur(12px) !important;
-  border: 1px solid #0c85a0;
+  border: 1px solid #4695e5;
   border-radius: 6px;
   padding: 4px;
   display: flex;
@@ -775,7 +775,7 @@ span .ant-upload {
 }
 
 .dark .minus-icon .anticon-minus {
-  color: rgb(134, 129, 129)
+  color: rgb(213, 208, 208)
 }
 
 /* Input value */
@@ -903,4 +903,8 @@ span .ant-upload {
   .reservation-form .ant-form-item .ant-form-item-label>label p {
     margin: 0 !important;
   }
+}
+
+.small-upload-icon {
+  font-size: 6px;
 }

@@ -243,7 +243,7 @@ export default function UpdateRateModal({
                                             className={`border-b border-slate-200 last:border-b-0 transition-colors ${isChanged ? 'bg-amber-50 hover:bg-amber-100/70' : 'hover:bg-slate-50'
                                                 }`}
                                         >
-                                            <td className="p-2.5 font-medium text-slate-700">
+                                            <td className="p-2.5 font-medium text-slate-400">
                                                 {dayjs(item.date).format('DD MMM YYYY')}
                                             </td>
                                             <td className="p-2.5 text-xs">
@@ -260,12 +260,12 @@ export default function UpdateRateModal({
                                                             {originalPrice.toLocaleString()}
                                                         </span>
                                                         <ArrowRightOutlined className="text-amber-500 text-[10px]" />
-                                                        <span className="font-semibold text-slate-900">
+                                                        <span className="font-semibold text-slate-400">
                                                             {currentPrice.toLocaleString()}
                                                         </span>
                                                     </div>
                                                 ) : (
-                                                    <span className="text-slate-600">
+                                                    <span className="text-slate-400">
                                                         {currentPrice.toLocaleString()}
                                                     </span>
                                                 )}
@@ -282,7 +282,7 @@ export default function UpdateRateModal({
                             <strong>{pendingValues.rates.length} Schedules Set</strong>
                         </Descriptions.Item>
                         <Descriptions.Item label="Audit System Notes">
-                            <span className="italic text-slate-600">
+                            <span className="italic text-slate-400">
                                 "{pendingValues?.reason}"
                             </span>
                         </Descriptions.Item>

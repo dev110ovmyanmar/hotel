@@ -95,10 +95,11 @@ const HouseKeepingStatusListing = () => {
       <button
         type="button"
         onClick={() => setViewMode("card")}
-        className={`p-2 rounded-sm transition-all duration-200 flex items-center justify-center ${viewMode === "card"
-            ? "!bg-[#1677ff] !shadow-sm !text-gray-100!"
+        className={`p-2 rounded-sm transition-all duration-200 flex items-center justify-center ${
+          viewMode === "card"
+            ? "bg-[#1677ff] shadow-sm text-gray-100!"
             : "hover:text-gray-500 hover:bg-gray-200!"
-          }`}
+        }`}
       >
         <AppstoreOutlined className="text-sm! " />
       </button>
@@ -106,10 +107,11 @@ const HouseKeepingStatusListing = () => {
       <button
         type="button"
         onClick={() => setViewMode("table")}
-        className={`p-2 rounded-sm transition-all duration-200 flex items-center justify-center ${viewMode === "table"
+        className={`p-2 rounded-sm transition-all duration-200 flex items-center justify-center ${
+          viewMode === "table"
             ? "bg-[#1677ff]  shadow-sm text-gray-100!"
             : "hover:text-gray-500 hover:bg-gray-200!"
-          }`}
+        }`}
       >
         <UnorderedListOutlined className="text-sm!" />
       </button>
@@ -161,7 +163,7 @@ const HouseKeepingStatusListing = () => {
             </div>
 
             {/* Standard Pagination for Grid View */}
-            <div className="mt-8 flex justify-center sm:justify-end bg-white p-4 rounded border border-gray-200 shadow-sm">
+            <div className="mt-8 flex justify-center sm:justify-end bg-white p-4 ">
               <Pagination
                 current={page}
                 pageSize={perPage}

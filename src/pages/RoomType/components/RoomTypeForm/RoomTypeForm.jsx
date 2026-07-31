@@ -29,13 +29,19 @@ import RoomTypeAmenityForm from "./RoomTypeAmenityForm";
 import { EditOutlined, PlusOutlined } from "@ant-design/icons";
 import Loader from "../../../../component/Loader/Loader";
 import ImageUpload from "../../../../component/ImageUpload/ImageUpload";
-import PriceTag, { priceFormatter, priceParser } from "../../../../component/PriceTag/PriceTag";
+import PriceTag, {
+  priceFormatter,
+  priceParser,
+} from "../../../../component/PriceTag/PriceTag";
 import { PERMISSIONS } from "../../../../variables/permission";
 import usePermission from "../../../../hooks/usePermission";
 import { hasIn } from "lodash";
 import { deleteImageUpload } from "../../../../api/deleteImageApi";
 import { queryClient } from "../../../../app/queryClient";
-import { roomAndRoomTypeDarkMode, textWhiteInDarkStyle } from "../../../../utils";
+import {
+  roomAndRoomTypeDarkMode,
+  textWhiteInDarkStyle,
+} from "../../../../utils";
 
 const RoomTypeForm = ({
   mode,
@@ -69,7 +75,6 @@ const RoomTypeForm = ({
     mode: "spinner",
     min: 1,
     max: 15,
-    defaultValue: 1,
     style: { width: 150 },
   };
 
@@ -77,7 +82,6 @@ const RoomTypeForm = ({
     mode: "spinner",
     min: 0,
     max: 10,
-    defaultValue: 0,
     style: { width: 150 },
   };
 
@@ -292,6 +296,7 @@ const RoomTypeForm = ({
             onFinish={onFinish}
             initialValues={{
               maxAdults: 1,
+              maxChildren: 0,
               maxOccupancy: 1,
               maxExtraBed: 0,
               totalRooms: 1,
@@ -332,8 +337,6 @@ const RoomTypeForm = ({
                   placeholder="Enter Totals Rooms"
                 />
               </Form.Item> */}
-
-
             </div>
 
             <Form.Item name="basePrice" hidden>
@@ -345,6 +348,7 @@ const RoomTypeForm = ({
                 label="Max Adults"
                 name="maxAdults"
                 rules={[{ required: true }]}
+                className="minus-icon"
               >
                 <InputNumber
                   {...sharedProps}
@@ -354,7 +358,11 @@ const RoomTypeForm = ({
                 />
               </Form.Item>
 
-              <Form.Item label="Max Children" name="maxChildren">
+              <Form.Item
+                label="Max Children"
+                name="maxChildren"
+                className="minus-icon"
+              >
                 <InputNumber
                   {...childSharedProps}
                   placeholder="Outlined"
@@ -369,6 +377,7 @@ const RoomTypeForm = ({
                 label="Max Occupancy"
                 name="maxOccupancy"
                 rules={[{ required: true }]}
+                className="minus-icon"
               >
                 <InputNumber
                   {...sharedProps}
@@ -378,7 +387,11 @@ const RoomTypeForm = ({
                 />
               </Form.Item>
 
-              <Form.Item label="Max Extra Bed" name="maxExtraBed">
+              <Form.Item
+                label="Max Extra Bed"
+                name="maxExtraBed"
+                className="minus-icon"
+              >
                 <InputNumber
                   {...childSharedProps}
                   placeholder="Outlined"
@@ -393,6 +406,7 @@ const RoomTypeForm = ({
                 label="Luxury Level"
                 name="rank"
                 rules={[{ required: true }]}
+                className="minus-icon"
               >
                 <InputNumber
                   {...sharedProps}
@@ -450,13 +464,17 @@ const RoomTypeForm = ({
                 {isAdd && (
                   <div className="mb-3">
                     <div className="mb-2">
-                      <span className={`text-gray-900 text-[16px] font-semibold ${textWhiteInDarkStyle}`}>
+                      <span
+                        className={`text-gray-900 text-[16px] font-semibold ${textWhiteInDarkStyle}`}
+                      >
                         Let's map room types to this rate plan
                       </span>
                     </div>
 
                     <div>
-                      <span className={`text-gray-900 text-[15px] italic ${textWhiteInDarkStyle}`}>
+                      <span
+                        className={`text-gray-900 text-[15px] italic ${textWhiteInDarkStyle}`}
+                      >
                         Map the following rate plans
                       </span>
                     </div>
@@ -509,7 +527,9 @@ const RoomTypeForm = ({
             )}
 
             {!isAdd && (
-              <Card className={`mt-5 shadow-sm  border border-gray-100 bg-gray-100! ${roomAndRoomTypeDarkMode}`}>
+              <Card
+                className={`mt-5 shadow-sm  border border-gray-100 bg-gray-100! ${roomAndRoomTypeDarkMode}`}
+              >
                 <div className="flex justify-between items-center text-base font-semibold mb-5">
                   <span>Room Type Amenity </span>
 
