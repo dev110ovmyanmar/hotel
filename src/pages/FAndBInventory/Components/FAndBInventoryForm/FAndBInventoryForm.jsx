@@ -200,10 +200,6 @@ const FAndBInventoryForm = ({
             layout="vertical"
             style={{ width: "100%" }}
             onFinish={onFinish}
-             initialValues={{
-            stockQuantity:1,
-            reorderLevel:1,
-          }}
           >
             <Form.Item
               label="Name"

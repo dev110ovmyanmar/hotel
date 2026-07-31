@@ -25,11 +25,8 @@ const fmt = (num, decimals = 0) =>
   });
 
 // ── Main Component ────────────────────────────────────────────────────────
-const FolioInvoicePrint = React.forwardRef(({ folios, folio, reservation, propertyImage, adminName, hideLetterhead }, ref) => {
+const FolioInvoicePrint = React.forwardRef(({ folios, folio, reservation, reservationRoom, propertyImage, adminName, hideLetterhead }, ref) => {
   if (!reservation) return null;
-
-  console.log("FolioList", folios);
-  console.log("Folio", folio);
 
   const foliosList = folios
     ? Array.isArray(folios) ? folios : [folios]
@@ -252,7 +249,7 @@ const FolioInvoicePrint = React.forwardRef(({ folios, folio, reservation, proper
                     gridTemplateColumns: "1fr 1fr",
                     rowGap: "12px",
                     columnGap: "24px"
-                  }}>Nights
+                  }}>
                     <StayCell label="Arrival" value={
                       reservation.actualCheckin
                         ? dayjs(reservation.actualCheckin).format("DD MMM YYYY")
@@ -269,16 +266,16 @@ const FolioInvoicePrint = React.forwardRef(({ folios, folio, reservation, proper
                     } />
 
                     {/* This wrapper forces Nights, Pax, and Rooms into a single row spanning both grid columns */}
-                    <div style={{
+                    {/* <div style={{
                       gridColumn: "span 2",
                       display: "grid",
                       gridTemplateColumns: "1fr 1fr 1fr",
                       columnGap: "24px"
                     }}>
-                      <StayCell label="Nights" value={reservation.totalNight ?? "—"} />
+                      <StayCell label="Nights" value={reservationRoom.totalNight ?? "—"} />
                       <StayCell label="Pax" value={pax} />
                       <StayCell label="Rooms" value={reservation.totalRooms ?? "—"} />
-                    </div>
+                    </div> */}
                   </div>
                 </td>
               </tr>
@@ -430,19 +427,19 @@ const FolioInvoicePrint = React.forwardRef(({ folios, folio, reservation, proper
                 {cols.map((col, i) => {
                   if (col.name === "Description") {
                     return (
-                      <td key={i} style={{ padding: "8px 6px", fontFamily: FONT_LABEL, fontSize: "14px", fontWeight: "700", color: INK, textAlign: "left", whiteSpace: "nowrap", borderBottom: "none", borderLeft: "none", borderRight: "none" }}>
+                      <td key={i} style={{ padding: "8px 6px", fontFamily: FONT_LABEL, fontSize: "14px", fontWeight: "700", color: INK, textAlign: "left", whiteSpace: "nowrap", borderTop: `1.5px solid ${BLUE}`, borderBottom: "none", borderLeft: "none", borderRight: "none" }}>
                         Balance
                       </td>
                     );
                   }
                   if (col.name === "Balance") {
                     return (
-                      <td key={i} style={{ padding: "8px 0 8px 6px", fontFamily: FONT_MONO, fontSize: "16px", fontWeight: "700", color: INK, textAlign: "right", whiteSpace: "nowrap", borderTop: `1.5px solid ${BLUE}`, borderBottom: "none", borderLeft: "none", borderRight: "none", background: BLUE_LIGHT }}>
+                      <td key={i} style={{ padding: "8px 0 8px 6px", fontFamily: FONT_MONO, fontSize: "16px", fontWeight: "700", color: INK, textAlign: "right", whiteSpace: "nowrap", borderTop: `1.5px solid ${BLUE}`, borderBottom: "none", borderLeft: "none", borderRight: "none" }}>
                         {fmt(grandBalance)} {currency}
                       </td>
                     );
                   }
-                  return <td key={i} style={{ padding: 0, borderBottom: "none", borderLeft: "none", borderRight: "none" }} />;
+                  return <td key={i} style={{ padding: 0, borderTop: `1.5px solid ${BLUE}`, borderBottom: "none", borderLeft: "none", borderRight: "none" }} />;
                 })}
               </tr>
             </tbody>
