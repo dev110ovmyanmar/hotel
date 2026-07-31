@@ -67,7 +67,6 @@ const AddPaymentForm = ({
     const guests = reservationMetaData?.main_guests || [];
     const folios = reservationMetaData?.folios || [];
     const paymentMethodsData = reservationMetaData?.payment_methods || [];
-    console.log("Folios", folios);
 
     // Track selected category filter by UUID state
     const [selectedProviderUuid, setSelectedProviderUuid] = useState("all");
