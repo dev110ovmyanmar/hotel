@@ -5,9 +5,10 @@ import { useNavigate, useLocation, useParams } from "react-router-dom";
 const ALL_TABS = [
   { label: "Room Information", key: "room-information" },
   { label: "Guest Details", key: "guest-details" },
-  { label: "Event Facility Booking", key: "event-facility-booking" },
+  { label: "Facility Booking", key: "event-facility-booking" },
   { label: "Service Add On", key: "service-add-on" },
   { label: "Service Order", key: "service-order" },
+  { label: "F&B Order", key: "food-beverage-order" },
   { label: "Folio Operations", key: "folio-operations" },
   { label: "Booking Details", key: "booking-detail" },
 ];
@@ -18,6 +19,7 @@ const EXTENDED_TABS = [
   "guest-details",
   "event-facility-booking",
   "service-order",
+  "food-beverage-order",
   "folio-operations",
 ];
 
@@ -66,12 +68,14 @@ const ReservationMenu = ({ data }) => {
         ...BASIC_TABS,
         "guest-details",
         "service-order",
+        "food-beverage-order",
         "folio-operations",
       ],
       checked_out: [
         ...BASIC_TABS,
         "guest-details",
         "service-order",
+        "food-beverage-order",
         "folio-operations",
       ],
     };
