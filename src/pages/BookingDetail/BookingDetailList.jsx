@@ -14,7 +14,10 @@ import BookingStatusCard from "./Components/BookingDetailsTables/BookingStatusCa
 import ContactPersonCard from "./Components/BookingDetailsTables/ContactPersonTable";
 import { useLocation, useParams, useNavigate } from "react-router-dom";
 import useApiQuery from "../../hooks/useApiQuery";
-import { folioPaymentList, reservationDetails } from "../../api/reservationSectionApi";
+import {
+  folioPaymentList,
+  reservationDetails,
+} from "../../api/reservationSectionApi";
 import Loader from "../../component/Loader/Loader";
 import ServiceOrder from "./Components/BookingDetailsTables/ServiceOrder";
 import { useEffect } from "react";
@@ -35,7 +38,7 @@ const BookingDetailList = () => {
       cleanId === ":bookingId" ||
       cleanId.length < 32
     ) {
-      navigate('/404', { replace: true });
+      navigate("/404", { replace: true });
     }
   }, [bookingId, navigate]);
 
@@ -48,7 +51,10 @@ const BookingDetailList = () => {
 
   useEffect(() => {
     if (bookingId && data?.reservation?.reservationNo) {
-      sessionStorage.setItem(`breadcrumb_${bookingId}`, data.reservation.reservationNo);
+      sessionStorage.setItem(
+        `breadcrumb_${bookingId}`,
+        data.reservation.reservationNo,
+      );
       window.dispatchEvent(new Event("breadcrumb_updated"));
     }
   }, [data, bookingId]);
@@ -61,11 +67,13 @@ const BookingDetailList = () => {
     );
   }
 
-  const reservationBooked = data?.reservationRoom?.roomStatus?.code === "booked";
+  const reservationBooked =
+    data?.reservationRoom?.roomStatus?.code === "booked";
 
-  const reservationCheckIn = data?.reservationRoom?.roomStatus?.code === "checked_in";
-  const reservationCheckOut = data?.reservationRoom?.roomStatus?.code === "checked_out";
-
+  // const reservationCheckIn = data?.reservationRoom?.roomStatus?.code === "checked_in";
+  // const reservationCheckOut = data?.reservationRoom?.roomStatus?.code === "checked_out";
+  const serviceAddOn = data?.reservationRoom?.roomStatus?.code === "confirmed";
+  const serviceOrder = data?.reservationRoom?.roomStatus?.code === "checked_in";
 
   return (
     <div className="w-full px-6 py-2">
@@ -73,8 +81,7 @@ const BookingDetailList = () => {
 
       <ReservationMenu data={data || {}} />
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
-        <BookingDetailButton data={data || {}}
-        />
+        <BookingDetailButton data={data || {}} />
       </div>
 
       <Row gutter={[16, 16]}>
@@ -87,12 +94,22 @@ const BookingDetailList = () => {
             <Col span={24}>
               <RoomStatusTable data={data?.reservation?.reservationRooms} />
             </Col>
-            <Col span={24}>
-              <ServiceAddOn data={data?.reservation?.reservationAddOns} />
-            </Col>
-            <Col span={24}>
-              <ServiceOrder data={data?.reservation?.serviceOrders} serviceOrderStatus={reservationCheckIn || reservationCheckOut}/>
-            </Col>
+            {serviceAddOn && (
+              <Col span={24}>
+                <ServiceAddOn data={data?.reservation?.reservationAddOns} />
+              </Col>
+            )}
+            {serviceOrder && (
+              <Col span={24}>
+                <ServiceOrder data={data?.reservation?.serviceOrders} />
+              </Col>
+            )}
+            {/* <Col span={24}>
+              <ServiceOrder
+                data={data?.reservation?.serviceOrders}
+                serviceOrderStatus={reservationCheckIn || reservationCheckOut}
+              />
+            </Col> */}
             <Col span={24}>
               <EventFacility data={data?.reservation?.facilityBookings} />
             </Col>
@@ -102,19 +119,16 @@ const BookingDetailList = () => {
         {/* RIGHT */}
         <Col xs={24} lg={8}>
           <Row gutter={[16, 16]}>
-            {
-              !reservationBooked &&
-              (
-                <>
-                  <Col span={24}>
-                    <FolioSummaryCard data={data?.reservation || {}} />
-                  </Col>
-                  <Col span={24}>
-                    <SummaryCard data={data?.reservation || {}} />
-                  </Col>
-                </>
-              )
-            }
+            {!reservationBooked && (
+              <>
+                <Col span={24}>
+                  <FolioSummaryCard data={data?.reservation || {}} />
+                </Col>
+                <Col span={24}>
+                  <SummaryCard data={data?.reservation || {}} />
+                </Col>
+              </>
+            )}
             <Col span={24}>
               <BookingStatusCard data={data || {}} />
             </Col>
