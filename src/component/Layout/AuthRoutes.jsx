@@ -261,6 +261,10 @@ const ServiceOrderList = lazy(
     import("../../pages/EditReservation/Menu/ServiceOrder/ServiceOrderList"),
 );
 
+const FoodBeverageOrderList = lazy(
+  () =>
+    import("../../pages/EditReservation/Menu/FoodBeverageOrder/FoodBeverageOrderList"),
+);
 // const Email =lazy(()=> import("../../pages/Email/Email"))
 export const authRoutes = [
   {
@@ -424,6 +428,11 @@ export const authRoutes = [
     key: 3.6,
     path: "/reservations/:bookingId/service-order",
     component: <ServiceOrderList />,
+  },
+   {
+    key: 3.6,
+    path: "/reservations/:bookingId/food-beverage-order",
+    component: <FoodBeverageOrderList />,
   },
   {
     key: 4.9,
