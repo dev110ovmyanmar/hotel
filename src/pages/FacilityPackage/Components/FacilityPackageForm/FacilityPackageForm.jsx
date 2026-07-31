@@ -184,7 +184,7 @@ const FacilityPackageForm = ({
             setPage(1);
             Toast.success("Package Created Successfully!");
           }
-        }
+        },
       });
     }
     if (isEdit) {
@@ -254,19 +254,13 @@ const FacilityPackageForm = ({
             layout="vertical"
             style={{ width: "100%" }}
             onFinish={onFinish}
-             initialValues={{
-            includedPax:0,
-          }}
           >
             <Form.Item
               label="Name"
               name="name"
               rules={[{ required: true, message: "Name is Required" }]}
             >
-              <Input
-                readOnly={isView}
-                placeholder="Enter Package Name"
-              />
+              <Input readOnly={isView} placeholder="Enter Package Name" />
             </Form.Item>
 
             <Form.Item
@@ -338,10 +332,13 @@ const FacilityPackageForm = ({
               <Form.Item
                 label="Pricing Type"
                 name="pricingType"
-                rules={[{ required: true, message: "Pricing Type is Required" }]}
+                rules={[
+                  { required: true, message: "Pricing Type is Required" },
+                ]}
                 getValueProps={(value) => ({
                   value: isView
-                    ? pricingTypesList.find((item) => item.value === value)?.label
+                    ? pricingTypesList.find((item) => item.value === value)
+                        ?.label
                     : value,
                 })}
               >
@@ -384,7 +381,6 @@ const FacilityPackageForm = ({
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-
               <Form.Item
                 label="Extra Pax Price"
                 name="extraPaxPrice"
