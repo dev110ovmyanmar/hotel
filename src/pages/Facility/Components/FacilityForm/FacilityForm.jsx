@@ -175,9 +175,7 @@ const FacilityForm = ({
             layout="vertical"
             style={{ width: "100%" }}
             onFinish={onFinish}
-             initialValues={{
-            capacity: 1,
-          }}
+           
           >
             <Form.Item
               label="Name"
@@ -201,7 +199,7 @@ const FacilityForm = ({
                 placeholder="Enter Capacity"
                 readOnly={isView}
                 style={{width:"100%"}}
-                min={1}
+                // min={1}
               />
             </Form.Item>
 

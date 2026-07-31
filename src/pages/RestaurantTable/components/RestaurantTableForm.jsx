@@ -157,9 +157,6 @@ const RestaurantTableForm = ({
           layout="vertical"
           onFinish={onFinish}
           className="w-full"
-          initialValues={{
-            capacity: 1,
-          }}
         >
           <div className="grid grid-cols-12 gap-x-4">
             <div className="col-span-6">

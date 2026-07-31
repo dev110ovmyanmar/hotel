@@ -202,6 +202,12 @@ const RoomInformationDetailsForm = ({
               <span>{(d?.serviceChargeTotal || 0).toLocaleString()} MMK</span>
             </div>
             <div className={textWhiteDark}>
+              <span>Incentive</span>
+              <span className="text-rose-500 font-medium">
+                - {(d?.incentiveTotal || 0).toLocaleString()} MMK
+              </span>
+            </div>
+            <div className={textWhiteDark}>
               <span>Discount</span>
               <span className="text-rose-500 font-medium">
                 - {(d?.discountTotal || 0).toLocaleString()} MMK

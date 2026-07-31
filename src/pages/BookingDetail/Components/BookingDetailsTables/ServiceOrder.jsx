@@ -41,7 +41,7 @@ const ServiceOrder = ({ data , serviceOrderStatus}) => {
   return (
     <>
       {
-        data?.length !== 0 && serviceOrderStatus && (
+        data?.length !== 0 && (
           <Card title={CustomTitle} className="service-order-card line-height">
             <Table
               columns={columns}
