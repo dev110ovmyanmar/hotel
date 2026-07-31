@@ -118,7 +118,7 @@ const ImageUploadCard = ({
         beforeUpload={beforeUpload}
         accept="image/png,image/jpeg"
         disabled={loading}
-        
+
       >
         {loading ? (
           <div>
@@ -143,7 +143,7 @@ const ImageUploadCard = ({
                 style={{ color: "#fff", cursor: "pointer" }}
                 onClick={() => handlePreview(imageUrl)}
               >
-                <EyeOutlined /> 
+                <EyeOutlined />
               </span>
 
               <span
@@ -167,7 +167,7 @@ const ImageUploadCard = ({
           </div>
 
         ) : (
-          <div>
+          <div onClick={inputRefClick}>
             <PlusOutlined />
             <div style={{ marginTop: 8 }}>Upload</div>
           </div>

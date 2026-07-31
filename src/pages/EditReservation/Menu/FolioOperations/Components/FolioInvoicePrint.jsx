@@ -6,9 +6,9 @@ const FONT_BODY = "'Inter', 'Helvetica Neue', 'Arial', sans-serif";
 const FONT_MONO = "'DM Mono', 'Courier New', monospace";
 const FONT_LABEL = "'Inter', 'Helvetica Neue', 'Arial', sans-serif";
 
-const INK = "#0f172a";
-const INK_SOFT = "#475569";
-const INK_MUTED = "#94a3b8";
+const INK = "#000000";
+const INK_SOFT = "#000000";
+const INK_MUTED = "#000000";
 
 const BLUE = "#1e3a8a";
 const BLUE_LIGHT = "#eff6ff";
@@ -25,8 +25,11 @@ const fmt = (num, decimals = 0) =>
   });
 
 // ── Main Component ────────────────────────────────────────────────────────
-const FolioInvoicePrint = React.forwardRef(({ folios, folio, reservation, propertyImage, adminName }, ref) => {
+const FolioInvoicePrint = React.forwardRef(({ folios, folio, reservation, propertyImage, adminName, hideLetterhead }, ref) => {
   if (!reservation) return null;
+
+  console.log("FolioList", folios);
+  console.log("Folio", folio);
 
   const foliosList = folios
     ? Array.isArray(folios) ? folios : [folios]
@@ -43,6 +46,7 @@ const FolioInvoicePrint = React.forwardRef(({ folios, folio, reservation, proper
       else if (line.postingType === "credit") grandCredit += amt;
     })
   );
+  console.log("Folios", folios);
   const grandBalance = grandDebit - grandCredit;
 
   const currency = foliosList[0]?.currency?.code || "MMK";
@@ -100,7 +104,7 @@ const FolioInvoicePrint = React.forwardRef(({ folios, folio, reservation, proper
         }}
       >
         <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=DM+Mono:wght@400;500;700&display=swap');
 
         @media screen {
           #native-print-container {
@@ -132,78 +136,80 @@ const FolioInvoicePrint = React.forwardRef(({ folios, folio, reservation, proper
         <div style={{ padding: "36px 40px", marginBottom: "0" }}>
 
           {/* ══ HEADER ══════════════════════════════════════════════ */}
-          <table style={{ width: "100%", borderCollapse: "collapse", marginBottom: "0" }}>
-            <tbody>
-              <tr>
-                {/* LEFT: Logo + Property */}
-                <td style={{ verticalAlign: "top", width: "55%", padding: "0 0 28px 0", borderBottom: `1.5px solid ${BLUE}` }}>
-                  <div style={{ display: "flex", alignItems: "flex-start", gap: "16px" }}>
-                    {propertyImage ? (
-                      <img
-                        src={propertyImage}
-                        alt="Property Logo"
-                        style={{ width: "60px", height: "60px", objectFit: "contain", flexShrink: 0 }}
-                      />
-                    ) : (
-                      <div style={{
-                        width: "48px", height: "48px", flexShrink: 0,
-                        border: `1.5px solid ${BLUE}`,
-                        display: "flex", alignItems: "center", justifyContent: "center",
-                        fontSize: "10px", color: BLUE, letterSpacing: "1px",
-                        fontFamily: FONT_LABEL, fontWeight: "700", textTransform: "uppercase",
-                      }}>
-                        LOGO
-                      </div>
-                    )}
-                    <div>
-                      <div style={{
-                        fontFamily: FONT_LABEL,
-                        fontWeight: "700",
-                        fontSize: "15px",
-                        letterSpacing: "3px",
-                        textTransform: "uppercase",
-                        color: INK,
-                        lineHeight: "1.2",
-                        marginBottom: "6px",
-                      }}>
-                        {property?.name || "AZURA BEACH RESORT CHAUNG THA"}
-                      </div>
-                      <div style={{ fontSize: "14px", color: INK_SOFT, lineHeight: "1.65", fontFamily: FONT_LABEL, fontWeight: "400" }}>
-                        {property?.address || "Chaung Tha Beach, Pathein Township, Ayeyarwady Region, Myanmar"}
-                      </div>
-                      <div style={{ fontSize: "14px", color: INK_SOFT, lineHeight: "1.65", fontFamily: FONT_LABEL }}>
-                        {property?.phone || "+959 977990001"}&ensp;·&ensp;{property?.email || "info.ct@azura-hotels.com"}
+          {!hideLetterhead && (
+            <table style={{ width: "100%", borderCollapse: "collapse", marginBottom: "0" }}>
+              <tbody>
+                <tr>
+                  {/* LEFT: Logo + Property */}
+                  <td style={{ verticalAlign: "top", width: "55%", padding: "0 0 28px 0", borderBottom: `1.5px solid ${BLUE}` }}>
+                    <div style={{ display: "flex", alignItems: "flex-start", gap: "16px" }}>
+                      {propertyImage ? (
+                        <img
+                          src={propertyImage}
+                          alt="Property Logo"
+                          style={{ width: "60px", height: "60px", objectFit: "contain", flexShrink: 0 }}
+                        />
+                      ) : (
+                        <div style={{
+                          width: "48px", height: "48px", flexShrink: 0,
+                          border: `1.5px solid ${BLUE}`,
+                          display: "flex", alignItems: "center", justifyContent: "center",
+                          fontSize: "10px", color: INK, letterSpacing: "1px",
+                          fontFamily: FONT_LABEL, fontWeight: "700", textTransform: "uppercase",
+                        }}>
+                          LOGO
+                        </div>
+                      )}
+                      <div>
+                        <div style={{
+                          fontFamily: FONT_LABEL,
+                          fontWeight: "700",
+                          fontSize: "15px",
+                          letterSpacing: "3px",
+                          textTransform: "uppercase",
+                          color: INK,
+                          lineHeight: "1.2",
+                          marginBottom: "6px",
+                        }}>
+                          {property?.name || "AZURA BEACH RESORT CHAUNG THA"}
+                        </div>
+                        <div style={{ fontSize: "14px", color: INK_SOFT, lineHeight: "1.65", fontFamily: FONT_LABEL, fontWeight: "500" }}>
+                          {property?.address || "Chaung Tha Beach, Pathein Township, Ayeyarwady Region, Myanmar"}
+                        </div>
+                        <div style={{ fontSize: "14px", color: INK_SOFT, lineHeight: "1.65", fontFamily: FONT_LABEL, fontWeight: "500" }}>
+                          {property?.phone || "+959 977990001"}&ensp;·&ensp;{property?.email || "info.ct@azura-hotels.com"}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </td>
+                  </td>
 
-                {/* RIGHT: INVOICE label */}
-                <td style={{ verticalAlign: "bottom", textAlign: "right", width: "45%", padding: "0 0 28px 0", borderBottom: `1.5px solid ${BLUE}` }}>
-                  <div style={{
-                    fontFamily: FONT_BODY,
-                    fontWeight: "400",
-                    fontSize: "24px",
-                    letterSpacing: "6px",
-                    textTransform: "uppercase",
-                    color: INK,
-                    lineHeight: "1",
-                    marginBottom: "10px",
-                  }}>
-                    Invoice
-                  </div>
-                  <div style={{ fontFamily: FONT_LABEL, fontSize: "14px", color: INK_SOFT }}>
-                    <span style={{ color: INK_MUTED, marginRight: "6px" }}>Date</span>
-                    <strong style={{ color: INK }}>{dayjs().format("DD MMM YYYY")}</strong>
-                  </div>
-                  <div style={{ fontFamily: FONT_LABEL, fontSize: "14px", color: INK_SOFT }}>
-                    <span style={{ color: INK_MUTED, marginRight: "6px" }}>Booking Ref</span>
-                    <strong style={{ color: INK }}>{reservation.reservationNo}</strong>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+                  {/* RIGHT: INVOICE label */}
+                  <td style={{ verticalAlign: "bottom", textAlign: "right", width: "45%", padding: "0 0 28px 0", borderBottom: `1.5px solid ${BLUE}` }}>
+                    <div style={{
+                      fontFamily: FONT_BODY,
+                      fontWeight: "600",
+                      fontSize: "24px",
+                      letterSpacing: "6px",
+                      textTransform: "uppercase",
+                      color: INK,
+                      lineHeight: "1",
+                      marginBottom: "10px",
+                    }}>
+                      Invoice
+                    </div>
+                    <div style={{ fontFamily: FONT_LABEL, fontSize: "14px", color: INK_SOFT }}>
+                      <span style={{ color: INK_MUTED, marginRight: "6px" }}>Date</span>
+                      <strong style={{ color: INK }}>{dayjs().format("DD MMM YYYY")}</strong>
+                    </div>
+                    <div style={{ fontFamily: FONT_LABEL, fontSize: "14px", color: INK_SOFT }}>
+                      <span style={{ color: INK_MUTED, marginRight: "6px" }}>Booking Ref</span>
+                      <strong style={{ color: INK }}>{reservation.reservationNo}</strong>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          )}
 
           {/* ══ GUEST + STAY INFO ════════════════════════════════════ */}
           <table style={{ width: "100%", borderCollapse: "collapse", marginTop: "28px", marginBottom: "28px" }}>
@@ -217,7 +223,7 @@ const FolioInvoicePrint = React.forwardRef(({ folios, folio, reservation, proper
                     fontWeight: "700",
                     letterSpacing: "3px",
                     textTransform: "uppercase",
-                    color: BLUE,
+                    color: INK,
                     marginBottom: "14px",
                   }}>
                     Bill To
@@ -236,7 +242,7 @@ const FolioInvoicePrint = React.forwardRef(({ folios, folio, reservation, proper
                     fontWeight: "700",
                     letterSpacing: "3px",
                     textTransform: "uppercase",
-                    color: BLUE,
+                    color: INK,
                     marginBottom: "14px",
                   }}>
                     Stay Details
@@ -246,7 +252,7 @@ const FolioInvoicePrint = React.forwardRef(({ folios, folio, reservation, proper
                     gridTemplateColumns: "1fr 1fr",
                     rowGap: "12px",
                     columnGap: "24px"
-                  }}>
+                  }}>Nights
                     <StayCell label="Arrival" value={
                       reservation.actualCheckin
                         ? dayjs(reservation.actualCheckin).format("DD MMM YYYY")
@@ -295,7 +301,7 @@ const FolioInvoicePrint = React.forwardRef(({ folios, folio, reservation, proper
               fontWeight: "700",
               letterSpacing: "3px",
               textTransform: "uppercase",
-              color: BLUE,
+              color: INK,
             }}>
               {foliosList.length > 1 ? " " : `Folio Transactions \u00a0\u00b7\u00a0 ${foliosList[0]?.folioNo || "#1"}`}
             </div>
@@ -319,7 +325,7 @@ const FolioInvoicePrint = React.forwardRef(({ folios, folio, reservation, proper
                     fontSize: "11px",
                     letterSpacing: "0.5px",
                     textTransform: "uppercase",
-                    color: BLUE,
+                    color: INK,
                     borderBottom: `1.5px solid ${BLUE}`,
                     borderTop: "none",
                     borderLeft: "none",
@@ -358,6 +364,7 @@ const FolioInvoicePrint = React.forwardRef(({ folios, folio, reservation, proper
                     <tr
                       key={line.id || idx}
                       className="fi-table-row"
+
                       style={{ background: isEven ? WHITE : ROW_ALT }}
                     >
                       <td style={td("center", true)}>{line.postedAt ? dayjs(line.postedAt).format("DD/MM/YY") : "—"}</td>
@@ -365,14 +372,14 @@ const FolioInvoicePrint = React.forwardRef(({ folios, folio, reservation, proper
                         <td style={{ ...td("center", false), color: INK_MUTED }}>{line._folioId}</td>
                       )}
                       <td style={{ ...td("center", true), color: INK_MUTED }}>{refVal}</td>
-                      <td style={{ ...td("left"), color: INK, fontWeight: "500" }}>{line.descriptionSnapshot || "—"}</td>
-                      <td style={{ ...td("right", true), textAlign: "right", fontFamily: FONT_MONO, fontSize: "13.5px", color: "#1a3a5c" }}>
-                        {isDebit ? fmt(amt) : "-"}
+                      <td style={{ ...td("left"), color: INK, fontWeight: "600" }}>{line.descriptionSnapshot || "—"}</td>
+                      <td style={{ ...td("right", true), textAlign: "right", fontFamily: FONT_MONO, fontSize: "13.5px", fontWeight: "500", color: INK }}>
+                        {isDebit ? fmt(amt) : "0"}
                       </td>
-                      <td style={{ ...td("right", true), textAlign: "right", fontFamily: FONT_MONO, fontSize: "13.5px", color: "#1a3a5c" }}>
-                        {isCredit ? fmt(amt) : "-"}
+                      <td style={{ ...td("right", true), textAlign: "right", fontFamily: FONT_MONO, fontSize: "13.5px", fontWeight: "500", color: INK }}>
+                        {isCredit ? fmt(amt) : "0"}
                       </td>
-                      <td style={{ ...td("right", true), textAlign: "right", fontFamily: FONT_MONO, fontSize: "13.5px", color: "#1a3a5c" }}>
+                      <td style={{ ...td("right", true), textAlign: "right", fontFamily: FONT_MONO, fontSize: "13.5px", fontWeight: "500", color: INK }}>
                         {fmt(balance)}
                       </td>
                     </tr>
@@ -383,15 +390,63 @@ const FolioInvoicePrint = React.forwardRef(({ folios, folio, reservation, proper
           </table>
 
           {/* ══ GRAND TOTAL ════════════════════════════════════════════ */}
-          <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "0", borderTop: `1.5px solid ${BLUE}` }}>
-            <table style={{ borderCollapse: "collapse", minWidth: "280px" }}>
-              <tbody>
-                <SumRow label="Total Debit" value={`${fmt(grandDebit)} ${currency}`} />
-                <SumRow label="Total Credit" value={`${fmt(grandCredit)} ${currency}`} />
-                <SumRow label="Balance" value={`${fmt(grandBalance)} ${currency}`} bold />
-              </tbody>
-            </table>
-          </div>
+          <table style={{ width: "100%", borderCollapse: "collapse", tableLayout: "fixed", fontSize: "13px", borderTop: `1.5px solid ${BLUE}` }}>
+            <colgroup>
+              {cols.map((col, idx) => (
+                <col key={idx} style={{ width: col.width }} />
+              ))}
+            </colgroup>
+            <tbody>
+              <tr>
+                {cols.map((col, i) => {
+                  if (col.name === "Debit") {
+                    return (
+                      <td key={i} style={{ padding: "12px 0 12px 6px", fontFamily: FONT_MONO, fontSize: "14.5px", fontWeight: "500", color: INK, textAlign: "right", whiteSpace: "nowrap", borderBottom: "none", borderLeft: "none", borderRight: "none" }}>
+                        {fmt(grandDebit)}
+                        {/* {currency} */}
+                      </td>
+                    );
+                  }
+                  if (col.name === "Credit") {
+                    return (
+                      <td key={i} style={{ padding: "12px 0 12px 6px", fontFamily: FONT_MONO, fontSize: "14.5px", fontWeight: "500", color: INK, textAlign: "right", whiteSpace: "nowrap", borderBottom: "none", borderLeft: "none", borderRight: "none" }}>
+                        {fmt(grandCredit)}
+                        {/* {currency} */}
+                      </td>
+                    );
+                  }
+                  if (col.name === "Balance") {
+                    return (
+                      <td key={i} style={{ padding: "12px 0 12px 6px", fontFamily: FONT_MONO, fontSize: "16px", fontWeight: "500", color: INK, textAlign: "right", whiteSpace: "nowrap", borderBottom: "none", borderLeft: "none", borderRight: "none" }}>
+                        {fmt(grandBalance)}
+                        {/* {currency} */}
+                      </td>
+                    );
+                  }
+                  return <td key={i} style={{ padding: 0, borderBottom: "none", borderLeft: "none", borderRight: "none" }} />;
+                })}
+              </tr>
+              <tr>
+                {cols.map((col, i) => {
+                  if (col.name === "Description") {
+                    return (
+                      <td key={i} style={{ padding: "8px 6px", fontFamily: FONT_LABEL, fontSize: "14px", fontWeight: "700", color: INK, textAlign: "left", whiteSpace: "nowrap", borderBottom: "none", borderLeft: "none", borderRight: "none" }}>
+                        Balance
+                      </td>
+                    );
+                  }
+                  if (col.name === "Balance") {
+                    return (
+                      <td key={i} style={{ padding: "8px 0 8px 6px", fontFamily: FONT_MONO, fontSize: "16px", fontWeight: "700", color: INK, textAlign: "right", whiteSpace: "nowrap", borderTop: `1.5px solid ${BLUE}`, borderBottom: "none", borderLeft: "none", borderRight: "none", background: BLUE_LIGHT }}>
+                        {fmt(grandBalance)} {currency}
+                      </td>
+                    );
+                  }
+                  return <td key={i} style={{ padding: 0, borderBottom: "none", borderLeft: "none", borderRight: "none" }} />;
+                })}
+              </tr>
+            </tbody>
+          </table>
 
           {/* ══ FOOTER ══════════════════════════════════════════════ */}
           <div style={{ marginTop: "36px" }}>
@@ -400,11 +455,11 @@ const FolioInvoicePrint = React.forwardRef(({ folios, folio, reservation, proper
               <tbody>
                 <tr>
                   <td style={{ verticalAlign: "bottom", width: "55%", padding: 0 }}>
-                    <div style={{ fontFamily: FONT_LABEL, fontSize: "13.5px", color: INK_SOFT, lineHeight: "1.7" }}>
-                      <span style={{ color: INK, fontWeight: "600" }}>Thank you</span> for choosing {property?.name || ""}.
+                    <div style={{ fontFamily: FONT_LABEL, fontSize: "13.5px", color: INK_SOFT, lineHeight: "1.7", fontWeight: "500" }}>
+                      <span style={{ color: INK, fontWeight: "700" }}>Thank you</span> for choosing {property?.name || ""}.
                       We look forward to welcoming you back.
                     </div>
-                    <div style={{ fontFamily: FONT_LABEL, fontSize: "13px", color: INK_MUTED, marginTop: "4px" }}>
+                    <div style={{ fontFamily: FONT_LABEL, fontSize: "13px", color: INK_MUTED, marginTop: "4px", fontWeight: "500" }}>
                       Enquiries: {property?.email || ""}
                     </div>
                   </td>
@@ -428,6 +483,7 @@ const FolioInvoicePrint = React.forwardRef(({ folios, folio, reservation, proper
               marginTop: "20px",
               fontFamily: FONT_LABEL,
               fontSize: "11px",
+              fontWeight: "500",
               color: INK_MUTED,
               letterSpacing: "1.5px",
               textTransform: "uppercase",
@@ -450,10 +506,10 @@ FolioInvoicePrint.displayName = "FolioInvoicePrint";
 
 const BillRow = ({ label, value }) => (
   <div style={{ display: "flex", marginBottom: "7px", fontSize: "15px", lineHeight: "1.5" }}>
-    <span style={{ width: "150px", flexShrink: 0, fontFamily: FONT_LABEL, fontSize: "13px", color: INK_MUTED, fontWeight: "500", paddingTop: "1px" }}>
+    <span style={{ width: "150px", flexShrink: 0, fontFamily: FONT_LABEL, fontSize: "13px", color: INK_MUTED, fontWeight: "600", paddingTop: "1px" }}>
       {label}
     </span>
-    <span style={{ color: INK_SOFT, fontFamily: FONT_LABEL, fontSize: "14px" }}>{value}</span>
+    <span style={{ color: INK_SOFT, fontFamily: FONT_LABEL, fontSize: "14px", fontWeight: "500" }}>{value}</span>
   </div>
 );
 
@@ -462,7 +518,7 @@ const StayCell = ({ label, value }) => (
     <div style={{ fontFamily: FONT_LABEL, fontSize: "11px", fontWeight: "700", letterSpacing: "1.5px", textTransform: "uppercase", color: INK_MUTED, marginBottom: "3px" }}>
       {label}
     </div>
-    <div style={{ fontFamily: FONT_LABEL, fontSize: "15px", fontWeight: "600", color: INK }}>
+    <div style={{ fontFamily: FONT_LABEL, fontSize: "15px", fontWeight: "700", color: INK }}>
       {value}
     </div>
   </div>
@@ -478,71 +534,12 @@ const td = (align, noWrap = false) => ({
   lineHeight: "1.4",
   fontSize: "13.5px",
   fontFamily: FONT_LABEL,
+  fontWeight: "500",
   borderBottom: `1px solid ${RULE}`,
   borderTop: "none",
   borderLeft: "none",
   borderRight: "none",
 });
-
-const SumRow = ({ label, value, bold }) => (
-  <tr>
-    <td style={{
-      padding: bold ? "12px 16px 12px 16px" : "8px 16px",
-      fontFamily: FONT_LABEL,
-      fontSize: bold ? "14px" : "13.5px",
-      fontWeight: bold ? "700" : "500",
-      color: bold ? INK : INK_SOFT,
-      letterSpacing: bold ? "0.5px" : "0",
-      borderTop: bold ? `1.5px solid ${BLUE}` : "none",
-      borderBottom: "none", borderLeft: "none", borderRight: "none",
-      background: bold ? BLUE_LIGHT : "transparent",
-    }}>
-      {label}
-    </td>
-    <td style={{
-      padding: bold ? "12px 0 12px 16px" : "8px 0 8px 16px",
-      fontFamily: FONT_MONO,
-      fontSize: bold ? "16px" : "14.5px",
-      fontWeight: bold ? "700" : "400",
-      color: bold ? INK : INK_SOFT,
-      textAlign: "right",
-      whiteSpace: "nowrap",
-      borderTop: bold ? `1.5px solid ${BLUE}` : "none",
-      borderBottom: "none", borderLeft: "none", borderRight: "none",
-      background: bold ? BLUE_LIGHT : "transparent",
-    }}>
-      {value}
-    </td>
-  </tr>
-);
-
-// const GrandTotal = ({ label, debit, credit, balance, currency }) => (
-//   <div style={{ marginTop: "24px", display: "flex", justifyContent: "flex-end" }}>
-//     <table style={{ borderCollapse: "collapse", minWidth: "300px", border: `1px solid ${BLUE}` }}>
-//       <thead>
-//         <tr>
-//           <th colSpan={2} style={{
-//             background: BLUE,
-//             color: WHITE,
-//             padding: "10px 18px",
-//             fontFamily: FONT_LABEL,
-//             fontSize: "11px",
-//             fontWeight: "700",
-//             letterSpacing: "3px",
-//             textTransform: "uppercase",
-//             textAlign: "left",
-//             border: "none",
-//           }}>
-//             {label}
-//           </th>
-//         </tr>
-//       </thead>
-//       <tbody>
-//         <SumRow label="Total Charges (Debit)" value={`${fmt(debit)}    ${currency}`} />
-//       </tbody>
-//     </table>
-//   </div>
-// );
 
 export default FolioInvoicePrint;
 

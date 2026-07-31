@@ -1,3 +1,12 @@
+// import React from 'react'
+
+// const FoodBeverageOrderForm = () => {
+//   return (
+//     <div>FoodBeverageOrderForm</div>
+//   )
+// }
+
+// export default FoodBeverageOrderForm
 import React, { useEffect } from "react";
 import {
   Drawer,
@@ -35,7 +44,7 @@ const sharedProps = {
   style: { width: 150 },
 };
 
-const ServiceOrderForm = ({
+const FoodBeverageOrderForm = ({
   mode,
   setMode,
   serviceData,
@@ -758,4 +767,4 @@ const ServiceOrderForm = ({
   );
 };
 
-export default ServiceOrderForm;
+export default FoodBeverageOrderForm;

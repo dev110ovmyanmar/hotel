@@ -20,9 +20,9 @@ export const button_config = {
     icon: <PlusOutlined style={{ fontSize: "12px" }} />,
   },
 
-  overtimeCharges: {
-    label: "Overtime Charges",
-  },
+  // overtimeCharges: {
+  //   label: "Overtime Charges",
+  // },
   roomMove: {
     label: "Room Move",
   },

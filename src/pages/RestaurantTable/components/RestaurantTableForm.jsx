@@ -175,6 +175,7 @@ const RestaurantTableForm = ({
               <Form.Item
                 label="Restaurant Table (Seats)"
                 name="capacity"
+                className="minus-icon"
                 rules={[{ required: true, message: "Please input capacity" }]}
               >
                 <InputNumber

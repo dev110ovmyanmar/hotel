@@ -110,6 +110,16 @@ const RatePlanTable = ({
       ),
     },
     {
+      title: "Meal Pricing",
+      dataIndex: ["mealPricingMode"],
+      key: "mealPricingMode",
+      align: "left",
+      render: (text) => {
+        if (!text) return "";
+        return text.charAt(0).toUpperCase() + text.slice(1);
+      },
+    },
+    {
       title: "Action",
       fixed: "end",
       align: "center",
@@ -139,18 +149,6 @@ const RatePlanTable = ({
               setSelectedData(record);
             },
           },
-          // {
-          //   key: "roomRate",
-          //   label: "Room Rate",
-          //   icon: <GiMushroomHouse style={{ fontSize: "12px" }} />,
-          //   // permission: PERMISSIONS.RATE_PLAN_EDIT,
-          //   onClick: () => {
-          //     navigate(
-          //       `/rates-availability/rate-plans/${record?.id}/room-rate`,
-          //       { state: { ratePlan: record } }
-          //     )
-          //   },
-          // },
         ];
 
         const items = actions
@@ -250,7 +248,7 @@ const RatePlanTable = ({
     {
       title: "Price (MMK)",
       dataIndex: "price",
-      key: "price",   
+      key: "price",
       render: (text, record) => {
         const hasWeekdays =
           record.weekdays &&
@@ -271,13 +269,7 @@ const RatePlanTable = ({
       },
       align: "right",
     },
-    // {
-    //   title: "Duration Hours",
-    //   dataIndex: "durationHours",
-    //   key: "durationHours",
-    //   align: "center",
-    //   render: (text) => <div>{text ? text : "-"}</div>,
-    // },
+
     {
       title: "Action",
       align: "center",

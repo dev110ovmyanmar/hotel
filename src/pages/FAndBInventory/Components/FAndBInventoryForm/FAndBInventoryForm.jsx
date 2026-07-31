@@ -264,6 +264,7 @@ const FAndBInventoryForm = ({
               <Form.Item
                 label="Stock Quantity"
                 name="stockQuantity"
+                className="minus-icon"
                 rules={[
                   { required: true, message: "Stock Quantity is Required" },
                 ]}
@@ -350,6 +351,7 @@ const FAndBInventoryForm = ({
               <Form.Item
                 label="Minimun Stock Reorder"
                 name="reorderLevel"
+                className="minus-icon"
                 rules={[
                   { required: true, message: "Reorder Level is Required" },
                 ]}
