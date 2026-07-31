@@ -34,6 +34,7 @@ const FolioOperationsList = () => {
 
   // State holds the structured layout payload for printing
   const [printTarget, setPrintTarget] = useState(null);
+  const [previewOpen, setPreviewOpen] = useState(false);
 
   // get login admin details
   const adminUuid = loadState(LOCAL_STORAGE_KEYS.loginAdminDetails)?.uuid;
@@ -147,20 +148,29 @@ const FolioOperationsList = () => {
     );
   };
 
-  // Watcher forces print trigger execution once state mounts element into DOM
+  // Opens the preview modal when printTarget is set
   useEffect(() => {
     if (printTarget) {
-      const originalTitle = document.title;
-      document.title = `Invoice_${printTarget?.reservation?.reservationNo || "Receipt"}`;
-
-      // Wait for DOM updates, then trigger native print
-      setTimeout(() => {
-        window.print();
-        setPrintTarget(null);
-        document.title = originalTitle;
-      }, 100);
+      setPreviewOpen(true);
     }
   }, [printTarget]);
+
+  // Triggers native browser print on the preview content
+  const handlePrintPreview = () => {
+    const originalTitle = document.title;
+    document.title = `Invoice_${printTarget?.reservation?.reservationNo || "Receipt"}`;
+
+    setTimeout(() => {
+      window.print();
+      document.title = originalTitle;
+    }, 100);
+  };
+
+  // Closes the preview modal and clears print target
+  const handleClosePreview = () => {
+    setPreviewOpen(false);
+    setPrintTarget(null);
+  };
 
   const handlePrintAll = useCallback(() => {
     if (!folioList?.data || folioList.data.length === 0) return;
@@ -218,7 +228,7 @@ const FolioOperationsList = () => {
         }
       />
 
-      {/* Renders template outside the main DOM tree to prevent layout interference */}
+      {/* Hidden container for window.print() to capture */}
       {printTarget &&
         createPortal(
           <div id="native-print-container">
@@ -232,6 +242,59 @@ const FolioOperationsList = () => {
           </div>,
           document.body,
         )}
+
+      {/* Print Preview Modal */}
+      <Modal
+        title="Invoice Preview"
+        open={previewOpen}
+        onCancel={handleClosePreview}
+        width={900}
+        centered
+        footer={
+          <div className="flex justify-end gap-2">
+            <button
+              key="close"
+              onClick={handleClosePreview}
+              className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors"
+            >
+              Close
+            </button>
+            <button
+              key="print"
+              onClick={handlePrintPreview}
+              style={{
+                padding: "8px 16px",
+                backgroundColor: "#1677ff",
+                color: "#ffffff",
+                border: "none",
+                borderRadius: "6px",
+                cursor: "pointer",
+                fontSize: "14px",
+                fontWeight: "500",
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+              }}
+            >
+              Print
+            </button>
+          </div>
+        }
+        styles={{ body: { padding: 0, overflow: "auto", maxHeight: "80vh" } }}
+      >
+        {printTarget && (
+          <div className="p-4">
+            <FolioInvoicePrint
+              folios={printTarget.folios}
+              folio={printTarget.folio}
+              adminName={adminName}
+              reservation={printTarget.reservation}
+              propertyImage={propretyImage}
+              hideLetterhead
+            />
+          </div>
+        )}
+      </Modal>
 
       <Modal
         title="Create New Folio"
