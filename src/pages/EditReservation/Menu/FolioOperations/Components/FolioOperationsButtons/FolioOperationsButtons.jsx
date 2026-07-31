@@ -80,7 +80,7 @@ const FolioOperationsButtons = ({ data, folioUuid, reservationId, onPrintAllFoli
           Print Invoice
         </Button>
 
-        <Dropdown
+        {/* <Dropdown
           menu={{ items: food }}
           trigger={["click"]}
           placement="bottomRight"
@@ -88,7 +88,7 @@ const FolioOperationsButtons = ({ data, folioUuid, reservationId, onPrintAllFoli
           <Button className="custom-blue-btn flex items-center gap-1">
             More <DownOutlined />
           </Button>
-        </Dropdown>
+        </Dropdown> */}
       </div>
 
       <FoodBeverageOrder
