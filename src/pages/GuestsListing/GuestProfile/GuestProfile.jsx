@@ -189,7 +189,7 @@ const GuestProfile = () => {
           <StatCard
             icon={<Calendar className="text-blue-500" />}
             label="Total Stays"
-            value={`${guestDetailDatas?.totalStay} ${guestDetailDatas?.totalStay <= 1 ? "Day" : "Days"}`}
+            value={`${guestDetailDatas?.totalStay} ${guestDetailDatas?.totalStay <= 1 ? "Night" : "Nights"}`}
           />
           <StatCard
             icon={<DollarSign className="text-green-500" />}

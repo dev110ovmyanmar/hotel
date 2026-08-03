@@ -15,6 +15,7 @@ import { Modal, Pagination } from 'antd';
 import useApiQuery from '../../../../hooks/useApiQuery';
 import { deleteGuestNote, getGuestNotes } from '../../../../api/guestNoteApi';
 import { useApiMutation } from '../../../../hooks/useApiMutation';
+import { LIMITS } from '../../../../variables/constants';
 
 const GuestNotes = ({
   guestUuid
@@ -25,7 +26,7 @@ const GuestNotes = ({
   const [selectedRow, setSelectedRow] = useState();
   const [deleteUuid, setDeleteUuid] = useState();
   const [page, setPage] = useState(1);
-  const pageSize = 3;
+  const [perPage, setPerPage] = useState(LIMITS.PAGE_SIZE);
 
   // Guest Note
   const { data: guestNoteList, isLoading } = useApiQuery({
@@ -33,16 +34,16 @@ const GuestNotes = ({
     fetchQueryFunction: getGuestNotes,
     params: {
       partnerType: "Guest",
-      guest: { uuid: guestUuid }
+      guest: { uuid: guestUuid },
+      pagination: {
+        page: page,
+        perPage: perPage,
+      },
     },
     options: { enabled: !!guestUuid }
   });
 
-  const paginatedNotes = guestNoteList?.data?.slice(
-    (page - 1) * pageSize,
-    page * pageSize
-  );
-
+  console.log(guestNoteList,"guestNoteList")
   const deleteGuestNotes = useApiMutation({
     mutationFn: deleteGuestNote,
     invalidateKeys: [["guestNotes", { uuid: selectedRow?.uuid }]],
@@ -117,10 +118,10 @@ const GuestNotes = ({
       <div className="space-y-4">
         {/* Preference Note */}
         {
-          paginatedNotes?.length <= 0 ? " " : <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100 ml-1">Guest Notes</h2>
+          guestNoteList?.data?.length <= 0 ? " " : <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100 ml-1">Guest Notes</h2>
         }
         {
-          paginatedNotes?.map(item => {
+          guestNoteList?.data?.map(item => {
             return (
               <NoteCard
                 borderColor="border-orange-300"
@@ -151,17 +152,17 @@ const GuestNotes = ({
       </Modal>
 
       {/* Pagination Section */}
-      {
-        guestNoteList?.data?.length > 3 &&
-        <div className='flex justify-end'>
-          <Pagination
-            current={page}
-            pageSize={pageSize}
-            total={guestNoteList?.data?.length || 0}
-            onChange={(page) => setPage(page)}
-          />
-        </div>
-      }
+      <div className='flex justify-end'>
+        <Pagination
+          current={guestNoteList?.pagination?.currentPage}
+          pageSize={guestNoteList?.pagination?.perPage}
+          total={guestNoteList?.pagination?.total}
+          onChange={(page, pageSize) => {
+            setPage(page);
+            setPerPage(pageSize);
+          }}
+        />
+      </div>
 
       <GuestNoteForm
         mode={mode}
