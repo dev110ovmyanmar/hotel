@@ -155,12 +155,10 @@ const ComplimentaryUpdateModal = ({
             complimentaryStatus: {
                 uuid: selectedStatusUuid
             },
-            reservationRooms: (roomAllocations || [])
-                .filter(room => room.compDates.length > 0 || room.nights.some(n => n.isComplimentary))
-                .map(room => ({
-                    uuid: room.roomInfo.uuid,
-                    dates: room.compDates
-                }))
+            reservationRooms: (roomAllocations || []).map(room => ({
+                uuid: room.roomInfo.uuid,
+                dates: room.compDates
+            }))
         };
 
         updateComplimentaryMutation.mutate(payload, {

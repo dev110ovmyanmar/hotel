@@ -32,46 +32,6 @@ const ChangeStatusForm = ({ reservationDetails, open, onClose }) => {
     enabled: !!uuid && open,
   });
 
-  // const reservationStatuses = useMemo(() => {
-  //   if (!initData?.statuses?.reservation_room_status) return [];
-
-  //   const roomsArray = Array.isArray(data?.data)
-  //     ? data.data
-  //     : data?.data
-  //       ? [data.data]
-  //       : [];
-
-  //   return initData.statuses.reservation_room_status
-  //     .filter((status) => {
-  //       const statusCode = status.code?.toLowerCase();
-  //       return (
-  //         statusCode !== "pending" &&
-  //         statusCode !== "reserved" &&
-  //         statusCode !== "booked"
-  //       );
-  //     })
-  //     .map((status) => {
-  //       const statusCode = status.code?.toLowerCase();
-  //       let isDisabled = false;
-
-  //       if (data?.data) {
-  //         const hasValidRooms = roomsArray.some((roomItem) => {
-  //           const allowableStatuses = Array.isArray(roomItem?.checkStatus)
-  //             ? roomItem.checkStatus.map((s) => String(s).toLowerCase())
-  //             : [];
-  //           return allowableStatuses.includes(statusCode);
-  //         });
-  //         isDisabled = !hasValidRooms;
-  //       }
-
-  //       return {
-  //         value: status.uuid,
-  //         label: status.name,
-  //         code: statusCode,
-  //         disabled: isDisabled,
-  //       };
-  //     });
-  // }, [initData, data]);
   const reservationStatuses = useMemo(() => {
     if (!initData?.statuses?.reservation_room_status) return [];
 
@@ -85,27 +45,27 @@ const ChangeStatusForm = ({ reservationDetails, open, onClose }) => {
       checked_in: {
         dotColor: "bg-[#08979C]",
         textColor: "text-[#08979C]",
-        desc: "Guest has checked into the assigned room(s)",
+        desc: "Checks the guest into the assigned room.",
       },
       confirmed: {
         dotColor: "bg-[#389E0D]",
         textColor: "text-[#389E0D]",
-        desc: "Reservation is officially locked and confirmed",
+        desc: "Confirms the reservation and reserves room inventory",
       },
       checked_out: {
         dotColor: "bg-[#FF8D28]",
         textColor: "text-[#FF8D28]",
-        desc: "Guest has finalized billing and left the premises",
+        desc: "Completes the stay and closes the guest's folio",
       },
       cancelled: {
         dotColor: "bg-[#CF1322]",
         textColor: "text-[#CF1322]",
-        desc: "Reservation is canceled (Requires a reason)",
+        desc: "Cancels the reservation and releases room inventory (Requires a reason)",
       },
       no_show: {
         dotColor: "bg-[#D46B08]",
         textColor: "text-[#D46B08]",
-        desc: "Guest failed to arrive for their scheduled stay",
+        desc: "Marks the reservation as a no-show and releases room inventory",
       },
     };
 

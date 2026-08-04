@@ -60,6 +60,10 @@ const TaxForm = ({
     label: type.name,
   }));
 
+  const defaultChargeType = initData?.statuses?.charge_type?.find(
+    (type) => type.code === "percentage",
+  );
+
   const chargeApplyType = initData?.statuses?.charge_apply_type?.map(
     (applyType) => ({
       value: applyType.uuid,
@@ -115,13 +119,18 @@ const TaxForm = ({
   };
 
   const onFinish = (values) => {
+    const defaultApplyType = initData?.statuses?.charge_apply_type?.find(
+      (item) => item.code === "all",
+    );
+    const chargeApplyTypeUuid = defaultApplyType?.uuid;
     if (isAdd) {
       const createValues = {
         ...values,
         isInclusive: values.isInclusive === true ? 1 : 0,
         chargeCategory: { uuid: values.charge_category },
         chargeType: { uuid: values.charge_type },
-        chargeApplyType: { uuid: values.charge_apply_type },
+        // chargeApplyType: { uuid: values.charge_apply_type },
+        chargeApplyType: { uuid: chargeApplyTypeUuid },
         perUnit: { uuid: values.per_unit },
       };
 
@@ -141,7 +150,8 @@ const TaxForm = ({
         isInclusive: values.isInclusive === true ? 1 : 0,
         chargeCategory: { uuid: values.charge_category },
         chargeType: { uuid: values.charge_type },
-        chargeApplyType: { uuid: values.charge_apply_type },
+        // chargeApplyType: { uuid: values.charge_apply_type },
+        chargeApplyType: { uuid: chargeApplyTypeUuid },
         perUnit: { uuid: values.per_unit },
         uuid: data?.uuid,
       };
@@ -293,6 +303,7 @@ const TaxForm = ({
                 <Form.Item
                   label="Charge Type"
                   name="charge_type"
+                  initialValue={defaultChargeType?.uuid}
                   rules={[{ required: true }]}
                   getValueProps={(value) => ({
                     value: isView
@@ -304,6 +315,7 @@ const TaxForm = ({
                     <Input readOnly={isView} />
                   ) : (
                     <Select
+                      disabled
                       showSearch={{
                         filterOption: (input, option) =>
                           (option?.label ?? "")
@@ -368,8 +380,8 @@ const TaxForm = ({
               </Col>
             </Row>
 
-            <Row gutter={16}>
-              <Col span={12}>
+            {/* <Row gutter={16}> */}
+              {/* <Col span={12}>
                 <Form.Item
                   label="Charge Apply Type"
                   name="charge_apply_type"
@@ -401,12 +413,12 @@ const TaxForm = ({
                     />
                   )}
                 </Form.Item>
-              </Col>
+              </Col> */}
 
-              <Col span={12}>
+              {/* <Col span={12}> */}
                 <Status isView={isView} statusValue={statuses} />
-              </Col>
-            </Row>
+              {/* </Col> */}
+            {/* </Row> */}
 
             <Form.Item label="Remark" name="remark">
               <TextArea readOnly={isView} placeholder="Enter Remark" />
