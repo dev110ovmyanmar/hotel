@@ -185,15 +185,18 @@ const ReservationsTable = ({
             icon={<EditOutlined />}
             onClick={() => handleMenuClick(record)}
           />
-          <Button
-            type="text"
-            icon={<PrinterOutlined />}
-            onClick={() => {
-              handleMenuClick(record.uuid),
-              setPrintOpen(true),
-              setSelectedReservation(record)
-            }}
-          />
+          {
+            record?.roomStatus?.code === "confirmed" &&
+            <Button
+              type="text"
+              icon={<PrinterOutlined />}
+              onClick={() => {
+                handleMenuClick(record.uuid),
+                  setPrintOpen(true),
+                  setSelectedReservation(record)
+              }}
+            />
+          }
         </div>
       ),
     },
@@ -205,8 +208,8 @@ const ReservationsTable = ({
         tableLayout="fixed"
         scroll={{ x: 1000 }}
         columns={columns}
-        dataSource={tableData} 
-        rowKey="uuid"      
+        dataSource={tableData}
+        rowKey="uuid"
         pagination={{
           current: page,
           pageSize: perPage,

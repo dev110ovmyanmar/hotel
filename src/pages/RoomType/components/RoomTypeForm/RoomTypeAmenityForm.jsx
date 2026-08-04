@@ -1,4 +1,12 @@
-import { Drawer, Input, Form, Select, Switch, InputNumber } from "antd";
+import {
+  Drawer,
+  Input,
+  Form,
+  Select,
+  Switch,
+  InputNumber,
+  Checkbox,
+} from "antd";
 import Toast from "../../../../component/Toast/Toast";
 import {
   createRoomTypeAmenity,
@@ -10,6 +18,10 @@ import { useApiMutation } from "../../../../hooks/useApiMutation";
 import { queryClient } from "../../../../app/queryClient";
 import { useEffect } from "react";
 import FormButtons from "../../../../component/FormButtons/FormButtons";
+import {
+  priceFormatter,
+  priceParser,
+} from "../../../../component/PriceTag/PriceTag";
 
 const RoomAttributesForm = ({
   mode,
@@ -146,7 +158,7 @@ const RoomAttributesForm = ({
             />
           </Form.Item>
 
-          <Form.Item
+          {/* <Form.Item
             label="Is Free"
             name="isFree"
             valuePropName="checked"
@@ -163,12 +175,20 @@ const RoomAttributesForm = ({
                 }
               }}
             />
+          </Form.Item> */}
+          <Form.Item
+            label="Is Free"
+            name="isFree"
+            initialValue={false}
+            valuePropName="checked"
+            rules={[{ required: true, message: "Please select billing type!" }]}
+          >
+            <Checkbox>This item is free.</Checkbox>
           </Form.Item>
 
-          <Form.Item
+          {/* <Form.Item
             label="Extra Price"
             name="extraPrice"
-            rules={[{ required: true, message: "Please enter extra price" }]}
           >
             <InputNumber
               className="!w-full"
@@ -176,8 +196,26 @@ const RoomAttributesForm = ({
               readOnly={isFree}
               placeholder="Enter Extra Price"
               suffix="MMK"
+              formatter={priceFormatter}
+              parser={priceParser}
             />
-          </Form.Item>
+          </Form.Item> */}
+          {!isFree && (
+            <Form.Item
+              label="Extra Price"
+              name="extraPrice"
+              rules={[{ required: true, message: "Please enter extra price!" }]}
+            >
+              <InputNumber
+                className="!w-full"
+                min={1}
+                placeholder="Enter Extra Price"
+                suffix="MMK"
+                formatter={priceFormatter}
+                parser={priceParser}
+              />
+            </Form.Item>
+          )}
         </Form>
       )}
     </Drawer>
