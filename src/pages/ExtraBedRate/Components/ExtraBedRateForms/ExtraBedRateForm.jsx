@@ -72,6 +72,13 @@ const ExtraBedRateForm = ({
     value: extraType.uuid,
     label: extraType.name,
   }));
+  // const extraList = initData?.statuses?.extra_type?.map((extraType) => {
+  //   const isPerson = extraType.name?.toLowerCase().includes("extra person");
+  //   return {
+  //     value: extraType.uuid,
+  //     label: isPerson ? `${extraType.name} ( Age: 11+ Years )` : extraType.name,
+  //   };
+  // });
 
   const selectedExtraTypeObj = extraList?.find(
     (item) => item.value === selectedExtraTypeUuid,
@@ -79,6 +86,15 @@ const ExtraBedRateForm = ({
   const isExtraPerson = selectedExtraTypeObj?.label
     ?.toLowerCase()
     .includes("extra person");
+
+  const hideAgeForExtraPerson =
+    isExtraPerson &&
+    form.getFieldValue("minAge") === 11 &&
+    form.getFieldValue("maxAge") === null;
+
+  const isExtraChild = selectedExtraTypeObj?.label
+    ?.toLowerCase()
+    .includes("extra child");
 
   const { data: ratePlanMetaData } = useApiQuery({
     fetchQueryName: "ratePlanMetaData",
@@ -132,6 +148,16 @@ const ExtraBedRateForm = ({
       setSelectedData(data);
     }
   }, [data]);
+
+  useEffect(() => {
+    if (isExtraPerson) {
+      form.setFieldsValue({
+        minAge: 11,
+        maxAge: null,
+      });
+    }
+  }, [isExtraPerson]);
+
   const handleClose = () => {
     setDrawerOpen(false);
     setSelectedData(null);
@@ -140,6 +166,10 @@ const ExtraBedRateForm = ({
 
   const onFinish = (values) => {
     const [start, end] = values.dateRange || [];
+    if (isExtraPerson) {
+      values.minAge = 11;
+      values.maxAge = null;
+    }
 
     if (isAdd) {
       const createValues = {
@@ -286,11 +316,19 @@ const ExtraBedRateForm = ({
             label="Extra Type"
             name="extraType"
             rules={[{ required: true }]}
-            getValueProps={(value) => ({
-              value: isView
-                ? extraList?.find((item) => item.value === value)?.label
-                : value,
-            })}
+            // getValueProps={(value) => ({
+            //   value: isView
+            //     ? extraList?.find((item) => item.value === value)?.label
+            //     : value,
+            // })}
+            getValueProps={(value) => {
+              const selectedItem = extraList?.find(
+                (item) => item.value === value,
+              );
+              return {
+                value: isView ? selectedItem?.label : value,
+              };
+            }}
           >
             {isView ? (
               <Input readOnly={isView} />
@@ -302,8 +340,11 @@ const ExtraBedRateForm = ({
               />
             )}
           </Form.Item>
-
           {isExtraPerson && (
+            <span className="text-gray-7700 font-medium">11+ Years</span>
+          )}
+
+          {isExtraChild && !hideAgeForExtraPerson && (
             <Row gutter={16}>
               <Col span={12}>
                 <Form.Item
@@ -334,6 +375,11 @@ const ExtraBedRateForm = ({
                   dependencies={["minAge"]}
                   rules={[
                     { required: true, message: "Please enter max age" },
+                    {
+                      type: "number",
+                      max: 10,
+                      message: "Age must be less than 10",
+                    },
                     ({ getFieldValue }) => ({
                       validator(_, value) {
                         const minAge = getFieldValue("minAge");
@@ -367,6 +413,7 @@ const ExtraBedRateForm = ({
               </Col>
             </Row>
           )}
+
           <Form.Item
             label="Price"
             name="price"
