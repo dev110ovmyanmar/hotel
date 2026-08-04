@@ -68,17 +68,19 @@ const ExtraBedRateForm = ({
     return current && current < dayjs().startOf("day");
   };
 
-  const extraList = initData?.statuses?.extra_type?.map((extraType) => ({
-    value: extraType.uuid,
-    label: extraType.name,
-  }));
-  // const extraList = initData?.statuses?.extra_type?.map((extraType) => {
-  //   const isPerson = extraType.name?.toLowerCase().includes("extra person");
-  //   return {
-  //     value: extraType.uuid,
-  //     label: isPerson ? `${extraType.name} ( Age: 11+ Years )` : extraType.name,
-  //   };
-  // });
+  const extraList = initData?.statuses?.extra_type?.map((extraType) => {
+    const isPerson = extraType.name?.toLowerCase().includes("extra person");
+    const isChild = extraType.name?.toLowerCase().includes("extra child");
+
+    return {
+      value: extraType.uuid,
+      label: isPerson
+        ? `${extraType.name} (Age: 11+ Years)`
+        : isChild
+          ? `${extraType.name} (Age: 0–10 Years)`
+          : extraType.name,
+    };
+  });
 
   const selectedExtraTypeObj = extraList?.find(
     (item) => item.value === selectedExtraTypeUuid,
@@ -155,8 +157,13 @@ const ExtraBedRateForm = ({
         minAge: 11,
         maxAge: null,
       });
+    } else {
+      form.setFieldsValue({
+        minAge: null,
+        maxAge: null,
+      });
     }
-  }, [isExtraPerson]);
+  }, [selectedExtraTypeUuid]);
 
   const handleClose = () => {
     setDrawerOpen(false);
@@ -340,9 +347,6 @@ const ExtraBedRateForm = ({
               />
             )}
           </Form.Item>
-          {isExtraPerson && (
-            <span className="text-gray-7700 font-medium">11+ Years</span>
-          )}
 
           {isExtraChild && !hideAgeForExtraPerson && (
             <Row gutter={16}>
@@ -356,7 +360,8 @@ const ExtraBedRateForm = ({
                     {
                       type: "number",
                       min: 0,
-                      message: "Age must be 0 or greater",
+                      max: 9,
+                      message: "Age must be between 0 and 9",
                     },
                   ]}
                 >
@@ -378,7 +383,7 @@ const ExtraBedRateForm = ({
                     {
                       type: "number",
                       max: 10,
-                      message: "Age must be less than 10",
+                      message: "Age must be 10 or less",
                     },
                     ({ getFieldValue }) => ({
                       validator(_, value) {

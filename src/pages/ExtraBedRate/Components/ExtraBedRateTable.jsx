@@ -100,7 +100,7 @@ const ExtraBedRateTable = ({ data, page, setPage }) => {
           record.code === "extra_person"
         ) {
           if (minAge !== undefined && maxAge === null) {
-            return `${text} (${minAge}+)`;
+            return `${text} (${minAge}+) years`;
            
           }
         }
