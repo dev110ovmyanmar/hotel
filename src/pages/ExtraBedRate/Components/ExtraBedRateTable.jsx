@@ -42,6 +42,34 @@ const ExtraBedRateTable = ({ data, page, setPage }) => {
       align: "center",
     },
 
+    // {
+    //   title: "Extra Type",
+    //   dataIndex: ["extraType", "name"],
+    //   key: "extraType",
+    //   onCell: (record) => ({
+    //     rowSpan: record.extraTypeRowSpan,
+    //     style: { verticalAlign: "middle" },
+    //   }),
+    //   render: (text, record) => {
+    //     if (
+    //       record.extraType?.code === "extra_child" ||
+    //       record.code === "extra_child"
+    //     ) {
+    //       const minAge = record.minAge;
+    //       const maxAge = record.maxAge;
+
+    //       if (minAge !== undefined && maxAge !== undefined) {
+    //         const ageText =
+    //           minAge === maxAge
+    //             ? `(${minAge})`
+    //             : `(${minAge} - ${maxAge}) years`;
+    //         return `${text} ${ageText}`;
+    //       }
+    //     }
+
+    //     return text;
+    //   },
+    // },
     {
       title: "Extra Type",
       dataIndex: ["extraType", "name"],
@@ -51,19 +79,29 @@ const ExtraBedRateTable = ({ data, page, setPage }) => {
         style: { verticalAlign: "middle" },
       }),
       render: (text, record) => {
-        if (
-          record.extraType?.code === "extra_person" ||
-          record.code === "extra_person"
-        ) {
-          const minAge = record.minAge;
-          const maxAge = record.maxAge;
+        const minAge = record.minAge;
+        const maxAge = record.maxAge;
 
+        if (
+          record.extraType?.code === "extra_child" ||
+          record.code === "extra_child"
+        ) {
           if (minAge !== undefined && maxAge !== undefined) {
             const ageText =
               minAge === maxAge
                 ? `(${minAge})`
                 : `(${minAge} - ${maxAge}) years`;
             return `${text} ${ageText}`;
+          }
+        }
+
+        if (
+          record.extraType?.code === "extra_person" ||
+          record.code === "extra_person"
+        ) {
+          if (minAge !== undefined && maxAge === null) {
+            return `${text} (${minAge}+)`;
+           
           }
         }
 
@@ -135,7 +173,7 @@ const ExtraBedRateTable = ({ data, page, setPage }) => {
   // Process data to calculate rowSpan for rate plans
   const processData = (data) => {
     if (!data) return [];
-    const newData = data.map((item) => ({ ...item })); // Shallow clone to avoid mutating props
+    const newData = data.map((item) => ({ ...item })); 
 
     const calculateSpan = (keyPath) => {
       let i = 0;
@@ -153,7 +191,6 @@ const ExtraBedRateTable = ({ data, page, setPage }) => {
           }
         }
 
-        // Dynamically set the span key, e.g., ratePlanRowSpan or ageTypeRowSpan
         const spanKey = `${keyPath[0]}RowSpan`;
         newData[i][spanKey] = count;
 
@@ -198,7 +235,7 @@ const ExtraBedRateTable = ({ data, page, setPage }) => {
       dataIndex: ["roomType", "name"],
       key: "roomType",
       align: "left",
-    },   
+    },
   ];
 
   return (

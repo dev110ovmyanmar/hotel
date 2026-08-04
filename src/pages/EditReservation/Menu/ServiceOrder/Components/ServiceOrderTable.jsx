@@ -28,6 +28,8 @@ const ServiceOrderTable = ({
       title: "Room No",
       dataIndex: ["reservationRoom", "room", "roomNo"],
       key: "roomNo",
+      width: 150,
+      render: (text) => <div>{text ? text : "-"}</div>,
     },
     {
       title: "Service Name",
@@ -48,10 +50,11 @@ const ServiceOrderTable = ({
       render: (orderStatus) => <ColorStatusTag status={orderStatus} />,
     },
     {
-      title: "Total Quantity",
+      title: "Quantity",
       dataIndex: "serviceOrderItems",
       key: "quantity",
-      align: "center",
+      width: 100,
+      align: "end",
       render: (items = []) => (
         <span>
           {Array.isArray(items)
