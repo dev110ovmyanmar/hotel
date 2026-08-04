@@ -121,7 +121,7 @@ const FAndBInventoryForm = ({
           handleClose();
           setDrawerOpen(false);
           setPage(1);
-          Toast.success("FAndB Inventory Created Successfully!");
+          Toast.success("F & B Inventory Created Successfully!");
         },
       });
     }
@@ -138,7 +138,7 @@ const FAndBInventoryForm = ({
         onSuccess: () => {
           setDrawerOpen(false);
           handleClose();
-          Toast.success("FAndB Inventory Updated Successfully!");
+          Toast.success("F & B Inventory Updated Successfully!");
         },
       });
     }
@@ -169,10 +169,10 @@ const FAndBInventoryForm = ({
           <div className="flex justify-between items-center">
             <span>
               {mode === "view"
-                ? "FAndB Inventory Details"
+                ? "F & B Inventory Details"
                 : mode === "edit"
-                  ? "Edit FAndB Inventory"
-                  : "Create FAndB Inventory"}
+                  ? "Edit F & B Inventory"
+                  : "Create F & B Inventory"}
             </span>
             {isView ? (
               canEdit && (
@@ -273,7 +273,6 @@ const FAndBInventoryForm = ({
                   className="w-full!"
                   mode={"spinner"}
                   min={1}
-                  max={100}
                   placeholder="Stock Quantity"
                   readOnly={isView}
                 />

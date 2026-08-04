@@ -43,8 +43,8 @@ const FAndBInventoryTable = ({
     },
     {
       title: "Stock Quantity",
-      dataIndex: "reorderLevel",
-      key: "reorderLevel",
+      dataIndex: "stockQuantity",
+      key: "stockQuantity",
       width: 100,
     },
     {
