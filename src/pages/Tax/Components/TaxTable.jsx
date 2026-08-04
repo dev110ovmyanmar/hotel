@@ -31,7 +31,12 @@ const TaxTable = ({
       dataIndex: "name",
       key: "name",
     },
-
+    {
+      title: "Charge Category",
+      dataIndex: ["chargeCategory", "name"],
+      key: "chargeCategory",
+      width: 160,
+    },
     {
       title: "Inclusive",
       dataIndex: "isInclusive",

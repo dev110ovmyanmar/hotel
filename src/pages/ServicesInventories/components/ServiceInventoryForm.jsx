@@ -358,7 +358,7 @@ const ServiceInventoryForm = ({
 
             <div className="grid grid-cols-2 gap-3">
               <Form.Item
-                label="Laundry Requirement"
+                label="Laundry Status"
                 name="laundryStatus"
                 initialValue={false}
                 valuePropName="checked"
@@ -367,11 +367,11 @@ const ServiceInventoryForm = ({
                 ]}
                 className={isView? "pointer-events-none" : ""}
               >
-                <Checkbox>Laundry Requirement</Checkbox>
+                <Checkbox  className="text-xs">Laundry Requirement</Checkbox>
               </Form.Item>
 
               <Form.Item
-                label="Is this item free?"
+                label="Is Free"
                 name="isFree"
                 initialValue={false}
                 valuePropName="checked"
