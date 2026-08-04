@@ -268,7 +268,6 @@ const ServiceInventoryForm = ({
                 <InputNumber
                   mode="spinner"
                   min={MIN_STOCK_QUANTITY}
-                  max={MAX_STOCK_QUANTITY}
                   className="!w-full"
                   placeholder="Enter Stock Quantity"
                   readOnly={isView}
@@ -351,7 +350,6 @@ const ServiceInventoryForm = ({
                 readOnly={isView}
                 mode="spinner"
                 min={MIN_REORDER_LEVEL}
-                max={MAX_REORDER_LEVEL}
                 style={{ width: 240 }}
               />
             </Form.Item>

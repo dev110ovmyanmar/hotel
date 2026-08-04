@@ -95,11 +95,10 @@ const HouseKeepingStatusListing = () => {
       <button
         type="button"
         onClick={() => setViewMode("card")}
-        className={`p-2 rounded-sm transition-all duration-200 flex items-center justify-center ${
-          viewMode === "card"
-            ? "bg-[#1677ff] shadow-sm text-gray-100!"
-            : "hover:text-gray-500 hover:bg-gray-200!"
-        }`}
+        className={`p-2 rounded-sm border-2 border-gray-300 transition-all duration-200 flex items-center justify-center ${viewMode === "card"
+          ? "bg-[#1677ff] shadow-sm text-gray-100! border-[#1677ff]!"
+          : "hover:text-gray-500 hover:bg-gray-200!"
+          }`}
       >
         <AppstoreOutlined className="text-sm! " />
       </button>
@@ -107,11 +106,10 @@ const HouseKeepingStatusListing = () => {
       <button
         type="button"
         onClick={() => setViewMode("table")}
-        className={`p-2 rounded-sm transition-all duration-200 flex items-center justify-center ${
-          viewMode === "table"
-            ? "bg-[#1677ff]  shadow-sm text-gray-100!"
-            : "hover:text-gray-500 hover:bg-gray-200!"
-        }`}
+        className={`p-2 rounded-sm border-2 border-gray-300 transition-all duration-200 flex items-center justify-center ${viewMode === "table"
+          ? "bg-[#1677ff] shadow-sm text-gray-100! border-[#1677ff]!"
+          : "hover:text-gray-500 hover:bg-gray-200!"
+          }`}
       >
         <UnorderedListOutlined className="text-sm!" />
       </button>

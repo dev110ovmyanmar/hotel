@@ -41,7 +41,7 @@ const RoomConfirmFinish = ({
                         
                         <div className="flex justify-between mt-5">
                             <p>Incentive</p>
-                            <p className="font-bold">{i?.incentiveTotal.toLocaleString()} MMK</p>
+                            <p className="font-bold text-red-500"> - {i?.incentiveTotal.toLocaleString()} MMK</p>
                         </div>
 
                         <div className="flex justify-between">

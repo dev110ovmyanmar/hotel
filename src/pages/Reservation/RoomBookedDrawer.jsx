@@ -87,7 +87,7 @@ const RoomBookedDrawer = ({
                     <div className="flex gap-4 py-2">
                         <div className="ml-2">Incentive Total</div>
                         <div className="flex flex-1 !justify-end">
-                            <div className="!text-md !font-bold">{roomBookValues?.incentiveTotal.toLocaleString()} MMK</div>
+                            <div className="!text-md !font-bold !text-red-500"> - {roomBookValues?.incentiveTotal.toLocaleString()} MMK</div>
                         </div>
                     </div>
 
@@ -228,7 +228,7 @@ const RoomBookedDrawer = ({
 
                             <div className="flex justify-between mt-4 p-2 ">
                                 <p>Incentive</p>
-                                <p className="font-bold">{room?.incentiveTotal.toLocaleString()} MMK</p>
+                                <p className="font-bold text-red-500"> - {room?.incentiveTotal.toLocaleString()} MMK</p>
                             </div>
 
                             <div className="flex justify-between p-2 ">

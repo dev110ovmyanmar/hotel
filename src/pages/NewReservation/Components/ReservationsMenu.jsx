@@ -129,12 +129,20 @@ const ReservationMenu = ({ onStatusChange, onViewChange }) => {
     <Space size="small" style={{ marginRight: 20 }}>
       <Button
         icon={<AppstoreOutlined />}
-        type={view === "grid" ? "primary" : "text"}
+        type={view === "grid" ? "primary" : "default"}
+        className={`rounded-sm border-2 border-gray-300 transition-all duration-200 ${view === "grid"
+            ? "bg-[#1677ff] shadow-sm text-gray-100! border-[#1677ff]!"
+            : "hover:text-gray-500 hover:bg-gray-200!"
+          }`}
         onClick={() => handleViewChange("grid")}
       />
       <Button
         icon={<UnorderedListOutlined />}
-        type={view === "table" ? "primary" : "text"}
+        type={view === "table" ? "primary" : "default"}
+        className={`rounded-sm border-2 border-gray-300 transition-all duration-200 ${view === "table"
+            ? "bg-[#1677ff] shadow-sm text-gray-100! border-[#1677ff]!"
+            : "hover:text-gray-500 hover:bg-gray-200!"
+          }`}
         onClick={() => handleViewChange("table")}
       />
     </Space>
@@ -156,7 +164,7 @@ const ReservationMenu = ({ onStatusChange, onViewChange }) => {
                 <span>
                   {item.label}
                   <Badge
-                    count={item?.count ?? 0} 
+                    count={item?.count ?? 0}
                     showZero
                     style={{
                       color: colors.color,
@@ -184,7 +192,7 @@ const ReservationMenu = ({ onStatusChange, onViewChange }) => {
           setStartDate={setStartDate}
           setEndDate={setEndDate}
         />
-        
+
         <Spin spinning={isLoading}>
           {view === "grid" ? (
             <ReservationsGrid

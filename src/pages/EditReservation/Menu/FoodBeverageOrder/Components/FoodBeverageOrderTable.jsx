@@ -15,72 +15,41 @@ const FoodBeverageOrderTable = ({
 }) => {
   const tableDataSource = Array.isArray(data)
     ? data
-    : data?.serviceOrders || [];
+    : data;
 
   const columns = [
     {
-      title: "ID",
-      dataIndex: "id",
-      key: "id",
-      width: 70,
+      title: "Consumption Type",
+      dataIndex: ["consumptionType", "name"],
+      key: "consumptionType",
     },
     {
-      title: "Room No",
-      dataIndex: ["reservationRoom", "room", "roomNo"],
-      key: "roomNo",
+      title: "Order Type",
+      dataIndex: ["orderType", "name"],
+      key: "orderType",
     },
     {
-      title: "Service Name",
-      dataIndex: "serviceName",
-      key: "serviceName",
+      title: "Restaurant Table",
+      dataIndex: ["restaurantTable", "tableNo"],
+      key: "restaurantTable",
     },
     {
-      title: "Service Package",
-      dataIndex: ["servicePackage", "name"],
-      key: "servicePackage",
-      render: (text) => <div>{text ? text : "-"}</div>,
-    },
-    {
-      title: "Status",
+      title: "Order Status",
       dataIndex: "orderStatus",
-      key: "status",
+      key: "orderStatus",
       width: 150,
       render: (orderStatus) => <ColorStatusTag status={orderStatus} />,
-    },
-    {
-      title: "Total Quantity",
-      dataIndex: "serviceOrderItems",
-      key: "quantity",
-      align: "center",
-      render: (items = []) => (
-        <span>
-          {Array.isArray(items)
-            ? items.reduce((total, { quantity = 0 }) => total + quantity, 0)
-            : 0}
-        </span>
-      ),
-    },
-    {
-      title: "Price",
-      dataIndex: "grandTotal",
-      key: "grandTotal",
-      render: (value) => (
-        <div className="flex justify-end items-center gap-1">
-          <PriceTag value={value} />
-          <span className=" font-medium">MMK</span>
-        </div>
-      ),
-      width: 150,
-      align: "right",
     },
     {
       title: "Action",
       key: "action",
       fixed: "end",
       render: (_, record) => {
+        console.log(record,"RecordInAction")
         const statusCode = record?.orderStatus?.code;
-        const isReadonlyStatus =
-          statusCode === "completed" || statusCode === "cancelled";
+        // const isReadonlyStatus =
+        //   statusCode === "completed" || statusCode === "cancelled";
+        //   console.log(onView(record),"ONViewAction")
 
         return (
           <Space size="middle">
@@ -91,14 +60,14 @@ const FoodBeverageOrderTable = ({
               />
             </Tooltip>
 
-            {!isReadonlyStatus && (
+            {/* {!isReadonlyStatus && ( */}
               <Tooltip title="Edit">
                 <EditOutlined
                   className="cursor-pointer text-amber-500 hover:text-amber-700"
                   onClick={() => onEdit(record)}
                 />
               </Tooltip>
-            )}
+            {/* )} */}
           </Space>
         );
       },
