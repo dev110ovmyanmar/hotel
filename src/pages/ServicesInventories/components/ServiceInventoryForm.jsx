@@ -268,7 +268,6 @@ const ServiceInventoryForm = ({
                 <InputNumber
                   mode="spinner"
                   min={MIN_STOCK_QUANTITY}
-                  max={MAX_STOCK_QUANTITY}
                   className="!w-full"
                   placeholder="Enter Stock Quantity"
                   readOnly={isView}
@@ -351,14 +350,13 @@ const ServiceInventoryForm = ({
                 readOnly={isView}
                 mode="spinner"
                 min={MIN_REORDER_LEVEL}
-                max={MAX_REORDER_LEVEL}
                 style={{ width: 240 }}
               />
             </Form.Item>
 
             <div className="grid grid-cols-2 gap-3">
               <Form.Item
-                label="Laundry Status"
+                label="Laundry Requirement"
                 name="laundryStatus"
                 initialValue={false}
                 valuePropName="checked"
@@ -367,11 +365,11 @@ const ServiceInventoryForm = ({
                 ]}
                 className={isView? "pointer-events-none" : ""}
               >
-                <Checkbox  className="text-xs">Laundry Requirement</Checkbox>
+                <Checkbox>Laundry Requirement</Checkbox>
               </Form.Item>
 
               <Form.Item
-                label="Is Free"
+                label="Is this item free?"
                 name="isFree"
                 initialValue={false}
                 valuePropName="checked"
