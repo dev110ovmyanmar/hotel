@@ -47,7 +47,8 @@ const HouseKeepingTaskCard = ({ data, onEdit, onView,
 
     // --- UI Helpers ---
     const TightRow = ({ icon: Icon, label, value, isDate = false }) => (
-        <div className="grid grid-cols-[130px_10px_1fr] items-center py-1 border-b border-gray-50 last:border-0">
+        // <div className="grid grid-cols-[130px_10px_1fr] items-center py-1 border-b border-gray-500 last:border-0">
+        <div className="grid grid-cols-[130px_10px_1fr] items-center py-1 border-b border-gray-50 dark:border-gray-800 last:border-0">
             <div className="flex items-center gap-1.5">
                 {Icon && <Icon className={textClass} />}
                 <span className={`${textClass}`}>{label}</span>

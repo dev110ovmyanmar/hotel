@@ -17,7 +17,7 @@ const SearchByModal = ({
         onCancel={onCancel}
         confirmLoading={confirmLoading}
       >
-        Are you sure you want to add this item?
+        Are you sure you want to create this event?
       </Modal>
     </>
   );

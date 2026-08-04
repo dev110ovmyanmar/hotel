@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Form, Input, Button, Drawer, Switch, Row, Col } from "antd";
+import { Form, Input, Button, Drawer, Switch, Row, Col, Checkbox } from "antd";
 import Toast from "../../../../component/Toast/Toast";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
 import useApiQuery from "../../../../hooks/useApiQuery";
@@ -160,7 +160,7 @@ const AmenitiesForm = ({
               <Input readOnly={isView} placeholder="Enter Amenity Code" />
             </Form.Item>
 
-            <Row gutter={16}>
+            {/* <Row gutter={16}>
               <Col span={12}>
                 <Form.Item
                   label="Is Free"
@@ -188,7 +188,36 @@ const AmenitiesForm = ({
                   />
                 </Form.Item>
               </Col>
-            </Row>
+            </Row> */}
+            <div className="grid grid-cols-2 gap-3">
+              <Form.Item
+                label="Is Free"
+                name="isFree"
+                initialValue={false}
+                valuePropName="checked"
+                rules={[
+                  { required: true, message: "Please check laundry status!" },
+                ]}
+                className={isView ? "pointer-events-none" : ""}
+              >
+                <Checkbox className="text-xs">
+                  This item is free of charge.
+                </Checkbox>
+              </Form.Item>
+
+              <Form.Item
+                label="Visibility"
+                name="visibility"
+                initialValue={false}
+                valuePropName="checked"
+                rules={[
+                  { required: true, message: "Please select billing type!" },
+                ]}
+                className={isView ? "pointer-events-none" : ""}
+              >
+                <Checkbox>Display this item in Hotel Profile.</Checkbox>
+              </Form.Item>
+            </div>
           </Form>
         )}
       </Drawer>

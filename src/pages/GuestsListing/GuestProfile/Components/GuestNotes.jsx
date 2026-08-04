@@ -43,7 +43,6 @@ const GuestNotes = ({
     options: { enabled: !!guestUuid }
   });
 
-  console.log(guestNoteList,"guestNoteList")
   const deleteGuestNotes = useApiMutation({
     mutationFn: deleteGuestNote,
     invalidateKeys: [["guestNotes", { uuid: selectedRow?.uuid }]],
@@ -152,17 +151,21 @@ const GuestNotes = ({
       </Modal>
 
       {/* Pagination Section */}
-      <div className='flex justify-end'>
-        <Pagination
-          current={guestNoteList?.pagination?.currentPage}
-          pageSize={guestNoteList?.pagination?.perPage}
-          total={guestNoteList?.pagination?.total}
-          onChange={(page, pageSize) => {
-            setPage(page);
-            setPerPage(pageSize);
-          }}
-        />
-      </div>
+      {
+        guestNoteList?.pagination?.total !== 0 &&
+        <div className='flex justify-end'>
+          <Pagination
+            current={guestNoteList?.pagination?.currentPage}
+            pageSize={guestNoteList?.pagination?.perPage}
+            total={guestNoteList?.pagination?.total}
+            onChange={(page, pageSize) => {
+              setPage(page);
+              setPerPage(pageSize);
+            }}
+          />
+        </div>
+      }
+
 
       <GuestNoteForm
         mode={mode}
