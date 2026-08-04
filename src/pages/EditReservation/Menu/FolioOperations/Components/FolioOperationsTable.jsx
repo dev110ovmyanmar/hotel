@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Button, Divider, Modal, Radio, Space, Table } from "antd";
-import { SwapOutlined, InfoCircleOutlined, FolderOpenOutlined, PrinterOutlined } from "@ant-design/icons";
+import { SwapOutlined, InfoCircleOutlined, FolderOpenOutlined, PrinterOutlined, FileSearchOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import { darkModeStyle, houseKeepingAndMaintenanceRequestDarkMode, partnerDarkModeStyle, selectedDarkMode, textColorDarkMode, textWhiteInDarkStyle } from "../../../../../utils";
 
@@ -53,6 +53,7 @@ const SubFolioTable = ({ record, lineColumns, onMoveTo, isTransferring }) => {
         <Table.Summary.Cell index={0} />
         <Table.Summary.Cell index={1} />
         <Table.Summary.Cell index={2} />
+        <Table.Summary.Cell index={3} />
         <Table.Summary.Cell index={3} >Total </Table.Summary.Cell>
         <Table.Summary.Cell index={3} align="right">
           {totalDebit > 0 ? `${totalDebit.toLocaleString()}` : "-"}
@@ -125,6 +126,12 @@ const FolioOperationsTable = ({
       dataIndex: "descriptionSnapshot", // Fixed: 'description' is null, 'descriptionSnapshot' contains the text
       key: "descriptionSnapshot",
       render: (_, record) => record.descriptionSnapshot || "-",
+    },
+    {
+      title: "Room",
+      dataIndex: "room",
+      key: "room",
+      render: (_, record) => record.reservationRoom?.room?.roomNo || "-",
     },
     {
       title: "Quantity",
@@ -314,52 +321,65 @@ const FolioOperationsTable = ({
 
           {/* Card Selection List */}
           <div className={`max-h-[280px] overflow-y-auto pr-1 py-1 flex flex-col gap-2.5 custom-scrollbar `}>
-            {dataSource
-              ?.filter((folio) => !selectedFolio || folio.id !== selectedFolio.id)
-              ?.map((folio) => {
-                const isSelected = targetFolioUuid === folio.uuid;
-                const isClosed = folio.closedAt !== null && folio.closedAt !== undefined;
-                const currency = folio.currency?.code || "MMK";
-                const amountText = folio.grandTotal !== undefined
-                  ? `${Number(folio.grandTotal).toLocaleString()} ${currency}`
-                  : "-";
+            {
+              dataSource?.length > 1 ? (
+                <>
+                  {dataSource
+                    ?.filter((folio) => !selectedFolio || folio.id !== selectedFolio.id)
+                    ?.map((folio) => {
+                      const isSelected = targetFolioUuid === folio.uuid;
+                      const isClosed = folio.closedAt !== null && folio.closedAt !== undefined;
+                      const currency = folio.currency?.code || "MMK";
+                      const amountText = folio.grandTotal !== undefined
+                        ? `${Number(folio.grandTotal).toLocaleString()} ${currency}`
+                        : "-";
 
-                return (
-                  <div
-                    key={folio.id}
-                    onClick={() => !isClosed && setTargetFolioUuid(folio.uuid)}
-                    className={`
+                      return (
+                        <div
+                          key={folio.id}
+                          onClick={() => !isClosed && setTargetFolioUuid(folio.uuid)}
+                          className={`
                       group relative flex items-center justify-between p-3 rounded-xl border transition-all duration-200 mx-2
                       ${isClosed
-                        ? 'border-gray-200 bg-gray-50/50 opacity-60 cursor-not-allowed'
-                        : isSelected
-                          ? 'border-blue-500 bg-blue-50/40 shadow-sm ring-1 ring-blue-500 cursor-pointer'
-                          : 'border-gray-200 hover:border-blue-300 hover:bg-gray-50/50 cursor-pointer'
-                      }
+                              ? 'border-gray-200 bg-gray-50/50 opacity-60 cursor-not-allowed'
+                              : isSelected
+                                ? 'border-blue-500 bg-blue-50/40 shadow-sm ring-1 ring-blue-500 cursor-pointer'
+                                : 'border-gray-200 hover:border-blue-300 hover:bg-gray-50/50 cursor-pointer'
+                            }
                     `}
-                  >
-                    <div className="flex items-center gap-3">
-                      {!isClosed && (
-                        <Radio
-                          checked={isSelected}
-                          value={folio.uuid}
-                          className="m-0 pointer-events-none"
-                        />
-                      )}
-                      <div className="flex items-center gap-2">
-                        <span className={`font-semibold text-sm ${isClosed ? 'text-gray-400' : 'text-gray-800 group-hover:text-blue-600'} transition-colors ${textColorDarkMode}`}>
-                          {folio.folioNo}
-                        </span>
-                        {isClosed && (
-                          <span className="text-xs text-gray-500 bg-gray-200 border border-gray-300 rounded-full px-2 py-0.5">
-                            It is paid
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
+                        >
+                          <div className="flex items-center gap-3">
+                            {!isClosed && (
+                              <Radio
+                                checked={isSelected}
+                                value={folio.uuid}
+                                className="m-0 pointer-events-none"
+                              />
+                            )}
+                            <div className="flex items-center gap-2">
+                              <span className={`font-semibold text-sm ${isClosed ? 'text-gray-400' : 'text-gray-800 group-hover:text-blue-600'} transition-colors ${textColorDarkMode}`}>
+                                {folio.folioNo}
+                              </span>
+                              {isClosed && (
+                                <span className="text-xs text-gray-500 bg-gray-200 border border-gray-300 rounded-full px-2 py-0.5">
+                                  It is paid
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                </>
+              ) : (
+                <div className={`flex flex-col m-2 items-center justify-center py-10 border border-dashed border-gray-300 rounded-xl bg-gray-50 ${darkModeStyle}`}>
+                  <FileSearchOutlined className="text-4xl text-gray-400 mb-3" />
+                  <h3 className={`text-base font-semibold text-gray-700 ${textColorDarkMode}`}>
+                    No Folios Found
+                  </h3>
+                </div>
+              )
+            }
           </div>
         </div>
       </Modal>
