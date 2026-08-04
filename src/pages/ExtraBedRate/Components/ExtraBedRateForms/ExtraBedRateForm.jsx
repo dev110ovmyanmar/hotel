@@ -68,10 +68,19 @@ const ExtraBedRateForm = ({
     return current && current < dayjs().startOf("day");
   };
 
-  const extraList = initData?.statuses?.extra_type?.map((extraType) => ({
-    value: extraType.uuid,
-    label: extraType.name,
-  }));
+  const extraList = initData?.statuses?.extra_type?.map((extraType) => {
+    const isPerson = extraType.name?.toLowerCase().includes("extra person");
+    const isChild = extraType.name?.toLowerCase().includes("extra child");
+
+    return {
+      value: extraType.uuid,
+      label: isPerson
+        ? `${extraType.name} (Age: 11+ Years)`
+        : isChild
+          ? `${extraType.name} (Age: 0–10 Years)`
+          : extraType.name,
+    };
+  });
 
   const selectedExtraTypeObj = extraList?.find(
     (item) => item.value === selectedExtraTypeUuid,
@@ -79,6 +88,15 @@ const ExtraBedRateForm = ({
   const isExtraPerson = selectedExtraTypeObj?.label
     ?.toLowerCase()
     .includes("extra person");
+
+  const hideAgeForExtraPerson =
+    isExtraPerson &&
+    form.getFieldValue("minAge") === 11 &&
+    form.getFieldValue("maxAge") === null;
+
+  const isExtraChild = selectedExtraTypeObj?.label
+    ?.toLowerCase()
+    .includes("extra child");
 
   const { data: ratePlanMetaData } = useApiQuery({
     fetchQueryName: "ratePlanMetaData",
@@ -132,6 +150,21 @@ const ExtraBedRateForm = ({
       setSelectedData(data);
     }
   }, [data]);
+
+  useEffect(() => {
+    if (isExtraPerson) {
+      form.setFieldsValue({
+        minAge: 11,
+        maxAge: null,
+      });
+    } else {
+      form.setFieldsValue({
+        minAge: null,
+        maxAge: null,
+      });
+    }
+  }, [selectedExtraTypeUuid]);
+
   const handleClose = () => {
     setDrawerOpen(false);
     setSelectedData(null);
@@ -140,6 +173,10 @@ const ExtraBedRateForm = ({
 
   const onFinish = (values) => {
     const [start, end] = values.dateRange || [];
+    if (isExtraPerson) {
+      values.minAge = 11;
+      values.maxAge = null;
+    }
 
     if (isAdd) {
       const createValues = {
@@ -286,11 +323,19 @@ const ExtraBedRateForm = ({
             label="Extra Type"
             name="extraType"
             rules={[{ required: true }]}
-            getValueProps={(value) => ({
-              value: isView
-                ? extraList?.find((item) => item.value === value)?.label
-                : value,
-            })}
+            // getValueProps={(value) => ({
+            //   value: isView
+            //     ? extraList?.find((item) => item.value === value)?.label
+            //     : value,
+            // })}
+            getValueProps={(value) => {
+              const selectedItem = extraList?.find(
+                (item) => item.value === value,
+              );
+              return {
+                value: isView ? selectedItem?.label : value,
+              };
+            }}
           >
             {isView ? (
               <Input readOnly={isView} />
@@ -303,7 +348,7 @@ const ExtraBedRateForm = ({
             )}
           </Form.Item>
 
-          {isExtraPerson && (
+          {isExtraChild && !hideAgeForExtraPerson && (
             <Row gutter={16}>
               <Col span={12}>
                 <Form.Item
@@ -315,7 +360,8 @@ const ExtraBedRateForm = ({
                     {
                       type: "number",
                       min: 0,
-                      message: "Age must be 0 or greater",
+                      max: 9,
+                      message: "Age must be between 0 and 9",
                     },
                   ]}
                 >
@@ -334,6 +380,11 @@ const ExtraBedRateForm = ({
                   dependencies={["minAge"]}
                   rules={[
                     { required: true, message: "Please enter max age" },
+                    {
+                      type: "number",
+                      max: 10,
+                      message: "Age must be 10 or less",
+                    },
                     ({ getFieldValue }) => ({
                       validator(_, value) {
                         const minAge = getFieldValue("minAge");
@@ -367,6 +418,7 @@ const ExtraBedRateForm = ({
               </Col>
             </Row>
           )}
+
           <Form.Item
             label="Price"
             name="price"

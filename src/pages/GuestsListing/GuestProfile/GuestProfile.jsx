@@ -76,7 +76,6 @@ const GuestProfile = () => {
     },
   });
 
-
   const tabItems = [
     { key: "1", label: "Personal Information" },
     { key: "2", label: "Stay History" },
@@ -90,7 +89,7 @@ const GuestProfile = () => {
       case "1":
         return <PersonalInformation personalInfo={guestDetailDatas} />;
       case "2":
-        return <StayHistory stayHistory={stayHistoryList?.data} />;
+        return <StayHistory guestUuid={guestDetailDatas?.uuid} />;
       // case "3": return <PreferencesLoyalty />;
       case "3":
         return <GuestNotes guestUuid={guestDetailDatas?.uuid} />;

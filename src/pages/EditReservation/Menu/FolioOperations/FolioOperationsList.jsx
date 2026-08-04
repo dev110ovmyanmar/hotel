@@ -177,6 +177,7 @@ const FolioOperationsList = () => {
     setPrintTarget({
       folios: folioList.data,
       reservation: folioList.reservation,
+      reservationRoom: folioList.reservationRoom,
     });
   }, [folioList]);
 
@@ -224,7 +225,7 @@ const FolioOperationsList = () => {
         isTransferring={transferLinesMutation.isPending}
         // Triggers single folio extraction configurations
         onPrintFolio={(folio) =>
-          setPrintTarget({ folio, reservation: folioList?.reservation })
+          setPrintTarget({ folio, reservation: folioList?.reservation, reservationRoom: folioList?.reservationRoom })
         }
       />
 
@@ -237,6 +238,7 @@ const FolioOperationsList = () => {
               folio={printTarget.folio}
               adminName={adminName}
               reservation={printTarget.reservation}
+              reservationRoom={printTarget.reservationRoom}
               propertyImage={propretyImage}
             />
           </div>,
@@ -289,6 +291,7 @@ const FolioOperationsList = () => {
               folio={printTarget.folio}
               adminName={adminName}
               reservation={printTarget.reservation}
+              reservationRoom={printTarget.reservationRoom}
               propertyImage={propretyImage}
               hideLetterhead
             />
