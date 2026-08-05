@@ -6,7 +6,6 @@ import ReservationListHeader from "../../component/ReservationHeader/Reservation
 import PaymentSummaryTable from "./Components/BookingDetailsTables/PaymentSummaryTable";
 import EventFacility from "./Components/BookingDetailsTables/EventFacility";
 import ServiceAddOn from "./Components/BookingDetailsTables/ServiceAddOn";
-import FoodBeverageOrder from "./Components/BookingDetailsTables/FoodBeverageOrder";
 import SummaryCard from "./Components/BookingDetailsTables/SummaryCard";
 import RoomStatusTable from "./Components/BookingDetailsTables/RoomStatusTable";
 import BookingDetailButton from "./Components/BookingDetailButton/BookingDetailButton";
@@ -22,6 +21,7 @@ import Loader from "../../component/Loader/Loader";
 import ServiceOrder from "./Components/BookingDetailsTables/ServiceOrder";
 import { useEffect } from "react";
 import FolioSummaryCard from "./Components/BookingDetailsTables/FolioSummaryCard";
+import FnbOrderFromBookingDetailList from "./Components/BookingDetailsTables/FnbOrderFromBookingDetailList";
 
 const BookingDetailList = () => {
   const navigate = useNavigate();
@@ -104,12 +104,9 @@ const BookingDetailList = () => {
                 <ServiceOrder data={data?.reservation?.serviceOrders} />
               </Col>
             )}
-            {/* <Col span={24}>
-              <ServiceOrder
-                data={data?.reservation?.serviceOrders}
-                serviceOrderStatus={reservationCheckIn || reservationCheckOut}
-              />
-            </Col> */}
+            <Col span={24}>
+              <FnbOrderFromBookingDetailList />
+            </Col>
             <Col span={24}>
               <EventFacility data={data?.reservation?.facilityBookings} />
             </Col>

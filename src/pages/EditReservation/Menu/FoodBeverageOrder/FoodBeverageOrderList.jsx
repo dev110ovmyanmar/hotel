@@ -9,6 +9,7 @@ import { LIMITS } from "../../../../variables/constants";
 import Loader from "../../../../component/Loader/Loader";
 import FoodBeverageOrderTable from "./Components/FoodBeverageOrderTable";
 import FoodBeverageOrderForm from "./Components/FoodBeverageOrderForms/FoodBeverageOrderForm";
+import { fetchFoodBeverageOrderList } from "../../../../api/foodBeverageOrder";
 
 const FoodBeverageOrderList = () => {
   const navigate = useNavigate();
@@ -22,7 +23,7 @@ const FoodBeverageOrderList = () => {
       !cleanId ||
       cleanId === "" ||
       cleanId === ":bookingId" ||
-      cleanId.length < 32 
+      cleanId.length < 32
     ) {
       navigate("/404", { replace: true });
     }
@@ -36,24 +37,26 @@ const FoodBeverageOrderList = () => {
   const [perPage, setPerPage] = useState(LIMITS.PAGE_SIZE);
 
   const { data, isLoading, refetch } = useApiQuery({
-    fetchQueryName: "service-order",
-    fetchQueryFunction: serviceOrderList,
+    fetchQueryName: "food-beverage-orders",
+    fetchQueryFunction: fetchFoodBeverageOrderList,
     params: {
       pagination: { page, perPage },
       keyword,
-      reservationRoom: { uuid },
+      reservationRoom: {
+        uuid
+      }
     },
-  });
 
-  useEffect(() => {
-    if (bookingId && data?.reservation?.reservationNo) {
-      sessionStorage.setItem(
-        `breadcrumb_${bookingId}`,
-        data.reservation.reservationNo,
-      );
-      window.dispatchEvent(new Event("breadcrumb_updated"));
-    }
-  }, [data, bookingId]);
+  });
+  // useEffect(() => {
+  //   if (bookingId && data?.reservation?.reservationNo) {
+  //     sessionStorage.setItem(
+  //       `breadcrumb_${bookingId}`,
+  //       data.reservation.reservationNo,
+  //     );
+  //     window.dispatchEvent(new Event("breadcrumb_updated"));
+  //   }
+  // }, [data, bookingId]);
 
   const handleAddService = () => {
     setSelectedData(null);
@@ -68,7 +71,7 @@ const FoodBeverageOrderList = () => {
       </div>
     );
   }
-
+  console.log(data,"FoodBeverageOrderDataList")
   return (
     <div className="w-full px-6 py-2">
       <ReservationHeader data={data ?? {}} />
@@ -78,7 +81,7 @@ const FoodBeverageOrderList = () => {
         <ReservationListHeader
           reservationId={data?.reservation?.reservationNo}
           onAddreservation={handleAddService}
-          addButtonText="Add Service Order"
+          addButtonText="Add F&B Order"
         />
       </div>
 
@@ -103,7 +106,8 @@ const FoodBeverageOrderList = () => {
 
       {drawerOpen && (
         <FoodBeverageOrderForm
-          serviceData={mode === "add" ? data?.reservation : selectedData}
+          reservationUuid={data?.reservation?.uuid}
+          reservationRoomId={bookingId}
           mode={mode}
           setMode={setMode}
           open={drawerOpen}
@@ -111,7 +115,7 @@ const FoodBeverageOrderList = () => {
             setDrawerOpen(false);
             setSelectedData(null);
           }}
-          onSuccess={refetch}
+          selectedData={selectedData}
         />
       )}
     </div>
