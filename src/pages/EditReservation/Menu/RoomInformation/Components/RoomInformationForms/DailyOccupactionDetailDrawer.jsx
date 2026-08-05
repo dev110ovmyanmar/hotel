@@ -1,0 +1,472 @@
+import React, { useEffect, useState } from "react";
+import {
+    Drawer,
+    Form,
+    InputNumber,
+    Button,
+    Tag,
+    Divider,
+    Space,
+    Badge,
+} from "antd";
+import {
+    PlusOutlined,
+    DeleteOutlined,
+    UserOutlined,
+    CalendarOutlined,
+    CoffeeOutlined,
+    DollarOutlined,
+    SaveOutlined,
+    CloseOutlined,
+    EditOutlined,
+} from "@ant-design/icons";
+import dayjs from "dayjs";
+
+import { upsertDailyOccupaction } from "../../../../../../api/dailyOccupactionApi";
+import { useApiMutation } from "../../../../../../hooks/useApiMutation";
+import Toast from "../../../../../../component/Toast/Toast";
+
+const STATUS_COLORS = {
+    active: "success",
+    inactive: "default",
+    cancelled: "error",
+};
+
+const SectionCard = ({ title, icon, children, extra }) => (
+    <div className="rounded-xl border border-slate-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 shadow-sm transition-all">
+        <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2.5">
+                {icon && <span className="text-lg flex items-center">{icon}</span>}
+                <h3 className="text-sm font-semibold text-slate-800 dark:text-gray-100 tracking-wide m-0">
+                    {title}
+                </h3>
+            </div>
+            {extra}
+        </div>
+        {children}
+    </div>
+);
+
+const InfoRow = ({ label, value, highlighted = false }) => (
+    <div className="flex justify-between items-center py-1.5 text-xs sm:text-sm">
+        <span className="text-slate-500 dark:text-gray-400 font-medium">
+            {label}
+        </span>
+        <span
+            className={`font-semibold ${highlighted
+                ? "text-emerald-600 dark:text-emerald-400"
+                : "text-slate-800 dark:text-gray-100"
+                }`}
+        >
+            {value ?? "-"}
+        </span>
+    </div>
+);
+
+const DailyOccupationDetailDrawer = ({
+    open,
+    onClose,
+    data,
+    reservationRoomUuid,
+    initialEditMode = false,
+}) => {
+    const [form] = Form.useForm();
+    const [isEditing, setIsEditing] = useState(false);
+
+    const childrenAges = Form.useWatch("childrenAges", form) || [];
+
+    const mutation = useApiMutation({
+        mutationFn: upsertDailyOccupaction,
+        invalidateKeys: [["dailyOccupactions"]],
+    });
+
+    // Helper to load form values from data
+    const syncFormValues = (d) => {
+        if (!d) return;
+        form.setFieldsValue({
+            adults: d.adults ?? 0,
+            extraBedCount: d.extraBedCount ?? 0,
+            extraPersonCount: d.extraPersonCount ?? 0,
+            babyCotCount: d.babyCotCount ?? 0,
+            childrenAges: d.children?.map((child) => child.age) ?? [],
+        });
+    };
+
+    // Re-sync form data whenever drawer opens or data payload changes
+    useEffect(() => {
+        if (open && data) {
+            setIsEditing(initialEditMode);
+            syncFormValues(data);
+        }
+        if (!open) {
+            setIsEditing(false);
+            form.resetFields();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [open, data]);
+
+    const handleCloseDrawer = () => {
+        setIsEditing(false);
+        form.resetFields();
+        onClose();
+    };
+
+    const handleSave = async () => {
+        try {
+            const values = await form.validateFields();
+            const payload = {
+                uuid: reservationRoomUuid,
+                stayDate: data.stayDate,
+                adults: values.adults,
+                extraBedCount: values.extraBedCount,
+                extraPersonCount: values.extraPersonCount,
+                babyCotCount: values.babyCotCount,
+                mealPlan: {
+                    uuid: data.mealPlan?.uuid,
+                },
+                childrenAges: values.childrenAges || [],
+            };
+
+            await mutation.mutateAsync(payload);
+            Toast.success("Occupation details updated successfully");
+            setIsEditing(false)
+        } catch (error) {
+            Toast.error("Failed to save occupation details");
+        }
+    };
+
+    const cancelEdit = () => {
+        setIsEditing(false);
+        syncFormValues(data); // restore original values, not blank
+    };
+
+    // Don't render content if no data, but let the Drawer handle its open/close animation
+    const hasData = !!data;
+
+    return (
+        <Drawer
+            open={open}
+            onClose={handleCloseDrawer}
+            width={480}
+            className="dark:bg-gray-900"
+            headerStyle={{ borderBottom: "1px solid rgba(229, 231, 235, 0.5)" }}
+            footerStyle={{ borderTop: "1px solid rgba(229, 231, 235, 0.5)" }}
+            title={
+                <div className="flex justify-between items-center pr-2">
+                    <div>
+                        <h2 className="font-bold text-base text-slate-800 dark:text-white m-0">
+                            Daily Occupation Details
+                        </h2>
+                    </div>
+
+                    {hasData && !isEditing && (
+                        <Button
+                            type="primary"
+                            ghost
+                            size="small"
+                            icon={<EditOutlined />}
+                            onClick={() => setIsEditing(true)}
+                            className="rounded-md"
+                        >
+                            Edit
+                        </Button>
+                    )}
+                </div>
+            }
+            footer={
+                hasData && isEditing && (
+                    <div className="flex justify-end gap-2 py-1">
+                        <Button
+                            icon={<CloseOutlined />}
+                            onClick={cancelEdit}
+                            className="rounded-md"
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            type="primary"
+                            icon={<SaveOutlined />}
+                            loading={mutation.isPending}
+                            onClick={handleSave}
+                            className="rounded-md bg-blue-600 hover:bg-blue-500"
+                        >
+                            Save Changes
+                        </Button>
+                    </div>
+                )
+            }
+        >
+            {!hasData ? (
+                <div className="flex items-center justify-center h-40 text-slate-400">
+                    No data available
+                </div>
+            ) : (
+                <Form form={form} layout="vertical" requiredMark={false}>
+                    <div className="space-y-4">
+                        {/* Header Banner: Stay Date & Status */}
+                        <div className="flex items-center justify-between p-4 rounded-xl bg-slate-50 dark:bg-gray-800/60 border border-slate-200/80 dark:border-gray-700">
+                            <div className="flex items-center gap-3">
+                                <div className="p-2.5 rounded-lg bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400">
+                                    <CalendarOutlined className="text-lg" />
+                                </div>
+                                <div>
+                                    <span className="text-xs font-medium text-slate-400 block uppercase tracking-wider">
+                                        Stay Date
+                                    </span>
+                                    <span className="text-base font-bold text-slate-800 dark:text-white">
+                                        {dayjs(data.stayDate).format("DD MMM YYYY")}
+                                    </span>
+                                </div>
+                            </div>
+
+                            {data.occupancyStatus && (
+                                <Badge
+                                    status={STATUS_COLORS[data.occupancyStatus.code] || "default"}
+                                    text={
+                                        <span className="font-medium text-xs dark:text-gray-300">
+                                            {data.occupancyStatus.name}
+                                        </span>
+                                    }
+                                />
+                            )}
+                        </div>
+
+                        {/* Guest Information */}
+                        <SectionCard
+                            title="Guest Information"
+                            icon={<UserOutlined className="text-emerald-500" />}
+                        >
+                            {isEditing ? (
+                                <div className="grid grid-cols-2 gap-x-4 gap-y-2">
+                                    <Form.Item name="adults" label="Adults" className="mb-2">
+                                        <InputNumber min={1} className="w-full rounded-lg" />
+                                    </Form.Item>
+
+                                    <Form.Item label="Children" className="mb-2">
+                                        <div className="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-gray-700 bg-slate-50 dark:bg-gray-900 font-semibold text-slate-700 dark:text-slate-300">
+                                            {childrenAges.length}
+                                        </div>
+                                    </Form.Item>
+
+                                    <Form.Item
+                                        name="extraBedCount"
+                                        label="Extra Bed"
+                                        className="mb-2"
+                                    >
+                                        <InputNumber min={0} className="w-full rounded-lg" />
+                                    </Form.Item>
+
+                                    <Form.Item
+                                        name="extraPersonCount"
+                                        label="Extra Person"
+                                        className="mb-2"
+                                    >
+                                        <InputNumber min={0} className="w-full rounded-lg" />
+                                    </Form.Item>
+
+                                    <Form.Item
+                                        name="babyCotCount"
+                                        label="Baby Cot"
+                                        className="mb-2 col-span-2"
+                                    >
+                                        <InputNumber min={0} className="w-full rounded-lg" />
+                                    </Form.Item>
+                                </div>
+                            ) : (
+                                <div className="grid grid-cols-2 gap-y-3 gap-x-4 bg-slate-50/50 dark:bg-gray-900/40 p-3 rounded-lg border border-slate-100 dark:border-gray-700/50">
+                                    <div>
+                                        <span className="text-xs text-slate-400 block">Adults</span>
+                                        <span className="font-semibold text-slate-700 dark:text-gray-200">
+                                            {data.adults}
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <span className="text-xs text-slate-400 block">Children</span>
+                                        <span className="font-semibold text-slate-700 dark:text-gray-200">
+                                            {data.childrenCount}
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <span className="text-xs text-slate-400 block">Extra Bed</span>
+                                        <span className="font-semibold text-slate-700 dark:text-gray-200">
+                                            {data.extraBedCount}
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <span className="text-xs text-slate-400 block">
+                                            Extra Person
+                                        </span>
+                                        <span className="font-semibold text-slate-700 dark:text-gray-200">
+                                            {data.extraPersonCount}
+                                        </span>
+                                    </div>
+                                    <div className="col-span-2">
+                                        <span className="text-xs text-slate-400 block">Baby Cot</span>
+                                        <span className="font-semibold text-slate-700 dark:text-gray-200">
+                                            {data.babyCotCount}
+                                        </span>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Dynamic Children Ages Section */}
+                            {isEditing && (
+                                <>
+                                    <Divider className="my-3 text-xs text-slate-400">
+                                        Children Ages
+                                    </Divider>
+
+                                    <Form.List name="childrenAges">
+                                        {(fields, { add, remove }) => (
+                                            <div className="space-y-2">
+                                                {fields.map(({ key, name }) => (
+                                                    <div
+                                                        key={key}
+                                                        className="flex items-center justify-between gap-2 bg-slate-50 dark:bg-gray-900/50 p-2 rounded-lg border border-slate-200/60 dark:border-gray-700"
+                                                    >
+                                                        <span className="text-xs font-medium text-slate-500 min-w-[60px]">
+                                                            Child {name + 1}
+                                                        </span>
+
+                                                        <Form.Item name={name} noStyle>
+                                                            <InputNumber
+                                                                min={0}
+                                                                max={17}
+                                                                className="flex-1 rounded-md"
+                                                                placeholder="Age"
+                                                            />
+                                                        </Form.Item>
+
+                                                        <span className="text-xs text-slate-400">yrs</span>
+
+                                                        <Button
+                                                            type="text"
+                                                            danger
+                                                            size="small"
+                                                            icon={<DeleteOutlined />}
+                                                            onClick={() => remove(name)}
+                                                        />
+                                                    </div>
+                                                ))}
+
+                                                <Button
+                                                    block
+                                                    type="dashed"
+                                                    icon={<PlusOutlined />}
+                                                    onClick={() => add()}
+                                                    className="mt-2 rounded-lg border-slate-300 dark:border-gray-600 text-slate-600 dark:text-gray-300"
+                                                >
+                                                    Add Child
+                                                </Button>
+                                            </div>
+                                        )}
+                                    </Form.List>
+                                </>
+                            )}
+                        </SectionCard>
+
+                        {/* Meal Plan */}
+                        <SectionCard
+                            title="Meal Plan"
+                            icon={<CoffeeOutlined className="text-amber-500" />}
+                        >
+                            {data.mealPlan ? (
+                                <div className="space-y-2">
+                                    <div className="flex justify-between items-start">
+                                        <div>
+                                            <h4 className="font-semibold text-slate-800 dark:text-white m-0 text-sm">
+                                                {data.mealPlan.name}
+                                            </h4>
+                                            {data.mealPlan.description && (
+                                                <p className="text-xs text-slate-400 m-0 mt-0.5">
+                                                    {data.mealPlan.description}
+                                                </p>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    <Space wrap className="pt-1">
+                                        {data.mealPlan.includesBreakfast && (
+                                            <Tag color="blue" className="rounded-md">
+                                                Breakfast
+                                            </Tag>
+                                        )}
+                                        {data.mealPlan.includesLunch && (
+                                            <Tag color="green" className="rounded-md">
+                                                Lunch
+                                            </Tag>
+                                        )}
+                                        {data.mealPlan.includesDinner && (
+                                            <Tag color="orange" className="rounded-md">
+                                                Dinner
+                                            </Tag>
+                                        )}
+                                    </Space>
+
+                                    <div className="border-t border-slate-100 dark:border-gray-700/60 pt-2 mt-3 space-y-1">
+                                        <InfoRow
+                                            label="Adult Price"
+                                            value={`${Number(
+                                                data.mealPlan.adultPrice || 0
+                                            ).toLocaleString()} MMK`}
+                                        />
+                                        <InfoRow
+                                            label="Child Price"
+                                            value={`${Number(
+                                                data.mealPlan.childPrice || 0
+                                            ).toLocaleString()} MMK`}
+                                        />
+                                    </div>
+                                </div>
+                            ) : (
+                                <span className="text-xs text-slate-400 italic">
+                                    No meal plan selected for this date.
+                                </span>
+                            )}
+                        </SectionCard>
+
+                        {/* Financial Breakdown */}
+                        <SectionCard
+                            title="Charges Summary"
+                            icon={<DollarOutlined className="text-indigo-500" />}
+                        >
+                            <div className="space-y-1">
+                                <InfoRow
+                                    label="Meal Charge"
+                                    value={
+                                        data.mealCharge
+                                            ? `${Number(data.mealCharge).toLocaleString()} MMK`
+                                            : "-"
+                                    }
+                                />
+                                <InfoRow
+                                    label="Daily Room Charge"
+                                    value={
+                                        data.dailyCharge
+                                            ? `${Number(data.dailyCharge).toLocaleString()} MMK`
+                                            : "-"
+                                    }
+                                />
+                                <Divider className="my-2" />
+                                <InfoRow
+                                    label="Total Daily Charge"
+                                    highlighted
+                                    value={
+                                        data.dailyCharge || data.mealCharge
+                                            ? `${(
+                                                Number(data.dailyCharge || 0) +
+                                                Number(data.mealCharge || 0)
+                                            ).toLocaleString()} MMK`
+                                            : "-"
+                                    }
+                                />
+                            </div>
+                        </SectionCard>
+                    </div>
+                </Form>
+            )}
+        </Drawer>
+    );
+};
+
+export default DailyOccupationDetailDrawer;
