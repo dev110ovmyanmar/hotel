@@ -35,7 +35,7 @@ const ServiceForm = ({
   setPage,
 }) => {
   const [form] = Form.useForm();
-
+  const usesInventory = Form.useWatch("usesInventory", form);
   const isView = mode === "view";
   const isEdit = mode === "edit";
   const isAdd = mode === "add";
@@ -91,6 +91,19 @@ const ServiceForm = ({
       enabled: !!selectedData?.uuid,
     },
   });
+  useEffect(() => {
+    if (usesInventory) {
+      // when true → clear field
+      form.setFieldsValue({
+        basePrice: null,
+      });
+    } else {
+      // when false → set 0 and disable
+      form.setFieldsValue({
+        basePrice: 0,
+      });
+    }
+  }, [usesInventory, form]);
 
   useEffect(() => {
     if (!isAdd && data) {
@@ -217,6 +230,7 @@ const ServiceForm = ({
             onFinish={onFinish}
             initialValues={{
               isComplimentary: false,
+              usesInventory: true,
               stages: [],
             }}
           >
@@ -228,90 +242,105 @@ const ServiceForm = ({
               <Input readOnly={isView} placeholder="Enter Service Name" />
             </Form.Item>
 
-            <Form.Item
-              label="Service Type"
-              name="serviceType"
-              rules={[{ required: true, message: "Service Type is Required" }]}
-              getValueProps={(value) => ({
-                value: isView
-                  ? servicesTypesList.find((item) => item.value === value)
-                      ?.label
-                  : value,
-              })}
-            >
-              {isView ? (
-                <Input readOnly={isView} />
-              ) : (
-                <Select
-                  showSearch={{
-                    filterOption: (input, option) =>
-                      (option?.label ?? "")
-                        .toLowerCase()
-                        .includes(input.toLowerCase()),
-                  }}
-                  options={servicesTypesList}
-                  placeholder="Select Service Type"
-                />
-              )}
-            </Form.Item>
-
-            <Row gutter={16}>
-              <Col span={12}>
-                <Form.Item
-                  label="Billing Type"
-                  name="billingType"
-                  rules={[
-                    { required: true, message: "Billing Type is Required" },
-                  ]}
-                  getValueProps={(value) => ({
-                    value: isView
-                      ? billingTypesList.find((item) => item.value === value)
-                          ?.label
-                      : value,
-                  })}
-                >
-                  {isView ? (
-                    <Input readOnly={isView} />
-                  ) : (
-                    <Select
-                      showSearch={{
-                        filterOption: (input, option) =>
-                          (option?.label ?? "")
-                            .toLowerCase()
-                            .includes(input.toLowerCase()),
-                      }}
-                      options={billingTypesList}
-                      placeholder="Select Billing Type"
-                      open={isView ? false : undefined}
-                    />
-                  )}
-                </Form.Item>
-              </Col>
-
-              <Col span={12}>
-                <Form.Item label="Base Price" name="basePrice">
-                  <InputNumber
-                    className="w-full!"
-                    min={0}
-                    readOnly={isView}
-                    placeholder="Enter Base Price"
-                    suffix="MMK"
-                    formatter={priceFormatter}
-                    parser={priceParser}
+            <div className="grid grid-cols-2 gap-3">
+              <Form.Item
+                label="Service Type"
+                name="serviceType"
+                rules={[
+                  { required: true, message: "Service Type is Required" },
+                ]}
+                getValueProps={(value) => ({
+                  value: isView
+                    ? servicesTypesList.find((item) => item.value === value)
+                        ?.label
+                    : value,
+                })}
+              >
+                {isView ? (
+                  <Input readOnly={isView} />
+                ) : (
+                  <Select
+                    showSearch={{
+                      filterOption: (input, option) =>
+                        (option?.label ?? "")
+                          .toLowerCase()
+                          .includes(input.toLowerCase()),
+                    }}
+                    options={servicesTypesList}
+                    placeholder="Select Service Type"
                   />
-                </Form.Item>
-              </Col>
-            </Row>
+                )}
+              </Form.Item>
+              <Form.Item
+                label="Billing Type"
+                name="billingType"
+                rules={[
+                  { required: true, message: "Billing Type is Required" },
+                ]}
+                getValueProps={(value) => ({
+                  value: isView
+                    ? billingTypesList.find((item) => item.value === value)
+                        ?.label
+                    : value,
+                })}
+              >
+                {isView ? (
+                  <Input readOnly={isView} />
+                ) : (
+                  <Select
+                    showSearch={{
+                      filterOption: (input, option) =>
+                        (option?.label ?? "")
+                          .toLowerCase()
+                          .includes(input.toLowerCase()),
+                    }}
+                    options={billingTypesList}
+                    placeholder="Select Billing Type"
+                    open={isView ? false : undefined}
+                  />
+                )}
+              </Form.Item>
+            </div>
 
-            <Form.Item
-              label="Is Complimentary"
-              name="isComplimentary"
-              valuePropName="checked"
-              rules={[{ required: true }]}
-              className={isView ? "pointer-events-none" : ""}
-            >
-              <Checkbox>Complimentary</Checkbox>
-            </Form.Item>
+            <div className="grid grid-cols-2 gap-3">
+              <Form.Item
+                label=""
+                name="usesInventory"
+                valuePropName="checked"
+                rules={[{ required: true }]}
+                className={`mt-10 ${isView ? "pointer-events-none" : ""}`}
+              >
+                <Checkbox disabled={isEdit} style={{ marginTop: "25px" }}>
+                  This service can use inventory tracking
+                </Checkbox>
+              </Form.Item>
+
+              <Form.Item label="Base Price" name="basePrice">
+              
+                <InputNumber
+                  className="w-full!"
+                  min={0}
+                  readOnly={isView || !usesInventory}
+                  disabled={!usesInventory}
+                  placeholder="Enter Base Price"
+                  suffix="MMK"
+                  formatter={priceFormatter}
+                  parser={priceParser}
+                />
+              </Form.Item>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <Form.Item
+                label=""
+                name="isComplimentary"
+                valuePropName="checked"
+                rules={[{ required: true }]}
+                className={isView ? "pointer-events-none" : ""}
+              >
+                <Checkbox style={{ marginTop: "10px" }}>Complimentary</Checkbox>
+              </Form.Item>
+            </div>
 
             <Form.Item
               label=" Available Stages"
@@ -334,18 +363,18 @@ const ServiceForm = ({
                       <label
                         key={stage.value}
                         className={`flex items-start gap-3 p-3.5 border rounded-xl select-none transition-all duration-200
-              ${isView ? "cursor-default" : "cursor-pointer"}
-              ${
-                isChecked
-                  ? isView
-                    ? "border-blue-300 bg-blue-50/20"
-                    : "border-blue-500 bg-blue-50/40 shadow-sm shadow-blue-100/50"
-                  : isView
-                    ? "border-gray-100 bg-gray-50/30"
-                    : "border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50/50"
-              }
-            `}
-                      >
+                             ${isView ? "cursor-default" : "cursor-pointer"}
+                             ${
+                               isChecked
+                                 ? isView
+                                   ? "border-blue-300 bg-blue-50/20"
+                                    : "border-blue-500 bg-blue-50/40 dark:bg-black shadow-sm shadow-blue-100/50"
+                                  : isView
+                                    ? "border-gray-100 bg-gray-50/30"
+                                    : "border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50/50"
+                                  }
+                                `}
+                       >
                         <div className="pt-0.5">
                           <Checkbox value={stage.value} />
                         </div>
@@ -355,7 +384,7 @@ const ServiceForm = ({
                               isChecked
                                 ? isView
                                   ? "text-blue-800/70"
-                                  : "text-blue-900"
+                                  : "text-blue-900 dark:text-blue-100"
                                 : isView
                                   ? ""
                                   : ""

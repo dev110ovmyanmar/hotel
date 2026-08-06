@@ -120,6 +120,7 @@ const FacilityBookingTable = ({
       dataIndex: ["status", "name"],
       key: "status",
       width: 110,
+      align:"center",
       render: (_, record) => <ColorStatusTag status={record?.status} />,
     },
     {

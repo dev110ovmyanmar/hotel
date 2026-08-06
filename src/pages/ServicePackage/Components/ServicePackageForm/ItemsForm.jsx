@@ -184,6 +184,7 @@ const ItemsForm = ({
                     layout="vertical"
                     style={{ width: "100%" }}
                     onFinish={onFinish}
+                    initialValues={{ quantity: 1 }}
                 >
                     <Row gutter={16}>
                         <Col span={12}>
@@ -224,7 +225,7 @@ const ItemsForm = ({
                         <Col span={12}>
                             <Form.Item label="Quantity" name="quantity" rules={[{ required: true, message: "Quantity is required!" }]}>
                                 <InputNumber
-                                    className="w-full!"
+                                    className="w-full!"                                    
                                     mode="spinner"
                                     min={1}
                                     readOnly={isView}

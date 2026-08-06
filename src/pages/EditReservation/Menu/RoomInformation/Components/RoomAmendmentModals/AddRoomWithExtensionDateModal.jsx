@@ -91,6 +91,7 @@ export default function AddRoomWithExtensionDateModal({
                     ratePlanUuid={ratePlanUuid}
                     setBackToExtensionStayDate={setBackToExtensionStayDate}
                     extensionDateonClose={extensionDateonClose}
+                    setDaysToAdd={setDaysToAdd}
                 />
             }
 
@@ -99,7 +100,7 @@ export default function AddRoomWithExtensionDateModal({
                 <Modal
                     title={
                         currentStep === 'form'
-                            ? "Extend Stay Duration"
+                            ? "Add New Room"
                             : <span className="flex items-center gap-2"><CheckCircleOutlined className="text-green-500" /> Review Stay Extension Summary</span>
                     }
                     open={isOpen}
@@ -156,9 +157,9 @@ export default function AddRoomWithExtensionDateModal({
                                             Provision Additional Days
                                         </label>
                                         {/* MAX EXTENSION BADGE */}
-                                        <span className="bg-blue-50 text-blue-600 text-xs font-semibold px-2.5 py-0.5 rounded-full border border-blue-100">
+                                        {/* <span className="bg-blue-50 text-blue-600 text-xs font-semibold px-2.5 py-0.5 rounded-full border border-blue-100">
                                             Max Extension: {maxDayExtension} Day(s)
-                                        </span>
+                                        </span> */}
                                     </div>
 
                                     <Space size="middle" className="flex items-center">
@@ -176,7 +177,7 @@ export default function AddRoomWithExtensionDateModal({
                                             shape="circle"
                                             icon={<PlusOutlined />}
                                             onClick={() => setDaysToAdd(prev => prev + 1)}
-                                            disabled={daysToAdd >= maxDayExtension}
+                                            // disabled={daysToAdd >= maxDayExtension}
                                         />
                                         <span className={`text-sm text-slate-500 font-medium ${textWhiteInDarkStyle}`}>
                                             Extra Day(s)
@@ -199,12 +200,10 @@ export default function AddRoomWithExtensionDateModal({
 
                             <Form.Item
                                 name="reason"
-                                label="Reason for Stay Extension"
+                                label="Reason for Add Room"
                             >
                                 <Input.TextArea
-                                    placeholder={maxDayExtension === 0 ? "Stay extension is currently unavailable." : "Provide business justification for stay extensions..."}
                                     rows={3}
-                                    disabled={maxDayExtension === 0}
                                 />
                             </Form.Item>
 

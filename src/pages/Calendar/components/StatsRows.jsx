@@ -36,7 +36,7 @@ const StatsRows = ({ dailyStats, days, CELL_WIDTH, SIDEBAR_WIDTH, checkIsToday, 
               : 'bg-[#c4c9d4] border-r'
             } ${isToday ? todayDarkModeStyle : darkModeStyle}`} style={{ width: CELL_WIDTH, minWidth: CELL_WIDTH, maxWidth: CELL_WIDTH }}>
             <div className="flex flex-col items-center">
-              <div className="text-[11px] font-bold text-gray-700">{stat.occupancy}%</div>
+              <div className="text-[11px] font-bold">{stat.occupancy}%</div>
               <div className="w-full bg-gray-200 h-1 mt-1 rounded-full overflow-hidden">
                 <div
                   className={`h-full ${stat.occupancy > 80 ? 'bg-amber-500' : 'bg-blue-500'}`}

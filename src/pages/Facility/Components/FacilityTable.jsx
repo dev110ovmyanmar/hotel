@@ -17,7 +17,7 @@ const FacilityTable = ({
   total,
   changePage,
   changePerPage,
-  loading
+  loading,
 }) => {
   const { hasPermission } = usePermission();
   const navigate = useNavigate();
@@ -46,17 +46,22 @@ const FacilityTable = ({
       title: "Capacity",
       dataIndex: "capacity",
       key: "capacity",
+      align: "end",
+      width: 150,
     },
     {
       title: "Status",
       dataIndex: ["status", "name"],
       key: "status",
+      align: "center",
+      // width: 120,
       render: (_, record) => <ColorStatusTag status={record?.status} />,
     },
     {
       title: "Action",
       fixed: "end",
       align: "center",
+      width: 110,
       render: (_, record) => {
         const smallStyle = { fontSize: "12px" };
 
@@ -94,7 +99,7 @@ const FacilityTable = ({
                 {
                   state: {
                     uuid: record?.uuid,
-                    name: record?.name
+                    name: record?.name,
                   },
                 },
               );
@@ -126,11 +131,12 @@ const FacilityTable = ({
             menu={{
               items,
               onClick: ({ key }) => {
-                const action = actions.find(a => a.key === key);
+                const action = actions.find((a) => a.key === key);
                 action?.onClick?.();
               },
             }}
-            trigger={["click"]}>
+            trigger={["click"]}
+          >
             <MoreOutlined style={{ fontSize: "16px" }} />
           </Dropdown>
         );
