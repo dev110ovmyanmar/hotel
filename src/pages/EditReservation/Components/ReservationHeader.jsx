@@ -37,7 +37,7 @@ const ReservationHeader = ({ data }) => {
             </span>
           </div>
 
-          {reservation?.children > 0 && (
+          {/* {reservation?.children > 0 && (
             <div className="flex items-center gap-2 py-1 rounded-lg mt-2.5">
               <FaChild className="text-pink-500 text-base" />
               <span className="text-[10px] md:text-[10px] lg:text-[13px] font-medium text-[#ffffff]">
@@ -45,7 +45,7 @@ const ReservationHeader = ({ data }) => {
                 {reservation?.children === 1 ? "Child" : "Children"}
               </span>
             </div>
-          )}
+          )} */}
 
           {/* <div className="hidden sm:block text-[#ffffff] mt-2.5">|</div> */}
 
