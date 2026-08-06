@@ -11,6 +11,7 @@ import { BsCalendar2Date } from "react-icons/bs";
 import { CiBadgeDollar } from "react-icons/ci";
 import { FaCrown, FaStar } from 'react-icons/fa';
 import { darkModeStyle, selectedDarkMode, textWhiteInDarkStyle, upgradeAndDownRoomDarkMode } from '../../../../../../utils';
+import dayjs from 'dayjs';
 
 const { Text, Title } = Typography;
 
@@ -25,7 +26,8 @@ export default function AddRoomExtensionLikeUpgradeDesignModal({
     originalCheckout,
     newCheckoutDate,
     setBackToExtensionStayDate,
-    extensionDateonClose
+    extensionDateonClose,
+    setDaysToAdd
 }) {
     const [form] = Form.useForm();
     const [selectedRoom, setSelectedRoom] = useState(null);
@@ -53,7 +55,8 @@ export default function AddRoomExtensionLikeUpgradeDesignModal({
         setSelectedRoomTypeName();
         setReviewData();
         setSelectRoomNo(false);
-        extensionDateonClose(false)
+        extensionDateonClose(false);
+        setDaysToAdd(1)
     };
     // Submits data directly using single-pane architectural validation structures
     const handleSubmit = async () => {
@@ -79,7 +82,8 @@ export default function AddRoomExtensionLikeUpgradeDesignModal({
                     setSelectedRoomTypeName();
                     setReviewData();
                     onClose(false);
-                    extensionDateonClose(false)
+                    extensionDateonClose(false);
+                    setDaysToAdd(1)
                 },
 
             });
@@ -130,7 +134,7 @@ export default function AddRoomExtensionLikeUpgradeDesignModal({
             console.log(error);
         }
     };
-    
+
     const backToSetFields = () => {
         setToReviewPage(false);
         form.setFieldsValue({
@@ -226,6 +230,9 @@ export default function AddRoomExtensionLikeUpgradeDesignModal({
         }
     }, [roomList]);
 
+    const checkInDateinRoom = dayjs(roomList?.filter?.checkinDate).format("DD MMM YYYY");
+    const checkOutDateinRoom = dayjs(roomList?.filter?.checkoutDate).format("DD MMM YYYY")
+
     return (
         <Modal
             title={
@@ -263,7 +270,10 @@ export default function AddRoomExtensionLikeUpgradeDesignModal({
                                 }}
                                     className={darkModeStyle}
                                 >
-                                    <Text><strong>Room Type:</strong> <span className={textWhiteInDarkStyle}>{currentRoomType}</span></Text>
+                                    <div>
+                                        <Text><strong>Room Type:</strong> <span className={textWhiteInDarkStyle}>{currentRoomType}</span></Text>
+                                        <div className='!text-xs !text-gray-600'>({checkInDateinRoom} - {checkOutDateinRoom})</div>
+                                    </div>
 
                                     <div className="grid place-items-center w-fit -mt-1">
                                         <FaStar className='text-amber-200  text-3xl col-start-1 row-start-1' />
@@ -405,8 +415,22 @@ export default function AddRoomExtensionLikeUpgradeDesignModal({
                                 </Form>
                             </>
                         ) : (
-                            <div className="text-center py-8">
-                                <Text type="secondary">There are no rooms available to add.</Text>
+                            <div>
+                                <div className="text-center py-8">
+                                    <Text type="secondary">There are no rooms available to add.</Text>
+                                </div>
+
+                                <div className='flex justify-end'>
+                                    <Button
+                                    key="back"
+                                    onClick={() => {
+                                        setBackToExtensionStayDate(true);
+                                        onClose(false)
+                                    }}
+                                >
+                                    Back
+                                </Button>
+                                </div>
                             </div>
                         )
                     )
@@ -415,6 +439,7 @@ export default function AddRoomExtensionLikeUpgradeDesignModal({
                                 record={record}
                                 selectedRoomTypeName={selectedRoomTypeName}
                                 reviewData={reviewData}
+                                isAddNewRoom={true}
                             />
                         )
 

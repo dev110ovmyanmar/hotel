@@ -44,7 +44,7 @@ const EventFacility = ({ data }) => {
   ];
   return (
     <>
-      {data.length !== 0 && (
+      {data?.length !== 0 && (
         <Card title={CustomTitle} className="event-card line-height">
           <Table
             columns={columns}
