@@ -38,7 +38,7 @@ const columns = [
 ];
 
 const RoomStatusTable = ({ data }) => {
-  const formattedData = data.map((item) => ({
+  const formattedData = data?.map((item) => ({
     ...item,
     children: Array.isArray(item.children) ? item.children : null,
   }));

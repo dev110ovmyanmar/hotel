@@ -27,7 +27,7 @@ const FolioSummaryCard = ({ data }) => {
       </Row>
 
       <Row justify="space-between">
-        <Text>Tax({reservation?.taxPercentage}%)</Text>
+        <Text>Tax</Text>
         <div className="flex  justify-end gap-1">
           <PriceTag value={reservation?.taxTotal} />
           <span>MMK</span>

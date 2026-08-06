@@ -64,6 +64,8 @@ const ReservationList = () => {
 
   const [refreshConfirmModalOpen, setRefreshConfirmModalOpen] = useState(false);
   const [submitted,isSubmitted] = useState(false);
+  const [submitPendingDisabled,setSubmitPendingDisabled] = useState(false);
+
 
 
   const defaultFilter = [
@@ -179,7 +181,7 @@ const ReservationList = () => {
   };
 
   const submitReservation = () => {
-
+    setSubmitPendingDisabled(true);
     const rooms = roomBookValues?.rooms.map((room) => ({
       roomType: {
         uuid: room.roomType.uuid
@@ -468,6 +470,7 @@ const ReservationList = () => {
                 type="primary"
                 onClick={submitReservation}
                 loading={submitReservationMutate?.isPending}
+                disabled={submitPendingDisabled}
               >
                 Submit
               </Button>

@@ -63,7 +63,7 @@ const FoodBeverageOrderList = () => {
     setMode("add");
     setDrawerOpen(true);
   };
-
+  console.log(data,"DataInFoodBeverageOrderLIst")
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-full min-h-[300px]">
@@ -106,6 +106,7 @@ const FoodBeverageOrderList = () => {
 
       {drawerOpen && (
         <FoodBeverageOrderForm
+          reservationRoomNo={data?.reservationRoom?.room?.roomNo}
           reservationUuid={data?.reservation?.uuid}
           reservationRoomId={bookingId}
           mode={mode}
