@@ -356,7 +356,7 @@ const ServiceInventoryForm = ({
 
             <div className="grid grid-cols-2 gap-3">
               <Form.Item
-                label="Laundry Requirement"
+                // label="Laundry Requirement"
                 name="laundryStatus"
                 initialValue={false}
                 valuePropName="checked"
@@ -369,7 +369,7 @@ const ServiceInventoryForm = ({
               </Form.Item>
 
               <Form.Item
-                label="Is this item free?"
+                // label="Is this item free?"
                 name="isFree"
                 initialValue={false}
                 valuePropName="checked"

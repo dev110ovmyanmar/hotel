@@ -177,13 +177,13 @@ const RoomAttributesForm = ({
             />
           </Form.Item> */}
           <Form.Item
-            label="Is Free"
+            // label="Is Free"
             name="isFree"
             initialValue={false}
             valuePropName="checked"
             rules={[{ required: true, message: "Please select billing type!" }]}
           >
-            <Checkbox>This item is free.</Checkbox>
+            <Checkbox>This item is free</Checkbox>
           </Form.Item>
 
           {/* <Form.Item

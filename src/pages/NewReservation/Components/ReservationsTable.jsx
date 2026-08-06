@@ -29,11 +29,11 @@ const ReservationsTable = ({
   const [printOpen, setPrintOpen] = useState(false);
   const [selectedReservation, setSelectedReservation] = useState();
 
-  const tableData = (data || []).map((item) => ({
-    ...item,
-    childCount: item.children,
-    children: undefined,
-  }));
+  // const tableData = (data || []).map((item) => ({
+  //   ...item,
+  //   childCount: item.children,
+  //   children: undefined,
+  // }));
 
   const handleMenuClick = (item) => {
     if (item?.uuid) {
@@ -142,11 +142,11 @@ const ReservationsTable = ({
               <IoPeopleSharp className="text-blue-500" /> {record?.adults}
             </span>
 
-            {record?.childCount > 0 && (
+            {/* {record?.childCount > 0 && (
               <span className="flex items-center gap-1">
                 <FaChild className="text-pink-500" /> {record.childCount}
               </span>
-            )}
+            )} */}
           </div>
         </div>
       ),
@@ -208,7 +208,8 @@ const ReservationsTable = ({
         tableLayout="fixed"
         scroll={{ x: 1000 }}
         columns={columns}
-        dataSource={tableData}
+        // dataSource={tableData}
+        dataSource={data}
         rowKey="uuid"
         pagination={{
           current: page,

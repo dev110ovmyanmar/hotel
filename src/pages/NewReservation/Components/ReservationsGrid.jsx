@@ -129,7 +129,7 @@ const ReservationsGrid = ({
                           <IoPeopleSharp className="text-blue-500 " /> {item.adults}
                         </span>
 
-                        {item.children && (
+                        {/* {item.children && (
                           <span
                             style={{
                               display: "flex",
@@ -139,7 +139,7 @@ const ReservationsGrid = ({
                           >
                             <FaChild className="text-pink-500" /> {item.children}
                           </span>
-                        )}
+                        )} */}
                       </Space>
                     </div>
 
