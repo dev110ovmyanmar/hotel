@@ -16,20 +16,18 @@ import {
     CalendarOutlined,
     CoffeeOutlined,
     DollarOutlined,
-    SaveOutlined,
-    CloseOutlined,
-    EditOutlined,
 } from "@ant-design/icons";
 import dayjs from "dayjs";
 
 import { upsertDailyOccupaction } from "../../../../../../api/dailyOccupactionApi";
 import { useApiMutation } from "../../../../../../hooks/useApiMutation";
 import Toast from "../../../../../../component/Toast/Toast";
+import FormButtons from "../../../../../../component/FormButtons/FormButtons";
 
 const STATUS_COLORS = {
-    active: "success",
-    inactive: "default",
-    cancelled: "error",
+    active: { color: "#389E0D", background: "#F6FFED", borderColor: "#B7EB8F" },
+    updated: { color: "#0958D9", background: "#E6F4FF", borderColor: "#91CAFF" },
+    cancelled: { color: "#CF1322", background: "#FFF1F0", borderColor: "#FFA39E" },
 };
 
 const SectionCard = ({ title, icon, children, extra }) => (
@@ -69,6 +67,7 @@ const DailyOccupationDetailDrawer = ({
     data,
     reservationRoomUuid,
     initialEditMode = false,
+    isPastDate = false,
 }) => {
     const [form] = Form.useForm();
     const [isEditing, setIsEditing] = useState(false);
@@ -129,15 +128,11 @@ const DailyOccupationDetailDrawer = ({
 
             await mutation.mutateAsync(payload);
             Toast.success("Occupation details updated successfully");
-            setIsEditing(false)
+            setIsEditing(false);
+            onClose();
         } catch (error) {
-            Toast.error("Failed to save occupation details");
+            console.log(error);
         }
-    };
-
-    const cancelEdit = () => {
-        setIsEditing(false);
-        syncFormValues(data); // restore original values, not blank
     };
 
     // Don't render content if no data, but let the Drawer handle its open/close animation
@@ -150,7 +145,6 @@ const DailyOccupationDetailDrawer = ({
             width={480}
             className="dark:bg-gray-900"
             headerStyle={{ borderBottom: "1px solid rgba(229, 231, 235, 0.5)" }}
-            footerStyle={{ borderTop: "1px solid rgba(229, 231, 235, 0.5)" }}
             title={
                 <div className="flex justify-between items-center pr-2">
                     <div>
@@ -159,41 +153,21 @@ const DailyOccupationDetailDrawer = ({
                         </h2>
                     </div>
 
-                    {hasData && !isEditing && (
-                        <Button
-                            type="primary"
-                            ghost
-                            size="small"
-                            icon={<EditOutlined />}
-                            onClick={() => setIsEditing(true)}
-                            className="rounded-md"
-                        >
-                            Edit
-                        </Button>
-                    )}
-                </div>
-            }
-            footer={
-                hasData && isEditing && (
-                    <div className="flex justify-end gap-2 py-1">
-                        <Button
-                            icon={<CloseOutlined />}
-                            onClick={cancelEdit}
-                            className="rounded-md"
-                        >
-                            Cancel
-                        </Button>
-                        <Button
-                            type="primary"
-                            icon={<SaveOutlined />}
-                            loading={mutation.isPending}
-                            onClick={handleSave}
-                            className="rounded-md bg-blue-600 hover:bg-blue-500"
-                        >
-                            Save Changes
-                        </Button>
+                    <div className="flex items-center gap-2">
+                        {hasData && !isEditing && !isPastDate && (
+                            <Button type="primary" onClick={() => setIsEditing(true)}>
+                                Edit
+                            </Button>
+                        )}
+                        {hasData && isEditing && (
+                            <FormButtons
+                                mode="update"
+                                isPending={mutation.isPending}
+                                onClick={handleSave}
+                            />
+                        )}
                     </div>
-                )
+                </div>
             }
         >
             {!hasData ? (
@@ -220,14 +194,21 @@ const DailyOccupationDetailDrawer = ({
                             </div>
 
                             {data.occupancyStatus && (
-                                <Badge
-                                    status={STATUS_COLORS[data.occupancyStatus.code] || "default"}
-                                    text={
-                                        <span className="font-medium text-xs dark:text-gray-300">
-                                            {data.occupancyStatus.name}
-                                        </span>
-                                    }
-                                />
+                                // <Badge
+                                //     status={STATUS_COLORS[data.occupancyStatus.code] || "default"}
+                                //     text={
+                                //         <span className="font-medium text-xs dark:text-gray-300">
+                                //             {data.occupancyStatus.name}
+                                //         </span>
+                                //     }
+                                // />
+
+                                <span
+                                    className="font-medium text-xs rounded-md px-2 py-0.5 border inline-block"
+                                    style={STATUS_COLORS[data.occupancyStatus.code]}
+                                >
+                                    {data.occupancyStatus.name}
+                                </span>
                             )}
                         </div>
 
@@ -436,15 +417,15 @@ const DailyOccupationDetailDrawer = ({
                                     value={
                                         data.mealCharge
                                             ? `${Number(data.mealCharge).toLocaleString()} MMK`
-                                            : "-"
+                                            : 0
                                     }
                                 />
                                 <InfoRow
                                     label="Daily Room Charge"
-                                    value={
-                                        data.dailyCharge
-                                            ? `${Number(data.dailyCharge).toLocaleString()} MMK`
-                                            : "-"
+                                    value={0
+                                        // data.dailyCharge
+                                        //     ? `${Number(data.dailyCharge).toLocaleString()} MMK`
+                                        //     : 0
                                     }
                                 />
                                 <Divider className="my-2" />
@@ -452,12 +433,13 @@ const DailyOccupationDetailDrawer = ({
                                     label="Total Daily Charge"
                                     highlighted
                                     value={
-                                        data.dailyCharge || data.mealCharge
-                                            ? `${(
-                                                Number(data.dailyCharge || 0) +
-                                                Number(data.mealCharge || 0)
-                                            ).toLocaleString()} MMK`
-                                            : "-"
+                                        // data.dailyCharge || data.mealCharge
+                                        //     ? `${(
+                                        //         Number(data.dailyCharge || 0) +
+                                        //         Number(data.mealCharge || 0)
+                                        //     ).toLocaleString()} MMK`
+                                        //     : 0
+                                        0
                                     }
                                 />
                             </div>
