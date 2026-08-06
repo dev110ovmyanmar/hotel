@@ -6,6 +6,8 @@ import DailyOccupationDetailDrawer from "./DailyOccupactionDetailDrawer";
 import { getDailyOccupactions } from "../../../../../../api/dailyOccupactionApi";
 import { useApiQuery } from "../../../../../../hooks/useApiQuery";
 
+import PriceTag from "../../../../../../component/PriceTag/PriceTag";
+
 // Monospace-style info row
 const InfoLine = ({ label, value }) => (
     <div className="flex gap-2 font-mono text-sm leading-relaxed">
@@ -36,8 +38,6 @@ const DailyOccupactionsTableDrawer = ({
         },
     });
 
-    const dates = data?.dailyOccupancy?.map((item) => item.stayDate);
-
     // Check Data is past or prensent
     const isDatePast = (date) => {
         const today = dayjs();
@@ -66,23 +66,11 @@ const DailyOccupactionsTableDrawer = ({
         setDetailDrawerOpen(true);
     };
 
-    // Build stay summary text from the API data or selectedData
     const checkinDate = selectedData?.checkinDate;
     const checkoutDate = selectedData?.checkoutDate;
-    const nights =
-        checkinDate && checkoutDate
-            ? dayjs(checkoutDate).diff(dayjs(checkinDate), "day")
-            : null;
 
-    const totalNights =
-        checkinDate && checkoutDate
-            ? dayjs(checkoutDate).startOf("day").diff(
-                dayjs(checkinDate).startOf("day"),
-                "day"
-            )
-            : 0;
-    const testNights = totalNights - 1;
-    console.log("TotalNights : ", testNights);
+    const nights = selectedData?.totalNight;
+
     const stayText =
         checkinDate && checkoutDate
             ? `${dayjs(checkinDate).format("DD-MMM-YYYY")} to ${dayjs(checkoutDate).format("DD-MMM-YYYY")}${nights !== null ? ` (${nights} Night${nights !== 1 ? "s" : ""})` : ""}`
@@ -100,70 +88,44 @@ const DailyOccupactionsTableDrawer = ({
             key: "stayDate",
             width: 90,
             render: (value) => (
-                <span className="font-semibold text-slate-700 dark:text-gray-200 text-xs whitespace-nowrap">
+                <span>
                     {value ? dayjs(value).format("DD-MM-YYYY") : "-"}
                 </span>
             ),
         },
         {
-            title: "Adults",
-            dataIndex: "adults",
-            key: "adults",
-            align: "center",
-            width: 65,
-            render: (val) => (
-                <span className="text-slate-700 dark:text-gray-200 text-sm font-medium">
-                    {val ?? 0}
-                </span>
-            ),
-        },
-        {
-            title: "Children",
-            dataIndex: "childrenCount",
-            key: "childrenCount",
-            align: "center",
-            width: 75,
-            render: (val) => (
-                <span className="text-slate-700 dark:text-gray-200 text-sm font-medium">
-                    {val ?? 0}
-                </span>
-            ),
-        },
-        {
-            title: "Extra Bed",
-            dataIndex: "extraBedCount",
-            key: "extraBedCount",
+            title: "Occupancy",
+            key: "occupancy",
             align: "center",
             width: 80,
-            render: (val) => (
-                <span className="text-slate-700 dark:text-gray-200 text-sm font-medium">
-                    {val ?? 0}
-                </span>
-            ),
+            render: (_, record) => {
+                const adults = record.adults ?? 0;
+                const children = record.childrenCount ?? 0;
+                return (
+                    <div className="text-slate-700 dark:text-gray-200 text-sm font-medium leading-tight">
+                        <div>Adult: {adults}</div>
+                        <div>Child: {children}</div>
+                    </div>
+                );
+            },
         },
         {
-            title: "Extra Person",
-            dataIndex: "extraPersonCount",
-            key: "extraPersonCount",
+            title: "Extra",
+            key: "extra",
             align: "center",
-            width: 95,
-            render: (val) => (
-                <span className="text-slate-700 dark:text-gray-200 text-sm font-medium">
-                    {val ?? 0}
-                </span>
-            ),
-        },
-        {
-            title: "Baby Cot",
-            dataIndex: "babyCotCount",
-            key: "babyCotCount",
-            align: "center",
-            width: 75,
-            render: (val) => (
-                <span className="text-slate-700 dark:text-gray-200 text-sm font-medium">
-                    {val ?? 0}
-                </span>
-            ),
+            width: 100,
+            render: (_, record) => {
+                const bed = record.extraBedCount ?? 0;
+                const person = record.extraPersonCount ?? 0;
+                const cot = record.babyCotCount ?? 0;
+                return (
+                    <div className="text-slate-700 dark:text-gray-200 text-sm font-medium leading-tight">
+                        <div>Bed: {bed}</div>
+                        <div>Person: {person}</div>
+                        <div>Cot: {cot}</div>
+                    </div>
+                );
+            },
         },
         {
             title: "Meal",
@@ -172,21 +134,22 @@ const DailyOccupactionsTableDrawer = ({
             width: 60,
             render: (_, record) => {
                 return (
-                    <span className="text-slate-700 dark:text-gray-200 text-sm font-semibold cursor-default">
-                        {record.mealPlan?.name || "-"}
+                    <span>
+                        {record.mealPlan?.code == null ? "Room Only" : record.mealPlan?.code}
                     </span>
                 );
             },
         },
         {
-            title: "Total Charge (MMK)",
+            title: "Total (MMK)",
             key: "grandTotal",
             align: "center",
             width: 50,
             render: (_, record) => {
+                const total = Number(record?.dailyCharge?.grandTotal) || 0;
                 return (
                     <span className="text-slate-700 dark:text-gray-200 text-sm font-medium">
-                        {record?.dailyCharge?.grandTotal || "0"}
+                        {total.toLocaleString("en-US", { maximumFractionDigits: 0 })}
                     </span>
                 )
             }
@@ -199,42 +162,20 @@ const DailyOccupactionsTableDrawer = ({
             align: "center",
             onCell: () => ({ style: { verticalAlign: "top", paddingTop: 8 } }),
             render: (_, record) => {
-                const smallStyle = { fontSize: "12px" };
-
-                const isPast = isDatePast(record.stayDate);
-
-                const actions = [
-                    {
-                        key: "view",
-                        label: "View",
-                        icon: <EyeOutlined style={{ fontSize: "12px" }} />,
-                        onClick: () => handleOpenDetail(record, false),
-                    },
-                    ...(!isPast
-                        ? [
-                            {
-                                key: "edit",
-                                label: "Edit",
-                                icon: <EditOutlined style={{ fontSize: "12px" }} />,
-                                onClick: () => handleOpenDetail(record, true),
-                            },
-                        ]
-                        : []),
-                ];
-
-                const items = actions.map((action) => ({
-                    key: action.key,
-                    disabled: action.disabled,
-                    label: (
-                        <Space size={4} style={smallStyle} onClick={action.disabled ? undefined : action.onClick}>
-                            {action.icon}
-                            <span style={{ fontSize: "14px" }}>{action.label}</span>
-                        </Space>
-                    ),
-                }));
-
                 return (
-                    <Dropdown menu={{ items }} trigger={["click"]}>
+                    <Dropdown
+                        menu={{
+                            onClick: ({ key }) => {
+                                if (key === "1") handleOpenDetail(record, false);
+                                if (key === "2") handleOpenDetail(record, true);
+                            },
+                            items: [
+                                { key: "1", label: "View", icon: <EyeOutlined /> },
+                                !isDatePast(record.stayDate) && { key: "2", label: "Edit", icon: <EditOutlined /> },
+                            ],
+                        }}
+                        trigger={["click"]}
+                    >
                         <MoreOutlined style={{ fontSize: "16px", cursor: "pointer" }} />
                     </Dropdown>
                 );
@@ -261,7 +202,7 @@ const DailyOccupactionsTableDrawer = ({
                     <div>
                         <div className="relative rounded-lg border border-slate-200 dark:border-gray-700 bg-slate-50 dark:bg-gray-800/60 px-5 py-4">
                             <div className="space-y-0.5">
-                                <InfoLine label="Reservation" value={reservationCode} />
+                                <InfoLine label="Reservation No" value={reservationCode} />
                                 <InfoLine label="Guest" value={guestName} />
                                 <InfoLine label="Room" value={roomLabel} />
                                 <InfoLine label="Stay" value={stayText} />
