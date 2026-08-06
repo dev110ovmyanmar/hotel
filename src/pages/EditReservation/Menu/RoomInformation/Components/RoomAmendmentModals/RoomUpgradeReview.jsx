@@ -7,7 +7,8 @@ import { darkModeStyle, upgradeAndDownRoomDarkMode } from '../../../../../../uti
 const RoomUpgradeReview = ({
     record,
     selectedRoomTypeName,
-    reviewData
+    reviewData,
+    isAddNewRoom
 }) => {
     const dataSource = [
         {
@@ -64,7 +65,7 @@ const RoomUpgradeReview = ({
             align:"center",
         },
         {
-            title: "Upgrade Room",
+            title: isAddNewRoom? "New Room" : "Upgrade Room",
             dataIndex: "upgrade",
             key: "upgrade",
             align:"center",

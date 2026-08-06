@@ -19,6 +19,11 @@ const FoodBeverageOrderTable = ({
 
   const columns = [
     {
+      title: "ID",
+      dataIndex: "id",
+      key: "id",
+    },
+    {
       title: "Consumption Type",
       dataIndex: ["consumptionType", "name"],
       key: "consumptionType",
