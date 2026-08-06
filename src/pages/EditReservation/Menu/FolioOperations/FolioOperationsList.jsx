@@ -212,11 +212,12 @@ const FolioOperationsList = () => {
         data={folioList?.reservation || []}
         folioUuid={folioList}
         onPrintAllFolios={handlePrintAll}
+        reservationUuid={reservationUuid}
       />
 
       <FolioOperationsTable
         setSelectedData={setSelectedData}
-        setMode={setMode}
+        setMode={setMode} 
         setDrawerOpen={setDrawerOpen}
         dataSource={folioList?.data}
         onCreateFolio={handleAddFolioOperations}

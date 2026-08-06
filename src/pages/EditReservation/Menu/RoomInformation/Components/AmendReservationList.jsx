@@ -176,37 +176,37 @@ export const getAmendReservationMenuItems = ({
             },
           ],
         },
-        { type: "divider" },
-        {
-          key: "col_guest",
-          type: "group",
-          label: "GUEST / OCCUPANCY",
-          children: [
-            {
-              key: "occupancy_change",
-              label: "Update Room Guests",
-              icon: <UserOutlined />,
-              disabled: checkDisabled("occupancy_change"),
-              ...getDisabledStyles("occupancy_change"),
-              onClick: () => {
-                if (!checkDisabled("occupancy_change")) {
-                  setSelectedData(record);
-                  setGuestOpen(true);
-                }
-              },
-            },
-            {
-              key: "extra_bed_remove",
-              label: "Remove Extra Bed",
-              icon: <MinusOutlined />,
-              disabled: checkDisabled("extra_bed_remove"),
-              ...getDisabledStyles("extra_bed_remove"),
-              onClick: () =>
-                !checkDisabled("extra_bed_remove") &&
-                handleAction("extra_bed_remove", record),
-            },
-          ],
-        },
+        // { type: "divider" },
+        // {
+        //   key: "col_guest",
+        //   type: "group",
+        //   label: "GUEST / OCCUPANCY",
+        //   children: [
+        //     {
+        //       key: "occupancy_change",
+        //       label: "Update Room Guests",
+        //       icon: <UserOutlined />,
+        //       disabled: checkDisabled("occupancy_change"),
+        //       ...getDisabledStyles("occupancy_change"),
+        //       onClick: () => {
+        //         if (!checkDisabled("occupancy_change")) {
+        //           setSelectedData(record);
+        //           setGuestOpen(true);
+        //         }
+        //       },
+        //     },
+        //     {
+        //       key: "extra_bed_remove",
+        //       label: "Remove Extra Bed",
+        //       icon: <MinusOutlined />,
+        //       disabled: checkDisabled("extra_bed_remove"),
+        //       ...getDisabledStyles("extra_bed_remove"),
+        //       onClick: () =>
+        //         !checkDisabled("extra_bed_remove") &&
+        //         handleAction("extra_bed_remove", record),
+        //     },
+        //   ],
+        // },
       ],
     },
   ];

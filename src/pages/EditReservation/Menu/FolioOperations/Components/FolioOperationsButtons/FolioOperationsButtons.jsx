@@ -2,13 +2,19 @@ import { DownOutlined, PlusOutlined } from "@ant-design/icons";
 import { IoPrintOutline } from "react-icons/io5";
 import React, { useState } from "react";
 import { Button, Drawer, Dropdown, Form, Select } from "antd";
-import FoodBeverageOrder from "../FolioOperationsForms/FoodBeverageOrder";
+// import FoodBeverageOrder from "../FolioOperationsForms/FoodBeverageOrder";
 import AddNewServiceOrderForm from "../FolioOperationsForms/AddNewServiceOrderForm";
 import AddNewFacilityOrderForm from "../FolioOperationsForms/AddNewFacilityOrderForm";
 import AddPaymentForm from "../../../../../BookingDetail/Components/BookingDetailForms/AddPaymentForm";
 import { queryClient } from "../../../../../../app/queryClient";
 
-const FolioOperationsButtons = ({ data, folioUuid, reservationId, onPrintAllFolios }) => {
+const FolioOperationsButtons = ({ 
+    data, 
+    folioUuid, 
+    reservationId, 
+    onPrintAllFolios , 
+    reservationUuid 
+  }) => {
   const [form] = Form.useForm();
   const [open, setOpen] = useState(false);
   const [serviceOpen, setServiceOpen] = useState(false);
@@ -28,7 +34,6 @@ const FolioOperationsButtons = ({ data, folioUuid, reservationId, onPrintAllFoli
       key: "service",
       label: "Add New Service Order",
       onClick: () => {
-        console.log("Service order button clicked!");
         setServiceOpen(true);
       },
     },
@@ -80,7 +85,7 @@ const FolioOperationsButtons = ({ data, folioUuid, reservationId, onPrintAllFoli
           Print Invoice
         </Button>
 
-        {/* <Dropdown
+        <Dropdown
           menu={{ items: food }}
           trigger={["click"]}
           placement="bottomRight"
@@ -88,14 +93,15 @@ const FolioOperationsButtons = ({ data, folioUuid, reservationId, onPrintAllFoli
           <Button className="custom-blue-btn flex items-center gap-1">
             More <DownOutlined />
           </Button>
-        </Dropdown> */}
+        </Dropdown>
       </div>
 
-      <FoodBeverageOrder
+      {/* <FoodBeverageOrder
         open={open}
         onClose={() => setOpen(false)}
         reservationId={reservationId}
-      />
+        reservationUuid={reservationUuid}
+      /> */}
 
       {serviceOpen && (
         <AddNewServiceOrderForm

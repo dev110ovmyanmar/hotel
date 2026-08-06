@@ -31,6 +31,7 @@ const FacilityPackageTable = ({
       title: "ID",
       render: (_, record) => <div>{record?.id}</div>,
       width: 70,
+      align: "left",
     },
     {
       title: "Name",
@@ -48,6 +49,8 @@ const FacilityPackageTable = ({
       title: "Included Pax",
       dataIndex: "includedPax",
       key: "includedPax",
+      width: 120,
+      align: "end",
     },
     {
       title: "Included Hours",
@@ -58,11 +61,14 @@ const FacilityPackageTable = ({
       title: "Price Type",
       dataIndex: ["pricingType", "name"],
       key: "pricingType",
+      align: "left",
+      width: 120,
     },
     {
       title: "Base Price (MMK)",
       dataIndex: "basePrice",
       key: "basePrice",
+      width: 170,
       render: (text) => <PriceTag value={text} />,
     },
     {
@@ -70,12 +76,14 @@ const FacilityPackageTable = ({
       dataIndex: "status",
       key: "status",
       align: "center",
+      width: 110,
       render: (_, record) => <ColorStatusTag status={record?.status} />,
     },
     {
       title: "Action",
       fixed: "end",
       align: "center",
+      width: 110,
       render: (_, record) => {
         const smallStyle = { fontSize: "12px" };
 
@@ -135,7 +143,8 @@ const FacilityPackageTable = ({
   const columns = TableColumns(baseColumns);
 
   return (
-    <div id="scrollId" className="w-full h-[63vh] ">
+    // <div id="scrollId" className="w-full h-[63vh] ">
+    <div id="scrollId">
       <Table
         tableLayout="fixed"
         scroll={{ x: 1000 }}

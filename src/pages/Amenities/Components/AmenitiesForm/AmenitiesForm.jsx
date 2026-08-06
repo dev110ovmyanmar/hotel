@@ -191,7 +191,7 @@ const AmenitiesForm = ({
             </Row> */}
             <div className="grid grid-cols-2 gap-3">
               <Form.Item
-                label="Is Free"
+                // label="Is Free"
                 name="isFree"
                 initialValue={false}
                 valuePropName="checked"
@@ -206,7 +206,7 @@ const AmenitiesForm = ({
               </Form.Item>
 
               <Form.Item
-                label="Visibility"
+                // label="Visibility"
                 name="visibility"
                 initialValue={false}
                 valuePropName="checked"
@@ -215,7 +215,7 @@ const AmenitiesForm = ({
                 ]}
                 className={isView ? "pointer-events-none" : ""}
               >
-                <Checkbox>Display this item in Hotel Profile.</Checkbox>
+                <Checkbox>Display this item in Hotel Profile</Checkbox>
               </Form.Item>
             </div>
           </Form>

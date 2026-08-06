@@ -194,7 +194,7 @@ const RoomInformationDetailsForm = ({
               <span>{(d?.subTotal || 0).toLocaleString()} MMK</span>
             </div>
             <div className={textWhiteDark}>
-              <span>Tax ({d?.taxPercentage || 0}%)</span>
+              <span>Tax</span>
               <span>{(d?.taxTotal || 0).toLocaleString()} MMK</span>
             </div>
             <div className={textWhiteDark}>

@@ -15,6 +15,7 @@ import Toast from "../../../component/Toast/Toast";
 import useApiQuery from "../../../hooks/useApiQuery";
 import { useApiMutation } from "../../../hooks/useApiMutation";
 import { upsertPermission, getPermissionDetail } from "../../../api/permissionApi";
+import { queryClient } from "../../../app/queryClient";
 
 const { TextArea } = Input;
 
@@ -35,6 +36,9 @@ const PermissionForm = ({
   const isView = mode === "view";
   const isEdit = mode === "edit";
   const isAdd = mode === "add";
+
+  const initData = queryClient.getQueryData(["initData", "authenticated"]);
+  const permissionsArray = initData?.permissions;
 
   const { data, isLoading } = useApiQuery({
     fetchQueryName: "permission-detail",
@@ -112,10 +116,10 @@ const PermissionForm = ({
 
   const moduleOptions = useMemo(() => {
     const modules = [
-      ...new Set(permissions.map((p) => p.module).filter(Boolean)),
+      ...new Set(permissionsArray.map((p) => p.split(".")[0]).filter(Boolean)),
     ];
     return modules.map((m) => ({ value: m }));
-  }, [permissions]);
+  }, [permissionsArray]);
 
   const validateUniqueName = (_, value) => {
     if (!value) return Promise.resolve();

@@ -71,18 +71,20 @@ const FolioInvoicePrint = React.forwardRef(({ folios, folio, reservation, reserv
       { name: "Date", width: "10%", align: "center" },
       { name: "Folio", width: "12%", align: "center" },
       { name: "Ref#", width: "8%", align: "center" },
-      { name: "Description", width: "35%", align: "left" },
-      { name: "Debit", width: "15%", align: "right" },
-      { name: "Credit", width: "15%", align: "right" },
-      { name: "Balance", width: "15%", align: "right" },
+      { name: "Description", width: "30%", align: "left" },
+      { name: "Room", width: "10%" },
+      { name: "Debit", width: "10%", align: "right" },
+      { name: "Credit", width: "10%", align: "right" },
+      { name: `Balance (${currency})`, width: "10%", align: "right" },
     ]
     : [
       { name: "Date", width: "10%", align: "center" },
       { name: "Ref#", width: "8%", align: "center" },
       { name: "Description", width: "42%", align: "left" },
+      { name: "Room", width: "10%" },
       { name: "Debit", width: "15%", align: "right" },
       { name: "Credit", width: "15%", align: "right" },
-      { name: "Balance", width: "15%", align: "right" },
+      { name: `Balance (${currency})`, width: "15%", align: "right" },
     ];
 
   return (
@@ -370,6 +372,7 @@ const FolioInvoicePrint = React.forwardRef(({ folios, folio, reservation, reserv
                       )}
                       <td style={{ ...td("center", true), color: INK_MUTED }}>{refVal}</td>
                       <td style={{ ...td("left"), color: INK, fontWeight: "600" }}>{line.descriptionSnapshot || "—"}</td>
+                      <td style={{ ...td("center", true), color: INK }}>{line.reservationRoom?.room?.roomNo || "—"}</td>
                       <td style={{ ...td("right", true), textAlign: "right", fontFamily: FONT_MONO, fontSize: "13.5px", fontWeight: "500", color: INK }}>
                         {isDebit ? fmt(amt) : "0"}
                       </td>
@@ -412,7 +415,7 @@ const FolioInvoicePrint = React.forwardRef(({ folios, folio, reservation, reserv
                       </td>
                     );
                   }
-                  if (col.name === "Balance") {
+                  if (col.name === `Balance (${currency})`) {
                     return (
                       <td key={i} style={{ padding: "12px 0 12px 6px", fontFamily: FONT_MONO, fontSize: "16px", fontWeight: "500", color: INK, textAlign: "right", whiteSpace: "nowrap", borderBottom: "none", borderLeft: "none", borderRight: "none" }}>
                         {fmt(grandBalance)}
@@ -432,10 +435,11 @@ const FolioInvoicePrint = React.forwardRef(({ folios, folio, reservation, reserv
                       </td>
                     );
                   }
-                  if (col.name === "Balance") {
+                  if (col.name === `Balance (${currency})`) {
                     return (
-                      <td key={i} style={{ padding: "8px 0 8px 6px", fontFamily: FONT_MONO, fontSize: "16px", fontWeight: "700", color: INK, textAlign: "right", whiteSpace: "nowrap", borderTop: `1.5px solid ${BLUE}`, borderBottom: "none", borderLeft: "none", borderRight: "none" }}>
-                        {fmt(grandBalance)} {currency}
+                      <td key={i} style={{ padding: "8px 6px", fontFamily: FONT_MONO, fontSize: "16px", fontWeight: "500", color: INK, textAlign: "right", whiteSpace: "nowrap", borderTop: `1.5px solid ${BLUE}`, borderBottom: "none", borderLeft: "none", borderRight: "none" }}>
+                        {fmt(grandBalance)}
+                        {/* {currency} */}
                       </td>
                     );
                   }

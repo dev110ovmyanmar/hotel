@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Dropdown, Table } from "antd";
 import dayjs from "dayjs";
 import { PlusOutlined, MessageOutlined, EyeOutlined } from "@ant-design/icons";
+import { CalendarPlus2 } from "lucide-react";
 import { IoOptionsSharp } from "react-icons/io5";
 import { Bs0Circle, BsPeople } from "react-icons/bs";
 import RoomInformationForm from "./RoomInformationForms/RoomInformationForm";
@@ -25,6 +26,7 @@ import AddRoomWithExtensionDateModal from "./RoomAmendmentModals/AddRoomWithExte
 import SingleRoomComplimentaryUpdateModal from "./ComplimentaryModals/SingleRoomComplimentaryUpdateModal";
 import RoomInformationDetailsForm from "./RoomInformationForms/RoomInformationDetailsForm";
 import AddExtraAmenitiesModal from "./Extra/AddExtraAmenitiesModal";
+import DailyOccupactionsTableDrawer from "./RoomInformationForms/DailyOccupactionsTableDrawer";
 
 import { useApiMutation } from "../../../../../hooks/useApiMutation";
 import { availabilitySearch } from "../../../../../api/reservationSectionApi";
@@ -44,9 +46,9 @@ const RoomInformationTable = ({
 }) => {
 
   const formattedData = data.map(item => ({
-  ...item,
-  children: Array.isArray(item.children) ? item.children : null
-}));
+    ...item,
+    children: Array.isArray(item.children) ? item.children : null
+  }));
 
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [detailsDrawerOpen, setDetailsDrawerOpen] = useState(false);
@@ -67,6 +69,7 @@ const RoomInformationTable = ({
   const [ratePlanUuid, setRatePlanUuid] = useState();
   const [addRoomWithStayExtension, setAddRoomWithStayExtension] =
     useState(false);
+  const [dailyOccupactionsTableDrawerOpen, setDailyOccupactionsTableDrawerOpen] = useState(false);
 
   const [compOpen, setCompOpen] = useState(false);
   const [addExtraBedOpen, setExtraBedOpen] = useState(false);
@@ -266,13 +269,23 @@ const RoomInformationTable = ({
               setCompOpen(true);
             },
           },
+          // {
+          //   key: "addExtra",
+          //   label: "Extra",
+          //   icon: <PlusOutlined />,
+          //   onClick: () => {
+          //     setSelectedData(record);
+          //     setExtraBedOpen(true);
+          //   },
+          // },
           {
-            key: "addExtra",
-            label: "Extra",
-            icon: <PlusOutlined />,
+            key: "dailyOccupaction",
+            label: "Daily Occupaction",
+            icon: <CalendarPlus2 className="w-4 h-4" />,
             onClick: () => {
               setSelectedData(record);
-              setExtraBedOpen(true);
+              setMode("view");
+              setDailyOccupactionsTableDrawerOpen(true);
             },
           },
         ];
@@ -343,6 +356,13 @@ const RoomInformationTable = ({
       <RoomInformationDetailsForm
         drawerOpen={detailsDrawerOpen}
         setDrawerOpen={setDetailsDrawerOpen}
+        selectedData={selectedData}
+        setSelectedData={setSelectedData}
+      />
+
+      <DailyOccupactionsTableDrawer
+        drawerOpen={dailyOccupactionsTableDrawerOpen}
+        setDrawerOpen={setDailyOccupactionsTableDrawerOpen}
         selectedData={selectedData}
         setSelectedData={setSelectedData}
       />

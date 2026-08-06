@@ -48,7 +48,12 @@ const ServiceTable = ({
       dataIndex: ["serviceType", "name"],
       key: "serviceType",
     },
-
+    {
+      title: "Service Stages",
+      dataIndex: ["serviceStages"],
+      key: "serviceStages",
+      render: (text) => <div>{text ? text : "_"}</div>,
+    },
     {
       title: "Complimentary",
       dataIndex: "isComplimentary",
@@ -73,18 +78,30 @@ const ServiceTable = ({
       title: "Billing Type",
       dataIndex: ["billingType", "name"],
       key: "billingType",
+      width: 120,
     },
+    // {
+    //   title: "Price (MMK)",
+    //   dataIndex: "basePrice",
+    //   key: "basePrice",
+    //   align: "end",
+    //   render: (text) => <PriceTag value={text} />,
+    // },
     {
       title: "Price (MMK)",
       dataIndex: "basePrice",
       key: "basePrice",
       align: "end",
-      render: (text) => <PriceTag value={text} />,
+      render: (text, record) => {
+        const price = record?.usesInventory ? 0 : text;
+        return <PriceTag value={price} />;
+      },
     },
     {
       title: "Action",
       fixed: "end",
       align: "center",
+      width: 110,
       render: (_, record) => {
         const smallStyle = { fontSize: "12px" };
 
@@ -157,6 +174,13 @@ const ServiceTable = ({
       align: "center",
     },
     {
+      title: "Base Price (MMK)",
+      dataIndex: ["serviceInventoryItem", "unitPrice"],
+      key: "unitPrice",
+      align: "end",
+      render: (text) => <PriceTag value={text} />,
+    },
+    {
       title: "Action",
       align: "center",
       render: (_, record) => {
@@ -212,9 +236,11 @@ const ServiceTable = ({
   ];
 
   const expandedRowRender = (record) => {
+    if (!canCreateNested && !rowExpandList) return null;
+
     return (
       <div className="nested-table-container">
-        {canCreateNested && (
+        {canCreateNested && record?.usesInventory === true && (
           <div className="flex justify-between items-center mb-3">
             <Button
               className="py-4! rounded-[5px]!"
@@ -232,15 +258,13 @@ const ServiceTable = ({
           </div>
         )}
 
-        {record?.serviceInventoryMappings <= 0 ? null : (
+        {record?.serviceInventoryMappings?.length > 0 && (
           <Table
             className="expanded-table dark:[&_.ant-table-thead>tr>th]:!text-[#F3F4F6]"
             columns={expandColumns}
-            dataSource={record.serviceInventoryMappings || []}
+            dataSource={record.serviceInventoryMappings}
             rowKey="uuid"
-            pagination={
-              record.serviceInventoryMappings?.length > 10 ? true : false
-            }
+            pagination={record.serviceInventoryMappings.length > 10}
             size="small"
           />
         )}
@@ -259,7 +283,7 @@ const ServiceTable = ({
           defaultExpandedRowKeys: ["0"],
           rowExpandable: (record) =>
             (rowExpandList && record?.serviceInventoryMappings?.length > 0) ||
-            canCreateNested,
+            (canCreateNested && record?.usesInventory === true),
         }}
         dataSource={data}
         loading={loading}
