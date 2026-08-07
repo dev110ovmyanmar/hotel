@@ -76,6 +76,7 @@ const GuestListDrawer = ({
     {
       title: "Action",
       key: "action",
+      width: 130,
       render: (_, record) => (
         <Space>
           <Tooltip title="View Details">

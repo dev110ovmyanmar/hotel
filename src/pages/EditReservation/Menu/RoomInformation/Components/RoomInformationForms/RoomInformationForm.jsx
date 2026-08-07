@@ -190,7 +190,7 @@ const RoomInformationForm = ({
             className="w-3/4 mb-0"
             rules={[{ required: true, message: "Please pick duration dates" }]}
           >
-            <RangePicker className="w-full" format="YYYY-MM-DD" disabledDate={disabledDate} />
+            <RangePicker className="w-full"  showTime format="YYYY-MM-DD" disabledDate={disabledDate} />
           </Form.Item>
 
           <Form.Item className={`w-1/5 mb-0 bg-gray-200 rounded ${darkModeStyle} dark:!shadow-lg dark:shadow-gray-900 dark:border dark:border-gray-100`}>

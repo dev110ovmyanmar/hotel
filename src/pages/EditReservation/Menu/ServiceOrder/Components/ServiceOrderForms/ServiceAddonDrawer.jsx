@@ -51,7 +51,7 @@ const ServiceAddonDrawer = ({
 
   const updateAddon = useApiMutation({
     mutationFn: updateServiceAddon,
-    invalidateKeys: [["service-addon"]],
+    invalidateKeys: [["service-addon"], ["service-order"]],
   });
 
   const currentStatusCode = selectedRecord?.addonStatus?.code;
