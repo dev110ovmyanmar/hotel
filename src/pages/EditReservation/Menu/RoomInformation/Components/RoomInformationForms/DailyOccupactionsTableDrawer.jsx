@@ -5,6 +5,7 @@ import dayjs from "dayjs";
 import DailyOccupationDetailDrawer from "./DailyOccupactionDetailDrawer";
 import { getDailyOccupactions } from "../../../../../../api/dailyOccupactionApi";
 import { useApiQuery } from "../../../../../../hooks/useApiQuery";
+import PriceTag from "../../../../../../component/PriceTag/PriceTag";
 
 // Monospace-style info row
 const InfoLine = ({ label, value }) => (
@@ -147,7 +148,7 @@ const DailyOccupactionsTableDrawer = ({
                 const total = Number(record?.dailyCharge?.grandTotal) || 0;
                 return (
                     <span className="text-slate-700 dark:text-gray-200 text-sm font-medium">
-                        {total.toLocaleString("en-US", { maximumFractionDigits: 0 })}
+                        <PriceTag value={total} />
                     </span>
                 )
             }

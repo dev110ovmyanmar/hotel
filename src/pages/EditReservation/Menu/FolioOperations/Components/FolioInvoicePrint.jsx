@@ -1,5 +1,6 @@
 import React from "react";
 import dayjs from "dayjs";
+import PriceTag from "../../../../../component/PriceTag/PriceTag";
 
 // ── Design Tokens ──────────────────────────────────────────────────────────
 const FONT_BODY = "'Inter', 'Helvetica Neue', 'Arial', sans-serif";
@@ -16,13 +17,6 @@ const BLUE_LIGHT = "#eff6ff";
 const RULE = "#dbe4f0";
 const WHITE = "#ffffff";
 const ROW_ALT = "#f8fafc";
-
-// ── Number Formatter ──────────────────────────────────────────────────────
-const fmt = (num, decimals = 0) =>
-  Number(num || 0).toLocaleString("en-US", {
-    minimumFractionDigits: decimals,
-    maximumFractionDigits: decimals,
-  });
 
 // ── Main Component ────────────────────────────────────────────────────────
 const FolioInvoicePrint = React.forwardRef(({ folios, folio, reservation, reservationRoom, propertyImage, adminName, hideLetterhead }, ref) => {
@@ -43,7 +37,7 @@ const FolioInvoicePrint = React.forwardRef(({ folios, folio, reservation, reserv
       else if (line.postingType === "credit") grandCredit += amt;
     })
   );
-  console.log("Folios", folios);
+
   const grandBalance = grandDebit - grandCredit;
 
   const currency = foliosList[0]?.currency?.code || "MMK";
@@ -68,23 +62,23 @@ const FolioInvoicePrint = React.forwardRef(({ folios, folio, reservation, reserv
 
   const cols = showFolioColumn
     ? [
-      { name: "Date", width: "10%", align: "center" },
-      { name: "Folio", width: "12%", align: "center" },
-      { name: "Ref#", width: "8%", align: "center" },
-      { name: "Description", width: "30%", align: "left" },
-      { name: "Room", width: "10%" },
-      { name: "Debit", width: "10%", align: "right" },
-      { name: "Credit", width: "10%", align: "right" },
-      { name: `Balance (${currency})`, width: "10%", align: "right" },
+      { name: "Date", width: "11%", align: "center" },
+      { name: "Folio", width: "10%", align: "center" },
+      { name: "Ref#", width: "6%", align: "center" },
+      { name: "Description", width: "26%", align: "left" },
+      { name: "Room", width: "8%" },
+      { name: "Debit", width: "13%", align: "right" },
+      { name: "Credit", width: "13%", align: "right" },
+      { name: `Balance (${currency})`, width: "13%", align: "right" },
     ]
     : [
-      { name: "Date", width: "10%", align: "center" },
-      { name: "Ref#", width: "8%", align: "center" },
-      { name: "Description", width: "42%", align: "left" },
-      { name: "Room", width: "10%" },
-      { name: "Debit", width: "15%", align: "right" },
-      { name: "Credit", width: "15%", align: "right" },
-      { name: `Balance (${currency})`, width: "15%", align: "right" },
+      { name: "Date", width: "11%", align: "center" },
+      { name: "Ref#", width: "6%", align: "center" },
+      { name: "Description", width: "34%", align: "left" },
+      { name: "Room", width: "8%" },
+      { name: "Debit", width: "16%", align: "right" },
+      { name: "Credit", width: "16%", align: "right" },
+      { name: `Balance (${currency})`, width: "16%", align: "right" },
     ];
 
   return (
@@ -98,7 +92,8 @@ const FolioInvoicePrint = React.forwardRef(({ folios, folio, reservation, reserv
           color: INK,
           background: WHITE,
           padding: "0",
-          maxWidth: "900px",
+          maxWidth: "1200px",
+          width: "100%",
           margin: "0 auto",
         }}
       >
@@ -112,7 +107,7 @@ const FolioInvoicePrint = React.forwardRef(({ folios, folio, reservation, reserv
         }
 
         @media print {
-          @page { size: A4 portrait; margin: 10mm 14mm; }
+          @page { size: A4 portrait; margin: 8mm 10mm; }
           body > *:not(#native-print-container) {
             display: none !important;
           }
@@ -132,7 +127,7 @@ const FolioInvoicePrint = React.forwardRef(({ folios, folio, reservation, reserv
         .fi-table-row:hover td { background: #f0f4fa !important; }
       `}</style>
 
-        <div style={{ padding: "36px 40px", marginBottom: "0" }}>
+        <div style={{ padding: "24px 28px", marginBottom: "0" }}>
 
           {/* ══ HEADER ══════════════════════════════════════════════ */}
           {!hideLetterhead && (
@@ -374,13 +369,13 @@ const FolioInvoicePrint = React.forwardRef(({ folios, folio, reservation, reserv
                       <td style={{ ...td("left"), color: INK, fontWeight: "600" }}>{line.descriptionSnapshot || "—"}</td>
                       <td style={{ ...td("center", true), color: INK }}>{line.reservationRoom?.room?.roomNo || "—"}</td>
                       <td style={{ ...td("right", true), textAlign: "right", fontFamily: FONT_MONO, fontSize: "13.5px", fontWeight: "500", color: INK }}>
-                        {isDebit ? fmt(amt) : "0"}
+                        {isDebit ? <PriceTag value={amt} /> : <PriceTag value={0} />}
                       </td>
                       <td style={{ ...td("right", true), textAlign: "right", fontFamily: FONT_MONO, fontSize: "13.5px", fontWeight: "500", color: INK }}>
-                        {isCredit ? fmt(amt) : "0"}
+                        {isCredit ? <PriceTag value={amt} /> : <PriceTag value={0} />}
                       </td>
                       <td style={{ ...td("right", true), textAlign: "right", fontFamily: FONT_MONO, fontSize: "13.5px", fontWeight: "500", color: INK }}>
-                        {fmt(balance)}
+                        <PriceTag value={balance} />
                       </td>
                     </tr>
                   );
@@ -401,24 +396,24 @@ const FolioInvoicePrint = React.forwardRef(({ folios, folio, reservation, reserv
                 {cols.map((col, i) => {
                   if (col.name === "Debit") {
                     return (
-                      <td key={i} style={{ padding: "12px 0 12px 6px", fontFamily: FONT_MONO, fontSize: "14.5px", fontWeight: "500", color: INK, textAlign: "right", whiteSpace: "nowrap", borderBottom: "none", borderLeft: "none", borderRight: "none" }}>
-                        {fmt(grandDebit)}
+                      <td key={i} style={{ padding: "12px 8px 12px 8px", fontFamily: FONT_MONO, fontSize: "14.5px", fontWeight: "500", color: INK, textAlign: "right", whiteSpace: "nowrap", borderBottom: "none", borderLeft: "none", borderRight: "none" }}>
+                        <PriceTag value={grandDebit} />
                         {/* {currency} */}
                       </td>
                     );
                   }
                   if (col.name === "Credit") {
                     return (
-                      <td key={i} style={{ padding: "12px 0 12px 6px", fontFamily: FONT_MONO, fontSize: "14.5px", fontWeight: "500", color: INK, textAlign: "right", whiteSpace: "nowrap", borderBottom: "none", borderLeft: "none", borderRight: "none" }}>
-                        {fmt(grandCredit)}
+                      <td key={i} style={{ padding: "12px 8px 12px 8px", fontFamily: FONT_MONO, fontSize: "14px", fontWeight: "500", color: INK, textAlign: "right", whiteSpace: "nowrap", borderBottom: "none", borderLeft: "none", borderRight: "none" }}>
+                        <PriceTag value={grandCredit} />
                         {/* {currency} */}
                       </td>
                     );
                   }
                   if (col.name === `Balance (${currency})`) {
                     return (
-                      <td key={i} style={{ padding: "12px 0 12px 6px", fontFamily: FONT_MONO, fontSize: "16px", fontWeight: "500", color: INK, textAlign: "right", whiteSpace: "nowrap", borderBottom: "none", borderLeft: "none", borderRight: "none" }}>
-                        {fmt(grandBalance)}
+                      <td key={i} style={{ padding: "12px 8px 12px 8px", fontFamily: FONT_MONO, fontSize: "14px", fontWeight: "500", color: INK, textAlign: "right", whiteSpace: "nowrap", borderBottom: "none", borderLeft: "none", borderRight: "none" }}>
+                        <PriceTag value={grandBalance} />
                         {/* {currency} */}
                       </td>
                     );
@@ -430,15 +425,15 @@ const FolioInvoicePrint = React.forwardRef(({ folios, folio, reservation, reserv
                 {cols.map((col, i) => {
                   if (col.name === "Description") {
                     return (
-                      <td key={i} style={{ padding: "8px 6px", fontFamily: FONT_LABEL, fontSize: "14px", fontWeight: "700", color: INK, textAlign: "left", whiteSpace: "nowrap", borderTop: `1.5px solid ${BLUE}`, borderBottom: "none", borderLeft: "none", borderRight: "none" }}>
+                      <td key={i} style={{ padding: "8px 8px", fontFamily: FONT_LABEL, fontSize: "14px", fontWeight: "700", color: INK, textAlign: "left", whiteSpace: "nowrap", borderTop: `1.5px solid ${BLUE}`, borderBottom: "none", borderLeft: "none", borderRight: "none" }}>
                         Balance
                       </td>
                     );
                   }
                   if (col.name === `Balance (${currency})`) {
                     return (
-                      <td key={i} style={{ padding: "8px 6px", fontFamily: FONT_MONO, fontSize: "16px", fontWeight: "500", color: INK, textAlign: "right", whiteSpace: "nowrap", borderTop: `1.5px solid ${BLUE}`, borderBottom: "none", borderLeft: "none", borderRight: "none" }}>
-                        {fmt(grandBalance)}
+                      <td key={i} style={{ padding: "8px 8px", fontFamily: FONT_MONO, fontSize: "14px", fontWeight: "500", color: INK, textAlign: "right", whiteSpace: "nowrap", borderTop: `1.5px solid ${BLUE}`, borderBottom: "none", borderLeft: "none", borderRight: "none" }}>
+                        <PriceTag value={grandBalance} />
                         {/* {currency} */}
                       </td>
                     );
@@ -526,7 +521,7 @@ const StayCell = ({ label, value }) => (
 );
 
 const td = (align, noWrap = false) => ({
-  padding: "10px 6px",
+  padding: "10px 8px",
   textAlign: align,
   color: INK_SOFT,
   verticalAlign: "middle",
@@ -540,6 +535,7 @@ const td = (align, noWrap = false) => ({
   borderTop: "none",
   borderLeft: "none",
   borderRight: "none",
+  overflow: "hidden",
 });
 
 export default FolioInvoicePrint;

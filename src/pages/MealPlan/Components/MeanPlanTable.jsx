@@ -71,15 +71,15 @@ const MeanPlanTable = ({
           <>
             <div className="flex justify-between">
               <span>Adult:</span>
-              <span> [{`${priceFormatter(record?.adultPrice)}`}] MMK</span>
+              <span className="flex items-center gap-1">[<PriceTag value={record?.adultPrice} />] MMK</span>
             </div>
             <div className="flex justify-between">
               <span>Child:</span>
-              <span>[{`${priceFormatter(record?.childPrice)}`}] MMK</span>
+              <span className="flex items-center gap-1">[<PriceTag value={record?.childPrice} />] MMK</span>
             </div>
             <div className="flex justify-between">
               <span>Child Free Age Below :</span>
-              <span>[{`${priceFormatter(record?.childFreeAgeBelow)}`}]
+              <span className="flex items-center gap-1">[<PriceTag value={record?.childFreeAgeBelow} />]
                 {record?.childFreeAgeBelow <= 1 ? " Year" : " Years"}
               </span>
             </div>
