@@ -6,8 +6,6 @@ import DailyOccupationDetailDrawer from "./DailyOccupactionDetailDrawer";
 import { getDailyOccupactions } from "../../../../../../api/dailyOccupactionApi";
 import { useApiQuery } from "../../../../../../hooks/useApiQuery";
 
-import PriceTag from "../../../../../../component/PriceTag/PriceTag";
-
 // Monospace-style info row
 const InfoLine = ({ label, value }) => (
     <div className="flex gap-2 font-mono text-sm leading-relaxed">
@@ -96,7 +94,7 @@ const DailyOccupactionsTableDrawer = ({
         {
             title: "Occupancy",
             key: "occupancy",
-            align: "center",
+            align: "left",
             width: 80,
             render: (_, record) => {
                 const adults = record.adults ?? 0;
@@ -104,7 +102,7 @@ const DailyOccupactionsTableDrawer = ({
                 return (
                     <div className="text-slate-700 dark:text-gray-200 text-sm font-medium leading-tight">
                         <div>Adult: {adults}</div>
-                        <div>Child: {children}</div>
+                        <div>Children: {children}</div>
                     </div>
                 );
             },
@@ -112,7 +110,7 @@ const DailyOccupactionsTableDrawer = ({
         {
             title: "Extra",
             key: "extra",
-            align: "center",
+            align: "left",
             width: 100,
             render: (_, record) => {
                 const bed = record.extraBedCount ?? 0;
@@ -120,9 +118,9 @@ const DailyOccupactionsTableDrawer = ({
                 const cot = record.babyCotCount ?? 0;
                 return (
                     <div className="text-slate-700 dark:text-gray-200 text-sm font-medium leading-tight">
-                        <div>Bed: {bed}</div>
-                        <div>Person: {person}</div>
-                        <div>Cot: {cot}</div>
+                        <div>Extra Bed: {bed}</div>
+                        <div>Extra Person: {person}</div>
+                        <div>Baby Cot: {cot}</div>
                     </div>
                 );
             },
