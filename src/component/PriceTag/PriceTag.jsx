@@ -1,8 +1,14 @@
-const PriceTag = ({value}) =>{
-    return (
-        <div className="text-end">{value?.toLocaleString()}</div>
-    )
-}
+const PriceTag = ({ value }) => {
+  return (
+    <div className="text-end">
+      {value?.toLocaleString('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })}
+    </div>
+  );
+};
+
 export default PriceTag;
 
 export const priceFormatter = (value) =>

@@ -3,7 +3,7 @@ import { Button, Divider, Modal, Radio, Space, Table } from "antd";
 import { SwapOutlined, InfoCircleOutlined, FolderOpenOutlined, PrinterOutlined, FileSearchOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import { darkModeStyle, houseKeepingAndMaintenanceRequestDarkMode, partnerDarkModeStyle, selectedDarkMode, textColorDarkMode, textWhiteInDarkStyle } from "../../../../../utils";
-
+import PriceTag from "../../../../../component/PriceTag/PriceTag";
 
 const FolioTitle = ({ rest }) => (
   <span>
@@ -56,13 +56,13 @@ const SubFolioTable = ({ record, lineColumns, onMoveTo, isTransferring }) => {
         <Table.Summary.Cell index={3} />
         <Table.Summary.Cell index={3} >Total </Table.Summary.Cell>
         <Table.Summary.Cell index={3} align="right">
-          {totalDebit > 0 ? `${totalDebit.toLocaleString()}` : "-"}
+          {totalDebit > 0 ? <PriceTag value={Number(totalDebit)} /> : <PriceTag value={0} />}
         </Table.Summary.Cell>
         <Table.Summary.Cell index={4} align="right">
-          {totalCredit > 0 ? `${totalCredit.toLocaleString()}` : "-"}
+          {totalCredit > 0 ? <PriceTag value={Number(totalCredit)} /> : <PriceTag value={0} />}
         </Table.Summary.Cell>
         <Table.Summary.Cell index={6} align="right">
-          {`${totalBalance.toLocaleString()}`}
+          <PriceTag value={Number(totalBalance)} />
         </Table.Summary.Cell>
       </Table.Summary.Row>
     </Table.Summary>
@@ -130,6 +130,7 @@ const FolioOperationsTable = ({
     {
       title: "Room",
       dataIndex: "room",
+      align: "center",
       key: "room",
       render: (_, record) => record.reservationRoom?.room?.roomNo || "-",
     },
@@ -149,11 +150,11 @@ const FolioOperationsTable = ({
       key: "grandTotal",
       align: "right",
       render: (_, record) => {
-        if (record.postingType !== "debit") return "-";
-        const val = record.grandTotal;
+        if (record.postingType !== "debit") return <PriceTag value={0} />;
+        const val = Number(record.grandTotal);
         return val !== undefined && val !== null
-          ? `${Number(val).toLocaleString()}`
-          : "-";
+          ? <PriceTag value={val} />
+          : <PriceTag value={0} />;
       },
     },
     {
@@ -162,11 +163,11 @@ const FolioOperationsTable = ({
       key: "grandTotal",
       align: "right",
       render: (_, record) => {
-        if (record.postingType !== "credit") return "-";
-        const val = record.grandTotal;
+        if (record.postingType !== "credit") return <PriceTag value={0} />;
+        const val = Number(record.grandTotal);
         return val !== undefined && val !== null
-          ? `${Number(val).toLocaleString()}`
-          : "-";
+          ? <PriceTag value={val} />
+          : <PriceTag value={0} />;
       },
     },
     {
@@ -174,10 +175,10 @@ const FolioOperationsTable = ({
       key: "balance",
       align: "right",
       render: (_, record) => {
-        const val = record.grandTotal;
-        if (val === undefined || val === null) return "-";
+        const val = Number(record.grandTotal);
+        if (val === undefined || val === null) return <PriceTag value={0} />;
         const balance = record.postingType === "credit" ? -val : val;
-        return `${Number(balance).toLocaleString()}`;
+        return <PriceTag value={balance} />;
       },
     }
   ];
@@ -199,12 +200,7 @@ const FolioOperationsTable = ({
       key: "action",
       render: (_, record) => {
         return (
-          // <Button onClick={() => onPrintFolio && onPrintFolio(record)}>
-          //   <PrinterOutlined />
-          // </Button>
-          //  <Button onClick={() => onPrintFolio && onPrintFolio(record)}>
           <PrinterOutlined onClick={() => onPrintFolio && onPrintFolio(record)} />
-          // </Button>
         )
       }
     }

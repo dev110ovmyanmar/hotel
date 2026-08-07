@@ -24,6 +24,7 @@ import { upsertDailyOccupaction } from "../../../../../../api/dailyOccupactionAp
 import { useApiMutation } from "../../../../../../hooks/useApiMutation";
 import Toast from "../../../../../../component/Toast/Toast";
 import FormButtons from "../../../../../../component/FormButtons/FormButtons";
+import PriceTag from "../../../../../../component/PriceTag/PriceTag";
 
 const STATUS_COLORS = {
     active: { color: "#389E0D", background: "#F6FFED", borderColor: "#B7EB8F" },
@@ -401,15 +402,11 @@ const DailyOccupationDetailDrawer = ({
                                     <div className="border-t border-slate-100 dark:border-gray-700/60 pt-2 mt-3 space-y-1">
                                         <InfoRow
                                             label="Adult Price"
-                                            value={`${Number(
-                                                data.mealPlan.adultPrice || 0
-                                            ).toLocaleString()} MMK`}
+                                            value={<span className="flex items-center justify-end gap-1"><PriceTag value={data.mealPlan.adultPrice || 0} /><span>MMK</span></span>}
                                         />
                                         <InfoRow
                                             label="Child Price"
-                                            value={`${Number(
-                                                data.mealPlan.childPrice || 0
-                                            ).toLocaleString()} MMK`}
+                                            value={<span className="flex items-center justify-end gap-1"><PriceTag value={data.mealPlan.childPrice || 0} /><span>MMK</span></span>}
                                         />
                                     </div>
                                 </div>
@@ -433,8 +430,8 @@ const DailyOccupationDetailDrawer = ({
                                             label="Meal Charge"
                                             value={
                                                 data.mealCharge
-                                                    ? `${Number(data.mealCharge).toLocaleString()} MMK`
-                                                    : 0
+                                                    ? <span className="flex items-center justify-end gap-1"><PriceTag value={data.mealCharge} /><span>MMK</span></span>
+                                                    : <span className="flex items-center justify-end gap-1"><PriceTag value={0} /><span>MMK</span></span>
                                             }
                                         />
                                         <InfoRow
