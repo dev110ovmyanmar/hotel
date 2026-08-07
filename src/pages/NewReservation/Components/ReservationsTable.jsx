@@ -58,15 +58,15 @@ const ReservationsTable = ({
       dataIndex: ["reservation", "reservationNo"],
       key: "reservationNo",
       align: "center",
-      width: 140,
+      // width: 150,
       render: (text) => <span className="text-indigo-700">{text}</span>,
     },
 
     {
       title: "Room No:",
       key: "roomNo",
-      align: "center",
-      width: 100,
+      align: "left",
+      // width: 100,
       render: (_, record) => {
         const roomNo = record?.room?.roomNo;
 
@@ -86,7 +86,7 @@ const ReservationsTable = ({
       title: "Room Type",
       dataIndex: ["roomType", "name"],
       key: "roomType",
-      align: "center",
+      align: "left",
       width: 120,
     },
 
@@ -94,7 +94,7 @@ const ReservationsTable = ({
       title: "Rate Plan",
       dataIndex: ["ratePlan", "name"],
       key: ["ratePlan"],
-      align: "center",
+      align: "left",
       width: 110,
     },
 
@@ -130,7 +130,7 @@ const ReservationsTable = ({
     {
       title: "Contact & Guests",
       key: "contact",
-      width: 110,
+      width: 125,
       render: (_, record) => (
         <div className="flex flex-col gap-1" style={{ fontSize: "12px" }}>
           <div className="flex items-center gap-1">

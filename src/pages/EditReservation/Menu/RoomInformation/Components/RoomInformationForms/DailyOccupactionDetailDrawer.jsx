@@ -427,33 +427,95 @@ const DailyOccupationDetailDrawer = ({
                                 >
                                     <div className="space-y-1">
                                         <InfoRow
-                                            label="Meal Charge"
+                                            label="Room Charge"
                                             value={
-                                                data.mealCharge
-                                                    ? <span className="flex items-center justify-end gap-1"><PriceTag value={data.mealCharge} /><span>MMK</span></span>
-                                                    : <span className="flex items-center justify-end gap-1"><PriceTag value={0} /><span>MMK</span></span>
+                                                data.dailyCharge?.roomRate
+                                                    ? <span className="flex items-center justify-end gap-1"><PriceTag value={data.dailyCharge.roomRate} /><span>MMK</span></span>
+                                                    : "-"
                                             }
                                         />
                                         <InfoRow
-                                            label="Daily Room Charge"
-                                            value={0
-                                                // data.dailyCharge
-                                                //     ? `${Number(data.dailyCharge).toLocaleString()} MMK`
-                                                //     : 0
+                                            label="Child Charge"
+                                            value={
+                                                data.dailyCharge?.childChargeTotal
+                                                    ? <span className="flex items-center justify-end gap-1"><PriceTag value={data.dailyCharge.childChargeTotal} /><span>MMK</span></span>
+                                                    : "-"
+                                            }
+                                        />
+                                        <InfoRow
+                                            label="Extra Bed Charge"
+                                            value={
+                                                data.dailyCharge?.extraBedTotal
+                                                    ? <span className="flex items-center justify-end gap-1"><PriceTag value={data.dailyCharge.extraBedTotal} /><span>MMK</span></span>
+                                                    : "-"
+                                            }
+                                        />
+                                        <InfoRow
+                                            label="Extra Person Charge"
+                                            value={
+                                                data.dailyCharge?.extraPersonTotal
+                                                    ? <span className="flex items-center justify-end gap-1"><PriceTag value={data.dailyCharge.extraPersonTotal} /><span>MMK</span></span>
+                                                    : "-"
+                                            }
+                                        />
+                                        <InfoRow
+                                            label="Baby Cot Charge"
+                                            value={
+                                                data.dailyCharge?.babyCotTotal
+                                                    ? <span className="flex items-center justify-end gap-1"><PriceTag value={data.dailyCharge.babyCotTotal} /><span>MMK</span></span>
+                                                    : "-"
+                                            }
+                                        />
+                                        <InfoRow
+                                            label="Meal Charge"
+                                            value={
+                                                data.dailyCharge?.mealChargeTotal
+                                                    ? <span className="flex items-center justify-end gap-1"><PriceTag value={data.dailyCharge.mealChargeTotal} /><span>MMK</span></span>
+                                                    : "-"
                                             }
                                         />
                                         <Divider className="my-2" />
                                         <InfoRow
-                                            label="Total Daily Charge"
+                                            label="Sub Total"
                                             highlighted
                                             value={
-                                                // data.dailyCharge || data.mealCharge
-                                                //     ? `${(
-                                                //         Number(data.dailyCharge || 0) +
-                                                //         Number(data.mealCharge || 0)
-                                                //     ).toLocaleString()} MMK`
-                                                //     : 0
-                                                0
+                                                data.dailyCharge?.subTotal
+                                                    ? <span className="flex items-center justify-end gap-1"><PriceTag value={data.dailyCharge.subTotal} /><span>MMK</span></span>
+                                                    : "-"
+                                            }
+                                        />
+                                        <InfoRow
+                                            label="Tax"
+                                            value={
+                                                data.dailyCharge?.taxTotal
+                                                    ? <span className="flex items-center justify-end gap-1"><PriceTag value={data.dailyCharge.taxTotal} /><span>MMK</span></span>
+                                                    : "-"
+                                            }
+                                        />
+                                        <InfoRow
+                                            label="Service Charge"
+                                            value={
+                                                data.dailyCharge?.serviceChargeTotal
+                                                    ? <span className="flex items-center justify-end gap-1"><PriceTag value={data.dailyCharge.serviceChargeTotal} /><span>MMK</span></span>
+                                                    : "-"
+                                            }
+                                        />
+                                        <InfoRow
+                                            label="Discount"
+                                            value={
+                                                data.dailyCharge?.discountTotal
+                                                    ? <span className="flex items-center justify-end gap-1"><PriceTag value={data.dailyCharge.discountTotal} /><span>MMK</span></span>
+                                                    : "-"
+                                            }
+                                        />
+                                        <Divider className="my-2" />
+                                        <InfoRow
+                                            label="Grand Total"
+                                            highlighted
+                                            value={
+                                                data.dailyCharge?.grandTotal
+                                                    ? <span className="flex items-center justify-end gap-1"><PriceTag value={data.dailyCharge.grandTotal} /><span>MMK</span></span>
+                                                    : "-"
                                             }
                                         />
                                     </div>

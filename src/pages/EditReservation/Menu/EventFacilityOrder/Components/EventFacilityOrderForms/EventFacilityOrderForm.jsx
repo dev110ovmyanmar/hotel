@@ -127,14 +127,9 @@ const EventFacilityOrderForm = ({
     label: item.name,
     disabled:
       isView ||
-
       // Create mode
-      (isAdd &&
-        ["completed", "cancelled"].includes(item?.code)) ||
-
-      (isEdit &&
-        currentStatus === "confirmed" &&
-        item.code === "pending"),
+      (isAdd && ["completed", "cancelled"].includes(item?.code)) ||
+      (isEdit && currentStatus === "confirmed" && item.code === "pending"),
   }));
 
   useEffect(() => {
@@ -145,11 +140,11 @@ const EventFacilityOrderForm = ({
     if (drawerOpen && isAdd && initDataFacilityStatus) {
       form.setFieldsValue({
         status: {
-          uuid: initDataFacilityStatus?.find((item) => item?.code === "pending")?.uuid,
+          uuid: initDataFacilityStatus?.find((item) => item?.code === "pending")
+            ?.uuid,
         },
       });
     }
-
   }, [isAdd, initDataFacilityStatus]);
 
   useEffect(() => {
@@ -174,9 +169,7 @@ const EventFacilityOrderForm = ({
 
         eventDate: dayjs(bookingDetails?.eventDate),
 
-        timeRange: [
-          startTime, endTime
-        ],
+        timeRange: [startTime, endTime],
 
         expectedHours: uiFormat,
         reservation: {
@@ -187,7 +180,7 @@ const EventFacilityOrderForm = ({
         },
       });
     }
-  }, [isEdit, isView, bookingDetails])
+  }, [isEdit, isView, bookingDetails]);
 
   useEffect(() => {
     if (eventTime?.[0] && eventTime?.[1]) {
@@ -240,7 +233,6 @@ const EventFacilityOrderForm = ({
           form.resetFields();
           setPage(1);
           Toast.success("Facility Booking Created Successfully!");
-
         },
       });
     }
@@ -250,7 +242,7 @@ const EventFacilityOrderForm = ({
         onSuccess: () => {
           Toast.success("FacilityBooking Updated Successfully!");
           setDrawerOpen(false);
-          setSelectedData(null)
+          setSelectedData(null);
         },
       });
     }
@@ -282,10 +274,11 @@ const EventFacilityOrderForm = ({
             </span>
             {isView ? (
               selectedData?.status?.code !== "completed" &&
-              selectedData?.status?.code !== "cancelled" &&
-              <Button type="primary" onClick={() => setMode("edit")}>
-                Edit
-              </Button>
+              selectedData?.status?.code !== "cancelled" && (
+                <Button type="primary" onClick={() => setMode("edit")}>
+                  Edit
+                </Button>
+              )
             ) : (
               <FormButtons
                 onClick={() => form.submit()}
@@ -356,7 +349,7 @@ const EventFacilityOrderForm = ({
             <Input readOnly={isView} placeholder="Enter Event Name" />
           </Form.Item>
 
-          <Form.Item
+          {/* <Form.Item
             label="Facility Package"
             name="facilityPackage"
             rules={[
@@ -378,6 +371,33 @@ const EventFacilityOrderForm = ({
                 });
               }}
             />
+          </Form.Item> */}
+          <Form.Item
+            label="Facility Package"
+            name="facilityPackage"
+            rules={[
+              { required: true, message: "Facility Package is Required" },
+            ]}
+            getValueProps={(value) => ({
+              value: isView
+                ? facilityPackages.find((item) => item.value === value)?.label
+                : value,
+            })}
+          >
+            {isView ? (
+              <Input readOnly={isView} />
+            ) : (
+              <Select
+                showSearch={{
+                  filterOption: (input, option) =>
+                    (option?.label ?? "")
+                      .toLowerCase()
+                      .includes(input.toLowerCase()),
+                }}
+                options={facilityPackages}
+                placeholder="Select Event Name"
+              />
+            )}
           </Form.Item>
 
           <Form.Item
@@ -467,13 +487,21 @@ const EventFacilityOrderForm = ({
                 }
                 options={facilityStatus}
                 placeholder="Select a Facility Status"
-                disabled={isEdit && (currentStatus === 'completed' || currentStatus === 'cancelled')}
+                disabled={
+                  isEdit &&
+                  (currentStatus === "completed" ||
+                    currentStatus === "cancelled")
+                }
               />
             )}
           </Form.Item>
 
           <Form.Item label="Remark" name="remark">
-            <TextArea readOnly={isView} placeholder="Enter Remark" className={darkModeStyle} />
+            <TextArea
+              readOnly={isView}
+              placeholder="Enter Remark"
+              className={darkModeStyle}
+            />
           </Form.Item>
 
           {/* <Row gutter={16}>

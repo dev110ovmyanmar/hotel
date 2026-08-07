@@ -1,16 +1,26 @@
 import React, { useState, useEffect } from "react";
 import { Button, Divider, Modal, Radio, Space, Table } from "antd";
-import { SwapOutlined, InfoCircleOutlined, FolderOpenOutlined, PrinterOutlined, FileSearchOutlined } from "@ant-design/icons";
+import {
+  SwapOutlined,
+  InfoCircleOutlined,
+  FolderOpenOutlined,
+  PrinterOutlined,
+  FileSearchOutlined,
+} from "@ant-design/icons";
 import dayjs from "dayjs";
-import { darkModeStyle, houseKeepingAndMaintenanceRequestDarkMode, partnerDarkModeStyle, selectedDarkMode, textColorDarkMode, textWhiteInDarkStyle } from "../../../../../utils";
+import {
+  darkModeStyle,
+  houseKeepingAndMaintenanceRequestDarkMode,
+  partnerDarkModeStyle,
+  selectedDarkMode,
+  textColorDarkMode,
+  textWhiteInDarkStyle,
+} from "../../../../../utils";
 import PriceTag from "../../../../../component/PriceTag/PriceTag";
 
 const FolioTitle = ({ rest }) => (
   <span>
-    <span
-    >
-      Folio
-    </span>
+    <span>Folio</span>
     {rest}
   </span>
 );
@@ -24,7 +34,8 @@ const SubFolioTable = ({ record, lineColumns, onMoveTo, isTransferring }) => {
     setSelectedRowKeys([]);
   }, [lines]);
 
-  const isFolioClosed = record.closedAt !== null && record.closedAt !== undefined;
+  const isFolioClosed =
+    record.closedAt !== null && record.closedAt !== undefined;
 
   const rowSelection = {
     selectedRowKeys,
@@ -48,18 +59,32 @@ const SubFolioTable = ({ record, lineColumns, onMoveTo, isTransferring }) => {
   const totalBalance = totalDebit - totalCredit;
 
   const summary = () => (
-    <Table.Summary fixed className="bg-gray-50 font-semibold" {...darkModeStyle} {...textWhiteInDarkStyle} {...textColorDarkMode}>
+    <Table.Summary
+      fixed
+      className="bg-gray-50 font-semibold"
+      {...darkModeStyle}
+      {...textWhiteInDarkStyle}
+      {...textColorDarkMode}
+    >
       <Table.Summary.Row>
         <Table.Summary.Cell index={0} />
         <Table.Summary.Cell index={1} />
         <Table.Summary.Cell index={2} />
         <Table.Summary.Cell index={3} />
-        <Table.Summary.Cell index={3} >Total </Table.Summary.Cell>
+        <Table.Summary.Cell index={3}>Total </Table.Summary.Cell>
         <Table.Summary.Cell index={3} align="right">
-          {totalDebit > 0 ? <PriceTag value={Number(totalDebit)} /> : <PriceTag value={0} />}
+          {totalDebit > 0 ? (
+            <PriceTag value={Number(totalDebit)} />
+          ) : (
+            <PriceTag value={0} />
+          )}
         </Table.Summary.Cell>
         <Table.Summary.Cell index={4} align="right">
-          {totalCredit > 0 ? <PriceTag value={Number(totalCredit)} /> : <PriceTag value={0} />}
+          {totalCredit > 0 ? (
+            <PriceTag value={Number(totalCredit)} />
+          ) : (
+            <PriceTag value={0} />
+          )}
         </Table.Summary.Cell>
         <Table.Summary.Cell index={6} align="right">
           <PriceTag value={Number(totalBalance)} />
@@ -70,19 +95,35 @@ const SubFolioTable = ({ record, lineColumns, onMoveTo, isTransferring }) => {
 
   return (
     <div>
-      <div style={{
-        display: "flex",
-        justifyContent: "end",
-        alignItems: "center",
-        gap: "10px",
-        padding: "8px",
-        borderTop: "1px solid #e8e8e8",
-      }}>
-        <Button onClick={() => setSelectedRowKeys([])}>Cancel</Button>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "end",
+          alignItems: "center",
+          gap: "10px",
+          padding: "8px",
+          borderTop: "1px solid #e8e8e8",
+        }}
+      >
+        <Button
+          onClick={() => setSelectedRowKeys([])}
+          disabled={selectedRowKeys.length === 0 || isTransferring}
+          className={
+            selectedRowKeys.length === 0 || isTransferring
+              ? "text-default"
+              : " dark:!bg-gray-50 dark:!text-gray-800"
+          }
+        >
+          Cancel
+        </Button>
+
         <Button
           type="primary"
           disabled={selectedRowKeys.length === 0 || isTransferring}
           onClick={() => onMoveTo(record, selectedRowKeys)}
+          className={
+            selectedRowKeys.length === 0 || isTransferring ? "text-default" : ""
+          }
         >
           Move To
         </Button>
@@ -107,7 +148,7 @@ const FolioOperationsTable = ({
   isFolioLineIsEmpty,
   onTransferLines,
   isTransferring,
-  onPrintFolio
+  onPrintFolio,
 }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedFolio, setSelectedFolio] = useState(null);
@@ -152,9 +193,11 @@ const FolioOperationsTable = ({
       render: (_, record) => {
         if (record.postingType !== "debit") return <PriceTag value={0} />;
         const val = Number(record.grandTotal);
-        return val !== undefined && val !== null
-          ? <PriceTag value={val} />
-          : <PriceTag value={0} />;
+        return val !== undefined && val !== null ? (
+          <PriceTag value={val} />
+        ) : (
+          <PriceTag value={0} />
+        );
       },
     },
     {
@@ -165,9 +208,11 @@ const FolioOperationsTable = ({
       render: (_, record) => {
         if (record.postingType !== "credit") return <PriceTag value={0} />;
         const val = Number(record.grandTotal);
-        return val !== undefined && val !== null
-          ? <PriceTag value={val} />
-          : <PriceTag value={0} />;
+        return val !== undefined && val !== null ? (
+          <PriceTag value={val} />
+        ) : (
+          <PriceTag value={0} />
+        );
       },
     },
     {
@@ -180,7 +225,7 @@ const FolioOperationsTable = ({
         const balance = record.postingType === "credit" ? -val : val;
         return <PriceTag value={balance} />;
       },
-    }
+    },
   ];
 
   const columns = [
@@ -200,10 +245,12 @@ const FolioOperationsTable = ({
       key: "action",
       render: (_, record) => {
         return (
-          <PrinterOutlined onClick={() => onPrintFolio && onPrintFolio(record)} />
-        )
-      }
-    }
+          <PrinterOutlined
+            onClick={() => onPrintFolio && onPrintFolio(record)}
+          />
+        );
+      },
+    },
   ];
 
   // Expandable: render folioLines as a nested table
@@ -238,7 +285,7 @@ const FolioOperationsTable = ({
           setSelectedFolio(null);
           setSelectedLineIds([]);
           setTargetFolioUuid(null);
-        }
+        },
       );
     }
   };
@@ -263,7 +310,8 @@ const FolioOperationsTable = ({
           className="custom-folio-table"
           expandable={{
             expandedRowRender,
-            rowExpandable: (record) => record.folioLines && record.folioLines.length > 0,
+            rowExpandable: (record) =>
+              record.folioLines && record.folioLines.length > 0,
           }}
         />
       </div>
@@ -275,8 +323,16 @@ const FolioOperationsTable = ({
               <SwapOutlined className="text-lg animate-pulse" />
             </div>
             <div>
-              <h3 className={`text-base font-semibold text-gray-800 leading-none m-0 ${textColorDarkMode}`}>Transfer Folio Lines</h3>
-              <p className={`text-xs text-gray-500 font-normal mt-1 ${textWhiteInDarkStyle}`}>Move selected line items to another folio</p>
+              <h3
+                className={`text-base font-semibold text-gray-800 leading-none m-0 ${textColorDarkMode}`}
+              >
+                Transfer Folio Lines
+              </h3>
+              <p
+                className={`text-xs text-gray-500 font-normal mt-1 ${textWhiteInDarkStyle}`}
+              >
+                Move selected line items to another folio
+              </p>
             </div>
           </div>
         }
@@ -292,10 +348,12 @@ const FolioOperationsTable = ({
         confirmLoading={isTransferring}
         okButtonProps={{
           disabled: !targetFolioUuid,
-          className: "bg-blue-600 hover:bg-blue-700 border-none font-medium px-5 rounded-lg"
+          className:
+            "bg-blue-600 hover:bg-blue-700 border-none font-medium px-5 rounded-lg",
         }}
         cancelButtonProps={{
-          className: "rounded-lg border-gray-200 hover:text-blue-600 hover:border-blue-500"
+          className:
+            "rounded-lg border-gray-200 hover:text-blue-600 hover:border-blue-500",
         }}
         okText="Submit"
         centered
@@ -304,78 +362,103 @@ const FolioOperationsTable = ({
       >
         <div className="py-4">
           {/* Info Banner */}
-          <div className={`bg-blue-50/60 border border-blue-100 rounded-xl p-3 mb-4 flex items-start gap-2.5 mx-2 ${darkModeStyle}`}>
+          <div
+            className={`bg-blue-50/60 border border-blue-100 rounded-xl p-3 mb-4 flex items-start gap-2.5 mx-2 ${darkModeStyle}`}
+          >
             <InfoCircleOutlined className="text-blue-500 mt-0.5 text-sm flex-shrink-0" />
             <div className="text-xs text-blue-800 leading-relaxed">
-              Moving <strong className="text-blue-900">{selectedLineIds.length}</strong> selected line item{selectedLineIds.length !== 1 ? 's' : ''} from <strong className="text-blue-900">{selectedFolio?.folioNo}</strong>.
+              Moving{" "}
+              <strong className="text-blue-900">
+                {selectedLineIds.length}
+              </strong>{" "}
+              selected line item{selectedLineIds.length !== 1 ? "s" : ""} from{" "}
+              <strong className="text-blue-900">
+                {selectedFolio?.folioNo}
+              </strong>
+              .
             </div>
           </div>
 
-          <div className={`mb-2 text-xs font-semibold text-gray-500 tracking-wider mx-2 ${textWhiteInDarkStyle}`}>
+          <div
+            className={`mb-2 text-xs font-semibold text-gray-500 tracking-wider mx-2 ${textWhiteInDarkStyle}`}
+          >
             Select Target Folio
           </div>
 
           {/* Card Selection List */}
-          <div className={`max-h-[280px] overflow-y-auto pr-1 py-1 flex flex-col gap-2.5 custom-scrollbar `}>
-            {
-              dataSource?.length > 1 ? (
-                <>
-                  {dataSource
-                    ?.filter((folio) => !selectedFolio || folio.id !== selectedFolio.id)
-                    ?.map((folio) => {
-                      const isSelected = targetFolioUuid === folio.uuid;
-                      const isClosed = folio.closedAt !== null && folio.closedAt !== undefined;
-                      const currency = folio.currency?.code || "MMK";
-                      const amountText = folio.grandTotal !== undefined
+          <div
+            className={`max-h-[280px] overflow-y-auto pr-1 py-1 flex flex-col gap-2.5 custom-scrollbar `}
+          >
+            {dataSource?.length > 1 ? (
+              <>
+                {dataSource
+                  ?.filter(
+                    (folio) => !selectedFolio || folio.id !== selectedFolio.id,
+                  )
+                  ?.map((folio) => {
+                    const isSelected = targetFolioUuid === folio.uuid;
+                    const isClosed =
+                      folio.closedAt !== null && folio.closedAt !== undefined;
+                    const currency = folio.currency?.code || "MMK";
+                    const amountText =
+                      folio.grandTotal !== undefined
                         ? `${Number(folio.grandTotal).toLocaleString()} ${currency}`
                         : "-";
 
-                      return (
-                        <div
-                          key={folio.id}
-                          onClick={() => !isClosed && setTargetFolioUuid(folio.uuid)}
-                          className={`
+                    return (
+                      <div
+                        key={folio.id}
+                        onClick={() =>
+                          !isClosed && setTargetFolioUuid(folio.uuid)
+                        }
+                        className={`
                       group relative flex items-center justify-between p-3 rounded-xl border transition-all duration-200 mx-2
-                      ${isClosed
-                              ? 'border-gray-200 bg-gray-50/50 opacity-60 cursor-not-allowed'
-                              : isSelected
-                                ? 'border-blue-500 bg-blue-50/40 shadow-sm ring-1 ring-blue-500 cursor-pointer'
-                                : 'border-gray-200 hover:border-blue-300 hover:bg-gray-50/50 cursor-pointer'
-                            }
+                      ${
+                        isClosed
+                          ? "border-gray-200 bg-gray-50/50 opacity-60 cursor-not-allowed"
+                          : isSelected
+                            ? "border-blue-500 bg-blue-50/40 shadow-sm ring-1 ring-blue-500 cursor-pointer"
+                            : "border-gray-200 hover:border-blue-300 hover:bg-gray-50/50 cursor-pointer"
+                      }
                     `}
-                        >
-                          <div className="flex items-center gap-3">
-                            {!isClosed && (
-                              <Radio
-                                checked={isSelected}
-                                value={folio.uuid}
-                                className="m-0 pointer-events-none"
-                              />
-                            )}
-                            <div className="flex items-center gap-2">
-                              <span className={`font-semibold text-sm ${isClosed ? 'text-gray-400' : 'text-gray-800 group-hover:text-blue-600'} transition-colors ${textColorDarkMode}`}>
-                                {folio.folioNo}
+                      >
+                        <div className="flex items-center gap-3">
+                          {!isClosed && (
+                            <Radio
+                              checked={isSelected}
+                              value={folio.uuid}
+                              className="m-0 pointer-events-none"
+                            />
+                          )}
+                          <div className="flex items-center gap-2">
+                            <span
+                              className={`font-semibold text-sm ${isClosed ? "text-gray-400" : "text-gray-800 group-hover:text-blue-600"} transition-colors ${textColorDarkMode}`}
+                            >
+                              {folio.folioNo}
+                            </span>
+                            {isClosed && (
+                              <span className="text-xs text-gray-500 bg-gray-200 border border-gray-300 rounded-full px-2 py-0.5">
+                                It is paid
                               </span>
-                              {isClosed && (
-                                <span className="text-xs text-gray-500 bg-gray-200 border border-gray-300 rounded-full px-2 py-0.5">
-                                  It is paid
-                                </span>
-                              )}
-                            </div>
+                            )}
                           </div>
                         </div>
-                      );
-                    })}
-                </>
-              ) : (
-                <div className={`flex flex-col m-2 items-center justify-center py-10 border border-dashed border-gray-300 rounded-xl bg-gray-50 ${darkModeStyle}`}>
-                  <FileSearchOutlined className="text-4xl text-gray-400 mb-3" />
-                  <h3 className={`text-base font-semibold text-gray-700 ${textColorDarkMode}`}>
-                    No Folios Found
-                  </h3>
-                </div>
-              )
-            }
+                      </div>
+                    );
+                  })}
+              </>
+            ) : (
+              <div
+                className={`flex flex-col m-2 items-center justify-center py-10 border border-dashed border-gray-300 rounded-xl bg-gray-50 ${darkModeStyle}`}
+              >
+                <FileSearchOutlined className="text-4xl text-gray-400 mb-3" />
+                <h3
+                  className={`text-base font-semibold text-gray-700 ${textColorDarkMode}`}
+                >
+                  No Folios Found
+                </h3>
+              </div>
+            )}
           </div>
         </div>
       </Modal>

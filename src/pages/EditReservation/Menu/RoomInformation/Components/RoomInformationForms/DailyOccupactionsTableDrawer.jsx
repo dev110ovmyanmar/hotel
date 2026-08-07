@@ -45,8 +45,8 @@ const DailyOccupactionsTableDrawer = ({
 
     // Always derive selected item from fresh API data
     const selectedRow = useMemo(() => {
-        if (!selectedRowKey || !data?.dailyOccupancy) return null;
-        return data.dailyOccupancy.find(
+        if (!selectedRowKey || !data?.dailyOccupancies) return null;
+        return data.dailyOccupancies.find(
             (item) => (item.uuid || item.stayDate) === selectedRowKey
         );
     }, [data, selectedRowKey]);
@@ -77,7 +77,7 @@ const DailyOccupactionsTableDrawer = ({
 
     const reservationCode = data?.reservationNo || "-";
     const guestName = data?.guestName;
-    const roomLabel = data?.roomType + " (" + data?.roomNo + ")";
+    const roomLabel = data?.roomType + (data?.roomNo ? ` (${data?.roomNo})` : "");
 
 
     const columns = [
@@ -159,7 +159,7 @@ const DailyOccupactionsTableDrawer = ({
             key: "action",
             width: 100,
             align: "center",
-            onCell: () => ({ style: { verticalAlign: "top", paddingTop: 8 } }),
+            onCell: () => ({ style: { verticalAlign: "center", paddingTop: 15 } }),
             render: (_, record) => {
                 return (
                     <Dropdown
@@ -201,10 +201,10 @@ const DailyOccupactionsTableDrawer = ({
                     <div>
                         <div className="relative rounded-lg border border-slate-200 dark:border-gray-700 bg-slate-50 dark:bg-gray-800/60 px-5 py-4">
                             <div className="space-y-0.5">
-                                <InfoLine label="Reservation No" value={reservationCode} />
-                                <InfoLine label="Guest" value={guestName} />
-                                <InfoLine label="Room" value={roomLabel} />
-                                <InfoLine label="Stay" value={stayText} />
+                                <InfoLine label="Reservation No" value={reservationCode || "-"} />
+                                <InfoLine label="Guest" value={guestName || "-"} />
+                                <InfoLine label="Room" value={roomLabel || "-"} />
+                                <InfoLine label="Stay" value={stayText || "-"} />
                             </div>
                         </div>
                     </div>
@@ -214,25 +214,41 @@ const DailyOccupactionsTableDrawer = ({
                         <h3 className="text-base font-bold text-slate-800 dark:text-white mb-3">
                             Daily Stay List
                         </h3>
-                        <div className="rounded-lg border border-slate-200 dark:border-gray-700 overflow-hidden bg-white dark:bg-gray-800 shadow-sm">
-                            <Table
-                                size="small"
-                                expandable={{
-                                    showExpandColumn: false,
-                                }}
-                                rowKey={(record) => record.uuid || record.stayDate}
-                                columns={columns}
-                                dataSource={data?.dailyOccupancy ?? []}
-                                loading={isLoading}
-                                pagination={false}
-                                scroll={{ x: 600 }}
-                                rowClassName={(_, index) =>
-                                    index % 2 === 0
-                                        ? "bg-white dark:bg-gray-800"
-                                        : "bg-slate-50/60 dark:bg-gray-800/50"
-                                }
-                            />
-                        </div>
+
+                        {
+                            data?.roomStatus?.code == "booked" ?
+                                <div className="rounded-lg border border-dashed border-slate-300 dark:border-gray-600 bg-slate-50 dark:bg-gray-800/40 px-5 py-8 text-center">
+                                    <div className="text-sm text-slate-400 dark:text-gray-500">
+                                        Daily occupancy has not been generated yet.
+                                        It will be available after confirmation.
+                                    </div>
+                                </div> :
+                                data?.roomStatus?.code == "cancelled" ?
+                                    <div className="rounded-lg border border-dashed border-slate-300 dark:border-gray-600 bg-slate-50 dark:bg-gray-800/40 px-5 py-8 text-center">
+                                        <div className="text-sm text-slate-400 dark:text-gray-500">
+                                            Daily occupancy is unavailable because this reservation was cancelled.
+                                        </div>
+                                    </div> :
+                                    <div className="rounded-lg border border-slate-200 dark:border-gray-700 overflow-hidden bg-white dark:bg-gray-800 shadow-sm">
+                                        <Table
+                                            size="small"
+                                            expandable={{
+                                                showExpandColumn: false,
+                                            }}
+                                            rowKey={(record) => record.uuid || record.stayDate}
+                                            columns={columns}
+                                            dataSource={data?.dailyOccupancies ?? []}
+                                            loading={isLoading}
+                                            pagination={false}
+                                            scroll={{ x: 600 }}
+                                            rowClassName={(_, index) =>
+                                                index % 2 === 0
+                                                    ? "bg-white dark:bg-gray-800"
+                                                    : "bg-slate-50/60 dark:bg-gray-800/50"
+                                            }
+                                        />
+                                    </div>
+                        }
                     </div>
                 </div>
             </Drawer>

@@ -15,13 +15,18 @@ import {
   Typography,
   Tag,
   Checkbox,
+  Tooltip,
 } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
 import { queryClient } from "../../../../../../app/queryClient";
 import useApiQuery from "../../../../../../hooks/useApiQuery";
 import { reservationRoomMeta } from "../../../../../../api/reservationSectionApi";
 import { useApiMutation } from "../../../../../../hooks/useApiMutation";
-import { createFoodBeverageOrder, foodBeverageOrderDetails, updateFoodBeverageOrder } from "../../../../../../api/foodBeverageOrder";
+import {
+  createFoodBeverageOrder,
+  foodBeverageOrderDetails,
+  updateFoodBeverageOrder,
+} from "../../../../../../api/foodBeverageOrder";
 import Toast from "../../../../../../component/Toast/Toast";
 import FormButtons from "../../../../../../component/FormButtons/FormButtons";
 import dayjs from "dayjs";
@@ -37,13 +42,13 @@ const FoodBeverageOrderForm = ({
   reservationRoomId,
   mode,
   setMode,
-  selectedData
+  selectedData,
 }) => {
   const [form] = Form.useForm();
   const itemsValue = Form.useWatch("items", form);
 
   const isAdd = mode === "add";
-  console.log(isAdd, "IsAddtrue?")
+  console.log(isAdd, "IsAddtrue?");
   const isEdit = mode === "edit";
   const isView = mode === "view";
   const [orders, setOrders] = useState([{ id: Date.now() }]);
@@ -52,13 +57,15 @@ const FoodBeverageOrderForm = ({
 
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
   const allStatuses = initData?.statuses;
-  const consumptionType = allStatuses.consumption_type.map(order => (
-    { value: order?.uuid, label: order?.name }
-  ));
+  const consumptionType = allStatuses.consumption_type.map((order) => ({
+    value: order?.uuid,
+    label: order?.name,
+  }));
 
-  const orderType = allStatuses.order_type.map(type => (
-    { value: type?.uuid, label: type?.name }
-  ));
+  const orderType = allStatuses.order_type.map((type) => ({
+    value: type?.uuid,
+    label: type?.name,
+  }));
 
   const { data } = useApiQuery({
     fetchQueryName: "order",
@@ -70,17 +77,16 @@ const FoodBeverageOrderForm = ({
     },
   });
 
-  const menuItemOptions = data?.menu_items?.map(menu => (
-    { value: menu?.uuid, label: menu?.name }
-  ));
+  const menuItemOptions = data?.menu_items?.map((menu) => ({
+    value: menu?.uuid,
+    label: menu?.name,
+  }));
 
-  const roomOptions = data?.rooms?.map(menu => (
-    {
-      value: menu?.room.uuid,
-      label: menu?.room.roomNo,
-      // disabled: 
-    }
-  ));
+  const roomOptions = data?.rooms?.map((menu) => ({
+    value: menu?.room.uuid,
+    label: menu?.room.roomNo,
+    // disabled:
+  }));
 
   const addMenu = () => {
     setOrders([...orders, { id: Date.now() }]);
@@ -117,58 +123,55 @@ const FoodBeverageOrderForm = ({
 
   const handleSubmit = (values) => {
     console.log("FormValues:", values);
-    console.log(mode, "FormSubmitmode")
-    const menuItems = values?.items.map(item => ({
+    console.log(mode, "FormSubmitmode");
+    const menuItems = values?.items.map((item) => ({
       uuid: item.menu,
       quantity: item.quantity,
-      modifiers: item?.modifier?.map(uuid => ({
+      modifiers: item?.modifier?.map((uuid) => ({
         uuid: uuid,
         quantity: 1,
       })),
     }));
     const payload = {
-      orderAt: values?.orderDate && values?.orderTime && isEdit
-        ? `${values.orderDate.format("YYYY-MM-DD")} ${values.orderTime.format("HH:mm:ss")}`
-        : null,
+      orderAt:
+        values?.orderDate && values?.orderTime && isEdit
+          ? `${values.orderDate.format("YYYY-MM-DD")} ${values.orderTime.format("HH:mm:ss")}`
+          : null,
       menuItems: menuItems,
       consumptionType: {
-        uuid: values?.consumptionType
+        uuid: values?.consumptionType,
       },
       orderStatus: {
-        uuid: values?.orderStatus
+        uuid: values?.orderStatus,
       },
       orderType: {
-        uuid: values?.orderType
+        uuid: values?.orderType,
       },
       uuid: isEdit ? selectedData?.uuid : null,
       reservation: {
-        uuid: isAdd ? reservationUuid : null
+        uuid: isAdd ? reservationUuid : null,
       },
     };
     if (isAdd) {
-      createFoodBeverate .mutate(payload, {
+      createFoodBeverate.mutate(payload, {
         onSuccess: () => {
           Toast.success("Food Order Created Successfully");
-          onClose(false)
-        }
-      })
+          onClose(false);
+        },
+      });
     }
 
     if (isEdit) {
       updateFoodBeverate.mutate(payload, {
         onSuccess: () => {
           Toast.success("Food Order Updated Successfully");
-          onClose(false)
-        }
-      })
+          onClose(false);
+        },
+      });
     }
   };
 
-
-
-  const {
-    data: fnbOrderDetails
-  } = useApiQuery({
+  const { data: fnbOrderDetails } = useApiQuery({
     fetchQueryName: "fnb-order-details",
     fetchQueryFunction: foodBeverageOrderDetails,
     params: {
@@ -178,7 +181,7 @@ const FoodBeverageOrderForm = ({
       enabled: !!selectedData?.uuid,
     },
   });
-  console.log(fnbOrderDetails, "fnbOrderDetailsSelectedDataIn")
+  console.log(fnbOrderDetails, "fnbOrderDetailsSelectedDataIn");
 
   useEffect(() => {
     if (fnbOrderDetails && (isView || isEdit)) {
@@ -190,7 +193,7 @@ const FoodBeverageOrderForm = ({
           quantity: item.quantity,
           pricePerQty: item.unitPrice,
           modifier: item?.fnbOrderItemModifiers?.map(
-            item => item?.modifiers?.uuid
+            (item) => item?.modifiers?.uuid,
           ),
         })) || [];
 
@@ -218,7 +221,7 @@ const FoodBeverageOrderForm = ({
 
   useEffect(() => {
     const pendingStatus = allStatuses?.order_status?.find(
-      (status) => status.code === "pending"
+      (status) => status.code === "pending",
     );
 
     if (pendingStatus) {
@@ -234,38 +237,24 @@ const FoodBeverageOrderForm = ({
     value: order.uuid,
     label: order.name,
     disabled:
-      (
-        isAdd &&
-        ["cancelled", "completed"].includes(order.code)
-      ) ||
-      (
-        isEdit &&
-        (
-          currentOrderStatus === "pending" &&
-          ["cancelled", "completed"].includes(order.code)
-        ) ||
-        (
-          currentOrderStatus === "in_progress" &&
-          ["pending"].includes(order.code)
-        )
-      ),
+      (isAdd && ["cancelled", "completed"].includes(order.code)) ||
+      (isEdit &&
+        currentOrderStatus === "pending" &&
+        ["cancelled", "completed"].includes(order.code)) ||
+      (currentOrderStatus === "in_progress" &&
+        ["pending"].includes(order.code)),
   }));
 
   const handleChangeMenu = (value, option, index) => {
     setMenuUuid((prev) => ({
       ...prev,
-      [index]: value
-    }))
+      [index]: value,
+    }));
 
-    const selectedMenu = data?.menu_items?.find(
-      (menu) => menu.uuid === value
-    );
+    const selectedMenu = data?.menu_items?.find((menu) => menu.uuid === value);
 
     if (selectedMenu) {
-      form.setFieldValue(
-        ["items", index, "pricePerQty"],
-        selectedMenu.price
-      );
+      form.setFieldValue(["items", index, "pricePerQty"], selectedMenu.price);
     }
   };
 
@@ -294,15 +283,16 @@ const FoodBeverageOrderForm = ({
               )
             ) : (
               <>
-                {
-                  isAdd &&
-                  <Button type="primary" onClick={() => {
-                    form.submit(),
-                      setMode("add")
-                  }}>
+                {isAdd && (
+                  <Button
+                    type="primary"
+                    onClick={() => {
+                      (form.submit(), setMode("add"));
+                    }}
+                  >
                     Create
                   </Button>
-                }
+                )}
               </>
             )}
           </div>
@@ -314,28 +304,29 @@ const FoodBeverageOrderForm = ({
           onFinish={handleSubmit}
           disabled={isView}
         >
-          <Card size="small"
-            title={(
+          <Card
+            size="small"
+            title={
               <>
                 <div className="flex justify-between items-center">
                   <div>Order Info</div>
-                  {
-                    isEdit &&
+                  {isEdit && (
                     <div>
-                      <Button type="primary" onClick={() => {
-                        form.submit(),
-                          setMode("edit")
-                      }} >
+                      <Button
+                        type="primary"
+                        onClick={() => {
+                          (form.submit(), setMode("edit"));
+                        }}
+                      >
                         Update Order Info
                       </Button>
                     </div>
-                  }
+                  )}
                 </div>
               </>
-
-            )}
+            }
             className="shadow-sm rounded"
-            headStyle={{ backgroundColor: "#fafafa" }}
+            // headStyle={{ backgroundColor: "#fafafa" }}
           >
             <div className="grid grid-cols-2 gap-4">
               <Form.Item
@@ -398,7 +389,10 @@ const FoodBeverageOrderForm = ({
                   placeholder="Select Order Status"
                   style={{ width: "100%" }}
                   options={orderStatus}
-                  disabled={currentOrderStatus === "completed" || currentOrderStatus === "cancelled"}
+                  disabled={
+                    currentOrderStatus === "completed" ||
+                    currentOrderStatus === "cancelled"
+                  }
                 />
               </Form.Item>
             </div>
@@ -406,11 +400,13 @@ const FoodBeverageOrderForm = ({
           <Space direction="vertical" size="large" className="w-full">
             {orders.map((order, index) => {
               // selected menu for card
-              const selectedMenuItem = data?.menu_items
-                ?.find((addon) => addon?.uuid === menuUuid[index]);
+              const selectedMenuItem = data?.menu_items?.find(
+                (addon) => addon?.uuid === menuUuid[index],
+              );
 
               const hasSelectedModifiers =
-                fnbOrderDetails?.fnbOrderItems?.[index]?.fnbOrderItemModifiers?.length > 0;
+                fnbOrderDetails?.fnbOrderItems?.[index]?.fnbOrderItemModifiers
+                  ?.length > 0;
 
               const showModifier = isAdd
                 ? selectedMenuItem?.modifiers?.length > 0
@@ -418,32 +414,29 @@ const FoodBeverageOrderForm = ({
               return (
                 <Card
                   key={order.id}
-                  title={(
+                  title={
                     <>
                       <div className="flex justify-between items-center">
                         <div>{`Order ${index + 1}`}</div>
-                        {
-                          isEdit &&
+                        {isEdit && (
                           <div>
-                            <Button type="primary" >
-                              Update
-                            </Button>
+                            <Button type="primary">Update</Button>
                           </div>
-                        }
+                        )}
                       </div>
                     </>
-                  )}
+                  }
                   className="shadow-sm rounded mb-4 border-l-4 border-blue-500"
-                  headStyle={{ backgroundColor: "#fafafa" }}
+                  // headStyle={{ backgroundColor: "#fafafa" }}
                   size="small"
                   extra={
                     orders.length > 1 && (
-                      <Button
-                        type="text"
-                        danger
-                        icon={<DeleteOutlined />}
-                        onClick={() => deleteOrder(order.id, index)}
-                      />
+                      <Tooltip title="Delete Order">
+                        <DeleteOutlined
+                          style={{ fontSize: "16px", color: "red" }}
+                          onClick={() => deleteOrder(order.id, index)}
+                        />
+                      </Tooltip>
                     )
                   }
                 >
@@ -455,7 +448,9 @@ const FoodBeverageOrderForm = ({
                     >
                       <Select
                         options={menuItemOptions}
-                        onChange={(value, option) => handleChangeMenu(value, option, index)}
+                        onChange={(value, option) =>
+                          handleChangeMenu(value, option, index)
+                        }
                         placeholder="Select Menu"
                       />
                     </Form.Item>
@@ -477,59 +472,61 @@ const FoodBeverageOrderForm = ({
                   {/* Add on List */}
                   {orders?.length > 0 && (
                     <div>
-                      {showModifier
-                        ? (
-                          <div>
-                            <div className="flex justify-between items-center mb-2">
-                              <Text strong>Add on Menu</Text>
-                              <Tag color="default" className="mr-0">
-                                Optional
-                              </Tag>
-                            </div>
-                            <Form.Item
-                              name={["items", index, "modifier"]}
-                              className="mb-0"
-                            >
-                              <Checkbox.Group className="w-full">
-                                <div className="space-y-2">
-                                  {selectedMenuItem?.modifiers?.map(modify => (
-                                    <div
-                                      // key={modify.label}
-                                      className="grid grid-cols-3 gap-3 items-center py-2 border-b border-gray-50 hover:bg-gray-50 transition-colors"
-                                    >
-                                      {/*  Select Box + Name */}
-                                      <div className="flex items-center">
-                                        <Checkbox key={modify.uuid} value={modify.uuid}>
-                                          <span className="ml-2 text-sm">
-                                            {modify.name}
-                                          </span>
-                                        </Checkbox>
-                                      </div>
-
-                                      {/*  Quantity */}
-                                      <div className="text-center">
-                                        <InputNumber {...sharedProps} value={modify?.unitCost} />
-                                      </div>
-
-                                      {/* Price  */}
-                                      <div className=" border border-gray-300 p-1 rounded ">
-                                        <Text className="text-sm font-medium">
-                                          {modify.unitPrice.toLocaleString()}{" "}
-                                          <span className="ml-15">MMK</span>
-                                        </Text>
-                                      </div>
-                                    </div>
-                                  ))
-                                  }
-                                </div>
-                              </Checkbox.Group>
-                            </Form.Item>
+                      {showModifier ? (
+                        <div>
+                          <div className="flex justify-between items-center mb-2">
+                            <Text strong>Add on Menu</Text>
+                            <Tag color="default" className="mr-0">
+                              Optional
+                            </Tag>
                           </div>
-                        ) : null}
+                          <Form.Item
+                            name={["items", index, "modifier"]}
+                            className="mb-0"
+                          >
+                            <Checkbox.Group className="w-full">
+                              <div className="space-y-2">
+                                {selectedMenuItem?.modifiers?.map((modify) => (
+                                  <div
+                                    // key={modify.label}
+                                    className="grid grid-cols-3 gap-3 items-center py-2 border-b border-gray-50 hover:bg-gray-50 transition-colors"
+                                  >
+                                    {/*  Select Box + Name */}
+                                    <div className="flex items-center">
+                                      <Checkbox
+                                        key={modify.uuid}
+                                        value={modify.uuid}
+                                      >
+                                        <span className="ml-2 text-sm">
+                                          {modify.name}
+                                        </span>
+                                      </Checkbox>
+                                    </div>
 
+                                    {/*  Quantity */}
+                                    <div className="text-center">
+                                      <InputNumber
+                                        {...sharedProps}
+                                        value={modify?.unitCost}
+                                      />
+                                    </div>
+
+                                    {/* Price  */}
+                                    <div className=" border border-gray-300 p-1 rounded ">
+                                      <Text className="text-sm font-medium">
+                                        {modify.unitPrice.toLocaleString()}{" "}
+                                        <span className="ml-15">MMK</span>
+                                      </Text>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </Checkbox.Group>
+                          </Form.Item>
+                        </div>
+                      ) : null}
 
                       {/*  selected add on labels */}
-
                     </div>
                   )}
                 </Card>
@@ -537,14 +534,13 @@ const FoodBeverageOrderForm = ({
             })}
           </Space>
 
-          {
-            !isView &&
+          {!isView && (
             <div className=" mt-3 ">
               <Button className="custom-blue-btn" onClick={addMenu}>
                 Add Menu
               </Button>
             </div>
-          }
+          )}
         </Form>
       </Drawer>
     </>
