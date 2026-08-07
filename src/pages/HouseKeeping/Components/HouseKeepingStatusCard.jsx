@@ -70,7 +70,7 @@ const HouseKeepingStatusCard = ({ data, onEdit, onView }) => {
   return (
     <div
       onClick={onView}
-      className="group relative bg-white border border-gray-200 rounded p-3 shadow-sm hover:shadow-md hover:border-blue-400 transition-all cursor-pointer flex flex-col h-fit"
+      className="group relative bg-white border border-gray-200 dark:border-gray-500 rounded p-3 shadow-sm dark:shadow-gray-400 hover:shadow-md hover:border-blue-400 transition-all cursor-pointer flex flex-col h-fit"
     >
       {/* Header: Room & Mapped Status Tag */}
       <div className="flex justify-between items-start mb-3">
@@ -106,7 +106,7 @@ const HouseKeepingStatusCard = ({ data, onEdit, onView }) => {
       </div>
 
       {/* Core Details Grid */}
-      <div className="flex-grow space-y-0.5">
+      <div className="flex-grow space-y-0.5 text-default">
         <TightRow
           icon={HomeOutlined}
           label="Floor"
@@ -146,7 +146,7 @@ const HouseKeepingStatusCard = ({ data, onEdit, onView }) => {
       </div>
 
       {/* Actions Footer */}
-      <div className="mt-3 pt-2 border-t border-gray-100 flex items-center justify-end gap-4">
+      <div className="mt-3 pt-2 border-t border-gray-200 dark:border-gray-400 flex items-center justify-end gap-4">
         {viewPermission && (
           <button
             onClick={(e) => {

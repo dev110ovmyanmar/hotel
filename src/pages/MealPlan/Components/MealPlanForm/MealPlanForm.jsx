@@ -53,13 +53,6 @@ const MeanPlanForm = ({
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
 
   const statuses = initData?.statuses?.status;
-  console.log(statuses, "statuses");
-  // const statuses = initData?.statuses?.status
-  //   ?.filter((item) => item.code !== "blocked")
-  //   ?.map((status) => ({
-  //     value: status.uuid,
-  //     label: status.name,
-  //   }));
 
   const upsertMealPlans = useApiMutation({
     mutationFn: upsertMealPlan,
@@ -72,7 +65,7 @@ const MeanPlanForm = ({
     fetchQueryFunction: mealPlanDetails,
     params: { uuid: selectedData?.uuid },
     options: {
-      enabled: !!selectedData?.uuid,
+      enabled: drawerOpen && !!selectedData?.uuid,
     },
   });
 
@@ -202,16 +195,34 @@ const MeanPlanForm = ({
             layout="vertical"
             validateTrigger="onSubmit"
             onFinish={onFinish}
+            initialValues={{
+              childFreeAgeBelow: 5,
+            }}
           >
-            <Form.Item
-              label="Name"
-              name="name"
-              rules={[
-                { required: true, message: "Meal Plan Name is Required" },
-              ]}
-            >
-              <Input readOnly={isView} placeholder="Enter Meal Plan Name" />
-            </Form.Item>
+            <Row gutter={16}>
+              <Col span={12}>
+                <Form.Item
+                  label="Name"
+                  name="name"
+                  rules={[
+                    { required: true, message: "Meal Plan Name is Required" },
+                  ]}
+                >
+                  <Input readOnly={isView} placeholder="Enter Meal Plan Name" />
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item
+                  label="Code"
+                  name="code"
+                  rules={[
+                    { required: true, message: "Meal Plan Code is Required" },
+                  ]}
+                >
+                  <Input readOnly={isView} placeholder="Enter Meal Plan Code" />
+                </Form.Item>
+              </Col>
+            </Row>
 
             <Form.Item label="Meal Includes" name="includes">
               <Checkbox.Group
@@ -222,7 +233,7 @@ const MeanPlanForm = ({
             </Form.Item>
 
             <Row gutter={16}>
-              <Col span={12}>
+              <Col span={8}>
                 <Form.Item
                   label="Adult Price"
                   name="adultPrice"
@@ -245,7 +256,7 @@ const MeanPlanForm = ({
                 </Form.Item>
               </Col>
 
-              <Col span={12}>
+              <Col span={8}>
                 <Form.Item
                   label="Child Price"
                   name="childPrice"
@@ -267,20 +278,25 @@ const MeanPlanForm = ({
                   />
                 </Form.Item>
               </Col>
-            </Row>
 
-            <Form.Item
-              label="Child Free Age Below"
-              name="childFreeAgeBelow"
-              min={5}
-            >
-              <InputNumber
-                style={{ width: "100%" }}
-                min={0}
-                readOnly={isView}
-                placeholder="Enter Child Free Age Below"
-              />
-            </Form.Item>
+              <Col span={8}>
+                <Form.Item
+                  label="Child Free Age Below"
+                  name="childFreeAgeBelow"
+                  min={5}
+                >
+                  <InputNumber
+                    mode="spinner"
+                    className="w-full rounded-lg"
+                    min={0}
+                    max={18}
+                    defaultValue={5}
+                    readOnly={isView}
+                    placeholder="Enter Child Free Age Below"
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
 
             <Status isView={isView} statusValue={statuses} />
             {/* <Form.Item

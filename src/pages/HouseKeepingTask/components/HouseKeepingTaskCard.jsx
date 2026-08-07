@@ -67,13 +67,13 @@ const HouseKeepingTaskCard = ({ data, onEdit, onView,
     return (
         <div
             onClick={onView}
-            className="group relative bg-white border border-gray-200 rounded p-3 shadow-sm hover:shadow-md hover:border-blue-400 transition-all cursor-pointer flex flex-col h-fit"
+            className="group relative bg-white border border-gray-200 dark:border-gray-500 rounded p-3 shadow-sm dark:shadow-gray-400 hover:shadow-md hover:border-blue-400 transition-all cursor-pointer flex flex-col h-fit"
         >
             {/* 1. Header: Room ID & Main Status */}
             <div className="flex justify-between items-start mb-3">
                 <div className="flex flex-col">
                     <span className="!text-[10px] lg:!text-[11px] 2xl:!text-[12px] font-bold text-gray-400 uppercase tracking-tight">Room No.</span>
-                    <h3 className="text-xl font-black leading-tight group-hover:text-blue-600 transition-colors">
+                    <h3 className="text-xl font-black  leading-tight group-hover:text-blue-600 transition-colors">
                         {data?.room?.roomNo || "---"}
                     </h3>
                 </div>
@@ -99,7 +99,7 @@ const HouseKeepingTaskCard = ({ data, onEdit, onView,
             </div>
 
             {/* 2. Core Information (With Icons) */}
-            <div className="flex-grow space-y-0.5">
+            <div className="flex-grow space-y-0.5 text-default">
                 <TightRow icon={HomeOutlined} label="Room Type" value={data?.room?.roomType?.name} />
                 <TightRow icon={AppstoreOutlined} label="Floor" value={`Level ${data?.room?.floor?.floorNo || "---"}`} />
                 <TightRow icon={ToolOutlined} label="Task" value={data?.taskType?.name} />
@@ -110,7 +110,7 @@ const HouseKeepingTaskCard = ({ data, onEdit, onView,
             </div>
 
             {/* 3. Action Footer */}
-            <div className="mt-3 pt-2 border-t border-gray-100 flex items-center justify-end">
+            <div className="mt-3 pt-2 border-t border-gray-200 dark:border-gray-400 flex items-center justify-end">
                 <div className="flex gap-4">
                     {
                         viewPermission && <button
