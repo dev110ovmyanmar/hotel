@@ -8,6 +8,7 @@ import {
     Divider,
     Space,
     Badge,
+    message
 } from "antd";
 import {
     PlusOutlined,
@@ -23,6 +24,7 @@ import { upsertDailyOccupaction } from "../../../../../../api/dailyOccupactionAp
 import { useApiMutation } from "../../../../../../hooks/useApiMutation";
 import Toast from "../../../../../../component/Toast/Toast";
 import FormButtons from "../../../../../../component/FormButtons/FormButtons";
+import PriceTag from "../../../../../../component/PriceTag/PriceTag";
 
 const STATUS_COLORS = {
     active: { color: "#389E0D", background: "#F6FFED", borderColor: "#B7EB8F" },
@@ -149,7 +151,7 @@ const DailyOccupationDetailDrawer = ({
                 <div className="flex justify-between items-center pr-2">
                     <div>
                         <h2 className="font-bold text-base text-slate-800 dark:text-white m-0">
-                            Daily Occupation Details
+                            Daily Occupancy Details
                         </h2>
                     </div>
 
@@ -194,15 +196,6 @@ const DailyOccupationDetailDrawer = ({
                             </div>
 
                             {data.occupancyStatus && (
-                                // <Badge
-                                //     status={STATUS_COLORS[data.occupancyStatus.code] || "default"}
-                                //     text={
-                                //         <span className="font-medium text-xs dark:text-gray-300">
-                                //             {data.occupancyStatus.name}
-                                //         </span>
-                                //     }
-                                // />
-
                                 <span
                                     className="font-medium text-xs rounded-md px-2 py-0.5 border inline-block"
                                     style={STATUS_COLORS[data.occupancyStatus.code]}
@@ -214,17 +207,17 @@ const DailyOccupationDetailDrawer = ({
 
                         {/* Guest Information */}
                         <SectionCard
-                            title="Guest Information"
+                            title="Occupancy"
                             icon={<UserOutlined className="text-emerald-500" />}
                         >
                             {isEditing ? (
-                                <div className="grid grid-cols-2 gap-x-4 gap-y-2">
+                                <div className="grid grid-cols-3 gap-x-4 gap-y-2">
                                     <Form.Item name="adults" label="Adults" className="mb-2">
-                                        <InputNumber min={1} className="w-full rounded-lg" />
+                                        <InputNumber min={0} className="w-full rounded-lg" />
                                     </Form.Item>
 
                                     <Form.Item label="Children" className="mb-2">
-                                        <div className="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-gray-700 bg-slate-50 dark:bg-gray-900 font-semibold text-slate-700 dark:text-slate-300">
+                                        <div className="px-2 py-1 !w-[95px] rounded-md border border-slate-200 dark:border-gray-700 bg-slate-50 dark:bg-gray-900 font-semibold text-slate-700 dark:text-slate-300">
                                             {childrenAges.length}
                                         </div>
                                     </Form.Item>
@@ -248,13 +241,13 @@ const DailyOccupationDetailDrawer = ({
                                     <Form.Item
                                         name="babyCotCount"
                                         label="Baby Cot"
-                                        className="mb-2 col-span-2"
+                                        className="mb-2"
                                     >
                                         <InputNumber min={0} className="w-full rounded-lg" />
                                     </Form.Item>
                                 </div>
                             ) : (
-                                <div className="grid grid-cols-2 gap-y-3 gap-x-4 bg-slate-50/50 dark:bg-gray-900/40 p-3 rounded-lg border border-slate-100 dark:border-gray-700/50">
+                                <div className="grid grid-cols-3 gap-y-3 gap-x-4 bg-slate-50/50 dark:bg-gray-900/40 p-3 rounded-lg border border-slate-100 dark:border-gray-700/50">
                                     <div>
                                         <span className="text-xs text-slate-400 block">Adults</span>
                                         <span className="font-semibold text-slate-700 dark:text-gray-200">
@@ -281,7 +274,7 @@ const DailyOccupationDetailDrawer = ({
                                             {data.extraPersonCount}
                                         </span>
                                     </div>
-                                    <div className="col-span-2">
+                                    <div>
                                         <span className="text-xs text-slate-400 block">Baby Cot</span>
                                         <span className="font-semibold text-slate-700 dark:text-gray-200">
                                             {data.babyCotCount}
@@ -301,32 +294,46 @@ const DailyOccupationDetailDrawer = ({
                                         {(fields, { add, remove }) => (
                                             <div className="space-y-2">
                                                 {fields.map(({ key, name }) => (
-                                                    <div
-                                                        key={key}
-                                                        className="flex items-center justify-between gap-2 bg-slate-50 dark:bg-gray-900/50 p-2 rounded-lg border border-slate-200/60 dark:border-gray-700"
-                                                    >
-                                                        <span className="text-xs font-medium text-slate-500 min-w-[60px]">
-                                                            Child {name + 1}
-                                                        </span>
+                                                    <div key={key} className="bg-slate-50 dark:bg-gray-900/50 p-2 rounded-lg border border-slate-200/60 dark:border-gray-700">
+                                                        <div className="flex items-center justify-between gap-2">
+                                                            <span className="text-xs font-medium text-slate-500 min-w-[60px]">
+                                                                Child {name + 1}
+                                                            </span>
 
-                                                        <Form.Item name={name} noStyle>
-                                                            <InputNumber
-                                                                min={0}
-                                                                max={17}
-                                                                className="flex-1 rounded-md"
-                                                                placeholder="Age"
+                                                            <Form.Item
+                                                                name={name}
+                                                                noStyle
+                                                                rules={[
+                                                                    { required: true, message: "Please enter age" },
+                                                                    {
+                                                                        type: "number",
+                                                                        min: 1,
+                                                                        max: 10,
+                                                                        message: "Age must be between 1 and 10",
+                                                                    },
+                                                                ]}
+                                                            >
+                                                                <InputNumber
+                                                                    min={1}
+                                                                    max={10}
+                                                                    defaultValue={1}
+                                                                    mode="spinner"
+                                                                    className="flex-1 rounded-md"
+                                                                    placeholder="Age"
+                                                                    style={{ width: "100%" }}
+                                                                />
+                                                            </Form.Item>
+
+                                                            <span className="text-xs text-slate-400">years</span>
+
+                                                            <Button
+                                                                type="text"
+                                                                danger
+                                                                size="small"
+                                                                icon={<DeleteOutlined />}
+                                                                onClick={() => remove(name)}
                                                             />
-                                                        </Form.Item>
-
-                                                        <span className="text-xs text-slate-400">yrs</span>
-
-                                                        <Button
-                                                            type="text"
-                                                            danger
-                                                            size="small"
-                                                            icon={<DeleteOutlined />}
-                                                            onClick={() => remove(name)}
-                                                        />
+                                                        </div>
                                                     </div>
                                                 ))}
 
@@ -334,7 +341,7 @@ const DailyOccupationDetailDrawer = ({
                                                     block
                                                     type="dashed"
                                                     icon={<PlusOutlined />}
-                                                    onClick={() => add()}
+                                                    onClick={() => add(1)}
                                                     className="mt-2 rounded-lg border-slate-300 dark:border-gray-600 text-slate-600 dark:text-gray-300"
                                                 >
                                                     Add Child
@@ -382,20 +389,24 @@ const DailyOccupationDetailDrawer = ({
                                                 Dinner
                                             </Tag>
                                         )}
+
+                                        {
+                                            data.mealPlan.code == null && (
+                                                <Tag color="yellow" className="rounded-md">
+                                                    Room Only
+                                                </Tag>
+                                            )
+                                        }
                                     </Space>
 
                                     <div className="border-t border-slate-100 dark:border-gray-700/60 pt-2 mt-3 space-y-1">
                                         <InfoRow
                                             label="Adult Price"
-                                            value={`${Number(
-                                                data.mealPlan.adultPrice || 0
-                                            ).toLocaleString()} MMK`}
+                                            value={<span className="flex items-center justify-end gap-1"><PriceTag value={data.mealPlan.adultPrice || 0} /><span>MMK</span></span>}
                                         />
                                         <InfoRow
                                             label="Child Price"
-                                            value={`${Number(
-                                                data.mealPlan.childPrice || 0
-                                            ).toLocaleString()} MMK`}
+                                            value={<span className="flex items-center justify-end gap-1"><PriceTag value={data.mealPlan.childPrice || 0} /><span>MMK</span></span>}
                                         />
                                     </div>
                                 </div>
@@ -406,48 +417,117 @@ const DailyOccupationDetailDrawer = ({
                             )}
                         </SectionCard>
 
-                        {/* Financial Breakdown */}
-                        <SectionCard
-                            title="Charges Summary"
-                            icon={<DollarOutlined className="text-indigo-500" />}
-                        >
-                            <div className="space-y-1">
-                                <InfoRow
-                                    label="Meal Charge"
-                                    value={
-                                        data.mealCharge
-                                            ? `${Number(data.mealCharge).toLocaleString()} MMK`
-                                            : 0
-                                    }
-                                />
-                                <InfoRow
-                                    label="Daily Room Charge"
-                                    value={0
-                                        // data.dailyCharge
-                                        //     ? `${Number(data.dailyCharge).toLocaleString()} MMK`
-                                        //     : 0
-                                    }
-                                />
-                                <Divider className="my-2" />
-                                <InfoRow
-                                    label="Total Daily Charge"
-                                    highlighted
-                                    value={
-                                        // data.dailyCharge || data.mealCharge
-                                        //     ? `${(
-                                        //         Number(data.dailyCharge || 0) +
-                                        //         Number(data.mealCharge || 0)
-                                        //     ).toLocaleString()} MMK`
-                                        //     : 0
-                                        0
-                                    }
-                                />
-                            </div>
-                        </SectionCard>
+                        {
+                            !isEditing &&
+                            <>
+                                {/* Financial Breakdown */}
+                                < SectionCard
+                                    title="Charges Summary"
+                                    icon={<DollarOutlined className="text-indigo-500" />}
+                                >
+                                    <div className="space-y-1">
+                                        <InfoRow
+                                            label="Room Charge"
+                                            value={
+                                                data.dailyCharge?.roomRate
+                                                    ? <span className="flex items-center justify-end gap-1"><PriceTag value={data.dailyCharge.roomRate} /><span>MMK</span></span>
+                                                    : "-"
+                                            }
+                                        />
+                                        <InfoRow
+                                            label="Child Charge"
+                                            value={
+                                                data.dailyCharge?.childChargeTotal
+                                                    ? <span className="flex items-center justify-end gap-1"><PriceTag value={data.dailyCharge.childChargeTotal} /><span>MMK</span></span>
+                                                    : "-"
+                                            }
+                                        />
+                                        <InfoRow
+                                            label="Extra Bed Charge"
+                                            value={
+                                                data.dailyCharge?.extraBedTotal
+                                                    ? <span className="flex items-center justify-end gap-1"><PriceTag value={data.dailyCharge.extraBedTotal} /><span>MMK</span></span>
+                                                    : "-"
+                                            }
+                                        />
+                                        <InfoRow
+                                            label="Extra Person Charge"
+                                            value={
+                                                data.dailyCharge?.extraPersonTotal
+                                                    ? <span className="flex items-center justify-end gap-1"><PriceTag value={data.dailyCharge.extraPersonTotal} /><span>MMK</span></span>
+                                                    : "-"
+                                            }
+                                        />
+                                        <InfoRow
+                                            label="Baby Cot Charge"
+                                            value={
+                                                data.dailyCharge?.babyCotTotal
+                                                    ? <span className="flex items-center justify-end gap-1"><PriceTag value={data.dailyCharge.babyCotTotal} /><span>MMK</span></span>
+                                                    : "-"
+                                            }
+                                        />
+                                        <InfoRow
+                                            label="Meal Charge"
+                                            value={
+                                                data.dailyCharge?.mealChargeTotal
+                                                    ? <span className="flex items-center justify-end gap-1"><PriceTag value={data.dailyCharge.mealChargeTotal} /><span>MMK</span></span>
+                                                    : "-"
+                                            }
+                                        />
+                                        <Divider className="my-2" />
+                                        <InfoRow
+                                            label="Sub Total"
+                                            highlighted
+                                            value={
+                                                data.dailyCharge?.subTotal
+                                                    ? <span className="flex items-center justify-end gap-1"><PriceTag value={data.dailyCharge.subTotal} /><span>MMK</span></span>
+                                                    : "-"
+                                            }
+                                        />
+                                        <InfoRow
+                                            label="Tax"
+                                            value={
+                                                data.dailyCharge?.taxTotal
+                                                    ? <span className="flex items-center justify-end gap-1"><PriceTag value={data.dailyCharge.taxTotal} /><span>MMK</span></span>
+                                                    : "-"
+                                            }
+                                        />
+                                        <InfoRow
+                                            label="Service Charge"
+                                            value={
+                                                data.dailyCharge?.serviceChargeTotal
+                                                    ? <span className="flex items-center justify-end gap-1"><PriceTag value={data.dailyCharge.serviceChargeTotal} /><span>MMK</span></span>
+                                                    : "-"
+                                            }
+                                        />
+                                        <InfoRow
+                                            label="Discount"
+                                            value={
+                                                data.dailyCharge?.discountTotal
+                                                    ? <span className="flex items-center justify-end gap-1"><PriceTag value={data.dailyCharge.discountTotal} /><span>MMK</span></span>
+                                                    : "-"
+                                            }
+                                        />
+                                        <Divider className="my-2" />
+                                        <InfoRow
+                                            label="Grand Total"
+                                            highlighted
+                                            value={
+                                                data.dailyCharge?.grandTotal
+                                                    ? <span className="flex items-center justify-end gap-1"><PriceTag value={data.dailyCharge.grandTotal} /><span>MMK</span></span>
+                                                    : "-"
+                                            }
+                                        />
+                                    </div>
+                                </SectionCard>
+                            </>
+                        }
+
                     </div>
                 </Form>
-            )}
-        </Drawer>
+            )
+            }
+        </Drawer >
     );
 };
 

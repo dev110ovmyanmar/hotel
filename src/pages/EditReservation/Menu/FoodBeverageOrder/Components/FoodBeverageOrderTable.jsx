@@ -22,6 +22,7 @@ const FoodBeverageOrderTable = ({
       title: "ID",
       dataIndex: "id",
       key: "id",
+      width:90
     },
     {
       title: "Consumption Type",
@@ -33,11 +34,11 @@ const FoodBeverageOrderTable = ({
       dataIndex: ["orderType", "name"],
       key: "orderType",
     },
-    {
-      title: "Restaurant Table",
-      dataIndex: ["restaurantTable", "tableNo"],
-      key: "restaurantTable",
-    },
+    // {
+    //   title: "Restaurant Table",
+    //   dataIndex: ["restaurantTable", "tableNo"],
+    //   key: "restaurantTable",
+    // },
     {
       title: "Order Status",
       dataIndex: "orderStatus",
@@ -46,15 +47,26 @@ const FoodBeverageOrderTable = ({
       render: (orderStatus) => <ColorStatusTag status={orderStatus} />,
     },
     {
+      title: "Price",
+      dataIndex: "grandTotal",
+      key: "grandTotal",
+      width: 150,
+      render: (text) => (
+        <div className="flex justify-end items-center gap-1">
+          <PriceTag value={text} />
+          <span className=" font-medium">MMK</span>
+        </div>
+      )
+    },
+    {
       title: "Action",
       key: "action",
       fixed: "end",
       render: (_, record) => {
-        console.log(record,"RecordInAction")
+        console.log(record, "RecordInAction")
         const statusCode = record?.orderStatus?.code;
-        // const isReadonlyStatus =
-        //   statusCode === "completed" || statusCode === "cancelled";
-        //   console.log(onView(record),"ONViewAction")
+        const isReadonlyStatus =
+          statusCode === "completed" || statusCode === "cancelled";
 
         return (
           <Space size="middle">
@@ -65,14 +77,14 @@ const FoodBeverageOrderTable = ({
               />
             </Tooltip>
 
-            {/* {!isReadonlyStatus && ( */}
-              <Tooltip title="Edit">
-                <EditOutlined
-                  className="cursor-pointer text-amber-500 hover:text-amber-700"
-                  onClick={() => onEdit(record)}
-                />
-              </Tooltip>
-            {/* )} */}
+            {!isReadonlyStatus && (
+            <Tooltip title="Edit">
+              <EditOutlined
+                className="cursor-pointer text-amber-500 hover:text-amber-700"
+                onClick={() => onEdit(record)}
+              />
+            </Tooltip>
+            )} 
           </Space>
         );
       },

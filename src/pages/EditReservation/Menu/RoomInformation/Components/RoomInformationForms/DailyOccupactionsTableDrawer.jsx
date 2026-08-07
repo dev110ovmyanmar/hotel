@@ -5,6 +5,7 @@ import dayjs from "dayjs";
 import DailyOccupationDetailDrawer from "./DailyOccupactionDetailDrawer";
 import { getDailyOccupactions } from "../../../../../../api/dailyOccupactionApi";
 import { useApiQuery } from "../../../../../../hooks/useApiQuery";
+import PriceTag from "../../../../../../component/PriceTag/PriceTag";
 
 // Monospace-style info row
 const InfoLine = ({ label, value }) => (
@@ -36,8 +37,6 @@ const DailyOccupactionsTableDrawer = ({
         },
     });
 
-    const dates = data?.dailyOccupancy?.map((item) => item.stayDate);
-
     // Check Data is past or prensent
     const isDatePast = (date) => {
         const today = dayjs();
@@ -46,8 +45,8 @@ const DailyOccupactionsTableDrawer = ({
 
     // Always derive selected item from fresh API data
     const selectedRow = useMemo(() => {
-        if (!selectedRowKey || !data?.dailyOccupancy) return null;
-        return data.dailyOccupancy.find(
+        if (!selectedRowKey || !data?.dailyOccupancies) return null;
+        return data.dailyOccupancies.find(
             (item) => (item.uuid || item.stayDate) === selectedRowKey
         );
     }, [data, selectedRowKey]);
@@ -66,23 +65,11 @@ const DailyOccupactionsTableDrawer = ({
         setDetailDrawerOpen(true);
     };
 
-    // Build stay summary text from the API data or selectedData
     const checkinDate = selectedData?.checkinDate;
     const checkoutDate = selectedData?.checkoutDate;
-    const nights =
-        checkinDate && checkoutDate
-            ? dayjs(checkoutDate).diff(dayjs(checkinDate), "day")
-            : null;
 
-    const totalNights =
-        checkinDate && checkoutDate
-            ? dayjs(checkoutDate).startOf("day").diff(
-                dayjs(checkinDate).startOf("day"),
-                "day"
-            )
-            : 0;
-    const testNights = totalNights - 1;
-    console.log("TotalNights : ", testNights);
+    const nights = selectedData?.totalNight;
+
     const stayText =
         checkinDate && checkoutDate
             ? `${dayjs(checkinDate).format("DD-MMM-YYYY")} to ${dayjs(checkoutDate).format("DD-MMM-YYYY")}${nights !== null ? ` (${nights} Night${nights !== 1 ? "s" : ""})` : ""}`
@@ -90,7 +77,7 @@ const DailyOccupactionsTableDrawer = ({
 
     const reservationCode = data?.reservationNo || "-";
     const guestName = data?.guestName;
-    const roomLabel = data?.roomType + " (" + data?.roomNo + ")";
+    const roomLabel = data?.roomType + (data?.roomNo ? ` (${data?.roomNo})` : "");
 
 
     const columns = [
@@ -100,70 +87,44 @@ const DailyOccupactionsTableDrawer = ({
             key: "stayDate",
             width: 90,
             render: (value) => (
-                <span className="font-semibold text-slate-700 dark:text-gray-200 text-xs whitespace-nowrap">
+                <span>
                     {value ? dayjs(value).format("DD-MM-YYYY") : "-"}
                 </span>
             ),
         },
         {
-            title: "Adults",
-            dataIndex: "adults",
-            key: "adults",
-            align: "center",
-            width: 65,
-            render: (val) => (
-                <span className="text-slate-700 dark:text-gray-200 text-sm font-medium">
-                    {val ?? 0}
-                </span>
-            ),
-        },
-        {
-            title: "Children",
-            dataIndex: "childrenCount",
-            key: "childrenCount",
-            align: "center",
-            width: 75,
-            render: (val) => (
-                <span className="text-slate-700 dark:text-gray-200 text-sm font-medium">
-                    {val ?? 0}
-                </span>
-            ),
-        },
-        {
-            title: "Extra Bed",
-            dataIndex: "extraBedCount",
-            key: "extraBedCount",
-            align: "center",
+            title: "Occupancy",
+            key: "occupancy",
+            align: "left",
             width: 80,
-            render: (val) => (
-                <span className="text-slate-700 dark:text-gray-200 text-sm font-medium">
-                    {val ?? 0}
-                </span>
-            ),
+            render: (_, record) => {
+                const adults = record.adults ?? 0;
+                const children = record.childrenCount ?? 0;
+                return (
+                    <div className="text-slate-700 dark:text-gray-200 text-sm font-medium leading-tight">
+                        <div>Adult: {adults}</div>
+                        <div>Children: {children}</div>
+                    </div>
+                );
+            },
         },
         {
-            title: "Extra Person",
-            dataIndex: "extraPersonCount",
-            key: "extraPersonCount",
-            align: "center",
-            width: 95,
-            render: (val) => (
-                <span className="text-slate-700 dark:text-gray-200 text-sm font-medium">
-                    {val ?? 0}
-                </span>
-            ),
-        },
-        {
-            title: "Baby Cot",
-            dataIndex: "babyCotCount",
-            key: "babyCotCount",
-            align: "center",
-            width: 75,
-            render: (val) => (
-                <span className="text-slate-700 dark:text-gray-200 text-sm font-medium">
-                    {val ?? 0}
-                </span>
-            ),
+            title: "Extra",
+            key: "extra",
+            align: "left",
+            width: 100,
+            render: (_, record) => {
+                const bed = record.extraBedCount ?? 0;
+                const person = record.extraPersonCount ?? 0;
+                const cot = record.babyCotCount ?? 0;
+                return (
+                    <div className="text-slate-700 dark:text-gray-200 text-sm font-medium leading-tight">
+                        <div>Extra Bed: {bed}</div>
+                        <div>Extra Person: {person}</div>
+                        <div>Baby Cot: {cot}</div>
+                    </div>
+                );
+            },
         },
         {
             title: "Meal",
@@ -172,21 +133,22 @@ const DailyOccupactionsTableDrawer = ({
             width: 60,
             render: (_, record) => {
                 return (
-                    <span className="text-slate-700 dark:text-gray-200 text-sm font-semibold cursor-default">
-                        {record.mealPlan?.name || "-"}
+                    <span>
+                        {record.mealPlan?.code == null ? "Room Only" : record.mealPlan?.code}
                     </span>
                 );
             },
         },
         {
-            title: "Total Charge (MMK)",
+            title: "Total (MMK)",
             key: "grandTotal",
             align: "center",
             width: 50,
             render: (_, record) => {
+                const total = Number(record?.dailyCharge?.grandTotal) || 0;
                 return (
                     <span className="text-slate-700 dark:text-gray-200 text-sm font-medium">
-                        {record?.dailyCharge?.grandTotal || "0"}
+                        <PriceTag value={total} />
                     </span>
                 )
             }
@@ -197,44 +159,22 @@ const DailyOccupactionsTableDrawer = ({
             key: "action",
             width: 100,
             align: "center",
-            onCell: () => ({ style: { verticalAlign: "top", paddingTop: 8 } }),
+            onCell: () => ({ style: { verticalAlign: "center", paddingTop: 15 } }),
             render: (_, record) => {
-                const smallStyle = { fontSize: "12px" };
-
-                const isPast = isDatePast(record.stayDate);
-
-                const actions = [
-                    {
-                        key: "view",
-                        label: "View",
-                        icon: <EyeOutlined style={{ fontSize: "12px" }} />,
-                        onClick: () => handleOpenDetail(record, false),
-                    },
-                    ...(!isPast
-                        ? [
-                            {
-                                key: "edit",
-                                label: "Edit",
-                                icon: <EditOutlined style={{ fontSize: "12px" }} />,
-                                onClick: () => handleOpenDetail(record, true),
-                            },
-                        ]
-                        : []),
-                ];
-
-                const items = actions.map((action) => ({
-                    key: action.key,
-                    disabled: action.disabled,
-                    label: (
-                        <Space size={4} style={smallStyle} onClick={action.disabled ? undefined : action.onClick}>
-                            {action.icon}
-                            <span style={{ fontSize: "14px" }}>{action.label}</span>
-                        </Space>
-                    ),
-                }));
-
                 return (
-                    <Dropdown menu={{ items }} trigger={["click"]}>
+                    <Dropdown
+                        menu={{
+                            onClick: ({ key }) => {
+                                if (key === "1") handleOpenDetail(record, false);
+                                if (key === "2") handleOpenDetail(record, true);
+                            },
+                            items: [
+                                { key: "1", label: "View", icon: <EyeOutlined /> },
+                                !isDatePast(record.stayDate) && { key: "2", label: "Edit", icon: <EditOutlined /> },
+                            ],
+                        }}
+                        trigger={["click"]}
+                    >
                         <MoreOutlined style={{ fontSize: "16px", cursor: "pointer" }} />
                     </Dropdown>
                 );
@@ -261,10 +201,10 @@ const DailyOccupactionsTableDrawer = ({
                     <div>
                         <div className="relative rounded-lg border border-slate-200 dark:border-gray-700 bg-slate-50 dark:bg-gray-800/60 px-5 py-4">
                             <div className="space-y-0.5">
-                                <InfoLine label="Reservation" value={reservationCode} />
-                                <InfoLine label="Guest" value={guestName} />
-                                <InfoLine label="Room" value={roomLabel} />
-                                <InfoLine label="Stay" value={stayText} />
+                                <InfoLine label="Reservation No" value={reservationCode || "-"} />
+                                <InfoLine label="Guest" value={guestName || "-"} />
+                                <InfoLine label="Room" value={roomLabel || "-"} />
+                                <InfoLine label="Stay" value={stayText || "-"} />
                             </div>
                         </div>
                     </div>
@@ -274,25 +214,41 @@ const DailyOccupactionsTableDrawer = ({
                         <h3 className="text-base font-bold text-slate-800 dark:text-white mb-3">
                             Daily Stay List
                         </h3>
-                        <div className="rounded-lg border border-slate-200 dark:border-gray-700 overflow-hidden bg-white dark:bg-gray-800 shadow-sm">
-                            <Table
-                                size="small"
-                                expandable={{
-                                    showExpandColumn: false,
-                                }}
-                                rowKey={(record) => record.uuid || record.stayDate}
-                                columns={columns}
-                                dataSource={data?.dailyOccupancy ?? []}
-                                loading={isLoading}
-                                pagination={false}
-                                scroll={{ x: 600 }}
-                                rowClassName={(_, index) =>
-                                    index % 2 === 0
-                                        ? "bg-white dark:bg-gray-800"
-                                        : "bg-slate-50/60 dark:bg-gray-800/50"
-                                }
-                            />
-                        </div>
+
+                        {
+                            data?.roomStatus?.code == "booked" ?
+                                <div className="rounded-lg border border-dashed border-slate-300 dark:border-gray-600 bg-slate-50 dark:bg-gray-800/40 px-5 py-8 text-center">
+                                    <div className="text-sm text-slate-400 dark:text-gray-500">
+                                        Daily occupancy has not been generated yet.
+                                        It will be available after confirmation.
+                                    </div>
+                                </div> :
+                                data?.roomStatus?.code == "cancelled" ?
+                                    <div className="rounded-lg border border-dashed border-slate-300 dark:border-gray-600 bg-slate-50 dark:bg-gray-800/40 px-5 py-8 text-center">
+                                        <div className="text-sm text-slate-400 dark:text-gray-500">
+                                            Daily occupancy is unavailable because this reservation was cancelled.
+                                        </div>
+                                    </div> :
+                                    <div className="rounded-lg border border-slate-200 dark:border-gray-700 overflow-hidden bg-white dark:bg-gray-800 shadow-sm">
+                                        <Table
+                                            size="small"
+                                            expandable={{
+                                                showExpandColumn: false,
+                                            }}
+                                            rowKey={(record) => record.uuid || record.stayDate}
+                                            columns={columns}
+                                            dataSource={data?.dailyOccupancies ?? []}
+                                            loading={isLoading}
+                                            pagination={false}
+                                            scroll={{ x: 600 }}
+                                            rowClassName={(_, index) =>
+                                                index % 2 === 0
+                                                    ? "bg-white dark:bg-gray-800"
+                                                    : "bg-slate-50/60 dark:bg-gray-800/50"
+                                            }
+                                        />
+                                    </div>
+                        }
                     </div>
                 </div>
             </Drawer>

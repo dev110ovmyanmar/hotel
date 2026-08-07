@@ -50,23 +50,37 @@ const MeanPlanTable = ({
       },
     },
     {
+      title: "Code",
+      key: "code",
+      width: 100,
+      render: (_, record) => {
+        return (
+          <div>
+            <span>
+              {record?.code}
+            </span>
+          </div>
+        )
+      }
+    },
+    {
       title: "Pricing Rules",
-      width:350,
+      width: 350,
       render: (record) => {
         return (
           <>
             <div className="flex justify-between">
               <span>Adult:</span>
-              <span> [{`${priceFormatter(record?.adultPrice)}`}] MMK</span>
+              <span className="flex items-center gap-1">[<PriceTag value={record?.adultPrice} />] MMK</span>
             </div>
             <div className="flex justify-between">
               <span>Child:</span>
-              <span>[{`${priceFormatter(record?.childPrice)}`}] MMK</span>
+              <span className="flex items-center gap-1">[<PriceTag value={record?.childPrice} />] MMK</span>
             </div>
-            <div className="flex justify-between">  
+            <div className="flex justify-between">
               <span>Child Free Age Below :</span>
-              <span>[{`${priceFormatter(record?.childFreeAgeBelow)}`}]
-                {record?.childFreeAgeBelow <= 1 ? " Year" : " Years" }
+              <span className="flex items-center gap-1">[<PriceTag value={record?.childFreeAgeBelow} />]
+                {record?.childFreeAgeBelow <= 1 ? " Year" : " Years"}
               </span>
             </div>
           </>
@@ -77,6 +91,7 @@ const MeanPlanTable = ({
       title: "Status",
       dataIndex: ["status", "name"],
       key: "status",
+      align: "center",
       width: 150,
       render: (_, record) => <ColorStatusTag status={record?.status} />,
     },

@@ -73,7 +73,7 @@ const RoomInformationList = () => {
 
   const { data: reservationRoomsForComplimentary, isLoading: complimentaryLoading } = useApiQuery({
     fetchQueryName: "reservation-room-comp",
-    fetchQueryFunction: reservationRoomList,
+    // fetchQueryFunction: reservationRoomList,
     params: {
       reservationRoom: {
         uuid: uuid,

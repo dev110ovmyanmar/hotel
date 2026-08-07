@@ -5,6 +5,7 @@ import ReferralForm from './ReferralForm/ReferralForm';
 import ColorStatusTag from './../../../component/ColorStatusTag/ColorStatusTag';
 import { PERMISSIONS } from './../../../variables/permission';
 import usePermission from './../../../hooks/usePermission';
+import PriceTag from "../../../component/PriceTag/PriceTag";
 
 
 const ReferralTable = ({
@@ -56,7 +57,7 @@ const ReferralTable = ({
         const chargeTypeName = record?.chargeType?.code;
 
         if (chargeTypeName === "flat") {
-          return <div>{chargeValue?.toLocaleString()} MMK</div>
+          return <div className="flex items-center justify-end gap-1"><PriceTag value={chargeValue} /><span>MMK</span></div>
         } else {
           return <div>{chargeValue} %</div>
         }

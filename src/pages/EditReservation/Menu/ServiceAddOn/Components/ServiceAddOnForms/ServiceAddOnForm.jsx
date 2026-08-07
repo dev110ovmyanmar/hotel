@@ -235,8 +235,32 @@ const ServiceAddOnForm = ({
         }}
       >
         {!isAdd && (
-          <Form.Item label="Room No" name="roomNo">
-            <Select placeholder="Select a Room" options={rooms} allowClear />
+          // <Form.Item label="Room No" name="roomNo">
+          //   <Select placeholder="Select a Room" options={rooms} allowClear />
+          // </Form.Item>
+          <Form.Item
+            label="Room No"
+            name="roomNo"
+            getValueProps={(value) => ({
+              value: isView
+                ? rooms.find((item) => item.value === value)?.label
+                : value,
+            })}
+          >
+            {isView ? (
+              <Input readOnly={isView} />
+            ) : (
+              <Select
+                showSearch={{
+                  filterOption: (input, option) =>
+                    (option?.label ?? "")
+                      .toLowerCase()
+                      .includes(input.toLowerCase()),
+                }}
+                options={rooms}
+                placeholder="Select a Room"
+              />
+            )}
           </Form.Item>
         )}
 
@@ -302,7 +326,7 @@ const ServiceAddOnForm = ({
           <TextArea />
         </Form.Item>
 
-        <Form.Item
+        {/* <Form.Item
           label="Add On Status"
           name="status"
           rules={[
@@ -317,6 +341,33 @@ const ServiceAddOnForm = ({
             options={addonStatus}
             placeholder="Select Add On Status"
           />
+        </Form.Item> */}
+        <Form.Item
+          label="Add On Status"
+          name="status"
+          rules={[
+            { required: true, message: "Please select an add on status" },
+          ]}
+          getValueProps={(value) => ({
+            value: isView
+              ? addonStatus.find((item) => item.value === value)?.label
+              : value,
+          })}
+        >
+          {isView ? (
+            <Input readOnly={isView} />
+          ) : (
+            <Select
+              showSearch={{
+                filterOption: (input, option) =>
+                  (option?.label ?? "")
+                    .toLowerCase()
+                    .includes(input.toLowerCase()),
+              }}
+              options={addonStatus}
+              placeholder="Select Add On Status"
+            />
+          )}
         </Form.Item>
       </Form>
     </Drawer>

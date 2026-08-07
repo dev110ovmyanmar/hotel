@@ -124,7 +124,7 @@ const HouseKeepingTaskListing = () => {
       <button
         type="button"
         onClick={() => setViewMode("table")}
-        className={`p-2 rounded-sm border-2 border-gray-300 transition-all duration-200 flex items-center justify-center ${viewMode === "table"
+        className={`p-2 rounded-sm border-2 border-gray-300 dark:border-gray-500 transition-all duration-200 flex items-center justify-center ${viewMode === "table"
             ? "bg-[#1677ff] shadow-sm text-gray-100! border-[#1677ff]!"
             : "hover:text-gray-500 hover:bg-gray-200!"
           }`}

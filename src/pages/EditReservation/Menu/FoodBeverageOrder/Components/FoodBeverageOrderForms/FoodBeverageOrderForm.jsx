@@ -15,6 +15,7 @@ import {
   Typography,
   Tag,
   Checkbox,
+  Tooltip,
 } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
 import { queryClient } from "../../../../../../app/queryClient";
@@ -43,7 +44,6 @@ const FoodBeverageOrderForm = ({
   const itemsValue = Form.useWatch("items", form);
 
   const isAdd = mode === "add";
-  console.log(isAdd, "IsAddtrue?")
   const isEdit = mode === "edit";
   const isView = mode === "view";
   const [orders, setOrders] = useState([{ id: Date.now() }]);
@@ -70,15 +70,10 @@ const FoodBeverageOrderForm = ({
     },
   });
 
-  const menuItemOptions = data?.menu_items?.map(menu => (
-    { value: menu?.uuid, label: menu?.name }
-  ));
-
   const roomOptions = data?.rooms?.map(menu => (
     {
       value: menu?.room.uuid,
       label: menu?.room.roomNo,
-      // disabled: 
     }
   ));
 
@@ -116,14 +111,14 @@ const FoodBeverageOrderForm = ({
   });
 
   const handleSubmit = (values) => {
-    console.log("FormValues:", values);
-    console.log(mode, "FormSubmitmode")
+    console.log(values,"ValuesInHandleSubmit")
     const menuItems = values?.items.map(item => ({
       uuid: item.menu,
       quantity: item.quantity,
       modifiers: item?.modifier?.map(uuid => ({
-        uuid: uuid,
-        quantity: 1,
+        uuid,
+        quantity: item?.modifierQuantities?.[uuid],
+        // quantity: 1
       })),
     }));
     const payload = {
@@ -146,7 +141,7 @@ const FoodBeverageOrderForm = ({
       },
     };
     if (isAdd) {
-      createFoodBeverate .mutate(payload, {
+      createFoodBeverate.mutate(payload, {
         onSuccess: () => {
           Toast.success("Food Order Created Successfully");
           onClose(false)
@@ -164,8 +159,6 @@ const FoodBeverageOrderForm = ({
     }
   };
 
-
-
   const {
     data: fnbOrderDetails
   } = useApiQuery({
@@ -178,8 +171,8 @@ const FoodBeverageOrderForm = ({
       enabled: !!selectedData?.uuid,
     },
   });
-  console.log(fnbOrderDetails, "fnbOrderDetailsSelectedDataIn")
 
+  console.log(fnbOrderDetails,"fnbOrderDetails")
   useEffect(() => {
     if (fnbOrderDetails && (isView || isEdit)) {
       const customDate = dayjs(fnbOrderDetails.orderedAt);
@@ -192,6 +185,12 @@ const FoodBeverageOrderForm = ({
           modifier: item?.fnbOrderItemModifiers?.map(
             item => item?.modifiers?.uuid
           ),
+          modifierQuantities: Object.fromEntries(
+          item?.fnbOrderItemModifiers?.map((modifierItem) => [
+          modifierItem?.modifiers?.uuid,
+          modifierItem?.quantity,
+      ]) || []
+    ),
         })) || [];
 
       // Render one card for each menu
@@ -221,7 +220,7 @@ const FoodBeverageOrderForm = ({
       (status) => status.code === "pending"
     );
 
-    if (pendingStatus) {
+    if (isAdd && pendingStatus) {
       form.setFieldsValue({
         orderStatus: pendingStatus.uuid,
       });
@@ -230,20 +229,12 @@ const FoodBeverageOrderForm = ({
 
   const currentOrderStatus = fnbOrderDetails?.orderStatus?.code;
 
-  const orderStatus = allStatuses.order_status.map((order) => ({
+  const orderStatusOptions = allStatuses.order_status.map((order) => ({
     value: order.uuid,
     label: order.name,
     disabled:
       (
-        isAdd &&
-        ["cancelled", "completed"].includes(order.code)
-      ) ||
-      (
         isEdit &&
-        (
-          currentOrderStatus === "pending" &&
-          ["cancelled", "completed"].includes(order.code)
-        ) ||
         (
           currentOrderStatus === "in_progress" &&
           ["pending"].includes(order.code)
@@ -269,6 +260,24 @@ const FoodBeverageOrderForm = ({
     }
   };
 
+  console.log(menuUuid,"handleMenuChange")
+  const handleUpdateMenu = () =>{
+    const getValue = form.getFieldsValue();
+    console.log(getValue, "hereValuesgetValue");
+    // onClose()
+  }
+
+  useEffect(() => {
+  if (isAdd) {
+    form.setFieldsValue({
+      items: [
+        {
+          quantity: 1,
+        },
+      ],
+    });
+  }
+}, [isAdd, form]);
   return (
     <>
       {" "}
@@ -335,7 +344,6 @@ const FoodBeverageOrderForm = ({
 
             )}
             className="shadow-sm rounded"
-            headStyle={{ backgroundColor: "#fafafa" }}
           >
             <div className="grid grid-cols-2 gap-4">
               <Form.Item
@@ -397,154 +405,181 @@ const FoodBeverageOrderForm = ({
                 <Select
                   placeholder="Select Order Status"
                   style={{ width: "100%" }}
-                  options={orderStatus}
+                  options={orderStatusOptions}
                   disabled={currentOrderStatus === "completed" || currentOrderStatus === "cancelled"}
                 />
               </Form.Item>
             </div>
           </Card>
-          <Space direction="vertical" size="large" className="w-full">
-            {orders.map((order, index) => {
-              // selected menu for card
-              const selectedMenuItem = data?.menu_items
-                ?.find((addon) => addon?.uuid === menuUuid[index]);
+          <Space direction="vertical" size="large" className="w-full my-2">
+            <Form.List name="items" className="!my-2">
+              {(fields, { remove, add }) => (
+                <div className="border border-gray-200 rounded-md p-2">
+                  <div className="flex justify-end">
+                    {isEdit && (
+                      <Button type="primary" onClick={handleUpdateMenu}>
+                        Update Menu 
+                      </Button>
+                    )}
+                  </div>
+                  {fields.map(({ key, name }) => {
+                    console.log(itemsValue,"ItemsValue")
+                    const selectedMenuItem = data?.menu_items?.find(
+                      (addon) => addon?.uuid === menuUuid[name]
+                    );
 
-              const hasSelectedModifiers =
-                fnbOrderDetails?.fnbOrderItems?.[index]?.fnbOrderItemModifiers?.length > 0;
+                    const hasSelectedModifiers =
+                      fnbOrderDetails?.fnbOrderItems?.[name]
+                        ?.fnbOrderItemModifiers?.length > 0 ;
 
-              const showModifier = isAdd
-                ? selectedMenuItem?.modifiers?.length > 0
-                : hasSelectedModifiers;
-              return (
-                <Card
-                  key={order.id}
-                  title={(
-                    <>
-                      <div className="flex justify-between items-center">
-                        <div>{`Order ${index + 1}`}</div>
-                        {
-                          isEdit &&
-                          <div>
-                            <Button type="primary" >
-                              Update
-                            </Button>
+                    const showModifier = selectedMenuItem?.modifiers?.length > 0 ;
+                    const currentMenu = itemsValue?.[name]?.menu;
+
+                    const selectedMenus =
+                      itemsValue?.map(item => item?.menu).filter(Boolean) || [];
+
+                    const menuOptions = data?.menu_items?.map(menu => ({
+                      value: menu.uuid,
+                      label: menu.name,
+                      disabled:
+                        selectedMenus.includes(menu.uuid) &&
+                        menu.uuid !== currentMenu,
+                    }));
+
+                    return (
+                      <Card
+                        key={key}
+                        title={
+                          <div className="flex justify-between items-center">
+                            <div>{`Order ${name + 1}`}</div>
                           </div>
                         }
-                      </div>
-                    </>
-                  )}
-                  className="shadow-sm rounded mb-4 border-l-4 border-blue-500"
-                  headStyle={{ backgroundColor: "#fafafa" }}
-                  size="small"
-                  extra={
-                    orders.length > 1 && (
-                      <Button
-                        type="text"
-                        danger
-                        icon={<DeleteOutlined />}
-                        onClick={() => deleteOrder(order.id, index)}
-                      />
-                    )
-                  }
-                >
-                  <div className="grid grid-cols-3 gap-3">
-                    <Form.Item
-                      label="Menu"
-                      name={["items", index, "menu"]}
-                      required
-                    >
-                      <Select
-                        options={menuItemOptions}
-                        onChange={(value, option) => handleChangeMenu(value, option, index)}
-                        placeholder="Select Menu"
-                      />
-                    </Form.Item>
-                    <Form.Item
-                      label="Quantity"
-                      name={["items", index, "quantity"]}
-                      initialValue={1}
-                    >
-                      <InputNumber {...sharedProps} />
-                    </Form.Item>
-                    <Form.Item
-                      label="Price Per Qty"
-                      name={["items", index, "pricePerQty"]}
-                    >
-                      <InputNumber className="!w-full" min={0} suffix="MMK" />
-                    </Form.Item>
-                  </div>
+                        className="shadow-sm rounded !my-2 border-l-4 border-blue-500"
+                        size="small"
+                        extra={
+                          fields.length > 1 && (
+                            <Tooltip title="Delete Order">
+                              <DeleteOutlined
+                                style={{ fontSize: "16px", color: "red" }}
+                                onClick={() => remove(name)}
+                              />
+                            </Tooltip>
+                          )
+                        }
+                      >
+                        <div className="grid grid-cols-3 gap-3">
+                          <Form.Item
+                            label="Menu"
+                            name={[name, "menu"]}
+                            required
+                          >
+                            <Select
+                              options={menuOptions}
+                              onChange={(value, option) =>
+                                handleChangeMenu(value, option, name)
+                              }
+                              placeholder="Select Menu"
+                            />
+                          </Form.Item>
 
-                  {/* Add on List */}
-                  {orders?.length > 0 && (
-                    <div>
-                      {showModifier
+                          <Form.Item
+                            label="Quantity"
+                            name={[name, "quantity"]}
+                            initialValue={1}
+                          >
+                            <InputNumber {...sharedProps} />
+                          </Form.Item>
+
+                          <Form.Item
+                            label="Price Per Qty"
+                            name={[name, "pricePerQty"]}
+                          >
+                            <InputNumber
+                              className="!w-full"
+                              min={0}
+                              suffix="MMK"
+                            />
+                          </Form.Item>
+                        </div>
+
+                        {showModifier
                         ? (
                           <div>
                             <div className="flex justify-between items-center mb-2">
                               <Text strong>Add on Menu</Text>
+
                               <Tag color="default" className="mr-0">
                                 Optional
                               </Tag>
                             </div>
+
                             <Form.Item
-                              name={["items", index, "modifier"]}
+                              name={[name, "modifier"]}
                               className="mb-0"
                             >
                               <Checkbox.Group className="w-full">
                                 <div className="space-y-2">
                                   {selectedMenuItem?.modifiers?.map(modify => (
                                     <div
-                                      // key={modify.label}
-                                      className="grid grid-cols-3 gap-3 items-center py-2 border-b border-gray-50 hover:bg-gray-50 transition-colors"
+                                      key={modify.uuid}
+                                      className="grid grid-cols-3 gap-3 items-center py-2 border-b border-gray-50 hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors"
                                     >
-                                      {/*  Select Box + Name */}
                                       <div className="flex items-center">
-                                        <Checkbox key={modify.uuid} value={modify.uuid}>
+                                        <Checkbox
+                                          value={modify.uuid}
+                                        >
                                           <span className="ml-2 text-sm">
                                             {modify.name}
                                           </span>
                                         </Checkbox>
                                       </div>
 
-                                      {/*  Quantity */}
-                                      <div className="text-center">
-                                        <InputNumber {...sharedProps} value={modify?.unitCost} />
-                                      </div>
+                                        <Form.Item
+                                          name={[name, "modifierQuantities", modify.uuid]}
+                                          className="!m-0"
+                                        >
+                                          <InputNumber
+                                          {...sharedProps}
+                                        />
+                                        </Form.Item>
 
-                                      {/* Price  */}
-                                      <div className=" border border-gray-300 p-1 rounded ">
+                                      <div className="border border-gray-300 p-1 rounded">
                                         <Text className="text-sm font-medium">
-                                          {modify.unitPrice.toLocaleString()}{" "}
-                                          <span className="ml-15">MMK</span>
+                                          {modify.unitPrice.toLocaleString()}
+                                          <span className="ml-15">
+                                            {" "}
+                                            MMK
+                                          </span>
                                         </Text>
                                       </div>
                                     </div>
-                                  ))
-                                  }
+                                  ))}
                                 </div>
                               </Checkbox.Group>
                             </Form.Item>
                           </div>
-                        ) : null}
+                        )
+                      :
+                      null
+                      }
+                      </Card>
+                    );
+                  })}
 
-
-                      {/*  selected add on labels */}
-
-                    </div>
-                  )}
-                </Card>
-              );
-            })}
+                  {
+                    !isView &&
+                    <Button
+                        className="custom-blue-btn"
+                        onClick={() => add({ quantity: 1 })}
+                      >
+                        Add Menu
+                      </Button>
+                  }
+                </div>
+              )}
+            </Form.List>
+            
           </Space>
-
-          {
-            !isView &&
-            <div className=" mt-3 ">
-              <Button className="custom-blue-btn" onClick={addMenu}>
-                Add Menu
-              </Button>
-            </div>
-          }
         </Form>
       </Drawer>
     </>
@@ -552,3 +587,149 @@ const FoodBeverageOrderForm = ({
 };
 
 export default FoodBeverageOrderForm;
+
+
+// {orders.map((order, index) => {
+//               // selected menu for card
+//               const selectedMenuItem = data?.menu_items
+//                 ?.find((addon) => addon?.uuid === menuUuid[index]);
+
+//               const hasSelectedModifiers =
+//                 fnbOrderDetails?.fnbOrderItems?.[index]?.fnbOrderItemModifiers?.length > 0;
+
+//               const showModifier = isAdd
+//                 ? selectedMenuItem?.modifiers?.length > 0
+//                 : hasSelectedModifiers;
+
+//               const currentMenu = itemsValue?.[index]?.menu;
+              
+//               const selectedMenus =
+//                 itemsValue?.map(item => item?.menu).filter(Boolean) || [];
+
+//               const menuOptions = data?.menu_items?.map(menu => ({
+//                 value: menu.uuid,
+//                 label: menu.name,
+//                 disabled:
+//                   selectedMenus.includes(menu.uuid) &&
+//                   menu.uuid !== currentMenu, // keep current selection enabled
+//               }));
+//               return (
+//                 <Card
+//                   key={order.id}
+//                   title={(
+//                     <>
+//                       <div className="flex justify-between items-center">
+//                         <div>{`Order ${index + 1}`}</div>
+//                         {
+//                           isEdit &&
+//                           <div>
+//                             <Button type="primary" >
+//                               Update
+//                             </Button>
+//                           </div>
+//                         }
+//                       </div>
+//                     </>
+//                   )}
+//                   className="shadow-sm rounded mb-4 border-l-4 border-blue-500"
+//                   headStyle={{ backgroundColor: "#fafafa" }}
+//                   size="small"
+//                   extra={
+//                     orders.length > 1 && (
+//                       <Button
+//                         type="text"
+//                         danger
+//                         icon={<DeleteOutlined />}
+//                         onClick={() => deleteOrder(order.id, index)}
+//                       />
+//                     )
+//                   }
+//                 >
+//                   <div className="grid grid-cols-3 gap-3">
+//                     <Form.Item
+//                       label="Menu"
+//                       name={["items", index, "menu"]}
+//                       required
+//                     >
+//                       <Select
+//                         options={menuOptions}
+//                         onChange={(value, option) => handleChangeMenu(value, option, index)}
+//                         placeholder="Select Menu"
+//                       />
+//                     </Form.Item>
+//                     <Form.Item
+//                       label="Quantity"
+//                       name={["items", index, "quantity"]}
+//                       initialValue={1}
+//                     >
+//                       <InputNumber {...sharedProps} />
+//                     </Form.Item>
+//                     <Form.Item
+//                       label="Price Per Qty"
+//                       name={["items", index, "pricePerQty"]}
+//                     >
+//                       <InputNumber className="!w-full" min={0} suffix="MMK" />
+//                     </Form.Item>
+//                   </div>
+
+//                   {/* Add on List */}
+//                   {orders?.length > 0 && (
+//                     <div>
+//                       {showModifier
+//                         ? (
+//                           <div>
+//                             <div className="flex justify-between items-center mb-2">
+//                               <Text strong>Add on Menu</Text>
+//                               <Tag color="default" className="mr-0">
+//                                 Optional
+//                               </Tag>
+//                             </div>
+//                             <Form.Item
+//                               name={["items", index, "modifier"]}
+//                               className="mb-0"
+//                             >
+//                               <Checkbox.Group className="w-full">
+//                                 <div className="space-y-2">
+//                                   {selectedMenuItem?.modifiers?.map(modify => (
+//                                     <div
+//                                       // key={modify.label}
+//                                       className="grid grid-cols-3 gap-3 items-center py-2 border-b border-gray-50 hover:bg-gray-50 transition-colors"
+//                                     >
+//                                       {/*  Select Box + Name */}
+//                                       <div className="flex items-center">
+//                                         <Checkbox key={modify.uuid} value={modify.uuid}>
+//                                           <span className="ml-2 text-sm">
+//                                             {modify.name}
+//                                           </span>
+//                                         </Checkbox>
+//                                       </div>
+
+//                                       {/*  Quantity */}
+//                                       <div className="text-center">
+//                                         <InputNumber {...sharedProps} value={modify?.unitCost} />
+//                                       </div>
+
+//                                       {/* Price  */}
+//                                       <div className=" border border-gray-300 p-1 rounded ">
+//                                         <Text className="text-sm font-medium">
+//                                           {modify.unitPrice.toLocaleString()}{" "}
+//                                           <span className="ml-15">MMK</span>
+//                                         </Text>
+//                                       </div>
+//                                     </div>
+//                                   ))
+//                                   }
+//                                 </div>
+//                               </Checkbox.Group>
+//                             </Form.Item>
+//                           </div>
+//                         ) : null}
+
+
+//                       {/*  selected add on labels */}
+
+//                     </div>
+//                   )}
+//                 </Card>
+//               );
+//             })}
