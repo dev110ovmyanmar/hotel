@@ -264,6 +264,7 @@ const ServiceInventoryForm = ({
                 label={<span className="text-xs">Stock Quantity</span>}
                 name="stockQuantity"
                 rules={[{ required: true }]}
+                className="minus-icon"
               >
                 <InputNumber
                   mode="spinner"
@@ -344,6 +345,7 @@ const ServiceInventoryForm = ({
             <Form.Item
               label={<span className="text-xs">Reorder</span>}
               name="reorderLevel"
+              className="minus-icon"
             >
               <InputNumber
                 placeholder="Enter Reorder Level"

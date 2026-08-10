@@ -234,7 +234,7 @@ const ItemsForm = ({
             </Col>
 
             <Col span={12}>
-              <Form.Item label="Quantity" name="quantityPerService">
+              <Form.Item label="Quantity" name="quantityPerService" className="minus-icon">
                 <InputNumber
                   className="w-full!"
                   mode="spinner"
