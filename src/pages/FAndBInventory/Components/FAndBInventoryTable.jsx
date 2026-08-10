@@ -140,7 +140,7 @@ const FAndBInventoryTable = ({
       title: "Quantity",
       dataIndex: "quantityPerItem",
       key: "quantityPerItem",
-      align: "center",
+      align: "end",
     },
     {
       title: "Unit",

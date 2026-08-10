@@ -223,7 +223,7 @@ const ItemsForm = ({
 
                     <Row gutter={16}>
                         <Col span={12}>
-                            <Form.Item label="Quantity" name="quantity" rules={[{ required: true, message: "Quantity is required!" }]}>
+                            <Form.Item label="Quantity" name="quantity" className="minus-icon" rules={[{ required: true, message: "Quantity is required!" }]}>
                                 <InputNumber
                                     className="w-full!"                                    
                                     mode="spinner"
