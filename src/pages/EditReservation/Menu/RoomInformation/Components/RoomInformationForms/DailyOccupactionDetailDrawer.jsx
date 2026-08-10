@@ -70,6 +70,7 @@ const DailyOccupationDetailDrawer = ({
     reservationRoomUuid,
     initialEditMode = false,
     isPastDate = false,
+    disableEdit = false,
 }) => {
     const [form] = Form.useForm();
     const [isEditing, setIsEditing] = useState(false);
@@ -78,7 +79,7 @@ const DailyOccupationDetailDrawer = ({
 
     const mutation = useApiMutation({
         mutationFn: upsertDailyOccupaction,
-        invalidateKeys: [["dailyOccupactions"]],
+        invalidateKeys: [["dailyOccupactions"], ["reservation-room-details"], ["reservation-room"]],
     });
 
     // Helper to load form values from data
@@ -156,7 +157,7 @@ const DailyOccupationDetailDrawer = ({
                     </div>
 
                     <div className="flex items-center gap-2">
-                        {hasData && !isEditing && !isPastDate && (
+                        {hasData && !isEditing && !isPastDate && !disableEdit && (
                             <Button type="primary" onClick={() => setIsEditing(true)}>
                                 Edit
                             </Button>
@@ -354,7 +355,7 @@ const DailyOccupationDetailDrawer = ({
                         </SectionCard>
 
                         {/* Meal Plan */}
-                        <SectionCard
+                        {/* <SectionCard
                             title="Meal Plan"
                             icon={<CoffeeOutlined className="text-amber-500" />}
                         >
@@ -391,7 +392,7 @@ const DailyOccupationDetailDrawer = ({
                                         )}
 
                                         {
-                                            data.mealPlan.code == null && (
+                                            data.mealPlan.code == "RO" && (
                                                 <Tag color="yellow" className="rounded-md">
                                                     Room Only
                                                 </Tag>
@@ -415,7 +416,7 @@ const DailyOccupationDetailDrawer = ({
                                     No meal plan selected for this date.
                                 </span>
                             )}
-                        </SectionCard>
+                        </SectionCard> */}
 
                         {
                             !isEditing &&
@@ -431,7 +432,7 @@ const DailyOccupationDetailDrawer = ({
                                             value={
                                                 data.dailyCharge?.roomRate
                                                     ? <span className="flex items-center justify-end gap-1"><PriceTag value={data.dailyCharge.roomRate} /><span>MMK</span></span>
-                                                    : "-"
+                                                    : "0.00"
                                             }
                                         />
                                         <InfoRow
@@ -439,7 +440,7 @@ const DailyOccupationDetailDrawer = ({
                                             value={
                                                 data.dailyCharge?.childChargeTotal
                                                     ? <span className="flex items-center justify-end gap-1"><PriceTag value={data.dailyCharge.childChargeTotal} /><span>MMK</span></span>
-                                                    : "-"
+                                                    : "0.00"
                                             }
                                         />
                                         <InfoRow
@@ -447,7 +448,7 @@ const DailyOccupationDetailDrawer = ({
                                             value={
                                                 data.dailyCharge?.extraBedTotal
                                                     ? <span className="flex items-center justify-end gap-1"><PriceTag value={data.dailyCharge.extraBedTotal} /><span>MMK</span></span>
-                                                    : "-"
+                                                    : "0.00"
                                             }
                                         />
                                         <InfoRow
@@ -455,7 +456,7 @@ const DailyOccupationDetailDrawer = ({
                                             value={
                                                 data.dailyCharge?.extraPersonTotal
                                                     ? <span className="flex items-center justify-end gap-1"><PriceTag value={data.dailyCharge.extraPersonTotal} /><span>MMK</span></span>
-                                                    : "-"
+                                                    : "0.00"
                                             }
                                         />
                                         <InfoRow
@@ -463,7 +464,7 @@ const DailyOccupationDetailDrawer = ({
                                             value={
                                                 data.dailyCharge?.babyCotTotal
                                                     ? <span className="flex items-center justify-end gap-1"><PriceTag value={data.dailyCharge.babyCotTotal} /><span>MMK</span></span>
-                                                    : "-"
+                                                    : "0.00"
                                             }
                                         />
                                         <InfoRow
@@ -471,7 +472,7 @@ const DailyOccupationDetailDrawer = ({
                                             value={
                                                 data.dailyCharge?.mealChargeTotal
                                                     ? <span className="flex items-center justify-end gap-1"><PriceTag value={data.dailyCharge.mealChargeTotal} /><span>MMK</span></span>
-                                                    : "-"
+                                                    : "0.00"
                                             }
                                         />
                                         <Divider className="my-2" />
@@ -481,7 +482,7 @@ const DailyOccupationDetailDrawer = ({
                                             value={
                                                 data.dailyCharge?.subTotal
                                                     ? <span className="flex items-center justify-end gap-1"><PriceTag value={data.dailyCharge.subTotal} /><span>MMK</span></span>
-                                                    : "-"
+                                                    : "0.00"
                                             }
                                         />
                                         <InfoRow
@@ -489,7 +490,7 @@ const DailyOccupationDetailDrawer = ({
                                             value={
                                                 data.dailyCharge?.taxTotal
                                                     ? <span className="flex items-center justify-end gap-1"><PriceTag value={data.dailyCharge.taxTotal} /><span>MMK</span></span>
-                                                    : "-"
+                                                    : "0.00"
                                             }
                                         />
                                         <InfoRow
@@ -497,7 +498,7 @@ const DailyOccupationDetailDrawer = ({
                                             value={
                                                 data.dailyCharge?.serviceChargeTotal
                                                     ? <span className="flex items-center justify-end gap-1"><PriceTag value={data.dailyCharge.serviceChargeTotal} /><span>MMK</span></span>
-                                                    : "-"
+                                                    : "0.00"
                                             }
                                         />
                                         <InfoRow
@@ -505,7 +506,7 @@ const DailyOccupationDetailDrawer = ({
                                             value={
                                                 data.dailyCharge?.discountTotal
                                                     ? <span className="flex items-center justify-end gap-1"><PriceTag value={data.dailyCharge.discountTotal} /><span>MMK</span></span>
-                                                    : "-"
+                                                    : "0.00"
                                             }
                                         />
                                         <Divider className="my-2" />
@@ -515,7 +516,7 @@ const DailyOccupationDetailDrawer = ({
                                             value={
                                                 data.dailyCharge?.grandTotal
                                                     ? <span className="flex items-center justify-end gap-1"><PriceTag value={data.dailyCharge.grandTotal} /><span>MMK</span></span>
-                                                    : "-"
+                                                    : "0.00"
                                             }
                                         />
                                     </div>
