@@ -71,20 +71,7 @@ const RoomInformationList = () => {
     },
   });
 
-  const { data: reservationRoomsForComplimentary, isLoading: complimentaryLoading } = useApiQuery({
-    fetchQueryName: "reservation-room-comp",
-    // fetchQueryFunction: reservationRoomList,
-    params: {
-      reservationRoom: {
-        uuid: uuid,
-      },
-    },
-    options: {
-      enabled: !!bookingId && bookingId.trim().length >= 32,
-    },
-  });
-
-  const upcomingReservations = (reservationRoomsForComplimentary?.data || []).filter((item) => {
+  const upcomingReservations = (data?.data || []).filter((item) => {
     const checkin = new Date(item.checkinDate);
     checkin.setHours(0, 0, 0, 0);
 
