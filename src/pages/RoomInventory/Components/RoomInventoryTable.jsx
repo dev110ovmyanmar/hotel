@@ -76,55 +76,17 @@ const RoomInventoryTable = ({
     },
     {
       title: "Extra Bed",
-      dataIndex: "extraBed",
-      key: "extraBed",
+      dataIndex: "maxExtraBed",
+      key: "maxExtraBed",
       render: (text) => text || "-",
     },
     {
       title: "Max Occupancy",
-      fixed:"end",
+      fixed: "end",
       align: "center",
       dataIndex: "maxOccupancy",
       key: "maxOccupancy",
     },
-    // {
-    //   title: "Base Price (MMK)",
-    //   dataIndex: "basePrice",
-    //   key: "basePrice",
-    //   align: "end",
-    //   render: (text) => <PriceTag value={text} />,
-    // },
-    // {
-    //   title: "Stop Sell",
-    //   dataIndex: "stopSell",
-    //   key: "stopSell",
-    //   render: (_, record) => {
-    //     const isPastOrToday = dayjs(record.date).isSameOrBefore(dayjs(), "day");
-
-    //     const switchComponent = (
-    //       <Switch
-    //         checked={record.stopSell === true}
-    //         loading={updatingId === record.id}
-    //         disabled={isPastOrToday || updatingId === record.id}
-    //         onChange={(checked) => {
-    //           setSelectedRecord(record);
-    //           setSwitchValue(checked);
-    //           setConfirmOpen(true);
-    //         }}
-    //       />
-    //     );
-
-    //     if (isPastOrToday) {
-    //       return (
-    //         <Tooltip title="Cannot modify past or today dates">
-    //           {switchComponent}
-    //         </Tooltip>
-    //       );
-    //     }
-
-    //     return switchComponent;
-    //   },
-    // },
   ];
 
   const columns = TableColumns(baseColumns);
@@ -149,7 +111,7 @@ const RoomInventoryTable = ({
     },
     {
       title: "Sold Rooms",
-      dataIndex: "SoldRooms",
+      dataIndex: "soldRooms",
       key: "soldRooms",
       width: 150,
       align: "center",
@@ -194,7 +156,7 @@ const RoomInventoryTable = ({
     },
     {
       title: "Action",
-      align:"center",
+      align: "center",
       width: 150,
       render: (_, record) => {
         const smallStyle = { fontSize: "12px" };
