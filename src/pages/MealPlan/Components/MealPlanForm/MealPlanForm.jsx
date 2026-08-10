@@ -284,6 +284,7 @@ const MeanPlanForm = ({
                   label="Child Free Age Below"
                   name="childFreeAgeBelow"
                   min={5}
+                  className="minus-icon"
                 >
                   <InputNumber
                     mode="spinner"
