@@ -272,6 +272,7 @@ const FAndBInventoryForm = ({
                 <InputNumber
                   className="w-full!"
                   mode={"spinner"}
+                  defaultValue={1}
                   min={1}
                   placeholder="Stock Quantity"
                   readOnly={isView}
@@ -359,6 +360,7 @@ const FAndBInventoryForm = ({
                   className="w-full!"
                   mode={"spinner"}
                   min={1}
+                  defaultValue={1}
                   placeholder="Reorder Level"
                   readOnly={isView}
                 />

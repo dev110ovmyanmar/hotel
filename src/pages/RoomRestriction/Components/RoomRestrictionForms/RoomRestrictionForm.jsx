@@ -286,6 +286,7 @@ const RoomRestrictionForm = ({
               label="Min Stay"
               name="minStay"
               rules={[{ required: true }]}
+              className="minus-icon"
             >
               <InputNumber
                 {...childSharedProps}
@@ -299,6 +300,7 @@ const RoomRestrictionForm = ({
               label="Max Stay"
               name="maxStay"
               rules={[{ required: true }]}
+              className="minus-icon"
             >
               <InputNumber
                 {...childSharedProps}
