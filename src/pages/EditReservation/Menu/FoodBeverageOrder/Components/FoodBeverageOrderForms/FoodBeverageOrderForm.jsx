@@ -16,17 +16,21 @@ import {
   Tag,
   Checkbox,
   Tooltip,
+  Spin,
 } from "antd";
-import { DeleteOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { queryClient } from "../../../../../../app/queryClient";
 import useApiQuery from "../../../../../../hooks/useApiQuery";
 import { reservationRoomMeta } from "../../../../../../api/reservationSectionApi";
 import { useApiMutation } from "../../../../../../hooks/useApiMutation";
-import { createFoodBeverageOrder, foodBeverageOrderDetails, updateFoodBeverageOrder } from "../../../../../../api/foodBeverageOrder";
+import { createFoodBeverageOrder, foodBeverageOrderDetails, updateFoodBeverageOrder, upsertFoodBeverageOrderItem } from "../../../../../../api/foodBeverageOrder";
 import Toast from "../../../../../../component/Toast/Toast";
 import FormButtons from "../../../../../../component/FormButtons/FormButtons";
 import dayjs from "dayjs";
 import { values } from "lodash";
+import { AiOutlineCheckSquare } from "react-icons/ai";
+import { AiOutlineCloseSquare } from "react-icons/ai";
+
 
 const { Text } = Typography;
 
@@ -46,10 +50,11 @@ const FoodBeverageOrderForm = ({
   const isAdd = mode === "add";
   const isEdit = mode === "edit";
   const isView = mode === "view";
+  
   const [orders, setOrders] = useState([{ id: Date.now() }]);
   const [summaryOpen, setSummaryOpen] = useState(false);
   const [menuUuid, setMenuUuid] = useState({});
-
+  const [addedMenuIndex, setAddedMenuIndex] = useState(null);
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
   const allStatuses = initData?.statuses;
   const consumptionType = allStatuses.consumption_type.map(order => (
@@ -60,7 +65,7 @@ const FoodBeverageOrderForm = ({
     { value: type?.uuid, label: type?.name }
   ));
 
-  const { data } = useApiQuery({
+  const { data , isPending : reservationRoomMetaPending} = useApiQuery({
     fetchQueryName: "order",
     fetchQueryFunction: reservationRoomMeta,
     params: {
@@ -94,7 +99,6 @@ const FoodBeverageOrderForm = ({
     mode: "spinner",
     min: 1,
     // max: 10,
-    defaultValue: 1,
     style: { width: "100%" },
   };
 
@@ -111,13 +115,12 @@ const FoodBeverageOrderForm = ({
   });
 
   const handleSubmit = (values) => {
-    console.log(values,"ValuesInHandleSubmit")
     const menuItems = values?.items.map(item => ({
       uuid: item.menu,
       quantity: item.quantity,
       modifiers: item?.modifier?.map(uuid => ({
         uuid,
-        quantity: item?.modifierQuantities?.[uuid],
+        quantity: item?.modifierQuantities?.[uuid] || 1,
         // quantity: 1
       })),
     }));
@@ -160,7 +163,8 @@ const FoodBeverageOrderForm = ({
   };
 
   const {
-    data: fnbOrderDetails
+    data: fnbOrderDetails,
+    isPending: fnbOrderDetailsPending
   } = useApiQuery({
     fetchQueryName: "fnb-order-details",
     fetchQueryFunction: foodBeverageOrderDetails,
@@ -179,15 +183,15 @@ const FoodBeverageOrderForm = ({
 
       const menuItems =
         fnbOrderDetails.fnbOrderItems?.map((item) => ({
-          menu: item.menuItems?.uuid,
+          menu: item.menuItem?.uuid,
           quantity: item.quantity,
           pricePerQty: item.unitPrice,
           modifier: item?.fnbOrderItemModifiers?.map(
-            item => item?.modifiers?.uuid
+            item => item?.modifier?.uuid
           ),
           modifierQuantities: Object.fromEntries(
           item?.fnbOrderItemModifiers?.map((modifierItem) => [
-          modifierItem?.modifiers?.uuid,
+          modifierItem?.modifier?.uuid,
           modifierItem?.quantity,
       ]) || []
     ),
@@ -234,6 +238,9 @@ const FoodBeverageOrderForm = ({
     label: order.name,
     disabled:
       (
+        isAdd &&
+        (["cancelled","completed"]).includes(order.code) 
+        || 
         isEdit &&
         (
           currentOrderStatus === "in_progress" &&
@@ -260,11 +267,37 @@ const FoodBeverageOrderForm = ({
     }
   };
 
-  console.log(menuUuid,"handleMenuChange")
+  const upsertFoodBeverageOrderItems = useApiMutation({
+    mutationFn: upsertFoodBeverageOrderItem,
+    invalidateKeys: [["food-beverage-orders"]],
+    // shouldInvalidate: isEdit ? true : page === 1,
+  });
+  console.log(selectedData,"SelectedDatahandleUpdateMenu")
   const handleUpdateMenu = () =>{
     const getValue = form.getFieldsValue();
+    const menuItems = getValue?.items.map(item => ({
+      uuid: item.menu,
+      quantity: item.quantity,
+      modifiers: item?.modifier?.map(uuid => ({
+        uuid,
+        quantity: item?.modifierQuantities?.[uuid] || 1,
+        // quantity: 1
+      })),
+    }));
     console.log(getValue, "hereValuesgetValue");
     // onClose()
+    const payload = {
+      uuid: selectedData?.uuid,
+      menuItems : menuItems
+    }
+    upsertFoodBeverageOrderItems.mutate(payload,{
+      onSuccess : () => {
+        Toast.success("Food Beverage Order Item Updated Successfully.");
+        onClose(false);
+        setAddedMenuIndex(null);
+      }
+    })
+
   }
 
   useEffect(() => {
@@ -278,12 +311,25 @@ const FoodBeverageOrderForm = ({
     });
   }
 }, [isAdd, form]);
+
+useEffect(()=>{
+  form.setFieldsValue({
+    
+  })
+})
+
+const handleOnClose = () => {
+  onClose(false);
+  form.resetFields();
+  setMenuUuid({});
+  setAddedMenuIndex(null);
+  setOrders([{ id: Date.now() }]);
+};
   return (
     <>
-      {" "}
-      <Drawer
+     <Drawer
         open={open}
-        onClose={onClose}
+        onClose={handleOnClose}
         size={650}
         destroyOnClose
         title={
@@ -317,7 +363,11 @@ const FoodBeverageOrderForm = ({
           </div>
         }
       >
-        <Form
+        {
+          !isAdd && (reservationRoomMetaPending || fnbOrderDetailsPending) ?
+            <Spin />
+          :
+          <Form 
           layout="vertical"
           form={form}
           onFinish={handleSubmit}
@@ -335,7 +385,7 @@ const FoodBeverageOrderForm = ({
                         form.submit(),
                           setMode("edit")
                       }} >
-                        Update Order Info
+                        Update 
                       </Button>
                     </div>
                   }
@@ -414,16 +464,8 @@ const FoodBeverageOrderForm = ({
           <Space direction="vertical" size="large" className="w-full my-2">
             <Form.List name="items" className="!my-2">
               {(fields, { remove, add }) => (
-                <div className="border border-gray-200 rounded-md p-2">
-                  <div className="flex justify-end">
-                    {isEdit && (
-                      <Button type="primary" onClick={handleUpdateMenu}>
-                        Update Menu 
-                      </Button>
-                    )}
-                  </div>
+                <div>
                   {fields.map(({ key, name }) => {
-                    console.log(itemsValue,"ItemsValue")
                     const selectedMenuItem = data?.menu_items?.find(
                       (addon) => addon?.uuid === menuUuid[name]
                     );
@@ -451,20 +493,62 @@ const FoodBeverageOrderForm = ({
                         key={key}
                         title={
                           <div className="flex justify-between items-center">
-                            <div>{`Order ${name + 1}`}</div>
+                            <div>{`Menu ${name + 1}`}</div>
                           </div>
                         }
                         className="shadow-sm rounded !my-2 border-l-4 border-blue-500"
                         size="small"
                         extra={
-                          fields.length > 1 && (
-                            <Tooltip title="Delete Order">
-                              <DeleteOutlined
-                                style={{ fontSize: "16px", color: "red" }}
-                                onClick={() => remove(name)}
-                              />
-                            </Tooltip>
-                          )
+                          <div className="flex gap-x-3">
+                              
+                              {/* Newly added menu */}
+                              {addedMenuIndex === name ? (
+                                <>
+                                  <Tooltip title="Create Menu">
+                                    {
+                                      createFoodBeverageOrder.isPending ?
+                                      <Spin/>
+                                      :
+                                      <AiOutlineCheckSquare
+                                        onClick={handleUpdateMenu}
+                                        className="text-2xl cursor-pointer text-blue-500"
+                                      />
+                                    }
+                                  </Tooltip>
+
+                                  <Tooltip title="Cancel Menu">
+                                    <AiOutlineCloseSquare
+                                      onClick={() => {
+                                      setAddedMenuIndex(null);
+                                      }}
+                                      className="text-2xl cursor-pointer text-red-500"
+                                    />
+                                  </Tooltip>
+                                </>
+                              ) : (
+                                /* Existing menu */
+                                <>
+                                  {isEdit && (
+                                    <>
+                                      <Tooltip title="Edit Menu">
+                                        <EditOutlined
+                                        // onClick={() => setEditingMenu(index)}
+                                          className="text-2xl cursor-pointer !text-blue-500"
+                                        />
+                                      </Tooltip>
+
+                                      <Tooltip title="Delete Menu">
+                                        <DeleteOutlined
+                                          onClick={() => remove(name)}
+                                          className="text-2xl cursor-pointer !text-red-500"               
+                                        />
+                                      </Tooltip>
+                                    </>
+                                  )}
+                                </>
+                              )}
+
+                            </div>
                         }
                       >
                         <div className="grid grid-cols-3 gap-3">
@@ -485,7 +569,6 @@ const FoodBeverageOrderForm = ({
                           <Form.Item
                             label="Quantity"
                             name={[name, "quantity"]}
-                            initialValue={1}
                           >
                             <InputNumber {...sharedProps} />
                           </Form.Item>
@@ -500,68 +583,68 @@ const FoodBeverageOrderForm = ({
                               suffix="MMK"
                             />
                           </Form.Item>
-                        </div>
-
-                        {showModifier
-                        ? (
-                          <div>
-                            <div className="flex justify-between items-center mb-2">
-                              <Text strong>Add on Menu</Text>
-
-                              <Tag color="default" className="mr-0">
-                                Optional
-                              </Tag>
-                            </div>
-
-                            <Form.Item
-                              name={[name, "modifier"]}
-                              className="mb-0"
-                            >
-                              <Checkbox.Group className="w-full">
-                                <div className="space-y-2">
-                                  {selectedMenuItem?.modifiers?.map(modify => (
-                                    <div
-                                      key={modify.uuid}
-                                      className="grid grid-cols-3 gap-3 items-center py-2 border-b border-gray-50 hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors"
-                                    >
-                                      <div className="flex items-center">
-                                        <Checkbox
-                                          value={modify.uuid}
-                                        >
-                                          <span className="ml-2 text-sm">
-                                            {modify.name}
-                                          </span>
-                                        </Checkbox>
-                                      </div>
-
-                                        <Form.Item
-                                          name={[name, "modifierQuantities", modify.uuid]}
-                                          className="!m-0"
-                                        >
-                                          <InputNumber
-                                          {...sharedProps}
-                                        />
-                                        </Form.Item>
-
-                                      <div className="border border-gray-300 p-1 rounded">
-                                        <Text className="text-sm font-medium">
-                                          {modify.unitPrice.toLocaleString()}
-                                          <span className="ml-15">
-                                            {" "}
-                                            MMK
-                                          </span>
-                                        </Text>
-                                      </div>
-                                    </div>
-                                  ))}
-                                </div>
-                              </Checkbox.Group>
-                            </Form.Item>
                           </div>
-                        )
-                      :
-                      null
-                      }
+
+                          {showModifier
+                          ? (
+                            <div>
+                              <div className="flex justify-between items-center mb-2">
+                                <Text strong>Add on Menu</Text>
+
+                                <Tag color="default" className="mr-0">
+                                  Optional
+                                </Tag>
+                              </div>
+
+                              <Form.Item
+                                name={[name, "modifier"]}
+                                className="mb-0"
+                              >
+                                <Checkbox.Group className="w-full">
+                                  <div className="space-y-2">
+                                    {selectedMenuItem?.modifiers?.map(modify => (
+                                      <div
+                                        key={modify.uuid}
+                                        className="grid grid-cols-3 gap-3 items-center py-2 border-b border-gray-50 hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors"
+                                      >
+                                        <div className="flex items-center">
+                                          <Checkbox
+                                            value={modify.uuid}
+                                          >
+                                            <span className="ml-2 text-sm">
+                                              {modify.name}
+                                            </span>
+                                          </Checkbox>
+                                        </div>
+
+                                          <Form.Item
+                                            name={[name, "modifierQuantities", modify.uuid]}
+                                            className="!m-0"
+                                          >
+                                            <InputNumber
+                                            {...sharedProps}
+                                          />
+                                          </Form.Item>
+
+                                        <div className="border border-gray-300 p-1 rounded">
+                                          <Text className="text-sm font-medium">
+                                            {modify.unitPrice.toLocaleString()}
+                                            <span className="ml-15">
+                                              {" "}
+                                              MMK
+                                            </span>
+                                          </Text>
+                                        </div>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </Checkbox.Group>
+                              </Form.Item>
+                            </div>
+                          )
+                          :
+                          null
+                          }   
                       </Card>
                     );
                   })}
@@ -570,18 +653,25 @@ const FoodBeverageOrderForm = ({
                     !isView &&
                     <Button
                         className="custom-blue-btn"
-                        onClick={() => add({ quantity: 1 })}
+                        onClick={() => {
+                          const newIndex = fields.length;
+                          console.log(newIndex,"NewIndex")
+
+                          add({ quantity: 1 });
+                          setAddedMenuIndex(newIndex);
+                        }}
                       >
                         Add Menu
-                      </Button>
+                    </Button>
                   }
                 </div>
               )}
             </Form.List>
             
           </Space>
-        </Form>
-      </Drawer>
+          </Form>
+        }
+      </Drawer>      
     </>
   );
 };
