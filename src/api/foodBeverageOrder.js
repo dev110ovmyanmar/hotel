@@ -31,3 +31,11 @@ export const fetchFoodBeverageOrderList = async (params) => {
     );
     return data.response;
 };
+
+export const upsertFoodBeverageOrderItem = async (params) => {
+    const { data } = await apiClient.post(
+        "/fnb-order-item/upsert",
+        params
+    );
+    return data.response;
+};

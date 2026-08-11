@@ -16,19 +16,10 @@ const FoodBeverageOrderList = () => {
   const { bookingId } = useParams();
   const uuid = bookingId;
 
-  useEffect(() => {
-    const cleanId = bookingId ? bookingId.trim() : "";
-
-    if (
-      !cleanId ||
-      cleanId === "" ||
-      cleanId === ":bookingId" ||
-      cleanId.length < 32
-    ) {
-      navigate("/404", { replace: true });
-    }
-  }, [bookingId, navigate]);
-
+  const isValidBookingId =
+  !!bookingId &&
+  bookingId !== ":bookingId" &&
+  bookingId.trim().length >= 32;
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mode, setMode] = useState("add");
   const [selectedData, setSelectedData] = useState(null);
@@ -46,6 +37,9 @@ const FoodBeverageOrderList = () => {
         uuid
       }
     },
+    options:{
+      enabled : isValidBookingId
+    }
 
   });
   // useEffect(() => {
