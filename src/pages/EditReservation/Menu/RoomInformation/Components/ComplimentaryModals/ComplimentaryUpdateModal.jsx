@@ -42,7 +42,7 @@ const ComplimentaryUpdateModal = ({
             const today = new Date();
             today.setHours(0, 0, 0, 0);
 
-            return checkin > today && item.roomStatus?.code == "confirmed";
+            return checkin >= today && (item.roomStatus?.code == "confirmed" || item.roomStatus?.code == "checked_in");
         });
     }, [reservationRoomsForComplimentary?.data]);
 
