@@ -38,7 +38,7 @@ const DailyBreakDownDetailFormDrawer = ({ open, onClose, data }) => {
     <Drawer
       open={open}
       onClose={onClose}
-      width={400}
+      width={600}
       title={
         <div>
           <h2 className="font-bold text-base text-slate-800 dark:text-white m-0">
@@ -48,39 +48,23 @@ const DailyBreakDownDetailFormDrawer = ({ open, onClose, data }) => {
       }
     >
       <div className="space-y-1">
-        {/* Date Header */}
-        {/* <div className="text-center pb-3 border-b border-slate-200 dark:border-gray-600">
-          {data.postedToFolio && (
-            <div className="mt-2">
-              <Tag color="green" className="rounded-full text-xs">Posted to Folio</Tag>
-            </div>
-          )}
-        </div> */}
-
         {/* Room Charge */}
         <SectionTitle>Room Charge</SectionTitle>
         <InfoRow label="Room Rate" value={dc.roomRate || 0} />
 
         {/* Meal Charge */}
         {mealPlan && 
-        // (dc.adultMealTotal > 0 || dc.childMealTotal > 0) 
-        // &&
          (
           <>
             <SectionTitle>Meal Charge</SectionTitle>
-            <InfoRow label={mealPlan.name} value={dc.mealChargeTotal || 0} />
-            {/* {dc.adultMealCount > 0 && ( */}
               <InfoRow
-                sub={`Adult ${data.adults || 0} × ${(dc.adultMealPrice || 0).toLocaleString()}`}
-                value={dc.adultMealTotal || 0}
+                sub={`Adult ${data.adults || 0} × ${(data.mealCharge / data.adults || 0).toLocaleString()}`}
+                value={data.mealCharge || 0}
               />
-            {/* )} */}
-            {/* {dc.childMealCount > 0 && ( */}
               <InfoRow
-                sub={`Child ${data.childrenCount || 0} × ${(dc.childMealPrice || 0).toLocaleString()}`}
-                value={dc.childMealTotal || 0}
+                sub={`Child ${data.childrenCount || 0} × ${(dc?.childChargeTotal / data.childrenCount || 0).toLocaleString()} (Free for 5 years old and below)`}
+                value={dc.childChargeTotal || 0}
               />
-            {/* )} */}
           </>
         )}
 
@@ -91,42 +75,18 @@ const DailyBreakDownDetailFormDrawer = ({ open, onClose, data }) => {
           dc.childChargeTotal > 0) && (
           <>
             <SectionTitle>Extras</SectionTitle>
-            {/* {dc.extraBedTotal > 0 && ( */}
-              <>
-                <InfoRow label="Extra Bed" value={0} />
                 <InfoRow
-                  sub={`${data.extraBedCount || 0} × ${(dc.extraBedPrice || 0).toLocaleString()}`}
+                  sub={`Extra Bed ${data.extraBedCount || 0} × ${(dc.extraBedTotal / data.extraBedCount).toLocaleString()}`}
                   value={dc.extraBedTotal}
                 />
-              </>
-            {/* )} */}
-            {/* {dc.babyCotTotal > 0 && ( */}
-              <>
-                <InfoRow label="Baby Cot" value={0} />
                 <InfoRow
-                  sub={`${data.babyCotCount || 0} × ${(dc.babyCotPrice || 0).toLocaleString()}`}
+                  sub={`Baby Cot ${data.babyCotCount || 0} × ${(dc.babyCotTotal / data.babyCotCount).toLocaleString()}`}
                   value={dc.babyCotTotal}
                 />
-              </>
-            {/* )} */}
-            {/* {dc.extraPersonTotal > 0 && ( */}
-              <>
-                <InfoRow label="Extra Person" value={0} />
                 <InfoRow
-                  sub={`${data.extraPersonCount || 0} × ${(dc.extraPersonPrice || 0).toLocaleString()}`}
+                  sub={`Extra Person ${data.extraPersonCount || 0} × ${(dc.extraPersonTotal / data.extraPersonCount || 0).toLocaleString()}`}
                   value={dc.extraPersonTotal}
                 />
-              </>
-            {/* )} */}
-            {/* {dc.childChargeTotal > 0 && ( */}
-              <>
-                <InfoRow label="Child" value={0} />
-                <InfoRow
-                  sub={`${data.childrenCount || 0} × ${(dc.childPrice || 0).toLocaleString()}`}
-                  value={dc.childChargeTotal}
-                />
-              </>
-            {/* )} */}
           </>
         )}
 
@@ -143,20 +103,12 @@ const DailyBreakDownDetailFormDrawer = ({ open, onClose, data }) => {
         <InfoRow label="Service Charge" value={dc.serviceChargeTotal || 0} />
 
         {/* Incentive */}
-        {/* {(dc.incentiveTotal || 0) > 0 && ( */}
-          <>
             <SectionTitle>Incentive</SectionTitle>
             <InfoRow label="Incentive" value={dc.incentiveTotal} />
-          </>
-        {/* )} */}
 
         {/* Discount */}
-        {/* {(dc.discountTotal || 0) > 0 && ( */}
-          <>
             <SectionTitle>Discount</SectionTitle>
             <InfoRow label="Discount" value={dc.discountTotal} />
-          </>
-        {/* )} */}
 
         {/* Divider */}
         <div className="border-t border-dashed border-slate-300 dark:border-gray-600 my-4" />

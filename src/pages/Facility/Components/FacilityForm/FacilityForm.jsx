@@ -199,7 +199,8 @@ const FacilityForm = ({
                 placeholder="Enter Capacity"
                 readOnly={isView}
                 style={{width:"100%"}}
-                // min={1}
+                min={1}
+                defaultValue={1}
               />
             </Form.Item>
 

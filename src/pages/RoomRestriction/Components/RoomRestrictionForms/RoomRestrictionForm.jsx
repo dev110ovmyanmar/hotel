@@ -313,7 +313,7 @@ const RoomRestrictionForm = ({
 
           <div className="grid grid-cols-2 gap-6">
             <Form.Item
-              label="Close to Arrivel"
+              label="Close to Arrival"
               name="closedToArrival"
               valuePropName="checked"
               rules={[{ required: true }]}

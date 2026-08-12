@@ -230,9 +230,11 @@ export default function RoomUpgradeModal({
                                     >
                                         <Row gutter={[16, 16]}>
 
-                                            {roomList?.rooms?.map(room => {
+                                            {roomList?.rooms
+                                            ?.filter(room=>room?.rooms.length > 0)
+                                            ?.map(room => {
                                                 return (
-                                                    <Col span={12}>
+                                                    <Col span={12}> 
 
                                                         <div
                                                             className={`  

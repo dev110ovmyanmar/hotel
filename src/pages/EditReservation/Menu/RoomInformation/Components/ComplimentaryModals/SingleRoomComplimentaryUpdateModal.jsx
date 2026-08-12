@@ -28,7 +28,7 @@ const SingleRoomComplimentaryUpdateModal = ({
 
     const isCheckinValid = checkin ? checkin <= today : false;
     const isCheckoutValid = checkout ? checkout > today : false;
-    const isStatusValid = reservationData?.roomStatus?.code === "checked_in";
+    const isStatusValid = reservationData?.roomStatus?.code === "checked_in" || reservationData?.roomStatus?.code === "confirmed";
 
     // Global reservation validity block
     const isModificationAllowed =
@@ -105,18 +105,18 @@ const SingleRoomComplimentaryUpdateModal = ({
         });
     }, [reservationData, open]);
 
-    // Helper utility to check if a specific date is today or in the past
-    const isPastOrToday = (dateString) => {
+    // Helper utility to check if a specific date is in the past (today is now editable)
+    const isPastDate = (dateString) => {
         const targetDate = new Date(dateString);
         targetDate.setHours(0, 0, 0, 0);
-        return targetDate <= today;
+        return targetDate < today;
     };
 
     // Toggle specific date with guard clause
     const handleToggleDate = (dateString) => {
         if (
             !isModificationAllowed
-            || isPastOrToday(dateString)
+            || isPastDate(dateString)
         )
             return;
 
@@ -140,9 +140,9 @@ const SingleRoomComplimentaryUpdateModal = ({
             if (checked) {
                 const eligibleDates = prev.nights
                     .map((n) => n.date)
-                    .filter((date) => !isPastOrToday(date));
+                    .filter((date) => !isPastDate(date));
                 const existingLockedCompDates = prev.compDates.filter((date) =>
-                    isPastOrToday(date),
+                    isPastDate(date),
                 );
 
                 return {
@@ -153,7 +153,7 @@ const SingleRoomComplimentaryUpdateModal = ({
                 };
             } else {
                 const preservedLockedDates = prev.compDates.filter((date) =>
-                    isPastOrToday(date),
+                    isPastDate(date),
                 );
                 return { ...prev, compDates: preservedLockedDates };
             }
@@ -220,7 +220,7 @@ const SingleRoomComplimentaryUpdateModal = ({
     );
     const allNights = roomAllocation?.nights || [];
 
-    const manageableNights = allNights.filter((n) => !isPastOrToday(n.date));
+    const manageableNights = allNights.filter((n) => !isPastDate(n.date));
     const isAllSelected =
         manageableNights.length > 0 &&
         manageableNights.every((n) => roomAllocation?.compDates?.includes(n.date));
@@ -389,7 +389,7 @@ const SingleRoomComplimentaryUpdateModal = ({
                                             onChange={(e) => handleToggleAllDates(e.target.checked)}
                                             className={`text-xs font-semibold text-slate-700 ${!isModificationAllowed || manageableNights.length === 0 ? "pointer-events-none" : null}`}
                                         >
-                                            Mark Future Dates as Complimentary
+                                            Mark Dates from Today as Complimentary
                                         </Checkbox>
                                     </div>
                                 )}
@@ -399,7 +399,7 @@ const SingleRoomComplimentaryUpdateModal = ({
                                 {roomAllocation.nights.map((night) => {
                                     const isComp = roomAllocation.compDates.includes(night.date);
                                     const disabledDate = !isModificationAllowed
-                                        || isPastOrToday(night.date);
+                                        || isPastDate(night.date);
                                     const displayValue = isComp
                                         ? 0
                                         : parseFloat(night.originalPrice);

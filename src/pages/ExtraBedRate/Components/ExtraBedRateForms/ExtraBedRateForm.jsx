@@ -77,7 +77,7 @@ const ExtraBedRateForm = ({
       label: isPerson
         ? `${extraType.name} (Age: 11+ Years)`
         : isChild
-          ? `${extraType.name} (Age: 0–10 Years)`
+          ? `${extraType.name} (Age: 0 –10 Years)`
           : extraType.name,
     };
   });
