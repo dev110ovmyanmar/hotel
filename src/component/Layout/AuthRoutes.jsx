@@ -55,6 +55,7 @@ import {
   MdMeetingRoom,
 } from "react-icons/md";
 import { PERMISSIONS } from "../../variables/permission";
+import { FRONT_OFFICE } from "../../variables/constants";
 import { BiFoodMenu, BiGroup } from "react-icons/bi";
 import { GiBroom, GiModernCity, GiVacuumCleaner } from "react-icons/gi";
 import { LuPackageSearch, LuSalad } from "react-icons/lu";
@@ -846,6 +847,7 @@ export const authRoutes = [
     path: "/night-audit",
     component: <NightAudit />,
     icon: <AiOutlineSolution style={{ fontSize: "20px" }} />,
+    requiredRole: FRONT_OFFICE,
   },
   {
     key: 14,
@@ -968,22 +970,22 @@ export const authRoutes = [
   },
   {
     key: 17,
-    id: "/procument-/-purchasing-system",
-    label: "Procument / Purchasing System",
+    id: "/Procurement-/-purchasing-system",
+    label: "Procurement / Purchasing System",
     isPrivate: false,
     icon: <AuditOutlined style={{ fontSize: "20px" }} />,
     nested: [
       // {
       //   key: 9.1,
       //   label: "Items",
-      //   path: "/procument-/-purchasing-system/items",
+      //   path: "/Procurement-/-purchasing-system/items",
       //   icon: <ApartmentOutlined style={{ fontSize: "20px" }} />,
       //   // component: < />,
       //   // permission: ".list",
       // },
       {
         key: 17.1,
-        path: "/procument-/-purchasing-system/suppliers",
+        path: "/Procurement-/-purchasing-system/suppliers",
         label: "Suppliers",
         icon: <MdOutlinePeople style={{ fontSize: "20px" }} />,
         component: <SupplierList />,
@@ -993,7 +995,7 @@ export const authRoutes = [
       {
         key: 17.2,
         label: "Inventory Categories",
-        path: "/procument-/-purchasing-system/inventory-categories",
+        path: "/Procurement-/-purchasing-system/inventory-categories",
         icon: <MdOutlineCategory style={{ fontSize: "20px" }} />,
         component: <CategoryListing />,
         isPrivate: true,
@@ -1002,7 +1004,7 @@ export const authRoutes = [
       {
         key: 17.3,
         label: "Units",
-        path: "/procument-/-purchasing-system/units",
+        path: "/Procurement-/-purchasing-system/units",
         icon: <DeploymentUnitOutlined style={{ fontSize: "20px" }} />,
         component: <UnitListing />,
         isPrivate: true,
@@ -1176,7 +1178,7 @@ const AuthRoutes = () => {
               key={option.key}
               path={option.path}
               element={
-                <PermissionRoute permission={option.permission}>
+                <PermissionRoute permission={option.permission} requiredRole={option.requiredRole}>
                   {option.component}
                 </PermissionRoute>
               }

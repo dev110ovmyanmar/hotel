@@ -7,6 +7,9 @@ import { useEffect, useState } from "react";
 import emailjs from '@emailjs/browser';
 import { useSelector } from "react-redux";
 import { appSelector } from "../../services/appSlice";
+import { useApiMutation } from "../../hooks/useApiMutation";
+import { systemUnlock } from "../../api/nightAuditApi";
+import Toast from "../../component/Toast/Toast";
 
 const CreateNewDay = ({
     createNewDayClick
@@ -24,6 +27,25 @@ const CreateNewDay = ({
     const nextDay = dayjs().add(1, "add");
 
     const [haveNiceDay, setHaveNiceDay] = useState(false);
+
+    // System Unlock Mutation
+    const systemUnlockMutation = useApiMutation({
+        mutationFn: systemUnlock,
+            options: {
+            onSuccess: (data) => {
+                Toast.success("System Unlocked successfully");
+                setHaveNiceDay(true);
+            },
+            onError: (error) => {
+                console.error("System lock error:", error);
+                Toast.error(error?.response?.data?.error?.text || "Failed to unlock system");
+            },
+        },
+    });
+
+    const handleNext = () => {
+        systemUnlockMutation.mutate();
+    };
 
     useEffect(() => {
         if (haveNiceDay) {
@@ -78,7 +100,8 @@ const CreateNewDay = ({
                             <div className="flex justify-end">
                                 <Button
                                     type="primary"
-                                    onClick={() => setHaveNiceDay(true)}
+                                    onClick={handleNext}
+                                    loading={systemUnlockMutation.isPending}
                                 >
                                     Next
                                 </Button>

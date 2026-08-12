@@ -47,7 +47,7 @@ export default function RoomDowngradeModal({
         setReviewData()
     };
 
-    console.log(record, "Record")
+    console.log(selectedRoom, "selectedRoom")
     // Submits data directly using single-pane architectural validation structures
     const handleSubmit = async () => {
         try {
@@ -233,7 +233,10 @@ export default function RoomDowngradeModal({
                                         <Row gutter={[16, 16]}>
 
 
-                                            {roomList?.rooms?.map(room => {
+                                            {roomList?.rooms
+                                            ?.filter(room=>room?.rooms?.length > 0)
+                                            ?.map(room => {
+                                                console.log(room,"RoomInRoomList")
                                                 return (
                                                     <Col span={12}>
                                                         <div

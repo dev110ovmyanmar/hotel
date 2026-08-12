@@ -123,9 +123,32 @@ const ServiceOrderForm = ({
     (status) => status.code === "pending",
   );
 
+  // const rooms =
+  //   reservationRoom?.rooms
+  //     ?.filter((room) => room?.roomStatus?.code === "checked_in")
+  //     .map((room) => {
+  //       const checkin = getFormattedDate(room?.checkinDate);
+  //       const checkout = getFormattedDate(room?.checkoutDate);
+
+  //       return {
+  //         value: room?.uuid,
+  //         label: `${room?.room?.roomNo} (${checkin} / ${checkout})`,
+  //       };
+  //     }) || [];
   const rooms =
     reservationRoom?.rooms
-      ?.filter((room) => room?.roomStatus?.code === "checked_in")
+      ?.filter((room) => {
+        // View mode: show the current room even if it is not checked-in
+        if (isView) {
+          return (
+            room?.roomStatus?.code === "checked_in" ||
+            room?.uuid === orderDetails?.reservationRoom?.uuid
+          );
+        }
+
+        // Add/Edit: only show checked-in rooms
+        return room?.roomStatus?.code === "checked_in";
+      })
       .map((room) => {
         const checkin = getFormattedDate(room?.checkinDate);
         const checkout = getFormattedDate(room?.checkoutDate);
@@ -136,13 +159,36 @@ const ServiceOrderForm = ({
         };
       }) || [];
 
+  // const services =
+  //   reservationRoom?.services
+  //     ?.filter((service) =>
+  //       service?.serviceStages?.some((stage) =>
+  //         ["in_house", "pre_departure", "anytime"].includes(stage),
+  //       ),
+  //     )
+  //     ?.map((service) => ({
+  //       value: service?.uuid,
+  //       label: service?.name,
+  //     })) || [];
+
   const services =
     reservationRoom?.services
-      ?.filter((service) =>
-        service?.serviceStages?.some((stage) =>
+      ?.filter((service) => {
+        // View mode: show the current service even if its stage
+        // is not in_house, pre_departure, or anytime
+        if (isView) {
+          return (
+            service?.serviceStages?.some((stage) =>
+              ["in_house", "pre_departure", "anytime"].includes(stage),
+            ) || service?.uuid === orderDetails?.service?.uuid
+          );
+        }
+
+        // Add/Edit: only show allowed service stages
+        return service?.serviceStages?.some((stage) =>
           ["in_house", "pre_departure", "anytime"].includes(stage),
-        ),
-      )
+        );
+      })
       ?.map((service) => ({
         value: service?.uuid,
         label: service?.name,
@@ -315,12 +361,14 @@ const ServiceOrderForm = ({
         }}
       >
         {/* <Form.Item label="Room No" name="roomNo" rules={[{ required: true }]}>
+
           <Select
             placeholder="Select a Room"
             options={rooms}
-            allowClear={isView ? !isView : undefined}
-            open={isView ? !isView : undefined}
+          allowClear={isView ? !isView : undefined}
+          open={isView ? !isView : undefined}
           />
+
         </Form.Item> */}
         <Form.Item
           label="Room No"
@@ -453,102 +501,106 @@ const ServiceOrderForm = ({
                   />
                 )}
               </Form.Item>
-              {serviceInventories.length === 0 && (
-                <Form.Item
-                  label="Quantity"
-                  name="quantity"
-                  rules={[{ required: true }, { type: "number" }]}
-                  className="minus-icon"
-                >
-                  <InputNumber
-                    {...sharedProps}
-                    style={{ width: "100%" }}
-                    readOnly={isView}
-                  />
-                </Form.Item>
-              )}
+              {/* {serviceInventories.length === 0 && ( */}
+              {(serviceInventories.length === 0 ||
+                (isView && orderDetails?.consumptionType === null)) && (
+                  <Form.Item
+                    label="Quantity"
+                    name="quantity"
+                    rules={[{ required: true }, { type: "number" }]}
+                    className="minus-icon"
+                  >
+                    <InputNumber
+                      {...sharedProps}
+                      style={{ width: "100%" }}
+                      readOnly={isView}
+                    />
+                  </Form.Item>
+                )}
             </div>
 
-            {selectedServiceUuid && (
-              <div>
-                <label className="text-xs font-bold uppercase tracking-wider block">
-                  {serviceInventories.length > 0
-                    ? "Service Inventory Items"
-                    : ""}
-                </label>
+            {/* {selectedServiceUuid && ( */}
+            {selectedServiceUuid &&
+              !(isView && orderDetails?.consumptionType === null) && (
+                <div>
+                  <label className="text-xs font-bold uppercase tracking-wider block">
+                    {serviceInventories.length > 0
+                      ? "Service Inventory Items"
+                      : ""}
+                  </label>
 
-                {serviceInventories.length > 0 && (
-                  <div className="mb-5 mt-3 py-3 px-1 border border-gray-200 border-2 rounded-xl overflow-hidden bg-white">
-                    {serviceInventories?.map((item, index) => (
-                      <div
-                        key={item.value}
-                        className="flex items-center justify-between py-1 px-3.5 hover:bg-gray-50/70 transition-colors duration-150 dark:hover:bg-gray-900 dark:hover:backdrop-filter-lg"
-                      >
-                        <Form.Item
-                          name={["inventoryItems", index, "value"]}
-                          initialValue={item.value}
-                          hidden
+                  {serviceInventories.length > 0 && (
+                    <div className="mb-5 mt-3 py-3 px-1 border border-gray-200 border-2 rounded-xl overflow-hidden bg-white">
+                      {serviceInventories?.map((item, index) => (
+                        <div
+                          key={item.value}
+                          className="flex items-center justify-between py-1 px-3.5 hover:bg-gray-50/70 transition-colors duration-150 dark:hover:bg-gray-900 dark:hover:backdrop-filter-lg"
                         >
-                          <input type="hidden" />
-                        </Form.Item>
-                        <Form.Item
-                          name={["inventoryItems", index, "label"]}
-                          initialValue={item.label}
-                          hidden
-                        >
-                          <input type="hidden" />
-                        </Form.Item>
-
-                        <div className="flex items-center space-x-3 min-w-0 flex-1 pr-4">
-                          <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 flex-shrink-0" />
-                          <span
-                            className={`font-medium text-gray-700 truncate  ${textWhiteInDarkStyle}`}
-                            title={item.label}
-                          >
-                            {item.label}
-                          </span>
-                          <span className="inline-flex items-center  text-xs font-medium  text-gray-500  flex-shrink-0">
-                            ( Max: {item.maxLimit ?? "N/A"} )
-                          </span>
-                        </div>
-
-                        <div className="flex-shrink-0">
                           <Form.Item
-                            name={["inventoryItems", index, "quantity"]}
-                            initialValue={0}
-                            className="!mb-0 minus-icon"
-                            rules={[
-                              { required: true, message: "Required" },
-                              {
-                                type: "number",
-                                min: 0,
-                              },
-                              ...(item.maxLimit
-                                ? [
+                            name={["inventoryItems", index, "value"]}
+                            initialValue={item.value}
+                            hidden
+                          >
+                            <input type="hidden" />
+                          </Form.Item>
+                          <Form.Item
+                            name={["inventoryItems", index, "label"]}
+                            initialValue={item.label}
+                            hidden
+                          >
+                            <input type="hidden" />
+                          </Form.Item>
+
+                          <div className="flex items-center space-x-3 min-w-0 flex-1 pr-4">
+                            <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 flex-shrink-0" />
+                            <span
+                              className={`font-medium text-gray-700 truncate  ${textWhiteInDarkStyle}`}
+                              title={item.label}
+                            >
+                              {item.label}
+                            </span>
+                            <span className="inline-flex items-center  text-xs font-medium  text-gray-500  flex-shrink-0">
+                              ( Max: {item.maxLimit ?? "N/A"} )
+                            </span>
+                          </div>
+
+                          <div className="flex-shrink-0">
+                            <Form.Item
+                              name={["inventoryItems", index, "quantity"]}
+                              initialValue={0}
+                              className="!mb-0 minus-icon"
+                              rules={[
+                                { required: true, message: "Required" },
+                                {
+                                  type: "number",
+                                  min: 0,
+                                },
+                                ...(item.maxLimit
+                                  ? [
                                     {
                                       type: "number",
                                       max: item.maxLimit,
                                       message: `Max is ${item.maxLimit}`,
                                     },
                                   ]
-                                : []),
-                            ]}
-                          >
-                            <InputNumber
-                              {...sharedProps}
-                              min={0}
-                              max={item.maxLimit}
-                              placeholder="Qty:"
-                              className="w-24 h-8 rounded-lg text-center"
-                            />
-                          </Form.Item>
+                                  : []),
+                              ]}
+                            >
+                              <InputNumber
+                                {...sharedProps}
+                                min={0}
+                                max={item.maxLimit}
+                                placeholder="Qty:"
+                                className="w-24 h-8 rounded-lg text-center"
+                              />
+                            </Form.Item>
+                          </div>
                         </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
           </>
         )}
 
@@ -682,14 +734,14 @@ const ServiceOrderForm = ({
                 <InputNumber
                   {...sharedProps}
                   style={{ width: "100%" }}
-                  // readOnly={isView}
+                // readOnly={isView}
                 />
               </Form.Item>
             </>
           )}
         </div>
         <div className="grid grid-cols-2 gap-4">
-          <Form.Item
+          {/* <Form.Item
             label="Consumption Type"
             name="consumptionType"
             className="col-span-1"
@@ -716,8 +768,41 @@ const ServiceOrderForm = ({
                 placeholder="Select a Consumption Type"
               />
             )}
-          </Form.Item>
+          </Form.Item> */}
 
+          {(!isView || orderDetails?.consumptionType !== null) && (
+            <Form.Item
+              label="Consumption Type"
+              name="consumptionType"
+              className="col-span-1"
+              rules={[
+                {
+                  required: true,
+                  message: "Please select a Consumption Type",
+                },
+              ]}
+              getValueProps={(value) => ({
+                value: isView
+                  ? consumptionType.find((item) => item.value === value)?.label
+                  : value,
+              })}
+            >
+              {isView ? (
+                <Input readOnly />
+              ) : (
+                <Select
+                  showSearch
+                  filterOption={(input, option) =>
+                    (option?.label ?? "")
+                      .toLowerCase()
+                      .includes(input.toLowerCase())
+                  }
+                  options={consumptionType}
+                  placeholder="Select a Consumption Type"
+                />
+              )}
+            </Form.Item>
+          )}
           <Form.Item
             label="Order Status"
             name="orderStatus"

@@ -33,13 +33,13 @@ const columns = [
     title: "Amount",
     dataIndex: "amount",
     key: "amount",
-    align:"right",
+    align: "right",
     render: (value) => {
       return (
-        <>
-          <span>{value?.toLocaleString()}</span>
-          <span> {""} MMK</span>
-        </>
+        <div className="inline-flex items-center gap-1">
+          <PriceTag value={value} />
+          <span>MMK</span>
+        </div>
       );
     },
   },
@@ -61,7 +61,7 @@ const PaymentSummaryTable = ({ data }) => {
   // Safely extract the clean array from your wrapped object structure { data: Array(9) }
   const rawDataArray =
     data?.reservation?.folioPayments &&
-    Array.isArray(data?.reservation?.folioPayments)
+      Array.isArray(data?.reservation?.folioPayments)
       ? data?.reservation?.folioPayments
       : [];
 
