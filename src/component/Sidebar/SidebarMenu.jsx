@@ -6,6 +6,8 @@ import usePermission from "../../hooks/usePermission";
 import { useSelector } from "react-redux";
 import LeavePageModal from "../../pages/Reservation/LeavePageModal";
 import { createReservationSelector } from "../../services/createReservationSlice";
+import { loadState } from "../../utils/Utils";
+import { LOCAL_STORAGE_KEYS } from "../../variables/constants";
 
 const SidebarContent = ({
   onClick,
@@ -21,6 +23,13 @@ const SidebarContent = ({
 
   const [leavePageModalOpen, setLeavePageModalOpen] = useState(false);
   const [pendingPath, setPendingPath] = useState(null);
+
+  const roleCode = loadState(LOCAL_STORAGE_KEYS.loginAdminDetails)?.role?.code;
+
+  const hasRoleAccess = (requiredRole) => {
+    if (!requiredRole) return true;
+    return roleCode?.startsWith(requiredRole);
+  };
 
   const handleMenuItemClick = (path) => {
     if (hasUnsavedForm && !isSubmitted) {
@@ -42,7 +51,9 @@ const SidebarContent = ({
       .filter((route) => {
         // 1. Basic visibility check
         if (!route.label || !route.icon) return false;
-        // 2. Permission check
+        // 2. Role check
+        if (!hasRoleAccess(route.requiredRole)) return false;
+        // 3. Permission check
         if (route.permission && !hasPermission(route.permission)) return false;
         return true;
       })

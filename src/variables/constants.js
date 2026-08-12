@@ -20,6 +20,7 @@ export const SECRET_ACCESS_KEY = VITE_SECRET_ACCESS_KEY;
 export const ADMIN = "admin";
 export const SUPER_ADMIN = "superAdmin";
 export const SUPER_ADMIN_SK = "superadmin";
+export const FRONT_OFFICE = "front_office";
 
 //Gender options
 export const MALE = "male";
@@ -100,6 +101,7 @@ export const LIMITS = {
 
 export const SERVER_ERROR_CODES = {
   sessionExpired: "1000",
+  systemLocked: "1466",
 };
 
 export const makeid = (prefix, length) => {
@@ -288,3 +290,8 @@ export const sellingPriceValidator = (fieldName) => ({ getFieldValue }) => ({
     return Promise.resolve();
   },
 });
+
+// systemLogKey
+export const SYSTEM_LOCK_KEY = {
+  nightAudit: "night_audit",
+}
