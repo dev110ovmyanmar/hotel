@@ -42,9 +42,17 @@ const CalendarHeader = ({
   return (
     <div className="bg-white px-6 py-3 flex justify-between items-center border-b border-[#dee2e6] z-50">
       <div className="flex items-center gap-4">
-        <Space>
-          <DoubleLeftOutlined className={`text-gray-400 cursor-pointer ${disabled ? 'pointer-events-none opacity-50' : ''}`} onClick={() => setCurrentDate(currentDate.subtract(1, 'year'))} />
-          <LeftOutlined className={`text-gray-400 cursor-pointer ${disabled ? 'pointer-events-none opacity-50' : ''}`} onClick={() => setCurrentDate(currentDate.subtract(1, 'month'))} />
+        <div className="flex items-center gap-2">
+          <DoubleLeftOutlined
+            className={`text-gray-400 cursor-pointer hover:text-blue-500 active:text-blue-700 active:scale-90 transition-all duration-150 ${disabled ? 'pointer-events-none opacity-50' : ''}`}
+            onMouseDown={(e) => e.stopPropagation()}
+            onClick={() => setCurrentDate(currentDate.subtract(1, 'year'))}
+          />
+          <LeftOutlined
+            className={`text-gray-400 cursor-pointer hover:text-blue-500 active:text-blue-700 active:scale-90 transition-all duration-150 ${disabled ? 'pointer-events-none opacity-50' : ''}`}
+            onMouseDown={(e) => e.stopPropagation()}
+            onClick={() => setCurrentDate(currentDate.subtract(1, 'month'))}
+          />
           <DatePicker
             picker="date"
             value={currentDate}
@@ -54,12 +62,20 @@ const CalendarHeader = ({
             variant="borderless"
             disabled={disabled}
             styles={{ input: { textAlign: 'center' } }}
-            className="font-bold text-lg w-30 p-0 cursor-pointer"
+            className="font-bold text-lg w-44 p-0 cursor-pointer"
             onChange={(date) => date && setCurrentDate(date)}
           />
-          <RightOutlined className={`text-gray-400 cursor-pointer ${disabled ? 'pointer-events-none opacity-50' : ''}`} onClick={() => setCurrentDate(currentDate.add(1, 'month'))} />
-          <DoubleRightOutlined className={`text-gray-400 cursor-pointer ${disabled ? 'pointer-events-none opacity-50' : ''}`} onClick={() => setCurrentDate(currentDate.add(1, 'year'))} />
-        </Space>
+          <RightOutlined
+            className={`text-gray-400 cursor-pointer hover:text-blue-500 active:text-blue-700 active:scale-90 transition-all duration-150 ${disabled ? 'pointer-events-none opacity-50' : ''}`}
+            onMouseDown={(e) => e.stopPropagation()}
+            onClick={() => setCurrentDate(currentDate.add(1, 'month'))}
+          />
+          <DoubleRightOutlined
+            className={`text-gray-400 cursor-pointer hover:text-blue-500 active:text-blue-700 active:scale-90 transition-all duration-150 ${disabled ? 'pointer-events-none opacity-50' : ''}`}
+            onMouseDown={(e) => e.stopPropagation()}
+            onClick={() => setCurrentDate(currentDate.add(1, 'year'))}
+          />
+        </div>
       </div>
 
       <div className="flex items-center gap-4 text-blue-500">

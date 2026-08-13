@@ -39,3 +39,11 @@ export const upsertFoodBeverageOrderItem = async (params) => {
     );
     return data.response;
 };
+
+export const deleteFoodBeverageOrderItem = async (params) => {
+    const { data } = await apiClient.delete(
+        "/fnb-order-item/delete",
+        {data: params}
+    );
+    return data.response;
+};

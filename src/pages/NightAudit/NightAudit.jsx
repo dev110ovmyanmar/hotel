@@ -11,6 +11,10 @@ import CreateNewDay from "./CreateNewDay";
 import ConfirmModal from "./ConfirmModal";
 import ReactTimer from "../../component/ReactTimer/ReactTimer";
 import dayjs from "dayjs";
+import { useApiMutation } from "../../hooks/useApiMutation";
+import { systemLock } from "../../api/nightAuditApi";
+import Toast from "../../component/Toast/Toast";
+import { SYSTEM_LOCK_KEY } from "../../variables/constants";
 
 const NightAudit = () => {
     const [forceLogout, setForceLogout] = useState(false);
@@ -20,6 +24,30 @@ const NightAudit = () => {
     const [currentValue, setCurrentValue] = useState(0);
     const [finishCountDown, setFinishCountDown] = useState(false);
     const todayDate = dayjs().format("DD-MM-YYYY");
+
+    // System Lock Mutation
+    const systemLockMutation = useApiMutation({
+        mutationFn: systemLock,
+        shouldInvalidate: false,
+        options: {
+            onSuccess: (data) => {
+                Toast.success("System locked successfully");
+                setConfirmModal(false);
+                setCurrentValue(0);
+                setStep("checkBooking");
+                console.log("Step set to checkBooking");
+            },
+            onError: (error) => {
+                Toast.error(error?.response?.data?.error?.text || "Failed to lock system");
+            },
+        },
+    });
+
+    const handleForceLogout = () => {
+        systemLockMutation.mutate({
+            systemLockKey: SYSTEM_LOCK_KEY.nightAudit
+        });
+    };
 
     return (
         <div className="w-full px-6 py-2">
@@ -77,7 +105,13 @@ const NightAudit = () => {
                                         </div>
 
                                         <div className="flex justify-center">
-                                            <Button className="!bg-[#CF1322] !text-[#FFFFFF]" onClick={() => setConfirmModal(true)}>Forcefully Logout Admins</Button>
+                                            <Button
+                                                className="!bg-[#CF1322] !text-[#FFFFFF]"
+                                                onClick={() => setConfirmModal(true)}
+                                                loading={systemLockMutation.isPending}
+                                            >
+                                                Forcefully Logout Admins
+                                            </Button>
                                         </div>
                                     </div>
                             }
@@ -141,7 +175,7 @@ const NightAudit = () => {
             <ConfirmModal
                 open={confirmModal}
                 onCancel={() => setConfirmModal(false)}
-                onOk={() => { setForceLogout(true); setConfirmModal(false) }}
+                onOk={handleForceLogout}
             />
 
         </div>

@@ -55,6 +55,7 @@ import {
   MdMeetingRoom,
 } from "react-icons/md";
 import { PERMISSIONS } from "../../variables/permission";
+import { FRONT_OFFICE } from "../../variables/constants";
 import { BiFoodMenu, BiGroup } from "react-icons/bi";
 import { GiBroom, GiModernCity, GiVacuumCleaner } from "react-icons/gi";
 import { LuPackageSearch, LuSalad } from "react-icons/lu";
@@ -846,6 +847,7 @@ export const authRoutes = [
     path: "/night-audit",
     component: <NightAudit />,
     icon: <AiOutlineSolution style={{ fontSize: "20px" }} />,
+    requiredRole: FRONT_OFFICE,
   },
   {
     key: 14,
@@ -1176,7 +1178,7 @@ const AuthRoutes = () => {
               key={option.key}
               path={option.path}
               element={
-                <PermissionRoute permission={option.permission}>
+                <PermissionRoute permission={option.permission} requiredRole={option.requiredRole}>
                   {option.component}
                 </PermissionRoute>
               }

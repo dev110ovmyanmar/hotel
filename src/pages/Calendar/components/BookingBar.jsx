@@ -25,8 +25,9 @@ const BookingBar = ({ bookingItem, room, day, days, CELL_WIDTH, handleBookingCli
 
   if (isContinuingLeft && !isContinuingRight) {
     span = exitDay.diff(firstVisibleDay, 'day') + 1;
-  }
-  if (isContinuingLeft && isContinuingRight) {
+  } else if (!isContinuingLeft && isContinuingRight) {
+    span = exitDay.diff(entryDay, 'day') + 1;
+  } else if (isContinuingLeft && isContinuingRight) {
     span = days.length;
   }
 
