@@ -6,6 +6,7 @@ import { Button, Checkbox, Form, Select, Alert } from "antd";
 import Modal from "antd/es/modal/Modal";
 import Toast from "../../../../../../component/Toast/Toast";
 import { darkModeStyle, textWhiteInDarkStyle } from "../../../../../../utils";
+import PriceTag from "../../../../../../component/PriceTag/PriceTag";
 
 const SingleRoomComplimentaryUpdateModal = ({
     reservationData,
@@ -365,7 +366,12 @@ const SingleRoomComplimentaryUpdateModal = ({
                                         Net Amount
                                     </span>
                                     <span className="text-lg font-black text-emerald-600 dark:text-emerald-400 leading-none">
-                                        {net.toLocaleString()} MMK
+                                        <p className="inline-flex items-center gap-1 m-0">
+                                            <span>
+                                                <PriceTag value={net} />
+                                            </span>
+                                            <span>MMK</span>
+                                        </p>
                                     </span>
                                 </div>
                             </div>
@@ -426,7 +432,10 @@ const SingleRoomComplimentaryUpdateModal = ({
                                                 className="text-xs font-bold block mt-0.5"
                                                 style={{ color: isComp ? "green" : "inherit" }}
                                             >
-                                                {displayValue.toLocaleString()} MMK
+                                                <span className="inline-flex items-center gap-1 whitespace-nowrap">
+                                                    <PriceTag value={displayValue} />
+                                                    <span>MMK</span>
+                                                </span>
                                             </span>
                                             <span className="text-[8px] block mt-1 font-medium opacity-70">
                                                 {isComp ? "🎁 Waived" : "Available"}

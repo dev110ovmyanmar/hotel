@@ -20,6 +20,7 @@ import RoomModalBox from "./RoomModalBox";
 import RefreshConfirmModal from "./RefreshConfirmModal";
 import { useDispatch } from "react-redux";
 import { setHasUnsavedForm, setIsSubmitted } from "../../services/createReservationSlice";
+import PriceTag from "../../component/PriceTag/PriceTag";
 
 const ReservationList = () => {
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
@@ -63,8 +64,8 @@ const ReservationList = () => {
   const [rateKey, setRateKey] = useState();
 
   const [refreshConfirmModalOpen, setRefreshConfirmModalOpen] = useState(false);
-  const [submitted,isSubmitted] = useState(false);
-  const [submitPendingDisabled,setSubmitPendingDisabled] = useState(false);
+  const [submitted, isSubmitted] = useState(false);
+  const [submitPendingDisabled, setSubmitPendingDisabled] = useState(false);
 
 
 
@@ -292,8 +293,10 @@ const ReservationList = () => {
         return (
           <div className="mb-2">
             <div className="flex justify-center">
-              <p>{value?.minPrice?.toLocaleString()} MMK</p>
-              <div className="px-2 ms-2">
+              <p className="inline-flex items-center gap-1 m-0">
+                <PriceTag value={value?.minPrice} />
+                <span>MMK</span>
+              </p>              <div className="px-2 ms-2">
                 <ExclamationCircleOutlined
                   className={getRemainingRooms(record) <= 0 ? "!text-gray-500 !text-sm cursor-pointer" : "!text-[#2973e7] !text-sm cursor-pointer"}
                   onClick={() => {
@@ -415,7 +418,7 @@ const ReservationList = () => {
           refreshConfirmModalOpen={refreshConfirmModalOpen}
           setRefreshConfirmModalOpen={setRefreshConfirmModalOpen}
           refreshDataCleanOk={refreshDataCleanOk}
-          createContactFinish = {createContactFinish}
+          createContactFinish={createContactFinish}
         />
       </div>
 
@@ -499,7 +502,7 @@ const ReservationList = () => {
         createContactFinish={createContactFinish}
         setCreateContactFinish={setCreateContactFinish}
         createContactForm={createContactForm}
-        
+
       />
 
       <RoomBookedDrawer

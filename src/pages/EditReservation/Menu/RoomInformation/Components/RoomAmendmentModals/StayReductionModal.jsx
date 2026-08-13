@@ -108,7 +108,10 @@ export default function StayReductionModal({
                         type="primary"
                         danger
                         onClick={handleProceedToSummary}
-                        disabled={maxReduction <= 0} // Blocks moving forward if reduction limit is 0
+                        disabled={maxReduction <= 0}// Blocks moving forward if reduction limit is 0
+                        className={
+                            maxReduction <= 0 ? "text-default" : ""
+                        }
                     >
                         Review Summary
                     </Button>

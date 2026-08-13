@@ -144,7 +144,12 @@ const ServicePackageTable = ({
       dataIndex: ["item", "basePrice"],
       key: "basePrice",
       align: "right",
-      render: (text) => <PriceTag value={text} />,
+      render: (text) => (
+        <div>
+          {text ? <PriceTag value={text} /> : "-"}
+        </div>
+      ),
+
     },
     {
       title: "Action",

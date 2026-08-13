@@ -109,6 +109,9 @@ export default function StayExtensionModal({ isOpen,
                         type="primary"
                         onClick={handleProceedToSummary}
                         disabled={maxDayExtension <= 0}
+                        className={
+                            maxDayExtension <= 0 ? "text-default" : ""
+                        }
                     >
                         Review Summary
                     </Button>
