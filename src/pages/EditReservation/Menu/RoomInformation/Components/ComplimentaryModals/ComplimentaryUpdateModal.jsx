@@ -8,6 +8,7 @@ import Toast from '../../../../../../component/Toast/Toast';
 import useApiQuery from '../../../../../../hooks/useApiQuery';
 import { reservationRoomList } from '../../../../../../api/reservationSectionApi';
 import { darkModeStyle, textColorDarkMode, textWhiteInDarkStyle } from '../../../../../../utils';
+import PriceTag from '../../../../../../component/PriceTag/PriceTag';
 
 const ComplimentaryUpdateModal = ({
     open,
@@ -257,7 +258,12 @@ const ComplimentaryUpdateModal = ({
                                     <div className="flex flex-col items-end gap-1">
                                         <span className="text-[10px] text-slate-400 block uppercase font-bold tracking-tight">Net Amount</span>
                                         <span className="text-lg font-black text-emerald-600 leading-none">
-                                            {net.toLocaleString()} MMK
+                                            <p className="inline-flex items-center gap-1 m-0">
+                                                <span>
+                                                    <PriceTag value={net} />
+                                                </span>
+                                                <span>MMK</span>
+                                            </p>
                                         </span>
                                     </div>
                                 </div>
@@ -303,7 +309,12 @@ const ComplimentaryUpdateModal = ({
                                                     {night.date}
                                                 </span>
                                                 <span className={`text-xs font-bold block mt-0.5 ${isComp ? `text-emerald-600` : `text-slate-800 ${textWhiteInDarkStyle}`}`}>
-                                                    {displayValue.toLocaleString()} MMK
+                                                    <p className="inline-flex items-center gap-1 m-0">
+                                                        <span>
+                                                            <PriceTag value={displayValue} />
+                                                        </span>
+                                                        <span>MMK</span>
+                                                    </p>
                                                 </span>
                                                 <span className="text-[8px] block mt-1 font-medium opacity-70">
                                                     {isComp ? '🎁 Waived' : 'Available'}

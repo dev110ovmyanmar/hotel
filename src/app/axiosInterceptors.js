@@ -14,7 +14,7 @@ import {
 
 import { deviceId, deviceName, getAuthorization, getContentMD5, loadState } from "../utils";
 import { getDate } from "../utils/dateUtils";
-import { sessionExpired, networkFailedModal } from "../services/appSlice";
+import { sessionExpired, networkFailedModal, setSystemLocked } from "../services/appSlice";
 
 // Set up axios response interceptor
 export const setupResponseInterceptor = (client) => {
@@ -28,7 +28,11 @@ export const setupResponseInterceptor = (client) => {
 
       handlenetworkFailed(error);
 
-      handleSessionExpiration(error, store);
+      // Check system locked before session expiration
+      const isLocked = handleSystemLocked(error);
+      if (!isLocked) {
+        handleSessionExpiration(error, store);
+      }
 
       return Promise.reject(error); // Reject with parsed error
     },
@@ -40,9 +44,19 @@ const handleSessionExpiration = (error) => {
   const parsedError = error?.response?.data?.error;
   if (parsedError?.code === SERVER_ERROR_CODES.sessionExpired) {
     store.dispatch(sessionExpired(true));
-  } else {
+  } else if (parsedError?.code !== SERVER_ERROR_CODES.systemLocked) {
     Toast.error(error.response.data.error.text);
   }
+};
+
+// Handle system locked (night audit in progress)
+const handleSystemLocked = (error) => {
+  const parsedError = error?.response?.data?.error;
+  if (parsedError?.code === SERVER_ERROR_CODES.systemLocked) {
+    store.dispatch(setSystemLocked(true));
+    return true; // handled
+  }
+  return false; // not handled
 };
 
 const handlenetworkFailed = (error) => {

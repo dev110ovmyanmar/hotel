@@ -19,7 +19,7 @@ const initialState = {
   sessionExpired: false,
   theme: (!isServer && localStorage.getItem('theme')) || 'light',
   networkFailed: false,
-
+  systemLocked: false,
 };
 
 const appSlice = createSlice({
@@ -58,6 +58,9 @@ const appSlice = createSlice({
     networkFailedModal:(state,action)=>{
       console.log(action,"ActionInAppSlice")
       state.networkFailed = action.payload;
+    },
+    systemLocked: (state, action) => {
+      state.systemLocked = action.payload;
     },
 
     // Added Theme Toggle Reducer
@@ -101,6 +104,6 @@ export const {
 
 export const appSelector = (state) => state?.app;
 
-export const { sessionExpired  , networkFailedModal} = appSlice.actions;
+export const { sessionExpired, networkFailedModal, systemLocked: setSystemLocked } = appSlice.actions;
 
 export default appReducer;

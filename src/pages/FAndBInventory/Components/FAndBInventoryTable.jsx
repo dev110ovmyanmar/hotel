@@ -62,14 +62,15 @@ const FAndBInventoryTable = ({
     },
     {
       title: "Purchase Price (MMK)",
-      dataIndex: "unitPrice",
-      key: "unitPrice",
+      dataIndex: "unitCost",
+      key: "unitCost",
       render: (text) => <PriceTag value={text} />,
     },
     {
       title: "Selling  Price (MMK)",
-      dataIndex: "unitCost",
-      key: "unitCost",
+      dataIndex: "unitPrice",
+
+      key: " unitPrice",
       render: (text) => <PriceTag value={text} />,
     },
     {
@@ -129,12 +130,12 @@ const FAndBInventoryTable = ({
   ];
 
   const expandColumns = [
-    { title: "ID", dataIndex: "id", key: "id", align: "center", width:100 },
+    { title: "ID", dataIndex: "id", key: "id", align: "center", width: 100 },
     {
       title: "Menu Item",
       dataIndex: ["menuItem", "name"],
       key: "name",
-      width:550
+      width: 550
     },
     {
       title: "Quantity",

@@ -8,6 +8,7 @@ import { fetchInitData } from "./api/initDataApi.js";
 import { loadState } from "./utils/Utils.js";
 import { LOCAL_STORAGE_KEYS } from "./variables/constants.js";
 import useApiQuery from "./hooks/useApiQuery.js";
+import SystemLocked from "./component/SystemLocked/SystemLocked.jsx";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -52,6 +53,7 @@ const App = () => {
       }}
     >
       <div className="min-h-screen bg-background text-foreground transition-all duration-200">
+        <SystemLocked />
         <Routes />
       </div>
     </ConfigProvider>
