@@ -79,7 +79,7 @@ const MeanPlanTable = ({
             </div>
             <div className="flex justify-between">
               <span>Child Free Age Below :</span>
-              <span className="flex items-center gap-1">[<PriceTag value={record?.childFreeAgeBelow} />]
+              <span className="flex items-center gap-1">[ {record?.childFreeAgeBelow} ]
                 {record?.childFreeAgeBelow <= 1 ? " Year" : " Years"}
               </span>
             </div>

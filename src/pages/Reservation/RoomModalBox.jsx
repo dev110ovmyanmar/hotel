@@ -1,6 +1,7 @@
 import { Col, Divider, Modal, Row } from "antd"
 import dayjs from "dayjs"
 import React from "react"
+import PriceTag from "../../component/PriceTag/PriceTag";
 
 const RoomModalBox = ({
     roomModalBoxOpen,
@@ -48,7 +49,9 @@ const RoomModalBox = ({
                                             </Col>
 
                                             <Col span={12}>
-                                                <p className="text-end">{price?.price?.toLocaleString()}</p>
+                                                <p className="text-end">
+                                                    <PriceTag value={price?.price} />
+                                                </p>
                                             </Col>
 
                                             {

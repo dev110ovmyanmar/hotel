@@ -245,17 +245,18 @@ const RatePlanTable = ({
       key: "roomType",
       render: (text) => <div>{text}</div>,
     },
+
     {
       title: "Price (MMK)",
       dataIndex: "price",
       key: "price",
-      render: (text, record) => {
+      render: (price, record) => {
         const hasWeekdays =
           record.weekdays &&
           Object.values(record.weekdays).some((v) => v !== null);
         return (
           <div className="flex gap-2 items-center justify-end">
-            <PriceTag value={text} />
+            <PriceTag value={price} />
             {hasWeekdays && (
               <a
                 onClick={() => showWeekDayModal(record)}

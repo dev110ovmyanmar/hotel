@@ -86,9 +86,8 @@ export default function useGuestColumns(
       width: 100,
       fixed: "right",
       align: "center",
-      render: (_, record) => {
-        const smallStyle = { fontSize: "12px" };
 
+      render: (_, record) => {
         const actions = [
           {
             key: "view",
@@ -97,6 +96,7 @@ export default function useGuestColumns(
             permission: PERMISSIONS.GUEST_VIEW,
             onClick: () => onView(record),
           },
+
           {
             key: "edit",
             label: "Edit",
@@ -104,6 +104,7 @@ export default function useGuestColumns(
             permission: PERMISSIONS.GUEST_EDIT,
             onClick: () => onEdit(record),
           },
+
           {
             key: "manage-files",
             label: "Manage Files",
@@ -115,16 +116,22 @@ export default function useGuestColumns(
 
         const items = actions
           .filter(
-            (action) => !action.permission || hasPermission(action.permission),
+            (action) =>
+              !action.permission || hasPermission(action.permission),
           )
           .map((action) => ({
             key: action.key,
+
+            icon: action.icon,
+
             label: (
-              <Space size={4} style={smallStyle} onClick={action.onClick}>
-                {action.icon}
-                <span style={{ fontSize: "14px" }}>{action.label}</span>
-              </Space>
+              <span style={{ fontSize: "14px" }}>
+                {action.label}
+              </span>
             ),
+
+
+            onClick: action.onClick,
           }));
 
         if (items.length === 0) {
@@ -132,11 +139,19 @@ export default function useGuestColumns(
         }
 
         return (
-          <Dropdown menu={{ items }} trigger={["click"]}>
+          <Dropdown
+            menu={{ items }}
+            trigger={["click"]}
+            placement="bottomRight"
+          >
             <Button
-              icon={<MoreOutlined style={{ fontSize: "16px" }} />}
               type="text"
               size="small"
+              icon={
+                <MoreOutlined
+                  style={{ fontSize: "16px" }}
+                />
+              }
             />
           </Dropdown>
         );
