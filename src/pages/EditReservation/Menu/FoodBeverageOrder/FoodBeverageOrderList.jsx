@@ -102,6 +102,7 @@ const FoodBeverageOrderList = () => {
         <FoodBeverageOrderForm
           reservationRoomNo={data?.reservationRoom?.room?.roomNo}
           reservationUuid={data?.reservation?.uuid}
+          reservationRoomUuid={data?.reservationRoom?.room?.uuid}
           reservationRoomId={bookingId}
           mode={mode}
           setMode={setMode}
