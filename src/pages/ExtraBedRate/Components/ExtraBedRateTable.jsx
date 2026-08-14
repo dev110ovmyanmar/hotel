@@ -24,7 +24,7 @@ const ExtraBedRateTable = ({ data, page, setPage }) => {
       title: "Rate Plan",
       dataIndex: ["ratePlan", "name"],
       key: "ratePlan",
-      width: 150,
+      width: 250,
       onCell: (record) => ({
         rowSpan: record.ratePlanRowSpan,
         style: { verticalAlign: "middle" },
@@ -114,7 +114,7 @@ const ExtraBedRateTable = ({ data, page, setPage }) => {
       dataIndex: "price",
       key: "price",
       align: "right",
-      width: 100,
+      width: 130,
       render: (price) => <PriceTag value={price} />,
     },
     {

@@ -133,7 +133,7 @@ export default function DateChangeModal({
             {/* --- STEP 2: METRIC COMPARISON SUMMARY --- */}
             {currentStep === 'summary' && pendingValues && (
                 <div className="summary-container" style={{ animation: 'fadeIn 0.2s ease-in-out' }}>
-                    <p style={{ color: '#475569', marginBottom: '20px' }}>
+                    <p className="text-[#5f6c7f] dark:text-gray-400 mb-5">
                         Please confirm the adjustments below before applying changes to the dynamic room ledger grid.
                     </p>
 
@@ -169,7 +169,8 @@ export default function DateChangeModal({
                                     fontWeight: 'bold'
                                 }}
                             />
-                            <span style={{ fontSize: '12px', marginLeft: '10px', color: '#64748b' }}>
+                            {/* <span style={{ fontSize: '12px', marginLeft: '10px', color: '#64748b' }}> */}
+                            <span className= "text-xs ml-5 text-[#64748b] dark:text-gray-300">
                                 ({newNights - originalNights >= 0 ? `+${newNights - originalNights}` : `${newNights - originalNights}`} Nights variance)
                             </span>
                         </Descriptions.Item>

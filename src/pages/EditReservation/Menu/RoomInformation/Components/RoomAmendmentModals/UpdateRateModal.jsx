@@ -5,6 +5,7 @@ import { CheckCircleOutlined, ArrowRightOutlined } from '@ant-design/icons';
 import { createRoomAmendment } from '../../../../../../api/roomAmendmentApi';
 import { useApiMutation } from '../../../../../../hooks/useApiMutation';
 import { darkModeStyle, textColorDarkMode, textWhiteInDarkStyle } from '../../../../../../utils';
+import PriceTag from '../../../../../../component/PriceTag/PriceTag';
 
 export default function UpdateRateModal({
     isOpen,
@@ -188,7 +189,7 @@ export default function UpdateRateModal({
                                                         formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                                                         parser={value => value.replace(/[\s,]/g, '')}
                                                         min={0}
-                                                        addonBefore={<span className="text-xs font-semibold text-slate-500">MMK</span>}
+                                                        addonBefore={<span className="text-xs font-semibold text-slate-500 dark:text-slate-300">MMK</span>}
                                                     />
                                                 </Form.Item>
                                             </div>
@@ -211,7 +212,7 @@ export default function UpdateRateModal({
             {/* --- STEP 2: POST PAYLOAD SUMMARY REVIEW --- */}
             {currentStep === 'summary' && pendingValues && (
                 <div className="animate-[fadeIn_0.2s_ease-in-out]">
-                    <p className="text-slate-600 mb-3">
+                    <p className="text-slate-600 dark:text-slate-300 mb-3">
                         Please verify your modified schedule below before saving. Highlighted lines indicate changed prices.
                     </p>
 
@@ -243,7 +244,7 @@ export default function UpdateRateModal({
                                             className={`border-b border-slate-200 last:border-b-0 transition-colors ${isChanged ? 'bg-amber-50 hover:bg-amber-100/70' : 'hover:bg-slate-50'
                                                 }`}
                                         >
-                                            <td className="p-2.5 font-medium text-slate-400">
+                                            <td className="p-2.5 font-medium text-slate-500">
                                                 {dayjs(item.date).format('DD MMM YYYY')}
                                             </td>
                                             <td className="p-2.5 text-xs">
@@ -256,12 +257,12 @@ export default function UpdateRateModal({
                                             <td className="p-2.5">
                                                 {isChanged ? (
                                                     <div className="flex items-center gap-2">
-                                                        <span className="text-slate-400 line-through">
-                                                            {originalPrice.toLocaleString()}
+                                                        <span className="text-slate-500 line-through">
+                                                            <PriceTag value={originalPrice} />
                                                         </span>
-                                                        <ArrowRightOutlined className="text-amber-500 text-[10px]" />
-                                                        <span className="font-semibold text-slate-400">
-                                                            {currentPrice.toLocaleString()}
+                                                        <ArrowRightOutlined className="text-slate-600 text-[10px]" />
+                                                        <span className="font-semibold text-slate-500">
+                                                         <PriceTag value={currentPrice} />
                                                         </span>
                                                     </div>
                                                 ) : (
