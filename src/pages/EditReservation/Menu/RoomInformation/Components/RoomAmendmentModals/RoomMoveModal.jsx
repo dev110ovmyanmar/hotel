@@ -102,6 +102,9 @@ export default function RoomMoveModal({
                         onClick={() => setSelectRoomToMove(true)}
                         type={selectRoomUuid ? "primary" : "default"}
                         disabled={!selectRoomUuid}
+                        className={
+                            !selectRoomUuid ? "text-default" : ""
+                        }
                     >
                         Review
                     </Button>
@@ -140,8 +143,8 @@ export default function RoomMoveModal({
                                 <h1>{record?.roomType?.name}</h1>
                                 {
                                     record?.room?.roomNo ?
-                                    <Tag color="green" className='!border !border-green-300 !rounded-sm'>{record?.room?.roomNo}</Tag>
-                                    : null
+                                        <Tag color="green" className='!border !border-green-300 !rounded-sm'>{record?.room?.roomNo}</Tag>
+                                        : null
                                 }
                             </div>
 
