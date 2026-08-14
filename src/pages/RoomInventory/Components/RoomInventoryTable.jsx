@@ -213,7 +213,7 @@ const RoomInventoryTable = ({
   const expandedRowRender = (record) => {
     return (
       <Table
-        className="expanded-table dark:[&_.ant-table-thead>tr>th]:!text-[#F3F4F6]"
+        className="expanded-table dark:[&_.ant-table-thead>tr>th]:!text-[#F3F4F6]  [&_.ant-table-pagination]:!mt-8"
         columns={expandColumns}
         dataSource={record?.calendars}
         rowKey="uuid"

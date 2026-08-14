@@ -370,7 +370,7 @@ const ServiceOrderForm = ({
           />
 
         </Form.Item> */}
-        <Form.Item
+        {/* <Form.Item
           label="Room No"
           name="roomNo"
           rules={[{ required: true }]}
@@ -396,7 +396,28 @@ const ServiceOrderForm = ({
               open={isView ? !isView : undefined}
             />
           )}
-        </Form.Item>
+        </Form.Item> */}
+        {(!isView || orderDetails?.reservationRoom !== null) && (
+  <Form.Item
+    label="Room No"
+    name="roomNo"
+    rules={[{ required: true }]}
+    getValueProps={(value) => ({
+      value: isView
+        ? rooms.find((item) => item.value === value)?.label
+        : value,
+    })}
+  >
+    {isView ? (
+      <Input readOnly />
+    ) : (
+      <Select
+        options={rooms}
+        placeholder="Select a Room"
+      />
+    )}
+  </Form.Item>
+)}
 
         <Form.Item label="Selection Type" name="orderType">
           <Radio.Group

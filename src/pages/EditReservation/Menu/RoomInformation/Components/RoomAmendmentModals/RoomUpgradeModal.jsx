@@ -152,6 +152,9 @@ export default function RoomUpgradeModal({
                 type="primary"
                 onClick={handleReview}
                 disabled={!checkSelectedRoom}
+                 className={
+                    !checkSelectedRoom ? "text-default" : ""
+                }
             >
                 Review
             </Button>,

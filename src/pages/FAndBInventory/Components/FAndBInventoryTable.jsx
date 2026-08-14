@@ -46,6 +46,7 @@ const FAndBInventoryTable = ({
       dataIndex: "stockQuantity",
       key: "stockQuantity",
       width: 100,
+      align:"end"
     },
     {
       title: "Unit",
