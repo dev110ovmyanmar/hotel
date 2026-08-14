@@ -133,12 +133,15 @@ const RoomTypeTable = ({
           )
           .map((action) => ({
             key: action.key,
+            icon: action.icon,
             label: (
-              <Space size={4} style={smallStyle} onClick={action.onClick}>
-                {action.icon}
+              // <Space size={4} style={smallStyle} onClick={action.onClick}>
+                // {action.icon}
                 <span style={{ fontSize: "14px" }}>{action.label}</span>
-              </Space>
+              // </Space>
+              
             ),
+             onClick: action.onClick,
           }));
 
         if (items.length === 0) return null;
