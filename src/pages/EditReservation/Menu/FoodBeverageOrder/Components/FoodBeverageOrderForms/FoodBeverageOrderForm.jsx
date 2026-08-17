@@ -652,8 +652,11 @@ const FoodBeverageOrderForm = ({
                         const isCurrentCardEditable =
                           isNewMenu || isCurrentMenuEditing;
 
+                        const canDeleteCurrentCard =
+                          !clickAddMenu || isNewMenu || isCurrentMenuEditing;
+
                         const handleSubmitModal = () => {
-                          if (isClickedEditUuid || clickAddMenu || fields?.length === 1) return;
+                          // if (isClickedEditUuid || clickAddMenu || fields?.length === 1) return;
 
                           const itemUuid = fnbOrderDetails?.fnbOrderItems?.[name]?.uuid;
 
@@ -759,9 +762,8 @@ const FoodBeverageOrderForm = ({
                                                   <DeleteOutlined
                                                     onClick={() => {
                                                       if (fields.length === 1) return;
-                                                      if (isClickedEditUuid) {
-                                                        handleDeleteMenu(name, isClickedEditUuid);
-
+                                                      if (fields.length > 1) {
+                                                        setIsModalOpen(true);
                                                       }
                                                       else {
                                                         remove(name);
@@ -813,12 +815,13 @@ const FoodBeverageOrderForm = ({
                                                 <DeleteOutlined
                                                   onClick={() => {
                                                     if (fields.length === 1) return;
+                                                    if (!canDeleteCurrentCard) return;
                                                     if (fields.length > 1) {
                                                       setIsModalOpen(true);
                                                     }
 
                                                   }}
-                                                  className={`text-2xl ${fields.length !== 1 || !disabledConditionCheck
+                                                  className={`text-2xl ${fields.length !== 1 && canDeleteCurrentCard
                                                     ? "!cursor-pointer !text-red-500"
                                                     : "!cursor-not-allowed !text-gray-400"
                                                     }`}
@@ -1017,7 +1020,6 @@ const FoodBeverageOrderForm = ({
                           //   isClickedEditUuid ||
                           //   clickAddMenu
                           // }
-
                           disabled={
                             !itemsValue?.every(item => item?.menu) ||
                             !!isClickedEditUuid ||
