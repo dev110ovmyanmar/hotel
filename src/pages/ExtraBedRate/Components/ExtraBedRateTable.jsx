@@ -43,34 +43,7 @@ const ExtraBedRateTable = ({ data, page, setPage }) => {
       align: "center",
     },
 
-    // {
-    //   title: "Extra Type",
-    //   dataIndex: ["extraType", "name"],
-    //   key: "extraType",
-    //   onCell: (record) => ({
-    //     rowSpan: record.extraTypeRowSpan,
-    //     style: { verticalAlign: "middle" },
-    //   }),
-    //   render: (text, record) => {
-    //     if (
-    //       record.extraType?.code === "extra_child" ||
-    //       record.code === "extra_child"
-    //     ) {
-    //       const minAge = record.minAge;
-    //       const maxAge = record.maxAge;
-
-    //       if (minAge !== undefined && maxAge !== undefined) {
-    //         const ageText =
-    //           minAge === maxAge
-    //             ? `(${minAge})`
-    //             : `(${minAge} - ${maxAge}) years`;
-    //         return `${text} ${ageText}`;
-    //       }
-    //     }
-
-    //     return text;
-    //   },
-    // },
+    
     {
       title: "Extra Type",
       dataIndex: ["extraType", "name"],

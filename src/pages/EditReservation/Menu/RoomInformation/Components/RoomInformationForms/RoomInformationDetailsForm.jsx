@@ -236,13 +236,6 @@ const RoomInformationDetailsForm = ({
               </div>
             </div>
 
-            {d?.isComplimentary && (
-              <div className="mt-1">
-                <Tag color="purple" className="rounded-full text-xs">
-                  Complimentary ({d?.complimentaryStatus?.name})
-                </Tag>
-              </div>
-            )}
           </div>
         </div>
 
@@ -307,9 +300,14 @@ const RoomInformationDetailsForm = ({
                           </div>
                         </td>
                         <td className="px-3 py-2 text-center">
-
-                          <EyeOutlined title="View Details" onClick={() => handleViewDailyOccupancy(r.stayDate)} />
-
+                          <button
+                            type="button"
+                            onClick={() => handleViewDailyOccupancy(r.stayDate)}
+                            className="w-7 h-7 rounded-lg bg-slate-100 dark:bg-gray-700 hover:bg-blue-100 dark:hover:bg-blue-900/30 text-slate-400 hover:text-blue-500 transition-all flex items-center justify-center"
+                            title="View Details"
+                          >
+                            <EyeOutlined />
+                          </button>
                         </td>
                       </tr>
                     );

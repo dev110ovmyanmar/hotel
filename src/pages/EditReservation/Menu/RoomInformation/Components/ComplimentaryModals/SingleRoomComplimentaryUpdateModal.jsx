@@ -2,17 +2,28 @@ import React, { useEffect, useState } from "react";
 import { useApiMutation } from "../../../../../../hooks/useApiMutation";
 import { complimentaryUpdate } from "../../../../../../api/reservationSectionApi";
 import { queryClient } from "../../../../../../app/queryClient";
-import { Button, Checkbox, Form, Select, Alert } from "antd";
+import { Button, Checkbox, Form, Input, Select, Alert } from "antd";
 import Modal from "antd/es/modal/Modal";
 import Toast from "../../../../../../component/Toast/Toast";
 import { darkModeStyle, textWhiteInDarkStyle } from "../../../../../../utils";
+import { useApiQuery } from "../../../../../../hooks/useApiQuery";
+import { reservationRoomDetails } from "../../../../../../api/reservationSectionApi";
 import PriceTag from "../../../../../../component/PriceTag/PriceTag";
 
 const SingleRoomComplimentaryUpdateModal = ({
-    reservationData,
+    reservationRoomUuid,
     open,
     onCancel,
 }) => {
+   
+    const { data: reservationData, isLoading: reservationRoomsDetailsLoading } = useApiQuery({
+        fetchQueryName: "reservation-room-details",
+        fetchQueryFunction: reservationRoomDetails,
+        params: { uuid: reservationRoomUuid },
+        options: { enabled: !!reservationRoomUuid && open },
+      });
+    
+
     // Validation Logic Setup
     const checkin = reservationData?.checkinDate
         ? new Date(reservationData.checkinDate)
@@ -36,49 +47,48 @@ const SingleRoomComplimentaryUpdateModal = ({
         isCheckinValid && isCheckoutValid && isStatusValid;
 
     const initData = queryClient.getQueryData(["initData", "authenticated"]);
-    const complimentaryStatuses = initData?.statuses?.complimentary_status;
+    const complimentaryTypes = initData?.statuses?.complimentary_type;
     const [roomAllocation, setRoomAllocation] = useState(null);
-    const [selectedStatusUuid, setSelectedStatusUuid] = useState("");
+    const [selectedStatusCode, setSelectedStatusCode] = useState("");
     const [form] = Form.useForm();
 
     // Centralized Clean Up and Close Handler
     const handleClose = () => {
         setRoomAllocation(null);
-        setSelectedStatusUuid("");
+        setSelectedStatusCode("");
         form.resetFields();
         onCancel(); // Trigger original parent onCancel action
     };
 
     useEffect(() => {
-        if (!open) return; // Only process initialization logic if the modal is actively open
+        if (!open) return;
+        if (!Array.isArray(complimentaryTypes) || complimentaryTypes.length === 0) return;
+        if (!reservationData) return;
 
-        if (
-            Array.isArray(complimentaryStatuses) &&
-            complimentaryStatuses.length > 0 &&
-            !selectedStatusUuid
-        ) {
-            if (reservationData?.complimentaryStatus) {
-                const currentStatus = complimentaryStatuses.find(
-                    (s) => s.uuid === reservationData?.complimentaryStatus?.uuid,
-                );
-                if (currentStatus) {
-                    setSelectedStatusUuid(currentStatus.uuid);
-                    form.setFieldsValue({
-                        statusUuid: {
-                            value: currentStatus.uuid,
-                            label: currentStatus.name,
-                        },
-                    });
-                }
-            } else {
-                const defaultStatus = complimentaryStatuses[0];
-                setSelectedStatusUuid(defaultStatus.uuid);
+        const typeCode = reservationData.complimentaryType || null;
+        if (typeCode) {
+            const currentType = complimentaryTypes.find(
+                (s) => s.code === typeCode,
+            );
+            if (currentType) {
+                setSelectedStatusCode(currentType.code);
                 form.setFieldsValue({
-                    statusUuid: { value: defaultStatus.uuid, label: defaultStatus.name },
+                    statusUuid: {
+                        value: currentType.code,
+                        label: currentType.name,
+                    },
+                    complimentaryReason: reservationData.complimentaryReason || "",
                 });
             }
+        } else {
+            const defaultType = complimentaryTypes[0];
+            setSelectedStatusCode(defaultType.code);
+            form.setFieldsValue({
+                statusUuid: { value: defaultType.code, label: defaultType.name },
+                complimentaryReason: "",
+            });
         }
-    }, [complimentaryStatuses, selectedStatusUuid, form, reservationData, open]);
+    }, [open, complimentaryTypes, reservationData]);
 
     useEffect(() => {
         if (!reservationData || !open) return; // Only populate if modal is actively opening
@@ -191,9 +201,8 @@ const SingleRoomComplimentaryUpdateModal = ({
         if (!roomAllocation) return;
 
         const payload = {
-            complimentaryStatus: {
-                uuid: selectedStatusUuid,
-            },
+            complimentaryType: selectedStatusCode,
+            complimentaryReason: form.getFieldValue("complimentaryReason") || "",
             reservationRooms: [
                 {
                     uuid: roomAllocation.roomInfo.uuid,
@@ -208,7 +217,6 @@ const SingleRoomComplimentaryUpdateModal = ({
                 handleClose(); // Reset state on successful save tracking
             },
             onError: (error) => {
-                Toast.error("Failed to update complimentary status.");
                 console.error(error);
             },
         });
@@ -267,7 +275,7 @@ const SingleRoomComplimentaryUpdateModal = ({
                         <h2
                             className={`text-base font-bold t$ext-slate-900 ${textWhiteInDarkStyle}`}
                         >
-                            Complimentary Offer
+                            Room Complimentary (FOC)
                         </h2>
                     </div>
 
@@ -296,8 +304,8 @@ const SingleRoomComplimentaryUpdateModal = ({
                         />
                     )}
 
-                    {Array.isArray(complimentaryStatuses) &&
-                        complimentaryStatuses.length > 0 && (
+                    {Array.isArray(complimentaryTypes) &&
+                        complimentaryTypes.length > 0 && (
                             <Form form={form} layout="vertical">
                                 <Form.Item
                                     name="statusUuid"
@@ -306,23 +314,25 @@ const SingleRoomComplimentaryUpdateModal = ({
                                         <span
                                             className={`text-sm font-semibold text-slate-700  ${textWhiteInDarkStyle}`}
                                         >
-                                            Complimentary Reason:
+                                            Complimentary Type:
                                         </span>
                                     }
                                     rules={[
                                         {
                                             required: true,
-                                            message: "Please select a status",
+                                            message: "Please select a type",
                                         },
                                     ]}
                                 >
                                     <Select
-                                        options={complimentaryStatuses.map((status) => ({
-                                            value: status.uuid,
-                                            label: status.name,
+                                        options={complimentaryTypes.map((type) => ({
+                                            value: type.code,
+                                            label: type.name,
                                         }))}
                                         labelInValue
-                                        onChange={(obj) => setSelectedStatusUuid(obj.value)}
+                                        onChange={(obj) => {
+                                            setSelectedStatusCode(obj.value);
+                                        }}
                                         placeholder="Select Status"
                                         style={{ minWidth: 200 }}
                                         open={
@@ -335,6 +345,7 @@ const SingleRoomComplimentaryUpdateModal = ({
                 </div>
 
                 {roomAllocation && (
+                    <>
                     <div className="space-y-6 max-h-[55vh] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-slate-300">
                         <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-xs">
                             <div className="flex flex-wrap justify-between items-start gap-4 pb-4 border-b border-slate-100 mb-4">
@@ -438,7 +449,7 @@ const SingleRoomComplimentaryUpdateModal = ({
                                                 </span>
                                             </span>
                                             <span className="text-[8px] block mt-1 font-medium opacity-70">
-                                                {isComp ? "🎁 Waived" : "Available"}
+                                                {isComp ? "🎁 FOC" : "Available"}
                                             </span>
                                         </button>
                                     );
@@ -446,6 +457,27 @@ const SingleRoomComplimentaryUpdateModal = ({
                             </div>
                         </div>
                     </div>
+
+                        <Form form={form} layout="vertical">
+                            <Form.Item
+                                name="complimentaryReason"
+                                className="mb-0 !mt-6"
+                                label={
+                                    <span
+                                        className={`text-sm font-semibold text-slate-700 ${textWhiteInDarkStyle}`}
+                                    >
+                                        Complimentary Reason:
+                                    </span>
+                                }
+                            >
+                                <Input.TextArea
+                                    rows={3}
+                                    placeholder="VIP guest - GM approval"
+                                    disabled={!isModificationAllowed}
+                                />
+                            </Form.Item>
+                        </Form>
+                    </>
                 )}
             </div>
         </Modal>
