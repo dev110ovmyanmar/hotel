@@ -132,6 +132,7 @@ const ExtraBedRateForm = ({
       enabled: !!selectedData?.uuid,
     },
   });
+
   useEffect(() => {
     if (!isAdd && data) {
       form.setFieldsValue({
@@ -142,28 +143,30 @@ const ExtraBedRateForm = ({
         minAge: data?.minAge ?? null,
         maxAge: data?.maxAge ?? null,
         dateRange: [
-          data.startDate ? dayjs(data.startDate) : null,
-          data.endDate ? dayjs(data.endDate) : null,
+          data?.startDate ? dayjs(data.startDate) : null,
+          data?.endDate ? dayjs(data.endDate) : null,
         ],
       });
 
       setSelectedData(data);
     }
-  }, [data]);
+  }, [data, isAdd, form]);
 
   useEffect(() => {
+    if (!isAdd) return;
+
     if (isExtraPerson) {
       form.setFieldsValue({
         minAge: 10,
         maxAge: null,
       });
-    } else {
+    } else if (isExtraChild) {
       form.setFieldsValue({
         minAge: null,
         maxAge: null,
       });
     }
-  }, [selectedExtraTypeUuid]);
+  }, [selectedExtraTypeUuid, isExtraPerson, isExtraChild, isAdd, form]);
 
   const handleClose = () => {
     setDrawerOpen(false);
@@ -348,7 +351,7 @@ const ExtraBedRateForm = ({
             )}
           </Form.Item>
 
-          {isExtraChild && !hideAgeForExtraPerson && (
+          {isExtraChild && (
             <Row gutter={16}>
               <Col span={12}>
                 <Form.Item
@@ -356,7 +359,10 @@ const ExtraBedRateForm = ({
                   name="minAge"
                   dependencies={["maxAge"]}
                   rules={[
-                    { required: true, message: "Please enter min age" },
+                    {
+                      required: true,
+                      message: "Please enter min age",
+                    },
                     {
                       type: "number",
                       min: 0,
@@ -373,13 +379,17 @@ const ExtraBedRateForm = ({
                   />
                 </Form.Item>
               </Col>
+
               <Col span={12}>
                 <Form.Item
                   label="Max Age"
                   name="maxAge"
                   dependencies={["minAge"]}
                   rules={[
-                    { required: true, message: "Please enter max age" },
+                    {
+                      required: true,
+                      message: "Please enter max age",
+                    },
                     {
                       type: "number",
                       max: 9,
