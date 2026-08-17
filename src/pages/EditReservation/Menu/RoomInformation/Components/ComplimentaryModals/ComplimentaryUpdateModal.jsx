@@ -2,12 +2,13 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { useApiMutation } from '../../../../../../hooks/useApiMutation';
 import { complimentaryUpdate } from '../../../../../../api/reservationSectionApi';
 import { queryClient } from '../../../../../../app/queryClient';
-import { Button, Checkbox, Form, Select } from 'antd';
+import { Button, Checkbox, Form, Input, Select } from 'antd';
 import Modal from 'antd/es/modal/Modal';
 import Toast from '../../../../../../component/Toast/Toast';
 import useApiQuery from '../../../../../../hooks/useApiQuery';
 import { reservationRoomList } from '../../../../../../api/reservationSectionApi';
 import { darkModeStyle, textColorDarkMode, textWhiteInDarkStyle } from '../../../../../../utils';
+import PriceTag from '../../../../../../component/PriceTag/PriceTag';
 
 const ComplimentaryUpdateModal = ({
     open,
@@ -48,16 +49,23 @@ const ComplimentaryUpdateModal = ({
 
     useEffect(() => {
         if (open && !complimentaryLoading && Array.isArray(complimentaryStatuses) && complimentaryStatuses.length > 0 && !selectedStatusUuid) {
-            if (upcomingReservations?.[0]?.complimentaryStatus) {
-                const currentStatus = complimentaryStatuses.find(s => s.uuid === upcomingReservations?.[0]?.complimentaryStatus?.uuid);
+            const typeCode = upcomingReservations?.[0]?.complimentaryType || null;
+            if (typeCode) {
+                const currentStatus = complimentaryStatuses.find(s => s.code === typeCode);
                 if (currentStatus) {
                     setSelectedStatusUuid(currentStatus.uuid);
-                    form.setFieldsValue({ statusUuid: currentStatus.uuid });
+                    form.setFieldsValue({
+                        statusUuid: currentStatus.uuid,
+                        complimentaryReason: upcomingReservations?.[0]?.complimentaryReason || "",
+                    });
                 }
             } else {
                 const defaultStatus = complimentaryStatuses[0];
                 setSelectedStatusUuid(defaultStatus.uuid);
-                form.setFieldsValue({ statusUuid: defaultStatus.uuid });
+                form.setFieldsValue({
+                    statusUuid: defaultStatus.uuid,
+                    complimentaryReason: "",
+                });
             }
         }
     }, [open, complimentaryLoading, complimentaryStatuses, selectedStatusUuid, form, upcomingReservations]);
@@ -155,6 +163,7 @@ const ComplimentaryUpdateModal = ({
             complimentaryStatus: {
                 uuid: selectedStatusUuid
             },
+            complimentaryReason: form.getFieldValue("complimentaryReason") || "",
             reservationRooms: (roomAllocations || []).map(room => ({
                 uuid: room.roomInfo.uuid,
                 dates: room.compDates
@@ -257,7 +266,12 @@ const ComplimentaryUpdateModal = ({
                                     <div className="flex flex-col items-end gap-1">
                                         <span className="text-[10px] text-slate-400 block uppercase font-bold tracking-tight">Net Amount</span>
                                         <span className="text-lg font-black text-emerald-600 leading-none">
-                                            {net.toLocaleString()} MMK
+                                            <p className="inline-flex items-center gap-1 m-0">
+                                                <span>
+                                                    <PriceTag value={net} />
+                                                </span>
+                                                <span>MMK</span>
+                                            </p>
                                         </span>
                                     </div>
                                 </div>
@@ -303,7 +317,12 @@ const ComplimentaryUpdateModal = ({
                                                     {night.date}
                                                 </span>
                                                 <span className={`text-xs font-bold block mt-0.5 ${isComp ? `text-emerald-600` : `text-slate-800 ${textWhiteInDarkStyle}`}`}>
-                                                    {displayValue.toLocaleString()} MMK
+                                                    <p className="inline-flex items-center gap-1 m-0">
+                                                        <span>
+                                                            <PriceTag value={displayValue} />
+                                                        </span>
+                                                        <span>MMK</span>
+                                                    </p>
                                                 </span>
                                                 <span className="text-[8px] block mt-1 font-medium opacity-70">
                                                     {isComp ? '🎁 Waived' : 'Available'}
@@ -316,6 +335,23 @@ const ComplimentaryUpdateModal = ({
                         );
                     })}
                 </div>
+
+                <Form form={form} layout="vertical">
+                    <Form.Item
+                        name="complimentaryReason"
+                        className="mb-0 !mt-6"
+                        label={
+                            <span className={`text-sm font-semibold text-slate-700 ${textWhiteInDarkStyle}`}>
+                                Complimentary Reason:
+                            </span>
+                        }
+                    >
+                        <Input.TextArea
+                            rows={3}
+                            placeholder="VIP guest - GM approval"
+                        />
+                    </Form.Item>
+                </Form>
             </div>
         </Modal>
     );

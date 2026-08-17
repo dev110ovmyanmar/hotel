@@ -13,29 +13,7 @@ import { PERMISSIONS } from "../../../variables/permission";
 import { TableColumns } from "../../../component/TableColumns/TableColumns";
 import RoomRateForm from "../../RoomRate/Components/RoomRateForm/RoomRateForm";
 import { textGrayInDarkStyle, textWhiteInDarkStyle } from "../../../utils";
-
-export const PriceTag = ({ value, currency }) => {
-  // 1. Convert to a number just in case it's passed as a string
-  const numericPrice = typeof value === "string" ? parseFloat(value) : value;
-
-  // 2. Fallback safety if the value is missing or invalid
-  if (
-    isNaN(numericPrice) ||
-    numericPrice === null ||
-    numericPrice === undefined
-  ) {
-    return <span>0 {currency}</span>;
-  }
-
-  // 3. Format the number with standard thousands separators (e.g., 15,000)
-  const formattedPrice = new Intl.NumberFormat("en-US").format(numericPrice);
-
-  return (
-    <span>
-      {formattedPrice} {currency}
-    </span>
-  );
-};
+import PriceTag from "../../../component/PriceTag/PriceTag";
 
 const RatePlanTable = ({
   data,
@@ -90,6 +68,7 @@ const RatePlanTable = ({
       title: "Policy",
       dataIndex: ["policy", "name"],
       key: "policy",
+      align:"left"
     },
     {
       title: "Meal Plan",
@@ -245,17 +224,18 @@ const RatePlanTable = ({
       key: "roomType",
       render: (text) => <div>{text}</div>,
     },
+
     {
       title: "Price (MMK)",
       dataIndex: "price",
       key: "price",
-      render: (text, record) => {
+      render: (price, record) => {
         const hasWeekdays =
           record.weekdays &&
           Object.values(record.weekdays).some((v) => v !== null);
         return (
           <div className="flex gap-2 items-center justify-end">
-            <PriceTag value={text} />
+            <PriceTag value={price} />
             {hasWeekdays && (
               <a
                 onClick={() => showWeekDayModal(record)}
@@ -322,7 +302,7 @@ const RatePlanTable = ({
     const processedRates = processData(record?.roomRateMappings || []);
     return (
       <Table
-        className="expanded-table dark:[&_.ant-table-thead>tr>th]:!text-[#F3F4F6]"
+        className="expanded-table dark:[&_.ant-table-thead>tr>th]:!text-[#F3F4F6]  [&_.ant-table-pagination]:!mt-8"
         columns={expandColumns(record)}
         dataSource={processedRates}
         rowKey="uuid"
@@ -381,7 +361,7 @@ const RatePlanTable = ({
         // roomRateUuid={selectedRoomTypeUuid}
         roomRateUuid={selectedRoomTypeUuid}
         page={page}
-        setPage={() => {}}
+        setPage={() => { }}
       />
 
       <Modal

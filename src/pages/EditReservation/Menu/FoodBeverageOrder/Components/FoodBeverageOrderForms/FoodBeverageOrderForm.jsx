@@ -23,7 +23,7 @@ import { queryClient } from "../../../../../../app/queryClient";
 import useApiQuery from "../../../../../../hooks/useApiQuery";
 import { reservationRoomMeta } from "../../../../../../api/reservationSectionApi";
 import { useApiMutation } from "../../../../../../hooks/useApiMutation";
-import { createFoodBeverageOrder, foodBeverageOrderDetails, updateFoodBeverageOrder, upsertFoodBeverageOrderItem } from "../../../../../../api/foodBeverageOrder";
+import { createFoodBeverageOrder, deleteFoodBeverageOrderItem, foodBeverageOrderDetails, updateFoodBeverageOrder, upsertFoodBeverageOrderItem } from "../../../../../../api/foodBeverageOrder";
 import Toast from "../../../../../../component/Toast/Toast";
 import FormButtons from "../../../../../../component/FormButtons/FormButtons";
 import dayjs from "dayjs";
@@ -40,12 +40,14 @@ const FoodBeverageOrderForm = ({
   reservationUuid,
   reservationRoomNo,
   reservationRoomId,
+  reservationRoomUuid,
   mode,
   setMode,
   selectedData
 }) => {
   const [form] = Form.useForm();
   const itemsValue = Form.useWatch("items", form);
+  console.log(itemsValue, "ItemValuesssssss")
 
   const isAdd = mode === "add";
   const isEdit = mode === "edit";
@@ -55,6 +57,10 @@ const FoodBeverageOrderForm = ({
   const [menuUuid, setMenuUuid] = useState({});
   const [addedMenuIndex, setAddedMenuIndex] = useState(null);
   const [isEditToCreate, setIsEditToCreate] = useState(null);
+  const [foodBeverageMenuSuccess, setFoodBeverageMenuSuccess] = useState(false);
+  const [isSameUuid, setIsSameUuid] = useState([]);
+  const [clickAddMenu, setClickAddMenu] = useState(false);
+  const [isClickedEditUuid, setIsClickedEditUuid] = useState();
 
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
   const allStatuses = initData?.statuses;
@@ -100,8 +106,15 @@ const FoodBeverageOrderForm = ({
     // shouldInvalidate: isEdit ? true : page === 1,
   });
 
+  const deleteFoodBeverageOrderMenu = useApiMutation({
+    mutationFn: deleteFoodBeverageOrderItem,
+    invalidateKeys: [
+      ["fnb-order-details", { uuid: selectedData?.uuid }],
+    ],
+  });
+
   const handleSubmit = (values) => {
-    console.log(values, "createHandleSubmit")
+    console.log(values, "handleSubmitValues")
     const menuItems = values?.items.map(item => ({
       uuid: item.menu,
       quantity: item.quantity,
@@ -111,7 +124,7 @@ const FoodBeverageOrderForm = ({
       })),
     }));
     const payload = {
-      orderAt: values?.orderDate && values?.orderTime && isEdit
+      orderAt: values?.orderDate && values?.orderTime
         ? `${values.orderDate.format("YYYY-MM-DD")} ${values.orderTime.format("HH:mm:ss")}`
         : null,
       menuItems: menuItems,
@@ -126,8 +139,11 @@ const FoodBeverageOrderForm = ({
       },
       uuid: isEdit ? selectedData?.uuid : null,
       reservation: {
-        uuid: isAdd ? reservationUuid : null
+        uuid: reservationUuid
       },
+      reservationRoom: {
+        uuid: reservationRoomUuid
+      }
     };
     if (isAdd) {
       createFoodBeverate.mutate(payload, {
@@ -163,79 +179,80 @@ const FoodBeverageOrderForm = ({
   });
 
   useEffect(() => {
-  if (!fnbOrderDetails || (!isView && !isEdit)) return;
-  if (!data?.menu_items) return;
+    if (!fnbOrderDetails || (!isView && !isEdit)) return;
+    if (!data?.menu_items) return;
 
-  const customDate = dayjs(fnbOrderDetails.orderedAt);
+    const customDate = dayjs(fnbOrderDetails.orderedAt);
 
-  const menuItems =
-    fnbOrderDetails.fnbOrderItems?.map((item) => {
-      const menuUuid = item?.menuItem?.uuid;
+    const menuItems =
+      fnbOrderDetails.fnbOrderItems?.map((item) => {
+        const menuUuid = item?.menuItem?.uuid;
 
-      // Find the full menu from your menu API data
-      const selectedMenu = data.menu_items.find(
-        (menu) => menu.uuid === menuUuid
-      );
+        // Find the full menu from your menu API data
+        const selectedMenu = data.menu_items.find(
+          (menu) => menu.uuid === menuUuid
+        );
 
-      // Existing modifiers from backend
-      const existingModifiers =
-        item?.fnbOrderItemModifiers || [];
+        // Existing modifiers from backend
+        const existingModifiers =
+          item?.fnbOrderItemModifiers || [];
 
-      // Checkbox values
-      const selectedModifiers = existingModifiers.map(
-        (modifierItem) => modifierItem?.modifier?.uuid
-      );
+        // Checkbox values
+        const selectedModifiers = existingModifiers.map(
+          (modifierItem) => modifierItem?.modifier?.uuid
+        );
 
-      // Create quantity for EVERY modifier in the menu
-      const modifierQuantities = Object.fromEntries(
-        (selectedMenu?.modifiers || []).map((modifier) => {
-          const existingModifier = existingModifiers.find(
-            (modifierItem) =>
-              modifierItem?.modifier?.uuid === modifier.uuid
-          );
+        // Create quantity for EVERY modifier in the menu
+        const modifierQuantities = Object.fromEntries(
+          (selectedMenu?.modifiers || []).map((modifier) => {
+            const existingModifier = existingModifiers.find(
+              (modifierItem) =>
+                modifierItem?.modifier?.uuid === modifier.uuid
+            );
 
-          return [
-            modifier.uuid,
-            existingModifier?.quantity ?? 0,
-          ];
-        })
-      );
+            return [
+              modifier.uuid,
+              existingModifier?.quantity ?? 0,
+            ];
+          })
+        );
 
-      return {
-        menu: menuUuid,
-        quantity: item?.quantity,
-        pricePerQty: item?.unitPrice,
-        modifier: selectedModifiers,
-        modifierQuantities,
-      };
-    }) || [];
+        return {
+          menu: menuUuid,
+          quantity: item?.quantity,
+          pricePerQty: item?.unitPrice,
+          modifier: selectedModifiers,
+          modifierQuantities,
+        };
+      }) || [];
 
-  // Tell your UI which menu is selected
-  const selectedMenus = {};
+    // Tell your UI which menu is selected
+    const selectedMenus = {};
 
-  menuItems.forEach((item, index) => {
-    selectedMenus[index] = item.menu;
-  });
+    menuItems.forEach((item, index) => {
+      selectedMenus[index] = item.menu;
+    });
 
-  setMenuUuid(selectedMenus);
+    setMenuUuid(selectedMenus);
 
-  form.setFieldsValue({
-    orderDate: customDate,
-    orderTime: customDate,
-    room: reservationRoomNo,
-    consumptionType: fnbOrderDetails.consumptionType?.uuid,
-    orderType: fnbOrderDetails.orderType?.uuid,
-    orderStatus: fnbOrderDetails.orderStatus?.uuid,
-    items: menuItems,
-  });
-}, [
-  fnbOrderDetails,
-  data?.menu_items,
-  isView,
-  isEdit,
-  reservationRoomNo,
-  form,
-]);
+    form.setFieldsValue({
+      orderDate: customDate,
+      orderTime: customDate,
+      room: reservationRoomNo,
+      consumptionType: fnbOrderDetails.consumptionType?.uuid,
+      orderType: fnbOrderDetails.orderType?.uuid,
+      orderStatus: fnbOrderDetails.orderStatus?.uuid,
+      items: menuItems,
+    });
+  }, [
+    fnbOrderDetails,
+    data?.menu_items,
+    isView,
+    isEdit,
+    reservationRoomNo,
+    form,
+  ]);
+
   useEffect(() => {
     const pendingStatus = allStatuses?.order_status?.find(
       (status) => status.code === "pending"
@@ -283,6 +300,11 @@ const FoodBeverageOrderForm = ({
       );
     }
 
+    form.setFieldValue(
+      ["items", index, "quantity"],
+      1
+    );
+
     const modifierQuantities = {};
 
     selectedMenu.modifiers?.forEach((modifier) => {
@@ -300,21 +322,21 @@ const FoodBeverageOrderForm = ({
     invalidateKeys: [["fnb-order-details"]],
     // shouldInvalidate: isEdit ? true : page === 1,
   });
-  console.log(selectedData, "SelectedDatahandleUpdateMenu")
 
-  const handleUpdateMenu = (index) => {
+  const handleUpdateMenuSubmit = (index) => {
+    // console.log(selectedData,"selecteddatamen")
+    // if (selectedData !== isClickedEditUuid) return;
     const values = form.getFieldsValue();
 
     const item = values?.items?.[index];
 
     const existingFnbOrderItem =
       fnbOrderDetails?.fnbOrderItems?.[index];
-    console.log(existingFnbOrderItem, 'existingfnborderitem')
 
     const payload = {
       uuid: selectedData?.uuid,
       fnbOrderItem: {
-        uuid: isEditToCreate === index ? existingFnbOrderItem?.uuid : null
+        uuid: isClickedEditUuid
       },
       menuItem: {
         uuid: item?.menu,
@@ -332,19 +354,43 @@ const FoodBeverageOrderForm = ({
       onSuccess: () => {
         Toast.success("Food Beverage Order Item Updated Successfully.");
         // onClose(false);
-        setIsEditToCreate(false)
+        setIsEditToCreate(false);
         setAddedMenuIndex(null);
+        setIsClickedEditUuid(null);
+        setClickAddMenu(false)
+        // setFoodBeverageMenuSuccess(true)
       }
     })
 
   }
+
+  const handleDeleteMenu = (index, itemUuid) => {
+    console.log(selectedData, "handleDeleteMenuIndex")
+
+    const payload = {
+      uuid: selectedData?.uuid,
+      fnbOrderItem: {
+        uuid: itemUuid
+      }
+    }
+
+    deleteFoodBeverageOrderMenu.mutate(payload, {
+      onSuccess: () => {
+        remove(index);
+        setClickAddMenu(false);
+        setIsClickedEditUuid(null);
+        setAddedMenuIndex(null);
+        setIsEditToCreate(null);
+      }
+    });
+  };
 
   useEffect(() => {
     if (isAdd) {
       form.setFieldsValue({
         items: [
           {
-            quantity: 1,
+            quantity: 0,
           },
         ],
       });
@@ -354,14 +400,68 @@ const FoodBeverageOrderForm = ({
     }
   }, [isAdd, form]);
 
-  const isMenuEditable = (index) =>
-    addedMenuIndex === index || isEditToCreate === index;
+  const isMenuEditable = (index) => {
+    const currentItemUuid = fnbOrderDetails?.fnbOrderItems?.[name]?.uuid;
+    return (
+      addedMenuIndex === index ||
+      isEditToCreate === index ||
+      !isSameUuid.includes(currentItemUuid)
+    )
+  }
 
   const handleOnClose = () => {
     onClose(false);
     form.resetFields();
     setMenuUuid({});
     setAddedMenuIndex(null);
+  };
+
+  const handleCloseForMenu = (name) => {
+    form.resetFields([
+      ["items", name],
+    ]);
+  };
+
+  const handleCanceltoOriginalValue = (name) => {
+    const originalItem =
+      fnbOrderDetails?.fnbOrderItems?.[name];
+
+    if (!originalItem) return;
+
+    form.setFieldValue(
+      ["items", name, "menu"],
+      originalItem?.menuItem?.uuid
+    );
+
+    form.setFieldValue(
+      ["items", name, "quantity"],
+      originalItem?.quantity
+    );
+
+    form.setFieldValue(
+      ["items", name, "pricePerQty"],
+      originalItem?.unitPrice
+    );
+
+    form.setFieldValue(
+      ["items", name, "modifier"],
+      originalItem?.fnbOrderItemModifiers?.map(
+        (modifier) => modifier?.modifier?.uuid
+      ) || []
+    );
+
+    form.setFieldValue(
+      ["items", name, "modifierQuantities"],
+      Object.fromEntries(
+        originalItem?.fnbOrderItemModifiers?.map((modifier) => [
+          modifier?.modifier?.uuid,
+          modifier?.quantity,
+        ]) || []
+      )
+    );
+
+    setIsClickedEditUuid(null);
+    setClickAddMenu(false)
   };
   return (
     <>
@@ -494,7 +594,7 @@ const FoodBeverageOrderForm = ({
                       placeholder="Select Order Status"
                       style={{ width: "100%" }}
                       options={orderStatusOptions}
-                      disabled={currentOrderStatus === "completed" || currentOrderStatus === "cancelled"}
+                      disabled={currentOrderStatus === "completed" || currentOrderStatus === "cancelled" || isView}
                     />
                   </Form.Item>
                 </div>
@@ -507,8 +607,6 @@ const FoodBeverageOrderForm = ({
                         const selectedMenuItem = data?.menu_items?.find(
                           (addon) => addon?.uuid === menuUuid[name]
                         );
-
-                        console.log(selectedMenuItem, "selectedMenuItem")
 
                         const hasSelectedModifiers =
                           fnbOrderDetails?.fnbOrderItems?.[name]
@@ -528,9 +626,19 @@ const FoodBeverageOrderForm = ({
                             menu.uuid !== currentMenu,
                         }));
 
+                        // New Uuid
+
+                        const menuCardUuid = fnbOrderDetails?.uuid;
+                        const currentItemUuid = fnbOrderDetails?.fnbOrderItems?.[name]?.uuid;
+
+                        const isClickedItemtoCreate = isSameUuid.includes(currentItemUuid);
+                        console.log(isClickedEditUuid, "isClickedEditUuid")
+
+                        const addNewMenu = addedMenuIndex === name;
+                        const disabledConditionCheck = (isClickedEditUuid && isClickedEditUuid === currentItemUuid && clickAddMenu) || (!clickAddMenu && !isClickedEditUuid);
                         return (
                           <Card
-                            key={key}
+                            key={currentItemUuid}
                             title={
                               <div className="flex justify-between items-center">
                                 <div>{`Menu ${name + 1}`}</div>
@@ -539,65 +647,171 @@ const FoodBeverageOrderForm = ({
                             className="shadow-sm rounded !my-2 border-l-4 border-blue-500"
                             size="small"
                             extra={
-                              <div className="flex gap-x-3">
-
-                                {/* Newly added menu */}
-                                {isMenuEditable(name) && !isAdd ? (
-                                  <>
-                                    <Tooltip title="Create Menu">
-                                      {
-                                        createFoodBeverageOrder.isPending ?
-                                          <Spin />
-                                          :
-                                          <AiOutlineCheckSquare
-                                            onClick={() => handleUpdateMenu(name)}
-                                            className="text-2xl cursor-pointer text-blue-500"
-                                          />
-                                      }
-                                    </Tooltip>
-
-                                    <Tooltip title="Cancel Menu">
-                                      <AiOutlineCloseSquare
-                                        onClick={() => {
-                                          setAddedMenuIndex(null);
-                                          setIsEditToCreate(null);
-                                          remove(name)
-                                        }}
-                                        className="text-2xl cursor-pointer text-red-500"
-                                      />
-                                    </Tooltip>
-                                  </>
-                                ) : (
-                                  /* Existing menu */
-                                  <>
-                                    {isEdit && (
-                                      <>
-                                        <Tooltip title="Edit Menu">
-                                          <EditOutlined
-                                            onClick={() => setIsEditToCreate(name)}
-                                            className="text-2xl cursor-pointer !text-blue-500"
-                                          />
-                                        </Tooltip>
-
-                                        <Tooltip title="Delete Menu">
-                                          <DeleteOutlined
-                                            onClick={() => remove(name)}
-                                            className="text-2xl cursor-pointer !text-red-500"
-                                          />
-                                        </Tooltip>
-                                      </>
-                                    )}
-                                  </>
+                              <>
+                                {isAdd && (
+                                  fields?.length > 1 && (
+                                    <div className="flex gap-x-3">
+                                      <Tooltip title="Delete Card">
+                                        <AiOutlineCloseSquare
+                                          onClick={() => {
+                                            if (fields?.length === 1) return;
+                                            remove(name);
+                                            setClickAddMenu(false)
+                                          }}
+                                          className="text-xl cursor-pointer text-red-500"
+                                        />
+                                      </Tooltip>
+                                    </div>
+                                  )
                                 )}
 
-                              </div>
+                                {
+                                  isEdit && (
+                                    <div className="flex gap-x-3">
+
+                                      {/* Newly added menu */}
+                                      {(menuCardUuid && currentItemUuid === isClickedEditUuid) || (!isClickedEditUuid && !currentItemUuid)
+
+                                        ? (
+                                          <>
+                                            <Tooltip title="Save Menu">
+                                              {
+                                                createFoodBeverageOrder.isPending ?
+                                                  <Spin />
+                                                  :
+                                                  <AiOutlineCheckSquare
+                                                    onClick={() => {
+                                                      if (
+                                                        itemsValue?.[name]?.menu &&
+                                                        !createFoodBeverageOrder?.isPending
+                                                      ) {
+                                                        handleUpdateMenuSubmit(name)
+                                                      }
+                                                    }}
+                                                    className={`text-2xl ${itemsValue?.[name]?.menu
+                                                      ? "cursor-pointer text-blue-500"
+                                                      : "cursor-not-allowed text-gray-400"
+                                                      }`}
+                                                    disabled={createFoodBeverageOrder?.isPending}
+                                                  />
+                                              }
+                                            </Tooltip>
+
+                                            <Tooltip title="Cancel">
+                                              <AiOutlineCloseSquare
+                                                onClick={() => {
+                                                  handleCanceltoOriginalValue(name)
+
+                                                }}
+
+                                                className="text-2xl cursor-pointer text-red-500"
+                                              />
+                                            </Tooltip>
+
+                                            {
+                                              !clickAddMenu &&
+                                              <Tooltip title="Delete Menu">
+                                                <DeleteOutlined
+                                                  onClick={() => {
+                                                    if (isClickedEditUuid) {
+                                                      handleDeleteMenu(name, isClickedEditUuid);
+
+                                                    }
+                                                    else {
+                                                      remove(name);
+                                                      setClickAddMenu(false);
+                                                    }
+                                                  }}
+                                                  className="text-2xl cursor-pointer !text-red-500"
+                                                />
+                                              </Tooltip>
+                                            }
+                                          </>
+                                        ) : (
+                                          /* Existing menu */
+                                          <>
+                                            <Tooltip title="Edit Menu">
+                                              <EditOutlined
+                                                onClick={() => {
+                                                  if (isClickedEditUuid || clickAddMenu) return;
+
+                                                  const editMenuUuidtoCreate = fnbOrderDetails?.fnbOrderItems?.[name]?.uuid;
+
+                                                  if (editMenuUuidtoCreate) {
+                                                    setIsSameUuid((prev) =>
+                                                      prev?.includes(editMenuUuidtoCreate)
+                                                        ? prev
+                                                        : [...prev, editMenuUuidtoCreate]
+                                                    )
+                                                    // setIsEditToCreate(name);
+                                                    if (currentItemUuid !== isClickedEditUuid || !isClickedEditUuid) {
+                                                      setIsClickedEditUuid(editMenuUuidtoCreate)
+                                                    }
+
+                                                  }
+                                                  setClickAddMenu(false);
+
+                                                }}
+                                                className={`text-2xl ${disabledConditionCheck
+                                                  ? "!cursor-pointer !text-blue-500"
+                                                  : "!cursor-not-allowed !text-gray-400"
+                                                  }`}
+
+                                              />
+                                            </Tooltip>
+
+                                            <Tooltip title="Delete Menu">
+                                              <DeleteOutlined
+                                                onClick={() => {
+                                                  if (isClickedEditUuid || clickAddMenu || fields?.length === 1) return;
+
+                                                  const itemUuid = fnbOrderDetails?.fnbOrderItems?.[name]?.uuid;
+
+                                                  console.log(itemUuid, "ItemUUId")
+                                                  if (!itemUuid) {
+                                                    return;
+                                                  }
+
+                                                  // Existing menu → call delete API
+                                                  if (itemUuid) {
+                                                    handleDeleteMenu(name, itemUuid);
+                                                    return;
+                                                  }
+
+                                                  // Newly added menu → only remove from form
+                                                  setAddedMenuIndex(null);
+                                                  setIsEditToCreate(null);
+                                                  // remove(name);
+                                                }}
+                                                className={`text-2xl ${disabledConditionCheck
+                                                  ? "!cursor-pointer !text-red-500"
+                                                  : "!cursor-not-allowed !text-gray-400"
+                                                  }`}
+                                              />
+                                            </Tooltip>
+                                          </>
+                                        )}
+
+                                    </div>
+                                  )
+                                }
+                              </>
+
+
                             }
+
+
                           >
                             <div className="grid grid-cols-3 gap-3">
                               <Form.Item
                                 label="Menu"
                                 name={[name, "menu"]}
-                                required
+                                rules={[
+                                  {
+                                    required: true,
+                                    message: "Please select a menu",
+                                  },
+                                ]}
                               >
                                 <Select
                                   options={menuOptions}
@@ -605,7 +819,7 @@ const FoodBeverageOrderForm = ({
                                     handleChangeMenu(value, option, name)
                                   }
                                   placeholder="Select Menu"
-                                  disabled={!isMenuEditable(name)}
+                                  disabled={!clickAddMenu && currentItemUuid !== isClickedEditUuid}
                                 />
                               </Form.Item>
 
@@ -615,7 +829,7 @@ const FoodBeverageOrderForm = ({
                               >
                                 <InputNumber
                                   {...sharedProps}
-                                  disabled={!isMenuEditable(name)}
+                                  disabled={!clickAddMenu && currentItemUuid !== isClickedEditUuid}
                                 />
                               </Form.Item>
 
@@ -627,7 +841,7 @@ const FoodBeverageOrderForm = ({
                                   className="!w-full"
                                   min={0}
                                   suffix="MMK"
-                                  disabled={!isMenuEditable(name)}
+                                  disabled={true}
                                 />
                               </Form.Item>
                             </div>
@@ -649,7 +863,6 @@ const FoodBeverageOrderForm = ({
                                   >
                                     <Checkbox.Group
                                       className="w-full"
-                                      disabled={!isMenuEditable(name)}
                                       onChange={(checkedValues) => {
                                         selectedMenuItem?.modifiers.forEach((modify) => {
                                           const uuid = modify.uuid;
@@ -677,43 +890,50 @@ const FoodBeverageOrderForm = ({
 
                                     >
                                       <div className="space-y-2">
-                                        {selectedMenuItem?.modifiers?.map(modify => (
-                                          <div
-                                            key={modify.uuid}
-                                            className="grid grid-cols-3 gap-3 items-center py-2 border-b border-gray-50 hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors"
-                                          >
-                                            <div className="flex items-center">
-                                              <Checkbox
-                                                value={modify.uuid}
-                                              >
-                                                <span className="ml-2 text-sm">
-                                                  {modify.name}
-                                                </span>
-                                              </Checkbox>
-                                            </div>
+                                        {selectedMenuItem?.modifiers?.map(modify => {
+                                          const selectedModifiers = itemsValue?.[name]?.modifier || [];
 
-                                            <Form.Item
-                                              name={[name, "modifierQuantities", modify.uuid]}
-                                              className="!m-0"
+                                          const isModifierChecked = selectedModifiers.includes(modify.uuid);
+
+                                          return (
+                                            <div
+                                              key={modify.uuid}
+                                              className="grid grid-cols-3 gap-3 items-center py-2 border-b border-gray-50 hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors"
                                             >
-                                              <InputNumber
-                                                {...sharedProps}
-                                                disabled={!isMenuEditable(name)}
+                                              <div className="flex items-center">
+                                                <Checkbox
+                                                  value={modify.uuid}
+                                                  disabled={!clickAddMenu && currentItemUuid !== isClickedEditUuid}
+                                                >
+                                                  <span className="ml-2 text-sm">
+                                                    {modify.name}
+                                                  </span>
+                                                </Checkbox>
+                                              </div>
 
-                                              />
-                                            </Form.Item>
+                                              <Form.Item
+                                                name={[name, "modifierQuantities", modify.uuid]}
+                                                className="!m-0"
+                                              >
+                                                <InputNumber
+                                                  {...sharedProps}
+                                                  disabled={!clickAddMenu && currentItemUuid !== isClickedEditUuid}
 
-                                            <div className="border border-gray-300 p-1 rounded">
-                                              <Text className="text-sm font-medium" disabled={!isMenuEditable(name)}>
-                                                {modify.unitPrice.toLocaleString()}
-                                                <span className="ml-15">
-                                                  {" "}
-                                                  MMK
-                                                </span>
-                                              </Text>
+                                                />
+                                              </Form.Item>
+
+                                              <Form.Item className="!m-0">
+                                                <InputNumber
+                                                  className="!w-full"
+                                                  min={0}
+                                                  suffix="MMK"
+                                                  disabled={true}
+                                                  value={modify.unitPrice.toLocaleString()}
+                                                />
+                                              </Form.Item>
                                             </div>
-                                          </div>
-                                        ))}
+                                          )
+                                        })}
                                       </div>
                                     </Checkbox.Group>
                                   </Form.Item>
@@ -727,16 +947,44 @@ const FoodBeverageOrderForm = ({
                       })}
 
                       {
-                        !isView &&
+                        isEdit &&
                         <Button
                           className="custom-blue-btn"
                           onClick={() => {
                             const newIndex = fields.length;
-                            console.log(newIndex, "NewIndex")
 
                             add({ quantity: 1 });
                             setAddedMenuIndex(newIndex);
+                            console.log(addedMenuIndex, "addedMenuIndex");
+
+                            setClickAddMenu(true);
                           }}
+                          disabled={
+                            !itemsValue?.every(item => item?.menu) ||
+                            isClickedEditUuid ||
+                            clickAddMenu
+                          }
+
+                        >
+                          Add Menu
+                        </Button>
+                      }
+
+                      {
+                        isAdd &&
+                        <Button
+                          className="custom-blue-btn"
+                          onClick={() => {
+                            const newIndex = fields.length;
+
+                            add({ quantity: 1 });
+                            setAddedMenuIndex(newIndex);
+                            console.log(addedMenuIndex, "addedMenuIndex");
+
+                            setClickAddMenu(true)
+
+                          }}
+                          disabled={!itemsValue?.every(item => item?.menu)}
                         >
                           Add Menu
                         </Button>
@@ -744,11 +992,10 @@ const FoodBeverageOrderForm = ({
                     </div>
                   )}
                 </Form.List>
-
               </Space>
             </Form>
         }
-      </Drawer>
+      </Drawer >
     </>
   );
 };

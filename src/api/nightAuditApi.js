@@ -10,7 +10,7 @@ export const activeAdmins = async (params) => {
 };
 
 export const systemLock = async (params) => {
-    const { data } = await apiClient.post(
+    const { data } = await apiClient.put(
         "/night-audit/system-lock",
         params
     );
@@ -18,7 +18,7 @@ export const systemLock = async (params) => {
 };
 
 export const systemUnlock = async(params) => {
-    const { data } = await apiClient.post(
+    const { data } = await apiClient.put(
         "/night-audit/system-unlock",
         params
     );

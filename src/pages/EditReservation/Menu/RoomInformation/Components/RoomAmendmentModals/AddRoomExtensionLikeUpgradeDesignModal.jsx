@@ -272,7 +272,7 @@ export default function AddRoomExtensionLikeUpgradeDesignModal({
                                 >
                                     <div>
                                         <Text><strong>Room Type:</strong> <span className={textWhiteInDarkStyle}>{currentRoomType}</span></Text>
-                                        <div className='!text-xs !text-gray-600'>({checkInDateinRoom} - {checkOutDateinRoom})</div>
+                                        <div className='!text-xs !text-gray-600 dark:!text-gray-400'>({checkInDateinRoom} - {checkOutDateinRoom})</div>
                                     </div>
 
                                     <div className="grid place-items-center w-fit -mt-1">

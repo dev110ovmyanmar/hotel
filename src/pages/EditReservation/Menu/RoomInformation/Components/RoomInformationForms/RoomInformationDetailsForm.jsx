@@ -236,13 +236,6 @@ const RoomInformationDetailsForm = ({
               </div>
             </div>
 
-            {d?.isComplimentary && (
-              <div className="mt-1">
-                <Tag color="purple" className="rounded-full text-xs">
-                  Complimentary ({d?.complimentaryStatus?.name})
-                </Tag>
-              </div>
-            )}
           </div>
         </div>
 

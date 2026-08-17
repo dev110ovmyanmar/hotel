@@ -73,7 +73,7 @@ const RoomInformationTable = ({
 
   const [compOpen, setCompOpen] = useState(false);
   const [addExtraBedOpen, setExtraBedOpen] = useState(false);
-  const [reservationRoomDetail, setReservationRoomDetail] = useState(null);
+  const [reservationRoomUuid, setReservationRoomUuid] = useState(null);
   const [activeModal, setActiveModal] = useState(null);
 
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
@@ -217,6 +217,7 @@ const RoomInformationTable = ({
       width: 80,
       render: (_, record) => {
         const rawCode = record?.roomStatus?.code || "";
+        const enableComplimentaryUpdateButton = record?.roomStatus?.code == "checked_in" || record?.roomStatus?.code == "confirmed";
         const statusCode = rawCode.toLowerCase().replace("-", "_");
         if (["cancelled", "no_show"].includes(statusCode)) {
           return (
@@ -265,9 +266,10 @@ const RoomInformationTable = ({
             label: "Complimentary",
             icon: <Bs0Circle />,
             onClick: () => {
-              setReservationRoomDetail(record);
+              setReservationRoomUuid(record.uuid);
               setCompOpen(true);
             },
+            hidden: !enableComplimentaryUpdateButton,
           },
           // {
           //   key: "addExtra",
@@ -501,7 +503,7 @@ const RoomInformationTable = ({
         ratePlanUuid={ratePlanUuid}
       />
       <SingleRoomComplimentaryUpdateModal
-        reservationData={reservationRoomDetail}
+        reservationRoomUuid={reservationRoomUuid}
         open={compOpen}
         onCancel={() => setCompOpen(false)}
       />
