@@ -348,7 +348,7 @@ const FAndBInventoryForm = ({
                 )}
               </Form.Item>
 
-              <Form.Item
+              {/* <Form.Item
                 label="Minimun Stock Reorder"
                 name="reorderLevel"
                 className="minus-icon"
@@ -364,7 +364,7 @@ const FAndBInventoryForm = ({
                   placeholder="Reorder Level"
                   readOnly={isView}
                 />
-              </Form.Item>
+              </Form.Item> */}
             </div>
           </Form>
         )}
