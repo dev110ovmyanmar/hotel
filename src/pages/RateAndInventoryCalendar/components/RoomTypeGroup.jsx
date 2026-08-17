@@ -127,7 +127,7 @@ const RoomTypeGroup = ({
                                         handleStopSellToggle(rt.id, dateStr, avail.stopSell, avail.uuid)
                                     }
                                     style={{ backgroundColor: avail.stopSell ? '#ff4d4f' : '#5CB85C' }}
-                                    disabled={isPast || isLoading}
+                                    disabled={isPast || isLoading || isToday}
                                     loading={isLoading}
                                 />
                             ) : null}
@@ -184,6 +184,7 @@ const RoomTypeGroup = ({
                                         className="text-center text-[12px] font-bold text-green-600 px-1 !w-[50px] !border-gray-200 !rounded"
                                         status={isOverLimit ? 'error' : undefined}
                                         disabled={isDisabled}
+                                        readOnly
                                         value={isEditing ? editingCell.value : avail.stopSell ? 0 : avail.availableRooms}
                                         onFocus={() =>
                                             setEditingCell({ rtId: rt.id, dateStr, value: avail.availableRooms })
