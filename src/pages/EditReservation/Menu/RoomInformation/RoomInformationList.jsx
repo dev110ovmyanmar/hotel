@@ -18,7 +18,7 @@ import AssignRoomForm from "./Components/RoomInformationForms/AssignRoomForm";
 import { Button, Modal } from "antd";
 import ChangeStatusForm from "../../../BookingDetail/Components/BookingDetailForms/ChangeStatusForm";
 import Loader from "../../../../component/Loader/Loader";
-import ComplimentaryUpdateModal from "./Components/ComplimentaryModals/ComplimentaryUpdateModal";
+// import ComplimentaryUpdateModal from "./Components/ComplimentaryModals/ComplimentaryUpdateModal";
 
 const RoomInformationList = () => {
   const navigate = useNavigate();
@@ -50,7 +50,7 @@ const RoomInformationList = () => {
   const [assignRoomOpen, setAssignRoomOpen] = useState(false);
   const [showRoomResults, setShowRoomResults] = useState(false);
   const [open, setOpen] = useState(false);
-  const [compOpen, setCompOpen] = useState(false);
+  // const [compOpen, setCompOpen] = useState(false);
 
 
   const { data, isLoading, refetch } = useApiQuery({
@@ -71,17 +71,17 @@ const RoomInformationList = () => {
     },
   });
 
-  const upcomingReservations = (data?.data || []).filter((item) => {
-    const checkin = new Date(item.checkinDate);
-    checkin.setHours(0, 0, 0, 0);
+  // const upcomingReservations = (data?.data || []).filter((item) => {
+  //   const checkin = new Date(item.checkinDate);
+  //   checkin.setHours(0, 0, 0, 0);
 
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+  //   const today = new Date();
+  //   today.setHours(0, 0, 0, 0);
 
-    return checkin >= today && ["confirmed"].includes(item.roomStatus?.code);
-  });
+  //   return checkin >= today && ["confirmed"].includes(item.roomStatus?.code);
+  // });
 
-  const disableComplimentaryUpdateButton = upcomingReservations?.length == 0;
+  // const disableComplimentaryUpdateButton = upcomingReservations?.length == 0;
 
 
   useEffect(() => {
@@ -132,13 +132,13 @@ const RoomInformationList = () => {
           Change Status
         </Button>
 
-        {
+        {/* {
           disableComplimentaryUpdateButton ? null : (
             <Button className="custom-blue-btn" onClick={() => setCompOpen(true)}>
               Add Complimentary
             </Button>
           )
-        }
+        } */}
 
       </div>
 
@@ -195,14 +195,11 @@ const RoomInformationList = () => {
         />
       )}
 
-      {
-        <ComplimentaryUpdateModal
+      {/* <ComplimentaryUpdateModal
           bookingUuid={uuid}
           open={compOpen}
           onCancel={() => setCompOpen(false)}
-        />
-      }
-
+      /> */}
     </div>
   );
 };
