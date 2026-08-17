@@ -75,9 +75,9 @@ const ExtraBedRateForm = ({
     return {
       value: extraType.uuid,
       label: isPerson
-        ? `${extraType.name} (Age: 11+ Years)`
+        ? `${extraType.name} (Age: 10+ Years)`
         : isChild
-          ? `${extraType.name} (Age: 0 –10 Years)`
+          ? `${extraType.name} (Age: 0 – 9 Years)`
           : extraType.name,
     };
   });
@@ -91,7 +91,7 @@ const ExtraBedRateForm = ({
 
   const hideAgeForExtraPerson =
     isExtraPerson &&
-    form.getFieldValue("minAge") === 11 &&
+    form.getFieldValue("minAge") === 10 &&
     form.getFieldValue("maxAge") === null;
 
   const isExtraChild = selectedExtraTypeObj?.label
@@ -154,7 +154,7 @@ const ExtraBedRateForm = ({
   useEffect(() => {
     if (isExtraPerson) {
       form.setFieldsValue({
-        minAge: 11,
+        minAge: 10,
         maxAge: null,
       });
     } else {
@@ -174,7 +174,7 @@ const ExtraBedRateForm = ({
   const onFinish = (values) => {
     const [start, end] = values.dateRange || [];
     if (isExtraPerson) {
-      values.minAge = 11;
+      values.minAge = 10;
       values.maxAge = null;
     }
 
@@ -360,8 +360,8 @@ const ExtraBedRateForm = ({
                     {
                       type: "number",
                       min: 0,
-                      max: 9,
-                      message: "Age must be between 0 and 9",
+                      max: 8,
+                      message: "Child age must be between 0 and 8",
                     },
                   ]}
                 >
@@ -382,8 +382,8 @@ const ExtraBedRateForm = ({
                     { required: true, message: "Please enter max age" },
                     {
                       type: "number",
-                      max: 10,
-                      message: "Age must be 10 or less",
+                      max: 9,
+                      message: "Child age must be 9 or less",
                     },
                     ({ getFieldValue }) => ({
                       validator(_, value) {
