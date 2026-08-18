@@ -28,8 +28,6 @@ import { useApiMutation } from "../../../hooks/useApiMutation";
 import { getServiceMeta } from "../../../api/serviceInventoryApi";
 import Toast from "../../../component/Toast/Toast";
 import {
-  MIN_REORDER_LEVEL,
-  MAX_REORDER_LEVEL,
   MIN_STOCK_QUANTITY,
   MAX_STOCK_QUANTITY,
   sellingPriceValidator,
@@ -116,7 +114,6 @@ const ServiceInventoryForm = ({
   const handleSubmit = (values) => {
     const basePayload = {
       name: values.name,
-      reorderLevel: values.reorderLevel,
       unitPrice: values.unitPrice,
       unitCost: values.unitCost,
       stockQuantity: values.stockQuantity,
@@ -188,7 +185,6 @@ const ServiceInventoryForm = ({
                 Edit
               </Button>
             )
-
           ) : (
             <FormButtons
               onClick={() => form.submit()}
@@ -304,7 +300,7 @@ const ServiceInventoryForm = ({
                 getValueProps={(value) => ({
                   value: isView
                     ? categoryOptions.find((item) => item.value === value)
-                      ?.label
+                        ?.label
                     : value,
                 })}
               >
@@ -325,7 +321,7 @@ const ServiceInventoryForm = ({
                 getValueProps={(value) => ({
                   value: isView
                     ? supplierOptions.find((item) => item.value === value)
-                      ?.label
+                        ?.label
                     : value,
                 })}
               >
@@ -342,20 +338,6 @@ const ServiceInventoryForm = ({
               </Form.Item>
             </div>
 
-            <Form.Item
-              label={<span className="text-xs">Reorder</span>}
-              name="reorderLevel"
-              className="minus-icon"
-            >
-              <InputNumber
-                placeholder="Enter Reorder Level"
-                readOnly={isView}
-                mode="spinner"
-                min={MIN_REORDER_LEVEL}
-                style={{ width: 240 }}
-              />
-            </Form.Item>
-
             <div className="grid grid-cols-2 gap-3">
               <Form.Item
                 // label="Laundry Requirement"
@@ -365,7 +347,7 @@ const ServiceInventoryForm = ({
                 rules={[
                   { required: true, message: "Please check laundry status!" },
                 ]}
-                className={isView? "pointer-events-none" : ""}
+                className={isView ? "pointer-events-none" : ""}
               >
                 <Checkbox>Laundry Requirement</Checkbox>
               </Form.Item>
@@ -378,11 +360,9 @@ const ServiceInventoryForm = ({
                 rules={[
                   { required: true, message: "Please select billing type!" },
                 ]}
-                className={isView? "pointer-events-none" : ""}
+                className={isView ? "pointer-events-none" : ""}
               >
-                <Checkbox>
-                  This item is free
-                </Checkbox>
+                {/* <Checkbox>This item is free</Checkbox> */}
               </Form.Item>
             </div>
           </>

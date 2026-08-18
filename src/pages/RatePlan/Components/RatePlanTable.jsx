@@ -68,7 +68,7 @@ const RatePlanTable = ({
       title: "Policy",
       dataIndex: ["policy", "name"],
       key: "policy",
-      align:"left"
+      align: "left",
     },
     {
       title: "Meal Plan",
@@ -361,7 +361,7 @@ const RatePlanTable = ({
         // roomRateUuid={selectedRoomTypeUuid}
         roomRateUuid={selectedRoomTypeUuid}
         page={page}
-        setPage={() => { }}
+        setPage={() => {}}
       />
 
       <Modal
@@ -375,19 +375,33 @@ const RatePlanTable = ({
       >
         {selectedWeekDayData && (
           <div>
-            {/* Base Price Section */}
             <div
               style={{
                 display: "flex",
                 justifyContent: "space-between",
                 alignItems: "center",
                 marginBottom: "12px",
+                marginTop: "20px",
               }}
             >
-              <span style={{ color: "#8c8c8c" }}>Base Price</span>
-              <span style={{ fontWeight: 600, fontSize: "16px" }}>
-                <PriceTag value={selectedWeekDayData.price} currency="MMK" />
+              <span
+                style={{ color: "#5b5959" }}
+                className={textGrayInDarkStyle}
+              >
+                Base Price
               </span>
+              <div
+                style={{
+                  display: "flex",
+                  gap: "4px",
+                  alignItems: "center",
+                  fontWeight: 400,
+                  fontSize: "14px",
+                }}
+              >
+                <PriceTag value={selectedWeekDayData.price} />
+                <span className="font-normal text-[#979797]">MMK</span>
+              </div>
             </div>
 
             {getWeekdayList(selectedWeekDayData.weekdays).length > 0 && (
@@ -412,11 +426,12 @@ const RatePlanTable = ({
                 >
                   {getWeekdayList(selectedWeekDayData.weekdays).map((day) => (
                     <div
-                      key={day.label}
                       style={{
                         display: "flex",
                         justifyContent: "space-between",
-                        fontSize: "13px",
+                        alignItems: "center",
+                        marginBottom: "12px",
+                        marginTop: "10px",
                       }}
                     >
                       <span
@@ -425,9 +440,18 @@ const RatePlanTable = ({
                       >
                         {day.label}
                       </span>
-                      <span style={{ fontWeight: 500 }}>
-                        <PriceTag value={day.val} currency="MMK" />
-                      </span>
+                      <div
+                        style={{
+                          display: "flex",
+                          gap: "4px",
+                          alignItems: "center",
+                          fontWeight: 400,
+                          fontSize: "14px",
+                        }}
+                      >
+                        <PriceTag value={day.val} />
+                        <span className="font-normal text-[#979797]">MMK</span>
+                      </div>
                     </div>
                   ))}
                 </div>

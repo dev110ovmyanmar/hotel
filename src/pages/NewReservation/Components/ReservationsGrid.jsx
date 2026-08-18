@@ -18,7 +18,11 @@ import {
   PrinterOutlined,
 } from "@ant-design/icons";
 import { FaChild, FaGift, FaMoon } from "react-icons/fa";
-import { IoCalendarOutline, IoDocumentTextOutline, IoPeopleSharp } from "react-icons/io5";
+import {
+  IoCalendarOutline,
+  IoDocumentTextOutline,
+  IoPeopleSharp,
+} from "react-icons/io5";
 import PriceTag from "../../../component/PriceTag/PriceTag";
 import ReservationStatusColor from "./../../../component/ReservationStatusColor/ReservationStatusColor";
 import dayjs from "dayjs";
@@ -53,15 +57,20 @@ const ReservationsGrid = ({
     <div>
       <Row gutter={[16, 16]}>
         {data.map((item) => {
-          console.log(item, "DATEITEmRESERVATionGRid")
+          console.log(item, "DATEITEmRESERVATionGRid");
           return (
             <>
               <Col xs={24} sm={12} lg={8} key={item.id}>
                 <Card
-                  className="custom-blue-header"
+                  className="custom-blue-header transition-all
+                             duration-300
+                             ease-in-out
+                             hover:-translate-y-1
+                             hover:shadow-[0_8px_25px_rgba(0,0,0,0.15)]
+                             dark:hover:shadow-[0_8px_25px_rgba(0,0,0,0.5)]"
                   title={
                     <span className="font-semibold capitalize text-[#ffffff]">
-                      {item?.guest?.name}
+                      {item?.guest?.title} {item?.guest?.name}
                     </span>
                   }
                   extra={
@@ -76,16 +85,16 @@ const ReservationsGrid = ({
                           },
                           ...(item?.roomStatus?.code === "confirmed"
                             ? [
-                              {
-                                key: "print",
-                                label: "Print",
-                                icon: <PrinterOutlined />,
-                                onClick: () => {
-                                  setPrintOpen(true),
-                                    setSelectedReservation(item)
-                                }
-                              },
-                            ]
+                                {
+                                  key: "print",
+                                  label: "Print",
+                                  icon: <PrinterOutlined />,
+                                  onClick: () => {
+                                    (setPrintOpen(true),
+                                      setSelectedReservation(item));
+                                  },
+                                },
+                              ]
                             : []),
                         ],
                       }}
@@ -108,7 +117,7 @@ const ReservationsGrid = ({
                     onClick={() => handleMenuClick(item)}
                   >
                     <div style={{ marginBottom: 12 }}>
-                      <Space size="middle" >
+                      <Space size="middle">
                         <span
                           style={{
                             display: "flex",
@@ -126,7 +135,8 @@ const ReservationsGrid = ({
                             gap: "6px",
                           }}
                         >
-                          <IoPeopleSharp className="text-blue-500 " /> {item.adults}
+                          <IoPeopleSharp className="text-blue-500 " />{" "}
+                          {item.adults}
                         </span>
 
                         {/* {item.children && (
@@ -155,7 +165,11 @@ const ReservationsGrid = ({
                       }}
                     >
                       <div
-                        style={{ flex: 1, padding: "8px", background: "#fafafa" }}
+                        style={{
+                          flex: 1,
+                          padding: "8px",
+                          background: "#fafafa",
+                        }}
                         className="dark:!bg-[#141414]"
                       >
                         {item.checkinDate
@@ -171,7 +185,11 @@ const ReservationsGrid = ({
                       </div>
 
                       <div
-                        style={{ flex: 1, padding: "8px", background: "#fafafa" }}
+                        style={{
+                          flex: 1,
+                          padding: "8px",
+                          background: "#fafafa",
+                        }}
                         className="dark:!bg-[#141414]"
                       >
                         {item.checkoutDate
@@ -189,7 +207,10 @@ const ReservationsGrid = ({
                       }}
                     >
                       <div
-                        style={{ display: "flex", justifyContent: "space-between" }}
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                        }}
                       >
                         <span style={{ color: "#8c8c8c" }}>Res No:</span>
                         <span className="font-bold text-indigo-800">
@@ -198,14 +219,20 @@ const ReservationsGrid = ({
                       </div>
 
                       <div
-                        style={{ display: "flex", justifyContent: "space-between" }}
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                        }}
                       >
                         <span style={{ color: "#8c8c8c" }}>Room Type:</span>
                         <span>{item?.roomType?.name}</span>
                       </div>
 
                       <div
-                        style={{ display: "flex", justifyContent: "space-between" }}
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                        }}
                       >
                         <span style={{ color: "#8c8c8c" }}>Room No:</span>
                         <span>
@@ -219,13 +246,21 @@ const ReservationsGrid = ({
                         </span>
                       </div>
                       <div
-                        style={{ display: "flex", justifyContent: "space-between" }}
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                        }}
                       >
                         <span style={{ color: "#8c8c8c" }}>Contact No:</span>
-                        <span>{item?.guest?.phone ? item.guest.phone : "-"}</span>
+                        <span>
+                          {item?.guest?.phone ? item.guest.phone : "-"}
+                        </span>
                       </div>
                       <div
-                        style={{ display: "flex", justifyContent: "space-between" }}
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                        }}
                       >
                         <span style={{ color: "#8c8c8c", borderRadius: "5px" }}>
                           Status:
@@ -266,7 +301,7 @@ const ReservationsGrid = ({
                 </Card>
               </Col>
             </>
-          )
+          );
         })}
       </Row>
 
@@ -296,7 +331,6 @@ const ReservationsGrid = ({
         onClose={() => setPrintOpen(false)}
         data={selectedReservation}
       />
-
     </div>
   );
 };

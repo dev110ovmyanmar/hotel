@@ -36,7 +36,20 @@ const MeanPlanTable = ({
       key: "name",
       render: (text) => <div>{text}</div>,
     },
+   
     {
+      title: "Code",
+      key: "code",
+      width: 100,
+      render: (_, record) => {
+        return (
+          <div>
+            <span>{record?.code}</span>
+          </div>
+        );
+      },
+    },
+     {
       title: "Includes",
       key: "includes",
       render: (_, record) => {
@@ -50,42 +63,33 @@ const MeanPlanTable = ({
       },
     },
     {
-      title: "Code",
-      key: "code",
-      width: 100,
-      render: (_, record) => {
-        return (
-          <div>
-            <span>
-              {record?.code}
-            </span>
-          </div>
-        )
-      }
-    },
-    {
       title: "Pricing Rules",
-      width: 350,
+      width: 300,
       render: (record) => {
         return (
           <>
             <div className="flex justify-between">
               <span>Adult:</span>
-              <span className="flex items-center gap-1">[<PriceTag value={record?.adultPrice} />] MMK</span>
+              <span className="flex items-center ">
+                <PriceTag value={record?.adultPrice} /> MMK
+              </span>
             </div>
             <div className="flex justify-between">
               <span>Child:</span>
-              <span className="flex items-center gap-1">[<PriceTag value={record?.childPrice} />] MMK</span>
+              <span className="flex items-center ">
+                <PriceTag value={record?.childPrice} /> MMK
+              </span>
             </div>
             <div className="flex justify-between">
               <span>Child Free Age Below :</span>
-              <span className="flex items-center gap-1">[ {record?.childFreeAgeBelow} ]
+              <span className="flex items-center ">
+                 {record?.childFreeAgeBelow} 
                 {record?.childFreeAgeBelow <= 1 ? " Year" : " Years"}
               </span>
             </div>
           </>
-        )
-      }
+        );
+      },
     },
     {
       title: "Status",
