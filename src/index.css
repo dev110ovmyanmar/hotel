@@ -961,7 +961,6 @@ span .ant-upload {
   color: #c7c7c8;
 }
 
-.css-var-_r_0_ {
-  --ant-color-bg-container-disabled: #237efd;
-  --ant-color-text-disabled: #ffffff !important;
+.custom-disabled-checkbox {
+   --ant-color-bg-container-disabled: #237efd;
 }
