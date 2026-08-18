@@ -216,6 +216,7 @@ const RatePlanForm = ({
           name: values.name,
           code: values.code,
           uuid: data?.uuid,
+          mealPricingMode: values.mealPricingMode,
         },
         {
           onSuccess: () => {
@@ -521,22 +522,22 @@ const RatePlanForm = ({
                 </Radio.Group>
               </Form.Item> */}
             </div>
-              <Form.Item
-                label="Meal Pricing"
-                name="mealPricingMode"
-                rules={[
-                  {
-                    required: true,
-                  },
-                ]}
-              >
-                <Radio.Group disabled={isView}>
-                  <Space direction="horizontal">
-                    <Radio value="included"> Included in Room Rate</Radio>
-                    <Radio value="separate"> Charge Separately</Radio>
-                  </Space>
-                </Radio.Group>
-              </Form.Item>
+            <Form.Item
+              label="Meal Pricing"
+              name="mealPricingMode"
+              rules={[
+                {
+                  required: true,
+                },
+              ]}
+            >
+              <Radio.Group disabled={isView}>
+                <Space direction="horizontal">
+                  <Radio value="included"> Included in Room Rate</Radio>
+                  <Radio value="separate"> Charge Separately</Radio>
+                </Space>
+              </Radio.Group>
+            </Form.Item>
 
             {isAdd && (
               <div className="border-2 px-4  py-4 rounded mb-2">
