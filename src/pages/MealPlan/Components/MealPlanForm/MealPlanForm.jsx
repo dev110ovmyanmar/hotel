@@ -4,29 +4,29 @@ import {
   Input,
   Button,
   Drawer,
-  Space,
-  Select,
   Checkbox,
   Row,
   Col,
   InputNumber,
 } from "antd";
+
 import Toast from "../../../../component/Toast/Toast";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
 import useApiQuery from "../../../../hooks/useApiQuery";
-import FormButtons from "./../../../../component/FormButtons/FormButtons";
-import { upsertMealPlan, mealPlanDetails } from "../../../../api/mealPlanApi";
-import { queryClient } from "./../../../../app/queryClient";
+import FormButtons from "../../../../component/FormButtons/FormButtons";
+import {
+  upsertMealPlan,
+  mealPlanDetails,
+} from "../../../../api/mealPlanApi";
+import { queryClient } from "../../../../app/queryClient";
 import Loader from "../../../../component/Loader/Loader";
 import { PERMISSIONS } from "../../../../variables/permission";
 import usePermission from "../../../../hooks/usePermission";
 import Status from "../../../../component/Status/Status";
-import PriceTag, {
+import {
   priceFormatter,
   priceParser,
 } from "../../../../component/PriceTag/PriceTag";
-
-const { TextArea } = Input;
 
 const MeanPlanForm = ({
   mode,
@@ -41,18 +41,23 @@ const MeanPlanForm = ({
   const [form] = Form.useForm();
 
   const includeMeals = Form.useWatch("includes", form);
-  const mealChecked = includeMeals?.length > 0;
+
+  const mealChecked = Array.isArray(includeMeals) && includeMeals.length > 0;
 
   const isView = mode === "view";
   const isEdit = mode === "edit";
   const isAdd = mode === "add";
 
   const { hasPermission } = usePermission();
+
   const canEdit = hasPermission(PERMISSIONS.MEAL_PLAN_EDIT);
 
-  const initData = queryClient.getQueryData(["initData", "authenticated"]);
+  const initData = queryClient.getQueryData([
+    "initData",
+    "authenticated",
+  ]);
 
-  const statuses = initData?.statuses?.status;
+  const statuses = initData?.statuses?.status || [];
 
   const upsertMealPlans = useApiMutation({
     mutationFn: upsertMealPlan,
@@ -60,53 +65,76 @@ const MeanPlanForm = ({
     shouldInvalidate: isEdit ? true : page === 1,
   });
 
-  const { data, isLoading, error } = useApiQuery({
+  const {data,isLoading,} = useApiQuery({
     fetchQueryName: "meal-plan-details",
     fetchQueryFunction: mealPlanDetails,
-    params: { uuid: selectedData?.uuid },
+    params: {
+      uuid: selectedData?.uuid,
+    },
     options: {
       enabled: drawerOpen && !!selectedData?.uuid,
     },
   });
 
   useEffect(() => {
-    if (isAdd) {
-      form.setFieldsValue({
-        adultPrice: 0,
-        childPrice: 0,
-        status: {
-          uuid: statuses?.find((item) => item?.code === "active")?.uuid,
-        },
-        childFreeAgeBelow: 5,
-      });
-    }
-  }, [isAdd]);
+    if (!isAdd) return;
+    const activeStatus = statuses.find(
+      (item) => item?.code === "active"
+    );
+
+    form.setFieldsValue({
+      name: undefined,
+      code: undefined,
+      includes: [],
+      adultPrice: 0,
+      childPrice: 0,
+      childFreeAgeBelow: 5,
+      status: {
+        uuid: activeStatus?.uuid,
+      },
+      description: undefined,
+    });
+  }, [isAdd, form, statuses]);
 
   useEffect(() => {
-    if ((isEdit || isView) && data) {
-      const includes = [];
+    if ((!isEdit && !isView) || !data) return;
 
-      if (data.includesBreakfast) includes.push("breakfast");
-      if (data.includesLunch) includes.push("lunch");
-      if (data.includesDinner) includes.push("dinner");
+    const includes = [];
 
-      form.setFieldsValue({
-        ...data,
-        includes,
-        status: {
-          uuid: data?.status?.uuid,
-        },
-      });
+    if (data?.includesBreakfast) {
+      includes.push("breakfast");
     }
+
+    if (data?.includesLunch) {
+      includes.push("lunch");
+    }
+
+    if (data?.includesDinner) {
+      includes.push("dinner");
+    }
+
+    form.setFieldsValue({
+      ...data,
+      includes,
+      status: {
+        uuid: data?.status?.uuid,
+      },
+    });
   }, [data, isEdit, isView, form]);
 
   const onFinish = (values) => {
-    console.log(values, "ValuesOnFinsih");
+    console.log("Form Values:", values);
+
+    const includes = Array.isArray(values?.includes)
+      ? values.includes
+      : [];
+
     const payload = {
       ...values,
-      includesBreakfast: values?.includes.includes("breakfast") || false,
-      includesLunch: values?.includes.includes("lunch") || false,
-      includesDinner: values?.includes.includes("dinner") || false,
+      includesBreakfast: includes.includes("breakfast"),
+      includesLunch: includes.includes("lunch"),
+      includesDinner: includes.includes("dinner"),
+      includes: undefined,
     };
 
     if (isAdd) {
@@ -114,11 +142,16 @@ const MeanPlanForm = ({
         onSuccess: () => {
           setPage(1);
           setDrawerOpen(false);
+          setSelectedData(null);
+          setMode(null);
+          form.resetFields();
+
           Toast.success("Meal Plan Created Successfully!");
         },
       });
-    }
 
+      return;
+    }
     if (isEdit) {
       const editValues = {
         ...payload,
@@ -128,6 +161,10 @@ const MeanPlanForm = ({
       upsertMealPlans.mutate(editValues, {
         onSuccess: () => {
           setDrawerOpen(false);
+          setSelectedData(null);
+          setMode(null);
+          form.resetFields();
+
           Toast.success("Meal Plan Updated Successfully!");
         },
       });
@@ -135,35 +172,51 @@ const MeanPlanForm = ({
   };
 
   const onChange = (checkedValues) => {
-    console.log("checked = ", checkedValues);
+    console.log("Meal Includes:", checkedValues);
   };
 
   const options = [
-    { label: "Breakfast", value: "breakfast", className: "label-1" },
-    { label: "Lunch", value: "lunch", className: "label-2" },
-    { label: "Dinner", value: "dinner", className: "label-3" },
+    {
+      label: "Breakfast",
+      value: "breakfast",
+      className: "label-1",
+    },
+    {
+      label: "Lunch",
+      value: "lunch",
+      className: "label-2",
+    },
+    {
+      label: "Dinner",
+      value: "dinner",
+      className: "label-3",
+    },
   ];
+
+  const handleDrawerClose = () => {
+    setDrawerOpen(false);
+    setSelectedData(null);
+    setMode(null);
+    form.resetFields();
+  };
 
   return (
     <div className="flex justify-center">
       <Drawer
         size={550}
         open={drawerOpen}
-        onClose={() => {
-          setDrawerOpen(false);
-          setSelectedData(null);
-          form.resetFields();
-          setMode(null);
-        }}
+        onClose={handleDrawerClose}
         title={
           <div className="flex justify-between items-center">
             <span>
-              {mode === "view"
+              {isView
                 ? "Meal Plan Details"
-                : mode === "edit"
+                : isEdit
                   ? "Edit Meal Plan"
                   : "Add Meal Plan"}
             </span>
+
+
             {isView ? (
               canEdit && (
                 <Button
@@ -176,6 +229,7 @@ const MeanPlanForm = ({
                 </Button>
               )
             ) : (
+
               <FormButtons
                 onClick={() => form.submit()}
                 isPending={upsertMealPlans?.isPending}
@@ -196,7 +250,10 @@ const MeanPlanForm = ({
             validateTrigger="onSubmit"
             onFinish={onFinish}
             initialValues={{
+              includes: [],
               childFreeAgeBelow: 5,
+              adultPrice: 0,
+              childPrice: 0,
             }}
           >
             <Row gutter={16}>
@@ -205,30 +262,46 @@ const MeanPlanForm = ({
                   label="Name"
                   name="name"
                   rules={[
-                    { required: true, message: "Meal Plan Name is Required" },
+                    {
+                      required: true,
+                      message: "Meal Plan Name is Required",
+                    },
                   ]}
                 >
-                  <Input readOnly={isView} placeholder="Enter Meal Plan Name" />
+                  <Input
+                    readOnly={isView}
+                    placeholder="Enter Meal Plan Name"
+                  />
                 </Form.Item>
               </Col>
+
               <Col span={12}>
                 <Form.Item
                   label="Code"
                   name="code"
                   rules={[
-                    { required: true, message: "Meal Plan Code is Required" },
+                    {
+                      required: true,
+                      message: "Meal Plan Code is Required",
+                    },
                   ]}
                 >
-                  <Input readOnly={isView} placeholder="Enter Meal Plan Code" />
+                  <Input
+                    readOnly={isView}
+                    placeholder="Enter Meal Plan Code"
+                  />
                 </Form.Item>
               </Col>
-            </Row>
-
-            <Form.Item label="Meal Includes" name="includes">
+              </Row>
+            <Form.Item
+              label="Meal Includes"
+              name="includes"
+              initialValue={[]}
+            >
               <Checkbox.Group
                 options={options}
                 onChange={onChange}
-                className={isView ? "pointer-events-none" : ""}
+                disabled={isView}
               />
             </Form.Item>
 
@@ -271,8 +344,8 @@ const MeanPlanForm = ({
                     style={{ width: "100%" }}
                     min={0}
                     readOnly={isView}
-                    placeholder="Enter Child Price"
                     suffix="MMK"
+                    placeholder="Enter Child Price"
                     formatter={priceFormatter}
                     parser={priceParser}
                   />
@@ -283,7 +356,6 @@ const MeanPlanForm = ({
                 <Form.Item
                   label="Child Free Age Below"
                   name="childFreeAgeBelow"
-                  min={5}
                   className="minus-icon"
                 >
                   <InputNumber
@@ -291,7 +363,6 @@ const MeanPlanForm = ({
                     className="w-full rounded-lg"
                     min={0}
                     max={18}
-                    defaultValue={5}
                     readOnly={isView}
                     placeholder="Enter Child Free Age Below"
                   />
@@ -299,38 +370,20 @@ const MeanPlanForm = ({
               </Col>
             </Row>
 
-            <Status isView={isView} statusValue={statuses} />
-            {/* <Form.Item
-              label="Status"
-              name="status"
-              rules={[{ required: true, message: "Status is required" }]}
-              getValueProps={(value) => ({
-                value: isView
-                  ? statuses?.find((item) => item.value === value)?.label || value
-                  : value,
-              })}
+            <Status
+              isView={isView}
+              statusValue={statuses}
+            />
+            <Form.Item
+              label="Description"
+              name="description"
             >
-              {isView ? (
-                <Input readOnly={isView} />
-              ) : (
-                <Select
-                  showSearch={{
-                    filterOption: (input, option) =>
-                      (option?.label ?? "")
-                        .toLowerCase()
-                        .includes(input.toLowerCase()),
-                  }}
-                  options={statuses}
-                  placeholder="Select Status"
-                />
-              )}
-            </Form.Item> */}
-
-            <Form.Item label="Description" name="description">
               <Input.TextArea
                 rows={2}
                 readOnly={isView}
-                style={{ cursor: isView ? "default" : "text" }}
+                style={{
+                  cursor: isView ? "default" : "text",
+                }}
                 placeholder="Enter Description"
               />
             </Form.Item>

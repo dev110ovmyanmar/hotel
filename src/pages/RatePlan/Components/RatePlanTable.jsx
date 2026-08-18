@@ -63,12 +63,14 @@ const RatePlanTable = ({
       title: "Code",
       dataIndex: "code",
       key: "code",
+      width:100,
+       align: "left",
     },
     {
       title: "Policy",
       dataIndex: ["policy", "name"],
       key: "policy",
-      align:"left"
+      align: "left",
     },
     {
       title: "Meal Plan",
@@ -80,6 +82,7 @@ const RatePlanTable = ({
       title: "Is Default",
       dataIndex: "isDefault",
       key: "isDefault",
+      width:100,
       render: (isDefault) => (
         <div
           className={isDefault === true ? "text-[#389E0D]" : "text-[#CF1322]"}
@@ -93,6 +96,7 @@ const RatePlanTable = ({
       dataIndex: ["mealPricingMode"],
       key: "mealPricingMode",
       align: "left",
+      width:140,
       render: (text) => {
         if (!text) return "";
         return text.charAt(0).toUpperCase() + text.slice(1);
@@ -102,6 +106,7 @@ const RatePlanTable = ({
       title: "Action",
       fixed: "end",
       align: "center",
+      width:100,
       render: (_, record) => {
         const smallStyle = { fontSize: "12px" };
 
@@ -361,7 +366,7 @@ const RatePlanTable = ({
         // roomRateUuid={selectedRoomTypeUuid}
         roomRateUuid={selectedRoomTypeUuid}
         page={page}
-        setPage={() => { }}
+        setPage={() => {}}
       />
 
       <Modal
@@ -375,19 +380,33 @@ const RatePlanTable = ({
       >
         {selectedWeekDayData && (
           <div>
-            {/* Base Price Section */}
             <div
               style={{
                 display: "flex",
                 justifyContent: "space-between",
                 alignItems: "center",
                 marginBottom: "12px",
+                marginTop: "20px",
               }}
             >
-              <span style={{ color: "#8c8c8c" }}>Base Price</span>
-              <span style={{ fontWeight: 600, fontSize: "16px" }}>
-                <PriceTag value={selectedWeekDayData.price} currency="MMK" />
+              <span
+                style={{ color: "#5b5959" }}
+                className={textGrayInDarkStyle}
+              >
+                Base Price
               </span>
+              <div
+                style={{
+                  display: "flex",
+                  gap: "4px",
+                  alignItems: "center",
+                  fontWeight: 400,
+                  fontSize: "14px",
+                }}
+              >
+                <PriceTag value={selectedWeekDayData.price} />
+                <span className="font-normal text-[#979797]">MMK</span>
+              </div>
             </div>
 
             {getWeekdayList(selectedWeekDayData.weekdays).length > 0 && (
@@ -412,11 +431,12 @@ const RatePlanTable = ({
                 >
                   {getWeekdayList(selectedWeekDayData.weekdays).map((day) => (
                     <div
-                      key={day.label}
                       style={{
                         display: "flex",
                         justifyContent: "space-between",
-                        fontSize: "13px",
+                        alignItems: "center",
+                        marginBottom: "12px",
+                        marginTop: "10px",
                       }}
                     >
                       <span
@@ -425,9 +445,18 @@ const RatePlanTable = ({
                       >
                         {day.label}
                       </span>
-                      <span style={{ fontWeight: 500 }}>
-                        <PriceTag value={day.val} currency="MMK" />
-                      </span>
+                      <div
+                        style={{
+                          display: "flex",
+                          gap: "4px",
+                          alignItems: "center",
+                          fontWeight: 400,
+                          fontSize: "14px",
+                        }}
+                      >
+                        <PriceTag value={day.val} />
+                        <span className="font-normal text-[#979797]">MMK</span>
+                      </div>
                     </div>
                   ))}
                 </div>

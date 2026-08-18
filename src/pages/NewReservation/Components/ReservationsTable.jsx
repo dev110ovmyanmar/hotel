@@ -49,9 +49,14 @@ const ReservationsTable = ({
       dataIndex: ["guest", "name"],
       key: "guestName",
       width: 140,
-      render: (text) => (
-        <span style={{ textTransform: "capitalize" }}>{text || ""}</span>
-      ),
+      render: (text, record) => {
+        const title = record.guest?.title ? `${record.guest.title} ` : "";
+        return (
+          <span style={{ textTransform: "capitalize" }}>
+            {`${title}${text || ""}`.trim()}
+          </span>
+        );
+      },
     },
     {
       title: "Res No:",
@@ -185,18 +190,17 @@ const ReservationsTable = ({
             icon={<EditOutlined />}
             onClick={() => handleMenuClick(record)}
           />
-          {
-            record?.roomStatus?.code === "confirmed" &&
+          {record?.roomStatus?.code === "confirmed" && (
             <Button
               type="text"
               icon={<PrinterOutlined />}
               onClick={() => {
-                handleMenuClick(record.uuid),
+                (handleMenuClick(record.uuid),
                   setPrintOpen(true),
-                  setSelectedReservation(record)
+                  setSelectedReservation(record));
               }}
             />
-          }
+          )}
         </div>
       ),
     },

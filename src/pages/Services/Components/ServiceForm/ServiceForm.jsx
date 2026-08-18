@@ -310,13 +310,22 @@ const ServiceForm = ({
                 rules={[{ required: true }]}
                 className={`mt-10 ${isView ? "pointer-events-none" : ""}`}
               >
-                <Checkbox disabled={isEdit} style={{ marginTop: "25px" }}>
-                  This service can use inventory tracking
+                <Checkbox
+                  disabled={isEdit}
+                  className="text-white"
+                  style={{ marginTop: "25px" }}
+                >
+                  <span className="dark:text-gray-100">
+                    This service can use inventory tracking
+                  </span>
                 </Checkbox>
               </Form.Item>
 
-              <Form.Item label="Base Price" name="basePrice">
-              
+              <Form.Item
+                label="Base Price"
+                name="basePrice"
+                rules={[{ required: true }]}
+              >
                 <InputNumber
                   className="w-full!"
                   min={0}
@@ -368,13 +377,13 @@ const ServiceForm = ({
                                isChecked
                                  ? isView
                                    ? "border-blue-300 bg-blue-50/20"
-                                    : "border-blue-500 bg-blue-50/40 dark:bg-black shadow-sm shadow-blue-100/50"
-                                  : isView
-                                    ? "border-gray-100 bg-gray-50/30"
-                                    : "border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50/50"
-                                  }
+                                   : "border-blue-500 bg-blue-50/40 dark:bg-black shadow-sm shadow-blue-100/50"
+                                 : isView
+                                   ? "border-gray-100 bg-gray-50/30"
+                                   : "border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50/50"
+                             }
                                 `}
-                       >
+                      >
                         <div className="pt-0.5">
                           <Checkbox value={stage.value} />
                         </div>

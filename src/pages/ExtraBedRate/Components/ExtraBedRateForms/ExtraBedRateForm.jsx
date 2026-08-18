@@ -75,9 +75,9 @@ const ExtraBedRateForm = ({
     return {
       value: extraType.uuid,
       label: isPerson
-        ? `${extraType.name} (Age: 11+ Years)`
+        ? `${extraType.name} (Age: 10+ Years)`
         : isChild
-          ? `${extraType.name} (Age: 0 –10 Years)`
+          ? `${extraType.name} (Age: 0 – 9 Years)`
           : extraType.name,
     };
   });
@@ -91,7 +91,7 @@ const ExtraBedRateForm = ({
 
   const hideAgeForExtraPerson =
     isExtraPerson &&
-    form.getFieldValue("minAge") === 11 &&
+    form.getFieldValue("minAge") === 10 &&
     form.getFieldValue("maxAge") === null;
 
   const isExtraChild = selectedExtraTypeObj?.label
@@ -132,6 +132,7 @@ const ExtraBedRateForm = ({
       enabled: !!selectedData?.uuid,
     },
   });
+
   useEffect(() => {
     if (!isAdd && data) {
       form.setFieldsValue({
@@ -142,28 +143,30 @@ const ExtraBedRateForm = ({
         minAge: data?.minAge ?? null,
         maxAge: data?.maxAge ?? null,
         dateRange: [
-          data.startDate ? dayjs(data.startDate) : null,
-          data.endDate ? dayjs(data.endDate) : null,
+          data?.startDate ? dayjs(data.startDate) : null,
+          data?.endDate ? dayjs(data.endDate) : null,
         ],
       });
 
       setSelectedData(data);
     }
-  }, [data]);
+  }, [data, isAdd, form]);
 
   useEffect(() => {
+    if (!isAdd) return;
+
     if (isExtraPerson) {
       form.setFieldsValue({
-        minAge: 11,
+        minAge: 10,
         maxAge: null,
       });
-    } else {
+    } else if (isExtraChild) {
       form.setFieldsValue({
         minAge: null,
         maxAge: null,
       });
     }
-  }, [selectedExtraTypeUuid]);
+  }, [selectedExtraTypeUuid, isExtraPerson, isExtraChild, isAdd, form]);
 
   const handleClose = () => {
     setDrawerOpen(false);
@@ -174,7 +177,7 @@ const ExtraBedRateForm = ({
   const onFinish = (values) => {
     const [start, end] = values.dateRange || [];
     if (isExtraPerson) {
-      values.minAge = 11;
+      values.minAge = 10;
       values.maxAge = null;
     }
 
@@ -348,7 +351,7 @@ const ExtraBedRateForm = ({
             )}
           </Form.Item>
 
-          {isExtraChild && !hideAgeForExtraPerson && (
+          {isExtraChild && (
             <Row gutter={16}>
               <Col span={12}>
                 <Form.Item
@@ -356,12 +359,15 @@ const ExtraBedRateForm = ({
                   name="minAge"
                   dependencies={["maxAge"]}
                   rules={[
-                    { required: true, message: "Please enter min age" },
+                    {
+                      required: true,
+                      message: "Please enter min age",
+                    },
                     {
                       type: "number",
                       min: 0,
-                      max: 9,
-                      message: "Age must be between 0 and 9",
+                      max: 8,
+                      message: "Child age must be between 0 and 8",
                     },
                   ]}
                 >
@@ -373,17 +379,21 @@ const ExtraBedRateForm = ({
                   />
                 </Form.Item>
               </Col>
+
               <Col span={12}>
                 <Form.Item
                   label="Max Age"
                   name="maxAge"
                   dependencies={["minAge"]}
                   rules={[
-                    { required: true, message: "Please enter max age" },
+                    {
+                      required: true,
+                      message: "Please enter max age",
+                    },
                     {
                       type: "number",
-                      max: 10,
-                      message: "Age must be 10 or less",
+                      max: 9,
+                      message: "Child age must be 9 or less",
                     },
                     ({ getFieldValue }) => ({
                       validator(_, value) {

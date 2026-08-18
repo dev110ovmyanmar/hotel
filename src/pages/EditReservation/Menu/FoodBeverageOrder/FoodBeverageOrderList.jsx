@@ -104,6 +104,7 @@ const FoodBeverageOrderList = () => {
           reservationUuid={data?.reservation?.uuid}
           reservationRoomUuid={data?.reservationRoom?.uuid}
           reservationRoomId={bookingId}
+          refetchOrderList={refetch}
           mode={mode}
           setMode={setMode}
           open={drawerOpen}

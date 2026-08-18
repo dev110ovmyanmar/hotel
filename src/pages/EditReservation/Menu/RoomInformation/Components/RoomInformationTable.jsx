@@ -263,7 +263,7 @@ const RoomInformationTable = ({
           },
           {
             key: "roomComp",
-            label: "Complimentary",
+            label: "Room Complimentary",
             icon: <Bs0Circle />,
             onClick: () => {
               setReservationRoomUuid(record.uuid);
