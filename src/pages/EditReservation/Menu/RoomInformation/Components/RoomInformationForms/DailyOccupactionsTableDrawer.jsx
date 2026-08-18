@@ -6,6 +6,8 @@ import DailyOccupationDetailDrawer from "./DailyOccupactionDetailDrawer";
 import { getDailyOccupactions } from "../../../../../../api/dailyOccupactionApi";
 import { useApiQuery } from "../../../../../../hooks/useApiQuery";
 import PriceTag from "../../../../../../component/PriceTag/PriceTag";
+import DailyFOCDrawer from "./FOCForm/DailyFOCDrawer";
+import { Bs0Circle } from "react-icons/bs";
 
 // Monospace-style info row
 const InfoLine = ({ label, value }) => (
@@ -23,6 +25,7 @@ const DailyOccupactionsTableDrawer = ({
     setSelectedData,
 }) => {
     const [detailDrawerOpen, setDetailDrawerOpen] = useState(false);
+    const [fOCDrawerOpen, setFOCDrawerOpen] = useState(false);
     const [selectedRowKey, setSelectedRowKey] = useState(null);
     const [initialEditMode, setInitialEditMode] = useState(false);
 
@@ -64,6 +67,11 @@ const DailyOccupactionsTableDrawer = ({
         setInitialEditMode(editMode);
         setDetailDrawerOpen(true);
     };
+
+    const handleOpenFOC = (record) => {
+        setSelectedRowKey(record.uuid || record.stayDate);
+        setFOCDrawerOpen(true);
+    }
 
     const checkinDate = selectedData?.checkinDate;
     const checkoutDate = selectedData?.checkoutDate;
@@ -166,11 +174,14 @@ const DailyOccupactionsTableDrawer = ({
                         menu={{
                             onClick: ({ key }) => {
                                 if (key === "1") handleOpenDetail(record, false);
-                                if (key === "2") handleOpenDetail(record, true);
+                                 if (key === "2") handleOpenFOC(record)
+                                if (key === "3") handleOpenDetail(record, true);
+                               
                             },
                             items: [
                                 { key: "1", label: "View", icon: <EyeOutlined /> },
-                                !isDatePast(record.stayDate) && { key: "2", label: "Edit", icon: <EditOutlined /> },
+                                { key: "2", label: "FOC", icon: <Bs0Circle/>},
+                                !isDatePast(record.stayDate) && { key: "3", label: "Edit", icon: <EditOutlined /> }
                             ],
                         }}
                         trigger={["click"]}
@@ -265,6 +276,22 @@ const DailyOccupactionsTableDrawer = ({
                     setInitialEditMode(false);
                 }}
             />
+
+            <DailyFOCDrawer
+                open={fOCDrawerOpen}
+                children={selectedRow?.children ?? []}
+                extras={selectedRow?.extras ?? []}
+                mealPlan={selectedRow?.mealPlan ?? {}}
+                mealPricingMode={selectedRow?.mealPricingMode}
+                occupancyUuid={selectedRow?.uuid}
+                selectedRow={selectedRow}
+                onClose={() => {
+                    setFOCDrawerOpen(false);
+                    setSelectedRowKey(null);
+                }}
+            />
+
+
         </>
     );
 };
