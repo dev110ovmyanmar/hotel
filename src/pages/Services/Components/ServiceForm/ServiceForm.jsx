@@ -312,7 +312,7 @@ const ServiceForm = ({
               >
                 <Checkbox
                   disabled={isEdit}
-                  className="text-white"
+                  className="custom-disabled-checkbox"
                   style={{ marginTop: "25px" }}
                 >
                   <span className="dark:text-gray-100">
