@@ -63,6 +63,8 @@ const RatePlanTable = ({
       title: "Code",
       dataIndex: "code",
       key: "code",
+      width:100,
+       align: "left",
     },
     {
       title: "Policy",
@@ -80,6 +82,7 @@ const RatePlanTable = ({
       title: "Is Default",
       dataIndex: "isDefault",
       key: "isDefault",
+      width:100,
       render: (isDefault) => (
         <div
           className={isDefault === true ? "text-[#389E0D]" : "text-[#CF1322]"}
@@ -93,6 +96,7 @@ const RatePlanTable = ({
       dataIndex: ["mealPricingMode"],
       key: "mealPricingMode",
       align: "left",
+      width:140,
       render: (text) => {
         if (!text) return "";
         return text.charAt(0).toUpperCase() + text.slice(1);
@@ -102,6 +106,7 @@ const RatePlanTable = ({
       title: "Action",
       fixed: "end",
       align: "center",
+      width:100,
       render: (_, record) => {
         const smallStyle = { fontSize: "12px" };
 
