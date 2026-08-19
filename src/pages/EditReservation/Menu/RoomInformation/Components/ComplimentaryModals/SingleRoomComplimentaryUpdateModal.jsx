@@ -448,7 +448,7 @@ const SingleRoomComplimentaryUpdateModal = ({
                                                     <span>MMK</span>
                                                 </span>
                                             </span>
-                                            <span className="text-[8px] block mt-1 font-medium opacity-70">
+                                            <span className="text-[10px] block mt-1 font-medium opacity-70">
                                                 {isComp ? "🎁 FOC" : "Available"}
                                             </span>
                                         </button>

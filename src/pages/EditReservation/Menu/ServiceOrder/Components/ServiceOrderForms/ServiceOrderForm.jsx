@@ -83,8 +83,8 @@ const ServiceOrderForm = ({
 
   const orderType = Form.useWatch("orderType", form);
   const selectedServiceUuid = Form.useWatch("selectService", form);
-  const quantities = Form.useWatch("inventoryQuantities", form);
-  const orderStatusValue = Form.useWatch("orderStatus", form);
+  // const quantities = Form.useWatch("inventoryQuantities", form);
+  // const orderStatusValue = Form.useWatch("orderStatus", form);
 
   const consumptionType = initData?.statuses?.consumption_type?.map((item) => ({
     value: item.uuid,
@@ -419,7 +419,7 @@ const ServiceOrderForm = ({
   </Form.Item>
 )}
 
-        <Form.Item label="Selection Type" name="orderType">
+        <Form.Item label="Selection Types" name="orderType">
           <Radio.Group
             disabled={isView}
             onChange={(e) => {

@@ -9,10 +9,6 @@ import useApiQuery from "../../../../hooks/useApiQuery";
 import PriceTag from "../../../../component/PriceTag/PriceTag";
 
 const StayHistory = ({ guestUuid }) => {
-  const [drawerOpen, setDrawerOpen] = useState(false);
-  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-  const [mode, setMode] = useState("");
-  const [selectedRow, setSelectedRow] = useState();
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(LIMITS.PAGE_SIZE);
 
@@ -55,9 +51,9 @@ const StayHistory = ({ guestUuid }) => {
                     <div className="flex justify-between items-start mb-4">
                       <div className="flex items-center gap-3">
                         <span className="text-sm font-bold text-slate-800 dark:text-slate-100">
-                          {dayjs(booking.checkinDate).format("DD MMMM YYYY")} -{" "}
+                          {dayjs(booking.checkinDate).format("DD MMM YYYY")} -{" "}
                           {dayjs(booking?.checkoutDate).format(
-                            "DD MMMM YYYY",
+                            "DD MMM YYYY",
                           )}{" "}
                         </span>
                         <span className="text-[10px] bg-slate-100 text-slate-500 px-2 py-0.5 rounded border border-slate-200 font-semibold">
