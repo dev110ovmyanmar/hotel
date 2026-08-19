@@ -95,8 +95,9 @@ export default function DateChangeModal({
             }
         >
             {/* Context header string linked to your JSON payload structure */}
-            <div style={{ marginBottom: 16, color: '#64748b', fontSize: '13px', fontWeight: 500 }}>
-                {reservationNo} — <span style={{ color: '#1e293b' }} className={textWhiteInDarkStyle}>{guestName}</span>
+            {/* <div style={{ marginBottom: 16, color: '#64748b', fontSize: '13px', fontWeight: 500 }}> */}
+            <div className="text-indigo-700 dark:text-indigo-500 font-semibold">
+                {reservationNo}  <span style={{ color: '#1e293b' }} className={textWhiteInDarkStyle}> — {guestName}</span>
             </div>
 
             <Divider style={{ margin: '12px 0' }} />
@@ -159,11 +160,11 @@ export default function DateChangeModal({
                         </Descriptions.Item>
 
                         <Descriptions.Item label="Total Night Allocations">
-                            <Badge count={`${originalNights} Nights`} color="#94a3b8" />
+                            <Badge count={`${originalNights} Nights`} color="#777c81" />
                             <ArrowRightOutlined style={{ margin: '0 10px', color: '#1677ff' }} />
                             <Badge
                                 count={`${newNights} Nights`}
-                                color={newNights !== originalNights ? "#edf2f7" : "#cbd5e1"}
+                                color={newNights !== originalNights ? "#edf2f7" : "#bac4d0"}
                                 style={{
                                     color: newNights > originalNights ? '#52c41a' : newNights < originalNights ? '#f5222d' : '#1e293b',
                                     fontWeight: 'bold'
@@ -176,7 +177,7 @@ export default function DateChangeModal({
                         </Descriptions.Item>
 
                         <Descriptions.Item label="Audit System Notes">
-                            <span style={{ fontStyle: 'italic', color: '#475569' }}>
+                            <span className="italic text-slate-400 dark:text-slate-300">
                                 "{pendingValues.reason}"
                             </span>
                         </Descriptions.Item>
