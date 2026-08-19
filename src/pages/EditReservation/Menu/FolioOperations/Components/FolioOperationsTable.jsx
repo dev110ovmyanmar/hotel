@@ -6,6 +6,8 @@ import {
   FolderOpenOutlined,
   PrinterOutlined,
   FileSearchOutlined,
+  EditOutlined,
+  CheckOutlined,
 } from "@ant-design/icons";
 import dayjs from "dayjs";
 import {
@@ -17,6 +19,8 @@ import {
   textWhiteInDarkStyle,
 } from "../../../../../utils";
 import PriceTag from "../../../../../component/PriceTag/PriceTag";
+import AdjustmentDrawer from "./AdjustmentDrawer";
+import Toast from "../../../../../component/Toast/Toast";
 
 const FolioTitle = ({ rest }) => (
   <span>
@@ -47,7 +51,6 @@ const SubFolioTable = ({ record, lineColumns, onMoveTo, isTransferring }) => {
     }),
   };
 
-  // Calculate totals
   const totalDebit = lines
     .filter((line) => line.postingType === "debit")
     .reduce((sum, line) => sum + (Number(line.grandTotal) || 0), 0);
@@ -61,7 +64,7 @@ const SubFolioTable = ({ record, lineColumns, onMoveTo, isTransferring }) => {
   const summary = () => (
     <Table.Summary
       fixed
-      className="bg-gray-50 font-semibold"
+      className="bg-gray-50 dark:bg-gray-800 font-semibold"
       {...darkModeStyle}
       {...textWhiteInDarkStyle}
       {...textColorDarkMode}
@@ -89,30 +92,22 @@ const SubFolioTable = ({ record, lineColumns, onMoveTo, isTransferring }) => {
         <Table.Summary.Cell index={6} align="right">
           <PriceTag value={Number(totalBalance)} />
         </Table.Summary.Cell>
+        <Table.Summary.Cell index={7} />
       </Table.Summary.Row>
     </Table.Summary>
   );
 
   return (
     <div>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "end",
-          alignItems: "center",
-          gap: "10px",
-          padding: "8px",
-          borderTop: "1px solid #e8e8e8",
-        }}
-      >
+      <div className="flex justify-end items-center gap-2.5 p-2 border-t border-gray-200 dark:border-gray-700">
         <Button
           onClick={() => setSelectedRowKeys([])}
           disabled={selectedRowKeys.length === 0 || isTransferring}
-          className={
+          className={`rounded-lg ${
             selectedRowKeys.length === 0 || isTransferring
-              ? "text-default"
-              : " dark:!bg-gray-50 dark:!text-gray-800"
-          }
+              ? "text-gray-400"
+              : "text-gray-700 dark:text-gray-300 hover:border-blue-500"
+          }`}
         >
           Cancel
         </Button>
@@ -121,15 +116,17 @@ const SubFolioTable = ({ record, lineColumns, onMoveTo, isTransferring }) => {
           type="primary"
           disabled={selectedRowKeys.length === 0 || isTransferring}
           onClick={() => onMoveTo(record, selectedRowKeys)}
-          className={
-            selectedRowKeys.length === 0 || isTransferring ? "text-default" : ""
-          }
+          className={`rounded-lg ${
+            selectedRowKeys.length === 0 || isTransferring
+              ? "bg-gray-300 dark:bg-gray-600"
+              : "bg-blue-600 hover:bg-blue-700"
+          }`}
         >
           Move To
         </Button>
       </div>
       <Table
-        className="nested-folio-table expanded-table dark:[&_.ant-table-thead>tr>th]:!text-[#F3F4F6] "
+        className="nested-folio-table expanded-table dark:[&_.ant-table-thead>tr>th]:!text-[#F3F4F6]"
         rowSelection={rowSelection}
         columns={lineColumns}
         dataSource={lines}
@@ -149,12 +146,17 @@ const FolioOperationsTable = ({
   onTransferLines,
   isTransferring,
   onPrintFolio,
+  onAdjustLine,
+  isAdjusting = false,
 }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedFolio, setSelectedFolio] = useState(null);
   const [selectedLineIds, setSelectedLineIds] = useState([]);
   const [targetFolioUuid, setTargetFolioUuid] = useState(null);
+  const [adjustmentDrawerOpen, setAdjustmentDrawerOpen] = useState(false);
+  const [selectedLine, setSelectedLine] = useState(null);
 
+  // Updated lineColumns with Adjustment column
   const lineColumns = [
     {
       title: "No",
@@ -164,7 +166,7 @@ const FolioOperationsTable = ({
     },
     {
       title: "Description",
-      dataIndex: "descriptionSnapshot", // Fixed: 'description' is null, 'descriptionSnapshot' contains the text
+      dataIndex: "descriptionSnapshot",
       key: "descriptionSnapshot",
       render: (_, record) => record.descriptionSnapshot || "-",
     },
@@ -226,6 +228,47 @@ const FolioOperationsTable = ({
         return <PriceTag value={balance} />;
       },
     },
+    {
+      title: "Action",
+      key: "adjust",
+      align: "center",
+      width: 120,
+      render: (_, record) => {
+        const isVoided = !!record.voidedAt;
+        const isChildLine = !!record.parentLineId;
+        const isAdjustment = record.transactionType?.code === "adjustment";
+        const canAdjust = !isVoided && !isChildLine && !isAdjustment;
+
+        let tooltipText = "Adjust this line";
+        if (!canAdjust) {
+          if (isVoided) tooltipText = "Cannot adjust a voided line";
+          else if (isChildLine)
+            tooltipText =
+              "Cannot adjust a child line (tax, SC, discount, incentive)";
+          else if (isAdjustment)
+            tooltipText = "Cannot adjust an adjustment line";
+        }
+
+        return (
+          <Button
+            type="link"
+            size="small"
+            icon={<EditOutlined />}
+            onClick={() => {
+              setSelectedLine(record);
+              setAdjustmentDrawerOpen(true);
+            }}
+            disabled={!canAdjust}
+            title={tooltipText}
+            className={`text-blue-500 hover:text-blue-700 ${
+              !canAdjust ? "opacity-50 cursor-not-allowed" : ""
+            }`}
+          >
+            Adjust
+          </Button>
+        );
+      },
+    },
   ];
 
   const columns = [
@@ -247,13 +290,13 @@ const FolioOperationsTable = ({
         return (
           <PrinterOutlined
             onClick={() => onPrintFolio && onPrintFolio(record)}
+            className="text-blue-500 hover:text-blue-700 cursor-pointer text-base"
           />
         );
       },
     },
   ];
 
-  // Expandable: render folioLines as a nested table
   const expandedRowRender = (record) => {
     return (
       <SubFolioTable
@@ -285,21 +328,30 @@ const FolioOperationsTable = ({
           setSelectedFolio(null);
           setSelectedLineIds([]);
           setTargetFolioUuid(null);
-        },
+        }
       );
+    }
+  };
+
+  const handleAdjustmentConfirm = async (adjustmentData) => {
+    try {
+      await onAdjustLine(adjustmentData);
+      const total = adjustmentData.unitPrice * adjustmentData.quantity;
+      Toast.success(
+        `Adjustment Successful — ${adjustmentData.postingType.toUpperCase()} ${total.toLocaleString()} ${selectedLine?.currency?.symbol || "MMK"} — ${adjustmentData.description}`
+      );
+      setAdjustmentDrawerOpen(false);
+      setSelectedLine(null);
+    } catch (error) {
+      // Toast.error(`Adjustment Failed — ${error?.message || "Something went wrong"}`);
+      console.log(error);
+      throw error;
     }
   };
 
   return (
     <>
-      <div
-        style={{
-          border: "1px solid #e8e8e8",
-          borderRadius: 8,
-          overflow: "hidden",
-          background: "#fff",
-        }}
-      >
+      <div className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden bg-white dark:bg-gray-800">
         <Table
           columns={columns}
           dataSource={dataSource}
@@ -316,20 +368,21 @@ const FolioOperationsTable = ({
         />
       </div>
 
+      {/* Transfer Modal */}
       <Modal
         title={
-          <div className="flex items-center gap-2 pb-3 border-b border-gray-100">
-            <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-blue-50 text-blue-600">
-              <SwapOutlined className="text-lg animate-pulse" />
+          <div className="flex items-center gap-3 pb-3 border-b border-gray-100 dark:border-gray-700">
+            <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400">
+              <SwapOutlined className="text-lg" />
             </div>
             <div>
               <h3
-                className={`text-base font-semibold text-gray-800 leading-none m-0 ${textColorDarkMode}`}
+                className={`text-base font-semibold text-gray-800 dark:text-gray-200 leading-none m-0 ${textColorDarkMode}`}
               >
                 Transfer Folio Lines
               </h3>
               <p
-                className={`text-xs text-gray-500 font-normal mt-1 ${textWhiteInDarkStyle}`}
+                className={`text-xs text-gray-500 dark:text-gray-400 font-normal mt-1 ${textWhiteInDarkStyle}`}
               >
                 Move selected line items to another folio
               </p>
@@ -361,18 +414,17 @@ const FolioOperationsTable = ({
         className="custom-ant-modal"
       >
         <div className="py-4">
-          {/* Info Banner */}
           <div
-            className={`bg-blue-50/60 border border-blue-100 rounded-xl p-3 mb-4 flex items-start gap-2.5 mx-2 ${darkModeStyle}`}
+            className={`bg-blue-50/60 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800/30 rounded-xl p-3 mb-4 flex items-start gap-2.5 mx-2 ${darkModeStyle}`}
           >
-            <InfoCircleOutlined className="text-blue-500 mt-0.5 text-sm flex-shrink-0" />
-            <div className="text-xs text-blue-800 leading-relaxed">
+            <InfoCircleOutlined className="text-blue-500 dark:text-blue-400 mt-0.5 text-sm flex-shrink-0" />
+            <div className="text-xs text-blue-800 dark:text-blue-300 leading-relaxed">
               Moving{" "}
-              <strong className="text-blue-900">
+              <strong className="text-blue-900 dark:text-blue-200">
                 {selectedLineIds.length}
               </strong>{" "}
               selected line item{selectedLineIds.length !== 1 ? "s" : ""} from{" "}
-              <strong className="text-blue-900">
+              <strong className="text-blue-900 dark:text-blue-200">
                 {selectedFolio?.folioNo}
               </strong>
               .
@@ -380,20 +432,17 @@ const FolioOperationsTable = ({
           </div>
 
           <div
-            className={`mb-2 text-xs font-semibold text-gray-500 tracking-wider mx-2 ${textWhiteInDarkStyle}`}
+            className={`mb-2 text-xs font-semibold text-gray-500 dark:text-gray-400 tracking-wider mx-2 ${textWhiteInDarkStyle}`}
           >
             Select Target Folio
           </div>
 
-          {/* Card Selection List */}
-          <div
-            className={`max-h-[280px] overflow-y-auto pr-1 py-1 flex flex-col gap-2.5 custom-scrollbar `}
-          >
+          <div className="max-h-[280px] overflow-y-auto pr-1 py-1 flex flex-col gap-2.5 custom-scrollbar">
             {dataSource?.length > 1 ? (
               <>
                 {dataSource
                   ?.filter(
-                    (folio) => !selectedFolio || folio.id !== selectedFolio.id,
+                    (folio) => !selectedFolio || folio.id !== selectedFolio.id
                   )
                   ?.map((folio) => {
                     const isSelected = targetFolioUuid === folio.uuid;
@@ -412,15 +461,15 @@ const FolioOperationsTable = ({
                           !isClosed && setTargetFolioUuid(folio.uuid)
                         }
                         className={`
-                      group relative flex items-center justify-between p-3 rounded-xl border transition-all duration-200 mx-2
-                      ${
-                        isClosed
-                          ? "border-gray-200 bg-gray-50/50 opacity-60 cursor-not-allowed"
-                          : isSelected
-                            ? "border-blue-500 bg-blue-50/40 shadow-sm ring-1 ring-blue-500 cursor-pointer"
-                            : "border-gray-200 hover:border-blue-300 hover:bg-gray-50/50 cursor-pointer"
-                      }
-                    `}
+                          group relative flex items-center justify-between p-3 rounded-xl border transition-all duration-200 mx-2
+                          ${
+                            isClosed
+                              ? "border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50 opacity-60 cursor-not-allowed"
+                              : isSelected
+                              ? "border-blue-500 bg-blue-50/40 dark:bg-blue-900/30 shadow-sm ring-1 ring-blue-500 cursor-pointer"
+                              : "border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-700 hover:bg-gray-50/50 dark:hover:bg-gray-700/50 cursor-pointer"
+                          }
+                        `}
                       >
                         <div className="flex items-center gap-3">
                           {!isClosed && (
@@ -432,13 +481,17 @@ const FolioOperationsTable = ({
                           )}
                           <div className="flex items-center gap-2">
                             <span
-                              className={`font-semibold text-sm ${isClosed ? "text-gray-400" : "text-gray-800 group-hover:text-blue-600"} transition-colors ${textColorDarkMode}`}
+                              className={`font-semibold text-sm ${
+                                isClosed
+                                  ? "text-gray-400 dark:text-gray-500"
+                                  : "text-gray-800 dark:text-gray-200 group-hover:text-blue-600 dark:group-hover:text-blue-400"
+                              } transition-colors ${textColorDarkMode}`}
                             >
                               {folio.folioNo}
                             </span>
                             {isClosed && (
-                              <span className="text-xs text-gray-500 bg-gray-200 border border-gray-300 rounded-full px-2 py-0.5">
-                                It is paid
+                              <span className="text-xs text-gray-500 dark:text-gray-400 bg-gray-200 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-full px-2 py-0.5">
+                                Paid
                               </span>
                             )}
                           </div>
@@ -449,19 +502,34 @@ const FolioOperationsTable = ({
               </>
             ) : (
               <div
-                className={`flex flex-col m-2 items-center justify-center py-10 border border-dashed border-gray-300 rounded-xl bg-gray-50 ${darkModeStyle}`}
+                className={`flex flex-col m-2 items-center justify-center py-10 border border-dashed border-gray-300 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-800/50 ${darkModeStyle}`}
               >
-                <FileSearchOutlined className="text-4xl text-gray-400 mb-3" />
+                <FileSearchOutlined className="text-4xl text-gray-400 dark:text-gray-500 mb-3" />
                 <h3
-                  className={`text-base font-semibold text-gray-700 ${textColorDarkMode}`}
+                  className={`text-base font-semibold text-gray-700 dark:text-gray-300 ${textColorDarkMode}`}
                 >
                   No Folios Found
                 </h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  No other folios available for transfer
+                </p>
               </div>
             )}
           </div>
         </div>
       </Modal>
+
+      {/* Adjustment Drawer */}
+      <AdjustmentDrawer
+        open={adjustmentDrawerOpen}
+        onClose={() => {
+          setAdjustmentDrawerOpen(false);
+          setSelectedLine(null);
+        }}
+        lineData={selectedLine}
+        onConfirm={handleAdjustmentConfirm}
+        loading={isAdjusting}
+      />
     </>
   );
 };
