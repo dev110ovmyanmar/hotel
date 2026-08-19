@@ -13,8 +13,6 @@ import {
   status_actions,
 } from "./../../../../component/BookingActions/BookingActions";
 import ReservationNoteForm from "../BookingDetailForms/ReservationNoteForm";
-import { reservationMeta } from "../../../../api/reservationSectionApi";
-import useApiQuery from "../../../../hooks/useApiQuery";
 import { queryClient } from "../../../../app/queryClient";
 
 const BookingDetailButton = ({ data }) => {
@@ -82,7 +80,7 @@ const BookingDetailButton = ({ data }) => {
     <div>
       <div className="text-sm mb-6 mt-1.5">
         Reservation No:
-        <strong className="text-indigo-700">
+        <strong className="text-indigo-700 dark:text-indigo-500">
           {" "}
           {reservation?.reservation?.reservationNo}
         </strong>

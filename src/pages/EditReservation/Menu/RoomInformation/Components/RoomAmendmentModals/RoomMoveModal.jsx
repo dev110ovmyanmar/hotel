@@ -171,8 +171,8 @@ export default function RoomMoveModal({
                                         >
                                             <div className="flex justify-between items-start mb-3">
                                                 <div className="flex gap-1">
-                                                    <GiBed fontSize={30} className='text-green-500' />
-                                                    <h3 className="text-xl font-black text-green-500 leading-tight">
+                                                    <GiBed fontSize={30} className='text-green-500 dark:text-green-400 ' />
+                                                    <h3 className="text-base font-black text-green-500   dark:text-green-400leading-tight">
                                                         {room?.roomNo || "---"}
                                                     </h3>
                                                 </div>

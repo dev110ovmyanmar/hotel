@@ -6,13 +6,12 @@ const ReservationListHeader = ({
   reservationId,
   onAddreservation,
   addButtonText,
-  onAdd,
 }) => {
   return (
     <div className="flex flex-row justify-between items-center w-full gap-2">
       <span>
         Reservation No:{" "}
-        <strong className="text-indigo-700">{reservationId}</strong>
+        <strong className="text-indigo-700 dark:text-indigo-500">{reservationId}</strong>
       </span>
 
       {addButtonText && (

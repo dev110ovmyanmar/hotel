@@ -122,8 +122,8 @@ export default function StayExtensionModal({ isOpen,
             }
         >
             {/* Context Target Ribbon Header */}
-            <div className="mb-4 text-slate-500 text-sm font-medium">
-                {reservationNo} — <span className={`text-slate-800 ${textWhiteInDarkStyle}`}>{guestName}</span>
+            <div className="text-indigo-700 dark:text-indigo-500 font-semibold">
+                {reservationNo}  <span className={`text-slate-800 ${textWhiteInDarkStyle}`}> — {guestName}</span>
             </div>
 
             <Divider className="my-3" />
