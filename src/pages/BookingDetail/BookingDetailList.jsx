@@ -66,6 +66,7 @@ const BookingDetailList = () => {
       </div>
     );
   }
+  console.log(data,"foodbeverageorder")
 
   const reservationBooked =
     data?.reservationRoom?.roomStatus?.code === "booked";
@@ -105,7 +106,7 @@ const BookingDetailList = () => {
               </Col>
             )}
             <Col span={24}>
-              <FnbOrderFromBookingDetailList />
+              <FnbOrderFromBookingDetailList data={data?.reservation?.fnbOrders}/>
             </Col>
             <Col span={24}>
               <EventFacility data={data?.reservation?.facilityBookings} />
