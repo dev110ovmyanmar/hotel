@@ -46,21 +46,6 @@ const MenuItemTable = ({
       key: "menuCategory",
     },
     {
-      title: "Is Taxable",
-      dataIndex: "isTaxable",
-      key: "isTaxable",
-      width: 100,
-      render: (_, record) => (
-        <div
-          className={
-            record.isTaxable === true ? "text-[#389E0D]" : "text-[#CF1322]"
-          }
-        >
-          {record.isTaxable === true ? "True" : "False"}
-        </div>
-      ),
-    },
-    {
       title: "Status",
       dataIndex: "status",
       key: "status",
@@ -68,7 +53,6 @@ const MenuItemTable = ({
       width: 100,
       render: (status) => <ColorStatusTag status={status} />,
     },
-
     {
       title: "Purchasing  Price (MMK)",
       dataIndex: "cost",

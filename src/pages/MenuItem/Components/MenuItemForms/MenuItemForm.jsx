@@ -270,20 +270,6 @@ const MenuItemForm = ({
           </Row>
 
           <Form.Item
-            label="Is Taxable"
-            name="isTaxable"
-            valuePropName="checked"
-            initialValue={0}
-            rules={[{ required: true }]}
-          >
-            <Switch
-              checkedChildren="True"
-              unCheckedChildren="False"
-              disabled={isView}
-            />
-          </Form.Item>
-
-          <Form.Item
             label="Status"
             name="status"
             rules={[{ required: true, message: "Status is Required" }]}
@@ -331,13 +317,18 @@ const MenuItemForm = ({
           {!isAdd && data?.menuModifiers?.length > 0 && (
             <Card className="mt-5 border border-gray-100 bg-gray-50 shadow-sm">
               <div className="mb-4 flex items-center justify-between">
-                <span className={`text-base font-semibold text-gray-800 ${textWhiteInDarkStyle}`}>
+                <span
+                  className={`text-base font-semibold text-gray-800 ${textWhiteInDarkStyle}`}
+                >
                   Add On
                 </span>
               </div>
 
               {/* Form.Item completely manages value and onChange for the group */}
-              <Form.Item name="menuModifier" className={`mb-0 ${isView?'pointer-events-none':''}`}>
+              <Form.Item
+                name="menuModifier"
+                className={`mb-0 ${isView ? "pointer-events-none" : ""}`}
+              >
                 <Checkbox.Group className="w-full">
                   <Row gutter={[16, 16]}>
                     {data?.menuModifiers?.map((modifier) => (

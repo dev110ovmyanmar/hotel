@@ -217,7 +217,7 @@
 
 .css-var-_r_0_ {
   --ant-color-bg-container-disabled: rgba(0, 0, 0, 0);
-  --ant-color-text-disabled: #000000;
+  --ant-color-text-disabled: #181717;
   --ant-border-radius-lg: 5px;
 }
 
@@ -886,10 +886,6 @@ span .ant-upload {
   color: var(--dark-nested-text) !important;
 }
 
-/* .css-var-_r_0_ {
-  --ant-color-text-disabled: #ffffff;
-} */
-
 .close-icon-hide .ant-select-selection-item-remove {
   display: none !important;
 }
@@ -963,4 +959,8 @@ span .ant-upload {
 
 .dark .text-default {
   color: #c7c7c8;
+}
+
+.custom-disabled-checkbox {
+   --ant-color-bg-container-disabled: #237efd;
 }
