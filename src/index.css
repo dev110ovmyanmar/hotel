@@ -935,11 +935,16 @@ span .ant-upload {
 }
 
 .custom-disabled-checkbox {
-  --ant-color-bg-container-disabled: #0958d9;
+  --ant-color-bg-container-disabled: #1274fd;
 }
 
 .css-var-_r_0_.ant-radio-css-var {
-  --ant-radio-dot-color-disabled: #0958d9;
+  --ant-radio-dot-color-disabled: #f9fafb;
+}
+
+/* dark mode mmk color */
+.dark .ant-input-number-outlined.ant-input-number-disabled {
+  color: #ffffff;
 }
 
 .order-info-forms .ant-form-item {

@@ -141,7 +141,7 @@ const AssignRoomForm = ({
                 <Form.Item name="dates" noStyle>
                   <RangePicker
                     className="flex-1"
-                    format="DD/MM/YYYY"
+                    format="YYYY-MM-DD"
                     disabledDate={disabledDate}
                   />
                 </Form.Item>

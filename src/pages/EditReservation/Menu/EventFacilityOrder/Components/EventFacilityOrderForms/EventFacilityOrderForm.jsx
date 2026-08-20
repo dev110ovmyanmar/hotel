@@ -61,7 +61,7 @@ const EventFacilityOrderForm = ({
   ])?.statuses;
   const initDataFacilityStatus = initData?.facility_status;
 
-  const dateFormat = "DD-MM-YYYY";
+  const dateFormat = "YYYY-MM-DD";
   const disabledDate = (current) => {
     return current < dayjs().startOf("day");
   };
