@@ -100,6 +100,10 @@ const RoomInformationTable = ({
   const addRoomUuid = amendmentType?.find(
     (item) => item.code === "add_room",
   )?.uuid;
+  const dateChangeUuid = amendmentType?.find(
+    (item) => item.code === "date_change",
+  )?.uuid;
+  console.log(amendmentType,"dateChangeUuid")
 
   const availabilitySearchs = useApiMutation({
     mutationFn: availabilitySearch,
@@ -437,6 +441,7 @@ const RoomInformationTable = ({
           isOpen={true}
           onClose={closeModal}
           record={selectedData}
+          dateChangeUuid={dateChangeUuid}
         />
       )}
       {activeModal === "stay_extension" && selectedData && (
