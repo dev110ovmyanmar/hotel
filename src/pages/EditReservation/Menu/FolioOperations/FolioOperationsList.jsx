@@ -13,6 +13,7 @@ import {
   createFolio,
   transferFolioLines,
   folioAdjust,
+  folioRebate,
 } from "../../../../api/folioApi";
 import { LIMITS } from "../../../../variables/constants";
 import { useLocation } from "react-router-dom";
@@ -119,6 +120,11 @@ const FolioOperationsList = () => {
     mutationFn: folioAdjust,
     invalidateKeys: [["folios"]],
   });
+
+  const rebateLineMutation = useApiMutation({
+    mutationFn: folioRebate,
+    invalidateKeys: [["folios"]],
+  })
 
   const handleTransferLines = (
     { destinationFolioUuid, folioLineIds },
@@ -232,6 +238,8 @@ const FolioOperationsList = () => {
         isTransferring={transferLinesMutation.isPending}
         onAdjustLine={adjustLineMutation.mutateAsync}
         isAdjusting={adjustLineMutation.isPending}
+        onRebateLine={rebateLineMutation.mutateAsync}
+        isRebating={rebateLineMutation.isPending}
         // Triggers single folio extraction configurations
         onPrintFolio={(folio) =>
           setPrintTarget({ folio, reservation: folioList?.reservation, reservationRoom: folioList?.reservationRoom })

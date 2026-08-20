@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, Divider, Modal, Radio, Space, Table } from "antd";
+import { Button, Divider, Dropdown, Modal, Radio, Space, Table } from "antd";
 import {
   SwapOutlined,
   InfoCircleOutlined,
@@ -8,6 +8,8 @@ import {
   FileSearchOutlined,
   EditOutlined,
   CheckOutlined,
+  FundViewOutlined,
+  MoreOutlined,
 } from "@ant-design/icons";
 import dayjs from "dayjs";
 import {
@@ -20,6 +22,7 @@ import {
 } from "../../../../../utils";
 import PriceTag from "../../../../../component/PriceTag/PriceTag";
 import AdjustmentDrawer from "./AdjustmentDrawer";
+import RebateDrawer from "./RebateDrawer";
 import Toast from "../../../../../component/Toast/Toast";
 
 const FolioTitle = ({ rest }) => (
@@ -148,12 +151,15 @@ const FolioOperationsTable = ({
   onPrintFolio,
   onAdjustLine,
   isAdjusting = false,
+  onRebateLine,
+  isRebating = false
 }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedFolio, setSelectedFolio] = useState(null);
   const [selectedLineIds, setSelectedLineIds] = useState([]);
   const [targetFolioUuid, setTargetFolioUuid] = useState(null);
   const [adjustmentDrawerOpen, setAdjustmentDrawerOpen] = useState(false);
+  const [rebatDrawerOpen, setRebateDrawerOpen] = useState(false);
   const [selectedLine, setSelectedLine] = useState(null);
 
   // Updated lineColumns with Adjustment column
@@ -238,34 +244,57 @@ const FolioOperationsTable = ({
         const isChildLine = !!record.parentLineId;
         const isAdjustment = record.transactionType?.code === "adjustment";
         const canAdjust = !isVoided && !isChildLine && !isAdjustment;
+        const canRebate = record?.postingType === "debit"  && !isChildLine && !isVoided;
 
-        let tooltipText = "Adjust this line";
+        let tooltipTextforAdjust = "Adjust this line";
+        let tooltipTextforRebate = "Rebate this line";
         if (!canAdjust) {
           if (isVoided) tooltipText = "Cannot adjust a voided line";
           else if (isChildLine)
-            tooltipText =
+            tooltipTextforAdjust =
               "Cannot adjust a child line (tax, SC, discount, incentive)";
           else if (isAdjustment)
-            tooltipText = "Cannot adjust an adjustment line";
+            tooltipTextforAdjust = "Cannot adjust an adjustment line";
         }
 
-        return (
-          <Button
-            type="link"
-            size="small"
-            icon={<EditOutlined />}
-            onClick={() => {
+        const items = [
+          {
+            key: 'adjust',
+            label: 'Adjust',
+            icon: <EditOutlined />,
+            disabled: !canAdjust,
+            title: tooltipTextforAdjust,
+            onClick: () => {
               setSelectedLine(record);
               setAdjustmentDrawerOpen(true);
-            }}
-            disabled={!canAdjust}
-            title={tooltipText}
-            className={`text-blue-500 hover:text-blue-700 ${
-              !canAdjust ? "opacity-50 cursor-not-allowed" : ""
-            }`}
+            },
+          },
+          {
+            key: 'rebate',
+            label: 'Rebate',
+            icon: <FundViewOutlined />,
+            disabled: !canRebate,
+            title: tooltipTextforRebate,
+            onClick: () => {
+              setSelectedLine(record);
+              setRebateDrawerOpen(true);
+            },
+          },
+        ];
+
+        return (
+          <Dropdown
+            menu={{ items }}
+            placement="bottomRight"
+            trigger={['click']}
           >
-            Adjust
-          </Button>
+            <Button
+              type="text"
+              icon={<MoreOutlined />}
+              className="text-gray-500 hover:text-gray-700"
+            />
+          </Dropdown>
+
         );
       },
     },
@@ -344,6 +373,21 @@ const FolioOperationsTable = ({
       setSelectedLine(null);
     } catch (error) {
       // Toast.error(`Adjustment Failed — ${error?.message || "Something went wrong"}`);
+      console.log(error);
+      throw error;
+    }
+  };
+
+    const handleRebateConfirm = async (rebateData) => {
+    try {
+      await onRebateLine(rebateData);
+      Toast.success(
+        `Rebate Successful — ${rebateData.amount.toLocaleString()} ${selectedLine?.currency?.symbol || "MMK"} — ${rebateData.description}`
+      );
+      setRebateDrawerOpen(false);
+      setSelectedLine(null);
+    } catch (error) {
+      // Toast.error(`Rebate Failed — ${error?.message || "Something went wrong"}`);
       console.log(error);
       throw error;
     }
@@ -529,6 +573,18 @@ const FolioOperationsTable = ({
         lineData={selectedLine}
         onConfirm={handleAdjustmentConfirm}
         loading={isAdjusting}
+      />
+
+      {/* Rebate Drawer */}
+      <RebateDrawer
+        open={rebatDrawerOpen}
+        onClose={() => {
+          setRebateDrawerOpen(false);
+          setSelectedLine(null);
+        }}
+        lineData={selectedLine}
+        onConfirm={handleRebateConfirm}
+        loading={isRebating}
       />
     </>
   );
