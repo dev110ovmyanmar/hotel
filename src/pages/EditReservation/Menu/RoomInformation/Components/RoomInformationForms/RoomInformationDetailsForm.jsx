@@ -357,7 +357,7 @@ const RoomInformationDetailsForm = ({
                       >
                         <td className="px-3 py-2 whitespace-nowrap">
                           <span className="font-medium text-slate-700 dark:text-gray-200">
-                            {dayjs(r.stayDate).format("DD-MM-YYYY")}
+                            {dayjs(r.stayDate).format("YYYY-MM-DD")}
                           </span>
                         </td>
                         <td className="px-3 py-2 text-right text-slate-600 dark:text-gray-300">

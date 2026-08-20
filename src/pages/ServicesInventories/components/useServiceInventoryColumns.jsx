@@ -19,7 +19,7 @@ export default function useServiceInventoryColumns(onEdit, onView) {
       dataIndex: "id",
       key: "id",
       width: 50,
-      align:"left"
+      align: "left",
     },
     {
       title: "Name",
@@ -45,7 +45,7 @@ export default function useServiceInventoryColumns(onEdit, onView) {
     },
     {
       title: "Unit",
-      dataIndex: ["unit", "shortName"], // Separate column for Unit
+      dataIndex: ["unit", "shortName"],
       key: "unit",
       width: 80,
       align: "center",
@@ -64,19 +64,6 @@ export default function useServiceInventoryColumns(onEdit, onView) {
       ),
     },
     {
-      title: "Free",
-      dataIndex: "isFree",
-      key: "isFree",
-      align: "center",
-      width: 80,
-      render: (free) => (
-        <div className={free === true ? "text-[#389E0D]" : "text-[#CF1322]"}>
-          {free === true ? "True" : "False"}
-        </div>
-      ),
-    },
-
-    {
       title: "Selling Price (MMK)",
       dataIndex: "unitPrice",
       key: "unitPrice",
@@ -89,7 +76,7 @@ export default function useServiceInventoryColumns(onEdit, onView) {
       dataIndex: "unitCost",
       key: "unitCost",
       align: "right",
-       width: 170,
+      width: 170,
       render: (cost) => <PriceTag value={cost} />,
     },
     {
