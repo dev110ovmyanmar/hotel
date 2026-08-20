@@ -583,9 +583,9 @@ const FoodBeverageOrderForm = ({
                   </>
 
                 )}
-                className="shadow-sm rounded"
+                className="shadow-sm rounded order-info-forms"
               >
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-x-4">
                   <Form.Item
                     label="Order Date"
                     name="orderDate"
@@ -602,7 +602,7 @@ const FoodBeverageOrderForm = ({
                   </Form.Item>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-x-4">
                   <Form.Item label="Room" name="room" rules={[{ required: true }]}>
                     <Select
                       placeholder="Select Room"
@@ -625,7 +625,7 @@ const FoodBeverageOrderForm = ({
                 </div>
 
                 <div className="flex items-center grid grid-cols-2 gap-3 ">
-                  <div className="flex gap-x-10 border border-gray-300 px-3 py-1 rounded">
+                  <div className="flex gap-x-10 border border-gray-300 px-2 py-1 rounded mt-2">
                     <Form.Item
                       className="!m-0"
                       name="tax"
@@ -662,7 +662,7 @@ const FoodBeverageOrderForm = ({
                   </Form.Item>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-x-4">
                   <Form.Item
                     label="Order Status"
                     name="orderStatus"
@@ -681,6 +681,13 @@ const FoodBeverageOrderForm = ({
                       <Form.Item
                         label="Table No"
                         name="tableNo"
+                        required={dineInOrderType}
+                        rules={[
+                          {
+                            required: dineInOrderType,
+                            message: "Please select Table No",
+                          },
+                        ]}
                       >
                         <Select
                           placeholder="Select Table No"
@@ -771,7 +778,7 @@ const FoodBeverageOrderForm = ({
                                   <div>{`Menu ${name + 1}`}</div>
                                 </div>
                               }
-                              className="shadow-sm rounded !my-2 border-l-4 border-blue-500"
+                              className="shadow-sm rounded !my-2 border-l-4 border-blue-500 order-info-forms"
                               size="small"
                               extra={
                                 <>
@@ -981,7 +988,7 @@ const FoodBeverageOrderForm = ({
                               {showModifier
                                 ? (
                                   <div>
-                                    <div className="flex justify-between items-center mb-2">
+                                    <div className="flex justify-between items-center !mb-1">
                                       <Text strong>Add on Menu</Text>
 
                                       <Tag color="default" className="mr-0">
@@ -991,7 +998,7 @@ const FoodBeverageOrderForm = ({
 
                                     <Form.Item
                                       name={[name, "modifier"]}
-                                      className="mb-0"
+                                      className="!mb-0 !p-0"
                                     >
                                       <Checkbox.Group
                                         className="w-full"

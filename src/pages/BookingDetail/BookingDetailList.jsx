@@ -71,8 +71,6 @@ const BookingDetailList = () => {
   const reservationBooked =
     data?.reservationRoom?.roomStatus?.code === "booked";
 
-  // const reservationCheckIn = data?.reservationRoom?.roomStatus?.code === "checked_in";
-  // const reservationCheckOut = data?.reservationRoom?.roomStatus?.code === "checked_out";
   const serviceAddOn = data?.reservationRoom?.roomStatus?.code === "confirmed";
   const serviceOrder = data?.reservationRoom?.roomStatus?.code === "checked_in";
 

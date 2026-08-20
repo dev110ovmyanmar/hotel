@@ -24,6 +24,7 @@ export const getAmendReservationMenuItems = ({
   setSelectedData,
 }) => {
   if (!record?.amendStatus) return [];
+  const hasRoom = record?.room;
 
   const isCheckoutToday = record?.checkoutDate
     ? dayjs(record.checkoutDate).isSame(dayjs(), "day")
@@ -45,6 +46,8 @@ export const getAmendReservationMenuItems = ({
     return {};
   };
 
+  const confirmStatusDisabled = record?.roomStatus?.code !== "confirmed";
+
   return [
     { type: "divider" },
     {
@@ -61,11 +64,18 @@ export const getAmendReservationMenuItems = ({
               key: "date_change",
               label: "Change CI/CO Dates",
               icon: <CalendarOutlined />,
-              disabled: checkDisabled("date_change"),
+              disabled: checkDisabled("date_change") ||
+                confirmStatusDisabled,
               ...getDisabledStyles("date_change"),
               onClick: () =>
                 !checkDisabled("date_change") &&
                 handleAction("date_change", record),
+              style: confirmStatusDisabled
+                ? {
+                  color: "#a2a0a0",
+                  cursor: "not-allowed",
+                }
+                : {},
             },
             {
               key: "stay_extension",
@@ -97,7 +107,7 @@ export const getAmendReservationMenuItems = ({
               key: "room_move",
               label: "Change Room",
               icon: <MdOutlineMeetingRoom />,
-              disabled: checkDisabled("room_move"),
+              disabled: checkDisabled("room_move") || !hasRoom,
               ...getDisabledStyles("room_move"),
               onClick: () => {
                 if (!checkDisabled("room_move")) {
@@ -105,6 +115,12 @@ export const getAmendReservationMenuItems = ({
                   setRoomMoveOpen(true);
                 }
               },
+              style: !hasRoom
+                ? {
+                  color: "#a2a0a0",
+                  cursor: "not-allowed",
+                }
+                : {},
             },
             {
               key: "room_upgrade",
