@@ -43,7 +43,6 @@ const ServiceInventoryTable = ({
 
   return (
     <Table
-      // tableLayout="fixed"
       scroll={{ x: 1000 }}
       loading={loading}
       columns={columns}

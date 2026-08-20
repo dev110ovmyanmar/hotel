@@ -121,7 +121,7 @@ const DailyMealPlanTable = ({
             </span>
         }
         ,
-        ...((!isDatePastCheck || isSeparate) ? [{
+        ...((!isDatePastCheck && isSeparate) ? [{
         title: 'Action',
         key: 'action',
         width: 40,

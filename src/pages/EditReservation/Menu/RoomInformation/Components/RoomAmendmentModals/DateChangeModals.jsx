@@ -115,11 +115,11 @@ export default function DateChangeModal({
                 >
                     <div style={{ display: 'flex', gap: '16px' }}>
                         <Form.Item name="checkin" label="New Check-In Date" style={{ flex: 1 }} rules={[{ required: true, message: 'Select check-in' }]}>
-                            <DatePicker style={{ width: '100%' }} format="DD/MM/YYYY" />
+                            <DatePicker style={{ width: '100%' }} format="YYYY-MM-DD" />
                         </Form.Item>
 
                         <Form.Item name="checkout" label="New Check-Out Date" style={{ flex: 1 }} rules={[{ required: true, message: 'Select check-out' }]}>
-                            <DatePicker style={{ width: '100%' }} format="DD/MM/YYYY" />
+                            <DatePicker style={{ width: '100%' }} format="YYYY-MM-DD" />
                         </Form.Item>
                     </div>
 

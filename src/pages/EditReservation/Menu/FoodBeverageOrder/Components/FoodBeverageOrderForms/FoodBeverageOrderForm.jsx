@@ -591,7 +591,7 @@ const FoodBeverageOrderForm = ({
                     name="orderDate"
                     rules={[{ required: true }]}
                   >
-                    <DatePicker className="w-full" format="DD-MM-YYYY" />
+                    <DatePicker className="w-full" format="YYYY-MM-DD" />
                   </Form.Item>
                   <Form.Item
                     label="Order Time"

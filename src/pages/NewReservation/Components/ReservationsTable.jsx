@@ -29,12 +29,6 @@ const ReservationsTable = ({
   const [printOpen, setPrintOpen] = useState(false);
   const [selectedReservation, setSelectedReservation] = useState();
 
-  // const tableData = (data || []).map((item) => ({
-  //   ...item,
-  //   childCount: item.children,
-  //   children: undefined,
-  // }));
-
   const handleMenuClick = (item) => {
     if (item?.uuid) {
       navigate(`/reservations/${item.uuid}/room-information`);
@@ -46,9 +40,9 @@ const ReservationsTable = ({
 
     {
       title: "Guest Name",
-      dataIndex: ["guest", "name"],
-      key: "guestName",
-      width: 140,
+      dataIndex: ["contactGuest", "fullName"],
+      key: "contactGuest",
+      width: 120,
       render: (text, record) => {
         const title = record.guest?.title ? `${record.guest.title} ` : "";
         return (
@@ -59,19 +53,17 @@ const ReservationsTable = ({
       },
     },
     {
-      title: "Res No:",
+      title: "Res No",
       dataIndex: ["reservation", "reservationNo"],
       key: "reservationNo",
       align: "center",
-      // width: 150,
       render: (text) => <span className="text-indigo-700">{text}</span>,
     },
 
     {
-      title: "Room No:",
+      title: "Room No",
       key: "roomNo",
       align: "left",
-      // width: 100,
       render: (_, record) => {
         const roomNo = record?.room?.roomNo;
 
@@ -92,7 +84,6 @@ const ReservationsTable = ({
       dataIndex: ["roomType", "name"],
       key: "roomType",
       align: "left",
-      width: 120,
     },
 
     {
@@ -100,13 +91,11 @@ const ReservationsTable = ({
       dataIndex: ["ratePlan", "name"],
       key: ["ratePlan"],
       align: "left",
-      width: 110,
     },
 
     {
       title: "Stay Period",
       align: "center",
-      width: 110,
       render: (_, record) => {
         const arrival = record.checkinDate
           ? dayjs(record.checkinDate).format("YYYY-MM-DD")
@@ -135,23 +124,19 @@ const ReservationsTable = ({
     {
       title: "Contact & Guests",
       key: "contact",
-      width: 125,
+      width: 120,
       render: (_, record) => (
         <div className="flex flex-col gap-1" style={{ fontSize: "12px" }}>
           <div className="flex items-center gap-1">
-            <PhoneOutlined /> {record?.guest?.phone}
+            <UserOutlined style={{ fontSize: 14, color: "green" }} />{" "}
+            {record?.contactGuest?.fullName}
           </div>
 
           <div className="flex items-center gap-3 ">
-            <span className="flex items-center gap-1">
-              <IoPeopleSharp className="text-blue-500" /> {record?.adults}
-            </span>
-
-            {/* {record?.childCount > 0 && (
-              <span className="flex items-center gap-1">
-                <FaChild className="text-pink-500" /> {record.childCount}
-              </span>
-            )} */}
+            <div className="flex items-center gap-1">
+              <PhoneOutlined style={{ fontSize: 14, color: "green" }} />{" "}
+              {record?.contactGuest?.phone}
+            </div>
           </div>
         </div>
       ),
@@ -165,7 +150,7 @@ const ReservationsTable = ({
       render: (roomStatus) => <ReservationStatusColor status={roomStatus} />,
     },
     {
-      title: "Total Charges",
+      title: "Total Charges (MMK)",
       dataIndex: "grandTotal",
       key: "total",
       align: "end",
@@ -173,7 +158,7 @@ const ReservationsTable = ({
       render: (value) => (
         <div className="flex justify-end items-center gap-1">
           <PriceTag value={value} />
-          <span className="font-medium">MMK</span>
+          {/* <span className="font-medium">MMK</span> */}
         </div>
       ),
     },
@@ -212,7 +197,6 @@ const ReservationsTable = ({
         tableLayout="fixed"
         scroll={{ x: 1000 }}
         columns={columns}
-        // dataSource={tableData}
         dataSource={data}
         rowKey="uuid"
         pagination={{

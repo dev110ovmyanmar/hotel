@@ -109,7 +109,7 @@ const SearchEventFacilityOrderForm = ({
       width: 100,
       render: (_, record) => {
         const dateStr = record.eventDate
-          ? dayjs(record.eventDate, "YYYY-MM-DD").format("DD-MM-YYYY")
+          ? dayjs(record.eventDate, "YYYY-MM-DD").format("YYYY-MM-DD")
           : "-";
 
         const startTimeStr = record.startTime

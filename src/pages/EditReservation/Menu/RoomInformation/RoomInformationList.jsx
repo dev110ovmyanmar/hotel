@@ -50,8 +50,6 @@ const RoomInformationList = () => {
   const [assignRoomOpen, setAssignRoomOpen] = useState(false);
   const [showRoomResults, setShowRoomResults] = useState(false);
   const [open, setOpen] = useState(false);
-  // const [compOpen, setCompOpen] = useState(false);
-
 
   const { data, isLoading, refetch } = useApiQuery({
     fetchQueryName: "reservation-room",
@@ -71,19 +69,7 @@ const RoomInformationList = () => {
     },
   });
 
-  // const upcomingReservations = (data?.data || []).filter((item) => {
-  //   const checkin = new Date(item.checkinDate);
-  //   checkin.setHours(0, 0, 0, 0);
-
-  //   const today = new Date();
-  //   today.setHours(0, 0, 0, 0);
-
-  //   return checkin >= today && ["confirmed"].includes(item.roomStatus?.code);
-  // });
-
-  // const disableComplimentaryUpdateButton = upcomingReservations?.length == 0;
-
-
+  
   useEffect(() => {
     if (bookingId && data?.reservation?.reservationNo) {
       sessionStorage.setItem(

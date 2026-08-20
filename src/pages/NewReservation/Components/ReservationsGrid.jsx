@@ -27,6 +27,7 @@ import PriceTag from "../../../component/PriceTag/PriceTag";
 import ReservationStatusColor from "./../../../component/ReservationStatusColor/ReservationStatusColor";
 import dayjs from "dayjs";
 import PrintReservation from "../../../component/Topbar/PrintReservation";
+import { MdOutlineMeetingRoom } from 'react-icons/md';
 
 const ReservationsGrid = ({
   data,
@@ -40,7 +41,6 @@ const ReservationsGrid = ({
   const [printOpen, setPrintOpen] = useState(false);
   const [selectedReservation, setSelectedReservation] = useState();
 
-  // Updated to pass item?.uuid as a clear path parameter
   const handleMenuClick = (item) => {
     if (item?.uuid) {
       navigate(`/reservations/${item.uuid}/room-information`);
@@ -70,7 +70,7 @@ const ReservationsGrid = ({
                              dark:hover:shadow-[0_8px_25px_rgba(0,0,0,0.5)]"
                   title={
                     <span className="font-semibold capitalize text-[#ffffff]">
-                      {item?.guest?.title} {item?.guest?.name}
+                      {item?.guest?.fullName}
                     </span>
                   }
                   extra={
@@ -116,41 +116,32 @@ const ReservationsGrid = ({
                     className="cursor-pointer"
                     onClick={() => handleMenuClick(item)}
                   >
-                    <div style={{ marginBottom: 12 }}>
-                      <Space size="middle">
-                        <span
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "6px",
-                          }}
-                        >
-                          <IoDocumentTextOutline className="text-indigo-700 text-lg" />{" "}
+                    <div
+                      style={{
+                        marginBottom: 12,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        width: "100%",
+                      }}
+                    >
+                      {/* Start */}
+                      <span
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                        }}
+                      >
+                        <MdOutlineMeetingRoom className="text-indigo-700 text-lg" />
+                        <span style={{ marginLeft: 6 }}>
                           {item?.ratePlan?.name}
                         </span>
-                        <span
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "6px",
-                          }}
-                        >
-                          <IoPeopleSharp className="text-blue-500 " />{" "}
-                          {item.adults}
-                        </span>
+                      </span>
 
-                        {/* {item.children && (
-                          <span
-                            style={{
-                              display: "flex",
-                              alignItems: "center",
-                              gap: "6px",
-                            }}
-                          >
-                            <FaChild className="text-pink-500" /> {item.children}
-                          </span>
-                        )} */}
-                      </Space>
+                      {/* End */}
+                      <span>
+                        <ReservationStatusColor status={item?.roomStatus} />
+                      </span>
                     </div>
 
                     {/* Date Box */}
@@ -251,9 +242,9 @@ const ReservationsGrid = ({
                           justifyContent: "space-between",
                         }}
                       >
-                        <span style={{ color: "#8c8c8c" }}>Contact No:</span>
-                        <span>
-                          {item?.guest?.phone ? item.guest.phone : "-"}
+                        <span style={{ color: "#8c8c8c" }}>Contact Name:</span>
+                        <span className="font-bold ">
+                          {item?.contactGuest?.fullName ?? "-"}
                         </span>
                       </div>
                       <div
@@ -262,11 +253,10 @@ const ReservationsGrid = ({
                           justifyContent: "space-between",
                         }}
                       >
-                        <span style={{ color: "#8c8c8c", borderRadius: "5px" }}>
-                          Status:
+                        <span style={{ color: "#8c8c8c" }}>Contact No:</span>
+                        <span className=" ">
+                          {item?.contactGuest?.phone ?? "-"}
                         </span>
-
-                        <ReservationStatusColor status={item?.roomStatus} />
                       </div>
 
                       <hr

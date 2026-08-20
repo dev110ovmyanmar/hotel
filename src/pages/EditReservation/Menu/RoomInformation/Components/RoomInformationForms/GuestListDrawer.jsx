@@ -57,14 +57,9 @@ const GuestListDrawer = ({
   const columns = [
     {
       title: "Guest Name",
+      dataIndex: ["guest", "fullName"],
       key: "guestName",
-      render: (_, record) => {
-        const title = record?.guest?.title || record?.title || "";
-        const name = record?.guest?.name || record?.name || "";
-        return title || name ? `${title} ${name}`.trim() : "-";
-      },
     },
-
     {
       title: "Guest Type",
       dataIndex: "isPrimary",
@@ -80,38 +75,20 @@ const GuestListDrawer = ({
       render: (_, record) => (
         <Space>
           <Tooltip title="View Details">
-            {/* <Button
-              size="small"
-              type="text"
-              icon={<EyeOutlined />}
-              onClick={() => handleView(record)}
-            /> */}
             <EyeOutlined
-              style={{ fontSize: "14px" }}
+              style={{ fontSize: "16px" }}
               onClick={() => handleView(record)}
             />
           </Tooltip>
           <Tooltip title="Edit Guest">
-            {/* <Button
-              size="small"
-              type="text"
-              icon={<EditOutlined />}
-              onClick={() => handleEdit(record)}
-            /> */}
             <EditOutlined
-              style={{ fontSize: "14px" }}
+              style={{ fontSize: "16px" }}
               onClick={() => handleEdit(record)}
             />
           </Tooltip>
           <Tooltip title="File Upload">
-            {/* <Button
-              size="small"
-              type="text"
-              icon={<UploadOutlined />}
-              onClick={() => handleUpload(record)}
-            /> */}
             <UploadOutlined
-              style={{ fontSize: "14px" }}
+              style={{ fontSize: "16px" }}
               onClick={() => handleUpload(record)}
             />
           </Tooltip>
