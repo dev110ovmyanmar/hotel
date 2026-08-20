@@ -42,7 +42,7 @@ const DailyBreakDownDetailFormDrawer = ({ open, onClose, data }) => {
       title={
         <div>
           <h2 className="font-bold text-base text-slate-800 dark:text-white m-0">
-            Daily Breakdown - {dayjs(data.date).format("DD-MM-YYYY")}
+            Daily Breakdown - <span className="text-blue-700 dark:text-blue-400 font-semibold">{dayjs(data.date).format("DD MMM YYYY")}</span>  
           </h2>
         </div>
       }

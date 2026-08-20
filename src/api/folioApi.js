@@ -27,3 +27,20 @@ export const transferFolioLines = async (params) => {
     return data.response;
 };
 
+export const folioAdjust = async (params) => {
+    const { data } = await apiClient.post("/folio-line/adjust", params);
+    return data.response;
+}
+
+export const folioRebate = async (params) => {
+    const { data } = await apiClient.post("/folio-line/rebate", params);
+    return data.response;
+}
+
+export const folioVoid = async (params) => {
+    const { data } = await apiClient.post("/folio-line/void", params);
+    return data.response;
+}
+
+
+
