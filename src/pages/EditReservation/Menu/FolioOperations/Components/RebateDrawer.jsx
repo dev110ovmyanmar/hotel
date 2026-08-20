@@ -13,7 +13,7 @@ import { CloseOutlined, WarningOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import PriceTag from "../../../../../component/PriceTag/PriceTag";
 
-const AdjustmentDrawer = ({
+const RebateDrawer = ({
   open,
   onClose,
   lineData,
@@ -30,11 +30,11 @@ const AdjustmentDrawer = ({
   const canAdjust = !isVoided && !isChildLine && !isAdjustment;
 
   const blockReason = isVoided
-    ? "Cannot adjust a voided line"
+    ? "Cannot rebate a voided line"
     : isChildLine
-    ? "Cannot adjust a child line"
+    ? "Cannot rebate a child line"
     : isAdjustment
-    ? "Cannot adjust an adjustment line"
+    ? "Cannot rebate an adjustment line"
     : null;
 
   useEffect(() => {
@@ -45,7 +45,7 @@ const AdjustmentDrawer = ({
       setValidationErrors([]);
       form.setFieldsValue({
         postingType: opposite,
-        amount: undefined,
+        unitPrice: undefined,
         description: undefined,
         remark: undefined,
       });
@@ -57,15 +57,15 @@ const AdjustmentDrawer = ({
 
     if (values.postingType === "credit") {
       const max = lineData?.grandTotal || 0;
-      if ((values.amount || 0) > max) {
+      if ((values.unitPrice || 0) > max) {
         errors.push(
-          `Credit amount (${(values.amount || 0).toLocaleString()}) exceeds original (${max.toLocaleString()})`
+          `Credit amount (${(values.unitPrice || 0).toLocaleString()}) exceeds original (${max.toLocaleString()})`
         );
       }
     }
 
-    if (values.amount !== undefined && values.amount !== null) {
-      if (values.amount <= 0) errors.push("Amount must be greater than 0");
+    if (values.unitPrice !== undefined && values.unitPrice !== null) {
+      if (values.unitPrice <= 0) errors.push("Amount must be greater than 0");
     }
 
     setValidationErrors(errors);
@@ -77,9 +77,7 @@ const AdjustmentDrawer = ({
 
     await onConfirm({
       uuid: lineData.uuid,
-      postingType: values.postingType,
-      amount: values.amount,
-      quantity: 1,
+      amount: values.unitPrice,
       description: values.description,
       remark: values.remark,
     });
@@ -87,17 +85,16 @@ const AdjustmentDrawer = ({
 
   return (
     <Drawer
-      title="Adjust Line"
+      title="Rebate Line"
       placement="right"
       width={480}
       open={open}
       onClose={onClose}
       destroyOnClose
       closeIcon={<CloseOutlined />}
-      className="adjustment-drawer"
+      className="rebate-drawer"
       extra={
         <div className="flex justify-end gap-3">
-          {/* <Button onClick={onClose}>Cancel</Button> */}
           <Button
             type="primary"
             loading={loading}
@@ -150,57 +147,30 @@ const AdjustmentDrawer = ({
               validateAdjustment(all);
             }}
           >
-            {/* Type & Amount — Two Columns */}
-            <div className="grid grid-cols-2 gap-4">
-              {/* Amount */}
+            {/* Amount - Full Width */}
               <Form.Item
-                name="amount"
+                name="unitPrice"
                 label="Amount"
                 rules={[
-                  { required: true, message: "Required" },
+                //   { required: true, message: "Required" },
                   { type: "number", min: 0.01, message: "Must be > 0" },
                 ]}
               >
                 <InputNumber
-                  style={{ width: "100%" }}
+                  style={{ width: '100%' }}
                   formatter={(v) =>
                     v === undefined || v === null || v === ""
                       ? ""
                       : `${v}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                   }
                   parser={(v) => (v ? v.replace(/[^\d.]/g, "") : "")}
-                  addonAfter={lineData?.currency?.code || "MMK"}
+                  suffix={lineData?.currency?.code || "MMK"}
                   placeholder="Enter amount"
                   controls={false}
                   min={0.01}
                 />
               </Form.Item>
-
-              {/* Posting Type */}
-              <Form.Item
-                name="postingType"
-                label="Type"
-                rules={[{ required: true, message: "Required" }]}
-              >
-                <Radio.Group
-                  className="w-full"
-                  optionType="button"
-                >
-                  <Radio.Button
-                    value="debit"
-                    style={{margin: 2}}
-                  >
-                    Debit
-                  </Radio.Button>
-                  <Radio.Button
-                    value="credit"
-                    style={{margin: 2}}
-                  >
-                    Credit
-                  </Radio.Button>
-                </Radio.Group>
-              </Form.Item>
-            </div>
+            
 
             {/* Live Validation Errors — shown directly below the input */}
             {canAdjust && validationErrors.length > 0 && (
@@ -213,22 +183,15 @@ const AdjustmentDrawer = ({
               />
             )}
 
-            {/* Credit Max Warning */}
-            {/* {postingType === "credit" && (
-              <div className="text-xs text-gray-400 -mt-3 mb-4">
-                Max: <PriceTag value={Number(lineData.grandTotal)} />
-              </div>
-            )} */}
-
             {/* Description - Full Width */}
             <Form.Item
               name="description"
               label="Description"
-              rules={[{ required: true, message: "Required" }]}
+            //   rules={[{ required: true, message: "Required" }]}
             >
               <Input.TextArea
                 rows={2}
-                placeholder="Reason for adjustment"
+                placeholder="Reason for rebate"
                 maxLength={255}
               />
             </Form.Item>
@@ -248,4 +211,4 @@ const AdjustmentDrawer = ({
   );
 };
 
-export default AdjustmentDrawer;
+export default RebateDrawer;
