@@ -157,7 +157,7 @@ const EventFacilityOrderTable = ({
       key: "eventDate",
       width: 120,
       render: (text) => (
-        <div>{text ? dayjs(text, "YYYY-MM-DD").format("DD-MM-YYYY") : "-"}</div>
+        <div>{text ? dayjs(text, "YYYY-MM-DD").format("YYYY-MM-DD") : "-"}</div>
       ),
     },
     {

@@ -80,7 +80,7 @@ const DailyOccupactionsTableDrawer = ({
 
     const stayText =
         checkinDate && checkoutDate
-            ? `${dayjs(checkinDate).format("DD-MMM-YYYY")} to ${dayjs(checkoutDate).format("DD-MMM-YYYY")}${nights !== null ? ` (${nights} Night${nights !== 1 ? "s" : ""})` : ""}`
+            ? `${dayjs(checkinDate).format("DD MMM YYYY")} - ${dayjs(checkoutDate).format("DD MMM YYYY")}${nights !== null ? ` (${nights} Night${nights !== 1 ? "s" : ""})` : ""}`
             : "-";
 
     const reservationCode = data?.reservationNo || "-";
@@ -96,7 +96,7 @@ const DailyOccupactionsTableDrawer = ({
             width: 90,
             render: (value) => (
                 <span>
-                    {value ? dayjs(value).format("DD-MM-YYYY") : "-"}
+                    {value ? dayjs(value).format("YYYY-MM-DD") : "-"}
                 </span>
             ),
         },
@@ -110,7 +110,7 @@ const DailyOccupactionsTableDrawer = ({
                 const children = record.childrenCount ?? 0;
                 return (
                     <div className="text-slate-700 dark:text-gray-200 text-sm font-medium leading-tight">
-                        <div>Adult: {adults}</div>
+                        <div>Adults: {adults}</div>
                         <div>Children: {children}</div>
                     </div>
                 );

@@ -86,7 +86,6 @@ const ServiceInventoryListing = () => {
 
       <ServiceInventoryForm
         mode={currentMode}
-        // page={data?.pagination?.currentPage || page}
         page={page}
         drawerOpen={drawerOpen}
         setDrawerOpen={setDrawerOpen}
