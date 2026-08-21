@@ -23,6 +23,7 @@ const RebateDrawer = ({
   const [form] = Form.useForm();
   const [postingType, setPostingType] = React.useState("debit");
   const [validationErrors, setValidationErrors] = React.useState([]);
+  const [rebateType, setRebateType] = React.useState("full");
 
   const isVoided = !!lineData?.voidedAt;
   const isChildLine = !!lineData?.parentLineId;
@@ -43,9 +44,11 @@ const RebateDrawer = ({
       const opposite = lineData.postingType === "debit" ? "credit" : "debit";
       setPostingType(opposite);
       setValidationErrors([]);
+      setRebateType("full");
       form.setFieldsValue({
         postingType: opposite,
-        unitPrice: undefined,
+        rebateType: "full",
+        amount: undefined,
         description: undefined,
         remark: undefined,
       });
@@ -55,17 +58,20 @@ const RebateDrawer = ({
   const validateAdjustment = (values) => {
     const errors = [];
 
-    if (values.postingType === "credit") {
-      const max = lineData?.grandTotal || 0;
-      if ((values.unitPrice || 0) > max) {
-        errors.push(
-          `Credit amount (${(values.unitPrice || 0).toLocaleString()}) exceeds original (${max.toLocaleString()})`
-        );
+    // Only validate amount for partial rebate
+    if (values.rebateType === "partial") {
+      if (values.amount === undefined || values.amount === null) {
+        errors.push("Amount is required for partial rebate");
+      } else if (values.amount <= 0) {
+        errors.push("Amount must be greater than 0");
+      } else {
+        const max = lineData?.grandTotal || 0;
+        if (values.amount > max) {
+          errors.push(
+            `Amount (${values.amount.toLocaleString()}) exceeds original (${max.toLocaleString()})`
+          );
+        }
       }
-    }
-
-    if (values.unitPrice !== undefined && values.unitPrice !== null) {
-      if (values.unitPrice <= 0) errors.push("Amount must be greater than 0");
     }
 
     setValidationErrors(errors);
@@ -75,12 +81,17 @@ const RebateDrawer = ({
   const handleSubmit = async (values) => {
     if (!lineData || !canAdjust || !validateAdjustment(values)) return;
 
-    await onConfirm({
+    const payload = {
       uuid: lineData.uuid,
-      amount: values.unitPrice,
       description: values.description,
       remark: values.remark,
-    });
+    };
+
+    if (values.rebateType === "partial") {
+      payload.amount = values.amount;
+    }
+
+    await onConfirm(payload);
   };
 
   return (
@@ -144,15 +155,43 @@ const RebateDrawer = ({
             onValuesChange={(changed, all) => {
               if (changed.postingType !== undefined)
                 setPostingType(changed.postingType);
+              if (changed.rebateType !== undefined)
+                setRebateType(changed.rebateType);
               validateAdjustment(all);
             }}
           >
-            {/* Amount - Full Width */}
+            {/* Rebate Type */}
+            <Form.Item
+              name="rebateType"
+              label="Rebate Type"
+              rules={[{ required: true, message: "Required" }]}
+            >
+              <Radio.Group
+                className="w-full"
+                optionType="button"
+              >
+                <Radio.Button
+                  value="full"
+                  style={{margin: 2}}
+                >
+                  Full Rebate
+                </Radio.Button>
+                <Radio.Button
+                  value="partial"
+                  style={{margin: 2}}
+                >
+                  Partial Rebate
+                </Radio.Button>
+              </Radio.Group>
+            </Form.Item>
+
+            {/* Amount - Only shown for partial rebate */}
+            {rebateType === "partial" && (
               <Form.Item
-                name="unitPrice"
+                name="amount"
                 label="Amount"
                 rules={[
-                //   { required: true, message: "Required" },
+                  { required: true, message: "Required" },
                   { type: "number", min: 0.01, message: "Must be > 0" },
                 ]}
               >
@@ -170,6 +209,7 @@ const RebateDrawer = ({
                   min={0.01}
                 />
               </Form.Item>
+            )}
             
 
             {/* Live Validation Errors — shown directly below the input */}

@@ -90,10 +90,12 @@ const FoodBeverageOrderForm = ({
 
   const roomOptions = data?.rooms?.map(menu => (
     {
-      value: menu?.room.uuid,
+      value: menu?.uuid,
       label: menu?.room.roomNo,
     }
   ));
+
+  console.log(roomOptions,"roomOptions")
 
   const tableOptions = data?.restaurant_tables.map(table => (
     { value: table?.uuid, label: table?.tableNo }
@@ -153,7 +155,7 @@ const FoodBeverageOrderForm = ({
         uuid: reservationUuid
       },
       reservationRoom: {
-        uuid: reservationRoomUuid
+        uuid: values?.room
       },
       restaurantTable: {
         uuid: values?.tableNo

@@ -151,6 +151,7 @@ const RoomInformationList = () => {
       />
       <RoomInformationForm
         data={data?.reservation || []}
+        date={data?.reservationRoom || []}
         drawerOpen={drawerOpen}
         setDrawerOpen={setDrawerOpen}
         mode={mode}

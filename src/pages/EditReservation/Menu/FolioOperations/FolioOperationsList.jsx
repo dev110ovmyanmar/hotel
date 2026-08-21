@@ -14,6 +14,7 @@ import {
   transferFolioLines,
   folioAdjust,
   folioRebate,
+  folioVoid,
 } from "../../../../api/folioApi";
 import { LIMITS } from "../../../../variables/constants";
 import { useLocation } from "react-router-dom";
@@ -123,6 +124,11 @@ const FolioOperationsList = () => {
 
   const rebateLineMutation = useApiMutation({
     mutationFn: folioRebate,
+    invalidateKeys: [["folios"]],
+  })
+
+  const voidLineMutation = useApiMutation({
+    mutationFn: folioVoid,
     invalidateKeys: [["folios"]],
   })
 
@@ -240,6 +246,8 @@ const FolioOperationsList = () => {
         isAdjusting={adjustLineMutation.isPending}
         onRebateLine={rebateLineMutation.mutateAsync}
         isRebating={rebateLineMutation.isPending}
+        onVoidLine={voidLineMutation.mutateAsync}
+        isVording={voidLineMutation.isPending}
         // Triggers single folio extraction configurations
         onPrintFolio={(folio) =>
           setPrintTarget({ folio, reservation: folioList?.reservation, reservationRoom: folioList?.reservationRoom })
