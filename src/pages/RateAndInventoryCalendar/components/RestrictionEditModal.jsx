@@ -16,12 +16,13 @@ import Toast from '../../../component/Toast/Toast';
  *   onFinish    – (values) => void
  *   isViewMode  – boolean (whether the modal is in view-only mode)
  *   isPast      – boolean (whether the selected date is in the past)
+ *   isToday     – boolean (whether the selected date is today)
  *   dateStr     – string (the date string for the selected cell)
  *   modalData   – object (the current modal state data)
  *   loadingStates - object (global loading states for calendar actions)
  *   handleRoomRestrictionStopSell - (uuid) => void
  */
-const RestrictionEditModal = ({ open, onClose, onOk, form, isPending, onFinish, isViewMode, isPast, dateStr, modalData, loadingStates, handleRoomRestrictionStopSell }) => {
+const RestrictionEditModal = ({ open, onClose, onOk, form, isPending, onFinish, isViewMode, isPast, isToday, dateStr, modalData, loadingStates, handleRoomRestrictionStopSell }) => {
     const [viewMode, setViewMode] = useState(isViewMode);
 
     useEffect(() => {
@@ -45,52 +46,51 @@ const RestrictionEditModal = ({ open, onClose, onOk, form, isPending, onFinish, 
             closeIcon={<CloseOutlined />}
             width={480}
             centered
-            footer={viewMode ? (
-                <div>
-                    <Divider className='m-0 p-0 border-b-[1px] border-gray-300' />
-                    <div className="flex justify-between items-center text-left pt-2 px-1">
-                        {modalData?.uuid ?
-                            <span className="text-[12px] text-gray-500 font-medium leading-tight max-w-[85%]">
-                                Update Availability And Setting Minimum/Maximum Lengths Of Stay In Real-Time
-                            </span> :
-                            <span className="text-[12px] text-gray-500 font-medium leading-tight max-w-[85%]">
-                                Create New Room Restriction
-                            </span>
-                        }
+            footer={!isPast && !isToday ? (
+                viewMode ? (
+                    <div>
+                        <Divider className='m-0 p-0 border-b-[1px] border-gray-300' />
+                        <div className="flex justify-between items-center text-left pt-2 px-1">
+                            {modalData?.uuid ?
+                                <span className="text-[12px] text-gray-500 font-medium leading-tight max-w-[85%]">
+                                    Update Availability And Setting Minimum/Maximum Lengths Of Stay In Real-Time
+                                </span>
+                                : <span className="text-[12px] text-gray-500 font-medium leading-tight max-w-[85%]">
+                                    Create New Room Restriction
+                                </span>
+                            }
 
-                        {
-                            modalData?.uuid ? (
-                                !isPast ? (
+                            {
+                                modalData?.uuid ? (
                                     <EditOutlined
                                         className="text-blue-500 text-[18px] cursor-pointer hover:scale-110 transition-transform"
                                         onClick={() => setViewMode(false)}
                                     />
-                                ) : null
-                            ) : !isPast ? (
-                                <PlusOutlined
-                                    className="text-blue-500 text-[18px] cursor-pointer hover:scale-110 transition-transform"
-                                    onClick={() => setViewMode(false)}
-                                />
-                            ) : null
-                        }
+                                ) : (
+                                    <PlusOutlined
+                                        className="text-blue-500 text-[18px] cursor-pointer hover:scale-110 transition-transform"
+                                        onClick={() => setViewMode(false)}
+                                    />
+                                )
+                            }
+                        </div>
                     </div>
-                </div>
-
-            ) : [
-                <Button key="cancel" onClick={onClose}>Cancel</Button>,
-                <Button key="save" type="primary" loading={isPending} onClick={onOk}>Save</Button>
-            ]}
+                ) : [
+                    <Button key="cancel" onClick={onClose}>Cancel</Button>,
+                    <Button key="save" type="primary" loading={isPending} onClick={onOk}>Save</Button>
+                ]
+            ) : null}
         >
             {viewMode ? (
                 <div className="grid grid-cols-[140px_1fr] gap-y-4 py-4 px-2 items-center text-[13px] text-[#333]">
                     <span className="font-semibold text-gray-600">Date:</span>
-                    <span className="font-medium">{dateStr ? dayjs(dateStr).format('D.M.YYYY') : ''}</span>
+                    <span className="font-medium">{dateStr ? dayjs(dateStr).format('D-M-YYYY') : ''}</span>
 
                     <span className="font-semibold text-gray-600">Stop Sell:</span>
                     <Switch
                         className="!w-[40px]"
                         checked={modalData?.stopSell}
-                        disabled={isPast}
+                        disabled={isPast || isToday}
                         loading={loadingStates?.stopSell?.[modalData?.uuid]}
                         onChange={() => {
                             if (!modalData?.uuid) {
@@ -101,7 +101,7 @@ const RestrictionEditModal = ({ open, onClose, onOk, form, isPending, onFinish, 
                         }}
                         style={{
                             backgroundColor: modalData?.stopSell ? '#ff4d4f' : '#52c41a',
-                            opacity: isPast ? 0.5 : 1,
+                            opacity: isPast || isToday ? 0.5 : 1,
                             border: 'none'
                         }}
                     />

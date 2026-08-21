@@ -63,7 +63,8 @@ const RatePlanRows = ({ rp, rt, daysMeta, getRateData, handleRestrictionEditOpen
                                 { uuid: rt.uuid, name: rt.name },
                                 dateStr,
                                 !!rateData?.restriction || isPast || isToday, // open in view mode if restriction exists or it's a past date
-                                isPast
+                                isPast,
+                                isToday
                             )
                         }
                     >

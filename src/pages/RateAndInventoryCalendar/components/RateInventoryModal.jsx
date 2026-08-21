@@ -111,7 +111,8 @@ const RateInventoryModal = ({
                                                     { uuid: selectedCell.rtUuid },
                                                     selectedCell.dateStr,
                                                     !!rp.restriction || selectedCell.isPast,
-                                                    selectedCell.isPast
+                                                    selectedCell.isPast,
+                                                    selectedCell.isToday
                                                 );
                                                 onClose();
                                             }}
@@ -126,7 +127,8 @@ const RateInventoryModal = ({
                                                     { uuid: selectedCell.rtUuid },
                                                     selectedCell.dateStr,
                                                     !!rp.restriction || selectedCell.isPast,
-                                                    selectedCell.isPast
+                                                    selectedCell.isPast,
+                                                    selectedCell.isToday
                                                 );
                                                 onClose();
                                             }}
