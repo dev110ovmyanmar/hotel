@@ -717,6 +717,15 @@ span .ant-upload {
   border-bottom: 1px solid rgba(16, 185, 129, 0.35) !important;
 }
 
+.void-folioLine-row td{
+  background-color: rgba(239, 68, 68, 0.10) !important;
+  backdrop-filter: blur(6px) !important;
+  border-top: 1px solid rgba(239, 68, 68, 0.3) !important;
+  border-bottom: 1px solid rgba(239, 68, 68, 0.3) !important;
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
 .dark .active-reservation-row td {
   background-color: rgba(1, 65, 46, 0.35) !important;
   backdrop-filter: blur(12px) !important;

@@ -169,7 +169,7 @@ const AdjustmentDrawer = ({
                       : `${v}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                   }
                   parser={(v) => (v ? v.replace(/[^\d.]/g, "") : "")}
-                  addonAfter={lineData?.currency?.code || "MMK"}
+                  suffix={lineData?.currency?.code || "MMK"}
                   placeholder="Enter amount"
                   controls={false}
                   min={0.01}
@@ -212,13 +212,6 @@ const AdjustmentDrawer = ({
                 className="rounded-lg -mt-2 mb-4"
               />
             )}
-
-            {/* Credit Max Warning */}
-            {/* {postingType === "credit" && (
-              <div className="text-xs text-gray-400 -mt-3 mb-4">
-                Max: <PriceTag value={Number(lineData.grandTotal)} />
-              </div>
-            )} */}
 
             {/* Description - Full Width */}
             <Form.Item
