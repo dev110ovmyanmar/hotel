@@ -21,7 +21,7 @@ const ReservationHeader = ({ data }) => {
       <div>
         <div className="flex  items-center gap-3 mb-3">
           <h1 className="text-xl font-bold text-[#ffffff] tracking-tight capitalize">
-            {reservation?.guest?.name || "Unknown Guest"}
+            {reservation?.guest?.fullName || "Unknown Guest"}
           </h1>
           <ReservationStatusColor status={reservation?.roomStatus?.name} />
         </div>

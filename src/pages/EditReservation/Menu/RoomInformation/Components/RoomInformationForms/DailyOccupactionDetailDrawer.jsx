@@ -288,7 +288,7 @@ const DailyOccupationDetailDrawer = ({
                             {isEditing && (
                                 <>
                                     <Divider className="my-3 text-xs text-slate-400">
-                                        Children Ages
+                                        Children Age
                                     </Divider>
 
                                     <Form.List name="childrenAges">

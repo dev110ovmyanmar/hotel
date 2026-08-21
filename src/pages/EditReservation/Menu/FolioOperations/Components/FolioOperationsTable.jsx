@@ -10,6 +10,7 @@ import {
   CheckOutlined,
   FundViewOutlined,
   MoreOutlined,
+  WarningOutlined,
 } from "@ant-design/icons";
 import dayjs from "dayjs";
 import {
@@ -20,9 +21,12 @@ import {
   textColorDarkMode,
   textWhiteInDarkStyle,
 } from "../../../../../utils";
+import { SlCalculator } from "react-icons/sl";
+import { AiOutlineHdd } from "react-icons/ai";
 import PriceTag from "../../../../../component/PriceTag/PriceTag";
 import AdjustmentDrawer from "./AdjustmentDrawer";
 import RebateDrawer from "./RebateDrawer";
+import VoidDrawer from "./VoidDrawer";
 import Toast from "../../../../../component/Toast/Toast";
 
 const FolioTitle = ({ rest }) => (
@@ -49,8 +53,8 @@ const SubFolioTable = ({ record, lineColumns, onMoveTo, isTransferring }) => {
     onChange: (selectedKeys) => {
       setSelectedRowKeys(selectedKeys);
     },
-    getCheckboxProps: () => ({
-      disabled: isFolioClosed,
+    getCheckboxProps: (record) => ({
+      disabled: isFolioClosed || !!record.voidedAt,
     }),
   };
 
@@ -138,6 +142,7 @@ const SubFolioTable = ({ record, lineColumns, onMoveTo, isTransferring }) => {
         size="small"
         bordered
         summary={summary}
+        rowClassName={(record) => record.voidedAt ? 'void-folioLine-row' : ''}
       />
     </div>
   );
@@ -152,7 +157,9 @@ const FolioOperationsTable = ({
   onAdjustLine,
   isAdjusting = false,
   onRebateLine,
-  isRebating = false
+  isRebating = false,
+  onVoidLine,
+  isVording = false
 }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedFolio, setSelectedFolio] = useState(null);
@@ -160,6 +167,7 @@ const FolioOperationsTable = ({
   const [targetFolioUuid, setTargetFolioUuid] = useState(null);
   const [adjustmentDrawerOpen, setAdjustmentDrawerOpen] = useState(false);
   const [rebatDrawerOpen, setRebateDrawerOpen] = useState(false);
+  const [voidDrawerOpen, setVoidDrawerOpen] = useState(false);
   const [selectedLine, setSelectedLine] = useState(null);
 
   // Updated lineColumns with Adjustment column
@@ -249,7 +257,7 @@ const FolioOperationsTable = ({
         let tooltipTextforAdjust = "Adjust this line";
         let tooltipTextforRebate = "Rebate this line";
         if (!canAdjust) {
-          if (isVoided) tooltipText = "Cannot adjust a voided line";
+          if (isVoided) tooltipTextforAdjust = "Cannot adjust a voided line";
           else if (isChildLine)
             tooltipTextforAdjust =
               "Cannot adjust a child line (tax, SC, discount, incentive)";
@@ -257,11 +265,20 @@ const FolioOperationsTable = ({
             tooltipTextforAdjust = "Cannot adjust an adjustment line";
         }
 
+        const canVoid = !isVoided && !isChildLine && !isAdjustment;
+
+        let tooltipTextforVoid = "Void this line";
+        if (!canVoid) {
+          if (isVoided) tooltipTextforVoid = "Line is already voided";
+          else if (isChildLine) tooltipTextforVoid = "Cannot void a child line";
+          else if (isAdjustment) tooltipTextforVoid = "Cannot void an adjustment line";
+        }
+
         const items = [
           {
             key: 'adjust',
             label: 'Adjust',
-            icon: <EditOutlined />,
+            icon: <SlCalculator />,
             disabled: !canAdjust,
             title: tooltipTextforAdjust,
             onClick: () => {
@@ -272,7 +289,7 @@ const FolioOperationsTable = ({
           {
             key: 'rebate',
             label: 'Rebate',
-            icon: <FundViewOutlined />,
+            icon: <AiOutlineHdd />,
             disabled: !canRebate,
             title: tooltipTextforRebate,
             onClick: () => {
@@ -280,11 +297,27 @@ const FolioOperationsTable = ({
               setRebateDrawerOpen(true);
             },
           },
+          {
+            key: 'void',
+            label: 'Void',
+            icon: <WarningOutlined />,
+            disabled: !canVoid,
+            title: tooltipTextforVoid,
+            danger: true,
+            onClick: () => {
+              setSelectedLine(record);
+              setVoidDrawerOpen(true);
+            },
+          },
         ];
+
+        const enabledItems = items.filter(item => !item.disabled);
+
+        if (enabledItems.length === 0) return null;
 
         return (
           <Dropdown
-            menu={{ items }}
+            menu={{ items: enabledItems }}
             placement="bottomRight"
             trigger={['click']}
           >
@@ -365,9 +398,10 @@ const FolioOperationsTable = ({
   const handleAdjustmentConfirm = async (adjustmentData) => {
     try {
       await onAdjustLine(adjustmentData);
-      const total = adjustmentData.unitPrice * adjustmentData.quantity;
+      // const total = adjustmentData.unitPrice * adjustmentData.quantity;
       Toast.success(
-        `Adjustment Successful — ${adjustmentData.postingType.toUpperCase()} ${total.toLocaleString()} ${selectedLine?.currency?.symbol || "MMK"} — ${adjustmentData.description}`
+        // `Adjustment Successful — ${adjustmentData.postingType.toUpperCase()} ${total.toLocaleString()} ${selectedLine?.currency?.symbol || "MMK"} — ${adjustmentData.description}`
+        `Adjustment Successful`
       );
       setAdjustmentDrawerOpen(false);
       setSelectedLine(null);
@@ -381,13 +415,32 @@ const FolioOperationsTable = ({
     const handleRebateConfirm = async (rebateData) => {
     try {
       await onRebateLine(rebateData);
+      // const amountText = rebateData.amount
+      //   ? `${rebateData.amount.toLocaleString()} ${selectedLine?.currency?.symbol || "MMK"}`
+      //   : "Full Amount";
       Toast.success(
-        `Rebate Successful — ${rebateData.amount.toLocaleString()} ${selectedLine?.currency?.symbol || "MMK"} — ${rebateData.description}`
+        // `Rebate Successful — ${amountText} — ${rebateData.description}`
+        `Rebate Successful`
       );
       setRebateDrawerOpen(false);
       setSelectedLine(null);
     } catch (error) {
       // Toast.error(`Rebate Failed — ${error?.message || "Something went wrong"}`);
+      console.log(error);
+      throw error;
+    }
+  };
+
+  const handleVoidConfirm = async (voidData) => {
+    try {
+      await onVoidLine(voidData);
+      Toast.success(
+        // `Void Successful — ${selectedLine?.itemNameSnapshot || "Line"} — ${voidData.remark}`
+        `Void Successful`
+      );
+      setVoidDrawerOpen(false);
+      setSelectedLine(null);
+    } catch (error) {
       console.log(error);
       throw error;
     }
@@ -585,6 +638,18 @@ const FolioOperationsTable = ({
         lineData={selectedLine}
         onConfirm={handleRebateConfirm}
         loading={isRebating}
+      />
+
+      {/* Void Drawer */}
+      <VoidDrawer
+        open={voidDrawerOpen}
+        onClose={() => {
+          setVoidDrawerOpen(false);
+          setSelectedLine(null);
+        }}
+        lineData={selectedLine}
+        onConfirm={handleVoidConfirm}
+        loading={isVording}
       />
     </>
   );

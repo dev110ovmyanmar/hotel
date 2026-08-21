@@ -91,19 +91,19 @@ const ServiceForm = ({
       enabled: !!selectedData?.uuid,
     },
   });
+
   useEffect(() => {
+    if (!isAdd) return;
     if (usesInventory) {
-      // when true → clear field
-      form.setFieldsValue({
-        basePrice: null,
-      });
-    } else {
-      // when false → set 0 and disable
       form.setFieldsValue({
         basePrice: 0,
       });
+    } else {
+      form.setFieldsValue({
+        basePrice: null,
+      });
     }
-  }, [usesInventory, form]);
+  }, [usesInventory, isAdd, form]);
 
   useEffect(() => {
     if (!isAdd && data) {
@@ -118,12 +118,14 @@ const ServiceForm = ({
         status: data?.status?.uuid,
         isComplimentary:
           data?.isComplimentary === true || data?.isComplimentary === 1,
+        usesInventory: data?.usesInventory ?? false,
+        basePrice: data?.basePrice ?? null,
         stages: initialStages,
       });
+
       setSelectedData(data);
     }
-  }, [data, form]);
-
+  }, [data, form, isAdd]);
   const handleClose = () => {
     setDrawerOpen(false);
     setSelectedData(null);
@@ -143,6 +145,7 @@ const ServiceForm = ({
         serviceStage: {
           ids: stages || [],
         },
+        basePrice: formValues.basePrice,
       };
     };
 
@@ -231,6 +234,7 @@ const ServiceForm = ({
             initialValues={{
               isComplimentary: false,
               usesInventory: true,
+              basePrice: 0,
               stages: [],
             }}
           >
@@ -312,7 +316,7 @@ const ServiceForm = ({
               >
                 <Checkbox
                   disabled={isEdit}
-                  className="custom-disabled-checkbox"
+                  className={usesInventory ? "custom-disabled-checkbox" : ""}
                   style={{ marginTop: "25px" }}
                 >
                   <span className="dark:text-gray-100">
@@ -329,25 +333,13 @@ const ServiceForm = ({
                 <InputNumber
                   className="w-full!"
                   min={0}
-                  readOnly={isView || !usesInventory}
-                  disabled={!usesInventory}
+                  readOnly={isView || (!isEdit && usesInventory)}
+                  disabled={isView || (isEdit && usesInventory)}
                   placeholder="Enter Base Price"
                   suffix="MMK"
                   formatter={priceFormatter}
                   parser={priceParser}
                 />
-              </Form.Item>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3">
-              <Form.Item
-                label=""
-                name="isComplimentary"
-                valuePropName="checked"
-                rules={[{ required: true }]}
-                className={isView ? "pointer-events-none" : ""}
-              >
-                <Checkbox style={{ marginTop: "10px" }}>Complimentary</Checkbox>
               </Form.Item>
             </div>
 
@@ -379,21 +371,21 @@ const ServiceForm = ({
                                    ? "border-blue-300 bg-blue-50/20"
                                    : "border-blue-500 bg-blue-50/40 dark:bg-black shadow-sm shadow-blue-100/50"
                                  : isView
-                                   ? "border-gray-100 bg-gray-50/30"
+                                   ? "border-gray-100 "
                                    : "border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50/50"
                              }
                                 `}
                       >
                         <div className="pt-0.5">
-                          <Checkbox value={stage.value} />
+                          <Checkbox value={stage.value}  className={isChecked ? "custom-disabled-checkbox" : ""}/>
                         </div>
                         <div className="flex flex-col">
                           <span
-                            className={`text-xs ${
+                            className={`text-xs  ${
                               isChecked
                                 ? isView
-                                  ? "text-blue-800/70"
-                                  : "text-blue-900 dark:text-blue-100"
+                                  ? "text-blue-800/70 dark:text-gray-200"
+                                  : "text-blue-900 dark:text-gray-100"
                                 : isView
                                   ? ""
                                   : ""
