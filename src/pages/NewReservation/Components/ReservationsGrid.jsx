@@ -10,6 +10,7 @@ import {
   Space,
   Pagination,
   Empty,
+  Tooltip,
 } from "antd";
 import {
   PhoneOutlined,
@@ -27,7 +28,7 @@ import PriceTag from "../../../component/PriceTag/PriceTag";
 import ReservationStatusColor from "./../../../component/ReservationStatusColor/ReservationStatusColor";
 import dayjs from "dayjs";
 import PrintReservation from "../../../component/Topbar/PrintReservation";
-import { MdOutlineMeetingRoom } from 'react-icons/md';
+import { MdOutlineMeetingRoom } from "react-icons/md";
 
 const ReservationsGrid = ({
   data,
@@ -69,9 +70,11 @@ const ReservationsGrid = ({
                              hover:shadow-[0_8px_25px_rgba(0,0,0,0.15)]
                              dark:hover:shadow-[0_8px_25px_rgba(0,0,0,0.5)]"
                   title={
-                    <span className="font-semibold capitalize text-[#ffffff]">
-                      {item?.guest?.fullName}
-                    </span>
+                    <Tooltip title={item?.guest?.fullName}>
+                      <span className="font-semibold capitalize text-[#ffffff] inline-block max-w-[180px] truncate">
+                        {item?.guest?.fullName}
+                      </span>
+                    </Tooltip>
                   }
                   extra={
                     <Dropdown

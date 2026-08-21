@@ -10,6 +10,7 @@ import {
   InputNumber,
   Row,
   Col,
+  Radio,
 } from "antd";
 import TextArea from "antd/es/input/TextArea";
 import dayjs from "dayjs";
@@ -31,6 +32,7 @@ import {
 } from "../../../../../../api/booking";
 import { useApiMutation } from "../../../../../../hooks/useApiMutation";
 import Toast from "../../../../../../component/Toast/Toast";
+import { getGuestMeta } from "./../../../../../../api/guestNoteApi";
 
 const { RangePicker } = TimePicker;
 
@@ -50,6 +52,7 @@ const EventFacilityOrderForm = ({
   const [form] = Form.useForm();
   const phoneValue = Form.useWatch("guestPhone", form);
   const facilityPackageForm = Form.useWatch("facilityPackage", form);
+  const guestType = Form.useWatch("guestType", form);
 
   const isView = mode === "view";
   const isEdit = mode === "edit";
@@ -74,13 +77,6 @@ const EventFacilityOrderForm = ({
   const expectedSeconds =
     startTime && endTime ? endTime.diff(startTime, "second") : null;
 
-  // const hours = Math.floor(expectedSeconds / 3600);
-  // const minutes = Math.floor((expectedSeconds % 3600) / 60);
-  // const seconds = expectedSeconds % 60;
-
-  // const frontformattedExpectedHours = `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
-  // const formattedExpectedHours = `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
-
   const { data: facilityMetaData } = useApiQuery({
     fetchQueryName: "facilityMetaData",
     fetchQueryFunction: facilityMeta,
@@ -96,13 +92,11 @@ const EventFacilityOrderForm = ({
   const createFacilityBookings = useApiMutation({
     mutationFn: createFacilityBooking,
     invalidateKeys: [["facility-booking-list"]],
-    // shouldInvalidate: isEdit ? true : page === 1,
   });
 
   const editFacilityBookings = useApiMutation({
     mutationFn: editFacilityBooking,
     invalidateKeys: [["facility-booking-list"]],
-    // shouldInvalidate: isEdit ? true : page === 1,
   });
 
   const {
@@ -120,6 +114,21 @@ const EventFacilityOrderForm = ({
     },
   });
 
+  const { data: guestDetails } = useApiQuery({
+    fetchQueryName: "guest-details",
+    fetchQueryFunction: getGuestMeta,
+  });
+
+  const guestList = Array.isArray(guestDetails)
+    ? guestDetails
+    : guestDetails?.data || guestDetails?.guests || [];
+
+  const guestOptions = guestList.map((guest) => ({
+    label: guest?.fullName,
+    value: guest?.uuid,
+    phone: guest?.phone,
+  }));
+
   const currentStatus = bookingDetails?.status?.code;
 
   const facilityStatus = initDataFacilityStatus?.map((item) => ({
@@ -127,7 +136,6 @@ const EventFacilityOrderForm = ({
     label: item.name,
     disabled:
       isView ||
-      // Create mode
       (isAdd && ["completed", "cancelled"].includes(item?.code)) ||
       (isEdit && currentStatus === "confirmed" && item.code === "pending"),
   }));
@@ -135,52 +143,54 @@ const EventFacilityOrderForm = ({
   useEffect(() => {
     if (drawerOpen && isAdd) {
       form.resetFields();
-    }
 
-    if (drawerOpen && isAdd && initDataFacilityStatus) {
       form.setFieldsValue({
-        status: {
-          uuid: initDataFacilityStatus?.find((item) => item?.code === "pending")
-            ?.uuid,
-        },
+        guestType: "new",
+        expectedPax: 1,
       });
     }
-  }, [isAdd, initDataFacilityStatus]);
+  }, [drawerOpen, isAdd, form]);
 
   useEffect(() => {
-    const FacilityBookingFormDataView = isView || isEdit;
-    if (FacilityBookingFormDataView && bookingDetails) {
-      const startTime = dayjs(bookingDetails.startTime, "HH:mm");
-      const endTime = dayjs(bookingDetails.endTime, "HH:mm");
+    if (!(isView || isEdit) || !bookingDetails) return;
 
-      const expectedSeconds = endTime.diff(startTime, "second");
+    const startTime = dayjs(bookingDetails.startTime, "HH:mm:ss");
+    const endTime = dayjs(bookingDetails.endTime, "HH:mm:ss");
 
-      const hours = Math.floor(expectedSeconds / 3600);
-      const minutes = Math.floor((expectedSeconds % 3600) / 60);
+    const expectedSeconds = endTime.diff(startTime, "second");
 
-      const uiFormat =
-        `${String(hours).padStart(2, "0")}:` +
-        `${String(minutes).padStart(2, "0")}`;
+    const hours = Math.floor(expectedSeconds / 3600);
+    const minutes = Math.floor((expectedSeconds % 3600) / 60);
 
-      form.setFieldsValue({
-        ...bookingDetails,
+    const uiFormat =
+      `${String(hours).padStart(2, "0")}:` +
+      `${String(minutes).padStart(2, "0")}`;
 
-        facilityPackage: bookingDetails?.facilityPackage?.uuid,
+    const isExistingGuest = !!bookingDetails?.guest?.uuid;
 
-        eventDate: dayjs(bookingDetails?.eventDate),
-
-        timeRange: [startTime, endTime],
-
-        expectedHours: uiFormat,
-        reservation: {
-          uuid: bookingDetails?.reservation?.uuid,
-        },
-        status: {
-          uuid: bookingDetails?.status?.uuid,
-        },
-      });
-    }
-  }, [isEdit, isView, bookingDetails]);
+    form.setFieldsValue({
+      guestType: isExistingGuest ? "existing" : "new",
+      guestUuid: isExistingGuest ? bookingDetails?.guest?.uuid : undefined,
+      guestName: bookingDetails?.guestName || "",
+      guestPhone: bookingDetails?.guestPhone || "",
+      eventName: bookingDetails?.eventName,
+      facilityPackage: bookingDetails?.facilityPackage?.uuid,
+      eventDate: bookingDetails?.eventDate
+        ? dayjs(bookingDetails.eventDate)
+        : null,
+      timeRange: [startTime, endTime],
+      expectedHours: uiFormat,
+      expectedHoursBackend: bookingDetails?.expectedHours,
+      expectedPax: bookingDetails?.expectedPax,
+      remark: bookingDetails?.remark,
+      reservation: {
+        uuid: bookingDetails?.reservation?.uuid,
+      },
+      status: {
+        uuid: bookingDetails?.status?.uuid,
+      },
+    });
+  }, [isView, isEdit, bookingDetails, form]);
 
   useEffect(() => {
     if (eventTime?.[0] && eventTime?.[1]) {
@@ -219,6 +229,15 @@ const EventFacilityOrderForm = ({
       facilityPackage: {
         uuid: values.facilityPackage,
       },
+      guest:
+        values.guestType === "existing"
+          ? {
+              uuid: values.guestUuid,
+            }
+          : {
+              fullName: values.guestName,
+              phone: values.guestPhone,
+            },
       reservation: {
         uuid: isEdit ? bookingDetails?.reservation?.uuid : reservationId,
       },
@@ -231,7 +250,6 @@ const EventFacilityOrderForm = ({
           setDrawerOpen(false);
           setSelectedData(null);
           form.resetFields();
-          setPage(1);
           Toast.success("Facility Booking Created Successfully!");
         },
       });
@@ -240,16 +258,15 @@ const EventFacilityOrderForm = ({
     if (isEdit) {
       editFacilityBookings.mutate(modifiedValues, {
         onSuccess: () => {
-          Toast.success("FacilityBooking Updated Successfully!");
+          Toast.success("Facility Booking Updated Successfully!");
           setDrawerOpen(false);
           setSelectedData(null);
         },
       });
     }
-    setDrawerOpen(false);
+
     onSuccess();
   };
-
   const childSharedProps = {
     mode: "spinner",
     min: 1,
@@ -311,26 +328,107 @@ const EventFacilityOrderForm = ({
             </div>
           )}
 
-          <Form.Item
-            label="Guest Name"
-            name="guestName"
-            rules={[
-              { required: true, message: "Facility Booking Name is Required" },
-            ]}
-          >
-            <Input readOnly={isView} placeholder="Enter Name" />
+          <Form.Item label="Guest Name" name="guestType" className="mb-2">
+            <Radio.Group
+              disabled={isView}
+              onChange={(e) => {
+                const type = e.target.value;
+
+                if (type === "new") {
+                  form.setFieldsValue({
+                    guestUuid: undefined,
+                    guestName: "",
+                    guestPhone: "",
+                  });
+                }
+
+                if (type === "existing") {
+                  form.setFieldsValue({
+                    guestUuid: undefined,
+                    guestName: undefined,
+                    guestPhone: "",
+                  });
+                }
+              }}
+            >
+              <Radio
+                value="new"
+                className={
+                  guestType === "new" ? "custom-disabled-checkbox" : ""
+                }
+              >
+                New Guest
+              </Radio>
+              <Radio
+                value="existing"
+                className={
+                  guestType === "existing" ? "custom-disabled-checkbox" : ""
+                }
+              >
+                Existing Guest
+              </Radio>
+            </Radio.Group>
           </Form.Item>
+
+          {guestType === "existing" ? (
+            <Form.Item
+              label="Existing Guest"
+              name="guestUuid"
+              rules={[
+                {
+                  required: true,
+                  message: "Please select an existing guest",
+                },
+              ]}
+            >
+              <Select
+                showSearch
+                placeholder="Select Existing Guest"
+                disabled={isView}
+                options={guestOptions}
+                optionFilterProp="label"
+                filterOption={(input, option) =>
+                  option?.label?.toLowerCase().includes(input.toLowerCase())
+                }
+                onChange={(value, option) => {
+                  form.setFieldsValue({
+                    guestPhone: option?.phone || "",
+                  });
+                }}
+              />
+            </Form.Item>
+          ) : (
+            <Form.Item
+              label="New Guest Name"
+              name="guestName"
+              rules={[
+                {
+                  required: true,
+                  message: "Guest Name is Required",
+                },
+              ]}
+            >
+              <Input readOnly={isView} placeholder="Enter New Guest Name" />
+            </Form.Item>
+          )}
 
           <Form.Item
             label="Guest Phone No"
             name="guestPhone"
-            rules={[{ required: true }]}
+            rules={[
+              {
+                required: true,
+                message: "Guest Phone is Required",
+              },
+            ]}
           >
             <Input
               maxLength={20}
-              readOnly={isView}
+              disabled={isView || guestType === "existing"}
               placeholder="Enter Phone"
               onKeyPress={(e) => {
+                const value = e.currentTarget.value;
+
                 if (
                   !/[0-9]/.test(e.key) &&
                   !(e.key === "+" && value.length === 0)
@@ -349,29 +447,6 @@ const EventFacilityOrderForm = ({
             <Input readOnly={isView} placeholder="Enter Event Name" />
           </Form.Item>
 
-          {/* <Form.Item
-            label="Facility Package"
-            name="facilityPackage"
-            rules={[
-              { required: true, message: "Facility Package is Required" },
-            ]}
-          >
-            <Select
-              options={facilityPackages}
-              readOnly={isView}
-              placeholder="Select Event Name"
-              onSelect={(value) => {
-                const selectedPackage = facilityPackages.find(
-                  (item) => item.value === value,
-                );
-
-                form.setFieldsValue({
-                  expectedHours: selectedPackage?.expectedHours?.slice(0, 5),
-                  expectedPax: selectedPackage?.expectedPax,
-                });
-              }}
-            />
-          </Form.Item> */}
           <Form.Item
             label="Facility Package"
             name="facilityPackage"
@@ -426,7 +501,6 @@ const EventFacilityOrderForm = ({
             <Col span={12}>
               <Form.Item label="Expected Hours" name="expectedHours" required>
                 <Input readOnly />
-                {/* value={frontformattedExpectedHours}  */}
               </Form.Item>
             </Col>
 
@@ -436,7 +510,6 @@ const EventFacilityOrderForm = ({
               hidden
             >
               <Input readOnly />
-              {/* value={frontformattedExpectedHours}  */}
             </Form.Item>
           </Row>
 
@@ -453,14 +526,6 @@ const EventFacilityOrderForm = ({
               className="minus-icon"
             />
           </Form.Item>
-
-          {/* <Form.Item
-            label="Expected Pax"
-            name="expectedPax"
-            rules={[{ required: true, message: "Expected Pax is Required" }]}
-          >
-            <Input readOnly={isView} placeholder="Enter Expected Pax" />
-          </Form.Item> */}
 
           <Form.Item
             label="Facility Status"
@@ -503,129 +568,6 @@ const EventFacilityOrderForm = ({
               className={darkModeStyle}
             />
           </Form.Item>
-
-          {/* <Row gutter={16}>
-            <Col span={12}>
-              <Form.Item label="Event Order Date" name="eventOrderDate">
-                <DatePicker className="w-full" disabled={isView} />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item label="Event Order Time" name="eventOrderTime">
-                <TimePicker
-                  className="w-full"
-                  format="h:mm A"
-                  disabled={isView}
-                />
-              </Form.Item>
-            </Col>
-          </Row>
-
-          <Form.Item label="Order Event Name" name="name">
-            <Input placeholder="Enter Name" readOnly={isView} />
-          </Form.Item>
-
-          <Row gutter={16}>
-            <Col span={12}>
-              <Form.Item label="Start Date" name="startDate">
-                <DatePicker className="w-full" disabled={isView} />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item label="Time" name="startTime">
-                <TimePicker
-                  className="w-full"
-                  format="h:mm A"
-                  disabled={isView}
-                />
-              </Form.Item>
-            </Col>
-          </Row>
-
-          <Row gutter={16}>
-            <Col span={12}>
-              <Form.Item label="End Date" name="endDate">
-                <DatePicker className="w-full" disabled={isView} />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item label="Time" name="endTime">
-                <TimePicker
-                  className="w-full"
-                  format="h:mm A"
-                  disabled={isView}
-                />
-              </Form.Item>
-            </Col>
-          </Row>
-
-          <Form.Item label="Facility Name" name="facilityName">
-            <Select
-              placeholder="Select Facility"
-              disabled={isView}
-              options={[
-                { value: "aa", label: "Facility AA" },
-                { value: "bb", label: "Facility BB" },
-              ]}
-            />
-          </Form.Item>
-
-          <Form.Item
-            label="Estimated Pax"
-            name="estimatedPax"
-            rules={[{ required: true }]}
-          >
-            <InputNumber
-              className="!w-full"
-              min={0}
-              suffix="Pax"
-              placeholder="Enter Estimated Pax"
-            />
-          </Form.Item>
-
-          <Row gutter={16}>
-            <Col span={12}>
-              <Form.Item label="Guest Name" name="guestName">
-                <Input readOnly={isView} placeholder="Enter Guest Name" />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label="Guest Phone"
-                name="guestPhone"
-                rules={[
-                  { validator: validatePhoneNumber }
-
-                ]}
-              >
-                <Input
-                  readOnly={isView}
-                  placeholder="Enter Guest Phone"
-                  maxLength={
-                    phoneValue?.startsWith("09")
-                      ? 11
-                      : phoneValue?.startsWith("9")
-                        ? 10
-                        : 9
-                  }
-                />
-              </Form.Item>
-            </Col>
-          </Row>
-
-          <Form.Item label="Status" name="status">
-            <Select
-              disabled={isView}
-              options={[
-                { value: "Active", label: "Active" },
-                { value: "Inactive", label: "Inactive" },
-              ]}
-            />
-          </Form.Item>
-
-          <Form.Item label="Remarks" name="remarks">
-            <TextArea rows={3} placeholder="Enter Remarks..." />
-          </Form.Item> */}
         </Form>
       </Drawer>
 

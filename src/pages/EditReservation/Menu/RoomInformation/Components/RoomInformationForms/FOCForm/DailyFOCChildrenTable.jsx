@@ -97,8 +97,8 @@ const DailyFOCChildrenTable = ({ data = [], complimentaryTypes, onSuccess, isDat
         },
         {
             title: 'Total',
-            dataIndex: 'complimentaryTotal',
-            key: 'complimentaryTotal',
+            dataIndex: 'chargeAmount',
+            key: 'chargeAmount',
             align: 'right',
             render: (val) => <span>{val?.toLocaleString() ?? '0'}</span>,
         },

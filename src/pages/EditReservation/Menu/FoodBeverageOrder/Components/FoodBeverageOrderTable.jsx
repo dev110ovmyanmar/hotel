@@ -22,7 +22,12 @@ const FoodBeverageOrderTable = ({
       title: "ID",
       dataIndex: "id",
       key: "id",
-      width:90
+      width: 90
+    },
+    {
+      title: "Room No",
+      dataIndex: ["reservationRoom", "room", "roomNo"],
+      key: "reservationRoom",
     },
     {
       title: "Consumption Type",
@@ -31,14 +36,18 @@ const FoodBeverageOrderTable = ({
     },
     {
       title: "Order Type",
-      dataIndex: ["orderType", "name"],
       key: "orderType",
+      render: (record,text) => {
+        return (
+          <div className="flex-col items-center gap-1">
+              <div>{record?.orderType.name}</div>
+              {record?.orderType.code === "dine_in" && 
+                  <div>Table No - {record?.restaurantTable ? `(${record?.restaurantTable?.tableNo})` : null}</div>
+              }
+          </div>
+        )
+      }
     },
-    // {
-    //   title: "Restaurant Table",
-    //   dataIndex: ["restaurantTable", "tableNo"],
-    //   key: "restaurantTable",
-    // },
     {
       title: "Order Status",
       dataIndex: "orderStatus",
@@ -78,13 +87,13 @@ const FoodBeverageOrderTable = ({
             </Tooltip>
 
             {!isReadonlyStatus && (
-            <Tooltip title="Edit">
-              <EditOutlined
-                className="cursor-pointer text-amber-500 hover:text-amber-700"
-                onClick={() => onEdit(record)}
-              />
-            </Tooltip>
-            )} 
+              <Tooltip title="Edit">
+                <EditOutlined
+                  className="cursor-pointer text-amber-500 hover:text-amber-700"
+                  onClick={() => onEdit(record)}
+                />
+              </Tooltip>
+            )}
           </Space>
         );
       },

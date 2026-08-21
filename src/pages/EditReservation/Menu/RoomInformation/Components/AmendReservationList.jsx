@@ -162,16 +162,16 @@ export const getAmendReservationMenuItems = ({
                 setRatePlanUuid(record?.ratePlan?.uuid);
               },
             },
-            {
-              key: "remove_room",
-              label: "Remove Room",
-              icon: <MinusOutlined />,
-              disabled: checkDisabled("remove_room"),
-              ...getDisabledStyles("remove_room"),
-              onClick: () =>
-                !checkDisabled("remove_room") &&
-                handleAction("remove_room", record),
-            },
+            // {
+            //   key: "remove_room",
+            //   label: "Remove Room",
+            //   icon: <MinusOutlined />,
+            //   disabled: checkDisabled("remove_room"),
+            //   ...getDisabledStyles("remove_room"),
+            //   onClick: () =>
+            //     !checkDisabled("remove_room") &&
+            //     handleAction("remove_room", record),
+            // },
           ],
         },
         { type: "divider" },

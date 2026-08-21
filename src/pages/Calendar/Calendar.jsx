@@ -88,7 +88,7 @@ const Calendar = () => {
     setSelectedBooking({
       id: booking.reservationRoomUuid,
       reservationNo: booking.reservationNo,
-      name: booking.guest?.name || 'Unknown',
+      name: booking.guest?.fullName || 'Unknown',
       roomId: room.roomNo,
       roomFloor: room.floor,
       checkIn: booking.checkinDate,
