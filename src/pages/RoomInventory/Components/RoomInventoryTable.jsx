@@ -107,7 +107,7 @@ const RoomInventoryTable = ({
       key: "availableRooms",
       width: 150,
       align: "center",
-      render: (text) => <div>{text ? text : "-"}</div>,
+      render: (text) => <div>{text ? text : "0"}</div>,
     },
     {
       title: "Sold Rooms",
@@ -115,7 +115,7 @@ const RoomInventoryTable = ({
       key: "soldRooms",
       width: 150,
       align: "center",
-      render: (text) => <div>{text ? text : "-"}</div>,
+      render: (text) => <div>{text ? text : "0"}</div>,
     },
     {
       title: "Stop Sell",
