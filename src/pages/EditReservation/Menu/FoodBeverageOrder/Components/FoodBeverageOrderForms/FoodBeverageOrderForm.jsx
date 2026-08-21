@@ -50,7 +50,10 @@ const FoodBeverageOrderForm = ({
 }) => {
   const [form] = Form.useForm();
   const itemsValue = Form.useWatch("items", form);
-  const selectedOrderType = Form.useWatch("orderType", form)
+  const selectedOrderType = Form.useWatch("orderType", form);
+  const taxValue = Form.useWatch("tax", form);
+  const serviceChargesValue = Form.useWatch("serviceCharges",form)
+
   console.log(selectedOrderType, "selectedOrderType")
 
   const isAdd = mode === "add";
@@ -256,7 +259,7 @@ const FoodBeverageOrderForm = ({
     form.setFieldsValue({
       orderDate: customDate,
       orderTime: customDate,
-      room: reservationRoomNo,
+      room: fnbOrderDetails?.reservationRoom?.uuid,
       consumptionType: fnbOrderDetails.consumptionType?.uuid,
       orderType: fnbOrderDetails.orderType?.uuid,
       orderStatus: fnbOrderDetails.orderStatus?.uuid,
@@ -634,6 +637,7 @@ const FoodBeverageOrderForm = ({
                       valuePropName="checked"
                     >
                       <Checkbox
+                        className={isView && taxValue ? "custom-disabled-checkbox" : ""}
                       >
                         Tax
                       </Checkbox>
@@ -645,6 +649,7 @@ const FoodBeverageOrderForm = ({
                       valuePropName="checked"
                     >
                       <Checkbox
+                        className={isView && serviceChargesValue? "custom-disabled-checkbox" : ""}
                       >
                         Service Charges
                       </Checkbox>
