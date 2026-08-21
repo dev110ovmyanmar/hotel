@@ -37,7 +37,7 @@ const BookingBar = ({ bookingItem, room, day, days, CELL_WIDTH, handleBookingCli
   const style = STATUS_COLORS[booking.roomStatus];
   const checkInFmt = bookingCheckIn.format('DD MMM');
   const checkOutFmt = bookingCheckOut.format('DD MMM');
-  const guestName = booking.guest?.name || 'Unknown';
+  const guestName = booking.guest?.fullName || 'Unknown';
 
   const leftOffset = isContinuingLeft ? '0px' : '42.5px';
   let dynamicWidth = span * CELL_WIDTH;
