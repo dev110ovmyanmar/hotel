@@ -15,7 +15,7 @@ const RoomConfirmFinish = ({
                             <Tag color="blue">{i?.totalRooms} Room</Tag>
                         </div>
 
-                        <div className="flex">
+                        <div className="flex !m-0 !p-0">
                             <MdPeopleOutline fontSize={19} className="mt-1" />
                             <span className="text-md ml-1 mt-1">{i.adults}</span>
 
@@ -26,20 +26,20 @@ const RoomConfirmFinish = ({
                             {/* <div className="!text-md ml-1 mt-1">{i.extraBed} Extra Bed</div> */}
                         </div>
 
-                        <Divider />
+                        <Divider className="!my-3 !p-0"/>
 
                         {
                             i?.ratePlans?.map((rate) =>
-                                <div className="flex justify-between py-1">
-                                    <p>{rate?.name}</p>
+                                <div className="flex justify-between !m-0 !p-0">
+                                    <p >{rate?.name}</p>
                                     <p className="font-bold">{rate?.totalPrice?.toLocaleString()} MMK</p>
                                 </div>
                             )
                         }
 
-                        <Divider/>
+                        <Divider className="!my-3 !p-0"/>
                         
-                        <div className="flex justify-between mt-5">
+                        <div className="flex justify-between">
                             <p>Incentive</p>
                             <p className="font-bold text-red-500"> - {i?.incentiveTotal.toLocaleString()} MMK</p>
                         </div>

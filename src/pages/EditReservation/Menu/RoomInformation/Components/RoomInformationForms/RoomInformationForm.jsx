@@ -4,7 +4,10 @@ import dayjs from "dayjs";
 import { FaMoon } from "react-icons/fa";
 import FormButtons from "../../../../../../component/FormButtons/FormButtons";
 import { useApiMutation } from "../../../../../../hooks/useApiMutation";
-import { availabilitySearch, createReservationRoom } from "../../../../../../api/reservationSectionApi";
+import {
+  availabilitySearch,
+  createReservationRoom,
+} from "../../../../../../api/reservationSectionApi";
 import Toast from "../../../../../../component/Toast/Toast";
 import { darkModeStyle, textWhiteInDarkStyle } from "../../../../../../utils";
 
@@ -12,6 +15,7 @@ const { RangePicker } = DatePicker;
 
 const RoomInformationForm = ({
   data,
+  date,
   mode,
   drawerOpen,
   setDrawerOpen,
@@ -41,45 +45,42 @@ const RoomInformationForm = ({
 
   const availableRoomsData = roomAvailabilitySearchs.data?.rooms || [];
 
-  // Initialize form fields with incoming basic parent data
   useEffect(() => {
-    if (drawerOpen && data) {
-      isInitializing.current = true;
+    if (!drawerOpen || !date) return;
 
-      const today = dayjs();
-      const Day = today.format("YYYY-MM-DD");
+    isInitializing.current = true;
 
-      const checkinDateObj = data?.actualCheckin ? dayjs(data?.actualCheckin) : null;
-      let finalCheckin = null;
+    const today = dayjs().startOf("day");
 
-      if (checkinDateObj) {
-        finalCheckin = checkinDateObj.isBefore(today, "day") ? Day : checkinDateObj.format("YYYY-MM-DD");
-      }
+    const originalCheckin = date?.checkinDate
+      ? dayjs(date.checkinDate).startOf("day")
+      : today;
 
-      const checkoutDateObj = data?.actualCheckout ? dayjs(data?.actualCheckout) : null;
-      let finalCheckout = null;
+    const originalCheckout = date?.checkoutDate
+      ? dayjs(date.checkoutDate).startOf("day")
+      : null;
 
-      if (checkoutDateObj) {
-        finalCheckout = checkoutDateObj.isBefore(today, "day") ? Day : checkoutDateObj.format("YYYY-MM-DD");
-      }
+    const finalCheckin = originalCheckin.isBefore(today, "day")
+      ? today
+      : originalCheckin;
 
-      form.setFieldsValue({
-        dates: [
-          finalCheckin ? dayjs(finalCheckin) : null,
-          finalCheckout ? dayjs(finalCheckout) : null,
-        ],
-        roomTypeUuid: data?.roomType?.uuid || null,
-        ratePlanId: data?.roomRate?.id || null,
-        totalRooms: 1,
-      });
+    const finalCheckout =
+      originalCheckout && originalCheckout.isAfter(today, "day")
+        ? originalCheckout
+        : finalCheckin.add(1, "day");
 
-      setTimeout(() => {
-        isInitializing.current = false;
-      }, 100);
-    }
-  }, [drawerOpen, data, form]);
+    form.setFieldsValue({
+      dates: [finalCheckin, finalCheckout],
+      roomTypeUuid: data?.roomType?.uuid || null,
+      ratePlanId: data?.roomRate?.id || null,
+      totalRooms: 1,
+    });
 
-  // Fetch live availability options when dates are ready
+    setTimeout(() => {
+      isInitializing.current = false;
+    }, 100);
+  }, [drawerOpen, data, date, form]);
+
   useEffect(() => {
     if (drawerOpen && selectedDates?.[0] && selectedDates?.[1]) {
       if (!isInitializing.current) {
@@ -108,13 +109,19 @@ const RoomInformationForm = ({
   }, [drawerOpen, selectedDates, data]);
 
   const disabledDate = (current) => {
-    if (!current || !data) return false;
-    const today = dayjs().startOf("day");
-    let arrivalLimit = data.actualCheckin ? dayjs(data.actualCheckin).startOf("day") : today;
-    if (arrivalLimit.isBefore(today, "day")) {
-      arrivalLimit = today;
-    }
-    return current.isBefore(arrivalLimit, "day");
+    if (!current) return false;
+
+    const tomorrow = dayjs().startOf("day").add(1, "day");
+
+    const checkinDate = date?.checkinDate
+      ? dayjs(date.checkinDate).startOf("day")
+      : tomorrow;
+
+    const minDate = checkinDate.isBefore(tomorrow, "day")
+      ? tomorrow
+      : checkinDate;
+
+    return current.isBefore(minDate, "day");
   };
 
   const roomTypeOptions = availableRoomsData.map((item) => ({
@@ -122,7 +129,9 @@ const RoomInformationForm = ({
     value: item.roomType?.uuid,
   }));
 
-  const targetRoomDetails = availableRoomsData.find((item) => item.roomType?.uuid === selectedRoomUuid);
+  const targetRoomDetails = availableRoomsData.find(
+    (item) => item.roomType?.uuid === selectedRoomUuid,
+  );
   const maxAvailableRooms = targetRoomDetails?.totalRooms ?? 10;
 
   const ratePlanOptions = targetRoomDetails?.ratePlans
@@ -177,8 +186,16 @@ const RoomInformationForm = ({
       size={650}
       title={
         <div className="flex justify-between items-center">
-          <span className={`font-semibold text-lg text-slate-800 ${textWhiteInDarkStyle}`}>Create Room Information</span>
-          <FormButtons onClick={() => form.submit()} mode={mode} isPending={createReservationRooms.isPending} />
+          <span
+            className={`font-semibold text-lg text-slate-800 ${textWhiteInDarkStyle}`}
+          >
+            Create Room Information
+          </span>
+          <FormButtons
+            onClick={() => form.submit()}
+            mode={mode}
+            isPending={createReservationRooms.isPending}
+          />
         </div>
       }
     >
@@ -190,10 +207,16 @@ const RoomInformationForm = ({
             className="w-3/4 mb-0"
             rules={[{ required: true, message: "Please pick duration dates" }]}
           >
-            <RangePicker className="w-full"  showTime format="YYYY-MM-DD" disabledDate={disabledDate} />
+            <RangePicker
+              className="w-full"
+              format="YYYY-MM-DD"
+              disabledDate={disabledDate}
+            />
           </Form.Item>
 
-          <Form.Item className={`w-1/5 mb-0 bg-gray-200 rounded ${darkModeStyle} dark:!shadow-lg dark:shadow-gray-900 dark:border dark:border-gray-100`}>
+          <Form.Item
+            className={`w-1/5 mb-0 bg-gray-200 rounded ${darkModeStyle} dark:!shadow-lg dark:shadow-gray-900 dark:border dark:border-gray-100`}
+          >
             <div className="flex items-center gap-2 px-2 py-1 ml-3">
               <FaMoon className="text-xs" />
               <span className="text-xs font-bold whitespace-nowrap">
@@ -223,7 +246,11 @@ const RoomInformationForm = ({
             rules={[{ required: true, message: "Please select a room rate" }]}
           >
             <Select
-              placeholder={selectedRoomUuid ? "Select Room Rate Plan" : "Choose Room Type First"}
+              placeholder={
+                selectedRoomUuid
+                  ? "Select Room Rate Plan"
+                  : "Choose Room Type First"
+              }
               options={ratePlanOptions}
               disabled={!selectedRoomUuid}
             />
