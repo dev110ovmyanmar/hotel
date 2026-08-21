@@ -66,22 +66,31 @@ const FnbOrderFromBookingDetailList = ({ data }) => {
       },
     },
     {
-      title: "Fnb Order Type",
-      dataIndex: ["orderType","name"],
-      key: "orderTypeName",
+      title: "Order Type",
+      key: "orderType",
+      render: (record, text) => {
+        return (
+          <div className="flex-col">
+            <div>{record?.orderType.name}</div>
+            {record?.orderType.code === "dine_in" &&
+              <div>Table No - {record?.restaurantTable ? `(${record?.restaurantTable?.tableNo})` : null}</div>
+            }
+          </div>
+        )
+      }
     },
     {
       title: "Fnb Order Status",
       dataIndex: "orderStatus",
       key: "orderStatus",
       render: (status) => {
-        console.log(status,"statusfnborder")
+        console.log(status, "statusfnborder")
         return (
           status ? <ColorStatusTag status={status} /> : "-"
         );
       },
     },
-    
+
   ];
   return (
     <>

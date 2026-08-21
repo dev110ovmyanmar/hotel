@@ -353,7 +353,7 @@ const RateAndInventoryCalendar = () => {
             const avail = getAvailability(rt.id, dateStr);
             setSelectedCell({
                 roomTypeName: rt.name,
-                date: dayjs(dateStr).format('DD.MM.YYYY'),
+                date: dayjs(dateStr).format('DD-MM-YYYY'),
                 dateStr,
                 isPast: dayjs(dateStr).isBefore(dayjs(), 'day'),
                 rtId: rt.id,
@@ -377,7 +377,7 @@ const RateAndInventoryCalendar = () => {
     );
 
     const handleRestrictionEditOpen = useCallback(
-        (restriction, rp, rt, dateStr, isViewMode = false, isPast = false) => {
+        (restriction, rp, rt, dateStr, isViewMode = false, isPast = false, isToday = false) => {
             const vals = {
                 uuid: restriction?.uuid ?? null,
                 roomTypeUuid: rt.uuid,
@@ -392,6 +392,7 @@ const RateAndInventoryCalendar = () => {
                 stopSell: !!restriction?.stopSell,
                 isViewMode,
                 isPast,
+                isToday,
             };
             setRestrictionEditModal(vals);
             restrictionForm.setFieldsValue({
@@ -723,6 +724,7 @@ const RateAndInventoryCalendar = () => {
                 onFinish={handleRestrictionEditFinish}
                 isViewMode={restrictionEditModal?.isViewMode}
                 isPast={restrictionEditModal?.isPast}
+                isToday={restrictionEditModal?.isToday}
                 dateStr={restrictionEditModal?.dateStr}
                 modalData={restrictionEditModal}
                 loadingStates={loadingStates}

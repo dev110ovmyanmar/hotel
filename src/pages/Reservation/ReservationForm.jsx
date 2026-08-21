@@ -156,8 +156,21 @@ const ReservationForm = ({
     }, [totalNights, form])
 
     // Range Picker
-    const disabledDate = current => {
-        return current < dayjs().startOf('day');
+    const disabledDate = (current, info) => {
+        const today = dayjs().startOf("day");
+
+        if (current.isBefore(today, "day")) {
+            return true;
+        }
+
+        if (
+            info.from &&
+            current.isSame(info.from, "day")
+        ) {
+            return true;
+        }
+
+        return false;
     };
 
     return (
@@ -200,7 +213,7 @@ const ReservationForm = ({
                     }
                 </div>
 
-                <div className="flex flex-wrap gap-x-2">
+                <div className="flex flex-wrap gap-x-2 order-info-forms">
                     <div className="w-100 flex-auto md:flex-initial">
                         <Form.Item
                             name="filter"
@@ -252,7 +265,7 @@ const ReservationForm = ({
                         </Form.Item>
                     </div>
 
-                    <div className="w-50 md:w-42 lg:w-40 flex-auto md:flex-initial">
+                    <div className="w-60 md:w-52 lg:w-50 flex-auto md:flex-initial">
                         <Form.Item
                             name="bookedVia"
                             label={
@@ -283,7 +296,7 @@ const ReservationForm = ({
                         </Form.Item>
                     </div>
 
-                    <div className="w-50 md:w-42 lg:w-40 flex-auto md:flex-initial">
+                    <div className="w-60 md:w-52 lg:w-50 flex-auto md:flex-initial">
                         <Form.Item
                             name="sourceType"
                             label={
@@ -315,7 +328,7 @@ const ReservationForm = ({
 
                     </div>
 
-                    <div className="w-50 md:w-42 lg:w-40 flex-auto md:flex-initial">
+                    <div className="w-60 md:w-52 lg:w-50 flex-auto md:flex-initial">
                         {
                             (selectedSourceType === "Agency" ||
                                 selectedSourceType === "Company") && (
@@ -355,7 +368,7 @@ const ReservationForm = ({
                     </div>
                 </div>
 
-                <div className="flex gap-2 sm:flex-wrap w-[80%] lg:w-[75%] sm:w-[100%]">
+                <div className="flex gap-2 sm:flex-wrap w-[80%] lg:w-[75%] sm:w-[100%] order-info-forms">
                     {
                         (!afterRoomConfirm || selectedRoomTypes?.length > 0) &&
                         <div className="w-70 lg:w-65 sm:w-100 flex-auto">
@@ -382,7 +395,7 @@ const ReservationForm = ({
 
                     {
                         (!afterRoomConfirm || selectedRatePlans?.length > 0) &&
-                        <div className="w-10 lg:w-15 sm:w-100 flex-auto">
+                        <div className="w-20 lg:w-35 sm:w-100 flex-auto">
                             <Form.Item
                                 name="ratePlan"
                                 label={

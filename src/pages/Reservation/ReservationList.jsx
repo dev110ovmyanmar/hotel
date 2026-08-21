@@ -458,7 +458,6 @@ const ReservationList = () => {
                   setGuestDrawerOpen(true),
                     createContactForm.resetFields()
                 }}
-                className="my-4"
               >
                 Add Contact Person <PlusOutlined />
               </Button>
