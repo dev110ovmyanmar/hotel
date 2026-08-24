@@ -347,7 +347,7 @@ export default function DateChangeModal({
                 {
                     showSameDateMessage
                         ?
-                        <div className={`flex justify-between border-2 border-red-300 rounded p-2 shadow-md !backdrop-blur-md `}>
+                        <div className={`flex justify-between border-2 border-red-300 rounded p-2 shadow-md !backdrop-blur-md !mb-6 !-mt-3`}>
                             <div className='text-red-500 !text-xs'>The selected date is the same as the current date. Please select another date.</div>
                         </div>
                         :
@@ -359,10 +359,11 @@ export default function DateChangeModal({
                     isDateCheckAvailable !== null &&
                     watchCheckInDate &&
                     watchCheckOutDate &&
-                    <div className={`flex justify-between border-2 rounded p-2 shadow-lg !backdrop-blur-md ${isDateCheckAvailable === true ? 'border-green-300 ' : 'border-red-300'}`}>
-                        <div className='flex !font-bold'>
-                            <div>{watchCheckInDate?.format("DD MMM YYYY")} - </div>
-                            <div> {watchCheckOutDate?.format("DD MMM YYYY")}</div>
+                    <div className={`flex justify-between border-2 rounded p-2 shadow-lg !backdrop-blur-md !mb-6 !-mt-3 ${isDateCheckAvailable === true ? 'border-green-300 ' : 'border-red-300'}`}>
+                        <div className='flex gap-2 !font-bold'>
+                            <div>{watchCheckInDate?.format("DD MMM YYYY")}</div>
+                            <div>-</div>
+                            <div>{`${watchCheckOutDate?.format("DD MMM YYYY")}`}</div>
                         </div>
 
                         <Tag color={isDateCheckAvailable ? "green" : "red"}
