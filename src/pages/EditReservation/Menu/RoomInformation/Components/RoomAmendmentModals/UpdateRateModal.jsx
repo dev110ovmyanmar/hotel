@@ -26,6 +26,7 @@ export default function UpdateRateModal({
   rateChangeUuid,
 }) {
   const [form] = Form.useForm();
+  const watchRates = Form.useWatch("rates", form);
 
   const createRoomAmendmentMutation = useApiMutation({
     mutationFn: createRoomAmendment,
@@ -135,34 +136,34 @@ export default function UpdateRateModal({
       footer={
         currentStep === "form"
           ? [
-              <Button key="back" onClick={handleCloseReset}>
-                Cancel
-              </Button>,
-              <Button
-                key="submit"
-                type="primary"
-                onClick={handleProceedToSummary}
-              >
-                Review Summary
-              </Button>,
-            ]
+            <Button key="back" onClick={handleCloseReset}>
+              Cancel
+            </Button>,
+            <Button
+              key="submit"
+              type="primary"
+              onClick={handleProceedToSummary}
+            >
+              Review Summary
+            </Button>,
+          ]
           : [
-              <Button
-                key="back-to-form"
-                disabled={isSubmitting}
-                onClick={() => setCurrentStep("form")}
-              >
-                Modify Input
-              </Button>,
-              <Button
-                key="confirm"
-                type="primary"
-                loading={isSubmitting}
-                onClick={handleFinalCommit}
-              >
-                Apply Rate Updates
-              </Button>,
-            ]
+            <Button
+              key="back-to-form"
+              disabled={isSubmitting}
+              onClick={() => setCurrentStep("form")}
+            >
+              Modify Input
+            </Button>,
+            <Button
+              key="confirm"
+              type="primary"
+              loading={isSubmitting}
+              onClick={handleFinalCommit}
+            >
+              Apply Rate Updates
+            </Button>,
+          ]
       }
     >
       {/* Header Identity Information */}
@@ -177,7 +178,7 @@ export default function UpdateRateModal({
       {/* Context window visual helper */}
       {boundsStart && boundsEnd && (
         <div className="text-xs text-sky-600 dark:text-sky-800  bg-sky-100 dark:bg-sky-50 inline-block px-2 py-1 mt-1 rounded font-medium">
-          Valid Booking Windows: {boundsStart.format("DD MMM YYYY")} –{" "}
+          {boundsStart.format("DD MMM YYYY")} –{" "}
           {boundsEnd.format("DD MMM YYYY")}
         </div>
       )}
@@ -208,54 +209,61 @@ export default function UpdateRateModal({
                 </div>
 
                 <div className="max-h-[280px] overflow-y-auto mb-4 pr-1">
-                  {fields.map(({ key, name, ...restField }) => (
-                    <div
-                      key={key}
-                      className={`grid grid-cols-12 gap-4 items-center mb-3 bg-slate-50 p-3 rounded-md ${darkModeStyle}`}
-                    >
-                      {/* DYNAMIC EDITABLE DATE PICKER (PRE-FILLED) */}
-                      <div className="col-span-6">
-                        <Form.Item
-                          {...restField}
-                          name={[name, "date"]}
-                          className="m-0"
-                          getValueProps={(value) => ({
-                            value: value ? value.format("YYYY-MM-DD") : "",
-                          })}
-                        >
-                          <Input
-                            readOnly
-                            className="w-full border-none bg-transparent pointer-events-none font-medium text-slate-700 shadow-none focus:shadow-none"
-                          />
-                        </Form.Item>
-                      </div>
+                  {fields.map(({ key, name, ...restField }) => {
+                    const currentDate = watchRates?.[name]?.date;
+                    console.log(watchRates,"currentDate")
+                    const isPriceDisabled = currentDate?.isBefore(dayjs(), "day");
+                    return (
+                      <div
+                        key={key}
+                        className={`grid grid-cols-12 gap-4 items-center mb-3 bg-slate-50 p-3 rounded-md ${darkModeStyle}`}
+                      >
+                        {/* DYNAMIC EDITABLE DATE PICKER (PRE-FILLED) */}
+                        <div className="col-span-6">
+                          <Form.Item
+                            {...restField}
+                            name={[name, "date"]}
+                            className="m-0"
+                            getValueProps={(value) => ({
+                              value: value ? value.format("YYYY-MM-DD") : "",
+                            })}
+                          >
+                            <Input
+                              readOnly
+                              className="w-full border-none bg-transparent pointer-events-none font-medium text-slate-700 shadow-none focus:shadow-none"
+                            />
+                          </Form.Item>
+                        </div>
 
-                      {/* DYNAMIC EDITABLE RATE PRICE INPUT (PRE-FILLED) */}
-                      <div className="col-span-6">
-                        <Form.Item
-                          {...restField}
-                          name={[name, "price"]}
-                          rules={[{ required: true, message: "Enter Price" }]}
-                          className="m-0"
-                        >
-                          <InputNumber
-                            className="!w-full"
-                            placeholder="Rate Amount"
-                            formatter={(value) =>
-                              `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-                            }
-                            parser={(value) => value.replace(/[\s,]/g, "")}
-                            min={0}
-                            addonBefore={
-                              <span className="text-xs font-semibold text-slate-500 dark:text-slate-300">
-                                MMK
-                              </span>
-                            }
-                          />
-                        </Form.Item>
+                        {/* DYNAMIC EDITABLE RATE PRICE INPUT (PRE-FILLED) */}
+                        <div className="col-span-6">
+                          <Form.Item
+                            {...restField}
+                            name={[name, "price"]}
+                            rules={[{ required: true, message: "Enter Price" }]}
+                            className="m-0"
+                          
+                          >
+                            <InputNumber
+                              className="!w-full"
+                              placeholder="Rate Amount"
+                              formatter={(value) =>
+                                `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                              }
+                              parser={(value) => value.replace(/[\s,]/g, "")}
+                              min={0}
+                              addonBefore={
+                                <span className="text-xs font-semibold text-slate-500 dark:text-slate-300">
+                                  MMK
+                                </span>
+                              }
+                              disabled={isPriceDisabled}
+                            />
+                          </Form.Item>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    )
+                  })}
                 </div>
               </>
             )}
@@ -311,11 +319,10 @@ export default function UpdateRateModal({
                   return (
                     <tr
                       key={index}
-                      className={`border-b border-slate-200 last:border-b-0 transition-colors ${
-                        isChanged
-                          ? "bg-amber-50 hover:bg-amber-100/70"
-                          : "hover:bg-slate-50"
-                      }`}
+                      className={`border-b border-slate-200 last:border-b-0 transition-colors ${isChanged
+                        ? "bg-amber-50 hover:bg-amber-100/70"
+                        : "hover:bg-slate-50"
+                        }`}
                     >
                       <td className="p-2.5 font-medium text-slate-500">
                         {dayjs(item.date).format("DD MMM YYYY")}
