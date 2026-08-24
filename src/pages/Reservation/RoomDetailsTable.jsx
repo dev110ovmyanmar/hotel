@@ -37,8 +37,8 @@ const RoomDetailsTable = ({
                 <div className="my-5">
                     <span className="text-red-500">*** </span>
                     <span>
-                        Children under 6 years stay free in existing bedding; children
-                        aged 6+ must use extra bed.
+                        Children under 5 years stay free in existing bedding; children
+                        aged 10+ must use extra bed.
                     </span>
                 </div>
 
