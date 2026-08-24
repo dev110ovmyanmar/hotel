@@ -201,6 +201,7 @@
 .dark .ant-checkbox-disabled+span {
   --ant-color-text-disabled: #ffffff;
 }
+
 .ant-input-group .ant-input-group-addon:last-child {
   border-start-end-radius: 5px;
   border-end-end-radius: 5px;
@@ -225,6 +226,12 @@
 .css-var-_r_0_ {
   --ant-color-bg-container-disabled: rgba(0, 0, 0, 0);
   --ant-color-text-disabled: #181717;
+  --ant-border-radius-lg: 5px;
+}
+
+.dark .css-var-_r_0_ {
+  --ant-color-bg-container-disabled: rgba(0, 0, 0, 0);
+  --ant-color-text-disabled: #948e8e;
   --ant-border-radius-lg: 5px;
 }
 
@@ -724,7 +731,7 @@ span .ant-upload {
   border-bottom: 1px solid rgba(16, 185, 129, 0.35) !important;
 }
 
-.void-folioLine-row td{
+.void-folioLine-row td {
   background-color: rgba(239, 68, 68, 0.10) !important;
   backdrop-filter: blur(6px) !important;
   border-top: 1px solid rgba(239, 68, 68, 0.3) !important;
@@ -950,8 +957,18 @@ span .ant-upload {
   color: #c7c7c8;
 }
 
-.custom-disabled-checkbox {
+/* .custom-disabled-checkbox {
   --ant-color-bg-container-disabled: #1274fd;
+} */
+
+.custom-checkbox-icon {
+  background-color: #1274fd !important;
+  border-color: #1274fd !important;
+}
+
+/* The check mark */
+.custom-checkbox-icon::after {
+  border-color: #fff !important;
 }
 
 .css-var-_r_0_.ant-radio-css-var {
