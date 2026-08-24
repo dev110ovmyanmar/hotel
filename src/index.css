@@ -987,3 +987,10 @@ span .ant-upload {
 .order-info-forms .ant-form-item-label {
   padding-bottom: 2px;
 }
+
+.ant-picker-time-panel-cell-disabled .ant-picker-time-panel-cell-inner {
+  color: #999 !important;
+  background-color: #f0f0f0 !important;
+  cursor: not-allowed !important;
+  opacity: 1 !important;
+}
