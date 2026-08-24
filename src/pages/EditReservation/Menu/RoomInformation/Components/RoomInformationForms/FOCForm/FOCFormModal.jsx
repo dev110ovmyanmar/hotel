@@ -21,6 +21,27 @@ const FOCFormModal = ({
                 : `Child ${record?.childSequence ?? ''}`
     }`
 
+    // Handle form submission
+    const handleSubmit = () => {
+        form.validateFields()
+            .then((values) => {
+                // Create payload and clean it
+                const payload = { ...values };
+
+                // Remove complimentary fields if switch is OFF
+                if (!payload.isComplimentary) {
+                    delete payload.complimentaryType;
+                    delete payload.complimentaryReason;
+                }
+
+                // Call parent onSubmit with cleaned payload
+                onSubmit(payload);
+            })
+            .catch((error) => {
+                console.error('Validation failed:', error);
+            });
+    };
+
     return (
         <Modal
             title={title}
@@ -35,40 +56,61 @@ const FOCFormModal = ({
                     type="primary"
                     loading={loading}
                     disabled={!hasChanges}
-                    onClick={onSubmit}
+                    onClick={handleSubmit}  // Use custom handler
                 >
                     Save
                 </Button>,
             ]}
         >
-            <Form form={form} layout="vertical" className="mt-4" onValuesChange={onValuesChange}>
-                <Form.Item
-                    name="complimentaryType"
-                    label="Complimentary Type"
-                    rules={[{ required: true, message: 'Please select a complimentary type' }]}
-                >
-                    <Select placeholder="Select type">
-                        {complimentaryTypes?.map((type) => (
-                            <Select.Option key={type.code} value={type.code}>
-                                {type.name}
-                            </Select.Option>
-                        ))}
-                    </Select>
-                </Form.Item>
-
-                <Form.Item
-                    name="complimentaryReason"
-                    label="Reason"
-                >
-                    <Input.TextArea rows={3} placeholder="Enter reason" />
-                </Form.Item>
-
+            <Form 
+                form={form} 
+                layout="vertical" 
+                className="mt-4" 
+                onValuesChange={onValuesChange}
+            >
                 <Form.Item
                     name="isComplimentary"
                     label="Is Complimentary"
                     valuePropName="checked"
                 >
                     <Switch />
+                </Form.Item>
+
+                {/* Conditional fields - only shown when switch is ON */}
+                <Form.Item
+                    noStyle
+                    shouldUpdate={(prev, curr) => 
+                        prev.isComplimentary !== curr.isComplimentary
+                    }
+                >
+                    {({ getFieldValue }) => {
+                        const isComplimentary = getFieldValue('isComplimentary');
+                        return isComplimentary ? (
+                            <>
+                                <Form.Item
+                                    name="complimentaryType"
+                                    label="Complimentary Type"
+                                    rules={[{ required: true, message: 'Please select a complimentary type' }]}
+                                >
+                                    <Select placeholder="Select type">
+                                        {complimentaryTypes?.map((type) => (
+                                            <Option key={type.code} value={type.code}>
+                                                {type.name}
+                                            </Option>
+                                        ))}
+                                    </Select>
+                                </Form.Item>
+
+                                <Form.Item
+                                    name="complimentaryReason"
+                                    label="Reason"
+                                    rules={[{ required: true, message: 'Please enter a reason' }]}
+                                >
+                                    <Input.TextArea rows={3} placeholder="Enter reason" />
+                                </Form.Item>
+                            </>
+                        ) : null;
+                    }}
                 </Form.Item>
             </Form>
         </Modal>
