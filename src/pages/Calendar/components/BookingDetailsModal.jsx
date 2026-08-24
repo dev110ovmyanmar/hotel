@@ -2,7 +2,18 @@ import React from 'react';
 import { Button, Badge, Modal, Descriptions } from 'antd';
 import dayjs from 'dayjs';
 import { STATUS_COLORS } from '../Calendar';
+import ColorStatusTag from '../../../component/ColorStatusTag/ColorStatusTag';
 import { Link } from 'react-router-dom';
+
+const STATUS_NAMES = {
+  checked_in: 'Checked In',
+  checked_out: 'Checked Out',
+  pending: 'Pending',
+  confirmed: 'Confirmed',
+  cancelled: 'Cancelled',
+  booked: 'Booked',
+  no_show: 'No Show',
+};
 
 const BookingDetailsModal = ({ isModalOpen, handleModalClose, selectedBooking }) => (
   <Modal
@@ -39,10 +50,7 @@ const BookingDetailsModal = ({ isModalOpen, handleModalClose, selectedBooking })
         <Descriptions.Item label="Nights">{selectedBooking.nights} Night(s)</Descriptions.Item>
         <Descriptions.Item label="Guests">{selectedBooking.guests} Person(s)</Descriptions.Item>
         <Descriptions.Item label="Status">
-          <Badge
-            color={STATUS_COLORS[selectedBooking.status]?.bg || '#ccc'}
-            text={<span style={{ textTransform: 'capitalize', fontWeight: 500 }}>{selectedBooking.status}</span>}
-          />
+          <ColorStatusTag status={{ code: selectedBooking.status, name: STATUS_NAMES[selectedBooking.status] }} />
         </Descriptions.Item>
       </Descriptions>
     )}
