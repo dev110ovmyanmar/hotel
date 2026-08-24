@@ -10,8 +10,8 @@ const GuestInformationTable = ({
     const columns = [
         {
             title: "Name",
-            dataIndex: "name",
-            key: "name",
+            dataIndex: "fullName",
+            key: "fullName",
             render: (text) => <div>{text}</div>
         },
         {

@@ -10,6 +10,8 @@ import {
   TimePicker,
   Select,
   Table,
+  Empty,
+  Spin,
 } from "antd";
 import dayjs from "dayjs";
 import { getFormattedDate } from "../../../../../../utils";
@@ -34,6 +36,7 @@ const SearchEventFacilityOrderForm = ({
 }) => {
   const [form] = Form.useForm();
   const hasStartTime = Form.useWatch("startTime", form);
+  const hasEndTime = Form.useWatch("endTime", form);
   const [showTable, setShowTable] = useState(false);
   const [tableData, setTableData] = useState([]);
 
@@ -45,23 +48,80 @@ const SearchEventFacilityOrderForm = ({
   const [selectedBooking, setSelectedBooking] = useState();
 
   const [isSearched, setIsSearched] = useState(false);
+  const [searchTrigger, setSearchTrigger] = useState(0);
 
-  const { data: bookingSearch, isPending: bookingSearchPending } = useApiQuery({
+
+  const { data: bookingSearch, isFetching: bookingSearchPending } = useApiQuery({
     fetchQueryName: searchValues?.eventDate
-      ? ["facility-booking-search", searchValues]
+      ? ["facility-booking-search", searchValues, searchTrigger]
       : ["facility-booking-search"],
     fetchQueryFunction: () => {
       if (!searchValues?.eventDate) return null;
       return facilityBookingSearch(searchValues);
     },
     options: {
-      enabled: isSearched && !!searchValues?.eventDate,
+      enabled: !!searchValues?.eventDate && searchTrigger > 0,
     },
   });
 
   useEffect(() => {
-    setTableData(bookingSearch);
+    if (bookingSearch) {
+      setTableData(bookingSearch);
+      setShowTable(true);
+    }
   }, [bookingSearch]);
+
+  const disabledEndTime = () => {
+    if (!hasStartTime) {
+      return {};
+    }
+
+    return {
+      disabledHours: () =>
+        Array.from({ length: 24 }, (_, hour) =>
+          hour < hasStartTime.hour() ? hour : null
+        ).filter(hour => hour !== null),
+
+      disabledMinutes: (selectedHour) => {
+        if (selectedHour === hasStartTime.hour()) {
+          return Array.from(
+            { length: 60 },
+            (_, minute) => minute
+          ).filter(
+            minute => minute <= hasStartTime.minute()
+          );
+        }
+
+        return [];
+      },
+    };
+  };
+
+  const disabledStartTime = () => {
+    if (!hasEndTime) {
+      return {};
+    }
+
+    return {
+      disabledHours: () =>
+        Array.from({ length: 24 }, (_, hour) =>
+          hour > hasEndTime.hour() ? hour : null
+        ).filter(hour => hour !== null),
+
+      disabledMinutes: (selectedHour) => {
+        if (selectedHour === hasEndTime.hour()) {
+          return Array.from(
+            { length: 60 },
+            (_, minute) => minute
+          ).filter(
+            minute => minute >= hasEndTime.minute()
+          );
+        }
+
+        return [];
+      },
+    };
+  };
 
   const onFinish = (values) => {
     const modifiedValues = {
@@ -75,8 +135,9 @@ const SearchEventFacilityOrderForm = ({
     };
 
     setSearchValues(modifiedValues);
-    setIsSearched(true);
-    setShowTable(true);
+    // setIsSearched(false);
+    setShowTable(false);
+    setSearchTrigger((prev) => prev + 1);
   };
 
   const columns = [
@@ -222,14 +283,32 @@ const SearchEventFacilityOrderForm = ({
     >
       <div className="border border-gray-200 shadow-sm rounded-lg p-4 ">
         <Form layout="vertical" form={form} onFinish={onFinish}>
-          <Form.Item label="Event Date" name="eventDate" required>
+          <Form.Item 
+            label="Event Date" 
+            name="eventDate"
+            rules={[
+              {
+                required: true,
+                message:"Event Date is required."
+              }
+            ]}
+             >
             <DatePicker className="w-full" />
           </Form.Item>
 
           <Row gutter={16}>
             <Col span={12}>
-              <Form.Item label="Start Time" name="startTime">
-                <TimePicker className="w-full" format="HH:mm" />
+              <Form.Item
+                label="Start Time"
+                name="startTime"
+                rules={[
+                  {
+                    required: hasEndTime ? true : false,
+                    message: "Select Start Time"
+                  }
+                ]}
+              >
+                <TimePicker className="w-full" format="HH:mm" disabledTime={disabledStartTime} />
               </Form.Item>
             </Col>
             <Col span={12}>
@@ -243,7 +322,7 @@ const SearchEventFacilityOrderForm = ({
                   },
                 ]}
               >
-                <TimePicker className="w-full" format="HH:mm" />
+                <TimePicker className="w-full" format="HH:mm" disabledTime={disabledEndTime} />
               </Form.Item>
             </Col>
           </Row>
@@ -266,25 +345,43 @@ const SearchEventFacilityOrderForm = ({
           </Row>
 
           <div className="flex justify-end gap-2">
-            <Button type="primary" htmlType="submit">
+            <Button type="primary" htmlType="submit" loading={bookingSearchPending} >
               Search
             </Button>
           </div>
         </Form>
       </div>
 
-      {showTable && (
-        <div className="mt-6">
-          <Table
-            columns={columns}
-            dataSource={tableData}
-            rowKey="id"
-            pagination={false}
-            size="small"
-            className="custom-table-font"
-          />
-        </div>
-      )}
+      {
+        bookingSearchPending
+          ?
+          <div className="w-full flex justify-center items-center mt-6">
+            <Spin></Spin>
+          </div>
+          :
+
+          showTable &&
+          <div className="mt-6">
+            {
+              bookingSearch?.length !== 0
+                ?
+                <Table
+                  columns={columns}
+                  dataSource={tableData}
+                  rowKey="id"
+                  pagination={false}
+                  size="small"
+                  className="custom-table-font"
+                />
+                :
+                <div className="border border-gray-200 p-5 shadow-md rounded">
+                  <Empty description="No Event Availabe" />
+                </div>
+            }
+          </div>
+
+
+      }
 
       <SearchByModal
         open={openSearchModal}
