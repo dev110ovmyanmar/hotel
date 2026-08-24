@@ -23,7 +23,7 @@ const ContactPersonCard = ({ data }) => {
       </Row>
 
       <Row justify="space-between" className="mt-3">
-        <Text className="capitalize">{reservation?.guest?.name}</Text>
+        <Text className="capitalize">{reservation?.guest?.fullName}</Text>
         <Text>{reservation?.guest?.phone}</Text>
       </Row>
     </Card>

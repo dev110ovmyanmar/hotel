@@ -54,19 +54,6 @@ const ServiceTable = ({
       key: "serviceStages",
       render: (text) => <div>{text ? text : "_"}</div>,
     },
-    // {
-    //   title: "Complimentary",
-    //   dataIndex: "isComplimentary",
-    //   key: "isComplimentary",
-    //   align: "center",
-    //   width: 135,
-    //   render: (text) => (
-    //     <div className={text === true ? "text-[#389E0D]" : "text-[#CF1322]"}>
-    //       {text === true ? "Yes" : "No"}
-    //     </div>
-    //   ),
-    // },
-
     {
       title: "Status",
       dataIndex: ["status", "name"],
@@ -80,13 +67,7 @@ const ServiceTable = ({
       key: "billingType",
       width: 120,
     },
-    // {
-    //   title: "Price (MMK)",
-    //   dataIndex: "basePrice",
-    //   key: "basePrice",
-    //   align: "end",
-    //   render: (text) => <PriceTag value={text} />,
-    // },
+
     {
       title: "Price (MMK)",
       dataIndex: "basePrice",
