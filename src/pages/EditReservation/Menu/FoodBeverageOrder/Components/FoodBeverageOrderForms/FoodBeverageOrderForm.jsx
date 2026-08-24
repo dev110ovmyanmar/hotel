@@ -295,6 +295,7 @@ const FoodBeverageOrderForm = ({
         serviceCharges: false
       })
     }
+
   }, [allStatuses, form]);
 
   const currentOrderStatus = fnbOrderDetails?.orderStatus?.code;
@@ -725,13 +726,11 @@ const FoodBeverageOrderForm = ({
                   {(fields, { remove, add }) => (
                     <div>
                       {fields.map(({ key, name }) => {
+                        isAdd && form.setFieldValue(["items", name, "pricePerQty"], 0);
+
                         const selectedMenuItem = data?.menu_items?.find(
                           (addon) => addon?.uuid === menuUuid[name]
                         );
-
-                        const hasSelectedModifiers =
-                          fnbOrderDetails?.fnbOrderItems?.[name]
-                            ?.fnbOrderItemModifiers?.length > 0;
 
                         const showModifier = selectedMenuItem?.modifiers?.length > 0;
                         const currentMenu = itemsValue?.[name]?.menu;
@@ -1055,8 +1054,9 @@ const FoodBeverageOrderForm = ({
                                                     className={(isView && itemsValue?.[name].modifier.includes(modify.uuid)) || !isCurrentCardEditable ? "custom-disabled-checkbox" : ""}
                                                     classNames={{
                                                       icon:
-                                                        (isView && itemsValue?.[name]?.modifier?.includes(modify.uuid)) ||
-                                                          !isCurrentCardEditable
+                                                        (isView && itemsValue?.[name]?.modifier?.includes(modify.uuid))
+                                                        ? "custom-checkbox-icon"
+                                                        : isEdit && itemsValue?.[name]?.modifier?.includes(modify.uuid)
                                                           ? "custom-checkbox-icon"
                                                           : "",
                                                     }}
@@ -1100,14 +1100,9 @@ const FoodBeverageOrderForm = ({
                                 null
                               }
                             </Card>
-
-
                           </>
-
                         );
                       })}
-
-
 
                       {
                         isEdit &&
@@ -1119,6 +1114,7 @@ const FoodBeverageOrderForm = ({
                             add({
                               menu: undefined,
                               quantity: 0,
+                              pricePerQty: 0,
                               modifier: [],
                               modifierQuantities: {},
                             });
@@ -1149,6 +1145,7 @@ const FoodBeverageOrderForm = ({
                             add({
                               menu: undefined,
                               quantity: 0,
+                              pricePerQty: 0,
                               modifier: [],
                               modifierQuantities: {},
                             });

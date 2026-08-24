@@ -81,6 +81,25 @@ const RoomInformationForm = ({
     }, 100);
   }, [drawerOpen, data, date, form]);
 
+const disabledDate = (current, info) => {
+  if (!current) return false;
+
+  const today = dayjs().startOf("day");
+
+  if (current.isBefore(today, "day")) {
+    return true;
+  }
+  if (info?.from) {
+    const checkinDate = dayjs(info.from).startOf("day");
+
+    if (current.isSame(checkinDate, "day")) {
+      return true;
+    }
+  }
+
+  return false;
+};
+
   useEffect(() => {
     if (drawerOpen && selectedDates?.[0] && selectedDates?.[1]) {
       if (!isInitializing.current) {
@@ -107,22 +126,6 @@ const RoomInformationForm = ({
       roomAvailabilitySearchs.mutate(payload);
     }
   }, [drawerOpen, selectedDates, data]);
-
-  const disabledDate = (current) => {
-    if (!current) return false;
-
-    const tomorrow = dayjs().startOf("day").add(1, "day");
-
-    const checkinDate = date?.checkinDate
-      ? dayjs(date.checkinDate).startOf("day")
-      : tomorrow;
-
-    const minDate = checkinDate.isBefore(tomorrow, "day")
-      ? tomorrow
-      : checkinDate;
-
-    return current.isBefore(minDate, "day");
-  };
 
   const roomTypeOptions = availableRoomsData.map((item) => ({
     label: `${item.roomType?.name} (${item.totalRooms} available)`,
