@@ -32,10 +32,10 @@ const AdjustmentDrawer = ({
   const blockReason = isVoided
     ? "Cannot adjust a voided line"
     : isChildLine
-    ? "Cannot adjust a child line"
-    : isAdjustment
-    ? "Cannot adjust an adjustment line"
-    : null;
+      ? "Cannot adjust a child line"
+      : isAdjustment
+        ? "Cannot adjust an adjustment line"
+        : null;
 
   useEffect(() => {
     if (open && lineData) {
@@ -59,7 +59,7 @@ const AdjustmentDrawer = ({
       const max = lineData?.grandTotal || 0;
       if ((values.amount || 0) > max) {
         errors.push(
-          `Credit amount (${(values.amount || 0).toLocaleString()}) exceeds original (${max.toLocaleString()})`
+          `Credit amount (${(values.amount || 0).toLocaleString()}) exceeds original (${max.toLocaleString()})`,
         );
       }
     }
@@ -122,8 +122,12 @@ const AdjustmentDrawer = ({
               </Tag>
             </div>
             <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
-              <PriceTag value={Number(lineData.grandTotal)} />
-              <span>{dayjs(lineData.postedAt).format("DD-MM-YYYY")}</span>
+              {/* <PriceTag value={Number(lineData.grandTotal)} MMK/>  */}
+              <div className="flex items-center gap-1">
+                <PriceTag value={Number(lineData.grandTotal)} />
+                <span>(MMK)</span>
+              </div>
+              <span>{dayjs(lineData.postedAt).format("DD MMM YYYY")}</span>
             </div>
           </div>
 
@@ -182,20 +186,11 @@ const AdjustmentDrawer = ({
                 label="Type"
                 rules={[{ required: true, message: "Required" }]}
               >
-                <Radio.Group
-                  className="w-full"
-                  optionType="button"
-                >
-                  <Radio.Button
-                    value="debit"
-                    style={{margin: 2}}
-                  >
+                <Radio.Group className="w-full" optionType="button">
+                  <Radio.Button value="debit" style={{ margin: 2 }}>
                     Debit
                   </Radio.Button>
-                  <Radio.Button
-                    value="credit"
-                    style={{margin: 2}}
-                  >
+                  <Radio.Button value="credit" style={{ margin: 2 }}>
                     Credit
                   </Radio.Button>
                 </Radio.Group>

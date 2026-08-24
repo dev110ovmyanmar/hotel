@@ -33,10 +33,10 @@ const RebateDrawer = ({
   const blockReason = isVoided
     ? "Cannot rebate a voided line"
     : isChildLine
-    ? "Cannot rebate a child line"
-    : isAdjustment
-    ? "Cannot rebate an adjustment line"
-    : null;
+      ? "Cannot rebate a child line"
+      : isAdjustment
+        ? "Cannot rebate an adjustment line"
+        : null;
 
   useEffect(() => {
     if (open && lineData) {
@@ -68,7 +68,7 @@ const RebateDrawer = ({
         const max = lineData?.grandTotal || 0;
         if (values.amount > max) {
           errors.push(
-            `Amount (${values.amount.toLocaleString()}) exceeds original (${max.toLocaleString()})`
+            `Amount (${values.amount.toLocaleString()}) exceeds original (${max.toLocaleString()})`,
           );
         }
       }
@@ -130,8 +130,12 @@ const RebateDrawer = ({
               </Tag>
             </div>
             <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
-              <PriceTag value={Number(lineData.grandTotal)} />
-              <span>{dayjs(lineData.postedAt).format("DD-MM-YYYY")}</span>
+              {/* <PriceTag value={Number(lineData.grandTotal)} /> */}
+              <div className="flex items-center gap-1">
+                <PriceTag value={Number(lineData.grandTotal)} />
+                <span>(MMK)</span>
+              </div>
+              <span>{dayjs(lineData.postedAt).format("DD MMM YYYY")}</span>
             </div>
           </div>
 
@@ -166,20 +170,11 @@ const RebateDrawer = ({
               label="Rebate Type"
               rules={[{ required: true, message: "Required" }]}
             >
-              <Radio.Group
-                className="w-full"
-                optionType="button"
-              >
-                <Radio.Button
-                  value="full"
-                  style={{margin: 2}}
-                >
+              <Radio.Group className="w-full" optionType="button">
+                <Radio.Button value="full" style={{ margin: 2 }}>
                   Full Rebate
                 </Radio.Button>
-                <Radio.Button
-                  value="partial"
-                  style={{margin: 2}}
-                >
+                <Radio.Button value="partial" style={{ margin: 2 }}>
                   Partial Rebate
                 </Radio.Button>
               </Radio.Group>
@@ -196,7 +191,7 @@ const RebateDrawer = ({
                 ]}
               >
                 <InputNumber
-                  style={{ width: '100%' }}
+                  style={{ width: "100%" }}
                   formatter={(v) =>
                     v === undefined || v === null || v === ""
                       ? ""
@@ -210,7 +205,6 @@ const RebateDrawer = ({
                 />
               </Form.Item>
             )}
-            
 
             {/* Live Validation Errors — shown directly below the input */}
             {canAdjust && validationErrors.length > 0 && (
@@ -227,7 +221,7 @@ const RebateDrawer = ({
             <Form.Item
               name="description"
               label="Description"
-            //   rules={[{ required: true, message: "Required" }]}
+              //   rules={[{ required: true, message: "Required" }]}
             >
               <Input.TextArea
                 rows={2}
