@@ -14,10 +14,7 @@ import Toast from "../../../../component/Toast/Toast";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
 import useApiQuery from "../../../../hooks/useApiQuery";
 import FormButtons from "../../../../component/FormButtons/FormButtons";
-import {
-  upsertMealPlan,
-  mealPlanDetails,
-} from "../../../../api/mealPlanApi";
+import { upsertMealPlan, mealPlanDetails } from "../../../../api/mealPlanApi";
 import { queryClient } from "../../../../app/queryClient";
 import Loader from "../../../../component/Loader/Loader";
 import { PERMISSIONS } from "../../../../variables/permission";
@@ -52,10 +49,7 @@ const MeanPlanForm = ({
 
   const canEdit = hasPermission(PERMISSIONS.MEAL_PLAN_EDIT);
 
-  const initData = queryClient.getQueryData([
-    "initData",
-    "authenticated",
-  ]);
+  const initData = queryClient.getQueryData(["initData", "authenticated"]);
 
   const statuses = initData?.statuses?.status || [];
 
@@ -65,7 +59,7 @@ const MeanPlanForm = ({
     shouldInvalidate: isEdit ? true : page === 1,
   });
 
-  const {data,isLoading,} = useApiQuery({
+  const { data, isLoading } = useApiQuery({
     fetchQueryName: "meal-plan-details",
     fetchQueryFunction: mealPlanDetails,
     params: {
@@ -78,9 +72,7 @@ const MeanPlanForm = ({
 
   useEffect(() => {
     if (!isAdd) return;
-    const activeStatus = statuses.find(
-      (item) => item?.code === "active"
-    );
+    const activeStatus = statuses.find((item) => item?.code === "active");
 
     form.setFieldsValue({
       name: undefined,
@@ -125,9 +117,7 @@ const MeanPlanForm = ({
   const onFinish = (values) => {
     console.log("Form Values:", values);
 
-    const includes = Array.isArray(values?.includes)
-      ? values.includes
-      : [];
+    const includes = Array.isArray(values?.includes) ? values.includes : [];
 
     const payload = {
       ...values,
@@ -216,7 +206,6 @@ const MeanPlanForm = ({
                   : "Add Meal Plan"}
             </span>
 
-
             {isView ? (
               canEdit && (
                 <Button
@@ -229,7 +218,6 @@ const MeanPlanForm = ({
                 </Button>
               )
             ) : (
-
               <FormButtons
                 onClick={() => form.submit()}
                 isPending={upsertMealPlans?.isPending}
@@ -268,10 +256,7 @@ const MeanPlanForm = ({
                     },
                   ]}
                 >
-                  <Input
-                    readOnly={isView}
-                    placeholder="Enter Meal Plan Name"
-                  />
+                  <Input readOnly={isView} placeholder="Enter Meal Plan Name" />
                 </Form.Item>
               </Col>
 
@@ -286,18 +271,11 @@ const MeanPlanForm = ({
                     },
                   ]}
                 >
-                  <Input
-                    readOnly={isView}
-                    placeholder="Enter Meal Plan Code"
-                  />
+                  <Input readOnly={isView} placeholder="Enter Meal Plan Code" />
                 </Form.Item>
               </Col>
-              </Row>
-            <Form.Item
-              label="Meal Includes"
-              name="includes"
-              initialValue={[]}
-            >
+            </Row>
+            <Form.Item label="Meal Includes" name="includes" initialValue={[]}>
               <Checkbox.Group
                 options={options}
                 onChange={onChange}
@@ -370,14 +348,8 @@ const MeanPlanForm = ({
               </Col>
             </Row>
 
-            <Status
-              isView={isView}
-              statusValue={statuses}
-            />
-            <Form.Item
-              label="Description"
-              name="description"
-            >
+            <Status isView={isView} statusValue={statuses} />
+            <Form.Item label="Description" name="description">
               <Input.TextArea
                 rows={2}
                 readOnly={isView}

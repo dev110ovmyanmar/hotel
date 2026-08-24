@@ -52,9 +52,7 @@ const FoodBeverageOrderForm = ({
   const itemsValue = Form.useWatch("items", form);
   const selectedOrderType = Form.useWatch("orderType", form);
   const taxValue = Form.useWatch("tax", form);
-  const serviceChargesValue = Form.useWatch("serviceCharges",form)
-
-  console.log(selectedOrderType, "selectedOrderType")
+  const serviceChargesValue = Form.useWatch("serviceCharges", form);
 
   const isAdd = mode === "add";
   const isEdit = mode === "edit";
@@ -67,7 +65,10 @@ const FoodBeverageOrderForm = ({
   const [isClickedEditUuid, setIsClickedEditUuid] = useState();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteUuid, setIsDeleteUuid] = useState();
-
+  const [deleteTarget, setDeleteTarget] = useState({
+    index: null,
+    itemUuid: null,
+  });
 
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
   const allStatuses = initData?.statuses;
@@ -98,7 +99,7 @@ const FoodBeverageOrderForm = ({
     }
   ));
 
-  console.log(roomOptions,"roomOptions")
+  console.log(roomOptions, "roomOptions")
 
   const tableOptions = data?.restaurant_tables.map(table => (
     { value: table?.uuid, label: table?.tableNo }
@@ -294,6 +295,7 @@ const FoodBeverageOrderForm = ({
         serviceCharges: false
       })
     }
+
   }, [allStatuses, form]);
 
   const currentOrderStatus = fnbOrderDetails?.orderStatus?.code;
@@ -395,8 +397,8 @@ const FoodBeverageOrderForm = ({
 
   }
 
-  const handleDeleteMenu = (index, itemUuid) => {
-    console.log(selectedData, "handleDeleteMenuIndex")
+  const handleDeleteMenu = (itemUuid) => {
+    console.log(itemUuid, "handleDeleteMenuIndex")
 
     const payload = {
       uuid: selectedData?.uuid,
@@ -418,10 +420,10 @@ const FoodBeverageOrderForm = ({
         setClickAddMenu(false);
         setAddedMenuIndex(null);
         setIsDeleteUuid(null);
-        remove(index);
-
-        console.log(isClickedEditUuid, "DeleteEditIndex")
-
+        setDeleteTarget({
+          index: null,
+          itemUuid: null,
+        });
       }
     });
   };
@@ -637,7 +639,12 @@ const FoodBeverageOrderForm = ({
                       valuePropName="checked"
                     >
                       <Checkbox
-                        className={isView && taxValue ? "custom-disabled-checkbox" : ""}
+                        classNames={{
+                          icon:
+                            (isView && taxValue)
+                              ? "custom-checkbox-icon"
+                              : "",
+                        }}
                       >
                         Tax
                       </Checkbox>
@@ -649,7 +656,12 @@ const FoodBeverageOrderForm = ({
                       valuePropName="checked"
                     >
                       <Checkbox
-                        className={isView && serviceChargesValue? "custom-disabled-checkbox" : ""}
+                        classNames={{
+                          icon:
+                            (isView && serviceChargesValue)
+                              ? "custom-checkbox-icon"
+                              : "",
+                        }}
                       >
                         Service Charges
                       </Checkbox>
@@ -714,13 +726,11 @@ const FoodBeverageOrderForm = ({
                   {(fields, { remove, add }) => (
                     <div>
                       {fields.map(({ key, name }) => {
+                        isAdd && form.setFieldValue(["items", name, "pricePerQty"], 0);
+
                         const selectedMenuItem = data?.menu_items?.find(
                           (addon) => addon?.uuid === menuUuid[name]
                         );
-
-                        const hasSelectedModifiers =
-                          fnbOrderDetails?.fnbOrderItems?.[name]
-                            ?.fnbOrderItemModifiers?.length > 0;
 
                         const showModifier = selectedMenuItem?.modifiers?.length > 0;
                         const currentMenu = itemsValue?.[name]?.menu;
@@ -758,24 +768,6 @@ const FoodBeverageOrderForm = ({
                             isDeleteUuid ||
                             isMenuEditing
                           );
-
-                        const handleSubmitModal = () => {
-                          // if (isClickedEditUuid || clickAddMenu || fields?.length === 1) return;
-
-                          const itemUuid = fnbOrderDetails?.fnbOrderItems?.[name]?.uuid;
-
-                          if (!itemUuid) {
-                            return;
-                          }
-
-                          // Existing menu → call delete API
-                          if (itemUuid) {
-                            handleDeleteMenu(name, itemUuid);
-                            return;
-                          }
-                        };
-
-
                         return (
                           <>
                             <Card
@@ -841,7 +833,6 @@ const FoodBeverageOrderForm = ({
                                                 <AiOutlineCloseSquare
                                                   onClick={() => {
                                                     if (clickAddMenu) {
-
                                                       remove(name);
                                                       setMenuUuid({});
                                                       setIsSameUuid([]);
@@ -849,14 +840,11 @@ const FoodBeverageOrderForm = ({
                                                       setIsClickedEditUuid(null);
                                                       setClickAddMenu(false);
                                                       setIsDeleteUuid(null);
-
-
                                                     }
                                                     else {
                                                       handleCanceltoOriginalValue(name)
                                                     }
                                                   }}
-
                                                   className="text-2xl cursor-pointer text-red-500"
                                                 />
                                               </Tooltip>
@@ -924,7 +912,21 @@ const FoodBeverageOrderForm = ({
                                                 <DeleteOutlined
                                                   onClick={() => {
                                                     if (fields.length <= 1) return;
-                                                    setIsDeleteUuid(currentItemUuid);
+
+                                                    const currentItem = form.getFieldValue(["items", name]);
+
+                                                    const itemUuid = fnbOrderDetails?.fnbOrderItems?.find(
+                                                      item => item?.menuItem?.uuid === currentItem?.menu
+                                                    )?.uuid;
+
+                                                    if (!itemUuid) return;
+
+                                                    setDeleteTarget({
+                                                      index: name,
+                                                      itemUuid,
+                                                    });
+
+                                                    setIsDeleteUuid(itemUuid);
                                                     if (fields?.length > 1 && !clickAddMenu) {
                                                       setIsModalOpen(true)
                                                     }
@@ -1036,20 +1038,28 @@ const FoodBeverageOrderForm = ({
 
                                       >
                                         <div className="space-y-2">
-                                          {selectedMenuItem?.modifiers?.map(modify => {
+                                          {selectedMenuItem?.modifiers?.map((modify, index) => {
                                             const selectedModifiers = itemsValue?.[name]?.modifier || [];
-
                                             const isModifierChecked = selectedModifiers.includes(modify.uuid);
-
+                                            const lastestRow = index === selectedMenuItem?.modifiers?.length - 1;
                                             return (
                                               <div
                                                 key={modify.uuid}
-                                                className="grid grid-cols-3 gap-3 items-center py-2 border-b border-gray-50 hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors"
+                                                className={`grid grid-cols-3 gap-3 items-center py-2  !border-gray-50 hover:bg-gray-50 dark:!border-gray-700 dark:hover:bg-gray-900/50 transition-colors ${lastestRow ? "" : "border-b"}`}
                                               >
                                                 <div className="flex items-center">
                                                   <Checkbox
                                                     value={modify.uuid}
                                                     disabled={isAdd ? false : !isCurrentCardEditable}
+                                                    className={(isView && itemsValue?.[name].modifier.includes(modify.uuid)) || !isCurrentCardEditable ? "custom-disabled-checkbox" : ""}
+                                                    classNames={{
+                                                      icon:
+                                                        (isView && itemsValue?.[name]?.modifier?.includes(modify.uuid))
+                                                        ? "custom-checkbox-icon"
+                                                        : isEdit && itemsValue?.[name]?.modifier?.includes(modify.uuid)
+                                                          ? "custom-checkbox-icon"
+                                                          : "",
+                                                    }}
                                                   >
                                                     <span className="ml-2 text-sm">
                                                       {modify.name}
@@ -1090,20 +1100,7 @@ const FoodBeverageOrderForm = ({
                                 null
                               }
                             </Card>
-
-                            <Modal
-                              title="Delete Confirmation"
-                              closable={{ 'aria-label': 'Custom Close Button' }}
-                              open={isModalOpen}
-                              onOk={handleSubmitModal}
-                              onCancel={() => setIsModalOpen(false)}
-                              confirmLoading={deleteFoodBeverageOrderMenu?.isPending}
-                              mask={false}
-                            >
-                              Are you sure you want to delete this menu?
-                            </Modal>
                           </>
-
                         );
                       })}
 
@@ -1117,6 +1114,7 @@ const FoodBeverageOrderForm = ({
                             add({
                               menu: undefined,
                               quantity: 0,
+                              pricePerQty: 0,
                               modifier: [],
                               modifierQuantities: {},
                             });
@@ -1147,6 +1145,7 @@ const FoodBeverageOrderForm = ({
                             add({
                               menu: undefined,
                               quantity: 0,
+                              pricePerQty: 0,
                               modifier: [],
                               modifierQuantities: {},
                             });
@@ -1170,7 +1169,28 @@ const FoodBeverageOrderForm = ({
 
       </Drawer >
 
+      <Modal
+        title="Delete Confirmation"
+        closable={{ 'aria-label': 'Custom Close Button' }}
+        open={isModalOpen}
+        onOk={() => {
+          if (!deleteTarget.itemUuid) return;
 
+          handleDeleteMenu(deleteTarget.itemUuid);
+        }}
+        onCancel={() => {
+          setIsModalOpen(false);
+          setDeleteTarget({
+            index: null,
+            itemUuid: null,
+          });
+          setIsDeleteUuid(null);
+        }}
+        confirmLoading={deleteFoodBeverageOrderMenu?.isPending}
+        mask={false}
+      >
+        Are you sure you want to delete this menu?
+      </Modal>
     </>
   );
 };

@@ -88,8 +88,12 @@ const VoidDrawer = ({
               </Tag>
             </div>
             <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
-              <PriceTag value={Number(lineData.grandTotal)} />
-              <span>{dayjs(lineData.postedAt).format("DD-MM-YYYY")}</span>
+              {/* <PriceTag value={Number(lineData.grandTotal)} /> */}
+              <div className="flex items-center gap-1">
+                <PriceTag value={Number(lineData.grandTotal)} />
+                <span>(MMK)</span>
+              </div>
+              <span>{dayjs(lineData.postedAt).format("DD MMM YYYY")}</span>
             </div>
           </div>
 

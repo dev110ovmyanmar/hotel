@@ -7,7 +7,6 @@
 // import RoomModalBox from "./RoomModalBox";
 // import { darkModeStyle } from "../../utils";
 
-
 // const RoomBookedDrawer = ({
 //     roomBookOpen,
 //     setRoomBookOpen,
@@ -392,8 +391,7 @@ const RoomBookedDrawer = ({
     setModalOpen(false);
   };
 
-
-return (
+  return (
     <Drawer
       size={550}
       title={
@@ -426,7 +424,8 @@ return (
             <div className="flex flex-1 !justify-end">
               <div className="!text-md !font-bold !text-red-500">
                 {" "}
-                - <span className="inline-flex items-center gap-1 whitespace-nowrap">
+                -{" "}
+                <span className="inline-flex items-center gap-1 whitespace-nowrap">
                   <PriceTag value={roomBookValues?.incentiveTotal} />
                   <span>MMK</span>
                 </span>
@@ -464,9 +463,13 @@ return (
     >
       <div className="flex justify-between">
         <div>
-          <p>Check-in</p>
+          {/* <p>Check-in</p> */}
+          <span className="flex items-center gap-2 text-[11px] font-bold text-[#189094] uppercase tracking-wider">
+            <span className="w-2 h-2 rounded-full bg-[#189094] animate-pulse" />
+            Check-In
+          </span>
           <p className="font-bold">
-            {dayjs(roomBookValues?.filter.checkinDate).format("DD-MM-YYYY")}
+            {dayjs(roomBookValues?.filter.checkinDate).format("DD MMM YYYY")}
           </p>
         </div>
 
@@ -479,9 +482,13 @@ return (
         </div>
 
         <div>
-          <p>Check-out</p>
+          {/* <p>Check-out</p> */}
+          <span className="flex items-center justify-end gap-2 text-[11px] font-bold text-[#FF8D28] uppercase tracking-wider">
+            Check-Out
+            <span className="w-2 h-2 rounded-full bg-[#FF8D28] animate-pulse" />
+          </span>
           <p className="font-bold">
-            {dayjs(roomBookValues?.filter.checkoutDate).format("DD-MM-YYYY")}
+            {dayjs(roomBookValues?.filter.checkoutDate).format("DD MMM YYYY")}
           </p>
         </div>
       </div>
@@ -560,12 +567,11 @@ return (
                   <p className="font-bold">
                     {/* {rate?.totalPrice?.toLocaleString()} MMK */}
                     <span className="inline-flex items-center gap-1 whitespace-nowrap">
-                  <PriceTag value={rate?.totalPrice} />
-                  <span>MMK</span>
-                </span>
+                      <PriceTag value={rate?.totalPrice} />
+                      <span>MMK</span>
+                    </span>
                   </p>
                 </div>
-             
               </div>
             ))}
 
@@ -579,7 +585,8 @@ return (
               <p>Incentive</p>
               <p className="font-bold text-red-500">
                 {" "}
-                - <span className="inline-flex items-center gap-1 whitespace-nowrap">
+                -{" "}
+                <span className="inline-flex items-center gap-1 whitespace-nowrap">
                   <PriceTag value={room?.incentiveTotal} />
                   <span>MMK</span>
                 </span>
@@ -589,9 +596,9 @@ return (
             <div className="flex justify-between p-2 ">
               <p>Tax</p>
               <span className="inline-flex items-center gap-1 whitespace-nowrap">
-                  <PriceTag value={room?.taxTotal} />
-                  <span>MMK</span>
-                </span>
+                <PriceTag value={room?.taxTotal} />
+                <span>MMK</span>
+              </span>
             </div>
           </Card>
         ))}

@@ -33,7 +33,7 @@ const FnbOrderFromBookingDetailList = ({ data }) => {
       <div className="food-icon-box">
         <IoRestaurantOutline style={{ color: "#d56333", fontSize: "18px" }} />
       </div>
-      <Text>Food Beverage Order</Text>
+      <Text>Fnb Order</Text>
     </Space>
   );
 
