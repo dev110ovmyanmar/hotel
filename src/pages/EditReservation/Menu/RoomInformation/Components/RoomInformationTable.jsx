@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Dropdown, Table } from "antd";
 import dayjs from "dayjs";
 import { PlusOutlined, MessageOutlined, EyeOutlined } from "@ant-design/icons";
-import { CalendarPlus2 } from "lucide-react";
+import { CalendarPlus2, Gift } from "lucide-react";
 import { IoOptionsSharp } from "react-icons/io5";
 import { Bs0Circle, BsPeople } from "react-icons/bs";
 import RoomInformationForm from "./RoomInformationForms/RoomInformationForm";
@@ -32,6 +32,7 @@ import { useApiMutation } from "../../../../../hooks/useApiMutation";
 import { availabilitySearch } from "../../../../../api/reservationSectionApi";
 
 import { getAmendReservationMenuItems } from "./AmendReservationList";
+import { capitalizeFirstLetter } from "../../../../../utils";
 
 const RoomInformationTable = ({
   data,
@@ -144,39 +145,49 @@ const RoomInformationTable = ({
       title: "Room No",
       key: "room",
       dataIndex: "room",
-      width: 130,
+      width: 150,
       render: (text, record) => {
         const isRoomNull = !text;
         const isClickable =
           record?.assignStatus === true && !record?.expiredStatus;
         const shouldHighlightRoom =
           !isRoomNull && record?.assignStatus === true;
+        const isComplimentary = record?.isComplimentary == true;
 
         return (
-          <span
-            style={{
-              color: isRoomNull
-                ? isClickable
-                  ? "#1890ff"
-                  : "#bfbfbf"
-                : shouldHighlightRoom
-                  ? "#1890ff"
-                  : "inherit",
-              cursor:
-                isClickable || shouldHighlightRoom ? "pointer" : "not-allowed",
-              textDecoration:
-                isClickable || shouldHighlightRoom ? "underline" : "none",
-            }}
-            onClick={(e) => {
-              if (isClickable || shouldHighlightRoom) {
-                e.stopPropagation();
-                setSelectedData(record);
-                setAssignRoomOpen(true);
-              }
-            }}
-          >
-            {text ? text?.roomNo : "Assign Room"}
-          </span>
+          <div className="flex flex-col gap-1">
+            <span
+              style={{
+                color: isRoomNull
+                  ? isClickable
+                    ? "#1890ff"
+                    : "#bfbfbf"
+                  : shouldHighlightRoom
+                    ? "#1890ff"
+                    : "inherit",
+                cursor:
+                  isClickable || shouldHighlightRoom ? "pointer" : "not-allowed",
+                textDecoration:
+                  isClickable || shouldHighlightRoom ? "underline" : "none",
+              }}
+              onClick={(e) => {
+                if (isClickable || shouldHighlightRoom) {
+                  e.stopPropagation();
+                  setSelectedData(record);
+                  setAssignRoomOpen(true);
+                }
+              }}
+            >
+              {text ? text?.roomNo : "Assign Room"}
+            </span>
+            {isComplimentary && (
+              <div className="inline-flex items-center gap-0.5 px-1.5 py-0.5 text-[10px] font-semibold rounded-full bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 w-fit">
+                <Gift size={15}/>
+                {capitalizeFirstLetter(record?.complimentaryType)}
+              </div>
+            )}
+          </div>
+
         );
       },
     },
@@ -267,7 +278,7 @@ const RoomInformationTable = ({
           },
           {
             key: "roomComp",
-            label: "Room Complimentary",
+            label: "Room FOC",
             icon: <Bs0Circle />,
             onClick: () => {
               setReservationRoomUuid(record.uuid);

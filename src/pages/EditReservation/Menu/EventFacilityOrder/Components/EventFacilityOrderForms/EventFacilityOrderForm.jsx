@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect } from "react";
 import {
   Form,
   Input,
@@ -16,12 +16,7 @@ import TextArea from "antd/es/input/TextArea";
 import dayjs from "dayjs";
 import SearchEventFacilityOrderForm from "./SearchEventFacilityOrderForm";
 import FormButtons from "../../../../../../component/FormButtons/FormButtons";
-import {
-  darkModeStyle,
-  getFormattedDate,
-  getFormattedDateTime,
-  validatePhoneNumber,
-} from "../../../../../../utils";
+import { darkModeStyle } from "../../../../../../utils";
 import { facilityMeta } from "../../../../../../api/facilityPackageApi";
 import useApiQuery from "../../../../../../hooks/useApiQuery";
 import { queryClient } from "../../../../../../app/queryClient";
@@ -47,11 +42,8 @@ const EventFacilityOrderForm = ({
   reservationId,
   searchOpen,
   setSearchOpen,
-  refetchFacilityList,
 }) => {
   const [form] = Form.useForm();
-  const phoneValue = Form.useWatch("guestPhone", form);
-  const facilityPackageForm = Form.useWatch("facilityPackage", form);
   const guestType = Form.useWatch("guestType", form);
 
   const isView = mode === "view";
@@ -71,11 +63,6 @@ const EventFacilityOrderForm = ({
   const format = "HH:mm";
 
   const eventTime = Form.useWatch("timeRange", form);
-  const startTime = eventTime?.[0];
-  const endTime = eventTime?.[1];
-
-  const expectedSeconds =
-    startTime && endTime ? endTime.diff(startTime, "second") : null;
 
   const { data: facilityMetaData } = useApiQuery({
     fetchQueryName: "facilityMetaData",
@@ -99,11 +86,7 @@ const EventFacilityOrderForm = ({
     invalidateKeys: [["facility-booking-list"]],
   });
 
-  const {
-    data: bookingDetails,
-    isPending,
-    error,
-  } = useApiQuery({
+  const { data: bookingDetails } = useApiQuery({
     fetchQueryName: "facility-booking-details",
     fetchQueryFunction: facilityBookingDetails,
     params: {
@@ -127,6 +110,7 @@ const EventFacilityOrderForm = ({
     label: guest?.fullName,
     value: guest?.uuid,
     phone: guest?.phone,
+    fullName: guest?.fullName,
   }));
 
   const currentStatus = bookingDetails?.status?.code;
@@ -171,8 +155,10 @@ const EventFacilityOrderForm = ({
     form.setFieldsValue({
       guestType: isExistingGuest ? "existing" : "new",
       guestUuid: isExistingGuest ? bookingDetails?.guest?.uuid : undefined,
-      guestName: bookingDetails?.guestName || "",
-      guestPhone: bookingDetails?.guestPhone || "",
+      guestName:
+        bookingDetails?.guestName || bookingDetails?.guest?.fullName || "",
+      guestPhone:
+        bookingDetails?.guestPhone || bookingDetails?.guest?.phone || "",
       eventName: bookingDetails?.eventName,
       facilityPackage: bookingDetails?.facilityPackage?.uuid,
       eventDate: bookingDetails?.eventDate
@@ -220,29 +206,52 @@ const EventFacilityOrderForm = ({
   }, [eventTime]);
 
   const onFinish = (values) => {
+    const selectedGuest = guestList.find(
+      (guest) => guest?.uuid === values?.guestUuid,
+    );
+
+    const guestName =
+      values?.guestType === "existing"
+        ? values?.guestName ||
+          selectedGuest?.fullName ||
+          bookingDetails?.guest?.fullName ||
+          ""
+        : values?.guestName || "";
+
+    const guestPhone =
+      values?.guestType === "existing"
+        ? values?.guestPhone ||
+          selectedGuest?.phone ||
+          bookingDetails?.guest?.phone ||
+          ""
+        : values?.guestPhone || "";
     const modifiedValues = {
       ...values,
-      eventDate: values?.eventDate.format("YYYY-MM-DD"),
-      startTime: values.timeRange[0].format("HH:mm:ss"),
-      endTime: values.timeRange[1].format("HH:mm:ss"),
+      eventDate: values?.eventDate?.format("YYYY-MM-DD"),
+      startTime: values?.timeRange?.[0]?.format("HH:mm:ss"),
+      endTime: values?.timeRange?.[1]?.format("HH:mm:ss"),
       expectedHours: values?.expectedHoursBackend,
       facilityPackage: {
-        uuid: values.facilityPackage,
+        uuid: values?.facilityPackage,
       },
+      guestName,
+      guestPhone,
       guest:
-        values.guestType === "existing"
+        values?.guestType === "existing"
           ? {
-              uuid: values.guestUuid,
+              uuid: values?.guestUuid,
             }
           : {
-              fullName: values.guestName,
-              phone: values.guestPhone,
+              fullName: guestName,
+              phone: guestPhone,
             },
       reservation: {
         uuid: isEdit ? bookingDetails?.reservation?.uuid : reservationId,
       },
       uuid: isEdit ? bookingDetails?.uuid : null,
     };
+
+    console.log("Facility Booking Payload:", modifiedValues);
 
     if (isAdd) {
       createFacilityBookings.mutate(modifiedValues, {
@@ -392,6 +401,8 @@ const EventFacilityOrderForm = ({
                 }
                 onChange={(value, option) => {
                   form.setFieldsValue({
+                    guestUuid: value,
+                    guestName: option?.fullName || option?.label || "",
                     guestPhone: option?.phone || "",
                   });
                 }}

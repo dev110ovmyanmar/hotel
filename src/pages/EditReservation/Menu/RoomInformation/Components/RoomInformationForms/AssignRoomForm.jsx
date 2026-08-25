@@ -146,7 +146,9 @@ const AssignRoomForm = ({
                   />
                 </Form.Item>
 
-                <div className={`flex items-center justify-center gap-1.5 bg-gray-200 rounded px-3 h-[32px] min-w-[100px] ${darkModeStyle}`}>
+                <div
+                  className={`flex items-center justify-center gap-1.5 bg-gray-200 rounded px-3 h-[32px] min-w-[100px] ${darkModeStyle}`}
+                >
                   <FaMoon className=" text-xs" />
                   <span className="font-bold text-black text-center text-xs">
                     {calculateNights()}{" "}
@@ -174,6 +176,7 @@ const AssignRoomForm = ({
                   <Input readOnly={isView} />
                 ) : (
                   <Select
+                    allowClear
                     showSearch={{
                       filterOption: (input, option) =>
                         (option?.label ?? "")
