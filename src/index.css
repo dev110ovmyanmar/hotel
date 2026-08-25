@@ -957,9 +957,14 @@ span .ant-upload {
   color: #c7c7c8;
 }
 
-/* .custom-disabled-checkbox {
+.custom-disabled-checkbox {
   --ant-color-bg-container-disabled: #1274fd;
-} */
+}
+
+.dark .custom-disabled-checkbox {
+  --ant-color-bg-container-disabled: #1677ff;
+  --ant-color-text-disabled: #fff;
+}
 
 .custom-checkbox-icon {
   background-color: #1274fd !important;
@@ -986,4 +991,11 @@ span .ant-upload {
 
 .order-info-forms .ant-form-item-label {
   padding-bottom: 2px;
+}
+
+.ant-picker-time-panel-cell-disabled .ant-picker-time-panel-cell-inner {
+  color: #999 !important;
+  background-color: #f0f0f0 !important;
+  cursor: not-allowed !important;
+  opacity: 1 !important;
 }
