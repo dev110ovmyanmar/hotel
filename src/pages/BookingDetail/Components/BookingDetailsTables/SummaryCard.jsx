@@ -19,13 +19,12 @@ const SummaryCard = ({ data }) => {
   return (
     <Card title={CustomTitle} className="summary-card line-height">
       <Row justify="space-between">
-        <Text>Total Charge</Text>
+        <Text>Sub Total </Text>
         <div className="flex  justify-end gap-1">
           <PriceTag value={reservation?.subTotal} />
           <span>MMK</span>
         </div>
       </Row>
-
       <Row justify="space-between">
         <Text>Tax</Text>
         <div className="flex  justify-end gap-1">
@@ -34,16 +33,30 @@ const SummaryCard = ({ data }) => {
         </div>
       </Row>
 
-      <Divider className="custom-line" />
-
       <Row justify="space-between">
-        <Text>Total Amount</Text>
-        <div className="flex  justify-end gap-1">
-          <PriceTag value={reservation?.grandTotal} />
+        <Text>Incentive</Text>
+        <div className="flex  justify-end gap-1 text-rose-500">
+          - <PriceTag value={reservation?.incentiveTotal} />
           <span>MMK</span>
         </div>
       </Row>
 
+      <Row justify="space-between">
+        <Text>Discount</Text>
+        <div className="flex  justify-end gap-1 text-rose-500">
+          - <PriceTag value={reservation?.discountTotal} />
+          <span>MMK</span>
+        </div>
+      </Row>
+
+      <Divider className="custom-line" />
+      <Row justify="space-between">
+        <Text strong>Grand Total</Text>
+        <div className="flex  justify-end gap-1 text-indigo-600 dark:text-indigo-400">
+          <PriceTag value={reservation?.grandTotal} />
+          <span>MMK</span>
+        </div>
+      </Row>
       {/* <Row justify="space-between">
         <Text>Payment</Text>
         <Text>- 300,000 MMK</Text>
