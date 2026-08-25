@@ -119,15 +119,29 @@ export default function UpdateRateModal({
 
   return (
     <Modal
+      // title={
+      //   currentStep === "form" ? (
+      //     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+      //       <div style={{ width: '4px', height: '18px', background: '#1677ff', borderRadius: '2px' }} />
+      //       <span style={{ fontWeight: 600 }}>Modify Daily Room Rates</span>
+      //     </div>
+      //   ) : (
+      //     <span className="flex items-center gap-1.5">
+      //       {/* <CheckCircleOutlined className="text-blue-500" />  */}
+      //       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+      //         <div style={{ width: '4px', height: '18px', background: '#1677ff', borderRadius: '2px' }} />
+      //         <span style={{ fontWeight: 600 }}>Review Updated Rates Summary</span>
+      //       </div>
+      //     </span>
+      //   )
+      // }
       title={
-        currentStep === "form" ? (
-          "Modify Daily Room Rates"
-        ) : (
-          <span className="flex items-center gap-1.5">
-            <CheckCircleOutlined className="text-blue-500" /> Review Updated
-            Rates Summary
+        <div className="flex items-center gap-2">
+          <div className="h-[18px] w-1 rounded-sm bg-[#1677ff]" />
+          <span className="font-semibold">
+            {currentStep === "form" ? "Modify Daily Room Rates" : "Review Updated Rates Summary"}
           </span>
-        )
+        </div>
       }
       open={isOpen}
       onCancel={handleCloseReset}
@@ -136,15 +150,15 @@ export default function UpdateRateModal({
       footer={
         currentStep === "form"
           ? [
-            <Button key="back" onClick={handleCloseReset}>
-              Cancel
-            </Button>,
+            // <Button key="back" onClick={handleCloseReset}>
+            //   Cancel
+            // </Button>,
             <Button
               key="submit"
               type="primary"
               onClick={handleProceedToSummary}
             >
-              Review Summary
+              Review
             </Button>,
           ]
           : [
@@ -153,7 +167,7 @@ export default function UpdateRateModal({
               disabled={isSubmitting}
               onClick={() => setCurrentStep("form")}
             >
-              Modify Input
+              Back
             </Button>,
             <Button
               key="confirm"
@@ -161,7 +175,7 @@ export default function UpdateRateModal({
               loading={isSubmitting}
               onClick={handleFinalCommit}
             >
-              Apply Rate Updates
+              Confirm
             </Button>,
           ]
       }
@@ -196,14 +210,14 @@ export default function UpdateRateModal({
                     <span
                       className={`text-xs font-semibold text-slate-600 ${textColorDarkMode}`}
                     >
-                      TARGET DATE
+                      Target Date
                     </span>
                   </div>
                   <div className="col-span-6">
                     <span
                       className={`text-xs font-semibold text-slate-600 ${textColorDarkMode}`}
                     >
-                      NIGHTLY RATE (MMK)
+                      Nightly Rate (MMK)
                     </span>
                   </div>
                 </div>
@@ -211,7 +225,7 @@ export default function UpdateRateModal({
                 <div className="max-h-[280px] overflow-y-auto mb-4 pr-1">
                   {fields.map(({ key, name, ...restField }) => {
                     const currentDate = watchRates?.[name]?.date;
-                    console.log(watchRates,"currentDate")
+                    console.log(watchRates, "currentDate")
                     const isPriceDisabled = currentDate?.isBefore(dayjs(), "day");
                     return (
                       <div
@@ -242,7 +256,7 @@ export default function UpdateRateModal({
                             name={[name, "price"]}
                             rules={[{ required: true, message: "Enter Price" }]}
                             className="m-0"
-                          
+
                           >
                             <InputNumber
                               className="!w-full"
@@ -269,9 +283,9 @@ export default function UpdateRateModal({
             )}
           </Form.List>
 
-          <Form.Item name="reason" label="Reason for Rate Modification">
+          <Form.Item name="reason" label="Reason for Rate">
             <Input.TextArea
-              placeholder="Provide business justification details explaining rate variations..."
+              placeholder="Reason for Rate"
               rows={3}
             />
           </Form.Item>
@@ -364,9 +378,9 @@ export default function UpdateRateModal({
             <Descriptions.Item label="Active Record Targets">
               <strong>{pendingValues.rates.length} Schedules Set</strong>
             </Descriptions.Item>
-            <Descriptions.Item label="Audit System Notes">
+            <Descriptions.Item label="Reason">
               <span className="italic text-slate-400 dark:text-slate-300">
-                "{pendingValues?.reason}"
+                {pendingValues?.reason ? pendingValues?.reason : null}
               </span>
             </Descriptions.Item>
           </Descriptions>

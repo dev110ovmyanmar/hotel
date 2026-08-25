@@ -32,9 +32,9 @@ const ServiceAddOn = ({ data }) => {
       },
     },
     {
-      title: "Guest",
-      dataIndex: ["reservationRoom", "guest", "name"],
-      key: "guest",
+      title: "Room No",
+      dataIndex: ["reservationRoom", "room", "roomNo"],
+      key: "roomNo",
     },
   ];
 
