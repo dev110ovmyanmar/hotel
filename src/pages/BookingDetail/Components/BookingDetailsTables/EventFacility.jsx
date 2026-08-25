@@ -40,6 +40,12 @@ const EventFacility = ({ data }) => {
       render: (status) => {
         return status ? <ColorStatusTag status={status} /> : "-";
       },
+      width:150
+    },
+    {
+      title: "Event Date",
+      dataIndex: "eventDate",
+      key: "eventDate",
     },
   ];
   return (

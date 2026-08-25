@@ -95,7 +95,7 @@ export default function RoomMoveModal({
                 }
             }}
             cancelText={selectRoomToMove ? "Back" : "Cancel"}
-            okText={selectRoomToMove ? "OK" : null}
+            okText={selectRoomToMove ? "Confirm" : null}
             footer={
                 isQueryLoading || hasNoRooms ? null : (!selectRoomToMove ? (
                     <Button

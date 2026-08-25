@@ -110,7 +110,6 @@ export default function DateChangeModal({
     // Deep parsing row record metadata structures
     const reservationNo = record?.reservation?.reservationNo || `ID-${record?.id}`;
     const roomName = record?.room ? record?.room?.roomNo : null;
-    console.log(record,"RECCCCCCCCCCCC")
 
     // Original Values parsed safely into dayjs instances
     const originalCheckin = record?.checkinDate ? dayjs(record.checkinDate) : dayjs();
@@ -171,10 +170,27 @@ export default function DateChangeModal({
     const currentStayDate = 'flex !text-xs border-2 border-blue-300 shadow-md rounded p-2';
     return (
         <Modal
+            // title={
+            //     currentStep === 'form'
+            //         ?
+            //         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            //             <div style={{ width: '4px', height: '18px', background: '#1677ff', borderRadius: '2px' }} />
+            //             <span style={{ fontWeight: 600 }}>Modify Stay Schedules</span>
+            //         </div>
+            //         :
+            //         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            //             <div style={{ width: '4px', height: '18px', background: '#1677ff', borderRadius: '2px' }} />
+            //             <span style={{ fontWeight: 600 }}>Review Summary of Changes</span>
+            //         </div>
+            //     // <span><CheckCircleOutlined style={{ color: '#52c41a' }} /> Review Summary of Changes</span>
+            // }
             title={
-                currentStep === 'form'
-                    ? "Modify Stay Schedules"
-                    : <span><CheckCircleOutlined style={{ color: '#52c41a' }} /> Review Summary of Changes</span>
+                <div className="flex items-center gap-2">
+                    <div className="h-[18px] w-1 rounded-sm bg-[#1677ff]" />
+                    <span className="font-semibold">
+                        {currentStep === "form" ? "Modify Stay Schedules" : "Review Summary of Changes"}
+                    </span>
+                </div>
             }
             open={isOpen}
             onCancel={handleCloseReset}
@@ -206,8 +222,8 @@ export default function DateChangeModal({
             }
         >
             {/* Context header string linked to your JSON payload structure */}
-            <div style={{ marginBottom: 16, color: '#64748b', fontSize: '13px', fontWeight: 500 }}>
-                {reservationNo} <span style={{ color: '#1e293b' }} className={textWhiteInDarkStyle}> {roomName? `- ${roomName}` : null}</span>
+            <div className="text-indigo-700 dark:text-indigo-500 font-semibold">
+                {reservationNo}  <span className={`text-slate-800 ${textWhiteInDarkStyle}`}> {roomName ? `- ${roomName}` : null}</span>
             </div>
 
             <Divider style={{ margin: '12px 0' }} />
