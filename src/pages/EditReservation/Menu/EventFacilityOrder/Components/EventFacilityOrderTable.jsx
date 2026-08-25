@@ -130,7 +130,9 @@ const EventFacilityOrderTable = ({
       title: "Guest Name",
       dataIndex: "guestName",
       key: "guestName",
-      render: (text) => <div>{text}</div>,
+      render: (text, record) => (
+        <div>{record?.guest?.fullName || text || "-"}</div>
+      ),
     },
     {
       title: "Guest Phone No",
@@ -208,21 +210,22 @@ const EventFacilityOrderTable = ({
               setSelectedData(record);
             },
           },
-          ...(
-            record?.status?.code !== "completed" &&
-            record?.status?.code !== "cancelled" ?
-              [{
-                key: "edit",
-                label: "Edit",
-                icon: <EditOutlined style={{ fontSize: "12px" }} />,
-                // permission: PERMISSIONS.PARTNER_EDIT,
-                onClick: () => {
-                  setDrawerOpen(true);
-                  setMode("edit");
-                  setSelectedData(record);
+          ...(record?.status?.code !== "completed" &&
+          record?.status?.code !== "cancelled"
+            ? [
+                {
+                  key: "edit",
+                  label: "Edit",
+                  icon: <EditOutlined style={{ fontSize: "12px" }} />,
+                  // permission: PERMISSIONS.PARTNER_EDIT,
+                  onClick: () => {
+                    setDrawerOpen(true);
+                    setMode("edit");
+                    setSelectedData(record);
+                  },
                 },
-              }]
-              : [])
+              ]
+            : []),
         ];
 
         const items = actions
@@ -279,7 +282,7 @@ const EventFacilityOrderTable = ({
         setDrawerOpen={setDrawerOpen}
         selectedData={selectedData}
         setSelectedData={setSelectedData}
-      // onSuccess={refreshData}
+        // onSuccess={refreshData}
       />
     </div>
   );
