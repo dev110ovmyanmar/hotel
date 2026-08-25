@@ -239,3 +239,13 @@ export const borderDarkMode = `
 export const textColorDarkMode =  `
   dark:!text-blue-500
 `;
+
+/**
+ * Capitalizes the first character of a string
+ * @param {string} str - The string to capitalize
+ * @returns {string} - Capitalized string or empty string if input is invalid
+ */
+function capitalizeFirst(str) {
+  if (!str || typeof str !== 'string') return '';
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}

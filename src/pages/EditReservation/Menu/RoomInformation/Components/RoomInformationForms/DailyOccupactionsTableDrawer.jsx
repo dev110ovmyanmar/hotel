@@ -174,14 +174,15 @@ const DailyOccupactionsTableDrawer = ({
                         menu={{
                             onClick: ({ key }) => {
                                 if (key === "1") handleOpenDetail(record, false);
-                                 if (key === "2") handleOpenFOC(record)
-                                if (key === "3") handleOpenDetail(record, true);
+                                if (key === "2") handleOpenDetail(record, true);
+                                if (key === "3") handleOpenFOC(record);
+                              
                                
                             },
                             items: [
                                 { key: "1", label: "View", icon: <EyeOutlined /> },
-                                { key: "2", label: "FOC", icon: <Bs0Circle/>},
-                                !isDatePast(record.stayDate) && { key: "3", label: "Edit", icon: <EditOutlined /> }
+                                !isDatePast(record.stayDate) && { key: "2", label: "Edit", icon: <EditOutlined /> },
+                                { key: "3", label: "FOC", icon: <Bs0Circle/>},
                             ],
                         }}
                         trigger={["click"]}
