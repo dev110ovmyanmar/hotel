@@ -220,14 +220,14 @@ const RoomInformationDetailsForm = ({
               className={`font-bold text-sm text-slate-800 flex items-center gap-2 ${textColorDarkMode}`}
             >
               <span className="w-1.5 h-3 bg-indigo-500 rounded-full" />
-              Payment Summary
+              Total Summary
             </h3>
           </div>
           <div className="px-5 py-3 space-y-2 text-sm">
             <div className="grid grid-cols-2 gap-2.5 mb-2">
               <div className="bg-slate-50 dark:bg-gray-700/50 rounded-xl p-1.5 text-center">
                 <span className="text-[10px] text-slate-400 dark:text-slate-300 font-semibold uppercase block">
-                  Adults
+                  Max Adults
                 </span>
                 <span
                   className={`font-bold text-base text-slate-800 ${textWhiteInDarkStyle}`}
@@ -252,44 +252,44 @@ const RoomInformationDetailsForm = ({
                 <span className="text-slate-500 dark:text-slate-300 ">
                   Sub Total
                 </span>
-                <span className="flex items-center justify-end gap-1 font-medium">
+                <div className="flex justify-end gap-1">
                   <PriceTag value={d?.subTotal || 0} />
-                  <span className="text-slate-400 text-xs">MMK</span>
-                </span>
+                  <span>MMK</span>
+                </div>
               </div>
               <div className={textWhiteDark}>
                 <span className="text-slate-500 dark:text-slate-300">Tax</span>
-                <span className="flex items-center justify-end gap-1 font-medium">
+                <div className="flex justify-end gap-1">
                   <PriceTag value={d?.taxTotal || 0} />
-                  <span className="text-slate-400 text-xs">MMK</span>
-                </span>
+                  <span>MMK</span>
+                </div>
               </div>
               <div className={textWhiteDark}>
                 <span className="text-slate-500 dark:text-slate-300">
                   Service Charge
                 </span>
-                <span className="flex items-center justify-end gap-1 font-medium">
+                <div className="flex justify-end gap-1">
                   <PriceTag value={d?.serviceChargeTotal || 0} />
-                  <span className="text-slate-400 text-xs">MMK</span>
-                </span>
+                  <span>MMK</span>
+                </div>
               </div>
               <div className={textWhiteDark}>
                 <span className="text-slate-500 dark:text-slate-300">
                   Incentive
                 </span>
-                <span className="text-rose-500 font-medium flex items-center justify-end gap-1">
+                <div className="flex justify-end gap-1 text-rose-500">
                   - <PriceTag value={d?.incentiveTotal || 0} />
-                  <span className="text-slate-400 text-xs">MMK</span>
-                </span>
+                  <span>MMK</span>
+                </div>
               </div>
               <div className={textWhiteDark}>
                 <span className="text-slate-500 dark:text-slate-300">
                   Discount
                 </span>
-                <span className="text-rose-500 font-medium flex items-center justify-end gap-1">
+                <div className="flex justify-end gap-1 text-rose-500">
                   - <PriceTag value={d?.discountTotal || 0} />
-                  <span className="text-slate-400 text-xs">MMK</span>
-                </span>
+                  <span>MMK</span>
+                </div>
               </div>
             </div>
 
@@ -302,10 +302,10 @@ const RoomInformationDetailsForm = ({
                 <span className="text-slate-700 dark:text-gray-200">
                   Grand Total
                 </span>
-                <span className="text-indigo-600 dark:text-indigo-400 text-lg flex items-center justify-end gap-1">
+                <div className="flex justify-end gap-1 text-indigo-600 dark:text-indigo-400">
                   <PriceTag value={d?.grandTotal || 0} />
-                  <span className="text-sm">MMK</span>
-                </span>
+                  <span>MMK</span>
+                </div>
               </div>
             </div>
           </div>
@@ -324,16 +324,16 @@ const RoomInformationDetailsForm = ({
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
-                <thead className="bg-slate-50 dark:bg-gray-700/50 text-slate-500 dark:text-gray-400 font-semibold tracking-wider">
+                <thead className="bg-slate-100 dark:bg-gray-700/50 text-slate-900 dark:text-gray-300 font-medium">
                   <tr>
-                    <th className="px-3 py-2 text-left">Date</th>
-                    <th className="px-3 py-2 text-right whitespace-nowrap">
+                    <th className="px-3 py-2.5 text-left text-[14px] tracking-wider">Date</th>
+                    <th className="px-3 py-2.5 text-right text-[14px] tracking-wider whitespace-nowrap">
                       Room Rate(MMK)
                     </th>
-                    <th className="px-3 py-2 text-right">Extra(MMK)</th>
-                    <th className="px-3 py-2 text-right">Tax(MMK)</th>
-                    <th className="px-3 py-2 text-right">Total(MMK)</th>
-                    <th className="px-1 py-2 text-center w-8">Action</th>
+                    <th className="px-3 py-2.5 text-right text-[14px] tracking-wider">Extra(MMK)</th>
+                    <th className="px-3 py-2.5 text-right text-[14px] tracking-wider">Tax(MMK)</th>
+                    <th className="px-3 py-2.5 text-right text-[14px] tracking-wider">Total(MMK)</th>
+                    <th className="px-1 py-2.5 text-center text-[14px] tracking-wider w-8">Action</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 dark:divide-gray-700">
