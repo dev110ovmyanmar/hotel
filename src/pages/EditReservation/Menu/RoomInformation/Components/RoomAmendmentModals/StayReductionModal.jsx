@@ -111,15 +111,35 @@ export default function StayReductionModal({
 
   return (
     <Modal
+      // title={
+      //   currentStep === "form" ? (
+      //     // <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+      //     //   <div style={{ width: '4px', height: '18px', background: '#1677ff', borderRadius: '2px' }} />
+      //     //   <span style={{ fontWeight: 600 }}>Shorten Guest Stay Duration</span>
+      //     // </div>
+      //     <div className="flex items-center gap-2">
+      //       <div className="h-[18px] w-1 rounded-sm bg-[#1677ff]" />
+      //       <span className="font-semibold">Shorten Guest Stay Duration</span>
+      //     </div>
+
+      //   ) : (
+      //     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+      //       <div style={{ width: '4px', height: '18px', background: '#1677ff', borderRadius: '2px' }} />
+      //       <span style={{ fontWeight: 600 }}>Reduction Summary</span>
+      //     </div>
+      //     // <span className="flex items-center gap-2">
+      //     //   <CheckCircleOutlined className="text-amber-500" /> Review Stay
+      //     //   Reduction Summary
+      //     // </span>
+      //   )
+      // }
       title={
-        currentStep === "form" ? (
-          "Shorten Guest Stay Duration"
-        ) : (
-          <span className="flex items-center gap-2">
-            <CheckCircleOutlined className="text-amber-500" /> Review Stay
-            Reduction Summary
+        <div className="flex items-center gap-2">
+          <div className="h-[18px] w-1 rounded-sm bg-[#1677ff]" />
+          <span className="font-semibold">
+            {currentStep === "form" ? "Shorten Guest Stay Duration" :  "Reduction Summary"}
           </span>
-        )
+        </div>
       }
       open={isOpen}
       onCancel={handleCloseReset}
@@ -127,38 +147,37 @@ export default function StayReductionModal({
       footer={
         currentStep === "form"
           ? [
-              <Button key="back" onClick={handleCloseReset}>
-                Cancel
-              </Button>,
-              <Button
-                key="submit"
-                type="primary"
-                danger
-                onClick={handleProceedToSummary}
-                disabled={maxReduction <= 0} // Blocks moving forward if reduction limit is 0
-                className={maxReduction <= 0 ? "text-default" : ""}
-              >
-                Review Summary
-              </Button>,
-            ]
+            // <Button key="back" onClick={handleCloseReset}>
+            //   Cancel
+            // </Button>,
+            <Button
+              key="submit"
+              type="primary"
+              // danger
+              onClick={handleProceedToSummary}
+              disabled={maxReduction <= 0} // Blocks moving forward if reduction limit is 0
+              className={maxReduction <= 0 ? "text-default" : ""}
+            >
+              Review
+            </Button>,
+          ]
           : [
-              <Button
-                key="back-to-form"
-                disabled={isSubmitting}
-                onClick={() => setCurrentStep("form")}
-              >
-                Modify Reduction
-              </Button>,
-              <Button
-                key="confirm"
-                type="primary"
-                danger
-                loading={isSubmitting}
-                onClick={handleFinalCommit}
-              >
-                Confirm Reduction
-              </Button>,
-            ]
+            <Button
+              key="back-to-form"
+              disabled={isSubmitting}
+              onClick={() => setCurrentStep("form")}
+            >
+              Back
+            </Button>,
+            <Button
+              key="confirm"
+              type="primary"
+              loading={isSubmitting}
+              onClick={handleFinalCommit}
+            >
+              Confirm
+            </Button>,
+          ]
       }
     >
       {/* Context Target Ribbon Header */}
@@ -242,9 +261,9 @@ export default function StayReductionModal({
               </strong>
             </div>
             {maxReduction !== 0 && (
-              <div className="text-sm text-red-600 mt-1">
+              <div className="text-sm mt-1">
                 New Checkout -{" "}
-                <strong className="text-red-700">
+                <strong >
                   {newCheckoutDate.isValid()
                     ? newCheckoutDate.format("DD MMM YYYY")
                     : "-"}
@@ -258,7 +277,7 @@ export default function StayReductionModal({
               placeholder={
                 maxReduction === 0
                   ? "Stay reduction is currently unavailable."
-                  : "Provide business justification for early checkout / stay reduction..."
+                  : "Reason for Stay Reduction"
               }
               rows={3}
               disabled={maxReduction === 0}

@@ -32,12 +32,11 @@ const ServiceOrder = ({ data , serviceOrderStatus}) => {
       },
     },
     {
-      title: "Guest",
-      dataIndex: ["reservationRoom", "guest", "name"],
-      key: "guest",
+      title: "Room No",
+      dataIndex: ["reservationRoom", "room", "roomNo"],
+      key: "roomNo",
     },
   ];
-  console.log(data,"DataInServiceOrder")
   return (
     <>
       {

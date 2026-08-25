@@ -16,7 +16,6 @@ import {
     UserOutlined,
     CalendarOutlined,
     CoffeeOutlined,
-    DollarOutlined,
 } from "@ant-design/icons";
 import dayjs from "dayjs";
 
@@ -32,34 +31,32 @@ const STATUS_COLORS = {
     cancelled: { color: "#CF1322", background: "#FFF1F0", borderColor: "#FFA39E" },
 };
 
-const SectionCard = ({ title, icon, children, extra }) => (
-    <div className="rounded-xl border border-slate-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 shadow-sm transition-all">
-        <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2.5">
-                {icon && <span className="text-lg flex items-center">{icon}</span>}
-                <h3 className="text-sm font-semibold text-slate-800 dark:text-gray-100 tracking-wide m-0">
-                    {title}
-                </h3>
-            </div>
-            {extra}
+const SectionCard = ({ title, children }) => (
+    <div className="bg-slate-50 dark:bg-gray-800/60 border border-slate-200 dark:border-gray-700 rounded-xl p-4">
+        <h4 className="font-semibold text-slate-900 dark:text-gray-500 tracking-wider mb-3">
+            {title}
+        </h4>
+        <div className="divide-y divide-slate-200/70 dark:divide-gray-700/70">
+            {children}
         </div>
-        {children}
     </div>
 );
 
-const InfoRow = ({ label, value, highlighted = false }) => (
-    <div className="flex justify-between items-center py-1.5 text-xs sm:text-sm">
-        <span className="text-slate-500 dark:text-gray-400 font-medium">
+const InfoRow = ({ label, value, highlight }) => (
+    <div className="flex justify-between items-center py-2 first:pt-0 last:pb-0">
+        <span className="text-slate-700 dark:text-gray-200">
             {label}
         </span>
-        <span
-            className={`font-semibold ${highlighted
-                ? "text-emerald-600 dark:text-emerald-400"
-                : "text-slate-800 dark:text-gray-100"
-                }`}
+        <div
+            className={`flex justify-end gap-1 ${highlight
+                ? 'text-red-500 dark:text-red-400'
+                : ''
+            }`}
         >
-            {value ?? "-"}
-        </span>
+            {highlight && <span>-</span>}
+            <PriceTag value={value} />
+            <span>MMK</span>
+        </div>
     </div>
 );
 
@@ -422,104 +419,51 @@ const DailyOccupationDetailDrawer = ({
                             !isEditing &&
                             <>
                                 {/* Financial Breakdown */}
-                                < SectionCard
-                                    title="Charges Summary"
-                                    icon={<DollarOutlined className="text-indigo-500" />}
-                                >
-                                    <div className="space-y-1">
-                                        <InfoRow
-                                            label="Room Charge"
-                                            value={
-                                                data.dailyCharge?.roomRate
-                                                    ? <span className="flex items-center justify-end gap-1"><PriceTag value={data.dailyCharge.roomRate} /><span>MMK</span></span>
-                                                    : "0.00"
-                                            }
-                                        />
-                                        <InfoRow
-                                            label="Child Charge"
-                                            value={
-                                                data.dailyCharge?.childChargeTotal
-                                                    ? <span className="flex items-center justify-end gap-1"><PriceTag value={data.dailyCharge.childChargeTotal} /><span>MMK</span></span>
-                                                    : "0.00"
-                                            }
-                                        />
-                                        <InfoRow
-                                            label="Extra Bed Charge"
-                                            value={
-                                                data.dailyCharge?.extraBedTotal
-                                                    ? <span className="flex items-center justify-end gap-1"><PriceTag value={data.dailyCharge.extraBedTotal} /><span>MMK</span></span>
-                                                    : "0.00"
-                                            }
-                                        />
-                                        <InfoRow
-                                            label="Extra Person Charge"
-                                            value={
-                                                data.dailyCharge?.extraPersonTotal
-                                                    ? <span className="flex items-center justify-end gap-1"><PriceTag value={data.dailyCharge.extraPersonTotal} /><span>MMK</span></span>
-                                                    : "0.00"
-                                            }
-                                        />
-                                        <InfoRow
-                                            label="Baby Cot Charge"
-                                            value={
-                                                data.dailyCharge?.babyCotTotal
-                                                    ? <span className="flex items-center justify-end gap-1"><PriceTag value={data.dailyCharge.babyCotTotal} /><span>MMK</span></span>
-                                                    : "0.00"
-                                            }
-                                        />
-                                        <InfoRow
-                                            label="Meal Charge"
-                                            value={
-                                                data.dailyCharge?.mealChargeTotal
-                                                    ? <span className="flex items-center justify-end gap-1"><PriceTag value={data.dailyCharge.mealChargeTotal} /><span>MMK</span></span>
-                                                    : "0.00"
-                                            }
-                                        />
-                                        <Divider className="my-2" />
-                                        <InfoRow
-                                            label="Sub Total"
-                                            highlighted
-                                            value={
-                                                data.dailyCharge?.subTotal
-                                                    ? <span className="flex items-center justify-end gap-1"><PriceTag value={data.dailyCharge.subTotal} /><span>MMK</span></span>
-                                                    : "0.00"
-                                            }
-                                        />
-                                        <InfoRow
-                                            label="Tax"
-                                            value={
-                                                data.dailyCharge?.taxTotal
-                                                    ? <span className="flex items-center justify-end gap-1"><PriceTag value={data.dailyCharge.taxTotal} /><span>MMK</span></span>
-                                                    : "0.00"
-                                            }
-                                        />
-                                        <InfoRow
-                                            label="Service Charge"
-                                            value={
-                                                data.dailyCharge?.serviceChargeTotal
-                                                    ? <span className="flex items-center justify-end gap-1"><PriceTag value={data.dailyCharge.serviceChargeTotal} /><span>MMK</span></span>
-                                                    : "0.00"
-                                            }
-                                        />
-                                        <InfoRow
-                                            label="Discount"
-                                            value={
-                                                data.dailyCharge?.discountTotal
-                                                    ? <span className="flex items-center justify-end gap-1"><PriceTag value={data.dailyCharge.discountTotal} /><span>MMK</span></span>
-                                                    : "0.00"
-                                            }
-                                        />
-                                        <Divider className="my-2" />
-                                        <InfoRow
-                                            label="Grand Total"
-                                            highlighted
-                                            value={
-                                                data.dailyCharge?.grandTotal
-                                                    ? <span className="flex items-center justify-end gap-1"><PriceTag value={data.dailyCharge.grandTotal} /><span>MMK</span></span>
-                                                    : "0.00"
-                                            }
-                                        />
-                                    </div>
+                                <SectionCard title="Charges Summary">
+                                    {(() => {
+                                        const dc = data.dailyCharge || {};
+                                        const feeRows = [
+                                            ["Sub Total", dc.subTotal],
+                                            ["Tax", dc.taxTotal],
+                                            // ["Service Charge", dc.serviceChargeTotal],
+                                            ["Incentive", dc.incentiveTotal],
+                                            ["Discount", dc.discountTotal],
+                                        ];
+
+                                        return (
+                                            <>
+                                                <InfoRow label="Room Charge" value={dc.roomRate || 0} />
+                                                <InfoRow label="Child Charge" value={dc.childChargeTotal || 0} />
+                                                <InfoRow label="Extra Bed Charge" value={dc.extraBedTotal || 0} />
+                                                <InfoRow label="Extra Person Charge" value={dc.extraPersonTotal || 0} />
+                                                <InfoRow label="Baby Cot Charge" value={dc.babyCotTotal || 0} />
+                                                <InfoRow label="Meal Charge" value={dc.mealChargeTotal || 0} />
+
+                                                <div className="my-2 border-t border-dashed border-slate-300 dark:border-gray-600" />
+
+                                                {feeRows.map(([label, value]) => (
+                                                    <InfoRow
+                                                        key={label}
+                                                        label={label}
+                                                        value={value}
+                                                        highlight={label === "Incentive" || label === "Discount"}
+                                                    />
+                                                ))}
+
+                                                <div className="my-2 border-t border-dashed border-slate-300 dark:border-gray-600" />
+
+                                                <div className="flex justify-between items-center rounded-xl px-4 py-3.5 bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-200 dark:border-indigo-700">
+                                                    <span className="font-bold text-slate-800 dark:text-gray-100">
+                                                        Grand Total
+                                                    </span>
+                                                    <div className="flex justify-end gap-1 font-bold text-sm text-indigo-600 dark:text-indigo-400">
+                                                        <PriceTag value={dc.grandTotal || 0} />
+                                                        <span>MMK</span>
+                                                    </div>
+                                                </div>
+                                            </>
+                                        );
+                                    })()}
                                 </SectionCard>
                             </>
                         }
