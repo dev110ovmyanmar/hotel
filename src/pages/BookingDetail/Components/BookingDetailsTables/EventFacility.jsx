@@ -27,6 +27,9 @@ const EventFacility = ({ data }) => {
       title: "Event Name",
       dataIndex: "eventName",
       key: "eventName",
+      render: (text, record) => (
+        <div>{record?.guest?.fullName || text || "-"}</div>
+      ),
     },
     {
       title: "Guest Name",
@@ -40,7 +43,7 @@ const EventFacility = ({ data }) => {
       render: (status) => {
         return status ? <ColorStatusTag status={status} /> : "-";
       },
-      width:150
+      width: 150,
     },
     {
       title: "Event Date",
