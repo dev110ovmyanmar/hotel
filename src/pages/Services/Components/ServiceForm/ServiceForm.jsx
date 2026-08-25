@@ -377,14 +377,21 @@ const ServiceForm = ({
                                 `}
                       >
                         <div className="pt-0.5">
-                          <Checkbox value={stage.value}  className={isChecked ? "custom-disabled-checkbox" : ""}/>
+                          <Checkbox
+                            value={stage.value}
+                            className={
+                              isChecked ? "custom-disabled-checkbox" : ""
+                            }
+                          />
                         </div>
                         <div className="flex flex-col">
                           <span
                             className={`text-xs  ${
                               isChecked
                                 ? isView
-                                  ? "text-blue-800/70 dark:text-gray-200"
+                                  ? // ? "text-blue-800/70 dark:text-gray-200"
+                                    // : "text-blue-900 dark:text-gray-100"
+                                    "text-blue-800/70 dark:text-gray-200"
                                   : "text-blue-900 dark:text-gray-100"
                                 : isView
                                   ? ""
