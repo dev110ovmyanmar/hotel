@@ -111,15 +111,30 @@ export default function AddRoomWithExtensionDateModal({
 
       {(!availabilitySearchRoomList || backToExtensionStayDate) && (
         <Modal
+          // title={
+          //   currentStep === "form" ? (
+          //     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          //       <div style={{ width: '4px', height: '18px', background: '#1677ff', borderRadius: '2px' }} />
+          //       <span style={{ fontWeight: 600 }}>Add New Room</span>
+          //     </div>
+          //   ) : (
+          //     <span className="flex items-center gap-2">
+          //       {/* <CheckCircleOutlined className="text-green-500" />  */}
+          //       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          //         <div style={{ width: '4px', height: '18px', background: '#1677ff', borderRadius: '2px' }} />
+          //         <span style={{ fontWeight: 600 }}>Review Stay Extension Summary</span>
+          //       </div>
+
+          //     </span>
+          //   )
+          // }
           title={
-            currentStep === "form" ? (
-              "Add New Rooms"
-            ) : (
-              <span className="flex items-center gap-2">
-                <CheckCircleOutlined className="text-green-500" /> Review Stay
-                Extension Summary
+            <div className="flex items-center gap-2">
+              <div className="h-[18px] w-1 rounded-sm bg-[#1677ff]" />
+              <span className="font-semibold">
+                {currentStep === "form" ? "Add New Room" : "Review Stay Extension Summary"}
               </span>
-            )
+            </div>
           }
           open={isOpen}
           onCancel={handleCloseReset}
@@ -127,44 +142,44 @@ export default function AddRoomWithExtensionDateModal({
           footer={
             currentStep === "form"
               ? [
-                  <Button key="back" onClick={handleCloseReset}>
-                    Cancel
-                  </Button>,
-                  <Button
-                    key="submit"
-                    type="primary"
-                    onClick={handleAvailabilitySearchs}
-                    disabled={maxDayExtension <= 0}
-                    loading={availabilitySearchs?.isPending}
-                  >
-                    Next
-                  </Button>,
-                ]
+                // <Button key="back" onClick={handleCloseReset}>
+                //   Cancel
+                // </Button>,
+                <Button
+                  key="submit"
+                  type="primary"
+                  onClick={handleAvailabilitySearchs}
+                  disabled={maxDayExtension <= 0}
+                  loading={availabilitySearchs?.isPending}
+                >
+                  Next
+                </Button>,
+              ]
               : [
-                  <Button
-                    key="back-to-form"
-                    disabled={isSubmitting}
-                    onClick={() => setCurrentStep("form")}
-                  >
-                    Modify Extension
-                  </Button>,
-                  <Button
-                    key="confirm"
-                    type="primary"
-                    loading={isSubmitting}
-                    onClick={handleFinalCommit}
-                  >
-                    Confirm Extension
-                  </Button>,
-                ]
+                <Button
+                  key="back-to-form"
+                  disabled={isSubmitting}
+                  onClick={() => setCurrentStep("form")}
+                >
+                  Modify Extension
+                </Button>,
+                <Button
+                  key="confirm"
+                  type="primary"
+                  loading={isSubmitting}
+                  onClick={handleFinalCommit}
+                >
+                  Confirm Extension
+                </Button>,
+              ]
           }
         >
           {/* Context Target Ribbon Header */}
           <div className="text-indigo-700 dark:text-indigo-500 font-semibold">
             {" "}
-            <div className={`text-md text-slate-900 ${textWhiteInDarkStyle}`}>
+            {/* <div className={`text-md text-slate-900 ${textWhiteInDarkStyle}`}>
               {roomTypeName}
-            </div>
+            </div> */}
             {reservationNo}{" "}
             <span className={`text-slate-800 ${textWhiteInDarkStyle}`}>
               — {guestName}
@@ -225,7 +240,7 @@ export default function AddRoomWithExtensionDateModal({
                       shape="circle"
                       icon={<PlusOutlined />}
                       onClick={() => setDaysToAdd((prev) => prev + 1)}
-                      // disabled={daysToAdd >= maxDayExtension}
+                    // disabled={daysToAdd >= maxDayExtension}
                     />
                     <span
                       className={`text-sm text-slate-500 font-medium ${textWhiteInDarkStyle}`}
@@ -259,7 +274,7 @@ export default function AddRoomWithExtensionDateModal({
               </div>
 
               <Form.Item name="reason" label="Reason for Add Room">
-                <Input.TextArea rows={3} />
+                <Input.TextArea rows={3} placeholder="Reason for Add Room" />
               </Form.Item>
             </Form>
           )}
