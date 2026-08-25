@@ -1,6 +1,8 @@
 import React from "react";
-import { Drawer } from "antd";
+import { Divider, Drawer, Tooltip } from "antd";
 import dayjs from "dayjs";
+import { Gift } from "lucide-react";
+import { capitalizeFirstLetter } from "../../../../../../utils";
 import PriceTag from "../../../../../../component/PriceTag/PriceTag";
 
 const EXTRA_TYPE_LABELS = {
@@ -11,7 +13,7 @@ const EXTRA_TYPE_LABELS = {
 
 const SectionCard = ({ title, children }) => (
   <div className="bg-slate-50 dark:bg-gray-800/60 border border-slate-200 dark:border-gray-700 rounded-xl p-4">
-    <h4 className="text-[11px] font-semibold text-slate-400 dark:text-gray-500 uppercase tracking-wider mb-3">
+    <h4 className="font-semibold text-slate-900 dark:text-gray-500 tracking-wider mb-3">
       {title}
     </h4>
     <div className="divide-y divide-slate-200/70 dark:divide-gray-700/70">
@@ -21,39 +23,52 @@ const SectionCard = ({ title, children }) => (
 );
 
 const Amount = ({ value, muted }) => (
-  <div
-    className={`flex items-center gap-1 text-sm font-semibold tabular-nums ${muted
-        ? "text-slate-400 dark:text-gray-500"
-        : "text-slate-700 dark:text-gray-100"
-      }`}
-  >
+  <div className={`flex justify-end gap-1 ${muted ? "text-slate-400 dark:text-gray-500" : ""}`}>
     <PriceTag value={value} />
-    <span className="text-xs font-normal text-slate-400 dark:text-gray-500">
-      MMK
-    </span>
+    <span>MMK</span>
   </div>
 );
 
-const InfoRow = ({ label, isComplimentary, complimentaryType, value }) => (
+const InfoRow = ({ label, isComplimentary, complimentaryType, value, highlight, mealPricingMode }) => (
   <div className="flex justify-between items-center py-2 first:pt-0 last:pb-0">
-    {isComplimentary ? (
-      <div className="flex items-center gap-1.5 text-sm text-slate-500 dark:text-gray-400">
-        <span>{label}</span>
-        {complimentaryType && (
-          <span className="text-xs text-slate-400 dark:text-gray-500">
-            [
-            <span aria-hidden className="p-1">🎁</span>
-            <span className="p-1">{complimentaryType}</span>
-            ]
-          </span>
-        )}
-      </div>
-    ) : (
-      <span className="text-sm text-slate-700 dark:text-gray-200">
-        {label}
-      </span>
-    )}
-    <Amount value={value} muted={isComplimentary} />
+    <div className="flex items-center gap-1.5 text-slate-700 dark:text-gray-200">
+      <span>{label}</span>
+      {isComplimentary && complimentaryType && (
+        <div className="inline-flex items-center gap-0.5 px-1.5 py-0.5 text-[10px] font-semibold rounded-full bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 w-fit">
+          <Gift size={12} />
+          {capitalizeFirstLetter(complimentaryType)}
+        </div>
+      )}
+      {mealPricingMode && (
+        <Tooltip
+          title={
+            mealPricingMode === "included"
+              ? "These items are included in the room rate and will not be charged separately."
+              : "These items are not included in the room rate and will be charged separately."
+          }
+        >
+          <div className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 text-[10px] font-semibold rounded-full w-fit cursor-help ${
+            mealPricingMode === "included"
+              ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+              : "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400"
+          }`}>
+            {capitalizeFirstLetter(mealPricingMode)}
+          </div>
+        </Tooltip>
+      )}
+    </div>
+    <div
+      className={`flex justify-end gap-1 ${highlight
+          ? 'text-red-500 dark:text-red-400'
+          : isComplimentary
+            ? 'text-slate-700 dark:text-gray-200'
+            : ''
+        }`}
+    >
+      {highlight && <span>-</span>}
+      <PriceTag value={value} />
+      <span>MMK</span>
+    </div>
   </div>
 );
 
@@ -61,16 +76,14 @@ const DailyBreakDownDetailFormDrawer = ({ open, onClose, data }) => {
   if (!data) return null;
 
   const dc = data.dailyCharge || {};
-  const adults = data.adults || 1; // guard against divide-by-zero
-  const mealPerAdult = ((data.mealCharge || 0) / adults).toLocaleString();
 
   const feeRows = [
     ["Sub Total", dc.subTotal],
     ["Tax", dc.taxTotal],
-    ["Service Charge", dc.serviceChargeTotal],
+    // ["Service Charge", dc.serviceChargeTotal],
     ["Incentive", dc.incentiveTotal],
     ["Discount", dc.discountTotal],
-  ].filter(([, value]) => value > 0);
+  ];
 
   return (
     <Drawer
@@ -90,34 +103,19 @@ const DailyBreakDownDetailFormDrawer = ({ open, onClose, data }) => {
     >
       <div className="space-y-4">
         <SectionCard title="Room Charge">
-          <InfoRow label="Room Rate" 
-          isComplimentary={(dc.roomComplimentaryTotal || 0) > 0}
-          complimentaryType={data.roomComplimentaryType}
-          value={dc.roomRate || 0} 
+          <InfoRow label="Room Rate"
+            isComplimentary={(dc.roomComplimentaryTotal || 0) > 0}
+            complimentaryType={data.roomComplimentaryType}
+            value={dc.roomRate || 0}
           />
-          {
-            data?.mealPricingMode == "included" ? 
-            <InfoRow
-            label={`Meal Charge (${data.mealPricingMode})`}
-            isComplimentary={data.isMealComplimentary}
-            value={data.mealCharge || 0}
-          /> : null 
-          }
-        </SectionCard>
-
-        {
-          data?.mealPricingMode == "separate" ? 
-<SectionCard title="Meal Charge">
-
           <InfoRow
-            label={`Meal Charge (${data.mealPricingMode})`}
+            label="Meal Charge"
             isComplimentary={data.isMealComplimentary}
+            complimentaryType={data.mealComplimentaryType}
             value={data.mealCharge || 0}
+            mealPricingMode={data.mealPricingMode}
           />
-</SectionCard> : null
-        }
-
-
+        </SectionCard>
 
         {(data.children || []).length > 0 && (
           <SectionCard title="Children Charge">
@@ -152,22 +150,29 @@ const DailyBreakDownDetailFormDrawer = ({ open, onClose, data }) => {
         )}
 
         {feeRows.length > 0 && (
-          <SectionCard title="Fees & Adjustments">
+          <SectionCard title="Summary">
             {feeRows.map(([label, value]) => (
-              <InfoRow key={label} label={label} value={value} />
+              <InfoRow
+                key={label}
+                label={label}
+                value={value}
+                highlight={label === "Incentive" || label === "Discount"}
+              />
             ))}
+
+            <div className="my-2 border-t border-dashed border-slate-300 dark:border-gray-600" />
+
+            <div className="flex justify-between items-center rounded-xl px-4 py-3.5 bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-200 dark:border-indigo-700">
+              <span className="font-bold text-slate-800 dark:text-gray-100">
+                Grand Total
+              </span>
+              <div className="flex justify-end gap-1 font-bold text-sm text-indigo-600 dark:text-indigo-400">
+                <PriceTag value={dc.grandTotal || 0} />
+                <span>MMK</span>
+              </div>
+            </div>
           </SectionCard>
         )}
-
-        <div className="flex justify-between items-center rounded-xl px-4 py-3.5 bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-200 dark:border-indigo-700">
-          <span className="font-bold text-base text-slate-800 dark:text-gray-100">
-            Grand Total
-          </span>
-          <span className="flex items-center gap-1 font-bold text-lg text-indigo-600 dark:text-indigo-400 tabular-nums">
-            <PriceTag value={dc.grandTotal || 0} />
-            <span className="text-xs font-normal text-slate-400">MMK</span>
-          </span>
-        </div>
       </div>
     </Drawer>
   );

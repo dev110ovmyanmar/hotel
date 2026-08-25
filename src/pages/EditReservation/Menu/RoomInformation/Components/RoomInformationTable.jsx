@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Dropdown, Table } from "antd";
 import dayjs from "dayjs";
 import { PlusOutlined, MessageOutlined, EyeOutlined } from "@ant-design/icons";
-import { CalendarPlus2 } from "lucide-react";
+import { CalendarPlus2, Gift } from "lucide-react";
 import { IoOptionsSharp } from "react-icons/io5";
 import { Bs0Circle, BsPeople } from "react-icons/bs";
 import RoomInformationForm from "./RoomInformationForms/RoomInformationForm";
@@ -32,6 +32,7 @@ import { useApiMutation } from "../../../../../hooks/useApiMutation";
 import { availabilitySearch } from "../../../../../api/reservationSectionApi";
 
 import { getAmendReservationMenuItems } from "./AmendReservationList";
+import { capitalizeFirstLetter } from "../../../../../utils";
 
 const RoomInformationTable = ({
   data,
@@ -43,6 +44,7 @@ const RoomInformationTable = ({
   changePage,
   changePerPage,
   reservationUuid,
+  onSelectRow,
 }) => {
 
   const formattedData = data.map(item => ({
@@ -151,6 +153,7 @@ const RoomInformationTable = ({
           record?.assignStatus === true && !record?.expiredStatus;
         const shouldHighlightRoom =
           !isRoomNull && record?.assignStatus === true;
+        const canClick = isClickable || shouldHighlightRoom;
 
         return (
           <span
@@ -162,20 +165,20 @@ const RoomInformationTable = ({
                 : shouldHighlightRoom
                   ? "#1890ff"
                   : "inherit",
-              cursor:
-                isClickable || shouldHighlightRoom ? "pointer" : "not-allowed",
-              textDecoration:
-                isClickable || shouldHighlightRoom ? "underline" : "none",
+
+              cursor: canClick ? "pointer" : "default",
+
+              textDecoration: canClick ? "underline" : "none",
             }}
             onClick={(e) => {
-              if (isClickable || shouldHighlightRoom) {
-                e.stopPropagation();
-                setSelectedData(record);
-                setAssignRoomOpen(true);
-              }
+              if (!canClick) return;
+
+              e.stopPropagation();
+              setSelectedData(record);
+              setAssignRoomOpen(true);
             }}
           >
-            {text ? text?.roomNo : "Assign Room"}
+            {text?.roomNo || "Assign Room"}
           </span>
         );
       },
@@ -267,7 +270,7 @@ const RoomInformationTable = ({
           },
           {
             key: "roomComp",
-            label: "Room Complimentary",
+            label: "Room FOC",
             icon: <Bs0Circle />,
             onClick: () => {
               setReservationRoomUuid(record.uuid);
@@ -333,11 +336,27 @@ const RoomInformationTable = ({
         columns={columns}
         dataSource={formattedData}
         rowKey="uuid"
-        rowClassName={(record) =>
+         rowClassName={(record) =>
           record?.uuid === reservationUuid?.reservationRoom?.uuid
             ? "active-reservation-row"
-            : ""
+            : "cursor-pointer"
         }
+        onRow={(record) => ({
+          onClick: (event) => {
+            if (
+              event.target.closest(".ant-dropdown-trigger") ||
+              event.target.closest(".ant-dropdown-menu") ||
+              event.target.tagName === "A" ||
+              event.target.tagName === "BUTTON"
+            ) {
+              return;
+            }
+
+            if (onSelectRow) {
+              onSelectRow(record);
+            }
+          },
+        })}
         pagination={{
           current: page,
           pageSize: perPage,

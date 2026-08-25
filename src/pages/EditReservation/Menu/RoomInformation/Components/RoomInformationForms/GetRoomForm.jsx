@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Spin, Empty, Modal } from "antd"; 
+import { Button, Spin, Empty, Modal } from "antd";
 import dayjs from "dayjs";
 import {
   reservationRoomAssign,
@@ -82,7 +82,15 @@ const GetRoomForm = ({ selectedData, onSelectRoom, onClose, floorUuid }) => {
           <div className={textWhiteInDarkStyle}>Confirm Assign Room</div>
         </>
       ),
-      content: `Are you sure you want to assign Room  ${room.roomNo} (${room.roomType?.name || ""}) to this reservation?`,
+      content: (
+        <>
+          Are you sure you want to assign{" "}
+          <strong>
+            Room {room.roomNo} ({room.roomType?.name || ""})
+          </strong>{" "}
+          to this reservation?
+        </>
+      ),
       okText: "Confirm",
       okButtonProps: {
         className: "bg-blue-600 hover:bg-blue-500 text-white border-none",

@@ -50,6 +50,7 @@ const RoomInformationList = () => {
   const [assignRoomOpen, setAssignRoomOpen] = useState(false);
   const [showRoomResults, setShowRoomResults] = useState(false);
   const [open, setOpen] = useState(false);
+  const [selectedRoom, setSelectedRoom] = useState(null);
 
   const { data, isLoading, refetch } = useApiQuery({
     fetchQueryName: "reservation-room",
@@ -70,6 +71,7 @@ const RoomInformationList = () => {
   });
 
   
+
   useEffect(() => {
     if (bookingId && data?.reservation?.reservationNo) {
       sessionStorage.setItem(
@@ -79,6 +81,21 @@ const RoomInformationList = () => {
       window.dispatchEvent(new Event("breadcrumb_updated"));
     }
   }, [data, bookingId]);
+
+  useEffect(() => {
+    if (data?.reservationRoom) {
+      setSelectedRoom(data.reservationRoom);
+    }
+  }, [data]);
+
+  const handleSelectRow = (roomRecord) => {
+    setSelectedRoom(roomRecord);
+  };
+
+  const headerData = {
+    ...data,
+    reservationRoom: selectedRoom || data?.reservationRoom,
+  };
 
   const handleAddRoom = () => {
     setSelectedData(null);
@@ -96,7 +113,8 @@ const RoomInformationList = () => {
 
   return (
     <div className="w-full px-6 py-2">
-      <ReservationHeader data={data || {}} />
+      {/* <ReservationHeader data={data || {}} /> */}
+      <ReservationHeader data={headerData} />
 
       <ReservationMenu data={data} />
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
@@ -125,9 +143,7 @@ const RoomInformationList = () => {
             </Button>
           )
         } */}
-
       </div>
-
 
       {open && (
         <ChangeStatusForm
@@ -147,7 +163,12 @@ const RoomInformationList = () => {
         changePage={setPage}
         changePerPage={setPerPage}
         loading={isLoading}
-        reservationUuid={data || []}
+        // reservationUuid={data || []}
+        reservationUuid={{
+          ...data,
+          reservationRoom: selectedRoom || data?.reservationRoom,
+        }}
+        onSelectRow={handleSelectRow}
       />
       <RoomInformationForm
         data={data?.reservation || []}

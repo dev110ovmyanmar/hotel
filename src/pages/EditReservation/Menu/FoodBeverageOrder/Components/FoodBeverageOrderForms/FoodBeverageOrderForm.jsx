@@ -99,8 +99,6 @@ const FoodBeverageOrderForm = ({
     }
   ));
 
-  console.log(roomOptions, "roomOptions")
-
   const tableOptions = data?.restaurant_tables.map(table => (
     { value: table?.uuid, label: table?.tableNo }
   ));
@@ -131,7 +129,6 @@ const FoodBeverageOrderForm = ({
   });
 
   const handleSubmit = (values) => {
-    console.log(values, "handleSubmitValues")
     const menuItems = values?.items.map(item => ({
       uuid: item.menu,
       quantity: item.quantity,
@@ -338,8 +335,6 @@ const FoodBeverageOrderForm = ({
       );
     }
 
-
-
     const modifierQuantities = {};
 
     selectedMenu.modifiers?.forEach((modifier) => {
@@ -359,7 +354,6 @@ const FoodBeverageOrderForm = ({
   });
 
   const handleUpdateMenuSubmit = (index) => {
-    // console.log(selectedData,"selecteddatamen")
     // if (selectedData !== isClickedEditUuid) return;
     const values = form.getFieldsValue();
 
@@ -398,8 +392,6 @@ const FoodBeverageOrderForm = ({
   }
 
   const handleDeleteMenu = (itemUuid) => {
-    console.log(itemUuid, "handleDeleteMenuIndex")
-
     const payload = {
       uuid: selectedData?.uuid,
       fnbOrderItem: {
@@ -434,6 +426,7 @@ const FoodBeverageOrderForm = ({
         items: [
           {
             quantity: 0,
+            pricePerQty : 0
           },
         ],
       });
@@ -501,11 +494,6 @@ const FoodBeverageOrderForm = ({
         ]) ?? []
       )
     );
-
-    // setMenuUuid((prev) => ({
-    //   ...prev,
-    //   [name]: originalMenuUuid,
-    // }));
 
     setIsSameUuid([]);
     setAddedMenuIndex(null);
@@ -726,7 +714,6 @@ const FoodBeverageOrderForm = ({
                   {(fields, { remove, add }) => (
                     <div>
                       {fields.map(({ key, name }) => {
-                        isAdd && form.setFieldValue(["items", name, "pricePerQty"], 0);
 
                         const selectedMenuItem = data?.menu_items?.find(
                           (addon) => addon?.uuid === menuUuid[name]
@@ -834,7 +821,7 @@ const FoodBeverageOrderForm = ({
                                                   onClick={() => {
                                                     if (clickAddMenu) {
                                                       remove(name);
-                                                      setMenuUuid({});
+                                                      // setMenuUuid({});
                                                       setIsSameUuid([]);
                                                       setAddedMenuIndex(null);
                                                       setIsClickedEditUuid(null);
@@ -856,13 +843,24 @@ const FoodBeverageOrderForm = ({
                                                   <DeleteOutlined
                                                     onClick={() => {
                                                       if (fields.length <= 1) return;
+
+                                                      const currentItem = form.getFieldValue(["items", name]);
+
+                                                      const itemUuid = fnbOrderDetails?.fnbOrderItems?.find(
+                                                        item => item?.menuItem?.uuid === currentItem?.menu
+                                                      )?.uuid;
+
+                                                      if (!itemUuid) return;
+
+                                                      setDeleteTarget({
+                                                        index: name,
+                                                        itemUuid,
+                                                      });
+
+                                                      setIsDeleteUuid(itemUuid);
                                                       if (fields?.length > 1 && !clickAddMenu) {
                                                         setIsModalOpen(true)
                                                       }
-                                                      // setIsDeleteUuid(currentItemUuid);
-                                                      // if (fields.length > 1 && canEdit) {
-                                                      //   setIsModalOpen(true);
-                                                      // }
                                                     }}
                                                     className={`!text-xl ${fields.length > 1 && canEdit
                                                       ? "!cursor-pointer !text-red-500"
@@ -1055,10 +1053,10 @@ const FoodBeverageOrderForm = ({
                                                     classNames={{
                                                       icon:
                                                         (isView && itemsValue?.[name]?.modifier?.includes(modify.uuid))
-                                                        ? "custom-checkbox-icon"
-                                                        : isEdit && itemsValue?.[name]?.modifier?.includes(modify.uuid)
                                                           ? "custom-checkbox-icon"
-                                                          : "",
+                                                          : isEdit && itemsValue?.[name]?.modifier?.includes(modify.uuid)
+                                                            ? "custom-checkbox-icon"
+                                                            : "",
                                                     }}
                                                   >
                                                     <span className="ml-2 text-sm">
@@ -1110,7 +1108,6 @@ const FoodBeverageOrderForm = ({
                           className="custom-blue-btn"
                           onClick={() => {
                             const newIndex = fields.length;
-                            console.log(fields, "FieldLength")
                             add({
                               menu: undefined,
                               quantity: 0,
@@ -1150,7 +1147,6 @@ const FoodBeverageOrderForm = ({
                               modifierQuantities: {},
                             });
                             setAddedMenuIndex(newIndex);
-                            console.log(addedMenuIndex, "addedMenuIndex");
 
                             setClickAddMenu(true)
 

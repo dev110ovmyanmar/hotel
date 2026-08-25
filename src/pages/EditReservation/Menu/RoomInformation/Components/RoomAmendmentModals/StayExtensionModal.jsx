@@ -93,17 +93,35 @@ export default function StayExtensionModal({ isOpen,
 
     return (
         <Modal
+            // title={
+            //     currentStep === 'form'
+            //         ?
+            //         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            //             <div style={{ width: '4px', height: '18px', background: '#1677ff', borderRadius: '2px' }} />
+            //             <span style={{ fontWeight: 600 }}>Extend Guest Stay Duration</span>
+            //         </div>
+            //         : 
+            //         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            //             <div style={{ width: '4px', height: '18px', background: '#1677ff', borderRadius: '2px' }} />
+            //             <span style={{ fontWeight: 600 }}>Review Stay Extension Summary</span>
+            //         </div>
+            //         // <span className="flex items-center gap-2"><CheckCircleOutlined className="text-green-500" /> Review Stay Extension Summary</span>
+            // }
+
             title={
-                currentStep === 'form'
-                    ? "Extend Guest Stay Duration"
-                    : <span className="flex items-center gap-2"><CheckCircleOutlined className="text-green-500" /> Review Stay Extension Summary</span>
+                <div className="flex items-center gap-2">
+                    <div className="h-[18px] w-1 rounded-sm bg-[#1677ff]" />
+                    <span className="font-semibold">
+                        {currentStep === "form" ? "Extend Guest Stay Duration" : "Review Stay Extension Summary"}
+                    </span>
+                </div>
             }
             open={isOpen}
             onCancel={handleCloseReset}
             width={currentStep === 'form' ? 520 : 650}
             footer={
                 currentStep === 'form' ? [
-                    <Button key="back" onClick={handleCloseReset}>Cancel</Button>,
+                    // <Button key="back" onClick={handleCloseReset}>Cancel</Button>,
                     <Button
                         key="submit"
                         type="primary"
@@ -113,11 +131,11 @@ export default function StayExtensionModal({ isOpen,
                             maxDayExtension <= 0 ? "text-default" : ""
                         }
                     >
-                        Review Summary
+                        Review
                     </Button>
                 ] : [
-                    <Button key="back-to-form" disabled={isSubmitting} onClick={() => setCurrentStep('form')}>Modify Extension</Button>,
-                    <Button key="confirm" type="primary" loading={isSubmitting} onClick={handleFinalCommit}>Confirm Extension</Button>
+                    <Button key="back-to-form" disabled={isSubmitting} onClick={() => setCurrentStep('form')}>Back</Button>,
+                    <Button key="confirm" type="primary" loading={isSubmitting} onClick={handleFinalCommit}>Confirm</Button>
                 ]
             }
         >
@@ -199,7 +217,7 @@ export default function StayExtensionModal({ isOpen,
                         label="Reason for Stay Extension"
                     >
                         <Input.TextArea
-                            placeholder={maxDayExtension === 0 ? "Stay extension is currently unavailable." : "Provide business justification for stay extensions..."}
+                            placeholder={maxDayExtension === 0 ? "Stay extension is currently unavailable." : "Reason for Stay Extension"}
                             rows={3}
                             disabled={maxDayExtension === 0}
                         />

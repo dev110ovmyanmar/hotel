@@ -95,7 +95,7 @@ export default function RoomMoveModal({
                 }
             }}
             cancelText={selectRoomToMove ? "Back" : "Cancel"}
-            okText={selectRoomToMove ? "OK" : null}
+            okText={selectRoomToMove ? "Confirm" : null}
             footer={
                 isQueryLoading || hasNoRooms ? null : (!selectRoomToMove ? (
                     <Button
@@ -189,7 +189,7 @@ export default function RoomMoveModal({
 
                     {selectRoomToMove && (
                         <Row gutter={16} className="pt-4">
-                            <Col span={10}>
+                            <Col span={11}>
                                 <div className='flex justify-between border border-gray-300 p-3 rounded-md'>
                                     <div className='flex gap-2'>
                                         <GiBed fontSize={25} className='text-gray-500' />
@@ -199,7 +199,7 @@ export default function RoomMoveModal({
                                 </div>
                             </Col>
 
-                            <Col span={4}>
+                            <Col span={2}>
                                 <div className='flex justify-center p-3 rounded-md'>
                                     <SwapRightOutlined className='!text-2xl !font-bold' />
                                 </div>
@@ -208,7 +208,7 @@ export default function RoomMoveModal({
                             {reservationRoomSearchDetails?.rooms
                                 ?.filter(searchroom => searchroom?.uuid === selectRoomUuid)
                                 ?.map(searchroom => (
-                                    <Col span={10} key={searchroom.uuid}>
+                                    <Col span={11} key={searchroom.uuid}>
                                         <div className={`flex justify-between border-2 border-[#4C16FF] bg-[#F0EBFF] p-3 rounded-md ${upgradeAndDownRoomDarkMode}`}>
                                             <div className='flex gap-2'>
                                                 <GiBed fontSize={25} className='text-green-500' />

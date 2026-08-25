@@ -3,12 +3,14 @@ import { useApiMutation } from "../../../../../../hooks/useApiMutation";
 import { complimentaryUpdate } from "../../../../../../api/reservationSectionApi";
 import { queryClient } from "../../../../../../app/queryClient";
 import { Button, Checkbox, Form, Input, Select, Alert } from "antd";
+import { Gift, Ticket, Calendar } from "lucide-react";
 import Modal from "antd/es/modal/Modal";
 import Toast from "../../../../../../component/Toast/Toast";
 import { darkModeStyle, textWhiteInDarkStyle } from "../../../../../../utils";
 import { useApiQuery } from "../../../../../../hooks/useApiQuery";
 import { reservationRoomDetails } from "../../../../../../api/reservationSectionApi";
 import PriceTag from "../../../../../../component/PriceTag/PriceTag";
+
 
 const SingleRoomComplimentaryUpdateModal = ({
     reservationRoomUuid,
@@ -364,9 +366,9 @@ const SingleRoomComplimentaryUpdateModal = ({
                                     </div>
                                     <div className="flex items-center">
                                         <span
-                                            className={`text-[10px] bg-slate-50 text-slate-500 border border-slate-100 px-2 py-0.5 rounded font-medium ${darkModeStyle}`}
+                                            className={`text-[10px] flex bg-slate-50 text-slate-500 border border-slate-100 px-2 py-0.5 rounded font-medium ${darkModeStyle}`}
                                         >
-                                            🏷️ {roomAllocation.ratePlan.name} (
+                                            <div className="px-2 !text-yellow-700"><Ticket size={15}/> </div>{roomAllocation.ratePlan.name} (
                                             {roomAllocation.ratePlan.code})
                                         </span>
                                     </div>
@@ -389,7 +391,7 @@ const SingleRoomComplimentaryUpdateModal = ({
 
                             <div className="flex justify-between items-center mb-3">
                                 <h4 className="text-xs font-bold text-slate-500 dark:text-slate-300 uppercase tracking-wider flex items-center gap-2">
-                                    🗓️ Stay Dates
+                                    <div className="!text-blue-700"><Calendar size={15}/></div>Stay Dates
                                 </h4>
                                 {allNights.length > 0 && (
                                     <div
@@ -449,7 +451,7 @@ const SingleRoomComplimentaryUpdateModal = ({
                                                 </span>
                                             </span>
                                             <span className="text-[10px] block mt-1 font-medium opacity-70">
-                                                {isComp ? "🎁 FOC" : "Available"}
+                                                {isComp ? <Gift size={15}/> : "Available"}
                                             </span>
                                         </button>
                                     );
