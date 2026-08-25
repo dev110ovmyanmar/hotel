@@ -162,7 +162,7 @@ const RoomInformationDetailsForm = ({
               >
                 {d?.room === null ? (
                   <span className="text-blue-500 text-sm px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-900/30 font-medium">
-                    Assign Room
+                    Assign Rooms
                   </span>
                 ) : (
                   <span className="flex items-center gap-2">
