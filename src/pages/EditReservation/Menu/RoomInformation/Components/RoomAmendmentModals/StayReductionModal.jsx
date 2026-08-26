@@ -40,6 +40,8 @@ export default function StayReductionModal({
   // Parse baseline properties out of your JSON structure
   const reservationNo =
     record?.reservation?.reservationNo || `ID-${record?.id}`;
+  const roomNo = record?.room?.roomNo;
+
   const guestName = record?.reservation?.guest?.name || "Unknown Guest";
 
   const originalCheckin = record?.checkinDate ? dayjs(record.checkinDate) : "";
@@ -137,7 +139,7 @@ export default function StayReductionModal({
         <div className="flex items-center gap-2">
           <div className="h-[18px] w-1 rounded-sm bg-[#1677ff]" />
           <span className="font-semibold">
-            {currentStep === "form" ? "Shorten Guest Stay Duration" :  "Reduction Summary"}
+            {currentStep === "form" ? "Shorten Guest Stay Duration" : "Reduction Summary"}
           </span>
         </div>
       }
@@ -186,7 +188,7 @@ export default function StayReductionModal({
         {reservationNo}{" "}
         <span className={`text-slate-800 ${textWhiteInDarkStyle}`}>
           {" "}
-          — {guestName}
+          { roomNo ? `- ${roomNo}` : null}
         </span>
       </div>
 

@@ -85,7 +85,7 @@ export default function RoomMoveModal({
             }
             open={isOpen}
             onOk={handleOk}
-            loading={isQueryLoading}
+            // loading={isQueryLoading}
             confirmLoading={createRoomAmendmentMutation?.isPending}
             onCancel={() => {
                 if (selectRoomToMove) {
@@ -149,7 +149,12 @@ export default function RoomMoveModal({
                             </div>
 
                             <h4 className='!my-[10px]'>Available Rooms:</h4>
-                            <Row gutter={[16, 16]}>
+                            {
+                                isQueryLoading 
+                                ?
+                                <Spin></Spin>
+                                :
+                                <Row gutter={[16, 16]}>
                                 {reservationRoomSearchDetails?.rooms?.map((room) => (
                                     <Col span={12} key={room.uuid}>
                                         <Card
@@ -184,6 +189,7 @@ export default function RoomMoveModal({
                                     </Col>
                                 ))}
                             </Row>
+                            }
                         </>
                     )}
 

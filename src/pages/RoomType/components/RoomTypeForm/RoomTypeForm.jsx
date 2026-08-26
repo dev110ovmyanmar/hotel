@@ -35,7 +35,6 @@ import PriceTag, {
 } from "../../../../component/PriceTag/PriceTag";
 import { PERMISSIONS } from "../../../../variables/permission";
 import usePermission from "../../../../hooks/usePermission";
-import { hasIn } from "lodash";
 import { deleteImageUpload } from "../../../../api/deleteImageApi";
 import { queryClient } from "../../../../app/queryClient";
 import {
@@ -52,7 +51,6 @@ const RoomTypeForm = ({
   setDrawerOpen,
   imageDrawerOpen,
   setImageDrawerOpen,
-  setPage,
   page,
 }) => {
   const [form] = Form.useForm();
