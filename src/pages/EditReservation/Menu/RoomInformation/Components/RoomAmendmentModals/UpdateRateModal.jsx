@@ -18,6 +18,7 @@ import {
   textWhiteInDarkStyle,
 } from "../../../../../../utils";
 import PriceTag from "../../../../../../component/PriceTag/PriceTag";
+import TextArea from "antd/es/input/TextArea";
 
 export default function UpdateRateModal({
   isOpen,
@@ -27,6 +28,9 @@ export default function UpdateRateModal({
 }) {
   const [form] = Form.useForm();
   const watchRates = Form.useWatch("rates", form);
+  const watchReason = Form.useWatch("reason", form);
+  console.log(watchReason, "WatchRateforreason")
+
 
   const createRoomAmendmentMutation = useApiMutation({
     mutationFn: createRoomAmendment,
@@ -41,6 +45,8 @@ export default function UpdateRateModal({
   // Context headers
   const reservationNo =
     record?.reservation?.reservationNo || `ID-${record?.id}`;
+  const roomNo = record?.room?.roomNo;
+
   const guestName = record?.reservation?.guest?.name || "Unknown Guest";
 
   // Establish strict date boundaries from API record
@@ -185,7 +191,7 @@ export default function UpdateRateModal({
         {" "}
         {reservationNo} {" "}
         <span className={`text-slate-800 ${textWhiteInDarkStyle}`}>
-          — {guestName}
+          {roomNo? `- ${roomNo}` : null }
         </span>
       </div>
 
@@ -225,7 +231,6 @@ export default function UpdateRateModal({
                 <div className="max-h-[280px] overflow-y-auto mb-4 pr-1">
                   {fields.map(({ key, name, ...restField }) => {
                     const currentDate = watchRates?.[name]?.date;
-                    console.log(watchRates, "currentDate")
                     const isPriceDisabled = currentDate?.isBefore(dayjs(), "day");
                     return (
                       <div
@@ -295,10 +300,6 @@ export default function UpdateRateModal({
       {/* --- STEP 2: POST PAYLOAD SUMMARY REVIEW --- */}
       {currentStep === "summary" && pendingValues && (
         <div className="animate-[fadeIn_0.2s_ease-in-out]">
-          <p className="text-slate-600 dark:text-slate-300 mb-3">
-            Please verify your modified schedule below before saving.
-            Highlighted lines indicate changed prices.
-          </p>
 
           <div className="max-h-[220px] overflow-y-auto mb-4 border border-slate-200 rounded-md">
             <table
@@ -374,7 +375,7 @@ export default function UpdateRateModal({
             </table>
           </div>
 
-          <Descriptions bordered column={1} size="small">
+          {/* <Descriptions bordered column={1} size="small">
             <Descriptions.Item label="Active Record Targets">
               <strong>{pendingValues.rates.length} Schedules Set</strong>
             </Descriptions.Item>
@@ -383,7 +384,15 @@ export default function UpdateRateModal({
                 {pendingValues?.reason ? pendingValues?.reason : null}
               </span>
             </Descriptions.Item>
-          </Descriptions>
+          </Descriptions> */}
+
+          <Form layout="vertical">
+            <Form.Item label="Reason for Rate">
+              <TextArea value={pendingValues?.reason || "No reason provided"} rows={3} disabled>
+                {pendingValues?.reason || "No reason provided"}
+              </TextArea>
+            </Form.Item>
+          </Form>
         </div>
       )}
     </Modal>
