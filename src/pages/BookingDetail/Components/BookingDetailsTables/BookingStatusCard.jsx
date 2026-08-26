@@ -4,6 +4,7 @@ import { FaChild } from "react-icons/fa";
 import { IoPeopleSharp } from "react-icons/io5";
 import { MdOutlineMeetingRoom } from "react-icons/md";
 import ReservationStatusColor from "../../../../component/ReservationStatusColor/ReservationStatusColor";
+import dayjs from "dayjs";
 
 const { Text } = Typography;
 
@@ -23,11 +24,11 @@ const BookingStatusCard = ({ data }) => {
       <Card
         title={CustomTitle}
         className="booking-status-card line-height"
-      // extra={
-      //   <ReservationStatusColor
-      //     status={data?.reservation?.reservationStatus?.name}
-      //   />
-      // }
+        // extra={
+        //   <ReservationStatusColor
+        //     status={data?.reservation?.reservationStatus?.name}
+        //   />
+        // }
       >
         {/* <Row>
           <Col span={8}>
@@ -72,7 +73,12 @@ const BookingStatusCard = ({ data }) => {
 
         <div>
           <Text>Booking Date: </Text>
-          <Text>{reservation?.updatedAt}</Text>
+
+          <Text strong>
+            {reservation?.updatedAt
+              ? dayjs(reservation.updatedAt).format("YYYY-MM-DD")
+              : ""}
+          </Text>
         </div>
 
         <div>
@@ -85,13 +91,12 @@ const BookingStatusCard = ({ data }) => {
           <Text strong>{data?.reservation?.sourceType?.name}</Text>
         </div>
 
-        {
-          data?.reservation?.source?.name &&
+        {data?.reservation?.source?.name && (
           <div>
             <Text>Source Name: </Text>
             <Text strong>{data?.reservation?.source?.name}</Text>
           </div>
-        }
+        )}
       </Card>
     </>
   );

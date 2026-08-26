@@ -44,6 +44,7 @@ const RoomInformationTable = ({
   changePage,
   changePerPage,
   reservationUuid,
+  onSelectRow,
 }) => {
 
   const formattedData = data.map(item => ({
@@ -145,49 +146,40 @@ const RoomInformationTable = ({
       title: "Room No",
       key: "room",
       dataIndex: "room",
-      width: 150,
+      width: 130,
       render: (text, record) => {
         const isRoomNull = !text;
         const isClickable =
           record?.assignStatus === true && !record?.expiredStatus;
         const shouldHighlightRoom =
           !isRoomNull && record?.assignStatus === true;
-        const isComplimentary = record?.isComplimentary == true;
+        const canClick = isClickable || shouldHighlightRoom;
 
         return (
-          <div className="flex flex-col gap-1">
-            <span
-              style={{
-                color: isRoomNull
-                  ? isClickable
-                    ? "#1890ff"
-                    : "#bfbfbf"
-                  : shouldHighlightRoom
-                    ? "#1890ff"
-                    : "inherit",
-                cursor:
-                  isClickable || shouldHighlightRoom ? "pointer" : "not-allowed",
-                textDecoration:
-                  isClickable || shouldHighlightRoom ? "underline" : "none",
-              }}
-              onClick={(e) => {
-                if (isClickable || shouldHighlightRoom) {
-                  e.stopPropagation();
-                  setSelectedData(record);
-                  setAssignRoomOpen(true);
-                }
-              }}
-            >
-              {text ? text?.roomNo : "Assign Room"}
-            </span>
-            {isComplimentary && (
-              <div className="inline-flex items-center gap-0.5 px-1.5 py-0.5 text-[10px] font-semibold rounded-full bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 w-fit">
-                <Gift size={15}/>
-                {capitalizeFirstLetter(record?.complimentaryType)}
-              </div>
-            )}
-          </div>
+          <span
+            style={{
+              color: isRoomNull
+                ? isClickable
+                  ? "#1890ff"
+                  : "#bfbfbf"
+                : shouldHighlightRoom
+                  ? "#1890ff"
+                  : "inherit",
 
+              cursor: canClick ? "pointer" : "default",
+
+              textDecoration: canClick ? "underline" : "none",
+            }}
+            onClick={(e) => {
+              if (!canClick) return;
+
+              e.stopPropagation();
+              setSelectedData(record);
+              setAssignRoomOpen(true);
+            }}
+          >
+            {text?.roomNo || "Assign Room"}
+          </span>
         );
       },
     },
@@ -344,11 +336,27 @@ const RoomInformationTable = ({
         columns={columns}
         dataSource={formattedData}
         rowKey="uuid"
-        rowClassName={(record) =>
+         rowClassName={(record) =>
           record?.uuid === reservationUuid?.reservationRoom?.uuid
             ? "active-reservation-row"
-            : ""
+            : "cursor-pointer"
         }
+        onRow={(record) => ({
+          onClick: (event) => {
+            if (
+              event.target.closest(".ant-dropdown-trigger") ||
+              event.target.closest(".ant-dropdown-menu") ||
+              event.target.tagName === "A" ||
+              event.target.tagName === "BUTTON"
+            ) {
+              return;
+            }
+
+            if (onSelectRow) {
+              onSelectRow(record);
+            }
+          },
+        })}
         pagination={{
           current: page,
           pageSize: perPage,

@@ -18,6 +18,7 @@ import {
   Tooltip,
   Spin,
   Modal,
+  Collapse,
 } from "antd";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { queryClient } from "../../../../../../app/queryClient";
@@ -426,7 +427,7 @@ const FoodBeverageOrderForm = ({
         items: [
           {
             quantity: 0,
-            pricePerQty : 0
+            pricePerQty: 0
           },
         ],
       });
@@ -501,6 +502,15 @@ const FoodBeverageOrderForm = ({
     setClickAddMenu(false);
     setIsDeleteUuid(null)
   };
+
+  const collapseItems = [
+    {
+      key: '1',
+      label: 'This is panel header 1',
+      children: <p>HI</p>,
+    }
+  ];
+
   return (
     <>
       <Drawer
@@ -757,98 +767,127 @@ const FoodBeverageOrderForm = ({
                           );
                         return (
                           <>
-                            <Card
-                              key={currentItemUuid}
-                              title={
-                                <div className="flex justify-between items-center">
-                                  <div>{`Menu ${name + 1}`}</div>
-                                </div>
-                              }
-                              className="shadow-sm rounded !my-2 border-l-4 border-blue-500 order-info-forms"
-                              size="small"
-                              extra={
-                                <>
-                                  {isAdd && (
-                                    fields?.length > 1 && (
-                                      <div className="flex gap-x-3">
+                            <Collapse
+                              defaultActiveKey={isAdd ? [currentItemUuid || key] : []}
+                              className="!my-2 order-info-forms"
+                              items={[
+                                {
+                                  key: currentItemUuid || key,
+
+                                  label: (
+                                    <div className="flex justify-between items-center w-full">
+                                      <div className="font-medium">
+                                        {isAdd
+                                          ? (
+                                            menuOptions?.find(
+                                              (option) =>
+                                                option.value === itemsValue?.[name]?.menu
+                                            )?.label || `Menu ${name + 1}`
+                                          )
+                                          : (
+                                            fnbOrderDetails?.fnbOrderItems?.[name]?.menuItem?.name ||
+                                            menuOptions?.find(
+                                              (option) =>
+                                                option.value === itemsValue?.[name]?.menu
+                                            )?.label ||
+                                            `Menu ${name + 1}`
+                                          )}
+                                      </div>
+                                    </div>
+                                  ),
+
+                                  extra: (
+                                    <div
+                                      className="flex gap-x-3 items-center"
+                                      onClick={(e) => {
+                                        // Prevent clicking Edit/Delete from opening/closing Collapse
+                                        e.stopPropagation();
+                                      }}
+                                    >
+                                      {/* ADD MODE */}
+                                      {isAdd && fields?.length > 1 && (
                                         <Tooltip title="Delete Card">
                                           <AiOutlineCloseSquare
                                             onClick={() => {
                                               if (fields?.length === 1) return;
+
                                               remove(name);
-                                              setClickAddMenu(false)
+                                              setClickAddMenu(false);
                                             }}
                                             className="text-xl cursor-pointer text-red-500"
                                           />
                                         </Tooltip>
-                                      </div>
-                                    )
-                                  )}
+                                      )}
 
-                                  {
-                                    isEdit && (
-                                      <div className="flex gap-x-3">
-
-                                        {/* Newly added menu */}
-                                        {(menuCardUuid && currentItemUuid === isClickedEditUuid) || (!isClickedEditUuid && !currentItemUuid)
-                                          ? (
+                                      {/* EDIT MODE */}
+                                      {isEdit && (
+                                        <>
+                                          {/* Newly added menu */}
+                                          {(menuCardUuid &&
+                                            currentItemUuid === isClickedEditUuid) ||
+                                            (!isClickedEditUuid && !currentItemUuid) ? (
                                             <>
+                                              {/* Save Menu */}
                                               <Tooltip title="Save Menu">
-                                                {
-                                                  upsertFoodBeverageOrderItems.isPending ?
-                                                    <Spin />
-                                                    :
-                                                    <AiOutlineCheckSquare
-                                                      onClick={() => {
-                                                        if (
-                                                          itemsValue?.[name]?.menu &&
-                                                          !upsertFoodBeverageOrderItems?.isPending
-                                                        ) {
-                                                          handleUpdateMenuSubmit(name)
-                                                        }
-                                                      }}
-                                                      className={`text-2xl ${itemsValue?.[name]?.menu
-                                                        ? "cursor-pointer text-blue-500"
-                                                        : "cursor-not-allowed text-gray-400"
-                                                        }`}
-                                                      disabled={upsertFoodBeverageOrderItems?.isPending}
-                                                    />
-                                                }
+                                                {upsertFoodBeverageOrderItems.isPending ? (
+                                                  <Spin />
+                                                ) : (
+                                                  <AiOutlineCheckSquare
+                                                    onClick={() => {
+                                                      if (
+                                                        itemsValue?.[name]?.menu &&
+                                                        !upsertFoodBeverageOrderItems?.isPending
+                                                      ) {
+                                                        handleUpdateMenuSubmit(name);
+                                                      }
+                                                    }}
+                                                    className={`text-2xl ${itemsValue?.[name]?.menu
+                                                      ? "cursor-pointer text-blue-500"
+                                                      : "cursor-not-allowed text-gray-400"
+                                                      }`}
+                                                  />
+                                                )}
                                               </Tooltip>
 
+                                              {/* Cancel */}
                                               <Tooltip title="Cancel">
                                                 <AiOutlineCloseSquare
                                                   onClick={() => {
                                                     if (clickAddMenu) {
                                                       remove(name);
-                                                      // setMenuUuid({});
+
                                                       setIsSameUuid([]);
                                                       setAddedMenuIndex(null);
                                                       setIsClickedEditUuid(null);
                                                       setClickAddMenu(false);
                                                       setIsDeleteUuid(null);
-                                                    }
-                                                    else {
-                                                      handleCanceltoOriginalValue(name)
+                                                    } else {
+                                                      handleCanceltoOriginalValue(name);
                                                     }
                                                   }}
                                                   className="text-2xl cursor-pointer text-red-500"
                                                 />
                                               </Tooltip>
 
-                                              {
-                                                !clickAddMenu &&
-
+                                              {/* Delete newly added menu */}
+                                              {!clickAddMenu && (
                                                 <Tooltip title="Delete Menu">
                                                   <DeleteOutlined
                                                     onClick={() => {
                                                       if (fields.length <= 1) return;
 
-                                                      const currentItem = form.getFieldValue(["items", name]);
+                                                      const currentItem =
+                                                        form.getFieldValue([
+                                                          "items",
+                                                          name,
+                                                        ]);
 
-                                                      const itemUuid = fnbOrderDetails?.fnbOrderItems?.find(
-                                                        item => item?.menuItem?.uuid === currentItem?.menu
-                                                      )?.uuid;
+                                                      const itemUuid =
+                                                        fnbOrderDetails?.fnbOrderItems?.find(
+                                                          (item) =>
+                                                            item?.menuItem?.uuid ===
+                                                            currentItem?.menu
+                                                        )?.uuid;
 
                                                       if (!itemUuid) return;
 
@@ -858,8 +897,12 @@ const FoodBeverageOrderForm = ({
                                                       });
 
                                                       setIsDeleteUuid(itemUuid);
-                                                      if (fields?.length > 1 && !clickAddMenu) {
-                                                        setIsModalOpen(true)
+
+                                                      if (
+                                                        fields?.length > 1 &&
+                                                        !clickAddMenu
+                                                      ) {
+                                                        setIsModalOpen(true);
                                                       }
                                                     }}
                                                     className={`!text-xl ${fields.length > 1 && canEdit
@@ -868,19 +911,19 @@ const FoodBeverageOrderForm = ({
                                                       }`}
                                                   />
                                                 </Tooltip>
-                                              }
-
+                                              )}
                                             </>
                                           ) : (
-                                            /* Existing menu */
                                             <>
+                                              {/* Existing menu - Edit */}
                                               <Tooltip title="Edit Menu">
                                                 <EditOutlined
                                                   onClick={() => {
                                                     if (!canEdit) return;
 
                                                     const itemUuid =
-                                                      fnbOrderDetails?.fnbOrderItems?.[name]?.uuid;
+                                                      fnbOrderDetails?.fnbOrderItems?.[name]
+                                                        ?.uuid;
 
                                                     if (!itemUuid) return;
 
@@ -893,29 +936,33 @@ const FoodBeverageOrderForm = ({
                                                     );
 
                                                     setClickAddMenu(false);
-                                                    setIsDeleteUuid(null)
-
-
+                                                    setIsDeleteUuid(null);
                                                   }}
-                                                  // className="text-2xl !cursor-pointer !text-blue-500"
                                                   className={`text-2xl ${canEdit
                                                     ? "!cursor-pointer !text-blue-500"
                                                     : "!cursor-not-allowed !text-gray-400"
                                                     }`}
-
                                                 />
                                               </Tooltip>
 
+                                              {/* Existing menu - Delete */}
                                               <Tooltip title="Delete Menu">
                                                 <DeleteOutlined
                                                   onClick={() => {
                                                     if (fields.length <= 1) return;
 
-                                                    const currentItem = form.getFieldValue(["items", name]);
+                                                    const currentItem =
+                                                      form.getFieldValue([
+                                                        "items",
+                                                        name,
+                                                      ]);
 
-                                                    const itemUuid = fnbOrderDetails?.fnbOrderItems?.find(
-                                                      item => item?.menuItem?.uuid === currentItem?.menu
-                                                    )?.uuid;
+                                                    const itemUuid =
+                                                      fnbOrderDetails?.fnbOrderItems?.find(
+                                                        (item) =>
+                                                          item?.menuItem?.uuid ===
+                                                          currentItem?.menu
+                                                      )?.uuid;
 
                                                     if (!itemUuid) return;
 
@@ -925,8 +972,12 @@ const FoodBeverageOrderForm = ({
                                                     });
 
                                                     setIsDeleteUuid(itemUuid);
-                                                    if (fields?.length > 1 && !clickAddMenu) {
-                                                      setIsModalOpen(true)
+
+                                                    if (
+                                                      fields?.length > 1 &&
+                                                      !clickAddMenu
+                                                    ) {
+                                                      setIsModalOpen(true);
                                                     }
                                                   }}
                                                   className={`!text-xl ${fields.length > 1 && canEdit
@@ -937,167 +988,249 @@ const FoodBeverageOrderForm = ({
                                               </Tooltip>
                                             </>
                                           )}
-
-                                      </div>
-                                    )
-                                  }
-                                </>
-
-                              }
-
-
-                            >
-                              <div className="grid grid-cols-3 gap-3">
-                                <Form.Item
-                                  label="Menu"
-                                  name={[name, "menu"]}
-                                  rules={[
-                                    {
-                                      required: true,
-                                      message: "Please select a menu",
-                                    },
-                                  ]}
-                                >
-                                  <Select
-                                    options={menuOptions}
-                                    onChange={(value, option) =>
-                                      handleChangeMenu(value, option, name)
-                                    }
-                                    placeholder="Select Menu"
-                                    disabled={isAdd ? false : !isCurrentCardEditable}
-                                  />
-                                </Form.Item>
-
-                                <Form.Item
-                                  label="Quantity"
-                                  name={[name, "quantity"]}
-                                >
-                                  <InputNumber
-                                    {...sharedProps}
-                                    min={itemsValue?.[name]?.menu ? 1 : 0}
-                                    disabled={isAdd ? !itemsValue?.[name]?.menu : !isCurrentCardEditable || !itemsValue?.[name]?.menu}
-                                  />
-                                </Form.Item>
-
-                                <Form.Item
-                                  label="Price Per Qty"
-                                  name={[name, "pricePerQty"]}
-                                >
-                                  <InputNumber
-                                    className="!w-full"
-                                    min={0}
-                                    suffix={<div className="dark:!text-gray-200">MMK</div>}
-                                    disabled={true}
-                                  />
-                                </Form.Item>
-                              </div>
-
-                              {showModifier
-                                ? (
-                                  <div>
-                                    <div className="flex justify-between items-center !mb-1">
-                                      <Text strong>Add on Menu</Text>
-
-                                      <Tag color="default" className="mr-0">
-                                        Optional
-                                      </Tag>
+                                        </>
+                                      )}
                                     </div>
+                                  ),
 
-                                    <Form.Item
-                                      name={[name, "modifier"]}
-                                      className="!mb-0 !p-0"
-                                    >
-                                      <Checkbox.Group
-                                        className="w-full"
-                                        onChange={(checkedValues) => {
-                                          selectedMenuItem?.modifiers.forEach((modify) => {
-                                            const uuid = modify.uuid;
+                                  children: (
+                                    <div className="px-1">
+                                      {/* =========================
+              MENU / QUANTITY / PRICE
+             ========================= */}
+                                      <div className="grid grid-cols-3 gap-3">
+                                        <Form.Item
+                                          label="Menu"
+                                          name={[name, "menu"]}
+                                          rules={[
+                                            {
+                                              required: true,
+                                              message: "Please select a menu",
+                                            },
+                                          ]}
+                                        >
+                                          <Select
+                                            options={menuOptions}
+                                            onChange={(value, option) =>
+                                              handleChangeMenu(value, option, name)
+                                            }
+                                            placeholder="Select Menu"
+                                            disabled={
+                                              isAdd
+                                                ? false
+                                                : !isCurrentCardEditable
+                                            }
+                                          />
+                                        </Form.Item>
 
-                                            const currentQuantity =
-                                              form.getFieldValue([
-                                                "items",
-                                                name,
-                                                "modifierQuantities",
-                                                uuid,
-                                              ]) ?? 0;
+                                        <Form.Item
+                                          label="Quantity"
+                                          name={[name, "quantity"]}
+                                        >
+                                          <InputNumber
+                                            {...sharedProps}
+                                            min={
+                                              itemsValue?.[name]?.menu ? 1 : 0
+                                            }
+                                            disabled={
+                                              isAdd
+                                                ? !itemsValue?.[name]?.menu
+                                                : !isCurrentCardEditable ||
+                                                !itemsValue?.[name]?.menu
+                                            }
+                                          />
+                                        </Form.Item>
 
-                                            const newQuantity = checkedValues.includes(uuid)
-                                              ? currentQuantity > 0
-                                                ? currentQuantity
-                                                : 1
-                                              : 0;
-
-                                            form.setFieldValue(
-                                              ["items", name, "modifierQuantities", uuid],
-                                              newQuantity
-                                            );
-                                          });
-                                        }}
-
-                                      >
-                                        <div className="space-y-2">
-                                          {selectedMenuItem?.modifiers?.map((modify, index) => {
-                                            const selectedModifiers = itemsValue?.[name]?.modifier || [];
-                                            const isModifierChecked = selectedModifiers.includes(modify.uuid);
-                                            const lastestRow = index === selectedMenuItem?.modifiers?.length - 1;
-                                            return (
-                                              <div
-                                                key={modify.uuid}
-                                                className={`grid grid-cols-3 gap-3 items-center py-2  !border-gray-50 hover:bg-gray-50 dark:!border-gray-700 dark:hover:bg-gray-900/50 transition-colors ${lastestRow ? "" : "border-b"}`}
-                                              >
-                                                <div className="flex items-center">
-                                                  <Checkbox
-                                                    value={modify.uuid}
-                                                    disabled={isAdd ? false : !isCurrentCardEditable}
-                                                    className={(isView && itemsValue?.[name].modifier.includes(modify.uuid)) || !isCurrentCardEditable ? "custom-disabled-checkbox" : ""}
-                                                    classNames={{
-                                                      icon:
-                                                        (isView && itemsValue?.[name]?.modifier?.includes(modify.uuid))
-                                                          ? "custom-checkbox-icon"
-                                                          : isEdit && itemsValue?.[name]?.modifier?.includes(modify.uuid)
-                                                            ? "custom-checkbox-icon"
-                                                            : "",
-                                                    }}
-                                                  >
-                                                    <span className="ml-2 text-sm">
-                                                      {modify.name}
-                                                    </span>
-                                                  </Checkbox>
-                                                </div>
-
-                                                <Form.Item
-                                                  name={[name, "modifierQuantities", modify.uuid]}
-                                                  className="!m-0"
-                                                >
-                                                  <InputNumber
-                                                    {...sharedProps}
-                                                    min={isModifierChecked ? 1 : 0}
-                                                    disabled={!isModifierChecked ? true : !isCurrentCardEditable}
-
-                                                  />
-                                                </Form.Item>
-
-                                                <Form.Item className="!m-0">
-                                                  <InputNumber
-                                                    className="!w-full"
-                                                    min={0}
-                                                    suffix={<div className="dark:!text-gray-200">MMK</div>}
-                                                    disabled={true}
-                                                    value={modify.unitPrice.toLocaleString()}
-                                                  />
-                                                </Form.Item>
+                                        <Form.Item
+                                          label="Price Per Qty"
+                                          name={[name, "pricePerQty"]}
+                                        >
+                                          <InputNumber
+                                            className="!w-full"
+                                            min={0}
+                                            suffix={
+                                              <div className="dark:!text-gray-200">
+                                                MMK
                                               </div>
-                                            )
-                                          })}
-                                        </div>
-                                      </Checkbox.Group>
-                                    </Form.Item>
-                                  </div>
-                                )
-                                :
-                                null
-                              }
-                            </Card>
+                                            }
+                                            disabled
+                                          />
+                                        </Form.Item>
+                                      </div>
+
+                                      {/* =========================
+              ADD ON MENU
+             ========================= */}
+                                      {showModifier &&
+                                        selectedMenuItem?.modifiers?.length > 0 && (
+                                          <div className="mt-2">
+                                            <div className="flex justify-between items-center !mb-1">
+                                              <Text strong>Add on Menu</Text>
+
+                                              <Tag
+                                                color="default"
+                                                className="mr-0"
+                                              >
+                                                Optional
+                                              </Tag>
+                                            </div>
+
+                                            <Form.Item
+                                              name={[name, "modifier"]}
+                                              className="!mb-0 !p-0"
+                                            >
+                                              <Checkbox.Group
+                                                className="w-full"
+                                                onChange={(checkedValues) => {
+                                                  selectedMenuItem?.modifiers?.forEach(
+                                                    (modify) => {
+                                                      const uuid = modify.uuid;
+
+                                                      const currentQuantity =
+                                                        form.getFieldValue([
+                                                          "items",
+                                                          name,
+                                                          "modifierQuantities",
+                                                          uuid,
+                                                        ]) ?? 0;
+
+                                                      const newQuantity =
+                                                        checkedValues.includes(uuid)
+                                                          ? currentQuantity > 0
+                                                            ? currentQuantity
+                                                            : 1
+                                                          : 0;
+
+                                                      form.setFieldValue(
+                                                        [
+                                                          "items",
+                                                          name,
+                                                          "modifierQuantities",
+                                                          uuid,
+                                                        ],
+                                                        newQuantity
+                                                      );
+                                                    }
+                                                  );
+                                                }}
+                                              >
+                                                <div className="space-y-2">
+                                                  {selectedMenuItem?.modifiers?.map(
+                                                    (modify, index) => {
+                                                      const selectedModifiers =
+                                                        itemsValue?.[name]?.modifier ||
+                                                        [];
+
+                                                      const isModifierChecked =
+                                                        selectedModifiers.includes(
+                                                          modify.uuid
+                                                        );
+
+                                                      const latestRow =
+                                                        index ===
+                                                        selectedMenuItem.modifiers
+                                                          .length -
+                                                        1;
+
+                                                      return (
+                                                        <div
+                                                          key={modify.uuid}
+                                                          className={`
+                                grid grid-cols-3
+                                gap-3
+                                items-center
+                                py-2
+                                !border-gray-50
+                                hover:bg-gray-50
+                                dark:!border-gray-700
+                                dark:hover:bg-gray-900/50
+                                transition-colors
+                                ${latestRow
+                                                              ? ""
+                                                              : "border-b"
+                                                            }
+                              `}
+                                                        >
+                                                          {/* Modifier name */}
+                                                          <div className="flex items-center">
+                                                            <Checkbox
+                                                              value={modify.uuid}
+                                                              disabled={
+                                                                isAdd
+                                                                  ? false
+                                                                  : !isCurrentCardEditable
+                                                              }
+                                                              classNames={{
+                                                                icon:
+                                                                  (isView &&
+                                                                    selectedModifiers.includes(
+                                                                      modify.uuid
+                                                                    )) ||
+                                                                    (isEdit &&
+                                                                      selectedModifiers.includes(
+                                                                        modify.uuid
+                                                                      ))
+                                                                    ? "custom-checkbox-icon"
+                                                                    : "",
+                                                              }}
+                                                            >
+                                                              <span className="ml-2 text-sm">
+                                                                {modify.name}
+                                                              </span>
+                                                            </Checkbox>
+                                                          </div>
+
+                                                          {/* Modifier quantity */}
+                                                          <Form.Item
+                                                            name={[
+                                                              name,
+                                                              "modifierQuantities",
+                                                              modify.uuid,
+                                                            ]}
+                                                            className="!m-0"
+                                                          >
+                                                            <InputNumber
+                                                              {...sharedProps}
+                                                              min={
+                                                                isModifierChecked
+                                                                  ? 1
+                                                                  : 0
+                                                              }
+                                                              disabled={
+                                                                !isModifierChecked ||
+                                                                !isCurrentCardEditable
+                                                              }
+                                                            />
+                                                          </Form.Item>
+
+                                                          {/* Modifier price */}
+                                                          <Form.Item className="!m-0">
+                                                            <InputNumber
+                                                              className="!w-full"
+                                                              min={0}
+                                                              suffix={
+                                                                <div className="dark:!text-gray-200">
+                                                                  MMK
+                                                                </div>
+                                                              }
+                                                              disabled
+                                                              value={modify.unitPrice.toLocaleString()}
+                                                            />
+                                                          </Form.Item>
+                                                        </div>
+                                                      );
+                                                    }
+                                                  )}
+                                                </div>
+                                              </Checkbox.Group>
+                                            </Form.Item>
+                                          </div>
+                                        )}
+                                    </div>
+                                  ),
+                                },
+                              ]}
+                            />
                           </>
                         );
                       })}
@@ -1192,3 +1325,571 @@ const FoodBeverageOrderForm = ({
 };
 
 export default FoodBeverageOrderForm;
+
+// Original Card
+{/* <Card
+  key={currentItemUuid}
+  title={
+    <div className="flex justify-between items-center">
+      <div>{`Menu ${name + 1}`}</div>
+    </div>
+  }
+  className="shadow-sm rounded !my-2 border-l-4 border-blue-500 order-info-forms"
+  size="small"
+  extra={
+    <>
+      {isAdd && (
+        fields?.length > 1 && (
+          <div className="flex gap-x-3">
+            <Tooltip title="Delete Card">
+              <AiOutlineCloseSquare
+                onClick={() => {
+                  if (fields?.length === 1) return;
+                  remove(name);
+                  setClickAddMenu(false)
+                }}
+                className="text-xl cursor-pointer text-red-500"
+              />
+            </Tooltip>
+          </div>
+        )
+      )}
+
+      {
+        isEdit && (
+          <div className="flex gap-x-3">
+
+            {/* Newly added menu */}
+//             {(menuCardUuid && currentItemUuid === isClickedEditUuid) || (!isClickedEditUuid && !currentItemUuid)
+//               ? (
+//                 <>
+//                   <Tooltip title="Save Menu">
+//                     {
+//                       upsertFoodBeverageOrderItems.isPending ?
+//                         <Spin />
+//                         :
+//                         <AiOutlineCheckSquare
+//                           onClick={() => {
+//                             if (
+//                               itemsValue?.[name]?.menu &&
+//                               !upsertFoodBeverageOrderItems?.isPending
+//                             ) {
+//                               handleUpdateMenuSubmit(name)
+//                             }
+//                           }}
+//                           className={`text-2xl ${itemsValue?.[name]?.menu
+//                             ? "cursor-pointer text-blue-500"
+//                             : "cursor-not-allowed text-gray-400"
+//                             }`}
+//                           disabled={upsertFoodBeverageOrderItems?.isPending}
+//                         />
+//                     }
+//                   </Tooltip>
+
+//                   <Tooltip title="Cancel">
+//                     <AiOutlineCloseSquare
+//                       onClick={() => {
+//                         if (clickAddMenu) {
+//                           remove(name);
+//                           // setMenuUuid({});
+//                           setIsSameUuid([]);
+//                           setAddedMenuIndex(null);
+//                           setIsClickedEditUuid(null);
+//                           setClickAddMenu(false);
+//                           setIsDeleteUuid(null);
+//                         }
+//                         else {
+//                           handleCanceltoOriginalValue(name)
+//                         }
+//                       }}
+//                       className="text-2xl cursor-pointer text-red-500"
+//                     />
+//                   </Tooltip>
+
+//                   {
+//                     !clickAddMenu &&
+
+//                     <Tooltip title="Delete Menu">
+//                       <DeleteOutlined
+//                         onClick={() => {
+//                           if (fields.length <= 1) return;
+
+//                           const currentItem = form.getFieldValue(["items", name]);
+
+//                           const itemUuid = fnbOrderDetails?.fnbOrderItems?.find(
+//                             item => item?.menuItem?.uuid === currentItem?.menu
+//                           )?.uuid;
+
+//                           if (!itemUuid) return;
+
+//                           setDeleteTarget({
+//                             index: name,
+//                             itemUuid,
+//                           });
+
+//                           setIsDeleteUuid(itemUuid);
+//                           if (fields?.length > 1 && !clickAddMenu) {
+//                             setIsModalOpen(true)
+//                           }
+//                         }}
+//                         className={`!text-xl ${fields.length > 1 && canEdit
+//                           ? "!cursor-pointer !text-red-500"
+//                           : "!cursor-not-allowed !text-gray-400"
+//                           }`}
+//                       />
+//                     </Tooltip>
+//                   }
+
+//                 </>
+//               ) : (
+//                 /* Existing menu */
+//                 <>
+//                   <Tooltip title="Edit Menu">
+//                     <EditOutlined
+//                       onClick={() => {
+//                         if (!canEdit) return;
+
+//                         const itemUuid =
+//                           fnbOrderDetails?.fnbOrderItems?.[name]?.uuid;
+
+//                         if (!itemUuid) return;
+
+//                         setIsClickedEditUuid(itemUuid);
+
+//                         setIsSameUuid((prev) =>
+//                           prev.includes(itemUuid)
+//                             ? prev
+//                             : [...prev, itemUuid]
+//                         );
+
+//                         setClickAddMenu(false);
+//                         setIsDeleteUuid(null)
+
+
+//                       }}
+//                       // className="text-2xl !cursor-pointer !text-blue-500"
+//                       className={`text-2xl ${canEdit
+//                         ? "!cursor-pointer !text-blue-500"
+//                         : "!cursor-not-allowed !text-gray-400"
+//                         }`}
+
+//                     />
+//                   </Tooltip>
+
+//                   <Tooltip title="Delete Menu">
+//                     <DeleteOutlined
+//                       onClick={() => {
+//                         if (fields.length <= 1) return;
+
+//                         const currentItem = form.getFieldValue(["items", name]);
+
+//                         const itemUuid = fnbOrderDetails?.fnbOrderItems?.find(
+//                           item => item?.menuItem?.uuid === currentItem?.menu
+//                         )?.uuid;
+
+//                         if (!itemUuid) return;
+
+//                         setDeleteTarget({
+//                           index: name,
+//                           itemUuid,
+//                         });
+
+//                         setIsDeleteUuid(itemUuid);
+//                         if (fields?.length > 1 && !clickAddMenu) {
+//                           setIsModalOpen(true)
+//                         }
+//                       }}
+//                       className={`!text-xl ${fields.length > 1 && canEdit
+//                         ? "!cursor-pointer !text-red-500"
+//                         : "!cursor-not-allowed !text-gray-400"
+//                         }`}
+//                     />
+//                   </Tooltip>
+//                 </>
+//               )}
+
+//           </div>
+//         )
+//       }
+//     </>
+//   }
+// >
+//   <div className="grid grid-cols-3 gap-3">
+//     <Form.Item
+//       label="Menu"
+//       name={[name, "menu"]}
+//       rules={[
+//         {
+//           required: true,
+//           message: "Please select a menu",
+//         },
+//       ]}
+//     >
+//       <Select
+//         options={menuOptions}
+//         onChange={(value, option) =>
+//           handleChangeMenu(value, option, name)
+//         }
+//         placeholder="Select Menu"
+//         disabled={isAdd ? false : !isCurrentCardEditable}
+//       />
+//     </Form.Item>
+
+//     <Form.Item
+//       label="Quantity"
+//       name={[name, "quantity"]}
+//     >
+//       <InputNumber
+//         {...sharedProps}
+//         min={itemsValue?.[name]?.menu ? 1 : 0}
+//         disabled={isAdd ? !itemsValue?.[name]?.menu : !isCurrentCardEditable || !itemsValue?.[name]?.menu}
+//       />
+//     </Form.Item>
+
+//     <Form.Item
+//       label="Price Per Qty"
+//       name={[name, "pricePerQty"]}
+//     >
+//       <InputNumber
+//         className="!w-full"
+//         min={0}
+//         suffix={<div className="dark:!text-gray-200">MMK</div>}
+//         disabled={true}
+//       />
+//     </Form.Item>
+//   </div>
+
+//   {showModifier
+//     ? (
+//       <div>
+//         <div className="flex justify-between items-center !mb-1">
+//           <Text strong>Add on Menu</Text>
+
+//           <Tag color="default" className="mr-0">
+//             Optional
+//           </Tag>
+//         </div>
+
+//         <Form.Item
+//           name={[name, "modifier"]}
+//           className="!mb-0 !p-0"
+//         >
+//           <Checkbox.Group
+//             className="w-full"
+//             onChange={(checkedValues) => {
+//               selectedMenuItem?.modifiers.forEach((modify) => {
+//                 const uuid = modify.uuid;
+
+//                 const currentQuantity =
+//                   form.getFieldValue([
+//                     "items",
+//                     name,
+//                     "modifierQuantities",
+//                     uuid,
+//                   ]) ?? 0;
+
+//                 const newQuantity = checkedValues.includes(uuid)
+//                   ? currentQuantity > 0
+//                     ? currentQuantity
+//                     : 1
+//                   : 0;
+
+//                 form.setFieldValue(
+//                   ["items", name, "modifierQuantities", uuid],
+//                   newQuantity
+//                 );
+//               });
+//             }}
+
+//           >
+//             <div className="space-y-2">
+//               {selectedMenuItem?.modifiers?.map((modify, index) => {
+//                 const selectedModifiers = itemsValue?.[name]?.modifier || [];
+//                 const isModifierChecked = selectedModifiers.includes(modify.uuid);
+//                 const lastestRow = index === selectedMenuItem?.modifiers?.length - 1;
+//                 return (
+//                   <div
+//                     key={modify.uuid}
+//                     className={`grid grid-cols-3 gap-3 items-center py-2  !border-gray-50 hover:bg-gray-50 dark:!border-gray-700 dark:hover:bg-gray-900/50 transition-colors ${lastestRow ? "" : "border-b"}`}
+//                   >
+//                     <div className="flex items-center">
+//                       <Checkbox
+//                         value={modify.uuid}
+//                         disabled={isAdd ? false : !isCurrentCardEditable}
+//                         classNames={{
+//                           icon:
+//                             (isView && itemsValue?.[name]?.modifier?.includes(modify.uuid))
+//                               ? "custom-checkbox-icon"
+//                               : isEdit && itemsValue?.[name]?.modifier?.includes(modify.uuid)
+//                                 ? "custom-checkbox-icon"
+//                                 : "",
+//                         }}
+//                       >
+//                         <span className="ml-2 text-sm">
+//                           {modify.name}
+//                         </span>
+//                       </Checkbox>
+//                     </div>
+
+//                     <Form.Item
+//                       name={[name, "modifierQuantities", modify.uuid]}
+//                       className="!m-0"
+//                     >
+//                       <InputNumber
+//                         {...sharedProps}
+//                         min={isModifierChecked ? 1 : 0}
+//                         disabled={!isModifierChecked ? true : !isCurrentCardEditable}
+
+//                       />
+//                     </Form.Item>
+
+//                     <Form.Item className="!m-0">
+//                       <InputNumber
+//                         className="!w-full"
+//                         min={0}
+//                         suffix={<div className="dark:!text-gray-200">MMK</div>}
+//                         disabled={true}
+//                         value={modify.unitPrice.toLocaleString()}
+//                       />
+//                     </Form.Item>
+//                   </div>
+//                 )
+//               })}
+//             </div>
+//           </Checkbox.Group>
+//         </Form.Item>
+//       </div>
+//     )
+//     :
+//     null
+//   }
+// </Card> 
+
+// Original Modifier
+// {
+//   showModifier
+//     ? (
+//       <div>
+//         <div className="flex justify-between items-center !mb-1">
+//           <Text strong>Add on Menu</Text>
+
+//           <Tag color="default" className="mr-0">
+//             Optional
+//           </Tag>
+//         </div>
+
+//         <Form.Item
+//           name={[name, "modifier"]}
+//           className="!mb-0 !p-0"
+//         >
+//           <Checkbox.Group
+//             className="w-full"
+//             onChange={(checkedValues) => {
+//               selectedMenuItem?.modifiers.forEach((modify) => {
+//                 const uuid = modify.uuid;
+
+//                 const currentQuantity =
+//                   form.getFieldValue([
+//                     "items",
+//                     name,
+//                     "modifierQuantities",
+//                     uuid,
+//                   ]) ?? 0;
+
+//                 const newQuantity = checkedValues.includes(uuid)
+//                   ? currentQuantity > 0
+//                     ? currentQuantity
+//                     : 1
+//                   : 0;
+
+//                 form.setFieldValue(
+//                   ["items", name, "modifierQuantities", uuid],
+//                   newQuantity
+//                 );
+//               });
+//             }}
+
+//           >
+//             <div className="space-y-2">
+//               {selectedMenuItem?.modifiers?.map((modify, index) => {
+//                 const selectedModifiers = itemsValue?.[name]?.modifier || [];
+//                 const isModifierChecked = selectedModifiers.includes(modify.uuid);
+//                 const lastestRow = index === selectedMenuItem?.modifiers?.length - 1;
+//                 return (
+//                   <div
+//                     key={modify.uuid}
+//                     className={`grid grid-cols-3 gap-3 items-center py-2  !border-gray-50 hover:bg-gray-50 dark:!border-gray-700 dark:hover:bg-gray-900/50 transition-colors ${lastestRow ? "" : "border-b"}`}
+//                   >
+//                     <div className="flex items-center">
+//                       <Checkbox
+//                         value={modify.uuid}
+//                         disabled={isAdd ? false : !isCurrentCardEditable}
+//                         classNames={{
+//                           icon:
+//                             (isView && itemsValue?.[name]?.modifier?.includes(modify.uuid))
+//                               ? "custom-checkbox-icon"
+//                               : isEdit && itemsValue?.[name]?.modifier?.includes(modify.uuid)
+//                                 ? "custom-checkbox-icon"
+//                                 : "",
+//                         }}
+//                       >
+//                         <span className="ml-2 text-sm">
+//                           {modify.name}
+//                         </span>
+//                       </Checkbox>
+//                     </div>
+
+//                     <Form.Item
+//                       name={[name, "modifierQuantities", modify.uuid]}
+//                       className="!m-0"
+//                     >
+//                       <InputNumber
+//                         {...sharedProps}
+//                         min={isModifierChecked ? 1 : 0}
+//                         disabled={!isModifierChecked ? true : !isCurrentCardEditable}
+
+//                       />
+//                     </Form.Item>
+
+//                     <Form.Item className="!m-0">
+//                       <InputNumber
+//                         className="!w-full"
+//                         min={0}
+//                         suffix={<div className="dark:!text-gray-200">MMK</div>}
+//                         disabled={true}
+//                         value={modify.unitPrice.toLocaleString()}
+//                       />
+//                     </Form.Item>
+//                   </div>
+//                 )
+//               })}
+//             </div>
+//           </Checkbox.Group>
+//         </Form.Item>
+//       </div>
+//     )
+//     :
+//     null
+// }
+
+{/* Collapse For Only Modifier */ }
+// {showModifier
+//   ? (
+//     <Collapse
+//       items={[
+//         {
+//           key: "modifier",
+//           label: (
+//             <div className="flex justify-between items-center">
+//               <Text strong>Add on Menu</Text>
+
+//               <Tag color="default" className="mr-0">
+//                 Optional
+//               </Tag>
+//             </div>
+//           ),
+
+//           children: (
+//             <>
+//               {
+//                 showModifier &&
+//                 <div>
+//                   <Form.Item
+//                     name={[name, "modifier"]}
+//                     className="!mb-0 !p-0"
+//                   >
+//                     <Checkbox.Group
+//                       className="w-full"
+//                       onChange={(checkedValues) => {
+//                         selectedMenuItem?.modifiers.forEach((modify) => {
+//                           const uuid = modify.uuid;
+
+//                           const currentQuantity =
+//                             form.getFieldValue([
+//                               "items",
+//                               name,
+//                               "modifierQuantities",
+//                               uuid,
+//                             ]) ?? 0;
+
+//                           const newQuantity = checkedValues.includes(uuid)
+//                             ? currentQuantity > 0
+//                               ? currentQuantity
+//                               : 1
+//                             : 0;
+
+//                           form.setFieldValue(
+//                             ["items", name, "modifierQuantities", uuid],
+//                             newQuantity
+//                           );
+//                         });
+//                       }}
+
+//                     >
+//                       <div className="space-y-2">
+//                         {selectedMenuItem?.modifiers?.map((modify, index) => {
+//                           const selectedModifiers = itemsValue?.[name]?.modifier || [];
+//                           const isModifierChecked = selectedModifiers.includes(modify.uuid);
+//                           const lastestRow = index === selectedMenuItem?.modifiers?.length - 1;
+//                           return (
+//                             <div
+//                               key={modify.uuid}
+//                               className={`grid grid-cols-3 gap-3 items-center py-2  !border-gray-50 hover:bg-gray-50 dark:!border-gray-700 dark:hover:bg-gray-900/50 transition-colors ${lastestRow ? "" : "border-b"}`}
+//                             >
+//                               <div className="flex items-center">
+//                                 <Checkbox
+//                                   value={modify.uuid}
+//                                   disabled={isAdd ? false : !isCurrentCardEditable}
+//                                   classNames={{
+//                                     icon:
+//                                       (isView && itemsValue?.[name]?.modifier?.includes(modify.uuid))
+//                                         ? "custom-checkbox-icon"
+//                                         : isEdit && itemsValue?.[name]?.modifier?.includes(modify.uuid)
+//                                           ? "custom-checkbox-icon"
+//                                           : "",
+//                                   }}
+//                                 >
+//                                   <span className="ml-2 text-sm">
+//                                     {modify.name}
+//                                   </span>
+//                                 </Checkbox>
+//                               </div>
+
+//                               <Form.Item
+//                                 name={[name, "modifierQuantities", modify.uuid]}
+//                                 className="!m-0"
+//                               >
+//                                 <InputNumber
+//                                   {...sharedProps}
+//                                   min={isModifierChecked ? 1 : 0}
+//                                   disabled={!isModifierChecked ? true : !isCurrentCardEditable}
+
+//                                 />
+//                               </Form.Item>
+
+//                               <Form.Item className="!m-0">
+//                                 <InputNumber
+//                                   className="!w-full"
+//                                   min={0}
+//                                   suffix={<div className="dark:!text-gray-200">MMK</div>}
+//                                   disabled={true}
+//                                   value={modify.unitPrice.toLocaleString()}
+//                                 />
+//                               </Form.Item>
+//                             </div>
+//                           )
+//                         })}
+//                       </div>
+//                     </Checkbox.Group>
+//                   </Form.Item>
+//                 </div>
+//               }
+//             </>
+//           ),
+//         },
+//       ]}
+//     />
+//   )
+//   :
+//   null
+// }

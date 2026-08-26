@@ -2,6 +2,7 @@ import React from "react";
 import { FaChild, FaCalendarAlt, FaMoon, FaBed } from "react-icons/fa";
 import { IoPeopleSharp } from "react-icons/io5";
 import {
+  MdMeetingRoom,
   MdOutlineBed,
   MdOutlineMeetingRoom,
   MdOutlineRoom,
@@ -49,16 +50,6 @@ const ReservationHeader = ({ data }) => {
 
           {/* <div className="hidden sm:block text-[#ffffff] mt-2.5">|</div> */}
 
-          {/* <div className="flex items-center gap-2 py-1 rounded-lg mt-2.5">
-            <MdOutlineBed className="text-emerald-300 text-lg" />
-            <span className="text-[10px] md:text-[10px] lg:text-[13px] font-medium text-[#ffffff]">
-             {reservation?.totalRooms || 0}{" "} 
-            {reservation?.totalRooms === 1 ? "Room" : "Rooms"} 
-              {reservation?.extraBed || 0}{" "}
-              {reservation?.extraBed === 1 ? "Exta Bed" : "Extra Beds"}
-            </span>
-          </div> */}
-
           {reservation?.extraBedCount > 0 && (
             <div className="flex items-center gap-2 py-1 rounded-lg mt-2.5">
               <FaBed className="text-blue-500 text-base" />{" "}
@@ -82,6 +73,13 @@ const ReservationHeader = ({ data }) => {
                   <div className="text-[#ffffff]">Deposit Unpaid</div>
                 </div>
               )}
+            </span>
+          </div>
+
+          <div className="flex items-center gap-2 py-1 rounded-lg mt-2.5">
+            <MdMeetingRoom className="text-purple-300 text-base" />
+            <span className="text-[10px] md:text-[10px] lg:text-[13px] lg:font-medium text-[#ffffff]">
+              {reservation?.roomType?.name} {""}
             </span>
           </div>
         </div>

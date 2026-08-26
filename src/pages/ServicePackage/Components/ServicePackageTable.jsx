@@ -54,6 +54,13 @@ const ServicePackageTable = ({
       key: "service",
     },
     {
+      title: "Status",
+      dataIndex: ["status", "name"],
+      key: "status",
+      align: "center",
+      render: (_, record) => <ColorStatusTag status={record?.status} />,
+    },
+    {
       title: "Base Price (MMK)",
       dataIndex: "basePrice",
       key: "basePrice",
@@ -144,12 +151,11 @@ const ServicePackageTable = ({
       dataIndex: ["item", "basePrice"],
       key: "basePrice",
       align: "right",
-      render: (text) => (
-        <div>
-          {text ? <PriceTag value={text} /> : "-"}
-        </div>
-      ),
+      render: (_, record) => {
+        const price = record?.item?.basePrice ?? record?.item?.unitPrice;
 
+        return <div>{price != null ? <PriceTag value={price} /> : "—"}</div>;
+      },
     },
     {
       title: "Action",
