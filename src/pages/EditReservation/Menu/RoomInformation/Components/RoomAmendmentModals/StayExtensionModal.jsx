@@ -27,7 +27,7 @@ export default function StayExtensionModal({ isOpen,
 
     // Parse baseline properties out of your JSON structure
     const reservationNo = record?.reservation?.reservationNo || `ID-${record?.id}`;
-    const guestName = record?.reservation?.guest?.name || "Unknown Guest";
+    const roomNo = record?.room?.roomNo;
 
     const originalCheckin = record?.checkinDate ? dayjs(record.checkinDate) : "";
     const originalCheckout = record?.checkoutDate ? dayjs(record.checkoutDate) : "";
@@ -141,7 +141,7 @@ export default function StayExtensionModal({ isOpen,
         >
             {/* Context Target Ribbon Header */}
             <div className="text-indigo-700 dark:text-indigo-500 font-semibold">
-                {reservationNo}  <span className={`text-slate-800 ${textWhiteInDarkStyle}`}> — {guestName}</span>
+                {reservationNo}  <span className={`text-slate-800 ${textWhiteInDarkStyle}`}> {roomNo? `- ${roomNo}` : null}</span>
             </div>
 
             <Divider className="my-3" />
