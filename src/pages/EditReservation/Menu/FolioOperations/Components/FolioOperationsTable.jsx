@@ -59,11 +59,11 @@ const SubFolioTable = ({ record, lineColumns, onMoveTo, isTransferring }) => {
   };
 
   const totalDebit = lines
-    .filter((line) => line.postingType === "debit")
+    .filter((line) => line.postingType === "debit" && !line.voidedAt)
     .reduce((sum, line) => sum + (Number(line.grandTotal) || 0), 0);
 
   const totalCredit = lines
-    .filter((line) => line.postingType === "credit")
+    .filter((line) => line.postingType === "credit" && !line.voidedAt)
     .reduce((sum, line) => sum + (Number(line.grandTotal) || 0), 0);
 
   const totalBalance = totalDebit - totalCredit;
@@ -344,6 +344,11 @@ const FolioOperationsTable = ({
       title: "Owner Type",
       key: "type",
       render: (_, record) => record.folioOwnerType?.name || "-",
+    },
+    {
+      title: "Grand Total (MMK)",
+      key:"grandTotal",
+      render: (_, record) => record.grandTotal || 0,
     },
     {
       title: "Action",
