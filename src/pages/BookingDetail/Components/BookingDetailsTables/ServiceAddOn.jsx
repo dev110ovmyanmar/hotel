@@ -31,11 +31,11 @@ const ServiceAddOn = ({ data }) => {
         );
       },
     },
-    {
-      title: "Room No",
-      dataIndex: ["reservationRoom", "room", "roomNo"],
-      key: "roomNo",
-    },
+    // {
+    //   title: "Room No",
+    //   dataIndex: ["reservationRoom", "room", "roomNo"],
+    //   key: "roomNo",
+    // },
   ];
 
   return (

@@ -166,7 +166,7 @@ const RoomInformationDetailsForm = ({
                   </span>
                 ) : (
                   <span className="flex items-center gap-2">
-                    <span className="text-slate-400 font-normal">Room</span>
+                    <span className="text-slate-400 font-normal text-sm">Room No:</span>
                     {d?.room?.roomNo}
                   </span>
                 )}
@@ -181,7 +181,7 @@ const RoomInformationDetailsForm = ({
           </div>
 
           {/* Room Type & Rate Plan */}
-          <div className="grid grid-cols-2 gap-2.5 mt-2">
+          <div className="grid grid-cols-3 gap-2.5 mt-2">
             <div
               className={`bg-white/80 dark:bg-gray-800/80 rounded-xl p-2 border border-slate-100 dark:border-gray-600`}
             >
@@ -191,7 +191,7 @@ const RoomInformationDetailsForm = ({
                 Room Type
               </span>
               <div
-                className={`text-sm font-semibold text-slate-700 mt-0.5 ${textWhiteInDarkStyle}`}
+                className={`text-xs font-semibold text-slate-700 mt-0.5 ${textWhiteInDarkStyle}`}
               >
                 {d?.roomType?.name || "—"}
               </div>
@@ -205,9 +205,23 @@ const RoomInformationDetailsForm = ({
                 Rate Plan
               </span>
               <div
-                className={`text-sm font-semibold text-slate-700 mt-0.5 ${textWhiteInDarkStyle}`}
+                className={`text-xs font-semibold text-slate-700 mt-0.5 ${textWhiteInDarkStyle}`}
               >
                 {d?.ratePlan?.name || "—"}
+              </div>
+            </div>
+            <div
+              className={`bg-white/80 dark:bg-gray-800/80 rounded-xl p-2 border border-slate-100 dark:border-gray-600`}
+            >
+              <span
+                className={`text-[10px] text-slate-400 font-semibold uppercase tracking-wider ${textColorDarkMode}`}
+              >
+                Source Type{" "}
+              </span>
+              <div
+                className={`text-xs font-semibold text-slate-700 mt-0.5 ${textWhiteInDarkStyle}`}
+              >
+                {d?.reservation?.sourceType?.name || "—"}
               </div>
             </div>
           </div>
@@ -326,14 +340,24 @@ const RoomInformationDetailsForm = ({
               <table className="w-full text-sm">
                 <thead className="bg-slate-100 dark:bg-gray-700/50 text-slate-900 dark:text-gray-300 font-medium">
                   <tr>
-                    <th className="px-3 py-2.5 text-left text-[14px] tracking-wider">Date</th>
+                    <th className="px-3 py-2.5 text-left text-[14px] tracking-wider">
+                      Date
+                    </th>
                     <th className="px-3 py-2.5 text-right text-[14px] tracking-wider whitespace-nowrap">
                       Room Rate(MMK)
                     </th>
-                    <th className="px-3 py-2.5 text-right text-[14px] tracking-wider">Extra(MMK)</th>
-                    <th className="px-3 py-2.5 text-right text-[14px] tracking-wider">Tax(MMK)</th>
-                    <th className="px-3 py-2.5 text-right text-[14px] tracking-wider">Total(MMK)</th>
-                    <th className="px-1 py-2.5 text-center text-[14px] tracking-wider w-8">Action</th>
+                    <th className="px-3 py-2.5 text-right text-[14px] tracking-wider">
+                      Extra(MMK)
+                    </th>
+                    <th className="px-3 py-2.5 text-right text-[14px] tracking-wider">
+                      Tax(MMK)
+                    </th>
+                    <th className="px-3 py-2.5 text-right text-[14px] tracking-wider">
+                      Total(MMK)
+                    </th>
+                    <th className="px-1 py-2.5 text-center text-[14px] tracking-wider w-8">
+                      Action
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 dark:divide-gray-700">

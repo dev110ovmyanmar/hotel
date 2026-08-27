@@ -13,7 +13,7 @@ import { useState } from "react";
 
 
 const CheckBookingHeader = ({
-    colorClick
+    colorClick,
 }) => {
 
     return (
