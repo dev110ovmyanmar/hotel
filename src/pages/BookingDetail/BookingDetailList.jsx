@@ -14,7 +14,6 @@ import ContactPersonCard from "./Components/BookingDetailsTables/ContactPersonTa
 import { useLocation, useParams, useNavigate } from "react-router-dom";
 import useApiQuery from "../../hooks/useApiQuery";
 import {
-  folioPaymentList,
   reservationDetails,
 } from "../../api/reservationSectionApi";
 import Loader from "../../component/Loader/Loader";
