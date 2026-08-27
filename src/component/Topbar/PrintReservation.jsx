@@ -11,7 +11,7 @@ const generateContent = (data) => `
     <div class="form-border">
       <div class="form-title">Guest Registration Form</div>
 
-      ${renderRow("Name", data?.guest?.name)}
+      ${renderRow("Name", data?.guest?.fullName)}
       ${renderRow("Arrival Date", data?.checkinDate, "Departure Date", data?.checkoutDate)}
       ${renderRow("No of Night", data?.totalNight, "No of Pax", data?.noOfPax)}
       ${renderRow("Adult", data?.adults, "Child", data?.children)}
@@ -38,8 +38,8 @@ const generateContent = (data) => `
         </div>
 
         <div>
-         ${data?.guest?.name
-            ? `<div class="signature-name">${data.guest.name}</div>`
+         ${data?.guest?.fullName
+            ? `<div class="signature-name">${data.guest.fullName}</div>`
             : ""
           }
 

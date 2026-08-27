@@ -35,6 +35,7 @@ const CreateNewDay = ({
             onSuccess: (data) => {
                 Toast.success("System Unlocked successfully");
                 setHaveNiceDay(true);
+                createNewDayClick()
             },
             onError: (error) => {
                 console.error("System lock error:", error);
@@ -51,7 +52,7 @@ const CreateNewDay = ({
         if (haveNiceDay) {
             const timer = setTimeout(() => {
                 // Optional: redirect or reload page to initialize the new day
-                window.location.href = '/dashboard';
+                // window.location.href = '/dashboard';
             }, 5000); // Shows the message for 3.5 seconds
 
             return () => clearTimeout(timer);

@@ -24,6 +24,9 @@ const NightAudit = () => {
     const [currentValue, setCurrentValue] = useState(0);
     const [finishCountDown, setFinishCountDown] = useState(false);
     const todayDate = dayjs().format("DD-MM-YYYY");
+    const [hideSteps, setHideSteps] = useState(false);
+
+    console.log(hideSteps,"hideStepsinNightAudit")
 
     // System Lock Mutation
     const systemLockMutation = useApiMutation({
@@ -36,6 +39,7 @@ const NightAudit = () => {
                 setCurrentValue(0);
                 setStep("checkBooking");
                 console.log("Step set to checkBooking");
+                // setHideSteps(true)
             },
             onError: (error) => {
                 Toast.error(error?.response?.data?.error?.text || "Failed to lock system");
@@ -160,9 +164,13 @@ const NightAudit = () => {
                                 :
                                 step === "createNewDay" ?
                                     <>
-                                        <CheckBookingHeader colorClick={currentValue} />
+                                        {
+                                            !hideSteps &&
+                                            <CheckBookingHeader colorClick={currentValue} />
+                                        }
                                         <CreateNewDay createNewDayClick={() => {
-                                            setCurrentValue(5)
+                                            setCurrentValue(5);
+                                            setHideSteps(true)
 
                                         }} />
                                     </>
@@ -176,6 +184,7 @@ const NightAudit = () => {
                 open={confirmModal}
                 onCancel={() => setConfirmModal(false)}
                 onOk={handleForceLogout}
+                
             />
 
         </div>
