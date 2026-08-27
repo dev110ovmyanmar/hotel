@@ -22,12 +22,12 @@ const ServiceAddOnTable = ({ data }) => {
       key: "id",
       width: 70,
     },
-    {
-      title: "Room No",
-      dataIndex: ["reservationRoom", "room", "roomNo"],
-      key: "roomNo",
-      render: (text) => <div>{text ? text : "-"}</div>,
-    },
+    // {
+    //   title: "Room No",
+    //   dataIndex: ["reservationRoom", "room", "roomNo"],
+    //   key: "roomNo",
+    //   render: (text) => <div>{text ? text : "-"}</div>,
+    // },
     {
       title: "Service Name",
       dataIndex: ["service", "name"],
