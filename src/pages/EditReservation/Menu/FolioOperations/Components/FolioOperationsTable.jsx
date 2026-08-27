@@ -346,9 +346,22 @@ const FolioOperationsTable = ({
       render: (_, record) => record.folioOwnerType?.name || "-",
     },
     {
-      title: "Grand Total (MMK)",
+      title: "Total Amount (MMK)",
       key:"grandTotal",
-      render: (_, record) => record.grandTotal || 0,
+      align: "left",
+      render: (_, record) => <PriceTag align="start" value={record.grandTotal || 0}/>,
+    },
+    {
+      title: "Payment (MMK)",
+      key: "paidAmount",
+      align:"left",
+      render: (_, record) => <PriceTag align="start" value={record.paidAmount || 0}/>,
+    },
+    {
+      title: "Balance (MMK)",
+      key: "balanceAmount",
+      align:"left",
+      render: (_, record) => <PriceTag align="start" value={record.balanceAmount || 0}/>,
     },
     {
       title: "Action",

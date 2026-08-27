@@ -173,10 +173,10 @@ export const createFolioAddPayment = async (params) => {
 }
 
 // Folio-Payments-List
-export const folioPaymentList = async (params) => {
-  const { data } = await apiClient.get("folio-payments", { params });
-  return data.response;
-}
+// export const folioPaymentList = async (params) => {
+//   const { data } = await apiClient.get("folio-payments", { params });
+//   return data.response;
+// }
 
 // Folio-Payment-Detail
 export const folioPaymentDetails = async (params) => {
