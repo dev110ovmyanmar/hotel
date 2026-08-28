@@ -5,7 +5,7 @@ import { ArrowRightOutlined, CheckCircleOutlined, PlusOutlined, MinusOutlined, S
 import { useApiMutation } from '../../../../../../hooks/useApiMutation';
 import Toast from '../../../../../../component/Toast/Toast';
 import useApiQuery from '../../../../../../hooks/useApiQuery';
-import { reservationRoomSearch } from '../../../../../../api/reservationSectionApi';
+import { reservationRoomDetails, reservationRoomSearch } from '../../../../../../api/reservationSectionApi';
 import { createRoomAmendment } from '../../../../../../api/roomAmendmentApi';
 import ColorStatusTag from '../../../../../../component/ColorStatusTag/ColorStatusTag';
 import { GiBed } from "react-icons/gi";
@@ -29,20 +29,31 @@ export default function RoomMoveModal({
         }
     }, [isOpen]);
 
+    const {
+        data: reservationRoomsDataDetails,
+        isLoading: reservationRoomsDataDetailsLoading,
+        refetch: refetchReservationRoomsRoomDetails,
+    } = useApiQuery({
+        fetchQueryName: ["reservation-room-details", record?.uuid],
+        fetchQueryFunction: reservationRoomDetails,
+        params: { uuid: record?.uuid },
+        options: { enabled: !!record?.uuid && isOpen },
+    });
+
     const { data: reservationRoomSearchDetails, isPending: isQueryLoading } = useApiQuery({
         fetchQueryName: "reservation-room-search",
         fetchQueryFunction: reservationRoomSearch,
         params: {
             filter: {
-                checkinDate: dayjs(record?.checkinDate).format('YYYY-MM-DD'),
-                checkoutDate: dayjs(record?.checkoutDate).format('YYYY-MM-DD')
+                checkinDate: dayjs(reservationRoomsDataDetails?.checkinDate).format('YYYY-MM-DD'),
+                checkoutDate: dayjs(reservationRoomsDataDetails?.checkoutDate).format('YYYY-MM-DD')
             },
             roomType: {
-                uuid: record?.roomType?.uuid
+                uuid: reservationRoomsDataDetails?.roomType?.uuid
             },
-            enabled: isOpen && !!record?.checkinDate && !!record?.checkoutDate && !!record?.roomType?.uuid
+            enabled: isOpen && !!reservationRoomsDataDetails?.checkinDate && !!reservationRoomsDataDetails?.checkoutDate && !!reservationRoomsDataDetails?.roomType?.uuid
         },
-        enabled: isOpen && !!record?.checkinDate && !!record?.checkoutDate && !!record?.roomType?.uuid
+        enabled: isOpen && !!reservationRoomsDataDetails?.checkinDate && !!reservationRoomsDataDetails?.checkoutDate && !!reservationRoomsDataDetails?.roomType?.uuid
     });
 
     const createRoomAmendmentMutation = useApiMutation({
@@ -56,7 +67,7 @@ export default function RoomMoveModal({
     const handleOk = () => {
         const payload = {
             amendmentType: { uuid: roomMoveUuid },
-            reservationRoom: { uuid: record?.uuid },
+            reservationRoom: { uuid: reservationRoomsDataDetails?.uuid },
             room: { uuid: selectRoomUuid }
         };
 
@@ -72,8 +83,6 @@ export default function RoomMoveModal({
 
     // Clean structural conditions
     const hasNoRooms = !isQueryLoading && reservationRoomSearchDetails?.rooms?.length === 0;
-    console.log(record?.roomType?.name, "RecordInRoomMove")
-    console.log(record?.room?.roomNo, "room")
 
     return (
         <Modal
@@ -140,55 +149,55 @@ export default function RoomMoveModal({
                                     ${darkModeStyle}
                                 `}
                             >
-                                <h1>{record?.roomType?.name}</h1>
+                                <h1>{reservationRoomsDataDetails?.roomType?.name}</h1>
                                 {
-                                    record?.room?.roomNo ?
-                                        <Tag color="green" className='!border !border-green-300 !rounded-sm'>{record?.room?.roomNo}</Tag>
+                                    reservationRoomsDataDetails?.room?.roomNo ?
+                                        <Tag color="green" className='!border !border-green-300 !rounded-sm'>{reservationRoomsDataDetails?.room?.roomNo}</Tag>
                                         : null
                                 }
                             </div>
 
                             <h4 className='!my-[10px]'>Available Rooms:</h4>
                             {
-                                isQueryLoading 
-                                ?
-                                <Spin></Spin>
-                                :
-                                <Row gutter={[16, 16]}>
-                                {reservationRoomSearchDetails?.rooms?.map((room) => (
-                                    <Col span={12} key={room.uuid}>
-                                        <Card
-                                            onClick={() => setSelectRoomUuid(room.uuid)}
-                                            className={`
+                                isQueryLoading
+                                    ?
+                                    <Spin></Spin>
+                                    :
+                                    <Row gutter={[16, 16]}>
+                                        {reservationRoomSearchDetails?.rooms?.map((room) => (
+                                            <Col span={12} key={room.uuid}>
+                                                <Card
+                                                    onClick={() => setSelectRoomUuid(room.uuid)}
+                                                    className={`
                                                 !overflow-hidden !border !p-3 shadow-md cursor-pointer
                                                 hover:!border-sky-300 hover:!shadow-lg hover:-translate-y-1 
                                                 ${selectRoomUuid === room.uuid ? `!border-sky-600 !bg-sky-100 ${selectedDarkMode}` : '!border-sky-200'}
                                                 
                                             `}
-                                            styles={{
-                                                body: {
-                                                    padding: 0,
-                                                    display: 'flex',
-                                                    flexDirection: 'column',
-                                                    height: '100%',
-                                                },
-                                            }}
-                                        >
-                                            <div className="flex justify-between items-start mb-3">
-                                                <div className="flex gap-1">
-                                                    <GiBed fontSize={30} className='text-green-500 dark:text-green-400 ' />
-                                                    <h3 className="text-base font-black text-green-500   dark:text-green-400leading-tight">
-                                                        {room?.roomNo || "---"}
-                                                    </h3>
-                                                </div>
-                                                <div className="flex flex-col items-end gap-1.5">
-                                                    <ColorStatusTag status={room?.status} />
-                                                </div>
-                                            </div>
-                                        </Card>
-                                    </Col>
-                                ))}
-                            </Row>
+                                                    styles={{
+                                                        body: {
+                                                            padding: 0,
+                                                            display: 'flex',
+                                                            flexDirection: 'column',
+                                                            height: '100%',
+                                                        },
+                                                    }}
+                                                >
+                                                    <div className="flex justify-between items-start mb-3">
+                                                        <div className="flex gap-1">
+                                                            <GiBed fontSize={30} className='text-green-500 dark:text-green-400 ' />
+                                                            <h3 className="text-base font-black text-green-500   dark:text-green-400leading-tight">
+                                                                {room?.roomNo || "---"}
+                                                            </h3>
+                                                        </div>
+                                                        <div className="flex flex-col items-end gap-1.5">
+                                                            <ColorStatusTag status={room?.status} />
+                                                        </div>
+                                                    </div>
+                                                </Card>
+                                            </Col>
+                                        ))}
+                                    </Row>
                             }
                         </>
                     )}
@@ -199,9 +208,9 @@ export default function RoomMoveModal({
                                 <div className='flex justify-between border border-gray-300 p-3 rounded-md'>
                                     <div className='flex gap-2'>
                                         <GiBed fontSize={25} className='text-gray-500' />
-                                        <div className='text-md'>{record?.room?.roomNo}</div>
+                                        <div className='text-md'>{reservationRoomsDataDetails?.room?.roomNo}</div>
                                     </div>
-                                    <ColorStatusTag status={record?.room?.status} />
+                                    <ColorStatusTag status={reservationRoomsDataDetails?.roomStatus} />
                                 </div>
                             </Col>
 

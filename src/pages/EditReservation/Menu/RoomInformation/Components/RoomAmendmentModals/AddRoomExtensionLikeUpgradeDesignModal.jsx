@@ -49,7 +49,7 @@ const { Text, Title } = Typography;
 export default function AddRoomExtensionLikeUpgradeDesignModal({
   isOpen,
   onClose,
-  record,
+  reservationRoomsDataDetails,
   addRoomUuid,
   roomList,
   availabilitySearchsPendings,
@@ -75,7 +75,7 @@ export default function AddRoomExtensionLikeUpgradeDesignModal({
   });
 
   // Baseline property safe fallback metrics extraction
-  const currentRoomType = record?.roomType?.name;
+  const currentRoomType = reservationRoomsDataDetails?.roomType?.name;
 
   // Handles absolute clean form execution resets
   const handleCloseReset = () => {
@@ -96,7 +96,7 @@ export default function AddRoomExtensionLikeUpgradeDesignModal({
 
       const payload = {
         amendmentType: { uuid: addRoomUuid },
-        reservationRoom: { uuid: record?.uuid },
+        reservationRoom: { uuid: reservationRoomsDataDetails?.uuid },
         room: { uuid: reviewData.roomUuid?.value },
         roomType: { uuid: reviewData?.roomType },
         ratePlan: { uuid: reviewData?.ratePlan?.value },
@@ -251,7 +251,7 @@ export default function AddRoomExtensionLikeUpgradeDesignModal({
 
   useEffect(() => {
     const matchedRoom = roomList?.rooms?.find(
-      (room) => room.roomType.uuid === record?.roomType?.uuid,
+      (room) => room.roomType.uuid === reservationRoomsDataDetails?.roomType?.uuid,
     );
 
     if (matchedRoom) {
@@ -327,7 +327,7 @@ export default function AddRoomExtensionLikeUpgradeDesignModal({
               <div className="grid place-items-center w-fit -mt-1">
                 <FaStar className="text-amber-200  text-3xl col-start-1 row-start-1" />
                 <div className="col-start-1 row-start-1 text-gray-900 font-bold text-xs mt-1">
-                  {record?.roomType?.rank}
+                  {reservationRoomsDataDetails?.roomType?.rank}
                 </div>
               </div>
             </div>
@@ -486,7 +486,7 @@ export default function AddRoomExtensionLikeUpgradeDesignModal({
         )
       ) : (
         <RoomUpgradeReview
-          record={record}
+          reservationRoomsDataDetails={reservationRoomsDataDetails}
           selectedRoomTypeName={selectedRoomTypeName}
           reviewData={reviewData}
           isAddNewRoom={true}

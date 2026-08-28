@@ -25,9 +25,6 @@ const NightAudit = () => {
     const [finishCountDown, setFinishCountDown] = useState(false);
     const todayDate = dayjs().format("DD-MM-YYYY");
     const [hideSteps, setHideSteps] = useState(false);
-
-    console.log(hideSteps,"hideStepsinNightAudit")
-
     // System Lock Mutation
     const systemLockMutation = useApiMutation({
         mutationFn: systemLock,
@@ -39,7 +36,6 @@ const NightAudit = () => {
                 setCurrentValue(0);
                 setStep("checkBooking");
                 console.log("Step set to checkBooking");
-                // setHideSteps(true)
             },
             onError: (error) => {
                 Toast.error(error?.response?.data?.error?.text || "Failed to lock system");
@@ -66,7 +62,7 @@ const NightAudit = () => {
                         <Card
                             title={
                                 <div className="text-center w-full">
-                                    Perform Night Audit for  
+                                    Perform Night Audit for
                                     <span className="ms-1">{todayDate}</span>
                                 </div>
                             }
@@ -84,7 +80,7 @@ const NightAudit = () => {
 
                                         {
                                             !finishCountDown &&
-                                                <ReactTimer onFinish={() => setFinishCountDown(true)} />
+                                            <ReactTimer onFinish={() => setFinishCountDown(true)} />
                                         }
 
                                         {
@@ -184,7 +180,7 @@ const NightAudit = () => {
                 open={confirmModal}
                 onCancel={() => setConfirmModal(false)}
                 onOk={handleForceLogout}
-                
+
             />
 
         </div>
