@@ -266,6 +266,19 @@ const FoodBeverageOrderList = lazy(
   () =>
     import("../../pages/EditReservation/Menu/FoodBeverageOrder/FoodBeverageOrderList"),
 );
+
+const PaymentHistoryAllList = lazy(
+  () => import ("../../pages/PaymentHistoryAll/PaymentHistoryAllList")
+);
+
+const PendingPaymentsList = lazy(
+  () => import("../../pages/PendingPayments/PendingPaymentsList")
+);
+
+const RedundsList = lazy(
+  () => import("../../pages/Refunds/RefundsList")
+);
+
 // const Email =lazy(()=> import("../../pages/Email/Email"))
 export const authRoutes = [
   {
@@ -915,38 +928,38 @@ export const authRoutes = [
     label: "Payment & Billing",
     icon: <WalletOutlined style={{ fontSize: "20px" }} />,
     nested: [
+      // {
+      //   key: 16.1,
+      //   label: "Invoices",
+      //   path: "/payment-&-billing/invoices",
+      //   icon: <DollarOutlined style={{ fontSize: "20px" }} />,
+      //   // component: <Taxs />,
+      //   permission: PERMISSIONS.TAX_LIST,
+      // },
       {
         key: 16.1,
-        label: "Invoices",
-        path: "/payment-&-billing/invoices",
-        icon: <DollarOutlined style={{ fontSize: "20px" }} />,
-        // component: <Taxs />,
-        permission: PERMISSIONS.TAX_LIST,
-      },
-      {
-        key: 16.2,
         label: "Payment History",
         path: "/payment-&-billing/payment-history",
         icon: <MdPayments style={{ fontSize: "20px" }} />,
-        isPrivate: true,
-        // component: <PaymentList />,
-        permission: PERMISSIONS.PAYMENT_LIST,
+        // isPrivate: true,
+        component: <PaymentHistoryAllList />,
+        // permission: PERMISSIONS.PAYMENT_LIST,
       },
       {
-        key: 16.3,
+        key: 16.2,
         label: "Pending Payment",
         path: "/payment-&-billing/pending-payment",
         icon: <DollarOutlined style={{ fontSize: "20px" }} />,
-        // component: <Taxs />,
-        permission: PERMISSIONS.TAX_LIST,
+        component: <PendingPaymentsList/>,
+        // permission: PERMISSIONS.TAX_LIST,
       },
       {
-        key: 16.4,
+        key: 16.3,
         label: "Refunds",
         path: "/payment-&-billing/refunds",
         icon: <MdPayments style={{ fontSize: "20px" }} />,
         isPrivate: true,
-        // component: <PaymentList />,
+        component: <RedundsList />,
         permission: PERMISSIONS.PAYMENT_LIST,
       },
       {

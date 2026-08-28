@@ -17,6 +17,8 @@ import {
   textColorDarkMode,
   textWhiteInDarkStyle,
 } from "../../../../../../utils";
+import useApiQuery from "../../../../../../hooks/useApiQuery";
+import { reservationRoomDetails } from "../../../../../../api/reservationSectionApi";
 
 export default function StayReductionModal({
   isOpen,
@@ -25,6 +27,17 @@ export default function StayReductionModal({
   stayReductionUuid,
 }) {
   const [form] = Form.useForm();
+
+  const {
+    data: reservationRoomsDataDetails,
+    isLoading: reservationRoomsDataDetailsLoading,
+    refetch: refetchReservationRoomsRoomDetails,
+  } = useApiQuery({
+    fetchQueryName: ["reservation-room-details", record?.uuid],
+    fetchQueryFunction: reservationRoomDetails,
+    params: { uuid: record?.uuid },
+    options: { enabled: !!record?.uuid && isOpen },
+  });
 
   const createRoomAmendmentMutation = useApiMutation({
     mutationFn: createRoomAmendment,
@@ -39,24 +52,24 @@ export default function StayReductionModal({
 
   // Parse baseline properties out of your JSON structure
   const reservationNo =
-    record?.reservation?.reservationNo || `ID-${record?.id}`;
-  const roomNo = record?.room?.roomNo;
+    reservationRoomsDataDetails?.reservation?.reservationNo || `ID-${reservationRoomsDataDetails?.id}`;
+  const roomNo = reservationRoomsDataDetails?.room?.roomNo;
 
-  const guestName = record?.reservation?.guest?.name || "Unknown Guest";
+  const guestName = reservationRoomsDataDetails?.reservation?.guest?.name || "Unknown Guest";
 
-  const originalCheckin = record?.checkinDate ? dayjs(record.checkinDate) : "";
-  const originalCheckout = record?.checkoutDate
-    ? dayjs(record.checkoutDate)
-    : "";
+  const originalCheckin = reservationRoomsDataDetails?.checkinDate ? dayjs(reservationRoomsDataDetails.checkinDate) : null;
+  const originalCheckout = reservationRoomsDataDetails?.checkoutDate
+    ? dayjs(reservationRoomsDataDetails.checkoutDate)
+    : null;
 
   // Safely parse maxReduction to a number (fallback to 0 if undefined)
   const maxReduction =
-    record?.maxReduce !== undefined ? Number(record.maxReduce) : 0;
+    reservationRoomsDataDetails?.maxReduce !== undefined ? Number(reservationRoomsDataDetails.maxReduce) : 0;
 
   // Compute live mathematical timeline subtractions safely
-  const newCheckoutDate = originalCheckout.isValid()
+  const newCheckoutDate = originalCheckout?.isValid()
     ? originalCheckout.subtract(daysToSubtract, "day")
-    : dayjs();
+    : "-";
 
   // Step 1: Force field validation before pushing to screen state matrix
   const handleProceedToSummary = async () => {
@@ -72,13 +85,13 @@ export default function StayReductionModal({
   // Step 2: Fire backend server mutations
   const handleFinalCommit = async () => {
     setIsSubmitting(true);
-    const checkinDate = record?.checkinDate
-      ? record.checkinDate.split(" ")[0]
+    const checkinDate = reservationRoomsDataDetails?.checkinDate
+      ? reservationRoomsDataDetails.checkinDate.split(" ")[0]
       : originalCheckin.format("YYYY-MM-DD");
     try {
       const payload = {
         amendmentType: { uuid: stayReductionUuid },
-        reservationRoom: { uuid: record?.uuid },
+        reservationRoom: { uuid: reservationRoomsDataDetails?.uuid },
         checkinDate: checkinDate,
         checkoutDate: newCheckoutDate.format("YYYY-MM-DD"),
         reason: pendingValues?.reason,
@@ -188,7 +201,7 @@ export default function StayReductionModal({
         {reservationNo}{" "}
         <span className={`text-slate-800 ${textWhiteInDarkStyle}`}>
           {" "}
-          { roomNo ? `- ${roomNo}` : null}
+          {roomNo ? `- ${roomNo}` : null}
         </span>
       </div>
 
@@ -257,8 +270,8 @@ export default function StayReductionModal({
             <div className="text-xs ">
               Current Checkout -{" "}
               <strong>
-                {originalCheckout.isValid()
-                  ? originalCheckout.format("DD MMM YYYY")
+                {originalCheckout?.isValid()
+                  ? originalCheckout?.format("DD MMM YYYY")
                   : "-"}
               </strong>
             </div>
@@ -266,7 +279,7 @@ export default function StayReductionModal({
               <div className="text-sm mt-1">
                 New Checkout -{" "}
                 <strong >
-                  {newCheckoutDate.isValid()
+                  {newCheckoutDate?.isValid()
                     ? newCheckoutDate.format("DD MMM YYYY")
                     : "-"}
                 </strong>
@@ -294,13 +307,13 @@ export default function StayReductionModal({
           <Descriptions title="" bordered column={1} size="small">
             <Descriptions.Item label="Checkout Changes">
               <span className="text-slate-400 line-through">
-                {originalCheckout.isValid()
+                {originalCheckout?.isValid()
                   ? originalCheckout.format("DD MMM YYYY")
                   : "-"}
               </span>
               <ArrowRightOutlined className="mx-2.5 text-red-500" />
               <strong className={`text-slate-800 ${textColorDarkMode}`}>
-                {newCheckoutDate.isValid()
+                {newCheckoutDate?.isValid()
                   ? newCheckoutDate.format("DD MMM YYYY")
                   : "-"}
               </strong>
