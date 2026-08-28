@@ -57,7 +57,6 @@ const FoodBeverageOrderList = () => {
     setMode("add");
     setDrawerOpen(true);
   };
-  console.log(data,"DataInFoodBeverageOrderLIst")
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-full min-h-[300px]">
@@ -65,7 +64,6 @@ const FoodBeverageOrderList = () => {
       </div>
     );
   }
-  console.log(data,"FoodBeverageOrderDataList")
   return (
     <div className="w-full px-6 py-2">
       <ReservationHeader data={data ?? {}} />

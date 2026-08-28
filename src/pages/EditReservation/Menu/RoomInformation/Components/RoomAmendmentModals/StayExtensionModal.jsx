@@ -6,13 +6,27 @@ import { createRoomAmendment } from '../../../../../../api/roomAmendmentApi';
 import { useApiMutation } from '../../../../../../hooks/useApiMutation';
 import Toast from '../../../../../../component/Toast/Toast';
 import { borderDarkMode, darkModeStyle, textColorDarkMode, textWhiteInDarkStyle } from '../../../../../../utils';
+import useApiQuery from '../../../../../../hooks/useApiQuery';
+import { reservationRoomDetails } from '../../../../../../api/reservationSectionApi';
 
-export default function StayExtensionModal({ isOpen,
+export default function StayExtensionModal({
+    isOpen,
     onClose,
     record,
     stayExtensionUuid
 }) {
     const [form] = Form.useForm();
+
+    const {
+        data : reservationRoomsDataDetails,
+        isLoading: reservationRoomsDataDetailsLoading,
+        refetch: refetchReservationRoomsRoomDetails,
+    } = useApiQuery({
+        fetchQueryName: ["reservation-room-details", record?.uuid],
+        fetchQueryFunction: reservationRoomDetails,
+        params: { uuid: record?.uuid },
+        options: { enabled: !!record?.uuid && isOpen },
+    });
 
     const createRoomAmendmentMutation = useApiMutation({
         mutationFn: createRoomAmendment,
@@ -26,17 +40,17 @@ export default function StayExtensionModal({ isOpen,
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     // Parse baseline properties out of your JSON structure
-    const reservationNo = record?.reservation?.reservationNo || `ID-${record?.id}`;
-    const roomNo = record?.room?.roomNo;
+    const reservationNo = reservationRoomsDataDetails?.reservation?.reservationNo || `ID-${reservationRoomsDataDetails?.id}`;
+    const roomNo = reservationRoomsDataDetails?.room?.roomNo;
 
-    const originalCheckin = record?.checkinDate ? dayjs(record.checkinDate) : "";
-    const originalCheckout = record?.checkoutDate ? dayjs(record.checkoutDate) : "";
-
+    const originalCheckin = reservationRoomsDataDetails?.checkinDate ? dayjs(reservationRoomsDataDetails?.checkinDate) : null;
+    const originalCheckout = reservationRoomsDataDetails?.checkoutDate ? dayjs(reservationRoomsDataDetails?.checkoutDate) : null;
+    console.log(reservationRoomsDataDetails, "reservationRoomsDataDetailsoriginalCheckout")
     // Safely parse maxDayExtension to a number (fallback to 0 if undefined)
-    const maxDayExtension = record?.maxExtend !== undefined ? Number(record.maxExtend) : 0;
+    const maxDayExtension = reservationRoomsDataDetails?.maxExtend !== undefined ? Number(reservationRoomsDataDetails.maxExtend) : 0;
 
     // Compute live mathematical timeline additions safely
-    const newCheckoutDate = originalCheckout.isValid() ? originalCheckout.add(daysToAdd, 'day') : dayjs();
+    const newCheckoutDate = originalCheckout?.isValid() ? originalCheckout?.add(daysToAdd, 'day') : "-";
 
     // Step 1: Force field validation before pushing to screen state matrix
     const handleProceedToSummary = async () => {
@@ -52,13 +66,13 @@ export default function StayExtensionModal({ isOpen,
     // Step 2: Fire backend server mutations
     const handleFinalCommit = async () => {
         setIsSubmitting(true);
-        const checkinDate = record?.checkinDate ? record.checkinDate.split(" ")[0] : originalCheckin.format('YYYY-MM-DD');
-        const checkoutDate = record?.checkoutDate ? record.checkoutDate.split(" ")[0] : originalCheckout.format('YYYY-MM-DD');
+        const checkinDate = reservationRoomsDataDetails?.checkinDate ? reservationRoomsDataDetails?.checkinDate.split(" ")[0] : originalCheckin?.format('YYYY-MM-DD');
+        const checkoutDate = reservationRoomsDataDetails?.checkoutDate ? reservationRoomsDataDetails?.checkoutDate.split(" ")[0] : originalCheckout?.format('YYYY-MM-DD');
 
         try {
             const payload = {
                 amendmentType: { uuid: stayExtensionUuid },
-                reservationRoom: { uuid: record?.uuid },
+                reservationRoom: { uuid: reservationRoomsDataDetails?.uuid },
                 checkinDate: checkoutDate,
                 checkoutDate: newCheckoutDate.format('YYYY-MM-DD'),
                 reason: pendingValues?.reason
@@ -141,7 +155,7 @@ export default function StayExtensionModal({ isOpen,
         >
             {/* Context Target Ribbon Header */}
             <div className="text-indigo-700 dark:text-indigo-500 font-semibold">
-                {reservationNo}  <span className={`text-slate-800 ${textWhiteInDarkStyle}`}> {roomNo? `- ${roomNo}` : null}</span>
+                {reservationNo}  <span className={`text-slate-800 ${textWhiteInDarkStyle}`}> {roomNo ? `- ${roomNo}` : null}</span>
             </div>
 
             <Divider className="my-3" />
@@ -203,7 +217,7 @@ export default function StayExtensionModal({ isOpen,
                     {/* Timeline Data Footer */}
                     <div className={`bg-slate-50 p-3 px-4 rounded-lg mb-5 border border-slate-200 ${darkModeStyle} ${borderDarkMode}`}>
                         <div className="text-xs">
-                            Current Checkout - <strong >{originalCheckout.isValid() ? originalCheckout.format('DD MMM YYYY') : '-'}</strong>
+                            Current Checkout - <strong >{originalCheckout?.isValid() ? originalCheckout.format('DD MMM YYYY') : '-'}</strong>
                         </div>
                         {maxDayExtension !== 0 && (
                             <div className="text-sm mt-1">
