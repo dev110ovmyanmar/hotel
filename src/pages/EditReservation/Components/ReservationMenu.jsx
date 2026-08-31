@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { Tabs } from "antd";
-import { useNavigate, useLocation, useParams } from "react-router-dom";
+import { useNavigate, useLocation, useParams, useSearchParams } from "react-router-dom";
 
 const ALL_TABS = [
   { label: "Room Information", key: "room-information" },
@@ -27,12 +27,18 @@ const ReservationMenu = ({ data }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { bookingId } = useParams();
+  const [searchParams] = useSearchParams();
+
+  // Extract selected room UUID from query parameters if available
+  const selectedRoomUuid = searchParams.get("selectedRoomUuid");
 
   const activeKey = location.pathname.split("/").pop();
 
   const onChange = (key) => {
     if (bookingId) {
-      navigate(`/reservations/${bookingId}/${key}`);
+      // Append selectedRoomUuid parameter to maintain selection when navigating tabs
+      const queryParam = selectedRoomUuid ? `?selectedRoomUuid=${selectedRoomUuid}` : "";
+      navigate(`/reservations/${bookingId}/${key}${queryParam}`);
     }
   };
 
@@ -85,7 +91,7 @@ const ReservationMenu = ({ data }) => {
     if (!allowedKeys) return [];
 
     return ALL_TABS.filter((tab) => allowedKeys.includes(tab.key));
-  }, [statusCode, cancelledFromStatus]);
+  }, [statusCode, cancelledFromStatus, data]);
 
   return (
     <Tabs activeKey={activeKey} onChange={onChange} items={filteredTabs} />
