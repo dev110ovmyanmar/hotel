@@ -15,6 +15,7 @@ import {
   folioAdjust,
   folioRebate,
   folioVoid,
+  getfolioPrint
 } from "../../../../api/folioApi";
 import { LIMITS } from "../../../../variables/constants";
 import { useLocation } from "react-router-dom";
@@ -38,6 +39,7 @@ const FolioOperationsList = () => {
   // State holds the structured layout payload for printing
   const [printTarget, setPrintTarget] = useState(null);
   const [previewOpen, setPreviewOpen] = useState(false);
+  const [isPrintLoading, setIsPrintLoading] = useState(false);
 
   // get login admin details
   const adminUuid = loadState(LOCAL_STORAGE_KEYS.loginAdminDetails)?.uuid;
@@ -60,11 +62,9 @@ const FolioOperationsList = () => {
   const navigate = useNavigate();
   const { bookingId } = useParams();
   const uuid = bookingId; // assigned directly to your uuid variable
-  const [searchParams] = useSearchParams();
   // ROUTING GUARD: Kick out unassigned, empty, or partial/mangled IDs instantly
   useEffect(() => {
     const cleanId = bookingId ? bookingId.trim() : "";
-
     if (
       !cleanId ||
       cleanId === "" ||
@@ -74,7 +74,6 @@ const FolioOperationsList = () => {
       navigate("/404", { replace: true });
     }
   }, [bookingId, navigate]);
-  const selectedRoomUuid = searchParams.get("selectedRoomUuid") || bookingId;
 
   const {
     data: folioList,
@@ -86,10 +85,10 @@ const FolioOperationsList = () => {
     params: {
       pagination: { page, perPage },
       keyword,
-      reservationRoom: { uuid: selectedRoomUuid },
+      reservationRoom: { uuid: uuid },
     },
     options: {
-      enabled: !!selectedRoomUuid,
+      enabled: !!uuid,
     }
   });
 
@@ -194,14 +193,26 @@ const FolioOperationsList = () => {
     setPrintTarget(null);
   };
 
-  const handlePrintAll = useCallback(() => {
+  const handlePrintAll = useCallback(async () => {
     if (!folioList?.data || folioList.data.length === 0) return;
-    setPrintTarget({
-      folios: folioList.data,
-      reservation: folioList.reservation,
-      reservationRoom: folioList.reservationRoom,
-    });
-  }, [folioList]);
+
+    try {
+      const printData = await queryClient.fetchQuery({
+        queryKey: ["allFolioPrintData", { reservation: { uuid: reservationUuid } }],
+        queryFn: () => getfolioPrint({ reservation: { uuid: reservationUuid } }),
+      });
+
+      // API returns flat folio lines — wrap into folio shape for FolioInvoicePrint
+      const allLines = printData?.data || [];
+
+      setPrintTarget({
+        folios: allLines.length > 0 ? allLines : [],
+        reservation: printData?.reservation || null,
+      });
+    } catch (err) {
+      console.log("Error", error);
+    }
+  }, [folioList, reservationUuid, queryClient]);
 
   // Global trigger event listener setup
   useEffect(() => {
@@ -252,10 +263,29 @@ const FolioOperationsList = () => {
         isRebating={rebateLineMutation.isPending}
         onVoidLine={voidLineMutation.mutateAsync}
         isVording={voidLineMutation.isPending}
+        isPrintLoading={isPrintLoading}
         // Triggers single folio extraction configurations
-        onPrintFolio={(folio) =>
-          setPrintTarget({ folio, reservation: folioList?.reservation, reservationRoom: folioList?.reservationRoom })
-        }
+        onPrintFolio={async (folio) => {
+          setIsPrintLoading(true);
+          try {
+            const printData = await queryClient.fetchQuery({
+              queryKey: ["folioPrintData", { reservation: { uuid: reservationUuid }, folio: { uuid: folio.uuid } }],
+              queryFn: () => getfolioPrint({ reservation: { uuid: reservationUuid }, folio: { uuid: folio.uuid } }),
+            });
+            console.log("PrintData", printData);
+
+            // API returns flat folio lines — wrap into folio shape for FolioInvoicePrint
+            const allLines = printData?.data || [];
+            const folios = allLines;
+
+            setPrintTarget({
+              folios: folios,
+              reservation: printData?.reservation,
+            });
+          } finally {
+            setIsPrintLoading(false);
+          }
+        }}
       />
 
       {/* Hidden container for window.print() to capture */}

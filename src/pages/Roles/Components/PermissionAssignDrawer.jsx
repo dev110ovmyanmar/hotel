@@ -108,15 +108,15 @@ const PermissionAssignDrawer = ({
       open={open}
       onClose={handleClose}
       size={600}
-      footer={
-        <div className="flex justify-end gap-2">
-          <Button onClick={handleClose}>Cancel</Button>
+      extra={
+        <div className="flex gap-2">
           <Button type="primary" onClick={handleSave}>
-            Save Permissions
+            Update
           </Button>
         </div>
       }
     >
+
       {/* ── Search Input ── */}
       {/* <Input
         placeholder="Search permissions by name or code..."
