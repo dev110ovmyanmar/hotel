@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import ReservationHeader from "../../Components/ReservationHeader";
 import ReservationMenu from "../../Components/ReservationMenu";
 import ReservationListHeader from "../../../../component/ReservationHeader/ReservationListHeader";
@@ -17,6 +17,8 @@ const ServiceAddOnList = () => {
   const navigate = useNavigate();
   const { bookingId } = useParams();
   const uuid = bookingId; // assigned directly to your uuid variable
+
+  const [searchParams] = useSearchParams();
 
   // ROUTING GUARD: Kick out unassigned, empty, or partial/mangled IDs instantly
   useEffect(() => {
@@ -38,15 +40,23 @@ const ServiceAddOnList = () => {
   const [keyword, setKeyword] = useState("");
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(LIMITS.PAGE_SIZE);
+  const selectedRoomUuid = searchParams.get("selectedRoomUuid") || bookingId;
+
 
   const { data, isLoading, refetch } = useApiQuery({
     fetchQueryName: "service-addon",
     fetchQueryFunction: serviceAddonList,
     params: {
-      pagination: { page, perPage },
+      pagination: {
+        page,
+        perPage,
+      },
       keyword,
-      reservationRoom: { uuid },
+      reservationRoom: { uuid: selectedRoomUuid },
     },
+    options: {
+      enabled: !!selectedRoomUuid,
+    }
   });
 
   useEffect(() => {

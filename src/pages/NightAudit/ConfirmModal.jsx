@@ -5,7 +5,6 @@ const ConfirmModal = ({
     open,
     onCancel,
     onOk
-
 }) => {
     const stylesFn = {
         content: {
@@ -35,7 +34,7 @@ const ConfirmModal = ({
 
     return (
         <Modal
-            title="Confirm Force Logout"
+            title="Confirm Night Audit"
             open={open}
             onCancel={onCancel}
             onOk={onOk}
@@ -43,7 +42,7 @@ const ConfirmModal = ({
             styles={stylesFn}
             classNames={tailwindcss}
         >
-            The action will forcefully logout all other users after alerting them. Do you wish to continue?
+            Admins will remain logged in but will not be able to perform any operations while the Night Audit is in progress. Do you wish to continue?
 
         </Modal>
     )

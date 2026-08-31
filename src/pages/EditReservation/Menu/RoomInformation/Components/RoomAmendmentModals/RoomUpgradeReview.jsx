@@ -5,7 +5,7 @@ import { darkModeStyle, upgradeAndDownRoomDarkMode } from '../../../../../../uti
 
 
 const RoomUpgradeReview = ({
-    record,
+    reservationRoomsDataDetails,
     selectedRoomTypeName,
     reviewData,
     isAddNewRoom
@@ -14,7 +14,7 @@ const RoomUpgradeReview = ({
         {
             key: "1",
             field: <div className='font-bold'>Room Type</div>,
-            current: record?.roomType?.name,
+            current: reservationRoomsDataDetails?.roomType?.name,
             arrow: <SwapRightOutlined/>,
             upgrade: selectedRoomTypeName?.name,
             color: "border-2 border-[#4C16FF] bg-[#F0EBFF]",
@@ -22,7 +22,7 @@ const RoomUpgradeReview = ({
         {
             key: "2",
             field: <div className='font-bold'>Rank</div>,
-            current: record?.roomType?.rank,
+            current: reservationRoomsDataDetails?.roomType?.rank,
             arrow: <SwapRightOutlined/>,
             upgrade: reviewData?.rank,
             color: "border-2 border-[#4C16FF] bg-[#F0EBFF]",
@@ -30,7 +30,7 @@ const RoomUpgradeReview = ({
         {
             key: "3",
             field: <div className='font-bold'>Room No</div>,
-            current: record?.room?.roomNo,
+            current: reservationRoomsDataDetails?.room?.roomNo ? reservationRoomsDataDetails?.room?.roomNo : "-" ,
             arrow: <SwapRightOutlined/>,
             upgrade: reviewData?.roomUuid?.label,
             color: "border-2 border-[#4C16FF] bg-[#F0EBFF]",
@@ -38,7 +38,7 @@ const RoomUpgradeReview = ({
         {
             key: "4",
             field: <div className='font-bold'>Rate</div>,
-            current: record?.ratePlan?.name,
+            current: reservationRoomsDataDetails?.ratePlan?.name,
             arrow: <SwapRightOutlined/>,
             upgrade: reviewData?.ratePlan?.label,
             color: "border-2 border-[#4C16FF] bg-[#F0EBFF]",

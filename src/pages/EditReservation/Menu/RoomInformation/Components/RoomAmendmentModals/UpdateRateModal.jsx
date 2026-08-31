@@ -10,6 +10,7 @@ import {
 } from "antd";
 import dayjs from "dayjs";
 import { CheckCircleOutlined, ArrowRightOutlined } from "@ant-design/icons";
+import { Gift } from "lucide-react";
 import { createRoomAmendment } from "../../../../../../api/roomAmendmentApi";
 import { useApiMutation } from "../../../../../../hooks/useApiMutation";
 import {
@@ -19,6 +20,9 @@ import {
 } from "../../../../../../utils";
 import PriceTag from "../../../../../../component/PriceTag/PriceTag";
 import TextArea from "antd/es/input/TextArea";
+import { reservationRoomDetails } from "../../../../../../api/reservationSectionApi";
+import useApiQuery from "../../../../../../hooks/useApiQuery";
+import { capitalizeFirstLetter } from "../../../../../../utils";
 
 export default function UpdateRateModal({
   isOpen,
@@ -31,6 +35,16 @@ export default function UpdateRateModal({
   const watchReason = Form.useWatch("reason", form);
   console.log(watchReason, "WatchRateforreason")
 
+  const {
+    data: reservationRoomsDataDetails,
+    isLoading: reservationRoomsDataDetailsLoading,
+    refetch: refetchReservationRoomsRoomDetails,
+  } = useApiQuery({
+    fetchQueryName: ["reservation-room-details", record?.uuid],
+    fetchQueryFunction: reservationRoomDetails,
+    params: { uuid: record?.uuid },
+    options: { enabled: !!record?.uuid && isOpen },
+  });
 
   const createRoomAmendmentMutation = useApiMutation({
     mutationFn: createRoomAmendment,
@@ -44,26 +58,27 @@ export default function UpdateRateModal({
 
   // Context headers
   const reservationNo =
-    record?.reservation?.reservationNo || `ID-${record?.id}`;
-  const roomNo = record?.room?.roomNo;
-
-  const guestName = record?.reservation?.guest?.name || "Unknown Guest";
-
+    reservationRoomsDataDetails?.reservation?.reservationNo || `ID-${reservationRoomsDataDetails?.id}`;
+  const roomNo = reservationRoomsDataDetails?.room?.roomNo;
   // Establish strict date boundaries from API record
-  const boundsStart = record?.checkinDate ? dayjs(record.checkinDate) : null;
-  const boundsEnd = record?.checkoutDate ? dayjs(record.checkoutDate) : null;
+  const boundsStart = reservationRoomsDataDetails?.checkinDate ? dayjs(reservationRoomsDataDetails.checkinDate) : null;
+  const boundsEnd = reservationRoomsDataDetails?.checkoutDate ? dayjs(reservationRoomsDataDetails.checkoutDate) : null;
 
   // EFFECT: Map incoming API array data directly into Form.List initial items
   useEffect(() => {
-    if (isOpen && record?.rates) {
+    if (isOpen && reservationRoomsDataDetails?.rates) {
       // Clean up the strings like "2026-05-27(for only rate_change)"
-      const cleanedInitialRates = record.rates.map((item) => {
+      const cleanedInitialRates = reservationRoomsDataDetails.rates.map((item) => {
         const cleanDate = item?.date;
         const cleanPrice = item?.price;
+        const isComplimentary = item?.isComplimentary;
+        const complimentaryType = item?.complimentaryType;
 
         return {
           date: cleanDate ? dayjs(cleanDate) : null, // Convert to dayjs object for DatePicker
           price: isNaN(cleanPrice) ? null : cleanPrice,
+          isComplimentary: isComplimentary,
+          complimentaryType: complimentaryType,
         };
       });
 
@@ -72,9 +87,9 @@ export default function UpdateRateModal({
       });
     } else if (isOpen) {
       // Fallback if no initial rates are supplied by API
-      form.setFieldsValue({ rates: [{ date: null, price: null }] });
+      form.setFieldsValue({ rates: [{ date: null, price: null, isComplimentary: false, complimentaryType: null }] });
     }
-  }, [isOpen, record, form]);
+  }, [isOpen, reservationRoomsDataDetails, form]);
 
   // Proceed from form inputs to summary review screen
   const handleProceedToSummary = async () => {
@@ -98,7 +113,7 @@ export default function UpdateRateModal({
 
       const payload = {
         amendmentType: { uuid: rateChangeUuid },
-        reservationRoom: { uuid: record?.uuid },
+        reservationRoom: { uuid: reservationRoomsDataDetails?.uuid },
         rates: dynamicRatesPayload,
         reason: pendingValues?.reason,
       };
@@ -125,22 +140,6 @@ export default function UpdateRateModal({
 
   return (
     <Modal
-      // title={
-      //   currentStep === "form" ? (
-      //     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-      //       <div style={{ width: '4px', height: '18px', background: '#1677ff', borderRadius: '2px' }} />
-      //       <span style={{ fontWeight: 600 }}>Modify Daily Room Rates</span>
-      //     </div>
-      //   ) : (
-      //     <span className="flex items-center gap-1.5">
-      //       {/* <CheckCircleOutlined className="text-blue-500" />  */}
-      //       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-      //         <div style={{ width: '4px', height: '18px', background: '#1677ff', borderRadius: '2px' }} />
-      //         <span style={{ fontWeight: 600 }}>Review Updated Rates Summary</span>
-      //       </div>
-      //     </span>
-      //   )
-      // }
       title={
         <div className="flex items-center gap-2">
           <div className="h-[18px] w-1 rounded-sm bg-[#1677ff]" />
@@ -156,9 +155,6 @@ export default function UpdateRateModal({
       footer={
         currentStep === "form"
           ? [
-            // <Button key="back" onClick={handleCloseReset}>
-            //   Cancel
-            // </Button>,
             <Button
               key="submit"
               type="primary"
@@ -191,7 +187,7 @@ export default function UpdateRateModal({
         {" "}
         {reservationNo} {" "}
         <span className={`text-slate-800 ${textWhiteInDarkStyle}`}>
-          {roomNo? `- ${roomNo}` : null }
+          {roomNo ? `- ${roomNo}` : null}
         </span>
       </div>
 
@@ -212,7 +208,7 @@ export default function UpdateRateModal({
             {(fields) => (
               <>
                 <div className="grid grid-cols-12 gap-4 mb-2">
-                  <div className="col-span-6">
+                  <div className="col-span-3">
                     <span
                       className={`text-xs font-semibold text-slate-600 ${textColorDarkMode}`}
                     >
@@ -230,15 +226,18 @@ export default function UpdateRateModal({
 
                 <div className="max-h-[280px] overflow-y-auto mb-4 pr-1">
                   {fields.map(({ key, name, ...restField }) => {
-                    const currentDate = watchRates?.[name]?.date;
-                    const isPriceDisabled = currentDate?.isBefore(dayjs(), "day");
+                    const rateData = watchRates?.[name] || {};
+                    const currentDate = rateData?.date;
+                    const isComplimentary = rateData?.isComplimentary || false;
+                    const complimentaryType = rateData?.complimentaryType || "";
+                    const isPriceDisabled = currentDate?.isBefore(dayjs(), "day") || isComplimentary;
                     return (
                       <div
                         key={key}
                         className={`grid grid-cols-12 gap-4 items-center mb-3 bg-slate-50 p-3 rounded-md ${darkModeStyle}`}
                       >
                         {/* DYNAMIC EDITABLE DATE PICKER (PRE-FILLED) */}
-                        <div className="col-span-6">
+                        <div className="col-span-3">
                           <Form.Item
                             {...restField}
                             name={[name, "date"]}
@@ -271,7 +270,7 @@ export default function UpdateRateModal({
                               }
                               parser={(value) => value.replace(/[\s,]/g, "")}
                               min={0}
-                              addonBefore={
+                              prefix={
                                 <span className="text-xs font-semibold text-slate-500 dark:text-slate-300">
                                   MMK
                                 </span>
@@ -280,6 +279,24 @@ export default function UpdateRateModal({
                             />
                           </Form.Item>
                         </div>
+
+                        <div className="col-span-3 pb-4">
+                          {isComplimentary && complimentaryType && (
+                            <div className="inline-flex items-center gap-0.5 px-1.5 py-0.5 text-[10px] font-semibold rounded-full bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 w-fit">
+                              <Gift size={12} />
+                              {capitalizeFirstLetter(complimentaryType)}
+                            </div>
+                          )}
+
+                        </div>
+
+                        {/* Hidden fields to track complimentary status */}
+                        <Form.Item {...restField} name={[name, "isComplimentary"]} hidden>
+                          <Input />
+                        </Form.Item>
+                        <Form.Item {...restField} name={[name, "complimentaryType"]} hidden>
+                          <Input />
+                        </Form.Item>
                       </div>
                     )
                   })}
@@ -374,17 +391,6 @@ export default function UpdateRateModal({
               </tbody>
             </table>
           </div>
-
-          {/* <Descriptions bordered column={1} size="small">
-            <Descriptions.Item label="Active Record Targets">
-              <strong>{pendingValues.rates.length} Schedules Set</strong>
-            </Descriptions.Item>
-            <Descriptions.Item label="Reason">
-              <span className="italic text-slate-400 dark:text-slate-300">
-                {pendingValues?.reason ? pendingValues?.reason : null}
-              </span>
-            </Descriptions.Item>
-          </Descriptions> */}
 
           <Form layout="vertical">
             <Form.Item label="Reason for Rate">

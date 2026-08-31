@@ -2,30 +2,30 @@ import React, { useEffect, useState } from "react";
 import ReservationHeader from "../../Components/ReservationHeader";
 import ReservationMenu from "../../Components/ReservationMenu";
 import ReservationListHeader from "../../../../component/ReservationHeader/ReservationListHeader";
-import RoomAttributeTable from "../../../RoomAttribute/Components/RoomAttributeTable";
 import RoomInformationTable from "./Components/RoomInformationTable";
 import RoomInformationForm from "./Components/RoomInformationForms/RoomInformationForm";
-import { reservationRoomList } from "../../../../api/reservationSectionApi";
-import useApiQuery from "../../../../hooks/useApiQuery";
 import {
-  useLocation,
   useParams,
   useNavigate,
-  Navigate,
 } from "react-router-dom";
-import { LIMITS } from "../../../../variables/constants";
 import AssignRoomForm from "./Components/RoomInformationForms/AssignRoomForm";
 import { Button, Modal } from "antd";
 import ChangeStatusForm from "../../../BookingDetail/Components/BookingDetailForms/ChangeStatusForm";
 import Loader from "../../../../component/Loader/Loader";
-// import ComplimentaryUpdateModal from "./Components/ComplimentaryModals/ComplimentaryUpdateModal";
+import { reservationRoomList } from "../../../../api/reservationSectionApi";
+import useApiQuery from "../../../../hooks/useApiQuery";
+import { LIMITS } from "../../../../variables/constants";
+import { useSearchParams } from "react-router-dom";
 
 const RoomInformationList = () => {
   const navigate = useNavigate();
   const { bookingId } = useParams();
-  const uuid = bookingId; // assigned directly to your uuid variable
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  // ROUTING GUARD: Kick out unassigned, empty, or partial/mangled IDs instantly
+  // Retrieve room UUID from URL parameters on page load/refresh
+  const urlRoomUuid = searchParams.get("selectedRoomUuid");
+
+  // ROUTING GUARD: Redirect invalid/malformed IDs instantly
   useEffect(() => {
     const cleanId = bookingId ? bookingId.trim() : "";
 
@@ -43,58 +43,80 @@ const RoomInformationList = () => {
   const [mode, setMode] = useState("add");
   const [selectedData, setSelectedData] = useState(null);
   const [keyword, setKeyword] = useState("");
-  const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(LIMITS.PAGE_SIZE);
   const [assignRoomOpen, setAssignRoomOpen] = useState(false);
-  const [showRoomResults, setShowRoomResults] = useState(false);
   const [open, setOpen] = useState(false);
-  const [selectedRoom, setSelectedRoom] = useState(null);
 
-  const { data, isLoading, refetch } = useApiQuery({
-    fetchQueryName: "reservation-room",
+  // Initialize selected room state directly from URL query param if available
+  const [selectedRoomUuid, setSelectedRoomUuid] = useState(urlRoomUuid || null);
+
+  // 1. MAIN API QUERY: Fetches table room list for current booking ID
+  const {
+    data: listData,
+    isLoading: isListLoading,
+    refetch,
+  } = useApiQuery({
+    fetchQueryName:"reservation-room",
     fetchQueryFunction: reservationRoomList,
     params: {
-      pagination: {
-        page: page,
-        perPage: perPage,
-      },
+      pagination: { page, perPage },
       keyword,
-      reservationRoom: {
-        uuid: uuid,
-      },
+      reservationRoom: { uuid: bookingId },
     },
     options: {
       enabled: !!bookingId && bookingId.trim().length >= 32,
     },
   });
 
-  
-
+  // Automatically sync selected room UUID on fresh loads if URL state is empty
   useEffect(() => {
-    if (bookingId && data?.reservation?.reservationNo) {
+    if (listData?.data?.length > 0) {
+      const defaultUuid =
+        urlRoomUuid || listData?.reservationRoom?.uuid || listData?.data[0]?.uuid;
+
+      if (defaultUuid !== selectedRoomUuid) {
+        setSelectedRoomUuid(defaultUuid);
+        setSearchParams((prev) => {
+          prev.set("selectedRoomUuid", defaultUuid);
+          return prev;
+        }, { replace: true });
+      }
+    }
+  }, [listData, urlRoomUuid]);
+
+  // Update Breadcrumbs
+  useEffect(() => {
+    if (bookingId && listData?.reservation?.reservationNo) {
       sessionStorage.setItem(
         `breadcrumb_${bookingId}`,
-        data.reservation.reservationNo,
+        listData.reservation.reservationNo
       );
       window.dispatchEvent(new Event("breadcrumb_updated"));
     }
-  }, [data, bookingId]);
+  }, [listData, bookingId]);
 
-  useEffect(() => {
-    if (data?.reservationRoom) {
-      setSelectedRoom(data.reservationRoom);
+  // 2. SINGLE ROOM API QUERY: Triggers whenever selectedRoomUuid updates
+  const { data: singleRoomData, isLoading: isRoomLoading } = useApiQuery({
+    fetchQueryName: "reservation-room-detail", selectedRoomUuid,
+    fetchQueryFunction: reservationRoomList,
+    params: {
+      reservationRoom: { uuid: selectedRoomUuid },
+    },
+    options: {
+      enabled: !!selectedRoomUuid,
+    },
+  });
+
+  // Handle table row selection: updates state and syncs with URL
+  const handleSelectRow = (record) => {
+    if (record?.uuid && record.uuid !== selectedRoomUuid) {
+      setSelectedRoomUuid(record.uuid);
+      setSearchParams((prev) => {
+        prev.set("selectedRoomUuid", record.uuid);
+        return prev;
+      });
     }
-  }, [data]);
-
-  const handleSelectRow = (roomRecord) => {
-    setSelectedRoom(roomRecord);
-  };
-
-  const headerData = {
-    ...data,
-    reservationRoom: selectedRoom || data?.reservationRoom,
   };
 
   const handleAddRoom = () => {
@@ -103,7 +125,19 @@ const RoomInformationList = () => {
     setDrawerOpen(true);
   };
 
-  if (isLoading) {
+  // Resolve current active room object prioritize single room response over list response
+  const activeReservationRoom =
+    singleRoomData?.reservationRoom ||
+    singleRoomData?.data?.[0] ||
+    listData?.reservationRoom;
+
+  // Merged structure to supply Header and Menu with active room state
+  const activeRoomFullData = {
+    ...listData,
+    reservationRoom: activeReservationRoom,
+  };
+
+  if (isListLoading) {
     return (
       <div className="flex items-center justify-center h-full min-h-[300px]">
         <Loader />
@@ -113,21 +147,13 @@ const RoomInformationList = () => {
 
   return (
     <div className="w-full px-6 py-2">
-      {/* <ReservationHeader data={data || {}} /> */}
-      <ReservationHeader data={headerData} />
+      <ReservationHeader data={activeRoomFullData} />
+      <ReservationMenu data={activeRoomFullData} />
 
-      <ReservationMenu data={data} />
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
         <ReservationListHeader
-          reservationId={data?.reservation?.reservationNo}
+          reservationId={listData?.reservation?.reservationNo}
           onAddreservation={handleAddRoom}
-          // addButtonText={
-          //   ["confirmed", "checked_in"].includes(
-          //     data?.reservationRoom?.roomStatus?.code?.toLowerCase(),
-          //   )
-          //     ? "Add New Room"
-          //     : null
-          // }
           addButtonText={"Add New Room"}
         />
       </div>
@@ -135,44 +161,32 @@ const RoomInformationList = () => {
         <Button className="custom-blue-btn" onClick={() => setOpen(true)}>
           Change Status
         </Button>
-
-        {/* {
-          disableComplimentaryUpdateButton ? null : (
-            <Button className="custom-blue-btn" onClick={() => setCompOpen(true)}>
-              Add Complimentary
-            </Button>
-          )
-        } */}
       </div>
 
       {open && (
         <ChangeStatusForm
           open={open}
           onClose={() => setOpen(false)}
-          reservationId={data?.reservationNo}
-          reservationDetails={data}
+          reservationId={listData?.reservationNo}
+          reservationDetails={listData}
         />
       )}
 
       <RoomInformationTable
-        data={data?.data || []}
-        reservation={data?.reservation}
+        data={listData?.data || []}
+        reservation={listData?.reservation}
         page={page}
         perPage={perPage}
-        total={data?.pagination?.total}
+        total={listData?.pagination?.total}
         changePage={setPage}
         changePerPage={setPerPage}
-        loading={isLoading}
-        // reservationUuid={data || []}
-        reservationUuid={{
-          ...data,
-          reservationRoom: selectedRoom || data?.reservationRoom,
-        }}
+        loading={isListLoading || isRoomLoading}
+        reservationUuid={activeRoomFullData}
         onSelectRow={handleSelectRow}
       />
       <RoomInformationForm
-        data={data?.reservation || []}
-        date={data?.reservationRoom || []}
+        data={listData?.reservation || []}
+        date={listData?.reservationRoom || []}
         drawerOpen={drawerOpen}
         setDrawerOpen={setDrawerOpen}
         mode={mode}
@@ -183,31 +197,14 @@ const RoomInformationList = () => {
 
       {assignRoomOpen && (
         <AssignRoomForm
-          data={data?.data || []}
+          data={listData?.data || []}
           open={assignRoomOpen}
           onClose={() => setAssignRoomOpen(false)}
           selectedData={selectedData}
           setSelectedData={setSelectedData}
-          reservationUuid={data || []}
+          reservationUuid={listData || []}
         />
       )}
-
-      {showRoomResults && (
-        <GetRoomForm
-          data={data?.data || []}
-          open={showRoomResults}
-          onClose={() => setShowRoomResults(false)}
-          selectedData={selectedData}
-          setSelectedData={setSelectedData}
-          reservationUuid={data || []}
-        />
-      )}
-
-      {/* <ComplimentaryUpdateModal
-          bookingUuid={uuid}
-          open={compOpen}
-          onCancel={() => setCompOpen(false)}
-      /> */}
     </div>
   );
 };

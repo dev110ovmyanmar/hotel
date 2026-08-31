@@ -138,7 +138,7 @@ const RoleForm = ({
         Toast.success("Permissions updated successfully");
       },
       onError: () =>
-        Toast.error("An error occurred while updating permissions"),
+      console.log(error)
     });
     setPermDrawerOpen(false);
   };

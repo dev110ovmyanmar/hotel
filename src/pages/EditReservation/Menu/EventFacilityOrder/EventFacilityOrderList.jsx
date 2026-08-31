@@ -6,28 +6,17 @@ import EventFacilityOrderForm from "./Components/EventFacilityOrderForms/EventFa
 import useApiQuery from "../../../../hooks/useApiQuery";
 import { fetchFacilityBooking } from "../../../../api/booking";
 import { LIMITS } from "../../../../variables/constants";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import ReservationMenu from "../../Components/ReservationMenu.jsx";
 import Loader from "../../../../component/Loader/Loader.jsx";
 
 const EventFacilityOrderList = () => {
-  const [drawerOpen, setDrawerOpen] = useState(false);
-  const [mode, setMode] = useState("add");
-  const [selectedData, setSelectedData] = useState(null);
-
-  const [keyword, setKeyword] = useState("");
-  const [status, setStatus] = useState("all");
-  const [page, setPage] = useState(1);
-  const [perPage, setPerPage] = useState(LIMITS.PAGE_SIZE);
-  const [searchOpen, setSearchOpen] = useState(false);
-
-  const normalStatus = status === "all" ? null : status;
-
   const navigate = useNavigate();
   const { bookingId } = useParams();
-  const uuid = bookingId; // assigned directly to your uuid variable
+  const uuid = bookingId;
 
-  // ROUTING GUARD: Kick out unassigned, empty, or partial/mangled IDs instantly
+  const [searchParams] = useSearchParams();
+
   useEffect(() => {
     const cleanId = bookingId ? bookingId.trim() : "";
 
@@ -35,24 +24,33 @@ const EventFacilityOrderList = () => {
       !cleanId ||
       cleanId === "" ||
       cleanId === ":bookingId" ||
-      cleanId.length < 32 // Checks if the user chopped or deleted characters from the ID
+      cleanId.length < 32
     ) {
       navigate("/404", { replace: true });
     }
   }, [bookingId, navigate]);
 
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [mode, setMode] = useState("add");
+  const [selectedData, setSelectedData] = useState(null);
+  const [keyword, setKeyword] = useState("");
+  const [status, setStatus] = useState("all");
+  const [page, setPage] = useState(1);
+  const [perPage, setPerPage] = useState(LIMITS.PAGE_SIZE);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const selectedRoomUuid = searchParams.get("selectedRoomUuid") || bookingId;
+
   const { data, isLoading, error } = useApiQuery({
     fetchQueryName: "facility-booking-list",
     fetchQueryFunction: fetchFacilityBooking,
     params: {
-      pagination: {
-        page: page,
-        perPage: perPage,
-      },
-      reservationRoom: {
-        uuid: uuid,
-      },
+      pagination: { page, perPage },
+      keyword,
+      reservationRoom: { uuid: selectedRoomUuid },
     },
+    options: {
+      enabled: !!selectedRoomUuid,
+    }
   });
 
   useEffect(() => {

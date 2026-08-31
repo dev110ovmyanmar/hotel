@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import ReservationHeader from "../../Components/ReservationHeader";
 import ReservationMenu from "../../Components/ReservationMenu";
 import ReservationListHeader from "../../../../component/ReservationHeader/ReservationListHeader";
@@ -15,17 +15,19 @@ const FoodBeverageOrderList = () => {
   const navigate = useNavigate();
   const { bookingId } = useParams();
   const uuid = bookingId;
+  const [searchParams] = useSearchParams();
 
   const isValidBookingId =
-  !!bookingId &&
-  bookingId !== ":bookingId" &&
-  bookingId.trim().length >= 32;
+    !!bookingId &&
+    bookingId !== ":bookingId" &&
+    bookingId.trim().length >= 32;
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mode, setMode] = useState("add");
   const [selectedData, setSelectedData] = useState(null);
   const [keyword, setKeyword] = useState("");
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(LIMITS.PAGE_SIZE);
+  const selectedRoomUuid = searchParams.get("selectedRoomUuid") || uuid;
 
   const { data, isLoading, refetch } = useApiQuery({
     fetchQueryName: "food-beverage-orders",
@@ -33,14 +35,11 @@ const FoodBeverageOrderList = () => {
     params: {
       pagination: { page, perPage },
       keyword,
-      reservationRoom: {
-        uuid
-      }
+      reservationRoom: { uuid: selectedRoomUuid },
     },
-    options:{
-      enabled : isValidBookingId
+    options: {
+      enabled: !!selectedRoomUuid && isValidBookingId,
     }
-
   });
   // useEffect(() => {
   //   if (bookingId && data?.reservation?.reservationNo) {
@@ -57,7 +56,6 @@ const FoodBeverageOrderList = () => {
     setMode("add");
     setDrawerOpen(true);
   };
-  console.log(data,"DataInFoodBeverageOrderLIst")
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-full min-h-[300px]">
@@ -65,7 +63,6 @@ const FoodBeverageOrderList = () => {
       </div>
     );
   }
-  console.log(data,"FoodBeverageOrderDataList")
   return (
     <div className="w-full px-6 py-2">
       <ReservationHeader data={data ?? {}} />
