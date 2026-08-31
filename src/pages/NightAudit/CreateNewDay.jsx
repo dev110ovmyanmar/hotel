@@ -35,6 +35,7 @@ const CreateNewDay = ({
             onSuccess: (data) => {
                 Toast.success("System Unlocked successfully");
                 setHaveNiceDay(true);
+                createNewDayClick()
             },
             onError: (error) => {
                 console.error("System lock error:", error);

@@ -24,7 +24,7 @@ const NightAudit = () => {
     const [currentValue, setCurrentValue] = useState(0);
     const [finishCountDown, setFinishCountDown] = useState(false);
     const todayDate = dayjs().format("DD-MM-YYYY");
-
+    const [hideSteps, setHideSteps] = useState(false);
     // System Lock Mutation
     const systemLockMutation = useApiMutation({
         mutationFn: systemLock,
@@ -62,7 +62,7 @@ const NightAudit = () => {
                         <Card
                             title={
                                 <div className="text-center w-full">
-                                    Perform Night Audit for  
+                                    Perform Night Audit for
                                     <span className="ms-1">{todayDate}</span>
                                 </div>
                             }
@@ -80,7 +80,7 @@ const NightAudit = () => {
 
                                         {
                                             !finishCountDown &&
-                                                <ReactTimer onFinish={() => setFinishCountDown(true)} />
+                                            <ReactTimer onFinish={() => setFinishCountDown(true)} />
                                         }
 
                                         {
@@ -160,9 +160,13 @@ const NightAudit = () => {
                                 :
                                 step === "createNewDay" ?
                                     <>
-                                        <CheckBookingHeader colorClick={currentValue} />
+                                        {
+                                            !hideSteps &&
+                                            <CheckBookingHeader colorClick={currentValue} />
+                                        }
                                         <CreateNewDay createNewDayClick={() => {
-                                            setCurrentValue(5)
+                                            setCurrentValue(5);
+                                            setHideSteps(true)
 
                                         }} />
                                     </>
@@ -176,6 +180,7 @@ const NightAudit = () => {
                 open={confirmModal}
                 onCancel={() => setConfirmModal(false)}
                 onOk={handleForceLogout}
+
             />
 
         </div>

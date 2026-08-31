@@ -12,15 +12,6 @@ const useHouseKeepingStatusColumns = (onEdit, onView) => {
     const viewPermission = hasPermission(PERMISSIONS.HK_STATUS_VIEW);
     const editPermission = hasPermission(PERMISSIONS.HK_STATUS_EDIT);
 
-    const hkStatusMap = {
-        clean: "clean",
-        dirty: "dirty",
-        in_progress: "in_progress",
-        inspected: "inspected",
-        out_of_order: "out_of_order",
-        out_of_service: "out_of_service",
-    };
-
     return [
         {
             title: "ID",
@@ -51,19 +42,9 @@ const useHouseKeepingStatusColumns = (onEdit, onView) => {
             dataIndex: "cleanStatus",
             key: "cleanStatus",
             render: (cleanStatus) => {
-                // 1. Get the first item from the array
-                const firstItem = Array.isArray(cleanStatus) ? cleanStatus[0] : cleanStatus;
-
-                // 2. Extract the code string (e.g., "dirty")
-                const statusCode = firstItem?.code || firstItem;
-
-                // 3. Map it to the "hk_" version
-                const mappedCode = hkStatusMap[statusCode] || statusCode;
-
-                // 4. Create an object that ColorStatusTag expects: { code: "hk_dirty", name: "Dirty" }
                 const statusForTag = {
-                    code: mappedCode,
-                    name: firstItem?.name || statusCode
+                    code: cleanStatus?.code,
+                    name: cleanStatus?.name
                 };
 
                 return <ColorStatusTag status={statusForTag} />;

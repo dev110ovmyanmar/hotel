@@ -1,8 +1,8 @@
-import React from "react";
-import { Row, Col, Table, Card, Tag, Spin } from "antd";
+import React, { useEffect } from "react";
+import { Row, Col, } from "antd";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import ReservationHeader from "../EditReservation/Components/ReservationHeader";
 import ReservationMenu from "../EditReservation/Components/ReservationMenu";
-import ReservationListHeader from "../../component/ReservationHeader/ReservationListHeader";
 import PaymentSummaryTable from "./Components/BookingDetailsTables/PaymentSummaryTable";
 import EventFacility from "./Components/BookingDetailsTables/EventFacility";
 import ServiceAddOn from "./Components/BookingDetailsTables/ServiceAddOn";
@@ -11,30 +11,28 @@ import RoomStatusTable from "./Components/BookingDetailsTables/RoomStatusTable";
 import BookingDetailButton from "./Components/BookingDetailButton/BookingDetailButton";
 import BookingStatusCard from "./Components/BookingDetailsTables/BookingStatusCard";
 import ContactPersonCard from "./Components/BookingDetailsTables/ContactPersonTable";
-import { useLocation, useParams, useNavigate } from "react-router-dom";
-import useApiQuery from "../../hooks/useApiQuery";
-import {
-  folioPaymentList,
-  reservationDetails,
-} from "../../api/reservationSectionApi";
-import Loader from "../../component/Loader/Loader";
 import ServiceOrder from "./Components/BookingDetailsTables/ServiceOrder";
-import { useEffect } from "react";
 import FolioSummaryCard from "./Components/BookingDetailsTables/FolioSummaryCard";
 import FnbOrderFromBookingDetailList from "./Components/BookingDetailsTables/FnbOrderFromBookingDetailList";
+
+import useApiQuery from "../../hooks/useApiQuery";
+import { reservationDetails } from "../../api/reservationSectionApi";
+import Loader from "../../component/Loader/Loader";
 
 const BookingDetailList = () => {
   const navigate = useNavigate();
   const { bookingId } = useParams();
-  const uuid = bookingId; // assigned directly to your uuid variable
+  const [searchParams] = useSearchParams();
+  const uuid = bookingId;
 
-  // ROUTING GUARD: Kick out unassigned, empty, or partial/mangled IDs instantly
+  const selectedRoomUuid =
+    searchParams.get("selectedRoomUuid") || uuid;
+
   useEffect(() => {
     const cleanId = bookingId ? bookingId.trim() : "";
 
     if (
       !cleanId ||
-      cleanId === "" ||
       cleanId === ":bookingId" ||
       cleanId.length < 32
     ) {
@@ -44,18 +42,35 @@ const BookingDetailList = () => {
 
   const { data, isLoading } = useApiQuery({
     fetchQueryName: "reservation-details",
+    selectedRoomUuid,
     fetchQueryFunction: reservationDetails,
-    params: { reservationRoom: { uuid: uuid } },
-    options: { enabled: !!uuid },
+
+    params: {
+      reservationRoom: {
+        uuid: selectedRoomUuid,
+      },
+    },
+    options: { enabled: !!selectedRoomUuid },
   });
 
+  const roomStatusCode = data?.reservationRoom?.roomStatus?.code;
+  const reservationBooked = roomStatusCode === "booked";
+  const serviceAddOn = roomStatusCode === "confirmed";
+  const serviceOrder = roomStatusCode === "checked_in";
+
   useEffect(() => {
-    if (bookingId && data?.reservation?.reservationNo) {
+    if (
+      bookingId &&
+      data?.reservation?.reservationNo
+    ) {
       sessionStorage.setItem(
         `breadcrumb_${bookingId}`,
-        data.reservation.reservationNo,
+        data.reservation.reservationNo
       );
-      window.dispatchEvent(new Event("breadcrumb_updated"));
+
+      window.dispatchEvent(
+        new Event("breadcrumb_updated")
+      );
     }
   }, [data, bookingId]);
 
@@ -66,70 +81,94 @@ const BookingDetailList = () => {
       </div>
     );
   }
-  console.log(data,"foodbeverageorder")
 
-  const reservationBooked =
-    data?.reservationRoom?.roomStatus?.code === "booked";
-
-  const serviceAddOn = data?.reservationRoom?.roomStatus?.code === "confirmed";
-  const serviceOrder = data?.reservationRoom?.roomStatus?.code === "checked_in";
+  console.log(data, "foodbeverageorder");
 
   return (
     <div className="w-full px-6 py-2">
       <ReservationHeader data={data || {}} />
-
       <ReservationMenu data={data || {}} />
+
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
         <BookingDetailButton data={data || {}} />
       </div>
 
       <Row gutter={[16, 16]}>
-        {/* LEFT */}
+
         <Col xs={24} lg={16}>
           <Row gutter={[16, 16]}>
             <Col span={24}>
-              <PaymentSummaryTable data={data?.reservation?.folioPayments} />
+              <PaymentSummaryTable
+                data={data?.reservation?.folioPayments}
+              />
             </Col>
+
             <Col span={24}>
-              <RoomStatusTable data={data?.reservation?.reservationRooms} />
+              <RoomStatusTable
+                data={data?.reservation?.reservationRooms}
+              />
             </Col>
+
             {serviceAddOn && (
               <Col span={24}>
-                <ServiceAddOn data={data?.reservation?.reservationAddOns} />
+                <ServiceAddOn
+                  data={data?.reservation?.reservationAddOns}
+                />
               </Col>
             )}
+
             {serviceOrder && (
               <Col span={24}>
-                <ServiceOrder data={data?.reservation?.serviceOrders} />
+                <ServiceOrder
+                  data={data?.reservation?.serviceOrders}
+                />
               </Col>
             )}
+
             <Col span={24}>
-              <FnbOrderFromBookingDetailList data={data?.reservation?.fnbOrders}/>
+              <FnbOrderFromBookingDetailList
+                data={data?.reservation?.fnbOrders}
+              />
             </Col>
+
             <Col span={24}>
-              <EventFacility data={data?.reservation?.facilityBookings} />
+              <EventFacility
+                data={data?.reservation?.facilityBookings}
+              />
             </Col>
+
           </Row>
         </Col>
 
-        {/* RIGHT */}
         <Col xs={24} lg={8}>
+
           <Row gutter={[16, 16]}>
             {!reservationBooked && (
               <>
                 <Col span={24}>
-                  <FolioSummaryCard data={data?.reservation || {}} />
+                  <FolioSummaryCard
+                    data={data?.reservation || {}}
+                  />
                 </Col>
+
                 <Col span={24}>
-                  <SummaryCard data={data?.reservation || {}} />
+                  <SummaryCard
+                    data={data?.reservation || {}}
+                  />
                 </Col>
               </>
             )}
+
             <Col span={24}>
-              <BookingStatusCard data={data || {}} />
+              <BookingStatusCard
+                data={data || {}}
+              />
             </Col>
+
             <Col span={24}>
-              <ContactPersonCard data={data || {}} />
+              <ContactPersonCard
+                data={data || {}}
+              />
             </Col>
           </Row>
         </Col>
@@ -139,3 +178,4 @@ const BookingDetailList = () => {
 };
 
 export default BookingDetailList;
+

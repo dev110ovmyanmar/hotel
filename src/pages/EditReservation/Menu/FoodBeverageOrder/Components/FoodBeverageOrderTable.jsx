@@ -26,8 +26,15 @@ const FoodBeverageOrderTable = ({
     },
     {
       title: "Room No",
-      dataIndex: ["reservationRoom", "room", "roomNo"],
       key: "reservationRoom",
+      render: (record) => {
+        return (
+          <div className="flex-col items-center gap-1">
+            {record?.reservationRoom ? record?.reservationRoom.room.roomNo : "-"}
+           
+          </div>
+        )
+      }
     },
     {
       title: "Consumption Type",
@@ -37,13 +44,13 @@ const FoodBeverageOrderTable = ({
     {
       title: "Order Type",
       key: "orderType",
-      render: (record,text) => {
+      render: (record, text) => {
         return (
           <div className="flex-col items-center gap-1">
-              <div>{record?.orderType.name}</div>
-              {record?.orderType.code === "dine_in" && 
-                  <div>Table No - {record?.restaurantTable ? `(${record?.restaurantTable?.tableNo})` : null}</div>
-              }
+            <div>{record?.orderType.name}</div>
+            {record?.orderType.code === "dine_in" &&
+              <div>Table No - {record?.restaurantTable ? `(${record?.restaurantTable?.tableNo})` : null}</div>
+            }
           </div>
         )
       }
@@ -72,7 +79,6 @@ const FoodBeverageOrderTable = ({
       key: "action",
       fixed: "end",
       render: (_, record) => {
-        console.log(record, "RecordInAction")
         const statusCode = record?.orderStatus?.code;
         const isReadonlyStatus =
           statusCode === "completed" || statusCode === "cancelled";

@@ -130,6 +130,7 @@ const FoodBeverageOrderForm = ({
   });
 
   const handleSubmit = (values) => {
+    console.log(values,"2")
     const menuItems = values?.items.map(item => ({
       uuid: item.menu,
       quantity: item.quantity,
@@ -164,6 +165,7 @@ const FoodBeverageOrderForm = ({
       },
       isTaxable: values?.tax,
       isServiceChargeable: values?.serviceCharges,
+      refNo: values?.refNo
     };
     if (isAdd) {
       createFoodBeverate.mutate(payload, {
@@ -265,6 +267,7 @@ const FoodBeverageOrderForm = ({
       tableNo: fnbOrderDetails?.restaurantTable?.uuid,
       tax: fnbOrderDetails?.isTaxable,
       serviceCharges: fnbOrderDetails?.isServiceChargeable,
+      refNo:fnbOrderDetails?.refNo,
       items: menuItems,
     });
   }, [
@@ -608,7 +611,7 @@ const FoodBeverageOrderForm = ({
                 </div>
 
                 <div className="grid grid-cols-2 gap-x-4">
-                  <Form.Item label="Room" name="room" rules={[{ required: true }]}>
+                  <Form.Item label="Room" name="room" >
                     <Select
                       placeholder="Select Room"
                       style={{ width: "100%" }}
@@ -629,8 +632,33 @@ const FoodBeverageOrderForm = ({
                   </Form.Item>
                 </div>
 
-                <div className="flex items-center grid grid-cols-2 gap-3 ">
-                  <div className="flex gap-x-10 border border-gray-300 px-2 py-1 rounded mt-2">
+                <div className="grid grid-cols-2 gap-x-4">
+                  <Form.Item
+                    label="Ref No"
+                    name="refNo"
+                  >
+                    <Input
+                      placeholder="Enter Ref No"
+                      disabled={isView}
+                    />
+                  </Form.Item>
+
+                  <Form.Item
+                    label="Order Status"
+                    name="orderStatus"
+                    rules={[{ required: true }]}
+                  >
+                    <Select
+                      placeholder="Select Order Status"
+                      style={{ width: "100%" }}
+                      options={orderStatusOptions}
+                      disabled={currentOrderStatus === "completed" || currentOrderStatus === "cancelled" || isView}
+                    />
+                  </Form.Item>
+                </div>
+
+                <div className="flex items-center grid grid-cols-3 gap-2 ">
+                  <div className="flex gap-x-2 ">
                     <Form.Item
                       className="!m-0"
                       name="tax"
@@ -660,6 +688,7 @@ const FoodBeverageOrderForm = ({
                               ? "custom-checkbox-icon"
                               : "",
                         }}
+                        className="!text-[11px]"
                       >
                         Service Charges
                       </Checkbox>
@@ -675,21 +704,6 @@ const FoodBeverageOrderForm = ({
                       placeholder="Select Order Type"
                       style={{ width: "100%" }}
                       options={orderType}
-                    />
-                  </Form.Item>
-                </div>
-
-                <div className="grid grid-cols-2 gap-x-4">
-                  <Form.Item
-                    label="Order Status"
-                    name="orderStatus"
-                    rules={[{ required: true }]}
-                  >
-                    <Select
-                      placeholder="Select Order Status"
-                      style={{ width: "100%" }}
-                      options={orderStatusOptions}
-                      disabled={currentOrderStatus === "completed" || currentOrderStatus === "cancelled" || isView}
                     />
                   </Form.Item>
 
@@ -715,7 +729,6 @@ const FoodBeverageOrderForm = ({
                       :
                       null
                   }
-
                 </div>
               </Card>
 
@@ -730,25 +743,61 @@ const FoodBeverageOrderForm = ({
                         );
 
                         const showModifier = selectedMenuItem?.modifiers?.length > 0;
-                        const currentMenu = itemsValue?.[name]?.menu;
+                        // const currentMenu = itemsValue?.[name]?.menu;
 
                         const selectedMenus =
                           itemsValue?.map(item => item?.menu).filter(Boolean) || [];
 
-                        const menuOptions = data?.menu_items?.map(menu => ({
-                          value: menu.uuid,
-                          label: menu.name,
-                          disabled:
-                            selectedMenus.includes(menu.uuid) &&
-                            menu.uuid !== currentMenu,
-                        }));
+                        // const menuOptions = data?.menu_items?.map(menu => {
+                        //   return (
+                        //     {
+                        //       value: menu.uuid,
+                        //       label: menu.name,
+                        //       disabled:
+                        //         selectedMenus.includes(menu.uuid) &&
+                        //         isNewMenu
+                        //       // menu.uuid !== currentMenu,
+                        //     }
+                        //   )
+                        // });
+
+                        const currentMenu = itemsValue?.[name]?.menu;
+                        const isNewMenu = addedMenuIndex === name;
+
+                        const detailMenuUuids =
+                          fnbOrderDetails?.fnbOrderItems
+                            ?.map(item => item?.menuItem?.uuid)
+                            ?.filter(Boolean) || [];
+
+                        // const selectedMenuUuids =
+                        //   itemsValue
+                        //     ?.map(item => item?.menu)
+                        //     ?.filter(Boolean) || [];
+
+                        // const isNewMenu = !currentMenu;
+
+                        const menuOptions = data?.menu_items?.map(menu => {
+                          const alreadyInDetails = detailMenuUuids.includes(menu.uuid);
+                          const alreadySelected = selectedMenus.includes(menu.uuid);
+
+                          return {
+                            value: menu.uuid,
+                            label: menu.name,
+
+                            disabled: isEdit
+                              ? isNewMenu
+                                ? alreadyInDetails || alreadySelected
+                                : (alreadyInDetails || alreadySelected) &&
+                                menu.uuid !== currentMenu
+                              : alreadySelected,
+                          };
+                        });
 
                         // New Uuid
 
                         const menuCardUuid = fnbOrderDetails?.uuid;
                         const currentItemUuid = fnbOrderDetails?.fnbOrderItems?.[name]?.uuid;
 
-                        const isNewMenu = addedMenuIndex === name;
                         const isCurrentMenuEditing =
                           currentItemUuid && currentItemUuid === isClickedEditUuid;
                         const isCurrentCardEditable =
@@ -768,14 +817,14 @@ const FoodBeverageOrderForm = ({
                         return (
                           <>
                             <Collapse
-                              defaultActiveKey={isAdd ? [currentItemUuid || key] : []}
+                              defaultActiveKey={isAdd || clickAddMenu ? [currentItemUuid || key] : []}
                               className="!my-2 order-info-forms"
                               items={[
                                 {
                                   key: currentItemUuid || key,
 
                                   label: (
-                                    <div className="flex justify-between items-center w-full">
+                                    <div className={`flex items-center w-full ${isView? "justify-between" : "gap-x-90"}`}>
                                       <div className="font-medium">
                                         {isAdd
                                           ? (
@@ -793,6 +842,12 @@ const FoodBeverageOrderForm = ({
                                             `Menu ${name + 1}`
                                           )}
                                       </div>
+
+                                      {(!isAdd) && (
+                                        <span className="font-medium">
+                                          ( {fnbOrderDetails?.fnbOrderItems?.[name]?.grandTotal?.toLocaleString()} MMK )
+                                        </span>
+                                      )}
                                     </div>
                                   ),
 
@@ -995,9 +1050,6 @@ const FoodBeverageOrderForm = ({
 
                                   children: (
                                     <div className="px-1">
-                                      {/* =========================
-              MENU / QUANTITY / PRICE
-             ========================= */}
                                       <div className="grid grid-cols-3 gap-3">
                                         <Form.Item
                                           label="Menu"
@@ -1016,9 +1068,12 @@ const FoodBeverageOrderForm = ({
                                             }
                                             placeholder="Select Menu"
                                             disabled={
-                                              isAdd
-                                                ? false
-                                                : !isCurrentCardEditable
+                                              isView
+                                                ? true
+                                                :
+                                                isAdd
+                                                  ? false
+                                                  : !isCurrentCardEditable
                                             }
                                           />
                                         </Form.Item>
@@ -1033,10 +1088,13 @@ const FoodBeverageOrderForm = ({
                                               itemsValue?.[name]?.menu ? 1 : 0
                                             }
                                             disabled={
-                                              isAdd
-                                                ? !itemsValue?.[name]?.menu
-                                                : !isCurrentCardEditable ||
-                                                !itemsValue?.[name]?.menu
+                                              isView
+                                                ? true
+                                                :
+                                                isAdd
+                                                  ? !itemsValue?.[name]?.menu
+                                                  : !isCurrentCardEditable ||
+                                                  !itemsValue?.[name]?.menu
                                             }
                                           />
                                         </Form.Item>
@@ -1058,9 +1116,6 @@ const FoodBeverageOrderForm = ({
                                         </Form.Item>
                                       </div>
 
-                                      {/* =========================
-              ADD ON MENU
-             ========================= */}
                                       {showModifier &&
                                         selectedMenuItem?.modifiers?.length > 0 && (
                                           <div className="mt-2">
@@ -1136,29 +1191,32 @@ const FoodBeverageOrderForm = ({
                                                         <div
                                                           key={modify.uuid}
                                                           className={`
-                                grid grid-cols-3
-                                gap-3
-                                items-center
-                                py-2
-                                !border-gray-50
-                                hover:bg-gray-50
-                                dark:!border-gray-700
-                                dark:hover:bg-gray-900/50
-                                transition-colors
-                                ${latestRow
+                                                            grid grid-cols-3
+                                                            gap-3
+                                                            items-center
+                                                            py-2
+                                                            !border-gray-50
+                                                            hover:bg-gray-50
+                                                            dark:!border-gray-700
+                                                            dark:hover:bg-gray-900/50
+                                                            transition-colors
+                                                            ${latestRow
                                                               ? ""
                                                               : "border-b"
                                                             }
-                              `}
+                                                        `}
                                                         >
                                                           {/* Modifier name */}
                                                           <div className="flex items-center">
                                                             <Checkbox
                                                               value={modify.uuid}
                                                               disabled={
-                                                                isAdd
-                                                                  ? false
-                                                                  : !isCurrentCardEditable
+                                                                isView
+                                                                  ? true
+                                                                  :
+                                                                  isAdd
+                                                                    ? false
+                                                                    : !isCurrentCardEditable
                                                               }
                                                               classNames={{
                                                                 icon:
@@ -1197,8 +1255,11 @@ const FoodBeverageOrderForm = ({
                                                                   : 0
                                                               }
                                                               disabled={
-                                                                !isModifierChecked ||
-                                                                !isCurrentCardEditable
+                                                                isView
+                                                                  ?
+                                                                  true :
+                                                                  !isModifierChecked ||
+                                                                  !isCurrentCardEditable
                                                               }
                                                             />
                                                           </Form.Item>
