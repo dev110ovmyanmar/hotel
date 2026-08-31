@@ -179,6 +179,14 @@ const RoomInformationTable = ({
             }}
           >
             {text?.roomNo || "Assign Room"}
+              {record?.isComplimentary == true &&
+               record?.complimentaryType && 
+               (
+                    <div className="inline-flex items-center gap-0.5 px-1.5 py-0.5 text-[10px] font-semibold rounded-full bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 w-fit">
+                      <Gift size={12} />
+                      {capitalizeFirstLetter(record?.complimentaryType)}
+                    </div>
+              )}
           </span>
         );
       },

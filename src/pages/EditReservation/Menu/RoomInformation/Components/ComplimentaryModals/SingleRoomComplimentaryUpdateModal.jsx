@@ -40,13 +40,12 @@ const SingleRoomComplimentaryUpdateModal = ({
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    const isCheckinValid = checkin ? checkin <= today : false;
     const isCheckoutValid = checkout ? checkout > today : false;
     const isStatusValid = reservationData?.roomStatus?.code === "checked_in" || reservationData?.roomStatus?.code === "confirmed";
 
     // Global reservation validity block
-    const isModificationAllowed =
-        isCheckinValid && isCheckoutValid && isStatusValid;
+    const isModificationAllowed = isCheckoutValid && isStatusValid;
+
 
     const initData = queryClient.getQueryData(["initData", "authenticated"]);
     const complimentaryTypes = initData?.statuses?.complimentary_type;
@@ -288,13 +287,13 @@ const SingleRoomComplimentaryUpdateModal = ({
                                 <ul className="list-disc list-inside text-xs space-y-1 mt-1">
                                     {!isStatusValid && (
                                         <li>
-                                            Room status must be checked-in (Current status:{" "}
+                                            Room status must be checked-in or confirmed(Current status:{" "}
                                             {reservationData?.roomStatus?.name || "N/A"}).
                                         </li>
                                     )}
-                                    {!isCheckinValid && (
+                                    {/* {!isCheckinValid && (
                                         <li>Check-in date cannot be in the future.</li>
-                                    )}
+                                    )} */}
                                     {!isCheckoutValid && (
                                         <li>Checkout date must be later than today's date.</li>
                                     )}
