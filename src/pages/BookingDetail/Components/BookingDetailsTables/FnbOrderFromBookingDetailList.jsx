@@ -40,8 +40,14 @@ const FnbOrderFromBookingDetailList = ({ data }) => {
   const columns = [
     {
       title: "Room No",
-      dataIndex: ["reservationRoom", "room", "roomNo"],
+      // dataIndex: ["reservationRoom", "room", "roomNo"],
       key: "roomNo",
+      render: (record) => {
+        console.log(record,"TextRoomNo")
+        return (
+          <div className="text-center">{record?.reservationRoom ? record?.reservationRoom?.room?.roomNo : "-"}</div>
+        );
+      },
     },
     {
       title: "Fnb Order Date",
@@ -73,7 +79,7 @@ const FnbOrderFromBookingDetailList = ({ data }) => {
           <div className="flex-col">
             <div>{record?.orderType.name}</div>
             {record?.orderType.code === "dine_in" &&
-              <div>Table No - {record?.restaurantTable ? `(${record?.restaurantTable?.tableNo})` : null}</div>
+              <div className="!-mt-3 !p-0">Table No - {record?.restaurantTable ? `(${record?.restaurantTable?.tableNo})` : null}</div>
             }
           </div>
         )

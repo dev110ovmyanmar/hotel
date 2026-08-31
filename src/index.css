@@ -999,3 +999,23 @@ span .ant-upload {
   cursor: not-allowed !important;
   opacity: 1 !important;
 }
+
+/* plain table for fnb order form view */
+.plain-table .ant-table {
+  background: transparent;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.plain-table .ant-table-thead>tr>th {
+  background: transparent !important;
+  border-bottom: none !important;
+}
+
+.plain-table .ant-table-tbody>tr>td {
+  border-bottom: none !important;
+}
+
+.plain-table .ant-table-tbody>tr:hover>td {
+  background: transparent !important;
+}
