@@ -23,7 +23,7 @@ import { queryClient } from "../../../../app/queryClient";
 import { loadState } from "../../../../utils";
 import { LOCAL_STORAGE_KEYS } from "../../../../variables/constants";
 import { adminDetails } from "../../../../api/adminApi";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import Loader from "../../../../component/Loader/Loader";
 
 const FolioOperationsList = () => {
@@ -60,7 +60,7 @@ const FolioOperationsList = () => {
   const navigate = useNavigate();
   const { bookingId } = useParams();
   const uuid = bookingId; // assigned directly to your uuid variable
-
+  const [searchParams] = useSearchParams();
   // ROUTING GUARD: Kick out unassigned, empty, or partial/mangled IDs instantly
   useEffect(() => {
     const cleanId = bookingId ? bookingId.trim() : "";
@@ -74,6 +74,7 @@ const FolioOperationsList = () => {
       navigate("/404", { replace: true });
     }
   }, [bookingId, navigate]);
+  const selectedRoomUuid = searchParams.get("selectedRoomUuid") || bookingId;
 
   const {
     data: folioList,
@@ -85,8 +86,11 @@ const FolioOperationsList = () => {
     params: {
       pagination: { page, perPage },
       keyword,
-      reservationRoom: { uuid: uuid },
+      reservationRoom: { uuid: selectedRoomUuid },
     },
+    options: {
+      enabled: !!selectedRoomUuid,
+    }
   });
 
   useEffect(() => {
