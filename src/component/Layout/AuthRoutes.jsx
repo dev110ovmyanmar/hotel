@@ -413,11 +413,6 @@ export const authRoutes = [
     path: "/reservations/:bookingId/guest-details",
     component: <GuestDetails />,
   },
-  // {
-  //   key: 3.3,
-  //   path: "/reservations/room-information/",
-  //   component: <RoomInformation />,
-  // },
   {
     key: 3.3,
     path: "/reservations/:bookingId/room-information",
