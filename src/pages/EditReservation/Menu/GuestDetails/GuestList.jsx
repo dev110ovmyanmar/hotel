@@ -16,7 +16,6 @@ const GuestList = () => {
   const navigate = useNavigate();
   const { bookingId } = useParams();
   const uuid = bookingId; // assigned directly to your uuid variable
-  const [searchParams] = useSearchParams();
 
   // ROUTING GUARD: Kick out unassigned, empty, or partial/mangled IDs instantly
   useEffect(() => {
@@ -41,22 +40,21 @@ const GuestList = () => {
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(LIMITS.PAGE_SIZE);
   const [uploadOpen, setUploadOpen] = useState(false);
-  const selectedRoomUuid = searchParams.get("selectedRoomUuid") || bookingId;
 
   useEffect(() => {
     setPage(1);
   }, [keyword]);
 
   const { data, isLoading, refetch } = useApiQuery({
-    fetchQueryName: "reservation-guest", selectedRoomUuid,
+    fetchQueryName: "reservation-guest",
     fetchQueryFunction: reservationGuestList,
     params: {
       pagination: { page, perPage },
       keyword,
-      reservationRoom: { uuid: selectedRoomUuid },
+      reservationRoom: { uuid: uuid },
     },
     options: {
-      enabled: !!selectedRoomUuid,
+      enabled: !!uuid,
     }
   });
 

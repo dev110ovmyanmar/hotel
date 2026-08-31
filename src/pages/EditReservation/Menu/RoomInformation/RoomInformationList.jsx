@@ -9,23 +9,17 @@ import {
   useNavigate,
 } from "react-router-dom";
 import AssignRoomForm from "./Components/RoomInformationForms/AssignRoomForm";
-import { Button, Modal } from "antd";
+import { Button } from "antd";
 import ChangeStatusForm from "../../../BookingDetail/Components/BookingDetailForms/ChangeStatusForm";
 import Loader from "../../../../component/Loader/Loader";
 import { reservationRoomList } from "../../../../api/reservationSectionApi";
 import useApiQuery from "../../../../hooks/useApiQuery";
 import { LIMITS } from "../../../../variables/constants";
-import { useSearchParams } from "react-router-dom";
 
 const RoomInformationList = () => {
   const navigate = useNavigate();
   const { bookingId } = useParams();
-  const [searchParams, setSearchParams] = useSearchParams();
 
-  // Retrieve room UUID from URL parameters on page load/refresh
-  const urlRoomUuid = searchParams.get("selectedRoomUuid");
-
-  // ROUTING GUARD: Redirect invalid/malformed IDs instantly
   useEffect(() => {
     const cleanId = bookingId ? bookingId.trim() : "";
 
@@ -47,11 +41,16 @@ const RoomInformationList = () => {
   const [perPage, setPerPage] = useState(LIMITS.PAGE_SIZE);
   const [assignRoomOpen, setAssignRoomOpen] = useState(false);
   const [open, setOpen] = useState(false);
+  const [showRoomResults, setShowRoomResults] = useState(false);
+  const [selectedRoom, setSelectedRoom] = useState(null);
+  const [selectedRoomUuid, setSelectedRoomUuid] = useState(bookingId);
 
-  // Initialize selected room state directly from URL query param if available
-  const [selectedRoomUuid, setSelectedRoomUuid] = useState(urlRoomUuid || null);
+    useEffect(() => {
+    if (bookingId) {
+      setSelectedRoomUuid(bookingId);
+    }
+  }, [bookingId]);
 
-  // 1. MAIN API QUERY: Fetches table room list for current booking ID
   const {
     data: listData,
     isLoading: isListLoading,
@@ -62,79 +61,46 @@ const RoomInformationList = () => {
     params: {
       pagination: { page, perPage },
       keyword,
-      reservationRoom: { uuid: bookingId },
+      reservationRoom: { uuid: selectedRoomUuid },
     },
     options: {
       enabled: !!bookingId && bookingId.trim().length >= 32,
     },
   });
 
-  // Automatically sync selected room UUID on fresh loads if URL state is empty
-  useEffect(() => {
-    if (listData?.data?.length > 0) {
-      const defaultUuid =
-        urlRoomUuid || listData?.reservationRoom?.uuid || listData?.data[0]?.uuid;
-
-      if (defaultUuid !== selectedRoomUuid) {
-        setSelectedRoomUuid(defaultUuid);
-        setSearchParams((prev) => {
-          prev.set("selectedRoomUuid", defaultUuid);
-          return prev;
-        }, { replace: true });
-      }
-    }
-  }, [listData, urlRoomUuid]);
-
-  // Update Breadcrumbs
   useEffect(() => {
     if (bookingId && listData?.reservation?.reservationNo) {
       sessionStorage.setItem(
         `breadcrumb_${bookingId}`,
-        listData.reservation.reservationNo
+        listData.reservation.reservationNo,
       );
       window.dispatchEvent(new Event("breadcrumb_updated"));
     }
   }, [listData, bookingId]);
 
-  // 2. SINGLE ROOM API QUERY: Triggers whenever selectedRoomUuid updates
-  const { data: singleRoomData, isLoading: isRoomLoading } = useApiQuery({
-    fetchQueryName: "reservation-room-detail", selectedRoomUuid,
-    fetchQueryFunction: reservationRoomList,
-    params: {
-      reservationRoom: { uuid: selectedRoomUuid },
-    },
-    options: {
-      enabled: !!selectedRoomUuid,
-    },
-  });
-
-  // Handle table row selection: updates state and syncs with URL
-  const handleSelectRow = (record) => {
-    if (record?.uuid && record.uuid !== selectedRoomUuid) {
-      setSelectedRoomUuid(record.uuid);
-      setSearchParams((prev) => {
-        prev.set("selectedRoomUuid", record.uuid);
-        return prev;
-      });
+   useEffect(() => {
+    if (listData?.reservationRoom) {
+      setSelectedRoom(listData.reservationRoom);
     }
+  }, [listData]);
+
+  const handleSelectRow = (roomRecord) => {
+  setSelectedRoom(roomRecord);
+  const nextUuid = roomRecord?.uuid;
+  if (!nextUuid) return;
+  setSelectedRoomUuid(nextUuid);
+  navigate(`/reservations/${nextUuid}/room-information`);
+};
+
+  const headerData = {
+    ...listData,
+    reservationRoom: selectedRoom || listData?.reservationRoom,
   };
 
   const handleAddRoom = () => {
     setSelectedData(null);
     setMode("add");
     setDrawerOpen(true);
-  };
-
-  // Resolve current active room object prioritize single room response over list response
-  const activeReservationRoom =
-    singleRoomData?.reservationRoom ||
-    singleRoomData?.data?.[0] ||
-    listData?.reservationRoom;
-
-  // Merged structure to supply Header and Menu with active room state
-  const activeRoomFullData = {
-    ...listData,
-    reservationRoom: activeReservationRoom,
   };
 
   if (isListLoading) {
@@ -147,9 +113,8 @@ const RoomInformationList = () => {
 
   return (
     <div className="w-full px-6 py-2">
-      <ReservationHeader data={activeRoomFullData} />
-      <ReservationMenu data={activeRoomFullData} />
-
+      <ReservationHeader data={headerData} />
+      <ReservationMenu data={headerData} selectedRoomUuid={selectedRoomUuid}/>
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
         <ReservationListHeader
           reservationId={listData?.reservation?.reservationNo}
@@ -172,7 +137,7 @@ const RoomInformationList = () => {
         />
       )}
 
-      <RoomInformationTable
+       <RoomInformationTable
         data={listData?.data || []}
         reservation={listData?.reservation}
         page={page}
@@ -180,10 +145,14 @@ const RoomInformationList = () => {
         total={listData?.pagination?.total}
         changePage={setPage}
         changePerPage={setPerPage}
-        loading={isListLoading || isRoomLoading}
-        reservationUuid={activeRoomFullData}
+        loading={isListLoading}
+        reservationUuid={{
+          ...listData,
+          reservationRoom: selectedRoom || listData?.reservationRoom,
+        }}
         onSelectRow={handleSelectRow}
       />
+
       <RoomInformationForm
         data={listData?.reservation || []}
         date={listData?.reservationRoom || []}
