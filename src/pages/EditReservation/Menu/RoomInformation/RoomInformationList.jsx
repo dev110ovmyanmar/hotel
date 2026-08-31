@@ -1,17 +1,21 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate, useSearchParams } from "react-router-dom";
-import { Button } from "antd";
 import ReservationHeader from "../../Components/ReservationHeader";
 import ReservationMenu from "../../Components/ReservationMenu";
 import ReservationListHeader from "../../../../component/ReservationHeader/ReservationListHeader";
 import RoomInformationTable from "./Components/RoomInformationTable";
 import RoomInformationForm from "./Components/RoomInformationForms/RoomInformationForm";
+import {
+  useParams,
+  useNavigate,
+} from "react-router-dom";
 import AssignRoomForm from "./Components/RoomInformationForms/AssignRoomForm";
+import { Button, Modal } from "antd";
 import ChangeStatusForm from "../../../BookingDetail/Components/BookingDetailForms/ChangeStatusForm";
 import Loader from "../../../../component/Loader/Loader";
 import { reservationRoomList } from "../../../../api/reservationSectionApi";
 import useApiQuery from "../../../../hooks/useApiQuery";
 import { LIMITS } from "../../../../variables/constants";
+import { useSearchParams } from "react-router-dom";
 
 const RoomInformationList = () => {
   const navigate = useNavigate();
@@ -24,6 +28,7 @@ const RoomInformationList = () => {
   // ROUTING GUARD: Redirect invalid/malformed IDs instantly
   useEffect(() => {
     const cleanId = bookingId ? bookingId.trim() : "";
+
     if (
       !cleanId ||
       cleanId === "" ||
@@ -41,7 +46,6 @@ const RoomInformationList = () => {
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(LIMITS.PAGE_SIZE);
   const [assignRoomOpen, setAssignRoomOpen] = useState(false);
-  const [showRoomResults, setShowRoomResults] = useState(false);
   const [open, setOpen] = useState(false);
 
   // Initialize selected room state directly from URL query param if available
@@ -153,7 +157,6 @@ const RoomInformationList = () => {
           addButtonText={"Add New Room"}
         />
       </div>
-
       <div className="flex gap-2 mb-2">
         <Button className="custom-blue-btn" onClick={() => setOpen(true)}>
           Change Status
@@ -181,7 +184,6 @@ const RoomInformationList = () => {
         reservationUuid={activeRoomFullData}
         onSelectRow={handleSelectRow}
       />
-
       <RoomInformationForm
         data={listData?.reservation || []}
         date={listData?.reservationRoom || []}

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, Divider, Dropdown, Modal, Radio, Space, Table } from "antd";
+import { Button, Divider, Dropdown, Modal, Radio, Space, Spin, Table } from "antd";
 import {
   SwapOutlined,
   InfoCircleOutlined,
@@ -11,6 +11,7 @@ import {
   FundViewOutlined,
   MoreOutlined,
   WarningOutlined,
+  LoadingOutlined,
 } from "@ant-design/icons";
 import dayjs from "dayjs";
 import {
@@ -154,6 +155,7 @@ const FolioOperationsTable = ({
   onTransferLines,
   isTransferring,
   onPrintFolio,
+  isPrintLoading = false,
   onAdjustLine,
   isAdjusting = false,
   onRebateLine,
@@ -348,30 +350,36 @@ const FolioOperationsTable = ({
     {
       title: "Total Amount (MMK)",
       key:"grandTotal",
-      align: "left",
-      render: (_, record) => <PriceTag align="start" value={record.grandTotal || 0}/>,
+      align: "right",
+      render: (_, record) => <PriceTag value={record.grandTotal || 0}/>,
     },
     {
       title: "Payment (MMK)",
       key: "paidAmount",
-      align:"left",
-      render: (_, record) => <PriceTag align="start" value={record.paidAmount || 0}/>,
+      align:"right",
+      render: (_, record) => <PriceTag value={record.paidAmount || 0}/>,
     },
     {
       title: "Balance (MMK)",
       key: "balanceAmount",
-      align:"left",
-      render: (_, record) => <PriceTag align="start" value={record.balanceAmount || 0}/>,
+      align:"right",
+      render: (_, record) => <PriceTag value={record.balanceAmount || 0}/>,
     },
     {
       title: "Action",
       key: "action",
+      align: "center",
       render: (_, record) => {
         return (
-          <PrinterOutlined
-            onClick={() => onPrintFolio && onPrintFolio(record)}
-            className="text-blue-500 hover:text-blue-700 cursor-pointer text-base"
-          />
+          <Spin
+            indicator={<LoadingOutlined spin className="text-blue-500" />}
+            spinning={isPrintLoading}
+          >
+            <PrinterOutlined
+              onClick={() => !isPrintLoading && onPrintFolio && onPrintFolio(record)}
+              className={`text-blue-500 hover:text-blue-700 cursor-pointer text-base ${isPrintLoading ? 'opacity-50 pointer-events-none' : ''}`}
+            />
+          </Spin>
         );
       },
     },
