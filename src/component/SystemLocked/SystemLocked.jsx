@@ -47,18 +47,19 @@ const SystemLocked = () => {
         </div>
 
         <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-100 mb-3 tracking-tight">
-          System Locked
+          {/* System Locked */}
+          Night Audit in Progress
         </h2>
 
         <p className="text-gray-500 dark:text-gray-400 mb-4 text-sm sm:text-base leading-relaxed">
-          The system is currently locked during Night Audit operations.
+            The system is temporarily locked while the Night Audit is in progress. You cannot perform any operations at this time.
         </p>
 
         <p className="text-gray-400 dark:text-gray-500 mb-8 text-xs sm:text-sm">
-          Please try again later. Auto-refresh in{" "}
-          <span className="font-semibold text-amber-600 dark:text-amber-500">
+          Please wait until the Night Audit is completed.
+          {/* <span className="font-semibold text-amber-600 dark:text-amber-500">
             {countdown}s
-          </span>
+          </span> */}
         </p>
 
         <Button
