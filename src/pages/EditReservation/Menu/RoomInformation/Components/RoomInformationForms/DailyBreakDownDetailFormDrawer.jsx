@@ -11,7 +11,7 @@ const EXTRA_TYPE_LABELS = {
   baby_cot: "Baby Cot",
 };
 
-const SectionCard = ({ title, children }) => (
+export const SectionCard = ({ title, children }) => (
   <div className="bg-slate-50 dark:bg-gray-800/60 border border-slate-200 dark:border-gray-700 rounded-xl p-4">
     <h4 className="font-semibold text-slate-900 dark:text-gray-500 tracking-wider mb-3">
       {title}
@@ -29,7 +29,7 @@ const Amount = ({ value, muted }) => (
   </div>
 );
 
-const InfoRow = ({ label, isComplimentary, complimentaryType, value, highlight, mealPricingMode }) => (
+export const InfoRow = ({ label, isComplimentary, complimentaryType, value, highlight, mealPricingMode }) => (
   <div className="flex justify-between items-center py-2 first:pt-0 last:pb-0">
     <div className="flex items-center gap-1.5 text-slate-700 dark:text-gray-200">
       <span>{label}</span>
