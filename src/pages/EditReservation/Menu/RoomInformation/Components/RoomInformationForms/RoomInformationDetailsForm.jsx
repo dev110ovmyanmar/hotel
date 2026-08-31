@@ -11,6 +11,7 @@ import {
 import DailyBreakDownDetailFormDrawer from "./DailyBreakDownDetailFormDrawer";
 import { useApiQuery } from "../../../../../../hooks/useApiQuery";
 import PriceTag from "../../../../../../component/PriceTag/PriceTag";
+import ReservationStatusColor from "../../../../../../component/ReservationStatusColor/ReservationStatusColor";
 
 const STATUS_CONFIG = {
   Confirmed: { tagColor: "success" },
@@ -114,7 +115,7 @@ const RoomInformationDetailsForm = ({
         <div className="bg-gradient-to-r from-indigo-50 via-white to-purple-50 dark:from-[#1f1f1f] dark:via-[#1f1f1f] dark:to-[#1f1f1f] rounded-2xl border border-slate-200/60 dark:border-gray-600 p-3 shadow-sm">
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1">
-              <span className="flex items-center gap-2 text-[11px] font-bold text-[#189094] uppercase tracking-wider">
+              <span className="flex items-center gap-2 text-[12px] font-bold text-[#189094] tracking-wider">
                 <span className="w-2 h-2 rounded-full bg-[#189094] animate-pulse" />
                 Check-In
               </span>
@@ -133,7 +134,7 @@ const RoomInformationDetailsForm = ({
             </div>
 
             <div className="space-y-1 text-right">
-              <span className="flex items-center justify-end gap-2 text-[11px] font-bold text-[#FF8D28] uppercase tracking-wider">
+              <span className="flex items-center justify-end gap-2 text-[12px] font-bold text-[#FF8D28] tracking-wider">
                 Check-Out
                 <span className="w-2 h-2 rounded-full bg-[#FF8D28] animate-pulse" />
               </span>
@@ -161,23 +162,22 @@ const RoomInformationDetailsForm = ({
                 className={`font-bold text-slate-800 text-base ${textColorDarkMode}`}
               >
                 {d?.room === null ? (
-                  <span className="text-blue-500 text-sm px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-900/30 font-medium">
+                  <span className="text-blue-500 text-xs px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-900/30 font-medium">
                     Assign Rooms
                   </span>
                 ) : (
                   <span className="flex items-center gap-2">
-                    <span className="text-slate-400 font-normal text-sm">Room No:</span>
-                    {d?.room?.roomNo}
+                    <span className="text-slate-400 text-sm">Room No:</span>
+                    <p className=" text-sm"> {d?.room?.roomNo}</p>
                   </span>
                 )}
               </div>
             </div>
-            <Tag
+
+            <ReservationStatusColor
               color={statusStyle.tagColor}
-              className="px-3 py-1 text-xs font-semibold rounded-full"
-            >
-              {currentStatus || "Unknown"}
-            </Tag>
+              status={currentStatus}
+            />
           </div>
 
           {/* Room Type & Rate Plan */}
@@ -186,12 +186,12 @@ const RoomInformationDetailsForm = ({
               className={`bg-white/80 dark:bg-gray-800/80 rounded-xl p-2 border border-slate-100 dark:border-gray-600`}
             >
               <span
-                className={`text-[10px] text-slate-400 font-semibold uppercase tracking-wider ${textColorDarkMode}`}
+                className={`text-[12px] text-slate-400  tracking-wider ${textColorDarkMode}`}
               >
                 Room Type
               </span>
               <div
-                className={`text-xs font-semibold text-slate-700 mt-0.5 ${textWhiteInDarkStyle}`}
+                className={`text-xs  text-slate-900 mt-0.5 ${textWhiteInDarkStyle}`}
               >
                 {d?.roomType?.name || "—"}
               </div>
@@ -200,12 +200,12 @@ const RoomInformationDetailsForm = ({
               className={`bg-white/80 dark:bg-gray-800/80 rounded-xl p-2 border border-slate-100 dark:border-gray-600`}
             >
               <span
-                className={`text-[10px] text-slate-400 font-semibold uppercase tracking-wider ${textColorDarkMode}`}
+                className={`text-[12px] text-slate-400 tracking-wider ${textColorDarkMode}`}
               >
                 Rate Plan
               </span>
               <div
-                className={`text-xs font-semibold text-slate-700 mt-0.5 ${textWhiteInDarkStyle}`}
+                className={`text-xs text-slate-900 mt-0.5 ${textWhiteInDarkStyle}`}
               >
                 {d?.ratePlan?.name || "—"}
               </div>
@@ -214,15 +214,19 @@ const RoomInformationDetailsForm = ({
               className={`bg-white/80 dark:bg-gray-800/80 rounded-xl p-2 border border-slate-100 dark:border-gray-600`}
             >
               <span
-                className={`text-[10px] text-slate-400 font-semibold uppercase tracking-wider ${textColorDarkMode}`}
+                className={`text-[12px] text-slate-400  tracking-wider ${textColorDarkMode}`}
               >
                 Source Type{" "}
               </span>
               <div
-                className={`text-xs font-semibold text-slate-700 mt-0.5 ${textWhiteInDarkStyle}`}
+                className={`text-xs text-slate-900 mt-0.5 ${textWhiteInDarkStyle}`}
               >
                 {d?.reservation?.sourceType?.name || "—"}
-              </div>
+                {d?.reservation?.source?.name && (
+                  <span className="text-purple-600">
+                    {" "}({d.reservation.source.name})
+                  </span>
+                )}                   </div>
             </div>
           </div>
         </div>
@@ -240,7 +244,7 @@ const RoomInformationDetailsForm = ({
           <div className="px-5 py-3 space-y-2 text-sm">
             <div className="grid grid-cols-2 gap-2.5 mb-2">
               <div className="bg-slate-50 dark:bg-gray-700/50 rounded-xl p-1.5 text-center">
-                <span className="text-[10px] text-slate-400 dark:text-slate-300 font-semibold uppercase block">
+                <span className="text-[12px] text-slate-400 dark:text-slate-300 block">
                   Max Adults
                 </span>
                 <span
@@ -250,7 +254,7 @@ const RoomInformationDetailsForm = ({
                 </span>
               </div>
               <div className="bg-slate-50 dark:bg-gray-700/50 rounded-xl p-1.5 text-center">
-                <span className="text-[10px] text-slate-400 dark:text-slate-300 font-semibold uppercase block">
+                <span className="text-[12px] text-slate-400 dark:text-slate-300 block">
                   Nights
                 </span>
                 <span

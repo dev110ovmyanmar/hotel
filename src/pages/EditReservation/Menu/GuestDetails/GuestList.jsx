@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { Form } from "antd";
 import ReservationHeader from "../../Components/ReservationHeader";
 import ReservationMenu from "../../Components/ReservationMenu";
@@ -13,11 +13,10 @@ import GuestUploadDrawer from "./Components/GuestForms/GuestUploadDrawer";
 import Loader from "../../../../component/Loader/Loader";
 
 const GuestList = () => {
-  const location = useLocation();
-
   const navigate = useNavigate();
   const { bookingId } = useParams();
   const uuid = bookingId; // assigned directly to your uuid variable
+  const [searchParams] = useSearchParams();
 
   // ROUTING GUARD: Kick out unassigned, empty, or partial/mangled IDs instantly
   useEffect(() => {
@@ -38,27 +37,27 @@ const GuestList = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mode, setMode] = useState("add");
   const [selectedData, setSelectedData] = useState(null);
-
   const [keyword, setKeyword] = useState("");
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(LIMITS.PAGE_SIZE);
   const [uploadOpen, setUploadOpen] = useState(false);
+  const selectedRoomUuid = searchParams.get("selectedRoomUuid") || bookingId;
 
   useEffect(() => {
     setPage(1);
   }, [keyword]);
 
   const { data, isLoading, refetch } = useApiQuery({
-    fetchQueryName: "reservation-guest",
+    fetchQueryName: "reservation-guest", selectedRoomUuid,
     fetchQueryFunction: reservationGuestList,
     params: {
-      pagination: {
-        page,
-        perPage,
-      },
+      pagination: { page, perPage },
       keyword,
-      reservationRoom: { uuid },
+      reservationRoom: { uuid: selectedRoomUuid },
     },
+    options: {
+      enabled: !!selectedRoomUuid,
+    }
   });
 
   useEffect(() => {

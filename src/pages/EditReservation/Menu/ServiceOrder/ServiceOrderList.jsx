@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import ReservationHeader from "../../Components/ReservationHeader";
 import ReservationMenu from "../../Components/ReservationMenu";
 import ReservationListHeader from "../../../../component/ReservationHeader/ReservationListHeader";
@@ -16,7 +16,8 @@ const ServiceOrderList = () => {
   const navigate = useNavigate();
   const { bookingId } = useParams();
   const uuid = bookingId;
-  console.log(uuid,"uuid")
+  
+  const [searchParams] = useSearchParams();
 
   useEffect(() => {
     const cleanId = bookingId ? bookingId.trim() : "";
@@ -38,15 +39,19 @@ const ServiceOrderList = () => {
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(LIMITS.PAGE_SIZE);
   const [open, setOpen] = useState(false);
+  const selectedRoomUuid = searchParams.get("selectedRoomUuid") || uuid;
 
   const { data, isLoading, refetch } = useApiQuery({
-    fetchQueryName: "service-order",
+    fetchQueryName: ["service-order", selectedRoomUuid],
     fetchQueryFunction: serviceOrderList,
     params: {
       pagination: { page, perPage },
       keyword,
-      reservationRoom: { uuid },
+      reservationRoom: { uuid: selectedRoomUuid },
     },
+    options: {
+      enabled: !!selectedRoomUuid,
+    }
   });
 
   useEffect(() => {
