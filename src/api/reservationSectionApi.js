@@ -43,6 +43,13 @@ export const reservationDetails = async (params) => {
   return data.response;
 };
 
+export const reservationEdit = async (params) => {
+    const {data} = await apiClient.put(
+        `/reservation/edit`,
+        params
+    );
+    return data.response;}
+
 export const updateReservationStatus = async (params) => {
   const { data } = await apiClient.patch(`/reservation/status`, params);
   return data.response;
