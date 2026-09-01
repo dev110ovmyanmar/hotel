@@ -3,6 +3,10 @@ import { Button, Dropdown, Space, Table, Tag } from "antd";
 import { data } from "react-router-dom";
 import PriceTag from "../../component/PriceTag/PriceTag";
 import { AiOutlineRight } from "react-icons/ai";
+import { nightAuditCheckBookings } from "../../api/nightAuditApi";
+import useApiQuery from "../../hooks/useApiQuery";
+import dayjs from "dayjs";
+import ColorStatusTag from "../../component/ColorStatusTag/ColorStatusTag";
 
 
 const CheckBookingTable = ({
@@ -10,54 +14,56 @@ const CheckBookingTable = ({
 }) => {
     const columns = [
         {
-            title: "Order Id",
-            dataIndex: "orderId",
-            key: "orderId",
+            title: "Id",
+            dataIndex: "id",
+            key: "id",
             render: (text) => <div>{text}</div>
         },
         {
             title: "Check In",
-            dataIndex: "checkIn",
-            key: "checkIn",
-            render: (text) => <div>{text}</div>
+            dataIndex: "checkinDate",
+            key: "checkinDate",
+            render: (text) => <div>{dayjs(text).format("YYYY-MM-DD")}</div>
         },
         {
             title: "Check Out",
-            dataIndex: "checkOut",
-            key: "checkOut",
-            render: (text) => <div>{text}</div>
+            dataIndex: "checkoutDate",
+            key: "checkoutDate",
+            render: (text) => <div>{dayjs(text).format("YYYY-MM-DD")}</div>
         },
         {
-            title: "Night",
-            dataIndex: "night",
-            key: "night",
-            render: (text) => <div>{text}</div>
+            title: "Total Night",
+            dataIndex: "totalNight",
+            key: "totalNight",
+            render: (text) => <div>{text}</div>,
+            align:"center"
         },
-        {
-            title: "Payment",
-            dataIndex: "payment",
-            key: "payment",
-            render: (text) => <div>{text}</div>
-        },
+        // {
+        //     title: "Payment",
+        //     dataIndex: "payment",
+        //     key: "payment",
+        //     render: (text) => <div>{text}</div>
+        // },
         {
             title: "Total (MMK)",
-            dataIndex: "total",
-            key: "total",
-            render: (text) => <PriceTag value={text} />
+            dataIndex: "grandTotal",
+            key: "grandTotal",
+            render: (text) => <PriceTag value={text} />,
+            align: "right"
+
         },
-        {
-            title: "Balance (MMK)",
-            dataIndex: "balance",
-            key: "balance",
-            render: (text) => <PriceTag value={text} />
-        },
+        // {
+        //     title: "Balance (MMK)",
+        //     dataIndex: "balance",
+        //     key: "balance",
+        //     render: (text) => <PriceTag value={text} />
+        // },
         {
             title: "Status",
-            dataIndex: "status",
-            key: "status",
-            render: (text) => (
-                <Tag>{text}</Tag>
-            )
+            dataIndex: "roomStatus",
+            key: "roomStatus",
+            render: (_, record) => <ColorStatusTag status={record?.roomStatus} />,
+            align:"center"
         },
         {
             title: "Action",
@@ -120,46 +126,15 @@ const CheckBookingTable = ({
 
     ];
 
-    const dataSource = [
-        {
-            key: "1",
-            orderId: "1000",
-            checkIn: "21/1/2026",
-            checkOut: "22/1/2026",
-            night: "1",
-            total: 180000,
-            payment: "Cash",
-            balance: 30000,
-            status: "confirmed"
-        },
-        {
-            key: "2",
-            orderId: "1000",
-            checkIn: "21/1/2026",
-            checkOut: "22/1/2026",
-            night: "1",
-            total: "180000",
-            payment: "Cash",
-            balance: "30000",
-            status: "confirmed"
-        },
-        {
-            key: "3",
-            orderId: "1000",
-            checkIn: "21/1/2026",
-            checkOut: "22/1/2026",
-            night: "1",
-            total: "180000",
-            payment: "Cash",
-            balance: "30000",
-            status: "confirmed",
-        },
+    const { data: nightAuditCheckBookingData, isLoading, error } = useApiQuery({
+        fetchQueryName: "night-audit-check-bookings",
+        fetchQueryFunction: nightAuditCheckBookings,
+    });
 
-    ];
     return (
         <Table
             columns={columns}
-            dataSource={dataSource}
+            dataSource={nightAuditCheckBookingData}
             pagination={false}
             summary={() => (
                 <Table.Summary fixed>
