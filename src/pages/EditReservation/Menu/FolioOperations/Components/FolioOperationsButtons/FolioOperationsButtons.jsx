@@ -1,4 +1,4 @@
-import { DownOutlined, PlusOutlined } from "@ant-design/icons";
+import { DownOutlined, LoadingOutlined, PlusOutlined } from "@ant-design/icons";
 import { IoPrintOutline } from "react-icons/io5";
 import React, { useState } from "react";
 import { Button, Drawer, Dropdown, Form, Select } from "antd";
@@ -8,12 +8,13 @@ import AddNewFacilityOrderForm from "../FolioOperationsForms/AddNewFacilityOrder
 import AddPaymentForm from "../../../../../BookingDetail/Components/BookingDetailForms/AddPaymentForm";
 import { queryClient } from "../../../../../../app/queryClient";
 
-const FolioOperationsButtons = ({ 
-    data, 
-    folioUuid, 
-    reservationId, 
-    onPrintAllFolios , 
-    reservationUuid 
+const FolioOperationsButtons = ({
+    data,
+    folioUuid,
+    reservationId,
+    onPrintAllFolios,
+    isPrintAllLoading = false,
+    reservationUuid
   }) => {
   const [form] = Form.useForm();
   const [open, setOpen] = useState(false);
@@ -78,8 +79,9 @@ const FolioOperationsButtons = ({
 
         <Button
           className="custom-blue-btn"
-          icon={<IoPrintOutline />}
-          disabled={foliosList.length === 0}
+          icon={isPrintAllLoading ? <LoadingOutlined spin /> : <IoPrintOutline />}
+          disabled={foliosList.length === 0 || isPrintAllLoading}
+          loading={isPrintAllLoading}
           onClick={onPrintAllFolios}
         >
           Print Invoice

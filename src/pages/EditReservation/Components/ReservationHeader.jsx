@@ -1,14 +1,8 @@
 import React from "react";
-import { FaChild, FaCalendarAlt, FaMoon, FaBed } from "react-icons/fa";
+import { FaCalendarAlt, FaMoon, FaBed } from "react-icons/fa";
 import { IoPeopleSharp } from "react-icons/io5";
-import {
-  MdMeetingRoom,
-  MdOutlineBed,
-  MdOutlineMeetingRoom,
-  MdOutlineRoom,
-} from "react-icons/md";
+import {MdMeetingRoom,} from "react-icons/md";
 import { BiMoneyWithdraw } from "react-icons/bi";
-import { MdArrowDownward } from "react-icons/md";
 import dayjs from "dayjs";
 import ReservationStatusColor from "../../../component/ReservationStatusColor/ReservationStatusColor";
 
@@ -38,18 +32,7 @@ const ReservationHeader = ({ data }) => {
             </span>
           </div>
 
-          {/* {reservation?.children > 0 && (
-            <div className="flex items-center gap-2 py-1 rounded-lg mt-2.5">
-              <FaChild className="text-pink-500 text-base" />
-              <span className="text-[10px] md:text-[10px] lg:text-[13px] font-medium text-[#ffffff]">
-                {reservation?.children} {""}
-                {reservation?.children === 1 ? "Child" : "Children"}
-              </span>
-            </div>
-          )} */}
-
-          {/* <div className="hidden sm:block text-[#ffffff] mt-2.5">|</div> */}
-
+       
           {reservation?.extraBedCount > 0 && (
             <div className="flex items-center gap-2 py-1 rounded-lg mt-2.5">
               <FaBed className="text-blue-500 text-base" />{" "}
@@ -90,7 +73,7 @@ const ReservationHeader = ({ data }) => {
               <FaCalendarAlt className="text-base mt-1.5" />
             </div>
             <div className="flex flex-col">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 leading-none mb-0.5">
+              <span className="text-[12px] font-bold tracking-wider text-gray-400 leading-none mb-0.5">
                 Arrival
               </span>
               <div className="flex items-center gap-2">
@@ -115,7 +98,7 @@ const ReservationHeader = ({ data }) => {
               <FaCalendarAlt className="text-base mt-1.5" />
             </div>
             <div className="flex flex-col">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 leading-none mb-0.5">
+              <span className="text-[12px] font-bold tracking-wider text-gray-400 leading-none mb-0.5">
                 Departure
               </span>
               <div className="flex items-center gap-2">
@@ -135,19 +118,12 @@ const ReservationHeader = ({ data }) => {
 
           <div className="hidden md:block text-gray-300 mt-2">|</div>
 
-          {/* <div className="flex items-center gap-2 text-[#ffffff] py-1.5 ml-auto sm:ml-0 mt-2">
-            <FaMoon className="text-xs text-[#ffffff]" />
-            <span className="text-xs font-bold whitespace-nowrap">
-              {reservation?.totalNight || 0}{" "}
-              {reservation?.totalNight === 1 ? "Night" : "Nights"}
-            </span>
-          </div> */}
           <div className="flex items-center gap-2.5">
             <div className="text-amber-200">
               <FaMoon className="text-base mt-1.5" />
             </div>
             <div className="flex flex-col">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 leading-none mb-0.5">
+              <span className="text-[12px] font-bold tracking-wider text-gray-400 leading-none mb-0.5">
                 Total Night
               </span>
               <div className="flex items-center gap-2">

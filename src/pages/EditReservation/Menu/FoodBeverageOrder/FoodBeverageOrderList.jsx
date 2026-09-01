@@ -15,7 +15,6 @@ const FoodBeverageOrderList = () => {
   const navigate = useNavigate();
   const { bookingId } = useParams();
   const uuid = bookingId;
-  const [searchParams] = useSearchParams();
 
   const isValidBookingId =
     !!bookingId &&
@@ -27,7 +26,6 @@ const FoodBeverageOrderList = () => {
   const [keyword, setKeyword] = useState("");
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(LIMITS.PAGE_SIZE);
-  const selectedRoomUuid = searchParams.get("selectedRoomUuid") || uuid;
 
   const { data, isLoading, refetch } = useApiQuery({
     fetchQueryName: "food-beverage-orders",
@@ -35,10 +33,10 @@ const FoodBeverageOrderList = () => {
     params: {
       pagination: { page, perPage },
       keyword,
-      reservationRoom: { uuid: selectedRoomUuid },
+      reservationRoom: { uuid: uuid },
     },
     options: {
-      enabled: !!selectedRoomUuid && isValidBookingId,
+      enabled: !! isValidBookingId,
     }
   });
   // useEffect(() => {
