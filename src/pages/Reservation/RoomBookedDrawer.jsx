@@ -380,8 +380,8 @@ const RoomBookedDrawer = ({
     setRoomBookOpen(false);
 
     // Clear drawer data
-    setSelectedData([]);
-    setRoomBookValues(null);
+    // setSelectedData([]);
+    // setRoomBookValues(null);
 
     // Clear local state
     setDeleteKey(undefined);
