@@ -19,67 +19,46 @@ const WHITE = "#ffffff";
 const ROW_ALT = "#f8fafc";
 
 // ── Main Component ────────────────────────────────────────────────────────
-const FolioInvoicePrint = React.forwardRef(({ folios, folio, reservation, reservationRoom, propertyImage, adminName, hideLetterhead }, ref) => {
-  if (!reservation) return null;
+const FolioInvoicePrint = React.forwardRef(({ printData, adminName, hideLetterhead, propertyData }, ref) => {
+  if (!printData) return null;
 
-  const foliosList = folios
-    ? Array.isArray(folios) ? folios : [folios]
-    : folio ? [folio] : [];
-  if (foliosList.length === 0) return null;
+  const propertyImage = propertyData?.propertyFiles?.find(
+    (file) => file?.name === "email_photo",
+  )?.file;
 
-  const pax = (reservation.adults || 0) + (reservation.children || 0);
+  // Extract fields directly from API response
+  const foliosList = printData.data || [];
+  const guestName = printData.folio?.guest?.name || printData.guest || "—";
+  const guestPhone = printData.folio?.guest?.phone || "—";
+  const reservationNo = printData.folio?.folioNo || "—";
+  const tourCode = printData.tourCode || null;
+  const sourceType = printData.sourceType;
+  const sourceName = printData.sourceName;
+  const checkinDate = printData.checkinDate;
+  const checkoutDate = printData.checkoutDate;
 
   let grandDebit = 0, grandCredit = 0;
-  foliosList.forEach((f) =>
-    (f.folioLines || []).forEach((line) => {
+  foliosList.forEach((line) => {
       const amt = Number(line.grandTotal) || 0;
-      if (line.postingType === "debit") grandDebit += amt;
-      else if (line.postingType === "credit") grandCredit += amt;
-    })
-  );
+      if (line.postingType === "debit" && !line.voidedAt) grandDebit += amt;
+      else if (line.postingType === "credit" && !line.voidedAt) grandCredit += amt;
+    });
 
-  const grandBalance = grandDebit - grandCredit;
+  const allLines = foliosList;
 
-  const currency = foliosList[0]?.currency?.code || "MMK";
-  const property = foliosList[0]?.property;
-
-  const allLines = foliosList.flatMap((f, fIdx) => {
-    const folParts = (f.folioNo || "").split("-");
-    const folIdx = folParts.length > 3 ? folParts[folParts.length - 1] : (fIdx + 1);
-    return (f.folioLines || []).map(line => ({
-      ...line,
-      _folIdx: folIdx,
-      _folioNo: f.folioNo || "—",
-      _folioId: f.id || "-",
-    }));
-  }).sort((a, b) => {
-    if (!a.postedAt) return 1;
-    if (!b.postedAt) return -1;
-    return new Date(a.postedAt) - new Date(b.postedAt);
-  });
-
-  const showFolioColumn = !!folios;
+  const showFolioColumn = !!printData;
 
   const cols = showFolioColumn
     ? [
-      { name: "Date", width: "11%", align: "center" },
+      { name: "Date", width: "8%", align: "center" },
       { name: "Folio", width: "10%", align: "center" },
       { name: "Ref#", width: "6%", align: "center" },
       { name: "Description", width: "26%", align: "left" },
-      { name: "Room", width: "8%" },
+      { name: "Room", width: "11%", align: "center" },
       { name: "Debit", width: "13%", align: "right" },
       { name: "Credit", width: "13%", align: "right" },
-      { name: `Balance (${currency})`, width: "13%", align: "right" },
     ]
-    : [
-      { name: "Date", width: "11%", align: "center" },
-      { name: "Ref#", width: "6%", align: "center" },
-      { name: "Description", width: "34%", align: "left" },
-      { name: "Room", width: "8%" },
-      { name: "Debit", width: "16%", align: "right" },
-      { name: "Credit", width: "16%", align: "right" },
-      { name: `Balance (${currency})`, width: "16%", align: "right" },
-    ];
+    : [];
 
   return (
     <>
@@ -165,13 +144,13 @@ const FolioInvoicePrint = React.forwardRef(({ folios, folio, reservation, reserv
                           lineHeight: "1.2",
                           marginBottom: "6px",
                         }}>
-                          {property?.name || "AZURA BEACH RESORT CHAUNG THA"}
+                          {propertyData?.name || ""}
                         </div>
                         <div style={{ fontSize: "14px", color: INK_SOFT, lineHeight: "1.65", fontFamily: FONT_LABEL, fontWeight: "500" }}>
-                          {property?.address || "Chaung Tha Beach, Pathein Township, Ayeyarwady Region, Myanmar"}
+                          {propertyData?.address || ""}
                         </div>
                         <div style={{ fontSize: "14px", color: INK_SOFT, lineHeight: "1.65", fontFamily: FONT_LABEL, fontWeight: "500" }}>
-                          {property?.phone || "+959 977990001"}&ensp;·&ensp;{property?.email || "info.ct@azura-hotels.com"}
+                          {propertyData?.phone || ""}&ensp;·&ensp;{propertyData?.email || ""}
                         </div>
                       </div>
                     </div>
@@ -197,7 +176,7 @@ const FolioInvoicePrint = React.forwardRef(({ folios, folio, reservation, reserv
                     </div>
                     <div style={{ fontFamily: FONT_LABEL, fontSize: "14px", color: INK_SOFT }}>
                       <span style={{ color: INK_MUTED, marginRight: "6px" }}>Booking Ref</span>
-                      <strong style={{ color: INK }}>{reservation.reservationNo}</strong>
+                      <strong style={{ color: INK }}>{reservationNo}</strong>
                     </div>
                   </td>
                 </tr>
@@ -222,10 +201,10 @@ const FolioInvoicePrint = React.forwardRef(({ folios, folio, reservation, reserv
                   }}>
                     Bill To
                   </div>
-                  <BillRow label="Guest" value={<strong style={{ color: INK, fontWeight: "600" }}>{reservation.guest?.name || "—"}</strong>} />
-                  <BillRow label="Phone" value={reservation.guest?.phone || "—"} />
-                  <BillRow label="Company" value={reservation.sourceType?.code === "company" ? reservation.source?.name || "—" : "—"} />
-                  <BillRow label="Tour Code" value={reservation.tourCode || "—"} />
+                  <BillRow label="Guest" value={<strong style={{ color: INK, fontWeight: "600" }}>{guestName}</strong>} />
+                  <BillRow label="Phone" value={guestPhone} />
+                  <BillRow label="Company" value={sourceType === "company" ? sourceName || "—" : "—"} />
+                  <BillRow label="Tour Code" value={tourCode || "—"} />
                 </td>
 
                 {/* STAY GRID */}
@@ -248,31 +227,12 @@ const FolioInvoicePrint = React.forwardRef(({ folios, folio, reservation, reserv
                     columnGap: "24px"
                   }}>
                     <StayCell label="Arrival" value={
-                      reservation.actualCheckin
-                        ? dayjs(reservation.actualCheckin).format("DD MMM YYYY")
-                        : reservation.plannedCheckin
-                          ? dayjs(reservation.plannedCheckin).format("DD MMM YYYY")
-                          : "—"
+                      checkinDate ? dayjs(checkinDate).format("DD MMM YYYY") : "—"
                     } />
                     <StayCell label="Departure" value={
-                      reservation.actualCheckout
-                        ? dayjs(reservation.actualCheckout).format("DD MMM YYYY")
-                        : reservation.plannedCheckout
-                          ? dayjs(reservation.plannedCheckout).format("DD MMM YYYY")
-                          : "—"
+                      checkoutDate ? dayjs(checkoutDate).format("DD MMM YYYY") : "—"
                     } />
 
-                    {/* This wrapper forces Nights, Pax, and Rooms into a single row spanning both grid columns */}
-                    {/* <div style={{
-                      gridColumn: "span 2",
-                      display: "grid",
-                      gridTemplateColumns: "1fr 1fr 1fr",
-                      columnGap: "24px"
-                    }}>
-                      <StayCell label="Nights" value={reservationRoom.totalNight ?? "—"} />
-                      <StayCell label="Pax" value={pax} />
-                      <StayCell label="Rooms" value={reservation.totalRooms ?? "—"} />
-                    </div> */}
                   </div>
                 </td>
               </tr>
@@ -346,12 +306,9 @@ const FolioInvoicePrint = React.forwardRef(({ folios, folio, reservation, reserv
                 </tr>
               ) : (
                 allLines.map((line, idx) => {
-                  const folIdx = line._folIdx;
-                  const refVal = "-";
                   const amt = Number(line.grandTotal) || 0;
                   const isDebit = line.postingType === "debit";
                   const isCredit = line.postingType === "credit";
-                  const balance = isDebit ? amt : isCredit ? -amt : 0;
                   const isEven = idx % 2 === 0;
 
                   return (
@@ -363,19 +320,16 @@ const FolioInvoicePrint = React.forwardRef(({ folios, folio, reservation, reserv
                     >
                       <td style={td("center", true)}>{line.postedAt ? dayjs(line.postedAt).format("DD/MM/YY") : "—"}</td>
                       {showFolioColumn && (
-                        <td style={{ ...td("center", false), color: INK_MUTED }}>{line._folioId}</td>
+                        <td style={{ ...td("center", false), color: INK_MUTED }}>{line?.folioId}</td>
                       )}
-                      <td style={{ ...td("center", true), color: INK_MUTED }}>{refVal}</td>
-                      <td style={{ ...td("left"), color: INK, fontWeight: "600" }}>{line.descriptionSnapshot || "—"}</td>
-                      <td style={{ ...td("center", true), color: INK }}>{line.reservationRoom?.room?.roomNo || "—"}</td>
+                      <td style={{ ...td("center", true), color: INK_MUTED }}>{line?.refNo}</td>
+                      <td style={{ ...td("left"), color: INK }}>{line.descriptionSnapshot || "—"}</td>
+                      <td style={{ ...td("center", true), color: INK }}>{line?.roomNo || "—"}</td>
                       <td style={{ ...td("right", true), textAlign: "right", fontFamily: FONT_MONO, fontSize: "13.5px", fontWeight: "500", color: INK }}>
                         {isDebit ? <PriceTag value={amt} /> : <PriceTag value={0} />}
                       </td>
                       <td style={{ ...td("right", true), textAlign: "right", fontFamily: FONT_MONO, fontSize: "13.5px", fontWeight: "500", color: INK }}>
                         {isCredit ? <PriceTag value={amt} /> : <PriceTag value={0} />}
-                      </td>
-                      <td style={{ ...td("right", true), textAlign: "right", fontFamily: FONT_MONO, fontSize: "13.5px", fontWeight: "500", color: INK }}>
-                        <PriceTag value={balance} />
                       </td>
                     </tr>
                   );
@@ -398,7 +352,6 @@ const FolioInvoicePrint = React.forwardRef(({ folios, folio, reservation, reserv
                     return (
                       <td key={i} style={{ padding: "12px 8px 12px 8px", fontFamily: FONT_MONO, fontSize: "14.5px", fontWeight: "500", color: INK, textAlign: "right", whiteSpace: "nowrap", borderBottom: "none", borderLeft: "none", borderRight: "none" }}>
                         <PriceTag value={grandDebit} />
-                        {/* {currency} */}
                       </td>
                     );
                   }
@@ -406,39 +359,10 @@ const FolioInvoicePrint = React.forwardRef(({ folios, folio, reservation, reserv
                     return (
                       <td key={i} style={{ padding: "12px 8px 12px 8px", fontFamily: FONT_MONO, fontSize: "14px", fontWeight: "500", color: INK, textAlign: "right", whiteSpace: "nowrap", borderBottom: "none", borderLeft: "none", borderRight: "none" }}>
                         <PriceTag value={grandCredit} />
-                        {/* {currency} */}
-                      </td>
-                    );
-                  }
-                  if (col.name === `Balance (${currency})`) {
-                    return (
-                      <td key={i} style={{ padding: "12px 8px 12px 8px", fontFamily: FONT_MONO, fontSize: "14px", fontWeight: "500", color: INK, textAlign: "right", whiteSpace: "nowrap", borderBottom: "none", borderLeft: "none", borderRight: "none" }}>
-                        <PriceTag value={grandBalance} />
-                        {/* {currency} */}
                       </td>
                     );
                   }
                   return <td key={i} style={{ padding: 0, borderBottom: "none", borderLeft: "none", borderRight: "none" }} />;
-                })}
-              </tr>
-              <tr>
-                {cols.map((col, i) => {
-                  if (col.name === "Description") {
-                    return (
-                      <td key={i} style={{ padding: "8px 8px", fontFamily: FONT_LABEL, fontSize: "14px", fontWeight: "700", color: INK, textAlign: "left", whiteSpace: "nowrap", borderTop: `1.5px solid ${BLUE}`, borderBottom: "none", borderLeft: "none", borderRight: "none" }}>
-                        Balance
-                      </td>
-                    );
-                  }
-                  if (col.name === `Balance (${currency})`) {
-                    return (
-                      <td key={i} style={{ padding: "8px 8px", fontFamily: FONT_MONO, fontSize: "14px", fontWeight: "500", color: INK, textAlign: "right", whiteSpace: "nowrap", borderTop: `1.5px solid ${BLUE}`, borderBottom: "none", borderLeft: "none", borderRight: "none" }}>
-                        <PriceTag value={grandBalance} />
-                        {/* {currency} */}
-                      </td>
-                    );
-                  }
-                  return <td key={i} style={{ padding: 0, borderTop: `1.5px solid ${BLUE}`, borderBottom: "none", borderLeft: "none", borderRight: "none" }} />;
                 })}
               </tr>
             </tbody>
@@ -452,11 +376,11 @@ const FolioInvoicePrint = React.forwardRef(({ folios, folio, reservation, reserv
                 <tr>
                   <td style={{ verticalAlign: "bottom", width: "55%", padding: 0 }}>
                     <div style={{ fontFamily: FONT_LABEL, fontSize: "13.5px", color: INK_SOFT, lineHeight: "1.7", fontWeight: "500" }}>
-                      <span style={{ color: INK, fontWeight: "700" }}>Thank you</span> for choosing {property?.name || ""}.
+                      <span style={{ color: INK, fontWeight: "700" }}>Thank you</span> for choosing Azura.
                       We look forward to welcoming you back.
                     </div>
                     <div style={{ fontFamily: FONT_LABEL, fontSize: "13px", color: INK_MUTED, marginTop: "4px", fontWeight: "500" }}>
-                      Enquiries: {property?.email || ""}
+                      Enquiries: {propertyData?.phone || ""} &ensp;·&ensp;{propertyData?.email || ""}
                     </div>
                   </td>
                   <td style={{ width: "10%", padding: 0 }} />
@@ -468,7 +392,7 @@ const FolioInvoicePrint = React.forwardRef(({ folios, folio, reservation, reserv
                       {adminName}
                     </div>
                     <div style={{ fontFamily: FONT_LABEL, fontSize: "12px", color: INK_MUTED, marginTop: "3px" }}>
-                      {property?.name || ""}
+                      {propertyData?.name || ""}
                     </div>
                   </td>
                 </tr>
@@ -530,7 +454,7 @@ const td = (align, noWrap = false) => ({
   lineHeight: "1.4",
   fontSize: "13.5px",
   fontFamily: FONT_LABEL,
-  fontWeight: "500",
+  fontWeight: "300",
   borderBottom: `1px solid ${RULE}`,
   borderTop: "none",
   borderLeft: "none",

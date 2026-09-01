@@ -1,11 +1,11 @@
 const PriceTag = ({ value, align = 'end' }) => {
   return (
-    <div className={`text-${align}`}>
+    <span className={`text-${align}`}>
       {value?.toLocaleString('en-US', {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
       })}
-    </div>
+    </span>
   );
 };
 

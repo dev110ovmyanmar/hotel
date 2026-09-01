@@ -42,5 +42,9 @@ export const folioVoid = async (params) => {
     return data.response;
 }
 
+export const getfolioPrint = async (params) => {
+    const { data } = await apiClient.get("/folios/print", {params});
+    return data.response;
+}
 
 

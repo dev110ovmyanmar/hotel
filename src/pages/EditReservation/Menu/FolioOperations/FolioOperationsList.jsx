@@ -15,6 +15,7 @@ import {
   folioAdjust,
   folioRebate,
   folioVoid,
+  getfolioPrint
 } from "../../../../api/folioApi";
 import { LIMITS } from "../../../../variables/constants";
 import { useLocation } from "react-router-dom";
@@ -38,10 +39,11 @@ const FolioOperationsList = () => {
   // State holds the structured layout payload for printing
   const [printTarget, setPrintTarget] = useState(null);
   const [previewOpen, setPreviewOpen] = useState(false);
+  const [printingFolioUuid, setPrintingFolioUuid] = useState(null);
+  const [isPrintAllLoading, setIsPrintAllLoading] = useState(false);
 
   // get login admin details
   const adminUuid = loadState(LOCAL_STORAGE_KEYS.loginAdminDetails)?.uuid;
-  const roleUuid = loadState(LOCAL_STORAGE_KEYS.loginAdminDetails)?.role?.uuid;
 
   const { data: loginAdminDetails } = useApiQuery({
     fetchQueryName: "login-admin-details",
@@ -52,19 +54,14 @@ const FolioOperationsList = () => {
 
   // Property image
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
-  const propertyFiles = initData?.property?.propertyFiles;
-  const propretyImage = propertyFiles?.find(
-    (file) => file?.name === "email_photo",
-  )?.file;
+  const propertyData = initData?.property;
 
   const navigate = useNavigate();
   const { bookingId } = useParams();
   const uuid = bookingId; // assigned directly to your uuid variable
-  const [searchParams] = useSearchParams();
   // ROUTING GUARD: Kick out unassigned, empty, or partial/mangled IDs instantly
   useEffect(() => {
     const cleanId = bookingId ? bookingId.trim() : "";
-
     if (
       !cleanId ||
       cleanId === "" ||
@@ -74,7 +71,6 @@ const FolioOperationsList = () => {
       navigate("/404", { replace: true });
     }
   }, [bookingId, navigate]);
-  const selectedRoomUuid = searchParams.get("selectedRoomUuid") || bookingId;
 
   const {
     data: folioList,
@@ -86,10 +82,10 @@ const FolioOperationsList = () => {
     params: {
       pagination: { page, perPage },
       keyword,
-      reservationRoom: { uuid: selectedRoomUuid },
+      reservationRoom: { uuid: uuid },
     },
     options: {
-      enabled: !!selectedRoomUuid,
+      enabled: !!uuid,
     }
   });
 
@@ -194,14 +190,41 @@ const FolioOperationsList = () => {
     setPrintTarget(null);
   };
 
-  const handlePrintAll = useCallback(() => {
+  //Print All Folios
+  const handlePrintAll = useCallback(async () => {
     if (!folioList?.data || folioList.data.length === 0) return;
-    setPrintTarget({
-      folios: folioList.data,
-      reservation: folioList.reservation,
-      reservationRoom: folioList.reservationRoom,
-    });
-  }, [folioList]);
+
+    setIsPrintAllLoading(true);
+    try {
+      const printData = await queryClient.fetchQuery({
+        queryKey: ["allFolioPrintData", { reservation: { uuid: reservationUuid } }],
+        queryFn: () => getfolioPrint({ reservation: { uuid: reservationUuid } }),
+      });
+
+      setPrintTarget(printData);
+    } catch (err) {
+      console.log("Error", err);
+    } finally {
+      setIsPrintAllLoading(false);
+    }
+  }, [folioList, reservationUuid, queryClient]);
+
+  //Print Single Folio
+  const handlePrintSingleFolio = useCallback(async (folio) => {
+          setPrintingFolioUuid(folio.uuid);
+          try {
+            const printData = await queryClient.fetchQuery({
+              queryKey: ["folioPrintData", { reservation: { uuid: reservationUuid }, folio: { uuid: folio.uuid } }],
+              queryFn: () => getfolioPrint({ reservation: { uuid: reservationUuid }, folio: { uuid: folio.uuid } }),
+            });
+            setPrintTarget(printData);
+          } catch (err) {
+            console.log("Error", err);
+          }
+          finally {
+            setPrintingFolioUuid(null);
+          }
+        }, [reservationUuid, queryClient, folioList])
 
   // Global trigger event listener setup
   useEffect(() => {
@@ -234,6 +257,7 @@ const FolioOperationsList = () => {
         data={folioList?.reservation || []}
         folioUuid={folioList}
         onPrintAllFolios={handlePrintAll}
+        isPrintAllLoading={isPrintAllLoading}
         reservationUuid={reservationUuid}
       />
 
@@ -252,10 +276,8 @@ const FolioOperationsList = () => {
         isRebating={rebateLineMutation.isPending}
         onVoidLine={voidLineMutation.mutateAsync}
         isVording={voidLineMutation.isPending}
-        // Triggers single folio extraction configurations
-        onPrintFolio={(folio) =>
-          setPrintTarget({ folio, reservation: folioList?.reservation, reservationRoom: folioList?.reservationRoom })
-        }
+        printingFolioUuid={printingFolioUuid}
+        onPrintFolio={handlePrintSingleFolio}
       />
 
       {/* Hidden container for window.print() to capture */}
@@ -263,12 +285,9 @@ const FolioOperationsList = () => {
         createPortal(
           <div id="native-print-container">
             <FolioInvoicePrint
-              folios={printTarget.folios}
-              folio={printTarget.folio}
+              printData={printTarget}
               adminName={adminName}
-              reservation={printTarget.reservation}
-              reservationRoom={printTarget.reservationRoom}
-              propertyImage={propretyImage}
+              propertyData={propertyData}
             />
           </div>,
           document.body,
@@ -316,12 +335,9 @@ const FolioOperationsList = () => {
         {printTarget && (
           <div className="p-4">
             <FolioInvoicePrint
-              folios={printTarget.folios}
-              folio={printTarget.folio}
+              printData={printTarget}
               adminName={adminName}
-              reservation={printTarget.reservation}
-              reservationRoom={printTarget.reservationRoom}
-              propertyImage={propretyImage}
+              propertyData={propertyData}
               hideLetterhead
             />
           </div>

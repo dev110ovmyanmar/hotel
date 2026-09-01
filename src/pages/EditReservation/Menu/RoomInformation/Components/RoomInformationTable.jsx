@@ -27,10 +27,8 @@ import SingleRoomComplimentaryUpdateModal from "./ComplimentaryModals/SingleRoom
 import RoomInformationDetailsForm from "./RoomInformationForms/RoomInformationDetailsForm";
 import AddExtraAmenitiesModal from "./Extra/AddExtraAmenitiesModal";
 import DailyOccupactionsTableDrawer from "./RoomInformationForms/DailyOccupactionsTableDrawer";
-
 import { useApiMutation } from "../../../../../hooks/useApiMutation";
 import { availabilitySearch } from "../../../../../api/reservationSectionApi";
-
 import { getAmendReservationMenuItems } from "./AmendReservationList";
 import { capitalizeFirstLetter } from "../../../../../utils";
 
@@ -179,6 +177,14 @@ const RoomInformationTable = ({
             }}
           >
             {text?.roomNo || "Assign Room"}
+              {record?.isComplimentary == true &&
+               record?.complimentaryType && 
+               (
+                    <div className="inline-flex items-center gap-0.5 px-1.5 py-0.5 text-[10px] font-semibold rounded-full bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 w-fit">
+                      <Gift size={12} />
+                      {capitalizeFirstLetter(record?.complimentaryType)}
+                    </div>
+              )}
           </span>
         );
       },
@@ -278,15 +284,6 @@ const RoomInformationTable = ({
             },
             hidden: !enableComplimentaryUpdateButton,
           },
-          // {
-          //   key: "addExtra",
-          //   label: "Extra",
-          //   icon: <PlusOutlined />,
-          //   onClick: () => {
-          //     setSelectedData(record);
-          //     setExtraBedOpen(true);
-          //   },
-          // },
           {
             key: "dailyOccupaction",
             label: "Daily Occupaction",
@@ -341,22 +338,13 @@ const RoomInformationTable = ({
             ? "active-reservation-row"
             : "cursor-pointer"
         }
-        onRow={(record) => ({
-          onClick: (event) => {
-            if (
-              event.target.closest(".ant-dropdown-trigger") ||
-              event.target.closest(".ant-dropdown-menu") ||
-              event.target.tagName === "A" ||
-              event.target.tagName === "BUTTON"
-            ) {
-              return;
-            }
-
-            if (onSelectRow) {
-              onSelectRow(record);
-            }
+         onRow={(record) => ({
+               onClick: () => {
+               if (onSelectRow) {
+               onSelectRow(record);
+             }
           },
-        })}
+      })}
         pagination={{
           current: page,
           pageSize: perPage,

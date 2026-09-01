@@ -17,8 +17,6 @@ const ServiceOrderList = () => {
   const { bookingId } = useParams();
   const uuid = bookingId;
   
-  const [searchParams] = useSearchParams();
-
   useEffect(() => {
     const cleanId = bookingId ? bookingId.trim() : "";
 
@@ -39,18 +37,17 @@ const ServiceOrderList = () => {
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(LIMITS.PAGE_SIZE);
   const [open, setOpen] = useState(false);
-  const selectedRoomUuid = searchParams.get("selectedRoomUuid") || uuid;
 
   const { data, isLoading, refetch } = useApiQuery({
-    fetchQueryName: ["service-order", selectedRoomUuid],
+    fetchQueryName: "service-order",
     fetchQueryFunction: serviceOrderList,
     params: {
       pagination: { page, perPage },
       keyword,
-      reservationRoom: { uuid: selectedRoomUuid },
+      reservationRoom: { uuid: uuid },
     },
     options: {
-      enabled: !!selectedRoomUuid,
+      enabled: !!uuid,
     }
   });
 

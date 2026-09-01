@@ -19,7 +19,6 @@ const EventFacilityOrderList = () => {
 
   useEffect(() => {
     const cleanId = bookingId ? bookingId.trim() : "";
-
     if (
       !cleanId ||
       cleanId === "" ||
@@ -76,7 +75,6 @@ const EventFacilityOrderList = () => {
       </div>
     );
   }
-
   return (
     <div className="w-full px-6 py-2">
       <ReservationHeader data={data || {}} />
@@ -97,6 +95,7 @@ const EventFacilityOrderList = () => {
         changePage={(page) => setPage(page)}
         changePerPage={(perPage) => setPerPage(perPage)}
         loading={isLoading}
+        reservationRoom={data?.reservationRoom}
       />
 
       {
@@ -110,6 +109,7 @@ const EventFacilityOrderList = () => {
             reservationId={data?.reservation?.uuid}
             searchOpen={searchOpen}
             setSearchOpen={setSearchOpen}
+            reservationRoom={data?.reservationRoom}
           />
         )
       }
