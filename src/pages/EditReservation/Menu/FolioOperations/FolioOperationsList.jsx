@@ -39,11 +39,11 @@ const FolioOperationsList = () => {
   // State holds the structured layout payload for printing
   const [printTarget, setPrintTarget] = useState(null);
   const [previewOpen, setPreviewOpen] = useState(false);
-  const [isPrintLoading, setIsPrintLoading] = useState(false);
+  const [printingFolioUuid, setPrintingFolioUuid] = useState(null);
+  const [isPrintAllLoading, setIsPrintAllLoading] = useState(false);
 
   // get login admin details
   const adminUuid = loadState(LOCAL_STORAGE_KEYS.loginAdminDetails)?.uuid;
-  const roleUuid = loadState(LOCAL_STORAGE_KEYS.loginAdminDetails)?.role?.uuid;
 
   const { data: loginAdminDetails } = useApiQuery({
     fetchQueryName: "login-admin-details",
@@ -54,10 +54,7 @@ const FolioOperationsList = () => {
 
   // Property image
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
-  const propertyFiles = initData?.property?.propertyFiles;
-  const propretyImage = propertyFiles?.find(
-    (file) => file?.name === "email_photo",
-  )?.file;
+  const propertyData = initData?.property;
 
   const navigate = useNavigate();
   const { bookingId } = useParams();
@@ -193,26 +190,41 @@ const FolioOperationsList = () => {
     setPrintTarget(null);
   };
 
+  //Print All Folios
   const handlePrintAll = useCallback(async () => {
     if (!folioList?.data || folioList.data.length === 0) return;
 
+    setIsPrintAllLoading(true);
     try {
       const printData = await queryClient.fetchQuery({
         queryKey: ["allFolioPrintData", { reservation: { uuid: reservationUuid } }],
         queryFn: () => getfolioPrint({ reservation: { uuid: reservationUuid } }),
       });
 
-      // API returns flat folio lines — wrap into folio shape for FolioInvoicePrint
-      const allLines = printData?.data || [];
-
-      setPrintTarget({
-        folios: allLines.length > 0 ? allLines : [],
-        reservation: printData?.reservation || null,
-      });
+      setPrintTarget(printData);
     } catch (err) {
-      console.log("Error", error);
+      console.log("Error", err);
+    } finally {
+      setIsPrintAllLoading(false);
     }
   }, [folioList, reservationUuid, queryClient]);
+
+  //Print Single Folio
+  const handlePrintSingleFolio = useCallback(async (folio) => {
+          setPrintingFolioUuid(folio.uuid);
+          try {
+            const printData = await queryClient.fetchQuery({
+              queryKey: ["folioPrintData", { reservation: { uuid: reservationUuid }, folio: { uuid: folio.uuid } }],
+              queryFn: () => getfolioPrint({ reservation: { uuid: reservationUuid }, folio: { uuid: folio.uuid } }),
+            });
+            setPrintTarget(printData);
+          } catch (err) {
+            console.log("Error", err);
+          }
+          finally {
+            setPrintingFolioUuid(null);
+          }
+        }, [reservationUuid, queryClient, folioList])
 
   // Global trigger event listener setup
   useEffect(() => {
@@ -245,6 +257,7 @@ const FolioOperationsList = () => {
         data={folioList?.reservation || []}
         folioUuid={folioList}
         onPrintAllFolios={handlePrintAll}
+        isPrintAllLoading={isPrintAllLoading}
         reservationUuid={reservationUuid}
       />
 
@@ -263,29 +276,8 @@ const FolioOperationsList = () => {
         isRebating={rebateLineMutation.isPending}
         onVoidLine={voidLineMutation.mutateAsync}
         isVording={voidLineMutation.isPending}
-        isPrintLoading={isPrintLoading}
-        // Triggers single folio extraction configurations
-        onPrintFolio={async (folio) => {
-          setIsPrintLoading(true);
-          try {
-            const printData = await queryClient.fetchQuery({
-              queryKey: ["folioPrintData", { reservation: { uuid: reservationUuid }, folio: { uuid: folio.uuid } }],
-              queryFn: () => getfolioPrint({ reservation: { uuid: reservationUuid }, folio: { uuid: folio.uuid } }),
-            });
-            console.log("PrintData", printData);
-
-            // API returns flat folio lines — wrap into folio shape for FolioInvoicePrint
-            const allLines = printData?.data || [];
-            const folios = allLines;
-
-            setPrintTarget({
-              folios: folios,
-              reservation: printData?.reservation,
-            });
-          } finally {
-            setIsPrintLoading(false);
-          }
-        }}
+        printingFolioUuid={printingFolioUuid}
+        onPrintFolio={handlePrintSingleFolio}
       />
 
       {/* Hidden container for window.print() to capture */}
@@ -293,12 +285,9 @@ const FolioOperationsList = () => {
         createPortal(
           <div id="native-print-container">
             <FolioInvoicePrint
-              folios={printTarget.folios}
-              folio={printTarget.folio}
+              printData={printTarget}
               adminName={adminName}
-              reservation={printTarget.reservation}
-              reservationRoom={printTarget.reservationRoom}
-              propertyImage={propretyImage}
+              propertyData={propertyData}
             />
           </div>,
           document.body,
@@ -346,12 +335,9 @@ const FolioOperationsList = () => {
         {printTarget && (
           <div className="p-4">
             <FolioInvoicePrint
-              folios={printTarget.folios}
-              folio={printTarget.folio}
+              printData={printTarget}
               adminName={adminName}
-              reservation={printTarget.reservation}
-              reservationRoom={printTarget.reservationRoom}
-              propertyImage={propretyImage}
+              propertyData={propertyData}
               hideLetterhead
             />
           </div>

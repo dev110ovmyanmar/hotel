@@ -19,10 +19,23 @@ const WHITE = "#ffffff";
 const ROW_ALT = "#f8fafc";
 
 // ── Main Component ────────────────────────────────────────────────────────
-const FolioInvoicePrint = React.forwardRef(({ folios, reservation, propertyImage, adminName, hideLetterhead }, ref) => {
-  if (!reservation) return null;
+const FolioInvoicePrint = React.forwardRef(({ printData, adminName, hideLetterhead, propertyData }, ref) => {
+  if (!printData) return null;
 
-  const foliosList = folios.length > 0 ? folios : [];
+  const propertyImage = propertyData?.propertyFiles?.find(
+    (file) => file?.name === "email_photo",
+  )?.file;
+
+  // Extract fields directly from API response
+  const foliosList = printData.data || [];
+  const guestName = printData.folio?.guest?.name || printData.guest || "—";
+  const guestPhone = printData.folio?.guest?.phone || "—";
+  const reservationNo = printData.folio?.folioNo || "—";
+  const tourCode = printData.tourCode || null;
+  const sourceType = printData.sourceType;
+  const sourceName = printData.sourceName;
+  const checkinDate = printData.checkinDate;
+  const checkoutDate = printData.checkoutDate;
 
   let grandDebit = 0, grandCredit = 0;
   foliosList.forEach((line) => {
@@ -33,15 +46,15 @@ const FolioInvoicePrint = React.forwardRef(({ folios, reservation, propertyImage
 
   const allLines = foliosList;
 
-  const showFolioColumn = !!folios;
+  const showFolioColumn = !!printData;
 
   const cols = showFolioColumn
     ? [
-      { name: "Date", width: "11%", align: "center" },
+      { name: "Date", width: "8%", align: "center" },
       { name: "Folio", width: "10%", align: "center" },
       { name: "Ref#", width: "6%", align: "center" },
       { name: "Description", width: "26%", align: "left" },
-      { name: "Room", width: "8%" },
+      { name: "Room", width: "11%", align: "center" },
       { name: "Debit", width: "13%", align: "right" },
       { name: "Credit", width: "13%", align: "right" },
     ]
@@ -131,13 +144,13 @@ const FolioInvoicePrint = React.forwardRef(({ folios, reservation, propertyImage
                           lineHeight: "1.2",
                           marginBottom: "6px",
                         }}>
-                          {"AZURA BEACH RESORT CHAUNG THA"}
+                          {propertyData?.name || ""}
                         </div>
                         <div style={{ fontSize: "14px", color: INK_SOFT, lineHeight: "1.65", fontFamily: FONT_LABEL, fontWeight: "500" }}>
-                          {"Chaung Tha Beach, Pathein Township, Ayeyarwady Region, Myanmar"}
+                          {propertyData?.address || ""}
                         </div>
                         <div style={{ fontSize: "14px", color: INK_SOFT, lineHeight: "1.65", fontFamily: FONT_LABEL, fontWeight: "500" }}>
-                          {"+959 977990001"}&ensp;·&ensp;{"info.ct@azura-hotels.com"}
+                          {propertyData?.phone || ""}&ensp;·&ensp;{propertyData?.email || ""}
                         </div>
                       </div>
                     </div>
@@ -163,7 +176,7 @@ const FolioInvoicePrint = React.forwardRef(({ folios, reservation, propertyImage
                     </div>
                     <div style={{ fontFamily: FONT_LABEL, fontSize: "14px", color: INK_SOFT }}>
                       <span style={{ color: INK_MUTED, marginRight: "6px" }}>Booking Ref</span>
-                      <strong style={{ color: INK }}>{reservation.reservationNo}</strong>
+                      <strong style={{ color: INK }}>{reservationNo}</strong>
                     </div>
                   </td>
                 </tr>
@@ -188,10 +201,10 @@ const FolioInvoicePrint = React.forwardRef(({ folios, reservation, propertyImage
                   }}>
                     Bill To
                   </div>
-                  <BillRow label="Guest" value={<strong style={{ color: INK, fontWeight: "600" }}>{reservation.guest?.name || "—"}</strong>} />
-                  <BillRow label="Phone" value={reservation.guest?.phone || "—"} />
-                  <BillRow label="Company" value={reservation.sourceType?.code === "company" ? reservation.source?.name || "—" : "—"} />
-                  <BillRow label="Tour Code" value={reservation.tourCode || "—"} />
+                  <BillRow label="Guest" value={<strong style={{ color: INK, fontWeight: "600" }}>{guestName}</strong>} />
+                  <BillRow label="Phone" value={guestPhone} />
+                  <BillRow label="Company" value={sourceType === "company" ? sourceName || "—" : "—"} />
+                  <BillRow label="Tour Code" value={tourCode || "—"} />
                 </td>
 
                 {/* STAY GRID */}
@@ -214,18 +227,10 @@ const FolioInvoicePrint = React.forwardRef(({ folios, reservation, propertyImage
                     columnGap: "24px"
                   }}>
                     <StayCell label="Arrival" value={
-                      reservation.actualCheckin
-                        ? dayjs(reservation.actualCheckin).format("DD MMM YYYY")
-                        : reservation.plannedCheckin
-                          ? dayjs(reservation.plannedCheckin).format("DD MMM YYYY")
-                          : "—"
+                      checkinDate ? dayjs(checkinDate).format("DD MMM YYYY") : "—"
                     } />
                     <StayCell label="Departure" value={
-                      reservation.actualCheckout
-                        ? dayjs(reservation.actualCheckout).format("DD MMM YYYY")
-                        : reservation.plannedCheckout
-                          ? dayjs(reservation.plannedCheckout).format("DD MMM YYYY")
-                          : "—"
+                      checkoutDate ? dayjs(checkoutDate).format("DD MMM YYYY") : "—"
                     } />
 
                   </div>
@@ -375,7 +380,7 @@ const FolioInvoicePrint = React.forwardRef(({ folios, reservation, propertyImage
                       We look forward to welcoming you back.
                     </div>
                     <div style={{ fontFamily: FONT_LABEL, fontSize: "13px", color: INK_MUTED, marginTop: "4px", fontWeight: "500" }}>
-                      Enquiries: {"azura@yahoo.coms"}
+                      Enquiries: {propertyData?.phone || ""} &ensp;·&ensp;{propertyData?.email || ""}
                     </div>
                   </td>
                   <td style={{ width: "10%", padding: 0 }} />
@@ -387,7 +392,7 @@ const FolioInvoicePrint = React.forwardRef(({ folios, reservation, propertyImage
                       {adminName}
                     </div>
                     <div style={{ fontFamily: FONT_LABEL, fontSize: "12px", color: INK_MUTED, marginTop: "3px" }}>
-                      {"Azura"}
+                      {propertyData?.name || ""}
                     </div>
                   </td>
                 </tr>

@@ -155,7 +155,7 @@ const FolioOperationsTable = ({
   onTransferLines,
   isTransferring,
   onPrintFolio,
-  isPrintLoading = false,
+  printingFolioUuid = null,
   onAdjustLine,
   isAdjusting = false,
   onRebateLine,
@@ -370,14 +370,15 @@ const FolioOperationsTable = ({
       key: "action",
       align: "center",
       render: (_, record) => {
+        const isThisRowLoading = printingFolioUuid === record.uuid;
         return (
           <Spin
             indicator={<LoadingOutlined spin className="text-blue-500" />}
-            spinning={isPrintLoading}
+            spinning={isThisRowLoading}
           >
             <PrinterOutlined
-              onClick={() => !isPrintLoading && onPrintFolio && onPrintFolio(record)}
-              className={`text-blue-500 hover:text-blue-700 cursor-pointer text-base ${isPrintLoading ? 'opacity-50 pointer-events-none' : ''}`}
+              onClick={() => !printingFolioUuid && onPrintFolio && onPrintFolio(record)}
+              className={`text-blue-500 hover:text-blue-700 cursor-pointer text-base ${printingFolioUuid ? 'opacity-50 pointer-events-none' : ''}`}
             />
           </Spin>
         );
