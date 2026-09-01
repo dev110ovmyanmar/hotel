@@ -1,17 +1,9 @@
-import { Dropdown, Space, Table, Button, Tooltip } from "antd";
-import { useState, useEffect } from "react";
-import {
-  MoreOutlined,
-  EyeOutlined,
-  EditOutlined,
-  PlusOutlined,
-  InboxOutlined,
-  UploadOutlined,
-} from "@ant-design/icons";
+import { Space, Table, Tooltip } from "antd";
+import { useState } from "react";
+import { EyeOutlined, EditOutlined } from "@ant-design/icons";
 import EventFacilityOrderForm from "./EventFacilityOrderForms/EventFacilityOrderForm";
 import dayjs from "dayjs";
 import ColorStatusTag from "../../../../../component/ColorStatusTag/ColorStatusTag";
-import { PERMISSIONS } from "../../../../../variables/permission";
 import usePermission from "../../../../../hooks/usePermission";
 
 const EventFacilityOrderTable = ({
@@ -22,10 +14,12 @@ const EventFacilityOrderTable = ({
   changePage,
   changePerPage,
   loading,
+  reservationRoom,
 }) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mode, setMode] = useState("add");
   const [selectedData, setSelectedData] = useState(null);
+  const { hasPermission } = usePermission();
 
   // useEffect(() => {
   //   const savedEvents = JSON.parse(localStorage.getItem("events")) || [];
@@ -117,7 +111,6 @@ const EventFacilityOrderTable = ({
   //     ),
   //   },
   // ];
-  const { hasPermission } = usePermission();
 
   const columns = [
     {
@@ -191,66 +184,98 @@ const EventFacilityOrderTable = ({
       width: 100,
       render: (_, record) => <ColorStatusTag status={record?.status} />,
     },
+    // {
+    //   title: "Action",
+    //   fixed: "end",
+    //   width: 80,
+    //   render: (_, record) => {
+    //     const smallStyle = { fontSize: "12px" };
+
+    //     const actions = [
+    //       {
+    //         key: "view",
+    //         label: "View",
+    //         icon: <EyeOutlined style={{ fontSize: "12px" }} />,
+    //         // permission: PERMISSIONS.PARTNER_VIEW,
+    //         onClick: () => {
+    //           setDrawerOpen(true);
+    //           setMode("view");
+    //           setSelectedData(record);
+    //         },
+    //       },
+    //       ...(record?.status?.code !== "completed" &&
+    //       record?.status?.code !== "cancelled"
+    //         ? [
+    //             {
+    //               key: "edit",
+    //               label: "Edit",
+    //               icon: <EditOutlined style={{ fontSize: "12px" }} />,
+    //               // permission: PERMISSIONS.PARTNER_EDIT,
+    //               onClick: () => {
+    //                 setDrawerOpen(true);
+    //                 setMode("edit");
+    //                 setSelectedData(record);
+    //               },
+    //             },
+    //           ]
+    //         : []),
+    //     ];
+
+    //     const items = actions
+    //       .filter(
+    //         (action) =>
+    //           (!action.permission || hasPermission(action.permission)) &&
+    //           !action.hidden,
+    //       )
+    //       .map((action) => ({
+    //         key: action.key,
+    //         onClick: action.onClick,
+    //         label: (
+    //           <Space size={4} style={smallStyle} onClick={action.onClick}>
+    //             {action.icon}
+    //             <span style={{ fontSize: "14px" }}>{action.label}</span>
+    //           </Space>
+    //         ),
+    //       }));
+
+    //     return (
+    //       <Dropdown menu={{ items }} trigger={["click"]}>
+    //         <MoreOutlined style={{ fontSize: "16px" }} />
+    //       </Dropdown>
+    //     );
+    //   },
+    // },
     {
       title: "Action",
+      key: "action",
       fixed: "end",
-      width: 80,
-      render: (_, record) => {
-        const smallStyle = { fontSize: "12px" };
+      align: "center",
+      render: (_, record) => (
+        <Space size="middle">
+          <Tooltip title="View Details">
+            <EyeOutlined
+              className="cursor-pointer text-blue-500 hover:text-blue-700"
+              onClick={() => {
+                setDrawerOpen(true);
+                setMode("view");
+                setSelectedData(record);
+              }}
+            />
+          </Tooltip>
 
-        const actions = [
-          {
-            key: "view",
-            label: "View",
-            icon: <EyeOutlined style={{ fontSize: "12px" }} />,
-            // permission: PERMISSIONS.PARTNER_VIEW,
-            onClick: () => {
-              setDrawerOpen(true);
-              setMode("view");
-              setSelectedData(record);
-            },
-          },
-          ...(record?.status?.code !== "completed" &&
-          record?.status?.code !== "cancelled"
-            ? [
-                {
-                  key: "edit",
-                  label: "Edit",
-                  icon: <EditOutlined style={{ fontSize: "12px" }} />,
-                  // permission: PERMISSIONS.PARTNER_EDIT,
-                  onClick: () => {
-                    setDrawerOpen(true);
-                    setMode("edit");
-                    setSelectedData(record);
-                  },
-                },
-              ]
-            : []),
-        ];
-
-        const items = actions
-          .filter(
-            (action) =>
-              (!action.permission || hasPermission(action.permission)) &&
-              !action.hidden,
-          )
-          .map((action) => ({
-            key: action.key,
-            onClick: action.onClick,
-            label: (
-              <Space size={4} style={smallStyle} onClick={action.onClick}>
-                {action.icon}
-                <span style={{ fontSize: "14px" }}>{action.label}</span>
-              </Space>
-            ),
-          }));
-
-        return (
-          <Dropdown menu={{ items }} trigger={["click"]}>
-            <MoreOutlined style={{ fontSize: "16px" }} />
-          </Dropdown>
-        );
-      },
+          <Tooltip title="Edit">
+            <EditOutlined
+              className="cursor-pointer text-amber-500 hover:text-amber-700"
+              onClick={() => {
+                setDrawerOpen(true);
+                setMode("edit");
+                setSelectedData(record);
+              }
+              }
+            />
+          </Tooltip>
+        </Space>
+      ),
     },
   ];
 
@@ -276,13 +301,14 @@ const EventFacilityOrderTable = ({
       />
 
       <EventFacilityOrderForm
+        reservationRoom={reservationRoom}
         mode={mode}
         setMode={setMode}
         drawerOpen={drawerOpen}
         setDrawerOpen={setDrawerOpen}
         selectedData={selectedData}
         setSelectedData={setSelectedData}
-        // onSuccess={refreshData}
+      // onSuccess={refreshData}
       />
     </div>
   );

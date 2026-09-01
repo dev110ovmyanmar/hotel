@@ -42,6 +42,7 @@ const EventFacilityOrderForm = ({
   reservationId,
   searchOpen,
   setSearchOpen,
+  reservationRoom,
 }) => {
   const [form] = Form.useForm();
   const guestType = Form.useWatch("guestType", form);
@@ -121,7 +122,11 @@ const EventFacilityOrderForm = ({
     disabled:
       isView ||
       (isAdd && ["completed", "cancelled"].includes(item?.code)) ||
-      (isEdit && currentStatus === "confirmed" && item.code === "pending"),
+      (isEdit &&
+        currentStatus === "confirmed" &&
+        item.code === "pending") ||
+      (item.code === "completed" &&
+        reservationRoom?.roomStatus?.code !== "checkedin"),
   }));
 
   useEffect(() => {
@@ -213,17 +218,17 @@ const EventFacilityOrderForm = ({
     const guestName =
       values?.guestType === "existing"
         ? values?.guestName ||
-          selectedGuest?.fullName ||
-          bookingDetails?.guest?.fullName ||
-          ""
+        selectedGuest?.fullName ||
+        bookingDetails?.guest?.fullName ||
+        ""
         : values?.guestName || "";
 
     const guestPhone =
       values?.guestType === "existing"
         ? values?.guestPhone ||
-          selectedGuest?.phone ||
-          bookingDetails?.guest?.phone ||
-          ""
+        selectedGuest?.phone ||
+        bookingDetails?.guest?.phone ||
+        ""
         : values?.guestPhone || "";
     const modifiedValues = {
       ...values,
@@ -239,12 +244,12 @@ const EventFacilityOrderForm = ({
       guest:
         values?.guestType === "existing"
           ? {
-              uuid: values?.guestUuid,
-            }
+            uuid: values?.guestUuid,
+          }
           : {
-              fullName: guestName,
-              phone: guestPhone,
-            },
+            fullName: guestName,
+            phone: guestPhone,
+          },
       reservation: {
         uuid: isEdit ? bookingDetails?.reservation?.uuid : reservationId,
       },
