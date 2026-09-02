@@ -44,10 +44,9 @@ const RoomInformationTable = ({
   reservationUuid,
   onSelectRow,
 }) => {
-
-  const formattedData = data.map(item => ({
+  const formattedData = data.map((item) => ({
     ...item,
-    children: Array.isArray(item.children) ? item.children : null
+    children: Array.isArray(item.children) ? item.children : null,
   }));
 
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -69,7 +68,10 @@ const RoomInformationTable = ({
   const [ratePlanUuid, setRatePlanUuid] = useState();
   const [addRoomWithStayExtension, setAddRoomWithStayExtension] =
     useState(false);
-  const [dailyOccupactionsTableDrawerOpen, setDailyOccupactionsTableDrawerOpen] = useState(false);
+  const [
+    dailyOccupactionsTableDrawerOpen,
+    setDailyOccupactionsTableDrawerOpen,
+  ] = useState(false);
 
   const [compOpen, setCompOpen] = useState(false);
   const [addExtraBedOpen, setExtraBedOpen] = useState(false);
@@ -103,7 +105,7 @@ const RoomInformationTable = ({
   const dateChangeUuid = amendmentType?.find(
     (item) => item.code === "date_change",
   )?.uuid;
-  console.log(amendmentType,"dateChangeUuid")
+  console.log(amendmentType, "dateChangeUuid");
 
   const availabilitySearchs = useApiMutation({
     mutationFn: availabilitySearch,
@@ -177,14 +179,12 @@ const RoomInformationTable = ({
             }}
           >
             {text?.roomNo || "Assign Room"}
-              {record?.isComplimentary == true &&
-               record?.complimentaryType && 
-               (
-                    <div className="inline-flex items-center gap-0.5 px-1.5 py-0.5 text-[10px] font-semibold rounded-full bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 w-fit">
-                      <Gift size={12} />
-                      {capitalizeFirstLetter(record?.complimentaryType)}
-                    </div>
-              )}
+            {record?.isComplimentary == true && record?.complimentaryType && (
+              <div className="inline-flex items-center gap-0.5 px-1.5 py-0.5 text-[10px] font-semibold rounded-full bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 w-fit">
+                <Gift size={12} />
+                {capitalizeFirstLetter(record?.complimentaryType)}
+              </div>
+            )}
           </span>
         );
       },
@@ -230,18 +230,27 @@ const RoomInformationTable = ({
       width: 80,
       render: (_, record) => {
         const rawCode = record?.roomStatus?.code || "";
-        const enableComplimentaryUpdateButton = record?.roomStatus?.code == "checked_in" || record?.roomStatus?.code == "confirmed";
+        const enableComplimentaryUpdateButton =
+          record?.roomStatus?.code === "checked_in" ||
+          record?.roomStatus?.code === "confirmed";
         const statusCode = rawCode.toLowerCase().replace("-", "_");
         if (["cancelled", "no_show"].includes(statusCode)) {
           return (
-            <IoOptionsSharp
-              style={{
-                fontSize: "30px",
-                padding: "4px",
-                color: "#bfbfbf",
-                cursor: "not-allowed",
+            <div
+              onClick={(e) => {
+                e.stopPropagation();
               }}
-            />
+            >
+              {" "}
+              <IoOptionsSharp
+                style={{
+                  fontSize: "30px",
+                  padding: "4px",
+                  color: "#bfbfbf",
+                  cursor: "not-allowed",
+                }}
+              />
+            </div>
           );
         }
 
@@ -311,15 +320,40 @@ const RoomInformationTable = ({
         const menuItems = [...baseMenuItems, ...amendmentItems];
 
         return (
-          <Dropdown
-            menu={{ items: menuItems, style: { minWidth: "200px" } }}
-            trigger={["click"]}
+          <div
+            onClick={(e) => {
+              // IMPORTANT:
+              // Prevent Action column clicks from triggering Table row onClick
+              e.stopPropagation();
+            }}
+            onMouseDown={(e) => {
+              e.stopPropagation();
+            }}
           >
-            <IoOptionsSharp
-              className="cursor-pointer"
-              style={{ fontSize: "30px", padding: "4px" }}
-            />
-          </Dropdown>
+            <Dropdown
+              menu={{
+                items: menuItems.filter((item) => !item.hidden),
+                style: {
+                  minWidth: "200px",
+                },
+              }}
+              trigger={["click"]}
+            >
+              <span
+                onClick={(e) => {
+                  e.stopPropagation();
+                }}
+              >
+                <IoOptionsSharp
+                  className="cursor-pointer"
+                  style={{
+                    fontSize: "30px",
+                    padding: "4px",
+                  }}
+                />
+              </span>
+            </Dropdown>
+          </div>
         );
       },
     },
@@ -333,18 +367,18 @@ const RoomInformationTable = ({
         columns={columns}
         dataSource={formattedData}
         rowKey="uuid"
-         rowClassName={(record) =>
+        rowClassName={(record) =>
           record?.uuid === reservationUuid?.reservationRoom?.uuid
             ? "active-reservation-row"
             : "cursor-pointer"
         }
-         onRow={(record) => ({
-               onClick: () => {
-               if (onSelectRow) {
-               onSelectRow(record);
-             }
+        onRow={(record) => ({
+          onClick: () => {
+            if (onSelectRow) {
+              onSelectRow(record);
+            }
           },
-      })}
+        })}
         pagination={{
           current: page,
           pageSize: perPage,
