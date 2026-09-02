@@ -7,6 +7,11 @@ import ReservationDetailsForm from "../BookingDetailForms/ReservationDetailsForm
 const { Text } = Typography;
 
 const BookingStatusCard = ({ data }) => {
+  const reservationRoom = data?.reservationRoom;
+
+  const editOpen =
+    reservationRoom?.roomStatus?.code === "booked" ||
+    reservationRoom?.roomStatus?.code === "confirmed";
 
   const [drawerOpen, setDrawerOpen] = useState(false);
 
@@ -22,21 +27,23 @@ const BookingStatusCard = ({ data }) => {
         <Text>Reservation Details</Text>
       </Space>
 
-      <Tooltip title="Edit Reservation">
-        <EditOutlined style={{ color: "#1070de", fontSize: "20px", cursor: "pointer", }} onClick={() => setDrawerOpen(true)} />
-      </Tooltip>
+      {editOpen && (
+        <Tooltip title="Edit Reservation">
+          <EditOutlined
+            style={{ color: "#1070de", fontSize: "20px", cursor: "pointer" }}
+            onClick={() => setDrawerOpen(true)}
+          />
+        </Tooltip>
+      )}
     </div>
   );
 
   return (
     <>
-      <Card
-        title={CustomTitle}
-        className="booking-status-card line-height"
-      >
+      <Card title={CustomTitle} className="booking-status-card line-height">
         <div>
           <Text>Ref No:</Text>
-          <Text strong> {data?.reservation?.refNo || " _"}</Text>
+          <Text strong> {data?.reservation?.refNo || " -"}</Text>
         </div>
 
         <div>
@@ -58,10 +65,8 @@ const BookingStatusCard = ({ data }) => {
       </Card>
 
       {drawerOpen && (
-        <ReservationDetailsForm
-          open={drawerOpen}
-          onClose={setDrawerOpen}
-        />)}
+        <ReservationDetailsForm open={drawerOpen} onClose={setDrawerOpen} />
+      )}
     </>
   );
 };

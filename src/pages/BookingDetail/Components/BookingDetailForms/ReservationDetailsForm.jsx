@@ -16,7 +16,7 @@ const ReservationDetailsForm = ({ open, onClose, onSuccess }) => {
   const [form] = Form.useForm();
   const { bookingId: reservationRoomUuid } = useParams();
   const [selectedSourceType, setSelectedSourceType] = useState(null);
-  const initData = queryClient.getQueryData([  "initData", "authenticated", ]);
+  const initData = queryClient.getQueryData(["initData", "authenticated"]);
 
   const { data, isLoading } = useApiQuery({
     fetchQueryName: "reservation-details",
@@ -100,12 +100,9 @@ const ReservationDetailsForm = ({ open, onClose, onSuccess }) => {
   }, [open, data, form]);
 
   const handleSourceTypeChange = (value) => {
-    const selected = sourceType.find(
-      (item) => item.value === value
-    );
+    const selected = sourceType.find((item) => item.value === value);
 
-    const sourceTypeCode =
-      selected?.code?.trim()?.toLowerCase() || null;
+    const sourceTypeCode = selected?.code?.trim()?.toLowerCase() || null;
 
     setSelectedSourceType(sourceTypeCode);
 
@@ -115,11 +112,6 @@ const ReservationDetailsForm = ({ open, onClose, onSuccess }) => {
   const handleFinish = (values) => {
     const reservation = data?.reservation;
 
-    if (!reservation?.uuid) {
-      message.error("Reservation UUID not found.");
-      return;
-    }
-
     const editValues = {
       reservation: {
         uuid: reservation.uuid,
@@ -127,20 +119,19 @@ const ReservationDetailsForm = ({ open, onClose, onSuccess }) => {
       refNo: values.refNo,
       bookedVia: values.bookingSource
         ? {
-          uuid: values.bookingSource,
-        }
+            uuid: values.bookingSource,
+          }
         : undefined,
       sourceType: values.sourceType
         ? {
-          uuid: values.sourceType,
-        }
+            uuid: values.sourceType,
+          }
         : undefined,
       source:
-        ["agency", "company"].includes(selectedSourceType) &&
-          values.sourceName
+        ["agency", "company"].includes(selectedSourceType) && values.sourceName
           ? {
-            uuid: values.sourceName,
-          }
+              uuid: values.sourceName,
+            }
           : undefined,
     };
 
@@ -187,11 +178,7 @@ const ReservationDetailsForm = ({ open, onClose, onSuccess }) => {
         </div>
       }
     >
-      <Form
-        form={form}
-        layout="vertical"
-        onFinish={handleFinish}
-      >
+      <Form form={form} layout="vertical" onFinish={handleFinish}>
         <Form.Item label="Ref No." name="refNo">
           <Input placeholder="Enter Ref No." />
         </Form.Item>
@@ -200,7 +187,6 @@ const ReservationDetailsForm = ({ open, onClose, onSuccess }) => {
           <Select
             options={bookedVia}
             placeholder="Select Booking Source"
-            allowClear
           />
         </Form.Item>
 
@@ -208,7 +194,6 @@ const ReservationDetailsForm = ({ open, onClose, onSuccess }) => {
           <Select
             options={sourceType}
             placeholder="Select Source Type"
-            allowClear
             onChange={handleSourceTypeChange}
           />
         </Form.Item>
@@ -217,14 +202,14 @@ const ReservationDetailsForm = ({ open, onClose, onSuccess }) => {
           <Form.Item
             label="Source Name"
             name="sourceName"
+            rules={[{ required: true }]}
           >
             <Select
               options={sourceNameOptions}
-              placeholder={`Select ${selectedSourceType === "agency"
-                  ? "Agency"
-                  : "Company"
-                }`}
-              allowClear
+              placeholder={`Select ${
+                selectedSourceType === "agency" ? "Agency" : "Company"
+              }`}
+
               showSearch
               optionFilterProp="label"
             />
