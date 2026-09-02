@@ -9,61 +9,57 @@ import dayjs from "dayjs";
 import ColorStatusTag from "../../component/ColorStatusTag/ColorStatusTag";
 
 
-const CheckBookingTable = ({
-    colorCheckBooking
+const PreAuditTable = ({
+    colorCheckBooking,
+    preAuditChecksData
 }) => {
     const columns = [
-        {
-            title: "Id",
-            dataIndex: "id",
-            key: "id",
-            render: (text) => <div>{text}</div>
-        },
-        {
-            title: "Check In",
-            dataIndex: "checkinDate",
-            key: "checkinDate",
-            render: (text) => <div>{dayjs(text).format("YYYY-MM-DD")}</div>
-        },
-        {
-            title: "Check Out",
-            dataIndex: "checkoutDate",
-            key: "checkoutDate",
-            render: (text) => <div>{dayjs(text).format("YYYY-MM-DD")}</div>
-        },
-        {
-            title: "Total Night",
-            dataIndex: "totalNight",
-            key: "totalNight",
-            render: (text) => <div>{text}</div>,
-            align:"center"
-        },
         // {
-        //     title: "Payment",
-        //     dataIndex: "payment",
-        //     key: "payment",
+        //     title: "Id",
+        //     dataIndex: "id",
+        //     key: "id",
         //     render: (text) => <div>{text}</div>
         // },
         {
-            title: "Total (MMK)",
-            dataIndex: "grandTotal",
-            key: "grandTotal",
-            render: (text) => <PriceTag value={text} />,
-            align: "right"
-
+            title: "Name",
+            dataIndex: "name",
+            key: "name",
+        },
+        {
+            title: "Count",
+            dataIndex: "count",
+            key: "count",
         },
         // {
-        //     title: "Balance (MMK)",
-        //     dataIndex: "balance",
-        //     key: "balance",
-        //     render: (text) => <PriceTag value={text} />
+        //     title: "Details",
+        //     dataIndex: "details",
+        //     key: "details",
+        //     align:"center"
         // },
         {
             title: "Status",
-            dataIndex: "roomStatus",
-            key: "roomStatus",
-            render: (_, record) => <ColorStatusTag status={record?.roomStatus} />,
-            align:"center"
+            dataIndex: "status",
+            key: "status",
+            align: "center",
+            render: (text) => {
+                const blocking = text === "BLOCKING";
+                const passed = text === "PASSED";
+                const warning = text === "WARNING"
+                console.log(text, "TextStatus")
+                return (
+                    <Tag color={blocking ? "red" : warning ? "orange" : "green"}
+                        className={
+                            `!rounded ${blocking
+                                ? "!border-red-500"
+                                : warning
+                                    ? "!border-orange-500"
+                                    : "!border-green-500"
+                            }`
+                        }>
+                        {text?.charAt(0).toUpperCase() + text?.slice(1).toLowerCase()}
+                    </Tag>
+                )
+            }
         },
         {
             title: "Action",
@@ -126,15 +122,10 @@ const CheckBookingTable = ({
 
     ];
 
-    const { data: nightAuditCheckBookingData, isLoading, error } = useApiQuery({
-        fetchQueryName: "night-audit-check-bookings",
-        fetchQueryFunction: nightAuditCheckBookings,
-    });
-
     return (
         <Table
             columns={columns}
-            dataSource={nightAuditCheckBookingData}
+            dataSource={preAuditChecksData}
             pagination={false}
             summary={() => (
                 <Table.Summary fixed>
@@ -142,9 +133,7 @@ const CheckBookingTable = ({
                         <Table.Summary.Cell index={0}></Table.Summary.Cell>
                         <Table.Summary.Cell index={1}></Table.Summary.Cell>
                         <Table.Summary.Cell index={2}></Table.Summary.Cell>
-                        <Table.Summary.Cell index={3}></Table.Summary.Cell>
-                        <Table.Summary.Cell index={4}></Table.Summary.Cell>
-                        <Table.Summary.Cell index={5}>
+                        <Table.Summary.Cell index={3}>
                             <Button
                                 type="primary"
                                 onClick={colorCheckBooking}
@@ -160,4 +149,4 @@ const CheckBookingTable = ({
     )
 }
 
-export default CheckBookingTable
+export default PreAuditTable

@@ -4,7 +4,8 @@ import { Modal } from "antd"
 const ConfirmModal = ({
     open,
     onCancel,
-    onOk
+    onOk,
+    confirmLoading
 }) => {
     const stylesFn = {
         content: {
@@ -41,6 +42,7 @@ const ConfirmModal = ({
             okText="Confirm"
             styles={stylesFn}
             classNames={tailwindcss}
+            confirmLoading={confirmLoading}
         >
             Admins will remain logged in but will not be able to perform any operations while the Night Audit is in progress. Do you wish to continue?
 
