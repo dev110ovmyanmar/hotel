@@ -12,9 +12,12 @@ import ConfirmModal from "./ConfirmModal";
 import ReactTimer from "../../component/ReactTimer/ReactTimer";
 import dayjs from "dayjs";
 import { useApiMutation } from "../../hooks/useApiMutation";
-import { systemLock } from "../../api/nightAuditApi";
+import { preAuditCheck, systemLock, systemUnlock } from "../../api/nightAuditApi";
 import Toast from "../../component/Toast/Toast";
 import { SYSTEM_LOCK_KEY } from "../../variables/constants";
+import IssueAndWarningCard from "./IssueAndWarningCard";
+import useApiQuery from "../../hooks/useApiQuery";
+import PreAuditTable from "./PreAuditTable";
 
 const NightAudit = () => {
     const [forceLogout, setForceLogout] = useState(false);
@@ -27,15 +30,24 @@ const NightAudit = () => {
     const [hideSteps, setHideSteps] = useState(false);
     // System Lock Mutation
     const systemLockMutation = useApiMutation({
-        mutationFn: systemLock,
+        // mutationFn: systemLock,
+        mutationFn: systemUnlock,
         shouldInvalidate: false,
         options: {
             onSuccess: (data) => {
                 Toast.success("System locked successfully");
                 setConfirmModal(false);
                 setCurrentValue(0);
-                setStep("checkBooking");
+                setStep("preAuditCheck");
                 console.log("Step set to checkBooking");
+                window.dispatchEvent(
+                    new CustomEvent("breadcrumb_updated", {
+                        detail: {
+                            stepValue: 0,
+                            nightAuditStarted: true,
+                        },
+                    })
+                );
             },
             onError: (error) => {
                 Toast.error(error?.response?.data?.error?.text || "Failed to lock system");
@@ -48,20 +60,30 @@ const NightAudit = () => {
             systemLockKey: SYSTEM_LOCK_KEY.nightAudit
         });
     };
+
+    const { data: preAuditChecksData, isLoading, error } = useApiQuery({
+        fetchQueryName: "pre-audit-checks",
+        fetchQueryFunction: preAuditCheck,
+        params: {
+            businessDate: '2026-09-02'
+        },
+    });
+    console.log(preAuditChecksData, "preAuditChecksData")
+
     return (
         <div className="w-full px-6 py-2">
             {
                 step === "startNightAudit" &&
                 <div>
                     <div className="flex justify-end mb-3">
-                        <DatePicker defaultValue={dayjs()}/>
+                        <DatePicker defaultValue={dayjs()} />
                     </div>
 
                     <div>
                         <Card
                             title={
                                 <div className="text-center w-full">
-                                     Night Audit — Closing Business Date: 
+                                    Night Audit — Closing Business Date:
                                     <span className="ms-1">{todayDate}</span>
                                 </div>
                             }
@@ -109,7 +131,7 @@ const NightAudit = () => {
                                             <Button
                                                 className="!bg-[#CF1322] !text-[#FFFFFF]"
                                                 onClick={() => setConfirmModal(true)}
-                                                loading={systemLockMutation.isPending}
+
                                             >
                                                 Lock System & Start Night Audit
                                             </Button>
@@ -124,63 +146,115 @@ const NightAudit = () => {
 
 
             {
-                step === "checkBooking" ?
+                step === "preAuditCheck" ?
                     <>
-                        <CheckBookingHeader colorClick={currentValue} />
-                        <CheckBookingTable colorCheckBooking={() => {
+                        <CheckBookingHeader
+                            colorClick={currentValue}
+                            preAuditChecksData={preAuditChecksData}
+                            preNightAudit={true}
+                        />
+                        <PreAuditTable colorCheckBooking={() => {
                             setCurrentValue(1);
-                            setStep("roomChargeTable")
-                        }} />
+                            setStep("checkBooking");
+                            window.dispatchEvent(
+                                new CustomEvent("breadcrumb_updated", {
+                                    detail: {
+                                        stepValue: 1,
+                                    },
+                                })
+                            );
+                        }}
+                            preAuditChecksData={preAuditChecksData?.checks}
+                        />
+                        <IssueAndWarningCard preAuditChecksData={preAuditChecksData} />
                     </>
                     :
-                    step === "roomChargeTable" ?
+                    step === "checkBooking" ?
                         <>
-                            <CheckBookingHeader colorClick={currentValue} />
-                            <RoomChargeTable roomChargeClick={() => {
+                            <CheckBookingHeader colorClick={currentValue} preAuditChecksData={preAuditChecksData} />
+                            <CheckBookingTable colorCheckBooking={() => {
                                 setCurrentValue(2);
-                                setStep("unsettledFolios")
+                                setStep("roomChargeTable");
+                                window.dispatchEvent(
+                                    new CustomEvent("breadcrumb_updated", {
+                                        detail: {
+                                            stepValue: 2,
+                                        },
+                                    })
+                                );
                             }} />
+                            <IssueAndWarningCard preAuditChecksData={preAuditChecksData}/>
                         </>
                         :
-                        step === "unsettledFolios" ?
+                        step === "roomChargeTable" ?
                             <>
-                                <CheckBookingHeader colorClick={currentValue} />
-                                <UnsettledFolios unsettledFolioClick={() => {
+                                <CheckBookingHeader colorClick={currentValue} preAuditChecksData={preAuditChecksData} />
+                                <RoomChargeTable roomChargeClick={() => {
                                     setCurrentValue(3);
-                                    setStep("nightAuditPosting")
+                                    setStep("unsettledFolios");
+                                    window.dispatchEvent(
+                                        new CustomEvent("breadcrumb_updated", {
+                                            detail: {
+                                                stepValue: 3,
+                                            },
+                                        })
+                                    );
                                 }} />
+                                <IssueAndWarningCard preAuditChecksData={preAuditChecksData}/>
                             </>
-                            : step === "nightAuditPosting" ?
+                            :
+                            step === "unsettledFolios" ?
                                 <>
-                                    <CheckBookingHeader colorClick={currentValue} />
-                                    <NightAuditPosting nightAuditPostingClick={() => {
+                                    <CheckBookingHeader colorClick={currentValue} preAuditChecksData={preAuditChecksData}/>
+                                    <UnsettledFolios unsettledFolioClick={() => {
                                         setCurrentValue(4);
-                                        setStep("createNewDay")
+                                        setStep("nightAuditPosting");
+                                        window.dispatchEvent(
+                                            new CustomEvent("breadcrumb_updated", {
+                                                detail: {
+                                                    stepValue: 4,
+                                                },
+                                            })
+                                        );
                                     }} />
                                 </>
-                                :
-                                step === "createNewDay" ?
+                                : step === "nightAuditPosting" ?
                                     <>
-                                        {
-                                            !hideSteps &&
-                                            <CheckBookingHeader colorClick={currentValue} />
-                                        }
-                                        <CreateNewDay createNewDayClick={() => {
+                                        <CheckBookingHeader colorClick={currentValue} preAuditChecksData={preAuditChecksData}/>
+                                        <NightAuditPosting nightAuditPostingClick={() => {
                                             setCurrentValue(5);
-                                            setHideSteps(true)
-
+                                            setStep("createNewDay");
+                                            window.dispatchEvent(
+                                                new CustomEvent("breadcrumb_updated", {
+                                                    detail: {
+                                                        stepValue: 5,
+                                                    },
+                                                })
+                                            );
                                         }} />
                                     </>
                                     :
-                                    null
+                                    step === "createNewDay" ?
+                                        <>
+                                            {
+                                                !hideSteps &&
+                                                <CheckBookingHeader colorClick={currentValue} preAuditChecksData={preAuditChecksData}/>
+                                            }
+                                            <CreateNewDay createNewDayClick={() => {
+                                                setCurrentValue(5);
+                                                setHideSteps(true)
+
+                                            }} />
+                                        </>
+                                        :
+                                        null
             }
-
-
 
             <ConfirmModal
                 open={confirmModal}
                 onCancel={() => setConfirmModal(false)}
                 onOk={handleForceLogout}
+                confirmLoading={systemLockMutation.isPending}
 
             />
 

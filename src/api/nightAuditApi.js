@@ -24,3 +24,19 @@ export const systemUnlock = async(params) => {
     );
     return data.response;
 }
+
+export const nightAuditCheckBookings = async(params) => {
+    const { data } = await apiClient.get(
+        "/night-audit/bookings",
+        {params}
+    );
+    return data.response;
+}
+
+export const preAuditCheck = async(params) => {
+    const { data } = await apiClient.get(
+        "/night-audit/pre-audit-check",
+        {params}
+    );
+    return data.response;
+}
