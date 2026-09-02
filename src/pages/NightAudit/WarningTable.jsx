@@ -9,61 +9,24 @@ import dayjs from "dayjs";
 import ColorStatusTag from "../../component/ColorStatusTag/ColorStatusTag";
 
 
-const CheckBookingTable = ({
-    colorCheckBooking
+const WarningTable = ({
+    warningData
 }) => {
     const columns = [
         {
-            title: "Id",
-            dataIndex: "id",
-            key: "id",
-            render: (text) => <div>{text}</div>
+            title: "Name",
+            dataIndex: "name",
+            key: "name",
         },
         {
-            title: "Check In",
-            dataIndex: "checkinDate",
-            key: "checkinDate",
-            render: (text) => <div>{dayjs(text).format("YYYY-MM-DD")}</div>
+            title: "Type",
+            // dataIndex: "name",
+            // key: "name",
         },
         {
-            title: "Check Out",
-            dataIndex: "checkoutDate",
-            key: "checkoutDate",
-            render: (text) => <div>{dayjs(text).format("YYYY-MM-DD")}</div>
-        },
-        {
-            title: "Total Night",
-            dataIndex: "totalNight",
-            key: "totalNight",
-            render: (text) => <div>{text}</div>,
-            align:"center"
-        },
-        // {
-        //     title: "Payment",
-        //     dataIndex: "payment",
-        //     key: "payment",
-        //     render: (text) => <div>{text}</div>
-        // },
-        {
-            title: "Total (MMK)",
-            dataIndex: "grandTotal",
-            key: "grandTotal",
-            render: (text) => <PriceTag value={text} />,
-            align: "right"
-
-        },
-        // {
-        //     title: "Balance (MMK)",
-        //     dataIndex: "balance",
-        //     key: "balance",
-        //     render: (text) => <PriceTag value={text} />
-        // },
-        {
-            title: "Status",
-            dataIndex: "roomStatus",
-            key: "roomStatus",
-            render: (_, record) => <ColorStatusTag status={record?.roomStatus} />,
-            align:"center"
+            title: "Details",
+            dataIndex: "message",
+            key: "message",
         },
         {
             title: "Action",
@@ -126,38 +89,13 @@ const CheckBookingTable = ({
 
     ];
 
-    const { data: nightAuditCheckBookingData, isLoading, error } = useApiQuery({
-        fetchQueryName: "night-audit-check-bookings",
-        fetchQueryFunction: nightAuditCheckBookings,
-    });
-
     return (
         <Table
             columns={columns}
-            dataSource={nightAuditCheckBookingData}
+            dataSource={warningData}
             pagination={false}
-            summary={() => (
-                <Table.Summary fixed>
-                    <Table.Summary.Row>
-                        <Table.Summary.Cell index={0}></Table.Summary.Cell>
-                        <Table.Summary.Cell index={1}></Table.Summary.Cell>
-                        <Table.Summary.Cell index={2}></Table.Summary.Cell>
-                        <Table.Summary.Cell index={3}></Table.Summary.Cell>
-                        <Table.Summary.Cell index={4}></Table.Summary.Cell>
-                        <Table.Summary.Cell index={5}>
-                            <Button
-                                type="primary"
-                                onClick={colorCheckBooking}
-                            >
-                                Next Step
-                                <AiOutlineRight />
-                            </Button>
-                        </Table.Summary.Cell>
-                    </Table.Summary.Row>
-                </Table.Summary>
-            )}
         />
     )
 }
 
-export default CheckBookingTable
+export default WarningTable
