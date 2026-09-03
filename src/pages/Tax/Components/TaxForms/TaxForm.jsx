@@ -185,7 +185,7 @@ const TaxForm = ({
           }
         }}
         onClose={handleClose}
-        size={500}
+        size={550}
         title={
           <div className="flex justify-between items-center">
             <span>

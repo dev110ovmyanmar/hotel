@@ -165,7 +165,7 @@ const AgencyForm = ({
       <Drawer
         open={drawerOpen}
         onClose={handleClose}
-        size={550}
+        size={600}
         title={
           <div className="flex justify-between items-center">
             <span>
@@ -202,13 +202,25 @@ const AgencyForm = ({
           validateTrigger="onSubmit"
           onFinish={onFinish}
         >
-          <Form.Item
-            label="Name"
-            name="name"
-            rules={[{ required: true, message: "Agency Name is Required" }]}
-          >
-            <Input readOnly={isView} placeholder="Enter Agency Name" />
-          </Form.Item>
+          <Row gutter={24}>
+            <Col span={16}>
+              <Form.Item
+                label="Name"
+                name="name"
+                rules={[{ required: true }]}
+              >
+                <Input readOnly={isView} placeholder="Enter Agency Name" />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item
+                label="Code"
+                name="code"
+              >
+                <Input readOnly={isView} placeholder="Enter Agency Code" />
+              </Form.Item>
+            </Col>
+          </Row>
 
           <Form.Item
             label="Contact Person Name"
