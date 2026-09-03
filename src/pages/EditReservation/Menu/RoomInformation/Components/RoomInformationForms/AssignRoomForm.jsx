@@ -124,7 +124,7 @@ const AssignRoomForm = ({
     <Drawer
       open={open}
       onClose={onClose}
-      size={650}
+      size={600}
       title={currentRoomNo ? "Change Assigned Room" : "Assign Room"}
       destroyOnClose
     >

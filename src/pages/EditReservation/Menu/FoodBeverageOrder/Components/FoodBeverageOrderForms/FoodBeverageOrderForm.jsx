@@ -552,7 +552,7 @@ const FoodBeverageOrderForm = ({
       <Drawer
         open={open}
         onClose={handleOnClose}
-        size={650}
+        size={600}
         destroyOnClose
         title={
           <div className="flex justify-between items-center">

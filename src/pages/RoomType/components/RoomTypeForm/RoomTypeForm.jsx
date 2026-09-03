@@ -296,7 +296,7 @@ const RoomTypeForm = ({
               maxAdults: 1,
               maxChildren: 0,
               maxOccupancy: 1,
-              maxExtraBeds: 0,
+              maxExtraBed: 0,
               totalRooms: 1,
               rank: 1,
             }}

@@ -171,7 +171,7 @@ const RoleForm = ({
             )}
           </div>
         }
-        size={500}
+        size={550}
         onClose={onClose}
         open={drawerOpen}
       >

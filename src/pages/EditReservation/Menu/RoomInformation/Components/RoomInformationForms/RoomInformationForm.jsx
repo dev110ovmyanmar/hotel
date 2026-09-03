@@ -186,7 +186,7 @@ const disabledDate = (current, info) => {
     <Drawer
       open={drawerOpen}
       onClose={handleClose}
-      size={650}
+      size={600}
       title={
         <div className="flex justify-between items-center">
           <span
