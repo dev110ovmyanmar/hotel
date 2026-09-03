@@ -70,41 +70,9 @@ const AddDepoistForm = ({
   const [selectedProviderUuid, setSelectedProviderUuid] = useState("all");
   const selectedMethod = Form.useWatch("paymentMethod", form);
 
-  // --- AUTOMATICALLY FILL AND SELECT COMPLETED STATUS IN UI ---
-  useEffect(() => {
-    if (!open) return;
-    if (reservationMetaDataLoading) return;
-
-    const defaultValues = {};
-
-    if (folios.length > 0) {
-      defaultValues.folio = folios[0].uuid;
-    }
-
-    const cashsMethod = paymentMethodsData.find(
+  const cashMethod = paymentMethodsData.find(
       (method) => method.name?.trim().toLowerCase() === "cashs",
     );
-
-    if (cashsMethod) {
-      defaultValues.paymentMethod = cashsMethod.uuid;
-    }
-
-    if (paymentCompletedStatus?.uuid) {
-      defaultValues.paymentStatus = paymentCompletedStatus.uuid;
-    }
-    setSelectedProviderUuid("all");
-
-    if (Object.keys(defaultValues).length > 0) {
-      form.setFieldsValue(defaultValues);
-    }
-  }, [
-    open,
-    reservationMetaDataLoading,
-    paymentMethodsData,
-    folios,
-    paymentCompletedStatus,
-    form,
-  ]);
 
   // --- Transform providerTypes into Ant Design Segmented options ---
   const segmentedOptions = useMemo(() => {
@@ -223,6 +191,14 @@ const AddDepoistForm = ({
     <Drawer
       open={open}
       onClose={onClose}
+      afterOpenChange={(onClose) => {
+        form.resetFields();
+        form.setFieldsValue({
+          paymentStatus: paymentCompletedStatus?.uuid,
+          paymentMethod: cashMethod?.uuid,
+        });
+        setSelectedProviderUuid("all");
+      }}
       size={550}
       destroyOnHidden
       title={

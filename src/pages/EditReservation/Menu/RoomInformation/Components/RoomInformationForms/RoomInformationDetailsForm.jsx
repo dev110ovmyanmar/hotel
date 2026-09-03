@@ -88,7 +88,7 @@ const RoomInformationDetailsForm = ({
     <Drawer
       open={drawerOpen}
       onClose={handleClose}
-      size={700}
+      size={650}
       title={
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-3">

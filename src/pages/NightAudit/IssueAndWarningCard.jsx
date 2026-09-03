@@ -15,7 +15,7 @@ const IssueAndWarningCard = ({
                     >
                         <div className="flex flex-col justify-center items-center">
                             <CircleCheckIcon className="text-green-500"></CircleCheckIcon>
-                            <div>No blocking issues found.</div>
+                            <div>No Blocking Issues Found.</div>
                         </div>
                     </Card>
                 </Col>

@@ -102,8 +102,7 @@ const FloorForm = ({
   return (
     <div className="flex justify-center">
       <Drawer
-        destroyOnClose
-        size={500}
+        size={550}
         open={drawerOpen}
         onClose={handleClose}
         title={

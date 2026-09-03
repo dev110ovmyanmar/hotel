@@ -41,7 +41,6 @@ const RoomInformationList = () => {
   const [perPage, setPerPage] = useState(LIMITS.PAGE_SIZE);
   const [assignRoomOpen, setAssignRoomOpen] = useState(false);
   const [open, setOpen] = useState(false);
-  const [showRoomResults, setShowRoomResults] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState(null);
   const [selectedRoomUuid, setSelectedRoomUuid] = useState(bookingId);
 

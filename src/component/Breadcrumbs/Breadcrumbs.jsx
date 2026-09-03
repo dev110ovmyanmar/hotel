@@ -2,32 +2,16 @@ import { Divider } from "antd";
 import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import StepsComponent from "../Steps/StepsComponent";
-import NightAuditBreadcrumbs from "../Steps/NightAuditBreadcrumbs";
 import NightAuditTopBar from "../../pages/NightAudit/NightAuditTopBar";
+import NightAuditTopBarBeforeLock from "../../pages/NightAudit/NightAuditTopBarBeforeLock";
 
 const Breadcrumbs = () => {
   const location = useLocation();
-  const [update, setUpdate] = useState(0);
-  const [nightAuditStep, setNightAuditStep] = useState(0);
   const [nightAuditStarted, setNightAuditStarted] = useState(false);
-
-  const nightAuditSteps = [
-    "Pre Audit Check",
-    "Check Booking",
-    "Room Charge",
-    "Unsettled Folios",
-    "Night Audit Posting",
-    "Create New Day",
-  ];
 
   useEffect(() => {
     const handleUpdate = (event) => {
-      setUpdate((prev) => prev + 1);
-
-      if (event.detail?.stepValue !== undefined) {
-        setNightAuditStep(event.detail.stepValue);
-      }
-
+      console.log(event,"EventHandleUpdate")
       if (event.detail?.nightAuditStarted !== undefined) {
         setNightAuditStarted(event.detail.nightAuditStarted);
       }
@@ -46,19 +30,17 @@ const Breadcrumbs = () => {
     };
   }, []);
 
-  // Custom Night Audit Breadcrumb
-  if (location.pathname === "/night-audit" && nightAuditStarted) {
+  if (location.pathname.includes("/night-audit") && !nightAuditStarted) {
     return (
-      <NightAuditTopBar nightAuditStep={nightAuditStep} nightAuditSteps={nightAuditSteps} />
+      <NightAuditTopBarBeforeLock />
     );
   }
 
-
-  // useEffect(() => {
-  //   const handleUpdate = () => setUpdate((prev) => prev + 1);
-  //   window.addEventListener("breadcrumb_updated", handleUpdate);
-  //   return () => window.removeEventListener("breadcrumb_updated", handleUpdate);
-  // }, []);
+  if (location.pathname.includes("/night-audit/") && nightAuditStarted) {
+    return (
+      <NightAuditTopBar setNightAuditStarted={setNightAuditStarted} />
+    );
+  }
 
   let currentLink = "";
 

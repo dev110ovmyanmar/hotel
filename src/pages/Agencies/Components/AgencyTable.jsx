@@ -39,12 +39,17 @@ const AgencyTable = ({
       title: "ID",
       render: (_, record) => <div>{record?.id}</div>,
       width: 70,
-      // align: "center",
     },
     {
       title: "Name",
       dataIndex: "name",
       key: "name",
+      render: (text) => <div>{text}</div>,
+    },
+    {
+      title: "Code",
+      dataIndex: "code",
+      key: "code",
       render: (text) => <div>{text}</div>,
     },
     {

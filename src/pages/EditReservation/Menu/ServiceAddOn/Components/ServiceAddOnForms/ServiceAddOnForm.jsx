@@ -201,7 +201,7 @@ const ServiceAddOnForm = ({
   return (
     <Drawer
       destroyOnClose
-      size={500}
+      size={550}
       open={open}
       onClose={handleClose}
       title={

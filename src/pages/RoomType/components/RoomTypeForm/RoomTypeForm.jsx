@@ -322,28 +322,13 @@ const RoomTypeForm = ({
               </Col>
             </Row>
 
-            <div className="grid grid-cols-2 gap-6">
-              {/* <Form.Item
-                label="Total Rooms"
-                name="totalRooms"
-                rules={[{ required: true }]}
-              >
-                <InputNumber
-                  {...sharedProps}
-                  disabled={isView}
-                  style={{ width: "100%" }}
-                  placeholder="Enter Totals Rooms"
-                />
-              </Form.Item> */}
-            </div>
-
             <Form.Item name="basePrice" hidden>
               <InputNumber readOnly={isView} />
             </Form.Item>
 
             <div className="grid grid-cols-2 gap-6">
               <Form.Item
-                label="Max Adults"
+                label="Standard Adults"
                 name="maxAdults"
                 rules={[{ required: true }]}
                 className="minus-icon"
@@ -357,7 +342,7 @@ const RoomTypeForm = ({
               </Form.Item>
 
               <Form.Item
-                label="Max Children"
+                label="Standard Children"
                 name="maxChildren"
                 className="minus-icon"
               >
@@ -372,7 +357,7 @@ const RoomTypeForm = ({
 
             <div className="grid grid-cols-2 gap-6">
               <Form.Item
-                label="Max Occupancy"
+                label="Max Occupancy (Total Guests)"
                 name="maxOccupancy"
                 rules={[{ required: true }]}
                 className="minus-icon"
@@ -387,7 +372,7 @@ const RoomTypeForm = ({
 
               <Form.Item
                 label="Max Extra Bed"
-                name="maxExtraBed"
+                name="maxExtraBeds"
                 className="minus-icon"
               >
                 <InputNumber
@@ -401,7 +386,7 @@ const RoomTypeForm = ({
 
             <div className="grid grid-cols-2 gap-6">
               <Form.Item
-                label="Luxury Level"
+                label="Luxury Level (Rate Level)"
                 name="rank"
                 rules={[{ required: true }]}
                 className="minus-icon"
@@ -414,7 +399,7 @@ const RoomTypeForm = ({
                 />
               </Form.Item>
 
-              <Form.Item label="Room Size" name="areaSize">
+              <Form.Item label="Room Size (sq ft / m²)" name="areaSize">
                 <Input readOnly={isView} placeholder="Enter Room Size" />
               </Form.Item>
             </div>
