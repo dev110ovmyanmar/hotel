@@ -7,20 +7,22 @@ const PreAuditCheckStatus = ({
     preNightAudit
 }) => {
     const cardDesign = `!w-full !max-w-[500px] !shadow-md !m-0 !p-0 `;
+    const warning = preAuditChecksData?.overallStatus === "WARNING";
+    const passed = preAuditChecksData?.overallStatus === "PASSED";
     return (
         <div>
-            <div className="items-center grid grid-cols-2 gap-x-10 !my-5">
+            <div className="items-center grid lg:grid-cols-2 md:grid-cols-1 gap-x-10 !my-5">
                 <Card className="!shadow-md" >
-                    <div className="flex items-center gap-x-2 ">
-                        <SafetyOutlined className="!text-5xl !text-green-500" />
+                    <div className="flex items-center gap-x-6 ">
+                        <SafetyOutlined className={`!text-4xl ${passed ? '!text-green-700' : warning ? '!text-orange-700' : '!text-red-700'}`} />
                         <div>
                             <div>Pre-Audit Check Status</div>
-                            <div className="!text-xl !text-green-700">No blocking issues found</div>
+                            <div className={`!text-lg ${passed ? '!text-green-700' : warning ? '!text-orange-700' : '!text-red-700'}`}>{preAuditChecksData?.overallStatus}</div>
                             {/* <div>All critical checks are good. You can proceed to next step.</div> */}
                         </div>
                     </div>
                 </Card>
-                <div className="border border-l-0 border-r-0  border-gray-300 flex items-center gap-x-5 py-3">
+                <div className="border border-l-0 border-r-0  border-gray-300  dark:!border-gray-700 flex items-center gap-x-5 py-2">
                     <Card className={`!bg-[#F6FFED] !text-[#389E0D] !border-[#B7EB8F] ${cardDesign}`}>
                         <div>
                             <div>Passed</div>
@@ -51,10 +53,10 @@ const PreAuditCheckStatus = ({
                         </div>
                     </Card>
 
-                    <Card className={`!bg-[#eeeeee] !border-gray-300 ${cardDesign} dark:!text-gray-700`}>
+                    <Card className={`${cardDesign} !border !border-gray-300 dark:!text-gray-200 text-center`}>
                         <div>
                             <div>Total Checks</div>
-                            <div className="text-center">
+                            <div>
                                 {preAuditChecksData?.summary?.totalChecks}
 
                             </div>

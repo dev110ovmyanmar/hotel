@@ -1,4 +1,4 @@
-import { EditOutlined, EyeOutlined, MoreOutlined } from "@ant-design/icons";
+import { CloseCircleOutlined, EditOutlined, EyeOutlined, MoreOutlined, WarningOutlined } from "@ant-design/icons";
 import { Button, Dropdown, Space, Table, Tag } from "antd";
 import { data } from "react-router-dom";
 import PriceTag from "../../component/PriceTag/PriceTag";
@@ -7,6 +7,7 @@ import { nightAuditCheckBookings } from "../../api/nightAuditApi";
 import useApiQuery from "../../hooks/useApiQuery";
 import dayjs from "dayjs";
 import ColorStatusTag from "../../component/ColorStatusTag/ColorStatusTag";
+import { CircleCheck } from "lucide-react";
 
 
 const PreAuditTable = ({
@@ -25,17 +26,6 @@ const PreAuditTable = ({
             dataIndex: "name",
             key: "name",
         },
-        {
-            title: "Count",
-            dataIndex: "count",
-            key: "count",
-        },
-        // {
-        //     title: "Details",
-        //     dataIndex: "details",
-        //     key: "details",
-        //     align:"center"
-        // },
         {
             title: "Status",
             dataIndex: "status",
@@ -56,11 +46,31 @@ const PreAuditTable = ({
                                     : "!border-green-500"
                             }`
                         }>
-                        {text?.charAt(0).toUpperCase() + text?.slice(1).toLowerCase()}
+                        <div className="flex gap-x-2 items-center">
+                            {passed
+                                ? <CircleCheck size={15}/>
+                                : warning
+                                    ? <WarningOutlined className="!text-[15px]"/>
+                                    : <CloseCircleOutlined className="!text-[15px]"/>
+                            }
+                            <div>{text?.charAt(0).toUpperCase() + text?.slice(1).toLowerCase()}</div>
+                        </div>
                     </Tag>
                 )
             }
         },
+        {
+            title: "Count",
+            dataIndex: "count",
+            key: "count",
+        },
+        // {
+        //     title: "Details",
+        //     dataIndex: "details",
+        //     key: "details",
+        //     align:"center"
+        // },
+
         {
             title: "Action",
             name: "action",
