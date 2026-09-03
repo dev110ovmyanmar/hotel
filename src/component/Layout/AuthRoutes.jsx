@@ -67,6 +67,12 @@ import { BsBuildingFillGear, BsBuildings } from "react-icons/bs";
 import { AiOutlineSolution } from "react-icons/ai";
 import NetworkErrorPage from "../NetworkErrorPage/NetworkErrorPage";
 import { Grid } from "antd";
+import PreAuditCheckPage from "../../pages/NightAudit/PreAuditCheck/PreAuditCheckPage";
+import CheckBookingPage from "../../pages/NightAudit/CheckBooking/CheckBookingPage";
+import RoomChargeTablePage from "../../pages/NightAudit/RoomChargeTable/RoomChargeTablePage";
+import UnsettledFoliosPage from "../../pages/NightAudit/UnsettledFolios/UnsettledFoliosPage";
+import NightAuditPostingPage from "../../pages/NightAudit/NightAuditPosting/NightAuditPostingPage";
+import CreateNewDayPage from "../../pages/NightAudit/CreateNewDay/CreateNewDayPage";
 
 const Dashboard = lazy(() => import("../../pages/Dashboard/Dashboard"));
 const Calendar = lazy(() => import("../../pages/Calendar/Calendar"));
@@ -268,7 +274,7 @@ const FoodBeverageOrderList = lazy(
 );
 
 const PaymentHistoryAllList = lazy(
-  () => import ("../../pages/PaymentHistoryAll/PaymentHistoryAllList")
+  () => import("../../pages/PaymentHistoryAll/PaymentHistoryAllList")
 );
 
 const PendingPaymentsList = lazy(
@@ -438,7 +444,7 @@ export const authRoutes = [
     path: "/reservations/:bookingId/service-order",
     component: <ServiceOrderList />,
   },
-   {
+  {
     key: 3.6,
     path: "/reservations/:bookingId/food-beverage-order",
     component: <FoodBeverageOrderList />,
@@ -858,6 +864,42 @@ export const authRoutes = [
     requiredRole: FRONT_OFFICE,
   },
   {
+    key: 13.1,
+    path: "/night-audit/pre-audit-check",
+    component: <PreAuditCheckPage />,
+    requiredRole: FRONT_OFFICE,
+  },
+  {
+    key: 13.2,
+    path: "/night-audit/check-booking",
+    component: <CheckBookingPage />,
+    requiredRole: FRONT_OFFICE,
+  },
+  {
+    key: 13.3,
+    path: "/night-audit/room-charge-table",
+    component: <RoomChargeTablePage />,
+    requiredRole: FRONT_OFFICE,
+  },
+  {
+    key: 13.4,
+    path: "/night-audit/unsettled-folios",
+    component: <UnsettledFoliosPage />,
+    requiredRole: FRONT_OFFICE,
+  },
+  {
+    key: 13.5,
+    path: "/night-audit/night-audit-posting",
+    component: <NightAuditPostingPage />,
+    requiredRole: FRONT_OFFICE,
+  },
+  {
+    key: 13.6,
+    path: "/night-audit/create-new-day",
+    component: <CreateNewDayPage />,
+    requiredRole: FRONT_OFFICE,
+  },
+  {
     key: 14,
     id: "/hr-management",
     label: "HR Management",
@@ -945,7 +987,7 @@ export const authRoutes = [
         label: "Pending Payment",
         path: "/payment-&-billing/pending-payment",
         icon: <DollarOutlined style={{ fontSize: "20px" }} />,
-        component: <PendingPaymentsList/>,
+        component: <PendingPaymentsList />,
         // permission: PERMISSIONS.TAX_LIST,
       },
       {
