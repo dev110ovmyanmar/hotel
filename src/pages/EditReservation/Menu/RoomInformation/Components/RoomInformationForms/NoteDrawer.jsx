@@ -165,7 +165,7 @@ const NoteDrawer = ({ mode, open, onClose, selectedData, onSuccess }) => {
       open={open}
       onClose={onClose}
       title="Room Notes"
-      size={500}
+      size={550}
       extra={
         !isView && (
           <Button
