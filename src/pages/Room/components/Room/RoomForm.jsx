@@ -192,7 +192,7 @@ const RoomForm = ({
       <Drawer
         open={drawerOpen}
         onClose={handleClose}
-        size={600}
+        size={550}
         title={
           <div className="flex justify-between items-center">
             <span>

@@ -106,6 +106,18 @@ export const capitalizeFirstLetter = (str) => {
   }
 }
 
+// Capitalize All Letters of a String
+export const capitalizeAllLetter = (str) => {
+  if (str) {
+    // Capitalize the first character of the string using charAt(0) and toUpperCase()
+    const capitalLetter = str.toUpperCase();
+    return capitalLetter;
+  } else {
+    return null;
+  }
+}
+
+
 /**
  * Use this method to check file size and type
  *
@@ -239,13 +251,3 @@ export const borderDarkMode = `
 export const textColorDarkMode =  `
   dark:!text-blue-500
 `;
-
-/**
- * Capitalizes the first character of a string
- * @param {string} str - The string to capitalize
- * @returns {string} - Capitalized string or empty string if input is invalid
- */
-function capitalizeFirst(str) {
-  if (!str || typeof str !== 'string') return '';
-  return str.charAt(0).toUpperCase() + str.slice(1);
-}

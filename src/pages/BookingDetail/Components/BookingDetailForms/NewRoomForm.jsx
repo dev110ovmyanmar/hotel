@@ -73,7 +73,7 @@ const NewRoomForm = ({ open, onClose, reservationId }) => {
     <Drawer
       open={open}
       onClose={onClose}
-      size={450}
+      size={550}
       destroyOnClose
       title="Room Move"
       footer={

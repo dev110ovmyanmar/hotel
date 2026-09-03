@@ -10,8 +10,6 @@ import {
   Checkbox,
   Switch,
   InputNumber,
-  Tooltip,
-  Divider,
   Radio,
   Space,
 } from "antd";
@@ -51,6 +49,7 @@ const RatePlanForm = ({
   const [form] = Form.useForm();
   const { hasPermission } = usePermission();
   const canEdit = hasPermission(PERMISSIONS.RATE_PLAN_EDIT);
+  const mealPricingType = Form.useWatch("pricingType", form);
 
   const isView = mode === "view";
   const isEdit = mode === "edit";
@@ -505,22 +504,7 @@ const RatePlanForm = ({
                   unCheckedChildren="False"
                 />
               </Form.Item>
-              {/* <Form.Item
-                label="Meal Pricing"
-                name="mealPricingMode"
-                rules={[
-                  {
-                    required: true,
-                  },
-                ]}
-              >
-                <Radio.Group disabled={isView}>
-                  <Space direction="horizontal">
-                    <Radio value="included"> Included in Room Rate</Radio>
-                    <Radio value="separate"> Charge Separately</Radio>
-                  </Space>
-                </Radio.Group>
-              </Form.Item> */}
+
             </div>
             <Form.Item
               label="Meal Pricing"
@@ -533,8 +517,8 @@ const RatePlanForm = ({
             >
               <Radio.Group disabled={isView}>
                 <Space direction="horizontal">
-                  <Radio value="included"> Included in Room Rate</Radio>
-                  <Radio value="separate"> Charge Separately</Radio>
+                  <Radio value="included" className="custom-disabled-checkbox"> Included in Room Rate</Radio>
+                  <Radio value="separate" className="custom-disabled-checkbox"> Charge Separately</Radio>
                 </Space>
               </Radio.Group>
             </Form.Item>

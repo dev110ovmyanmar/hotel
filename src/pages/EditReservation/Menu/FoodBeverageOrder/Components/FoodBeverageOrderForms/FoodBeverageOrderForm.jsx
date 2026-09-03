@@ -35,7 +35,7 @@ import { values } from "lodash";
 import { AiOutlineCheckSquare } from "react-icons/ai";
 import { AiOutlineCloseSquare } from "react-icons/ai";
 import { BookTemplateIcon, Check } from "lucide-react";
-import PriceTag from "../../../../../../component/PriceTag/PriceTag";
+import PriceTag, { priceFormatter, priceParser } from "../../../../../../component/PriceTag/PriceTag";
 import { InfoRow, SectionCard } from "../../../RoomInformation/Components/RoomInformationForms/DailyBreakDownDetailFormDrawer";
 
 
@@ -515,21 +515,34 @@ const FoodBeverageOrderForm = ({
       key: "menu",
     },
     {
-      title: "Quantity",
-      dataIndex: "quantity",
-      key: "quantity",
+      title: "Price",
+      key: "price",
+      render: (record) => {
+        return (
+          <div>{record?.quantity} x {record?.menuItem.price}</div>
+        )
+      }
+    },
+    {
+      title: "Add on Price",
+      dataIndex: "modifierTotal",
+      key: "modifierTotal",
+      render: (text) => {
+        return (
+          <div>{text.toLocaleString()}</div>
+        )
+      },
       align: "center"
     },
     {
-      title: "Price",
-      dataIndex: ["menuItem", "price"],
-      key: "price",
-      align: "right"
-    },
-    {
-      title: "Modifer Total",
-      dataIndex: "modifierTotal",
-      key: "modifierTotal",
+      title: "Total",
+      dataIndex: "grandTotal",
+      key: "grandTotal",
+      render: (text) => {
+        return (
+          <div>{text.toLocaleString()}</div>
+        )
+      },
       align: "right"
     },
   ];
@@ -539,7 +552,7 @@ const FoodBeverageOrderForm = ({
       <Drawer
         open={open}
         onClose={handleOnClose}
-        size={650}
+        size={600}
         destroyOnClose
         title={
           <div className="flex justify-between items-center">
@@ -1132,6 +1145,8 @@ const FoodBeverageOrderForm = ({
                                                 MMK
                                               </div>
                                             }
+                                            formatter={priceFormatter}
+                                            parser={priceParser}
                                             disabled
                                           />
                                         </Form.Item>
@@ -1376,6 +1391,7 @@ const FoodBeverageOrderForm = ({
                 </Form.List>
               </Space>
             </Form>
+
         }
 
         {

@@ -40,7 +40,7 @@ const OvertimeChargeForm = ({ open, onClose, reservationId }) => {
         title="Overtime Charge"
         open={open}
         onClose={onClose}
-        size={650}
+        size={550}
         destroyOnClose
       >
         <Form layout="vertical" form={form} onFinish={onFinish}>

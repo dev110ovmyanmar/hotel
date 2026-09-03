@@ -33,7 +33,7 @@ const ServiceAddOnForm = ({
   const isAdd = mode === "add";
   const isEdit = mode === "edit";
 
-  const selectedServiceUuid = Form.useWatch("selectService", form);
+  // const selectedServiceUuid = Form.useWatch("selectService", form);
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
 
   const reservationUuid = isAdd
@@ -67,40 +67,43 @@ const ServiceAddOnForm = ({
     invalidateKeys: [["service-addon"]],
   });
 
+
   const currentStatusCode = orderDetails?.addonStatus?.code;
   const addonStatus =
-    initData?.statuses?.addon_status
-      ?.filter((status) => {
-        if (isView) {
-          return status.code === currentStatusCode;
-        }
-        if (isEdit) {
-          if (currentStatusCode === "completed") {
-            return status.code === "completed";
-          }
-          if (currentStatusCode === "cancelled") {
-            return status.code === "cancelled";
-          }
-          if (currentStatusCode === "no_show") {
-            return status.code === "no_show";
-          }
-          if (currentStatusCode === "in_progress") {
-            return (
-              status.code === "in_progress" ||
-              status.code === "completed" ||
-              status.code === "cancelled" ||
-              status.code === "no_show"
-            );
-          }
-          return true;
+     initData?.statuses?.addon_status
+     ?.filter((status) => {
+      if (status.code === "completed" || status.code === "no_show") {
+        return false;
+      }
+
+      if (isView) {
+        return status.code === currentStatusCode;
+      }
+
+      if (isEdit) {
+        if (currentStatusCode === "cancelled") {
+          return status.code === "cancelled";
         }
 
-        return status.code === "pending" || status.code === "in_progress";
-      })
-      ?.map((status) => ({
-        value: status.uuid,
-        label: status.name,
-      })) || [];
+        if (currentStatusCode === "in_progress") {
+          return (
+            status.code === "in_progress" ||
+            status.code === "cancelled"
+          );
+        }
+
+        return true;
+      }
+
+      return (
+        status.code === "pending" ||
+        status.code === "in_progress"
+      );
+    })
+    ?.map((status) => ({
+      value: status.uuid,
+      label: status.name,
+    })) || [];
 
   const defaultStatus = initData?.statuses?.addon_status?.find(
     (status) => status.code === "pending",
@@ -198,7 +201,7 @@ const ServiceAddOnForm = ({
   return (
     <Drawer
       destroyOnClose
-      size={500}
+      size={550}
       open={open}
       onClose={handleClose}
       title={
@@ -235,9 +238,6 @@ const ServiceAddOnForm = ({
         }}
       >
         {!isAdd && (
-          // <Form.Item label="Room No" name="roomNo">
-          //   <Select placeholder="Select a Room" options={rooms} allowClear />
-          // </Form.Item>
           <Form.Item
             label="Room No"
             name="roomNo"
@@ -265,23 +265,6 @@ const ServiceAddOnForm = ({
         )}
 
         <div className="grid grid-cols-2 gap-4">
-          {/* <Form.Item
-            label="Select Service"
-            name="selectService"
-            rules={[{ required: true, message: "Please select a service" }]}
-          >
-            <Select
-              showSearch
-              options={services}
-              placeholder="Select Order Service"
-              onChange={() => form.setFieldValue("servicePackage", undefined)}
-              filterOption={(input, option) =>
-                (option?.label ?? "")
-                  .toLowerCase()
-                  .includes(input.toLowerCase())
-              }
-            />
-          </Form.Item> */}
           <Form.Item
             label="Select Service"
             name="selectService"
@@ -296,6 +279,7 @@ const ServiceAddOnForm = ({
               <Input readOnly={isView} />
             ) : (
               <Select
+                allowClear
                 showSearch={{
                   filterOption: (input, option) =>
                     (option?.label ?? "")
@@ -325,23 +309,7 @@ const ServiceAddOnForm = ({
         <Form.Item label="Note" name="note">
           <TextArea />
         </Form.Item>
-
-        {/* <Form.Item
-          label="Add On Status"
-          name="status"
-          rules={[
-            { required: true, message: "Please select an add on status" },
-          ]}
-        >
-          <Select
-            showSearch
-            filterOption={(input, option) =>
-              (option?.label ?? "").toLowerCase().includes(input.toLowerCase())
-            }
-            options={addonStatus}
-            placeholder="Select Add On Status"
-          />
-        </Form.Item> */}
+      
         <Form.Item
           label="Add On Status"
           name="status"

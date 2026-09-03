@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import { Divider, Steps } from 'antd';
+import {  Steps } from 'antd';
 const StepsComponent = ({
   stepValue
 }) => {
@@ -12,10 +11,13 @@ const StepsComponent = ({
         2xl:text-lg
     `;
   return (
-    <>
+    <div className='!my-3'>
       <Steps
         current={stepValue}
         items={[
+           {
+            title: <span className={textClass}>Pre Audit Check</span>,
+          },
           {
             title: <span className={textClass}>Check Booking</span>,
           },
@@ -34,7 +36,7 @@ const StepsComponent = ({
         ]}
       />
 
-    </>
+    </div>
   );
 };
 export default StepsComponent;

@@ -141,7 +141,7 @@ const CategoryForm = ({
           }
         </div>
       }
-      size={550} // size={500} is not a valid AntD prop, use width
+      size={550} // size={550} is not a valid AntD prop, use width
       afterOpenChange={(open) => {
         if (open && isAdd) {
           form.resetFields();

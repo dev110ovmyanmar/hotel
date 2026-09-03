@@ -73,14 +73,9 @@ const AddPaymentForm = ({
 
     const selectedMethod = Form.useWatch("paymentMethod", form);
 
-    // --- AUTOMATICALLY FILL AND SELECT COMPLETED STATUS IN UI ---
-    useEffect(() => {
-        if (open && paymentCompletedStatus?.uuid) {
-            form.setFieldsValue({
-                paymentStatus: paymentCompletedStatus.uuid,
-            });
-        }
-    }, [open, paymentCompletedStatus, form]);
+    const cashsMethod = paymentMethodsData.find(
+          (method) => method.name?.trim().toLowerCase() === "cashs",
+        );
 
     // --- Transform providerTypes into Ant Design Segmented options ---
     const segmentedOptions = useMemo(() => {
@@ -177,15 +172,15 @@ const AddPaymentForm = ({
         <Drawer
             open={open}
             onClose={onClose}
-            size={550}
-            afterOpenChange={(open) => {
-                if (open) {
-                    form.resetFields();
-                    form.setFieldsValue({
-                        paymentStatus: paymentCompletedStatus?.uuid,
-                    });
-                }
+            afterOpenChange={(onClose) => {
+                form.resetFields();
+                form.setFieldsValue({
+                    paymentStatus: paymentCompletedStatus?.uuid,
+                    paymentMethod: cashsMethod?.uuid,
+                });
+                setSelectedProviderUuid("all");
             }}
+            size={550}
             title={
                 <div className="flex justify-between items-center">
                     <span className="font-semibold text-lg">Add Payment</span>

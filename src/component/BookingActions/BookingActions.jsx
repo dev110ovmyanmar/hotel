@@ -45,6 +45,7 @@ export const status_actions = {
   CONFIRMED: ["overtimeCharges", "addNote", "addDeposit"],
   CHECKED_IN: [
     "addPayment",
+    "addDeposit",
     "overtimeCharges",
     "printInvoice",
     "addNote",

@@ -186,7 +186,7 @@ const disabledDate = (current, info) => {
     <Drawer
       open={drawerOpen}
       onClose={handleClose}
-      size={650}
+      size={600}
       title={
         <div className="flex justify-between items-center">
           <span
@@ -235,12 +235,25 @@ const disabledDate = (current, info) => {
             name="roomTypeUuid"
             rules={[{ required: true, message: "Please select a room type" }]}
           >
-            <Select
+            {/* <Select
               placeholder="Select Room Type"
               options={roomTypeOptions}
               onChange={handleRoomTypeChange}
               loading={roomAvailabilitySearchs.isPending}
-            />
+            /> */}
+             <Select
+                allowClear
+                showSearch={{
+                filterOption: (input, option) =>
+                (option?.label ?? "")
+                 .toLowerCase()
+                 .includes(input.toLowerCase()),
+                  }}
+                   options={roomTypeOptions}
+                   placeholder="Select Room Type"
+                   onChange={handleRoomTypeChange}
+                   loading={roomAvailabilitySearchs.isPending}
+                          />
           </Form.Item>
 
           <Form.Item

@@ -41,7 +41,7 @@ const OvertimeChargeCreateForm = ({ open, onClose, reservationId }) => {
       title="Overtime Charge"
       open={open}
       onClose={onClose}
-      size={450}
+      size={550}
       destroyOnClose
       extra={<Button type="primary">Create</Button>}
     >

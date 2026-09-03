@@ -290,7 +290,7 @@ const StaffsForm = ({
               name="position"
               rules={[{ required: true, message: "Please enter position" }]}
             >
-              <Input placeholder="Enter Room Type" />
+              <Input placeholder="Enter Position" />
             </Form.Item>
 
             <Form.Item
