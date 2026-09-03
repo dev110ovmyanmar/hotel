@@ -126,7 +126,7 @@ export const getAmendReservationMenuItems = ({
               key: "room_upgrade",
               label: "Upgrade Room",
               icon: <ArrowUpOutlined />,
-              disabled: checkDisabled("room_upgrade"),
+              disabled: checkDisabled("room_upgrade") || record?.postedToFolio,
               ...getDisabledStyles("room_upgrade"),
               onClick: () => {
                 if (!checkDisabled("room_upgrade")) {
@@ -135,12 +135,18 @@ export const getAmendReservationMenuItems = ({
                   setRatePlanUuid(record?.ratePlan?.uuid);
                 }
               },
+              style: record?.postedToFolio
+                ? {
+                  color: "#a2a0a0",
+                  cursor: "not-allowed",
+                }
+                : {},
             },
             {
               key: "room_downgrade",
               label: "Downgrade Room",
               icon: <ArrowDownOutlined />,
-              disabled: checkDisabled("room_downgrade"),
+              disabled: checkDisabled("room_downgrade") || record?.postedToFolio,
               ...getDisabledStyles("room_downgrade"),
               onClick: () => {
                 if (!checkDisabled("room_downgrade")) {
@@ -149,6 +155,12 @@ export const getAmendReservationMenuItems = ({
                   setRatePlanUuid(record?.ratePlan?.uuid);
                 }
               },
+              style: record?.postedToFolio
+                ? {
+                  color: "#a2a0a0",
+                  cursor: "not-allowed",
+                }
+                : {},
             },
             {
               key: "add_room",
@@ -184,11 +196,17 @@ export const getAmendReservationMenuItems = ({
               key: "rate_change",
               label: "Update Rates",
               icon: <DollarOutlined />,
-              disabled: checkDisabled("rate_change"),
+              disabled: checkDisabled("rate_change") || record?.postedToFolio,
               ...getDisabledStyles("rate_change"),
               onClick: () =>
                 !checkDisabled("rate_change") &&
                 handleAction("rate_change", record),
+              style: record?.postedToFolio
+                ? {
+                  color: "#a2a0a0",
+                  cursor: "not-allowed",
+                }
+                : {},
             },
           ],
         },
