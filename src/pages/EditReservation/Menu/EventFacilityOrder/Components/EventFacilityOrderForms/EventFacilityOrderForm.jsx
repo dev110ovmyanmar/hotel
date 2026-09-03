@@ -126,7 +126,7 @@ const EventFacilityOrderForm = ({
         currentStatus === "confirmed" &&
         item.code === "pending") ||
       (item.code === "completed" &&
-        reservationRoom?.roomStatus?.code !== "checkedin"),
+        reservationRoom?.roomStatus?.code === "checkedin"),
   }));
 
   useEffect(() => {

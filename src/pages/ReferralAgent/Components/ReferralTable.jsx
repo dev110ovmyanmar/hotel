@@ -40,7 +40,7 @@ const ReferralTable = ({
       title: "Code",
       dataIndex: "code",
       key: "code",
-      render: (text) => <div>{text}</div>,
+      render: (text) => text || "-",
     },
     {
       title: "Email",
