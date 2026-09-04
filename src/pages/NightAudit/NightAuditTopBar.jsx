@@ -5,9 +5,7 @@ import { useLocation } from "react-router-dom";
 import useApiQuery from "../../hooks/useApiQuery";
 import { preAuditCheck } from "../../api/nightAuditApi";
 
-const NightAuditTopBar = ({
-    setNightAuditStarted
-}) => {
+const NightAuditTopBar = () => {
     const location = useLocation();
     const { data: preAuditChecksData, isLoading, error } = useApiQuery({
         fetchQueryName: "pre-audit-checks",
