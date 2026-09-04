@@ -28,6 +28,7 @@ import PriceTag from "../../../../../component/PriceTag/PriceTag";
 import AdjustmentDrawer from "./AdjustmentDrawer";
 import RebateDrawer from "./RebateDrawer";
 import VoidDrawer from "./VoidDrawer";
+import FolioEditFormDrawer from "./FolioEditFormDrawer";
 import Toast from "../../../../../component/Toast/Toast";
 
 const FolioTitle = ({ rest }) => (
@@ -171,6 +172,8 @@ const FolioOperationsTable = ({
   const [rebatDrawerOpen, setRebateDrawerOpen] = useState(false);
   const [voidDrawerOpen, setVoidDrawerOpen] = useState(false);
   const [selectedLine, setSelectedLine] = useState(null);
+  const [folioEditDrawerOpen, setFolioEditDrawerOpen] = useState(false);
+  const [selectedFolioForEdit, setSelectedFolioForEdit] = useState(null);
 
   // Updated lineColumns with Adjustment column
   const lineColumns = [
@@ -371,15 +374,46 @@ const FolioOperationsTable = ({
       align: "center",
       render: (_, record) => {
         const isThisRowLoading = printingFolioUuid === record.uuid;
+
+        const items = [
+          {
+            key: 'edit',
+            label: 'Edit',
+            icon: <EditOutlined />,
+            onClick: () => {
+              setSelectedFolioForEdit(record);
+              setFolioEditDrawerOpen(true);
+            },
+          },
+          {
+            key: 'print',
+            label: 'Print',
+            icon: <PrinterOutlined />,
+            disabled: !!printingFolioUuid,
+            onClick: () => {
+              if (!printingFolioUuid && onPrintFolio) {
+                onPrintFolio(record);
+              }
+            },
+          },
+        ];
+
         return (
           <Spin
             indicator={<LoadingOutlined spin className="text-blue-500" />}
             spinning={isThisRowLoading}
           >
-            <PrinterOutlined
-              onClick={() => !printingFolioUuid && onPrintFolio && onPrintFolio(record)}
-              className={`text-blue-500 hover:text-blue-700 cursor-pointer text-base ${printingFolioUuid ? 'opacity-50 pointer-events-none' : ''}`}
-            />
+            <Dropdown
+              menu={{ items }}
+              placement="bottomRight"
+              trigger={['click']}
+            >
+              <Button
+                type="text"
+                icon={<MoreOutlined />}
+                className="text-gray-500 hover:text-gray-700"
+              />
+            </Dropdown>
           </Spin>
         );
       },
@@ -677,6 +711,17 @@ const FolioOperationsTable = ({
         lineData={selectedLine}
         onConfirm={handleVoidConfirm}
         loading={isVording}
+      />
+
+      {/* Folio Edit Drawer */}
+      <FolioEditFormDrawer
+        open={folioEditDrawerOpen}
+        onClose={() => {
+          setFolioEditDrawerOpen(false);
+          setSelectedFolioForEdit(null);
+        }}
+        folioData={selectedFolioForEdit}
+        reservationUuid={selectedFolioForEdit?.reservation?.uuid}
       />
     </>
   );

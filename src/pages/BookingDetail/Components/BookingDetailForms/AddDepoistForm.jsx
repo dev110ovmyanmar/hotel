@@ -14,11 +14,13 @@ import {
   Divider,
   Segmented,
   InputNumber,
+  Alert,
 } from "antd";
 import { createFolioPaymentDeposit } from "../../../../api/reservationSectionApi";
 import { reservationMeta } from "../../../../api/reservationSectionApi";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
 import { useApiQuery } from "../../../../hooks/useApiQuery";
+import Toast from "../../../../component/Toast/Toast";
 import {
   priceFormatter,
   priceParser,
@@ -68,11 +70,30 @@ const AddDepoistForm = ({
 
   // Track selected category filter by UUID state
   const [selectedProviderUuid, setSelectedProviderUuid] = useState("all");
+  const [selectedFolioGrandTotal, setSelectedFolioGrandTotal] = useState(null);
+  const [isGrandTotalZero, setIsGrandTotalZero] = useState(false);
+
   const selectedMethod = Form.useWatch("paymentMethod", form);
+  const selectedFolioUuid = Form.useWatch("folio", form);
 
   const cashMethod = paymentMethodsData.find(
       (method) => method.name?.trim().toLowerCase() === "cashs",
     );
+
+  // --- Check grandTotal when folio selection changes ---
+  useEffect(() => {
+    if (selectedFolioUuid && folios.length > 0) {
+      const selectedFolio = folios.find(folio => folio.uuid === selectedFolioUuid);
+      if (selectedFolio) {
+        const total = selectedFolio.grandTotal;
+        setSelectedFolioGrandTotal(total);
+        setIsGrandTotalZero(total === 0 || total === null || total === undefined);
+      }
+    } else {
+      setSelectedFolioGrandTotal(null);
+      setIsGrandTotalZero(false);
+    }
+  }, [selectedFolioUuid, folios]);
 
   // --- Transform providerTypes into Ant Design Segmented options ---
   const segmentedOptions = useMemo(() => {
@@ -153,12 +174,20 @@ const AddDepoistForm = ({
       onSuccess: () => {
         form.resetFields();
         setSelectedProviderUuid("all");
+        setIsGrandTotalZero(false);
+        setSelectedFolioGrandTotal(null);
         onClose();
       },
     },
   });
 
   const onFinish = (values) => {
+    // Prevent submission if grandTotal is zero
+    if (isGrandTotalZero) {
+      Toast.error("Cannot add deposit. The selected folio has a zero balance.");
+      return;
+    }
+
     const payload = {
       reservation: { uuid: bookingDetails?.reservation?.uuid },
       guest: { uuid: values.guest },
@@ -187,6 +216,14 @@ const AddDepoistForm = ({
     return method.type?.uuid === selectedProviderUuid;
   });
 
+  // Get selected folio details for display
+  const getSelectedFolioDetails = () => {
+    if (!selectedFolioUuid) return null;
+    return folios.find(folio => folio.uuid === selectedFolioUuid);
+  };
+
+  const selectedFolio = getSelectedFolioDetails();
+
   return (
     <Drawer
       open={open}
@@ -198,6 +235,8 @@ const AddDepoistForm = ({
           paymentMethod: cashMethod?.uuid,
         });
         setSelectedProviderUuid("all");
+        setIsGrandTotalZero(false);
+        setSelectedFolioGrandTotal(null);
       }}
       size={550}
       destroyOnHidden
@@ -211,6 +250,7 @@ const AddDepoistForm = ({
               form.submit();
             }}
             loading={isPending}
+            disabled={isGrandTotalZero}
           >
             Create
           </Button>
@@ -374,26 +414,56 @@ const AddDepoistForm = ({
               </Form.Item>
             </Col>
 
-            <Col span={12}>
-              <Form.Item
-                label={<span className="font-medium">Guest</span>}
-                name="guest"
-              >
-                <Select
-                  showSearch={{
-                    filterOption: (input, option) =>
-                      (option?.label ?? "")
-                        .toLowerCase()
-                        .includes(input.toLowerCase()),
-                  }}
-                  placeholder="Select a guest"
-                  options={guestOptions}
-                  className="w-full rounded"
-                />
-              </Form.Item>
-            </Col>
+            {!isGrandTotalZero && (
+              <Col span={12}>
+                <Form.Item
+                  label={<span className="font-medium">Guest</span>}
+                  name="guest"
+                >
+                  <Select
+                    showSearch={{
+                      filterOption: (input, option) =>
+                        (option?.label ?? "")
+                          .toLowerCase()
+                          .includes(input.toLowerCase()),
+                    }}
+                    placeholder="Select a guest"
+                    options={guestOptions}
+                    className="w-full rounded"
+                  />
+                </Form.Item>
+              </Col>
+            )}
           </Row>
 
+          {/* --- ALERT: Show when grandTotal is zero --- */}
+          {selectedFolio && isGrandTotalZero && (
+            <Alert
+              message="Cannot Add Deposit"
+              description={
+                <div>
+                  <p className="mb-1">
+                    <strong>Folio:</strong> {selectedFolio.folioNo}
+                  </p>
+                  <p className="mb-0">
+                    <strong>Grand Total:</strong> {selectedFolio.grandTotal !== null && selectedFolio.grandTotal !== undefined
+                      ? `${selectedFolio.grandTotal.toLocaleString()} MMK`
+                      : '0 MMK'}
+                  </p>
+                   <p className="mt-2 mb-0 text-red-600">
+                      This folio has a zero balance. No deposits can be added.
+                  </p>
+                </div>
+              }
+              type="warning"
+              showIcon
+              className="mb-4"
+            />
+          )}
+
+          {/* --- CONDITIONALLY RENDER OTHER FIELDS --- */}
+          {!isGrandTotalZero && (
+            <>
           <Row gutter={16}>
             <Col span={12}>
               <Form.Item
@@ -500,6 +570,8 @@ const AddDepoistForm = ({
               className="rounded w-full"
             />
           </Form.Item>
+            </>
+          )}
         </Form>
       )}
     </Drawer>

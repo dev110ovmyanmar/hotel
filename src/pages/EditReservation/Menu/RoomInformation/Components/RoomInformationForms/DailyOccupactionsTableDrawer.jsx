@@ -40,6 +40,8 @@ const DailyOccupactionsTableDrawer = ({
         },
     });
 
+    const roomType = data?.roomType || {};
+
     // Check Data is past or prensent
     const isDatePast = (date) => {
         const today = dayjs();
@@ -85,7 +87,7 @@ const DailyOccupactionsTableDrawer = ({
 
     const reservationCode = data?.reservationNo || "-";
     const guestName = data?.guestName;
-    const roomLabel = data?.roomType + (data?.roomNo ? ` (${data?.roomNo})` : "");
+    const roomLabel = data?.roomType?.name + (data?.roomNo ? ` (${data?.roomNo})` : "");
 
 
     const columns = [
@@ -268,6 +270,7 @@ const DailyOccupactionsTableDrawer = ({
             <DailyOccupationDetailDrawer
                 open={detailDrawerOpen}
                 data={selectedRow}
+                roomType={roomType}
                 reservationRoomUuid={selectedData?.uuid}
                 initialEditMode={initialEditMode}
                 isPastDate={selectedRow ? isDatePast(selectedRow.stayDate) : false}

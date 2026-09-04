@@ -8,7 +8,7 @@ import {
     Divider,
     Space,
     Badge,
-    message
+    message,
 } from "antd";
 import {
     PlusOutlined,
@@ -51,7 +51,7 @@ const InfoRow = ({ label, value, highlight }) => (
             className={`flex justify-end gap-1 ${highlight
                 ? 'text-red-500 dark:text-red-400'
                 : ''
-            }`}
+                }`}
         >
             {highlight && <span>-</span>}
             <PriceTag value={value} />
@@ -64,6 +64,7 @@ const DailyOccupationDetailDrawer = ({
     open,
     onClose,
     data,
+    roomType,
     reservationRoomUuid,
     initialEditMode = false,
     isPastDate = false,
@@ -71,6 +72,19 @@ const DailyOccupationDetailDrawer = ({
 }) => {
     const [form] = Form.useForm();
     const [isEditing, setIsEditing] = useState(false);
+
+    const maxAdults = roomType?.maxAdults || 0;
+    const maxChildren = roomType?.maxChildren || 0;
+    const maxExtraBed = roomType?.maxExtraBed || 0;
+    const maxOccupancy = roomType?.maxOccupancy || 0;
+
+    const maxLimits = {
+        adults: maxAdults,
+        extraBedCount: maxExtraBed,
+        extraPersonCount: maxOccupancy,
+        babyCotCount: maxOccupancy,
+    };
+
 
     const childrenAges = Form.useWatch("childrenAges", form) || [];
 
@@ -209,40 +223,76 @@ const DailyOccupationDetailDrawer = ({
                             icon={<UserOutlined className="text-emerald-500" />}
                         >
                             {isEditing ? (
-                                <div className="grid grid-cols-3 gap-x-4 gap-y-2">
-                                    <Form.Item name="adults" label="Adults" className="mb-2">
-                                        <InputNumber min={0} className="w-full rounded-lg" />
-                                    </Form.Item>
-
-                                    <Form.Item label="Children" className="mb-2">
-                                        <div className="px-2 py-1 !w-[95px] rounded-md border border-slate-200 dark:border-gray-700 bg-slate-50 dark:bg-gray-900 font-semibold text-slate-700 dark:text-slate-300">
-                                            {childrenAges.length}
+                                <div className="grid grid-cols-2 gap-x-4 gap-y-2">
+                                    <div>
+                                        <div className="flex items-center justify-between mb-1">
+                                            <label className="ant-form-item-label">Adults &ensp;
+                                            <span className="text-xs text-slate-400">Max: {maxLimits.adults}</span>
+                                            </label>
                                         </div>
-                                    </Form.Item>
+                                        <Form.Item name="adults"
+                                            className="mb-2"
+                                        >
+                                            <InputNumber
+                                                min={0}
+                                                className="!w-full rounded-lg" />
+                                        </Form.Item>
+                                    </div>
 
-                                    <Form.Item
-                                        name="extraBedCount"
-                                        label="Extra Bed"
-                                        className="mb-2"
-                                    >
-                                        <InputNumber min={0} className="w-full rounded-lg" />
-                                    </Form.Item>
+                                    <div>
+                                        <div className="flex items-center justify-between mb-1">
+                                            <label className="ant-form-item-label">Children &ensp;
+                                            <span className="text-xs text-slate-400">Max: {maxChildren}</span>
+                                            </label>
+                                        </div>
+                                        <Form.Item className="mb-2">
+                                            <div className="px-2 py-1 !w-full rounded-md border border-slate-200 dark:border-gray-700 bg-slate-50 dark:bg-gray-900 font-semibold text-slate-700 dark:text-slate-300">
+                                                {childrenAges.length}
+                                            </div>
+                                        </Form.Item>
+                                    </div>
 
-                                    <Form.Item
-                                        name="extraPersonCount"
-                                        label="Extra Person"
-                                        className="mb-2"
-                                    >
-                                        <InputNumber min={0} className="w-full rounded-lg" />
-                                    </Form.Item>
+                                    <div>
+                                        <div className="flex items-center justify-between mb-1">
+                                            <label className="ant-form-item-label">Extra Bed &ensp;
+                                            <span className="text-xs text-slate-400">Max: {maxLimits.extraBedCount}</span>
+                                            </label>
+                                        </div>
+                                        <Form.Item
+                                            name="extraBedCount"
+                                            className="mb-2"
+                                        >
+                                            <InputNumber min={0} className="!w-full rounded-lg" />
+                                        </Form.Item>
+                                    </div>
 
-                                    <Form.Item
-                                        name="babyCotCount"
-                                        label="Baby Cot"
-                                        className="mb-2"
-                                    >
-                                        <InputNumber min={0} className="w-full rounded-lg" />
-                                    </Form.Item>
+                                    <div>
+                                        <div className="flex items-center justify-between mb-1">
+                                            <label className="ant-form-item-label">Extra Person &ensp;
+                                            <span className="text-xs text-slate-400">Max: {maxLimits.extraPersonCount}</span>
+                                            </label>
+                                        </div>
+                                        <Form.Item
+                                            name="extraPersonCount"
+                                            className="mb-2"
+                                        >
+                                            <InputNumber min={0} className="!w-full rounded-lg" />
+                                        </Form.Item>
+                                    </div>
+
+                                    <div>
+                                        <div className="flex items-center justify-between mb-1">
+                                            <label className="ant-form-item-label">Baby Cot &ensp;
+                                            <span className="text-xs text-slate-400">Max: {maxLimits.babyCotCount}</span>
+                                            </label>
+                                        </div>
+                                        <Form.Item
+                                            name="babyCotCount"
+                                            className="mb-2"
+                                        >
+                                            <InputNumber min={0} className="!w-full rounded-lg" />
+                                        </Form.Item>
+                                    </div>
                                 </div>
                             ) : (
                                 <div className="grid grid-cols-3 gap-y-3 gap-x-4 bg-slate-50/50 dark:bg-gray-900/40 p-3 rounded-lg border border-slate-100 dark:border-gray-700/50">
@@ -350,70 +400,6 @@ const DailyOccupationDetailDrawer = ({
                                 </>
                             )}
                         </SectionCard>
-
-                        {/* Meal Plan */}
-                        {/* <SectionCard
-                            title="Meal Plan"
-                            icon={<CoffeeOutlined className="text-amber-500" />}
-                        >
-                            {data.mealPlan ? (
-                                <div className="space-y-2">
-                                    <div className="flex justify-between items-start">
-                                        <div>
-                                            <h4 className="font-semibold text-slate-800 dark:text-white m-0 text-sm">
-                                                {data.mealPlan.name}
-                                            </h4>
-                                            {data.mealPlan.description && (
-                                                <p className="text-xs text-slate-400 m-0 mt-0.5">
-                                                    {data.mealPlan.description}
-                                                </p>
-                                            )}
-                                        </div>
-                                    </div>
-
-                                    <Space wrap className="pt-1">
-                                        {data.mealPlan.includesBreakfast && (
-                                            <Tag color="blue" className="rounded-md">
-                                                Breakfast
-                                            </Tag>
-                                        )}
-                                        {data.mealPlan.includesLunch && (
-                                            <Tag color="green" className="rounded-md">
-                                                Lunch
-                                            </Tag>
-                                        )}
-                                        {data.mealPlan.includesDinner && (
-                                            <Tag color="orange" className="rounded-md">
-                                                Dinner
-                                            </Tag>
-                                        )}
-
-                                        {
-                                            data.mealPlan.code == "RO" && (
-                                                <Tag color="yellow" className="rounded-md">
-                                                    Room Only
-                                                </Tag>
-                                            )
-                                        }
-                                    </Space>
-
-                                    <div className="border-t border-slate-100 dark:border-gray-700/60 pt-2 mt-3 space-y-1">
-                                        <InfoRow
-                                            label="Adult Price"
-                                            value={<span className="flex items-center justify-end gap-1"><PriceTag value={data.mealPlan.adultPrice || 0} /><span>MMK</span></span>}
-                                        />
-                                        <InfoRow
-                                            label="Child Price"
-                                            value={<span className="flex items-center justify-end gap-1"><PriceTag value={data.mealPlan.childPrice || 0} /><span>MMK</span></span>}
-                                        />
-                                    </div>
-                                </div>
-                            ) : (
-                                <span className="text-xs text-slate-400 italic">
-                                    No meal plan selected for this date.
-                                </span>
-                            )}
-                        </SectionCard> */}
 
                         {
                             !isEditing &&
