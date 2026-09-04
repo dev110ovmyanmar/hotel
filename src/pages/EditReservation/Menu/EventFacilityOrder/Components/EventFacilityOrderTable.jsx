@@ -21,96 +21,7 @@ const EventFacilityOrderTable = ({
   const [selectedData, setSelectedData] = useState(null);
   const { hasPermission } = usePermission();
 
-  // useEffect(() => {
-  //   const savedEvents = JSON.parse(localStorage.getItem("events")) || [];
-  //   setDataSource(savedEvents);
-  // }, []);
-
-  // const refreshData = () => {
-  //   const savedEvents = JSON.parse(localStorage.getItem("events")) || [];
-  //   setDataSource(savedEvents);
-  // };
-
-  // const columns = [
-  //   { title: "Order ID", dataIndex: "id", key: "id" },
-  //   { title: "Event Name", dataIndex: "name", key: "name" },
-  //   { title: "Guest Name", dataIndex: "name", key: "name" },
-  //   {
-  //     title: "Start Date Time",
-  //     key: "startDateTime",
-  //     render: (_, record) => {
-  //       const date = record.startDate
-  //         ? dayjs(record.startDate).format("DD/MM/YYYY")
-  //         : "-";
-  //       const time = record.startTime
-  //         ? dayjs(record.startTime).format("h:mm A")
-  //         : "";
-  //       return (
-  //         <div>
-  //           <div className="font-medium">{date}</div>
-  //           <div className="text-xs text-gray-500">{time}</div>
-  //         </div>
-  //       );
-  //     },
-  //   },
-  //   {
-  //     title: "End Date Time",
-  //     key: "endDateTime",
-  //     render: (_, record) => {
-  //       const date = record.endDate
-  //         ? dayjs(record.endDate).format("DD/MM/YYYY")
-  //         : "-";
-  //       const time = record.endTime
-  //         ? dayjs(record.endTime).format("h:mm A")
-  //         : "";
-  //       return (
-  //         <div>
-  //           <div className="font-medium">{date}</div>
-  //           <div className="text-xs text-gray-500">{time}</div>
-  //         </div>
-  //       );
-  //     },
-  //   },
-  //   {
-  //     title: "Status",
-  //     dataIndex: "status",
-  //     key: "status",
-  //   },
-  //   {
-  //     title: "Guest Name",
-  //     dataIndex: "guestName",
-  //     key: "guestName",
-  //   },
-
-  //   {
-  //     title: "Action",
-  //     fixed:"end",
-  //     align: "center",
-  //     render: (_, record) => (
-  //       <Space size="middle">
-  //         <Tooltip title="View Details">
-  //           <EyeOutlined
-  //             onClick={() => {
-  //               setSelectedData(record);
-  //               setMode("view");
-  //               setDrawerOpen(true);
-  //             }}
-  //           />
-  //         </Tooltip>
-
-  //         <Tooltip title="Edit">
-  //           <EditOutlined
-  //             onClick={() => {
-  //               setSelectedData(record);
-  //               setMode("edit");
-  //               setDrawerOpen(true);
-  //             }}
-  //           />
-  //         </Tooltip>
-  //       </Space>
-  //     ),
-  //   },
-  // ];
+  const actionDisable = reservationRoom?.roomStatus?.code === "cancelled";
 
   const columns = [
     {
@@ -184,99 +95,75 @@ const EventFacilityOrderTable = ({
       width: 100,
       render: (_, record) => <ColorStatusTag status={record?.status} />,
     },
+
     // {
     //   title: "Action",
+    //   key: "action",
     //   fixed: "end",
-    //   width: 80,
-    //   render: (_, record) => {
-    //     const smallStyle = { fontSize: "12px" };
+    //   align: "center",
+    //   render: (_, record) => (
+    //     <Space size="middle">
+    //         <Tooltip title="View Details">
+    //           <EyeOutlined
+    //             className="cursor-pointer text-blue-500 hover:text-blue-700"
+    //             onClick={() => {
+    //               setDrawerOpen(true);
+    //               setMode("view");
+    //               setSelectedData(record);
+    //             }}
+    //           />
+    //         </Tooltip>
 
-    //     const actions = [
-    //       {
-    //         key: "view",
-    //         label: "View",
-    //         icon: <EyeOutlined style={{ fontSize: "12px" }} />,
-    //         // permission: PERMISSIONS.PARTNER_VIEW,
-    //         onClick: () => {
-    //           setDrawerOpen(true);
-    //           setMode("view");
-    //           setSelectedData(record);
-    //         },
-    //       },
-    //       ...(record?.status?.code !== "completed" &&
-    //       record?.status?.code !== "cancelled"
-    //         ? [
-    //             {
-    //               key: "edit",
-    //               label: "Edit",
-    //               icon: <EditOutlined style={{ fontSize: "12px" }} />,
-    //               // permission: PERMISSIONS.PARTNER_EDIT,
-    //               onClick: () => {
-    //                 setDrawerOpen(true);
-    //                 setMode("edit");
-    //                 setSelectedData(record);
-    //               },
-    //             },
-    //           ]
-    //         : []),
-    //     ];
+    //       <Tooltip title="Edit">
+    //         <EditOutlined
+    //           className="cursor-pointer text-amber-500 hover:text-amber-700"
+    //           onClick={() => {
+    //             setDrawerOpen(true);
+    //             setMode("edit");
+    //             setSelectedData(record);
+    //           }
+    //           }
+    //         />
+    //       </Tooltip>
 
-    //     const items = actions
-    //       .filter(
-    //         (action) =>
-    //           (!action.permission || hasPermission(action.permission)) &&
-    //           !action.hidden,
-    //       )
-    //       .map((action) => ({
-    //         key: action.key,
-    //         onClick: action.onClick,
-    //         label: (
-    //           <Space size={4} style={smallStyle} onClick={action.onClick}>
-    //             {action.icon}
-    //             <span style={{ fontSize: "14px" }}>{action.label}</span>
-    //           </Space>
-    //         ),
-    //       }));
-
-    //     return (
-    //       <Dropdown menu={{ items }} trigger={["click"]}>
-    //         <MoreOutlined style={{ fontSize: "16px" }} />
-    //       </Dropdown>
-    //     );
-    //   },
+    //     </Space>
+    //   ),
     // },
-    {
-      title: "Action",
-      key: "action",
-      fixed: "end",
-      align: "center",
-      render: (_, record) => (
-        <Space size="middle">
-          <Tooltip title="View Details">
-            <EyeOutlined
-              className="cursor-pointer text-blue-500 hover:text-blue-700"
-              onClick={() => {
-                setDrawerOpen(true);
-                setMode("view");
-                setSelectedData(record);
-              }}
-            />
-          </Tooltip>
+    ...(!actionDisable
+      ? [
+          {
+            title: "Action",
+            key: "action",
+            fixed: "end",
+            align: "center",
+            render: (_, record) => (
+              <Space size="middle">
+                <Tooltip title="View Details">
+                  <EyeOutlined
+                    className="cursor-pointer text-blue-500 hover:text-blue-700"
+                    onClick={() => {
+                      setDrawerOpen(true);
+                      setMode("view");
+                      setSelectedData(record);
+                    }}
+                  />
+                </Tooltip>
 
-          <Tooltip title="Edit">
-            <EditOutlined
-              className="cursor-pointer text-amber-500 hover:text-amber-700"
-              onClick={() => {
-                setDrawerOpen(true);
-                setMode("edit");
-                setSelectedData(record);
-              }
-              }
-            />
-          </Tooltip>
-        </Space>
-      ),
-    },
+                <Tooltip title="Edit">
+                  <EditOutlined
+                    className="cursor-pointer text-amber-500 hover:text-amber-700"
+                    onClick={() => {
+                      setDrawerOpen(true);
+                      setMode("edit");
+                      setSelectedData(record);
+                    }}
+                  />
+                </Tooltip>
+              </Space>
+            ),
+          },
+        ]
+      : []),
   ];
 
   return (

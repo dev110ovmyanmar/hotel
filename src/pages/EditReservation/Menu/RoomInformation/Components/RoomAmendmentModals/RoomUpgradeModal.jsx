@@ -7,8 +7,6 @@ import Toast from '../../../../../../component/Toast/Toast';
 import RoomUpgradeReview from './RoomUpgradeReview';
 import { FaStar } from 'react-icons/fa';
 import { darkModeStyle, selectedDarkMode, textWhiteInDarkStyle } from '../../../../../../utils';
-import { reservationRoomDetails } from '../../../../../../api/reservationSectionApi';
-import useApiQuery from '../../../../../../hooks/useApiQuery';
 
 const { Text, Title } = Typography;
 
@@ -29,19 +27,6 @@ export default function RoomUpgradeModal({
     const [reviewData, setReviewData] = useState(null);
     const [checkSelectedRoom, setCheckSelectedRoom] = useState(false);
 
-    const {
-        data: reservationRoomsDataDetails,
-        isLoading: reservationRoomsDataDetailsLoading,
-        refetch: refetchReservationRoomsRoomDetails,
-      } = useApiQuery({
-        fetchQueryName: "reservation-room-details",
-        fetchQueryFunction: reservationRoomDetails,
-        params: { uuid: record?.uuid },
-        options: { enabled: !!record?.uuid && isOpen },
-      });
-
-      console.log(reservationRoomsDataDetails,"reservationRoomsDataDetails")
-
     // API Mutation engine handling state invalidation
     const createRoomAmendmentMutation = useApiMutation({
         mutationFn: createRoomAmendment,
@@ -49,7 +34,7 @@ export default function RoomUpgradeModal({
     });
 
     // Baseline property safe fallback metrics extraction
-    const currentRoomType = reservationRoomsDataDetails?.roomType?.name;
+    const currentRoomType = record?.roomType?.name;
 
     // Handles absolute clean form execution resets
     const handleCloseReset = () => {
@@ -71,7 +56,7 @@ export default function RoomUpgradeModal({
 
             const payload = {
                 amendmentType: { uuid: roomUpgradeUuid },
-                reservationRoom: { uuid: reservationRoomsDataDetails?.uuid },
+                reservationRoom: { uuid: record?.uuid },
                 room: { uuid: reviewData.roomUuid?.value },
                 roomType: { uuid: reviewData?.roomType },
                 ratePlan: { uuid: reviewData?.ratePlan?.value },
@@ -233,7 +218,7 @@ export default function RoomUpgradeModal({
                                 <div className="grid place-items-center w-fit -mt-1">
                                     <FaStar className='text-amber-200  text-3xl col-start-1 row-start-1' />
                                     <div className="col-start-1 row-start-1 text-gray-900 font-bold text-xs mt-1">
-                                        {reservationRoomsDataDetails?.roomType?.rank}
+                                        {record?.roomType?.rank}
                                     </div>
                                 </div>
                             </div>
@@ -399,7 +384,7 @@ export default function RoomUpgradeModal({
                     )
                         : (
                             <RoomUpgradeReview
-                                reservationRoomsDataDetails={reservationRoomsDataDetails}
+                                record={record}
                                 selectedRoomTypeName={selectedRoomTypeName}
                                 reviewData={reviewData}
                             />

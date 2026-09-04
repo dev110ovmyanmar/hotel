@@ -519,7 +519,7 @@ const FoodBeverageOrderForm = ({
       key: "price",
       render: (record) => {
         return (
-          <div>{record?.quantity} x {record?.menuItem.price}</div>
+          <div>{record?.quantity} x {(record?.menuItem.price).toLocaleString()}</div>
         )
       }
     },
@@ -692,7 +692,7 @@ const FoodBeverageOrderForm = ({
                 </div>
 
                 <div className="flex items-center grid grid-cols-3 gap-2 ">
-                  <div className="flex gap-x-2 ">
+                  <div className="flex flex-col gap-x-2 ">
                     <Form.Item
                       className="!m-0"
                       name="tax"
@@ -722,7 +722,6 @@ const FoodBeverageOrderForm = ({
                               ? "custom-checkbox-icon"
                               : "",
                         }}
-                        className="!text-[11px]"
                       >
                         Service Charges
                       </Checkbox>
@@ -782,19 +781,6 @@ const FoodBeverageOrderForm = ({
                         const selectedMenus =
                           itemsValue?.map(item => item?.menu).filter(Boolean) || [];
 
-                        // const menuOptions = data?.menu_items?.map(menu => {
-                        //   return (
-                        //     {
-                        //       value: menu.uuid,
-                        //       label: menu.name,
-                        //       disabled:
-                        //         selectedMenus.includes(menu.uuid) &&
-                        //         isNewMenu
-                        //       // menu.uuid !== currentMenu,
-                        //     }
-                        //   )
-                        // });
-
                         const currentMenu = itemsValue?.[name]?.menu;
                         const isNewMenu = addedMenuIndex === name;
 
@@ -802,13 +788,6 @@ const FoodBeverageOrderForm = ({
                           fnbOrderDetails?.fnbOrderItems
                             ?.map(item => item?.menuItem?.uuid)
                             ?.filter(Boolean) || [];
-
-                        // const selectedMenuUuids =
-                        //   itemsValue
-                        //     ?.map(item => item?.menu)
-                        //     ?.filter(Boolean) || [];
-
-                        // const isNewMenu = !currentMenu;
 
                         const menuOptions = data?.menu_items?.map(menu => {
                           const alreadyInDetails = detailMenuUuids.includes(menu.uuid);
@@ -1396,142 +1375,113 @@ const FoodBeverageOrderForm = ({
 
         {
           isView &&
-          <SectionCard title="Summary">
-            <div>
-              <div className="grid grid-cols-3 gap-3 my-2">
+          (
+            fnbOrderDetailsPending
+              ? <div className="flex justify-center items-center"><Spin/></div>
+            :
+              <SectionCard title="Summary">
                 <div>
-                  <div className="flex gap-x-2">
-                    <span>Date:</span>
-                    <span>{fnbOrderDetails?.orderAt ? dayjs(fnbOrderDetails?.orderAt).format("YYYY-MM-DD") : "-"}</span>
-                  </div>
-                </div>
-                <div>
-                  <div className="flex gap-x-2">
-                    <span>Time:</span>
-                    <span>{fnbOrderDetails?.orderAt ? dayjs(fnbOrderDetails?.orderAt).format("hh:mm A") : "-"}</span>
-                  </div>
-                </div>
-                <div>
-                  <div className="flex gap-x-2">
-                    <span>Check No:</span>
-                    <span>{fnbOrderDetails?.refNo ? fnbOrderDetails?.refNo : "-"}</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-3 gap-3">
-                <div>
-                  <div className="flex gap-x-2">
-                    <span>Room:</span>
-                    <span>{fnbOrderDetails?.reservationRoom ? fnbOrderDetails?.reservationRoom?.room?.roomNo : "-"}</span>
-                  </div>
-                </div>
-                <div>
-                  <div className="flex gap-x-2">
-                    <span className="text-[13px]">Consumption Type:</span>
-                    <span>{fnbOrderDetails?.consumptionType?.name ? fnbOrderDetails?.consumptionType?.name : "-"}</span>
-                  </div>
-                </div>
-                <div>
-                  <div className="flex gap-x-2">
-                    <span>Order Type:</span>
-                    <span>{fnbOrderDetails?.orderType?.name ? fnbOrderDetails?.orderType?.name : "-"}</span>
-                  </div>
-                </div>
-
-                {
-                  fnbOrderDetails?.orderType?.code === "dine_in" ?
-                    <div>
-                      <div className="flex gap-x-2 mb-2">
-                        <span>Table No:</span>
-                        <span>{fnbOrderDetails?.restaurantTable ? fnbOrderDetails?.restaurantTable?.tableNo : "-"}</span>
-                      </div>
+                  <div className="grid grid-cols-2 gap-x-15">
+                    <div className="flex gap-x-2">
+                      <span>Date:</span>
+                      <span>{fnbOrderDetails?.orderAt ? dayjs(fnbOrderDetails?.orderAt).format("YYYY-MM-DD") : "-"}</span>
                     </div>
-                    :
-                    null
-                }
-              </div>
-
-              <div className="my-3 border border-gray-200 !p-0 shadow-md">
-                <Table
-                  columns={columns}
-                  dataSource={fnbOrderDetails?.fnbOrderItems}
-                  rowKey={(record) => record.uuid}
-                  pagination={false}
-                  bordered={false}
-                  size="small"
-                  className="plain-table"
-                />
-
-              </div>
-            </div>
-
-            {/* {
-              fnbOrderDetails?.fnbOrderItems.map(item => (
-                <div className="flex justify-between">
-                  <div>
-                    {item?.menuItem?.name}
+                    <div className="flex gap-x-2">
+                      <span>Time:</span>
+                      <span>{fnbOrderDetails?.orderAt ? dayjs(fnbOrderDetails?.orderAt).format("hh:mm A") : "-"}</span>
+                    </div>
                   </div>
-                  <div>
-                    {item?.quantity}
+
+                  <div className="grid grid-cols-2 gap-x-15 my-2">
+                    <div className="flex gap-x-2">
+                      <span>Consumption Type:</span>
+                      <span>{fnbOrderDetails?.consumptionType?.name ? fnbOrderDetails?.consumptionType?.name : "-"}</span>
+                    </div>
+                    <div className="flex gap-x-2 justify-start">
+                      <span>Order Type:</span>
+                      <span>{fnbOrderDetails?.orderType?.name ? fnbOrderDetails?.orderType?.name : "-"}</span>
+                    </div>
                   </div>
-                  <div>
-                    {item?.menuItem?.price}
+
+                  <div className="grid grid-cols-1">
+                    {
+                      fnbOrderDetails?.orderType?.code === "dine_in" ?
+                        <div>
+                          <div className="flex gap-x-2">
+                            <span>Table No:</span>
+                            <span>{fnbOrderDetails?.restaurantTable ? fnbOrderDetails?.restaurantTable?.tableNo : "-"}</span>
+                          </div>
+                        </div>
+                        :
+                        null
+                    }
+                  </div>
+
+                  <div className={`grid grid-cols-2 gap-x-15 ${fnbOrderDetails?.orderType?.code === "dine_in" ? "my-2" : ""}`}>
+                    <div className="flex gap-x-2">
+                      <span>Room:</span>
+                      <span>{fnbOrderDetails?.reservationRoom ? fnbOrderDetails?.reservationRoom?.room?.roomNo : "-"}</span>
+                    </div>
+                    <div className="flex gap-x-2">
+                      <span>Check No:</span>
+                      <span>{fnbOrderDetails?.refNo ? fnbOrderDetails?.refNo : "-"}</span>
+                    </div>
+                  </div>
+
+                  <div className="my-3 border border-gray-200 !p-0 shadow-md">
+                    <Table
+                      columns={columns}
+                      dataSource={fnbOrderDetails?.fnbOrderItems}
+                      rowKey={(record) => record.uuid}
+                      pagination={false}
+                      bordered={false}
+                      size="small"
+                      className="plain-table"
+                    />
+
                   </div>
                 </div>
-              ))
-            } */}
 
-            {/* <Descriptions title="Description" bordered>
-              {fnbOrderDetails?.fnbOrderItems?.map((item) => (
-                <Descriptions.Item
-                  key={item.uuid}
-                  label={item?.menuItem?.name}
-                >
-                  Qty: {item?.quantity} × {item?.menuItem?.price}
-                </Descriptions.Item>
-              ))}
-            </Descriptions> */}
+                <div className="flex flex-col gap-3 mt-3">
+                  <div className="flex justify-between items-center">
+                    <div>Sub Total</div>
+                    <div>{(fnbOrderDetails?.subTotal)?.toLocaleString('en-US')} MMK</div>
+                  </div>
+                  {/* <div className="border border-gray-200/70 dark:border-gray-500/70"></div> */}
 
-            <div className="flex flex-col gap-3 mt-3">
-              <div className="flex justify-between items-center">
-                <div>Sub Total</div>
-                <div>{(fnbOrderDetails?.subTotal)?.toLocaleString('en-US')} MMK</div>
-              </div>
-              {/* <div className="border border-gray-200/70 dark:border-gray-500/70"></div> */}
+                  <div className="flex justify-between items-center">
+                    <div>Tax</div>
+                    <div>{(fnbOrderDetails?.taxTotal)?.toLocaleString('en-US')} MMK</div>
+                  </div>
+                  {/* <div className="border border-gray-200/70 dark:border-gray-500/70"></div> */}
 
-              <div className="flex justify-between items-center">
-                <div>Tax</div>
-                <div>{(fnbOrderDetails?.taxTotal)?.toLocaleString('en-US')} MMK</div>
-              </div>
-              {/* <div className="border border-gray-200/70 dark:border-gray-500/70"></div> */}
+                  <div className="flex justify-between items-center">
+                    <div>Service Charges</div>
+                    <div>{(fnbOrderDetails?.serviceChargeTotal)?.toLocaleString('en-US')} MMK</div>
+                  </div>
+                  {/* <div className="border border-gray-200/70 dark:border-gray-500/70"></div> */}
 
-              <div className="flex justify-between items-center">
-                <div>Service Charges</div>
-                <div>{(fnbOrderDetails?.serviceChargeTotal)?.toLocaleString('en-US')} MMK</div>
-              </div>
-              {/* <div className="border border-gray-200/70 dark:border-gray-500/70"></div> */}
+                  <div className="flex justify-between items-center">
+                    <div>Discount</div>
+                    <div className="text-red-400">- {(fnbOrderDetails?.discountTotal)?.toLocaleString('en-US')} MMK</div>
+                  </div>
+                  {/* <div className="border border-gray-200/70 dark:border-gray-500/70"></div> */}
 
-              <div className="flex justify-between items-center">
-                <div>Discount</div>
-                <div className="text-red-400">- {(fnbOrderDetails?.discountTotal)?.toLocaleString('en-US')} MMK</div>
-              </div>
-              {/* <div className="border border-gray-200/70 dark:border-gray-500/70"></div> */}
+                </div>
 
-            </div>
+                <div className="my-2 border-t border-dashed border-slate-300 dark:border-gray-600" />
 
-            <div className="my-2 border-t border-dashed border-slate-300 dark:border-gray-600" />
-
-            <div className="flex justify-between items-center rounded-xl px-4 py-3.5 bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-200 dark:border-indigo-700">
-              <span className="font-bold text-slate-800 dark:text-gray-100">
-                Grand Total
-              </span>
-              <div className="flex justify-end gap-1 font-bold text-sm text-indigo-600 dark:text-indigo-400">
-                <div>{(fnbOrderDetails?.grandTotal)?.toLocaleString('en-US')}</div>
-                <span>MMK</span>
-              </div>
-            </div>
-          </SectionCard>
+                <div className="flex justify-between items-center rounded-xl px-4 py-3.5 bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-200 dark:border-indigo-700">
+                  <span className="font-bold text-slate-800 dark:text-gray-100">
+                    Grand Total
+                  </span>
+                  <div className="flex justify-end gap-1 font-bold text-sm text-indigo-600 dark:text-indigo-400">
+                    <div>{(fnbOrderDetails?.grandTotal)?.toLocaleString('en-US')}</div>
+                    <span>MMK</span>
+                  </div>
+                </div>
+              </SectionCard>
+          )
         }
 
       </Drawer >

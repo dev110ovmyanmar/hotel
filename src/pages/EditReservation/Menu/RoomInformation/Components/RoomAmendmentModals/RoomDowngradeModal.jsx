@@ -23,11 +23,9 @@ export default function RoomDowngradeModal({
     const [selectedRoom, setSelectedRoom] = useState(null);
     const [toReviewPage, setToReviewPage] = useState(null);
     const [selectedRoomTypeName, setSelectedRoomTypeName] = useState({});
-    console.log(selectedRoomTypeName, "selectedRoomTypeName")
     const [reviewData, setReviewData] = useState(null);
     const [checkSelectedRoom, setCheckSelectedRoom] = useState(false)
 
-    console.log(reviewData, "ReviewData")
     // API Mutation engine handling state invalidation
     const createRoomAmendmentMutation = useApiMutation({
         mutationFn: createRoomAmendment,
@@ -47,13 +45,10 @@ export default function RoomDowngradeModal({
         setReviewData()
     };
 
-    console.log(selectedRoom, "selectedRoom")
     // Submits data directly using single-pane architectural validation structures
     const handleSubmit = async () => {
         try {
             const values = await form.validateFields();
-
-            console.log(reviewData, "ReviewData")
 
             const payload = {
                 amendmentType: { uuid: roomDowngradeUuid },
@@ -80,7 +75,6 @@ export default function RoomDowngradeModal({
         }
     };
 
-    console.log(selectedRoomTypeName, "selectedRoomTypeName")
 
     const options = roomList?.rooms?.map(room => (
         { value: room?.roomType?.uuid, label: room?.roomType?.name }
@@ -126,8 +120,6 @@ export default function RoomDowngradeModal({
             console.log(error);
         }
     };
-
-    console.log(reviewData, "reviewDatarateStatus")
 
     const backToSetFields = () => {
         setToReviewPage(false);

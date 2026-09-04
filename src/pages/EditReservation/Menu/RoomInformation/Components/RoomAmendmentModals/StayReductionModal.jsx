@@ -17,8 +17,6 @@ import {
   textColorDarkMode,
   textWhiteInDarkStyle,
 } from "../../../../../../utils";
-import useApiQuery from "../../../../../../hooks/useApiQuery";
-import { reservationRoomDetails } from "../../../../../../api/reservationSectionApi";
 
 export default function StayReductionModal({
   isOpen,
@@ -27,17 +25,6 @@ export default function StayReductionModal({
   stayReductionUuid,
 }) {
   const [form] = Form.useForm();
-
-  const {
-    data: reservationRoomsDataDetails,
-    isLoading: reservationRoomsDataDetailsLoading,
-    refetch: refetchReservationRoomsRoomDetails,
-  } = useApiQuery({
-    fetchQueryName: ["reservation-room-details", record?.uuid],
-    fetchQueryFunction: reservationRoomDetails,
-    params: { uuid: record?.uuid },
-    options: { enabled: !!record?.uuid && isOpen },
-  });
 
   const createRoomAmendmentMutation = useApiMutation({
     mutationFn: createRoomAmendment,
@@ -52,19 +39,19 @@ export default function StayReductionModal({
 
   // Parse baseline properties out of your JSON structure
   const reservationNo =
-    reservationRoomsDataDetails?.reservation?.reservationNo || `ID-${reservationRoomsDataDetails?.id}`;
-  const roomNo = reservationRoomsDataDetails?.room?.roomNo;
+    record?.reservation?.reservationNo || `ID-${record?.id}`;
+  const roomNo = record?.room?.roomNo;
 
-  const guestName = reservationRoomsDataDetails?.reservation?.guest?.name || "Unknown Guest";
+  const guestName = record?.reservation?.guest?.name || "Unknown Guest";
 
-  const originalCheckin = reservationRoomsDataDetails?.checkinDate ? dayjs(reservationRoomsDataDetails.checkinDate) : null;
-  const originalCheckout = reservationRoomsDataDetails?.checkoutDate
-    ? dayjs(reservationRoomsDataDetails.checkoutDate)
+  const originalCheckin = record?.checkinDate ? dayjs(record.checkinDate) : null;
+  const originalCheckout = record?.checkoutDate
+    ? dayjs(record.checkoutDate)
     : null;
 
   // Safely parse maxReduction to a number (fallback to 0 if undefined)
   const maxReduction =
-    reservationRoomsDataDetails?.maxReduce !== undefined ? Number(reservationRoomsDataDetails.maxReduce) : 0;
+    record?.maxReduce !== undefined ? Number(record.maxReduce) : 0;
 
   // Compute live mathematical timeline subtractions safely
   const newCheckoutDate = originalCheckout?.isValid()
@@ -85,13 +72,13 @@ export default function StayReductionModal({
   // Step 2: Fire backend server mutations
   const handleFinalCommit = async () => {
     setIsSubmitting(true);
-    const checkinDate = reservationRoomsDataDetails?.checkinDate
-      ? reservationRoomsDataDetails.checkinDate.split(" ")[0]
+    const checkinDate = record?.checkinDate
+      ? record.checkinDate.split(" ")[0]
       : originalCheckin.format("YYYY-MM-DD");
     try {
       const payload = {
         amendmentType: { uuid: stayReductionUuid },
-        reservationRoom: { uuid: reservationRoomsDataDetails?.uuid },
+        reservationRoom: { uuid: record?.uuid },
         checkinDate: checkinDate,
         checkoutDate: newCheckoutDate.format("YYYY-MM-DD"),
         reason: pendingValues?.reason,
@@ -126,28 +113,6 @@ export default function StayReductionModal({
 
   return (
     <Modal
-      // title={
-      //   currentStep === "form" ? (
-      //     // <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-      //     //   <div style={{ width: '4px', height: '18px', background: '#1677ff', borderRadius: '2px' }} />
-      //     //   <span style={{ fontWeight: 600 }}>Shorten Guest Stay Duration</span>
-      //     // </div>
-      //     <div className="flex items-center gap-2">
-      //       <div className="h-[18px] w-1 rounded-sm bg-[#1677ff]" />
-      //       <span className="font-semibold">Shorten Guest Stay Duration</span>
-      //     </div>
-
-      //   ) : (
-      //     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-      //       <div style={{ width: '4px', height: '18px', background: '#1677ff', borderRadius: '2px' }} />
-      //       <span style={{ fontWeight: 600 }}>Reduction Summary</span>
-      //     </div>
-      //     // <span className="flex items-center gap-2">
-      //     //   <CheckCircleOutlined className="text-amber-500" /> Review Stay
-      //     //   Reduction Summary
-      //     // </span>
-      //   )
-      // }
       title={
         <div className="flex items-center gap-2">
           <div className="h-[18px] w-1 rounded-sm bg-[#1677ff]" />
@@ -162,13 +127,9 @@ export default function StayReductionModal({
       footer={
         currentStep === "form"
           ? [
-            // <Button key="back" onClick={handleCloseReset}>
-            //   Cancel
-            // </Button>,
             <Button
               key="submit"
               type="primary"
-              // danger
               onClick={handleProceedToSummary}
               disabled={maxReduction <= 0} // Blocks moving forward if reduction limit is 0
               className={maxReduction <= 0 ? "text-default" : ""}

@@ -1,7 +1,6 @@
 import { Input, Modal, Form } from "antd"
 import { useApiMutation } from "../../hooks/useApiMutation";
-import { systemLock, systemUnlock } from "../../api/nightAuditApi";
-import { SYSTEM_LOCK_KEY } from "../../variables/constants";
+import { systemLock } from "../../api/nightAuditApi";
 import Toast from "../../component/Toast/Toast";
 import { useNavigate } from "react-router-dom";
 
@@ -39,8 +38,7 @@ const ConfirmModal = ({
     }
 
     const systemLockMutation = useApiMutation({
-        // mutationFn: systemLock,
-        mutationFn: systemUnlock,
+        mutationFn: systemLock,
         shouldInvalidate: false,
         options: {
             onSuccess: (data) => {
@@ -64,16 +62,14 @@ const ConfirmModal = ({
     const handleForceLogout = async () => {
         try {
             const values = await form.validateFields();
-            console.log(values,"handleForceLogout")
+            console.log(values, "handleForceLogout")
 
-            if (values?.locking === SYSTEM_LOCK_KEY?.nightAudit) {
-                systemLockMutation.mutate({
-                    systemLockKey: values?.locking
-                });
-            }
+            systemLockMutation.mutate({
+                systemLockKey: values?.locking
+            });
         }
         catch (error) {
-            console.log("Validation failed:", error);
+            console.log("Validationfailed:", error);
         }
     };
 
