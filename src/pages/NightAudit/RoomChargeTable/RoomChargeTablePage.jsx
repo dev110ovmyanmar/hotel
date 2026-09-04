@@ -4,7 +4,6 @@ import RoomChargeTable from "../RoomChargeTable";
 import { preAuditCheck } from "../../../api/nightAuditApi";
 import useApiQuery from "../../../hooks/useApiQuery";
 import { Spin } from "antd";
-import IssueAndWarningCard from "../IssueAndWarningCard";
 
 const RoomChargeTablePage = ({
     stepValue
@@ -26,10 +25,9 @@ const RoomChargeTablePage = ({
         )
     }
 
-
     return (
         <div className="w-full px-6 py-2">
-            <CheckBookingHeader preAuditChecksData={preAuditChecksData} />
+            <CheckBookingHeader />
             <RoomChargeTable
                 roomChargeClick={() => {
                     window.dispatchEvent(

@@ -125,8 +125,9 @@ const ReservationList = () => {
         Toast.success(values);
         navigate("/reservations/all/");
         dispatch(setHasUnsavedForm(false));
-        dispatch(setIsSubmitted(true))
-      },
+        dispatch(setIsSubmitted(true));
+        setSearchButtonDisable(false)
+      }
     },
   });
 
@@ -231,7 +232,11 @@ const ReservationList = () => {
       rooms
 
     };
-    submitReservationMutate.mutate(payload);
+    submitReservationMutate.mutate(payload,{
+      onError: () =>{
+        setSubmitPendingDisabled(false)
+      }
+    });
   }
 
   //total booked rooms per roomType

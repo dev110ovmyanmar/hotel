@@ -28,7 +28,7 @@ const CreateNewDayPage = () => {
         <div className="w-full px-6 py-2">
             {
                 !hideSteps &&
-                <CheckBookingHeader preAuditChecksData={preAuditChecksData} />
+                <CheckBookingHeader />
             }
             <CreateNewDay createNewDayClick={() => {
                 setHideSteps(true);

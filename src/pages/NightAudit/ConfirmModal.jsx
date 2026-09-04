@@ -56,6 +56,9 @@ const ConfirmModal = ({
                 form.resetFields()
 
             },
+            onError: () => {
+                form.resetFields()
+            }
         },
     });
 
@@ -77,7 +80,10 @@ const ConfirmModal = ({
         <Modal
             title="Confirm Night Audit"
             open={open}
-            onCancel={onCancel}
+            onCancel={()=>{
+                onCancel();
+                form.resetFields()
+            }}
             onOk={handleForceLogout}
             okText="Confirm"
             styles={stylesFn}

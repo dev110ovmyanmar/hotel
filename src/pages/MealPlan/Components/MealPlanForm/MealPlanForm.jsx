@@ -303,6 +303,7 @@ const MeanPlanForm = ({
                     placeholder="Enter Adult Price"
                     formatter={priceFormatter}
                     parser={priceParser}
+                    disabled={!mealChecked}
                   />
                 </Form.Item>
               </Col>
@@ -326,6 +327,7 @@ const MeanPlanForm = ({
                     placeholder="Enter Child Price"
                     formatter={priceFormatter}
                     parser={priceParser}
+                    disabled={!mealChecked}
                   />
                 </Form.Item>
               </Col>
