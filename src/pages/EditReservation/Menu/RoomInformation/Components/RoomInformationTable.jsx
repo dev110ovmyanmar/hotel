@@ -513,6 +513,14 @@ const RoomInformationTable = ({
         <RoomMoveModal
           isOpen={roomMoveOpen}
           onClose={() => {
+            queryClient.removeQueries({
+              queryKey: ["reservation-room-search"],
+            });
+
+            // Clear room details data
+            queryClient.removeQueries({
+              queryKey: ["reservation-room-details"],
+            });
             setRoomMoveOpen(false);
             setSelectedData(null);
           }}

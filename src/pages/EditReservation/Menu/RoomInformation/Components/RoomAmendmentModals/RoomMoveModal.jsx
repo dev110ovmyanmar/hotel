@@ -5,7 +5,7 @@ import { ArrowRightOutlined, CheckCircleOutlined, PlusOutlined, MinusOutlined, S
 import { useApiMutation } from '../../../../../../hooks/useApiMutation';
 import Toast from '../../../../../../component/Toast/Toast';
 import useApiQuery from '../../../../../../hooks/useApiQuery';
-import { reservationRoomDetails, reservationRoomSearch } from '../../../../../../api/reservationSectionApi';
+import { reservationRoomSearch } from '../../../../../../api/reservationSectionApi';
 import { createRoomAmendment } from '../../../../../../api/roomAmendmentApi';
 import ColorStatusTag from '../../../../../../component/ColorStatusTag/ColorStatusTag';
 import { GiBed } from "react-icons/gi";
@@ -29,31 +29,35 @@ export default function RoomMoveModal({
         }
     }, [isOpen]);
 
-    const {
-        data: reservationRoomsDataDetails,
-        isLoading: reservationRoomsDataDetailsLoading,
-        refetch: refetchReservationRoomsRoomDetails,
-    } = useApiQuery({
-        fetchQueryName: ["reservation-room-details", record?.uuid],
-        fetchQueryFunction: reservationRoomDetails,
-        params: { uuid: record?.uuid },
-        options: { enabled: !!record?.uuid && isOpen },
-    });
+    const checkinDate = record?.checkinDate;
+    const checkoutDate = record?.checkoutDate;
 
-    const { data: reservationRoomSearchDetails, isPending: isQueryLoading } = useApiQuery({
-        fetchQueryName: "reservation-room-search",
+    const roomTypeUuid =
+        record?.roomType?.uuid ||
+        record?.roomType?.uuid;
+
+    const isEnabled =
+        isOpen &&
+        !!checkinDate &&
+        !!checkoutDate &&
+        !!roomTypeUuid;
+
+    const { data: reservationRoomSearchDetails, isPending: isQueryLoading , isFetching : isQueryFetching } = useApiQuery({
+        fetchQueryName: ["reservation-room-search", roomTypeUuid, checkinDate, checkoutDate],
         fetchQueryFunction: reservationRoomSearch,
         params: {
             filter: {
-                checkinDate: dayjs(reservationRoomsDataDetails?.checkinDate).format('YYYY-MM-DD'),
-                checkoutDate: dayjs(reservationRoomsDataDetails?.checkoutDate).format('YYYY-MM-DD')
+                checkinDate: dayjs(checkinDate).format('YYYY-MM-DD'),
+                checkoutDate: dayjs(checkoutDate).format('YYYY-MM-DD')
             },
             roomType: {
-                uuid: reservationRoomsDataDetails?.roomType?.uuid
+                uuid: roomTypeUuid
             },
-            enabled: isOpen && !!reservationRoomsDataDetails?.checkinDate && !!reservationRoomsDataDetails?.checkoutDate && !!reservationRoomsDataDetails?.roomType?.uuid
         },
-        enabled: isOpen && !!reservationRoomsDataDetails?.checkinDate && !!reservationRoomsDataDetails?.checkoutDate && !!reservationRoomsDataDetails?.roomType?.uuid
+        options: {
+            enabled: isEnabled,
+            
+        }
     });
 
     const createRoomAmendmentMutation = useApiMutation({
@@ -67,7 +71,7 @@ export default function RoomMoveModal({
     const handleOk = () => {
         const payload = {
             amendmentType: { uuid: roomMoveUuid },
-            reservationRoom: { uuid: reservationRoomsDataDetails?.uuid },
+            reservationRoom: { uuid: record?.uuid },
             room: { uuid: selectRoomUuid }
         };
 
@@ -82,7 +86,7 @@ export default function RoomMoveModal({
     };
 
     // Clean structural conditions
-    const hasNoRooms = !isQueryLoading && reservationRoomSearchDetails?.rooms?.length === 0;
+    const hasNoRooms = !isQueryFetching && reservationRoomSearchDetails?.rooms?.length === 0;
 
     return (
         <Modal
@@ -94,7 +98,6 @@ export default function RoomMoveModal({
             }
             open={isOpen}
             onOk={handleOk}
-            // loading={isQueryLoading}
             confirmLoading={createRoomAmendmentMutation?.isPending}
             onCancel={() => {
                 if (selectRoomToMove) {
@@ -106,7 +109,7 @@ export default function RoomMoveModal({
             cancelText={selectRoomToMove ? "Back" : "Cancel"}
             okText={selectRoomToMove ? "Confirm" : null}
             footer={
-                isQueryLoading || hasNoRooms ? null : (!selectRoomToMove ? (
+                isQueryLoading || isQueryFetching || hasNoRooms ? null : (!selectRoomToMove ? (
                     <Button
                         onClick={() => setSelectRoomToMove(true)}
                         type={selectRoomUuid ? "primary" : "default"}
@@ -149,17 +152,17 @@ export default function RoomMoveModal({
                                     ${darkModeStyle}
                                 `}
                             >
-                                <h1>{reservationRoomsDataDetails?.roomType?.name}</h1>
+                                <h1>{record?.roomType?.name}</h1>
                                 {
-                                    reservationRoomsDataDetails?.room?.roomNo ?
-                                        <Tag color="green" className='!border !border-green-300 !rounded-sm'>{reservationRoomsDataDetails?.room?.roomNo}</Tag>
+                                    record?.room?.roomNo ?
+                                        <Tag color="green" className='!border !border-green-300 !rounded-sm'>{record?.room?.roomNo}</Tag>
                                         : null
                                 }
                             </div>
 
                             <h4 className='!my-[10px]'>Available Rooms:</h4>
                             {
-                                isQueryLoading
+                                isQueryFetching
                                     ?
                                     <Spin></Spin>
                                     :
@@ -208,9 +211,9 @@ export default function RoomMoveModal({
                                 <div className='flex justify-between border border-gray-300 p-3 rounded-md'>
                                     <div className='flex gap-2'>
                                         <GiBed fontSize={25} className='text-gray-500' />
-                                        <div className='text-md'>{reservationRoomsDataDetails?.room?.roomNo}</div>
+                                        <div className='text-md'>{record?.room?.roomNo}</div>
                                     </div>
-                                    <ColorStatusTag status={reservationRoomsDataDetails?.roomStatus} />
+                                    <ColorStatusTag status={record?.roomStatus} />
                                 </div>
                             </Col>
 
