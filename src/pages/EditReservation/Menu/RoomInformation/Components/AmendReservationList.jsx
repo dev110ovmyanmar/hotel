@@ -11,6 +11,7 @@ import {
 } from "@ant-design/icons";
 import { MdOutlineMeetingRoom } from "react-icons/md";
 import dayjs from "dayjs";
+import { queryClient } from "../../../../../app/queryClient";
 
 export const getAmendReservationMenuItems = ({
   record,
@@ -111,6 +112,10 @@ export const getAmendReservationMenuItems = ({
               ...getDisabledStyles("room_move"),
               onClick: () => {
                 if (!checkDisabled("room_move")) {
+                  queryClient.removeQueries({
+                    queryKey: ["reservation-room-search"],
+                  });
+
                   handleAction("room_move", record);
                   setRoomMoveOpen(true);
                 }

@@ -6,8 +6,6 @@ import { createRoomAmendment } from '../../../../../../api/roomAmendmentApi';
 import { useApiMutation } from '../../../../../../hooks/useApiMutation';
 import Toast from '../../../../../../component/Toast/Toast';
 import { borderDarkMode, darkModeStyle, textColorDarkMode, textWhiteInDarkStyle } from '../../../../../../utils';
-import useApiQuery from '../../../../../../hooks/useApiQuery';
-import { reservationRoomDetails } from '../../../../../../api/reservationSectionApi';
 
 export default function StayExtensionModal({
     isOpen,
@@ -16,17 +14,6 @@ export default function StayExtensionModal({
     stayExtensionUuid
 }) {
     const [form] = Form.useForm();
-
-    const {
-        data : reservationRoomsDataDetails,
-        isLoading: reservationRoomsDataDetailsLoading,
-        refetch: refetchReservationRoomsRoomDetails,
-    } = useApiQuery({
-        fetchQueryName: ["reservation-room-details", record?.uuid],
-        fetchQueryFunction: reservationRoomDetails,
-        params: { uuid: record?.uuid },
-        options: { enabled: !!record?.uuid && isOpen },
-    });
 
     const createRoomAmendmentMutation = useApiMutation({
         mutationFn: createRoomAmendment,
@@ -40,14 +27,14 @@ export default function StayExtensionModal({
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     // Parse baseline properties out of your JSON structure
-    const reservationNo = reservationRoomsDataDetails?.reservation?.reservationNo || `ID-${reservationRoomsDataDetails?.id}`;
-    const roomNo = reservationRoomsDataDetails?.room?.roomNo;
+    const reservationNo = record?.reservation?.reservationNo || `ID-${record?.id}`;
+    const roomNo = record?.room?.roomNo;
 
-    const originalCheckin = reservationRoomsDataDetails?.checkinDate ? dayjs(reservationRoomsDataDetails?.checkinDate) : null;
-    const originalCheckout = reservationRoomsDataDetails?.checkoutDate ? dayjs(reservationRoomsDataDetails?.checkoutDate) : null;
-    console.log(reservationRoomsDataDetails, "reservationRoomsDataDetailsoriginalCheckout")
+    const originalCheckin = record?.checkinDate ? dayjs(record?.checkinDate) : null;
+    const originalCheckout = record?.checkoutDate ? dayjs(record?.checkoutDate) : null;
+    console.log(record, "recordoriginalCheckout")
     // Safely parse maxDayExtension to a number (fallback to 0 if undefined)
-    const maxDayExtension = reservationRoomsDataDetails?.maxExtend !== undefined ? Number(reservationRoomsDataDetails.maxExtend) : 0;
+    const maxDayExtension = record?.maxExtend !== undefined ? Number(record.maxExtend) : 0;
 
     // Compute live mathematical timeline additions safely
     const newCheckoutDate = originalCheckout?.isValid() ? originalCheckout?.add(daysToAdd, 'day') : "-";
@@ -66,13 +53,13 @@ export default function StayExtensionModal({
     // Step 2: Fire backend server mutations
     const handleFinalCommit = async () => {
         setIsSubmitting(true);
-        const checkinDate = reservationRoomsDataDetails?.checkinDate ? reservationRoomsDataDetails?.checkinDate.split(" ")[0] : originalCheckin?.format('YYYY-MM-DD');
-        const checkoutDate = reservationRoomsDataDetails?.checkoutDate ? reservationRoomsDataDetails?.checkoutDate.split(" ")[0] : originalCheckout?.format('YYYY-MM-DD');
+        const checkinDate = record?.checkinDate ? record?.checkinDate.split(" ")[0] : originalCheckin?.format('YYYY-MM-DD');
+        const checkoutDate = record?.checkoutDate ? record?.checkoutDate.split(" ")[0] : originalCheckout?.format('YYYY-MM-DD');
 
         try {
             const payload = {
                 amendmentType: { uuid: stayExtensionUuid },
-                reservationRoom: { uuid: reservationRoomsDataDetails?.uuid },
+                reservationRoom: { uuid: record?.uuid },
                 checkinDate: checkoutDate,
                 checkoutDate: newCheckoutDate.format('YYYY-MM-DD'),
                 reason: pendingValues?.reason
@@ -107,21 +94,6 @@ export default function StayExtensionModal({
 
     return (
         <Modal
-            // title={
-            //     currentStep === 'form'
-            //         ?
-            //         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            //             <div style={{ width: '4px', height: '18px', background: '#1677ff', borderRadius: '2px' }} />
-            //             <span style={{ fontWeight: 600 }}>Extend Guest Stay Duration</span>
-            //         </div>
-            //         : 
-            //         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            //             <div style={{ width: '4px', height: '18px', background: '#1677ff', borderRadius: '2px' }} />
-            //             <span style={{ fontWeight: 600 }}>Review Stay Extension Summary</span>
-            //         </div>
-            //         // <span className="flex items-center gap-2"><CheckCircleOutlined className="text-green-500" /> Review Stay Extension Summary</span>
-            // }
-
             title={
                 <div className="flex items-center gap-2">
                     <div className="h-[18px] w-1 rounded-sm bg-[#1677ff]" />

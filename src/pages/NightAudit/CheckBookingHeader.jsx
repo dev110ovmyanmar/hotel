@@ -38,7 +38,7 @@ const CheckBookingHeader = ({
 
             <StepsComponent stepValue={colorClick} />
 
-            <PreAuditCheckStatus preAuditChecksData={preAuditChecksData} preNightAudit={preNightAudit}/>
+            
         </div>
     )
 }

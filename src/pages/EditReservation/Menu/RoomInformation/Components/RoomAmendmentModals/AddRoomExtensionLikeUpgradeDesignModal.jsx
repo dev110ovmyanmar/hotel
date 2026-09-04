@@ -49,7 +49,7 @@ const { Text, Title } = Typography;
 export default function AddRoomExtensionLikeUpgradeDesignModal({
   isOpen,
   onClose,
-  reservationRoomsDataDetails,
+  record,
   addRoomUuid,
   roomList,
   availabilitySearchsPendings,
@@ -75,7 +75,8 @@ export default function AddRoomExtensionLikeUpgradeDesignModal({
   });
 
   // Baseline property safe fallback metrics extraction
-  const currentRoomType = reservationRoomsDataDetails?.roomType?.name;
+  console.log(record,"currentRoomType")
+  const currentRoomType = record?.roomType?.name;
 
   // Handles absolute clean form execution resets
   const handleCloseReset = () => {
@@ -96,7 +97,7 @@ export default function AddRoomExtensionLikeUpgradeDesignModal({
 
       const payload = {
         amendmentType: { uuid: addRoomUuid },
-        reservationRoom: { uuid: reservationRoomsDataDetails?.uuid },
+        reservationRoom: { uuid: record?.uuid },
         room: { uuid: reviewData.roomUuid?.value },
         roomType: { uuid: reviewData?.roomType },
         ratePlan: { uuid: reviewData?.ratePlan?.value },
@@ -251,7 +252,7 @@ export default function AddRoomExtensionLikeUpgradeDesignModal({
 
   useEffect(() => {
     const matchedRoom = roomList?.rooms?.find(
-      (room) => room.roomType.uuid === reservationRoomsDataDetails?.roomType?.uuid,
+      (room) => room.roomType.uuid === record?.roomType?.uuid,
     );
 
     if (matchedRoom) {
@@ -304,7 +305,6 @@ export default function AddRoomExtensionLikeUpgradeDesignModal({
                 justifyContent: "space-between",
                 background: "#f8fafc",
                 padding: "10px 14px",
-
                 borderRadius: "6px",
                 margin: "12px 0 20px 0",
                 border: "1px solid #e2e8f0",
@@ -327,7 +327,7 @@ export default function AddRoomExtensionLikeUpgradeDesignModal({
               <div className="grid place-items-center w-fit -mt-1">
                 <FaStar className="text-amber-200  text-3xl col-start-1 row-start-1" />
                 <div className="col-start-1 row-start-1 text-gray-900 font-bold text-xs mt-1">
-                  {reservationRoomsDataDetails?.roomType?.rank}
+                  {record?.roomType?.rank}
                 </div>
               </div>
             </div>
@@ -341,22 +341,22 @@ export default function AddRoomExtensionLikeUpgradeDesignModal({
                       <Col span={12}>
                         <div
                           className={`  
-                                                            flex
-                                                            justify-between
-                                                            p-4                                                          
-                                                            cursor-pointer 
-                                                            shadow-md 
-                                                            transition-all 
-                                                            !border-2 
-                                                            !duration-500
-                                                            rounded-2xl 
-                                                            ${
-                                                              selectedRoom ===
-                                                              room.roomType.uuid
-                                                                ? `!border-blue-500 !bg-blue-50 !shadow-lg ${selectedDarkMode}`
-                                                                : "!border-blue-200 !shadow-md hover:!border-blue-300 hover:-translate-y-1"
-                                                            }
-                                                        `}
+                              flex
+                              justify-between
+                              p-4                                                          
+                              cursor-pointer 
+                              shadow-md 
+                              transition-all 
+                              !border-2 
+                              !duration-500
+                              rounded-2xl 
+                              ${
+                                selectedRoom ===
+                                room.roomType.uuid
+                                  ? `!border-blue-500 !bg-blue-50 !shadow-lg ${selectedDarkMode}`
+                                  : "!border-blue-200 !shadow-md hover:!border-blue-300 hover:-translate-y-1"
+                              }
+                          `}
                           onClick={() => selectRoom(room)}
                         >
                           <div className="!text-xs">{room?.roomType?.name}</div>
@@ -364,15 +364,15 @@ export default function AddRoomExtensionLikeUpgradeDesignModal({
                           <div className="grid place-items-center w-fit -mt-2">
                             <FaStar
                               className={`
-                                                            ${
-                                                              selectedRoom ===
-                                                              room.roomType.uuid
-                                                                ? "text-amber-500"
-                                                                : "text-amber-200 "
-                                                            }
-                                                            text-3xl 
-                                                            col-start-1 
-                                                            row-start-1
+                                ${
+                                  selectedRoom ===
+                                  room.roomType.uuid
+                                    ? "text-amber-500"
+                                    : "text-amber-200 "
+                                }
+                                text-3xl 
+                                col-start-1 
+                                row-start-1
                                                                                                                         `}
                             />
                             <div className="col-start-1 row-start-1 text-gray-900 font-bold text-xs mt-1 ml-1 mr-1">
@@ -486,7 +486,7 @@ export default function AddRoomExtensionLikeUpgradeDesignModal({
         )
       ) : (
         <RoomUpgradeReview
-          reservationRoomsDataDetails={reservationRoomsDataDetails}
+          record={record}
           selectedRoomTypeName={selectedRoomTypeName}
           reviewData={reviewData}
           isAddNewRoom={true}

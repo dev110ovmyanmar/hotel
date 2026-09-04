@@ -47,4 +47,7 @@ export const getfolioPrint = async (params) => {
     return data.response;
 }
 
-
+export const editFolio = async (params) => {
+    const { data } = await apiClient.put("/folio/edit", params);
+    return data.response;
+}

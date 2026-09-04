@@ -65,7 +65,7 @@ const RoomTypeTable = ({
     },
     {
       title: "Max Extra Bed",
-      dataIndex: "maxExtraBed",
+      dataIndex: "maxExtraBeds",
       key: "maxExtraBed",
       width: 110,
       align: "center",

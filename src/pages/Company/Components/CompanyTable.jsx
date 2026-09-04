@@ -47,7 +47,7 @@ const CompanyTable = ({
       title: "Code",
       dataIndex: "code",
       key: "code",
-      render: (text) => <div>{text}</div>,
+      render: (text) => text || "-",
     },
     {
       title: "Contact Person",
