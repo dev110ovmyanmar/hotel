@@ -122,11 +122,8 @@ const EventFacilityOrderForm = ({
     disabled:
       isView ||
       (isAdd && ["completed", "cancelled"].includes(item?.code)) ||
-      (isEdit &&
-        currentStatus === "confirmed" &&
-        item.code === "pending") ||
-      (item.code === "completed" &&
-        reservationRoom?.roomStatus?.code === "checkedin"),
+      (isEdit && (item.code === "completed" && reservationRoom?.roomStatus?.code == "confirmed")
+      )
   }));
 
   useEffect(() => {
@@ -255,8 +252,6 @@ const EventFacilityOrderForm = ({
       },
       uuid: isEdit ? bookingDetails?.uuid : null,
     };
-
-    console.log("Facility Booking Payload:", modifiedValues);
 
     if (isAdd) {
       createFacilityBookings.mutate(modifiedValues, {
