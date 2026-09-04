@@ -2,6 +2,7 @@ import React from "react";
 import dayjs from "dayjs";
 import PriceTag from "../../../../../component/PriceTag/PriceTag";
 import { capitalizeAllLetter } from "../.././../../../utils/Utils";
+import { Flex } from "antd";
 
 // ── Design Tokens ──────────────────────────────────────────────────────────
 const FONT_BODY = "'Arial', 'Helvetica', sans-serif";
@@ -19,7 +20,7 @@ const RULE = "#cccccc";
 const WHITE = "#ffffff";
 
 // ── Main Component ────────────────────────────────────────────────────────
-const FolioInvoicePrint = React.forwardRef(({ printData, adminName, hideLetterhead, propertyData }, ref) => {
+const FolioInvoicePrint = React.forwardRef(({ printData, adminName, adminRole, hideLetterhead, propertyData }, ref) => {
   if (!printData) return null;
 
   const propertyImage = propertyData?.propertyFiles?.find(
@@ -42,7 +43,7 @@ const FolioInvoicePrint = React.forwardRef(({ printData, adminName, hideLetterhe
   const reservationNo = printData.reservationNo || "—";
   const creditTotal = printData.creditTotal || 0;
   const debitTotal = printData.debitTotal || 0;
-  const balanceTotal = printData.balanceTotal|| 0;
+  const balanceTotal = printData.balanceTotal || 0;
   const taxTotal = printData.taxTotal || 0;
   const subTotal = printData.subTotal || 0;
   const grandTotal = printData.grandTotal || 0;
@@ -109,76 +110,90 @@ const FolioInvoicePrint = React.forwardRef(({ printData, adminName, hideLetterhe
         <div style={{ padding: "24px 28px", marginBottom: "0" }}>
 
           {/* ══ HEADER ══════════════════════════════════════════════ */}
-          {!hideLetterhead && (
-            <table style={{ width: "100%", borderCollapse: "collapse", marginBottom: "0" }}>
-              <tbody>
-                <tr>
-                  {/* LEFT: Logo + Property */}
-                  <td style={{ verticalAlign: "top", width: "55%", padding: "0 0 24px 0", borderBottom: `1px solid ${RULE}` }}>
-                    <div style={{ display: "flex", alignItems: "flex-start", gap: "14px" }}>
-                      {propertyImage ? (
-                        <img
-                          src={propertyImage}
-                          alt="Property Logo"
-                          style={{ width: "50px", height: "50px", objectFit: "contain", flexShrink: 0 }}
-                        />
-                      ) : (
-                        <div style={{
-                          width: "44px", height: "44px", flexShrink: 0,
-                          border: `1px solid ${RULE}`,
-                          display: "flex", alignItems: "center", justifyContent: "center",
-                          fontSize: "10px", color: INK_MUTED,
-                          fontFamily: FONT_LABEL, fontWeight: "400",
-                        }}>
-                          LOGO
-                        </div>
-                      )}
-                      <div>
-                        <div style={{
-                          fontFamily: FONT_LABEL,
-                          fontWeight: "700",
-                          fontSize: "14px",
-                          textTransform: "uppercase",
-                          color: INK,
-                          lineHeight: "1.3",
-                          marginBottom: "4px",
-                        }}>
-                          {propertyData?.name || ""}
-                        </div>
-                        <div style={{ fontSize: "12px", color: INK_SOFT, lineHeight: "1.6", fontFamily: FONT_LABEL, fontWeight: "400" }}>
-                          {propertyData?.address || ""}
-                        </div>
-                        <div style={{ fontSize: "12px", color: INK_SOFT, lineHeight: "1.6", fontFamily: FONT_LABEL, fontWeight: "400" }}>
-                          {propertyData?.phone || ""} | {propertyData?.email || ""}
-                        </div>
-                      </div>
-                    </div>
-                  </td>
-
-                  {/* RIGHT: INVOICE label */}
-                  <td style={{ verticalAlign: "top", textAlign: "right", width: "45%", padding: "0 0 24px 0", borderBottom: `1px solid ${RULE}` }}>
-                    <div style={{
-                      fontFamily: FONT_BODY,
-                      fontWeight: "600",
-                      fontSize: "22px",
-                      textTransform: "uppercase",
-                      color: INK,
-                      lineHeight: "1",
-                    }}>
-                      Invoice
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          )}
-
-          {/* ══ GUEST + STAY INFO ════════════════════════════════════ */}
-          <table style={{ width: "100%", borderCollapse: "collapse", marginTop: "24px", marginBottom: "24px" }}>
+          {/* {!hideLetterhead && */}
+          {/* ( */}
+          <table style={{ width: "100%", borderCollapse: "collapse", marginBottom: "0" }}>
             <tbody>
               <tr>
-                {/* BILL TO */}
-                <td style={{ verticalAlign: "top", width: "50%", paddingRight: "28px", paddingLeft: "28px", paddingTop: "25px", borderTop: `1px solid ${RULE}`, borderBottom: `1px solid ${RULE}`, borderLeft: `1px solid ${RULE}` }}>
+                {/* LEFT: Logo + Property */}
+                <td style={{ verticalAlign: "top", width: "55%", padding: "0 0 5px 0" }}>
+                  <div style={{ display: "flex", alignItems: "flex-start", gap: "14px" }}>
+                    {propertyImage ? (
+                      <img
+                        src={propertyImage}
+                        alt="Property Logo"
+                        style={{ width: "50px", height: "50px", objectFit: "contain", flexShrink: 0 }}
+                      />
+                    ) : (
+                      <div style={{
+                        width: "44px", height: "44px", flexShrink: 0,
+                        border: `1px solid ${RULE}`,
+                        display: "flex", alignItems: "center", justifyContent: "center",
+                        fontSize: "10px", color: INK_MUTED,
+                        fontFamily: FONT_LABEL, fontWeight: "400",
+                      }}>
+                        LOGO
+                      </div>
+                    )}
+                    <div>
+                      <div style={{
+                        fontFamily: FONT_LABEL,
+                        fontWeight: "700",
+                        fontSize: "14px",
+                        textTransform: "uppercase",
+                        color: INK,
+                        lineHeight: "1.3",
+                      }}>
+                        {propertyData?.name || ""}
+                      </div>
+                      <div style={{ fontSize: "12px", color: INK_SOFT, lineHeight: "1.6", fontFamily: FONT_LABEL, fontWeight: "400" }}>
+                        {propertyData?.address || ""}
+                      </div>
+                      <div style={{ fontSize: "12px", color: INK_SOFT, lineHeight: "1.6", fontFamily: FONT_LABEL, fontWeight: "400" }}>
+                        {propertyData?.phone || ""} | {propertyData?.email || ""}
+                      </div>
+                    </div>
+                  </div>
+                </td>
+
+                {/* RIGHT: INVOICE label */}
+                <td style={{ verticalAlign: "top", textAlign: "right", width: "45%", padding: "0 0 24px 0" }}>
+                  <div style={{
+                    fontFamily: FONT_BODY,
+                    fontWeight: "600",
+                    fontSize: "22px",
+                    textTransform: "uppercase",
+                    color: INK,
+                    lineHeight: "1",
+                  }}>
+                    Invoice
+                  </div>
+                  {
+                    isfolioExist && (
+                          <div style={{ display: Flex,fontFamily: FONT_LABEL, fontSize: "12px", fontWeight: "300", textTransform: "uppercase", color: INK }}>
+                            Folio #&ensp;
+                            <span style={{fontWeight: "600"}}>{folioNo}</span>
+                          </div>
+                    )
+                  }
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          {/* ) */}
+          {/* } */}
+
+          {/* ══ GUEST + STAY INFO ════════════════════════════════════ */}
+          <table style={{ width: "100%", borderCollapse: "collapse", marginTop: 0, marginBottom: "5px", tableLayout: "fixed" }}>
+            <colgroup>
+              <col style={{ width: "50%" }} />
+              <col style={{ width: "25%" }} />
+              <col style={{ width: "25%" }} />
+            </colgroup>
+            <tbody>
+              <tr>
+                {/* Guest Info - spans 1 column */}
+                <td style={{ verticalAlign: "top", paddingRight: "10px", paddingLeft: "10px", paddingTop: "10px", borderTop: `1px solid ${RULE}`, borderLeft: `1px solid ${RULE}` }}>
                   {
                     (sourceType !== "company" && sourceType !== "agency") ? (
                       <BillRow label="Guest" value={<strong style={{ color: INK, fontWeight: "600" }}>{guestName}</strong>} />
@@ -199,64 +214,37 @@ const FolioInvoicePrint = React.forwardRef(({ printData, adminName, hideLetterhe
                       <BillRow label="Company" value={<strong style={{ color: INK, fontWeight: "600" }}>{capitalizeAllLetter(sourceName)}</strong>} />
                     )
                   }
-                  <BillRow label="Booking Ref" value={bookingRef || "—"} />
-                  <BillRow label="Tour Code" value={tourCode || "—"} />
                 </td>
 
-                {/* STAY GRID */}
-                <td style={{ verticalAlign: "top", width: "50%", paddingLeft: "28px", borderTop: `1px solid ${RULE}`, borderBottom: `1px solid ${RULE}`, borderRight: `1px solid ${RULE}` }}>
-                  <table style={{ width: "100%", borderCollapse: "collapse", tableLayout: "fixed" }}>
-                    <tbody>
-                      <tr>
-                        <td style={{ padding: "12px", width: "50%", height: "80px", borderBottom: `1px solid ${RULE}`, borderRight: `1px solid ${RULE}` , borderLeft: `1px solid ${RULE}`}}>
-                          <StayCell label="Res No" value={reservationNo || "—"} />
-                        </td>
-                        <td style={{ padding: "12px", width: "50%", height: "80px", borderBottom: `1px solid ${RULE}` }}>
-                          <StayCell label="Arrival" value={checkinDate ? dayjs(checkinDate).format("DD/MM/YYYY") : "—"} />
-                        </td>
-                      </tr>
-                      <tr>
-                        <td style={{ padding: "12px", width: "50%", height: "80px", borderRight: `1px solid ${RULE}`, borderLeft: `1px solid ${RULE}` }}>
-                          <StayCell label="Printed Date" value={dayjs().format("DD/MM/YYYY")} />
-                        </td>
-                        <td style={{ padding: "12px", width: "50%", height: "80px" }}>
-                          <StayCell label="Departure" value={checkoutDate ? dayjs(checkoutDate).format("DD/MM/YYYY") : "—"} />
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
+                {/* Res No */}
+                <td style={{ verticalAlign: "top", paddingLeft: "10px", paddingTop: "10px", borderTop: `1px solid ${RULE}`, borderLeft: `1px solid ${RULE}`, borderBottom: `1px solid ${RULE}` }}>
+                  <StayCell label="Res No" value={reservationNo || "—"} />
+                </td>
+
+                {/* Printed Date */}
+                <td style={{ verticalAlign: "top", paddingLeft: "10px", paddingTop: "10px", borderTop: `1px solid ${RULE}`, borderLeft: `1px solid ${RULE}`, borderRight: `1px solid ${RULE}`, borderBottom: `1px solid ${RULE}` }}>
+                  <StayCell label="Printed Date" value={dayjs().format("DD/MM/YYYY")} />
+                </td>
+              </tr>
+              <tr>
+                {/* Booking Ref and Tour Code - spans 1 column */}
+                <td style={{ verticalAlign: "top", paddingRight: "10px", paddingLeft: "10px", borderBottom: `1px solid ${RULE}`, borderLeft: `1px solid ${RULE}` }}>
+                  <BillRow label="Booking Ref" value={<strong>{bookingRef}</strong> || "—"} />
+                  <BillRow label="Tour Code" value={<strong>{tourCode}</strong> || "—"} />
+                </td>
+
+                {/* Arrival */}
+                <td style={{ verticalAlign: "top", paddingLeft: "10px", borderBottom: `1px solid ${RULE}`, borderLeft: `1px solid ${RULE}` }}>
+                  <StayCell label="Arrival" value={checkinDate ? dayjs(checkinDate).format("DD/MM/YYYY") : "—"} />
+                </td>
+
+                {/* Departure */}
+                <td style={{ verticalAlign: "top", paddingLeft: "10px", borderBottom: `1px solid ${RULE}`, borderLeft: `1px solid ${RULE}`, borderRight: `1px solid ${RULE}` }}>
+                  <StayCell label="Departure" value={checkoutDate ? dayjs(checkoutDate).format("DD/MM/YYYY") : "—"} />
                 </td>
               </tr>
             </tbody>
           </table>
-
-          {/* ══ FOLIO LABEL ══════════════════════════════════════════ */}
-          {
-            isfolioExist && (
-          <div style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            borderTop: `1px solid ${RULE}`,
-            borderBottom: `1px solid ${RULE}`,
-            padding: "8px 0",
-            marginBottom: "0",
-          }}>
-            <div style={{
-              fontFamily: FONT_LABEL,
-              fontSize: "12px",
-              fontWeight: "600",
-              // textTransform: "uppercase",
-              // color: INK,
-            }}>
-              <span style={{ fontFamily: FONT_LABEL, fontSize: "12px", fontWeight: "300", textTransform: "uppercase", color: INK }}>
-               Folio #&ensp;
-              </span>
-               {folioNo}
-            </div>
-          </div>
-            )
-          }
 
           {/* ══ TRANSACTIONS TABLE ═══════════════════════════════════ */}
           <table style={{ width: "100%", borderCollapse: "collapse", tableLayout: "fixed", fontSize: "13px" }}>
@@ -341,21 +329,21 @@ const FolioInvoicePrint = React.forwardRef(({ printData, adminName, hideLetterhe
                 {cols.map((col, i) => {
                   if (col.name === "Room") {
                     return (
-                      <td key={i} style={{ padding: "12px 8px 12px 8px", fontFamily: FONT_LABEL, fontSize: "13px", fontWeight: "600", color: INK, textAlign: "left", whiteSpace: "nowrap", borderBottom: "none", borderLeft: "none", borderRight: "none" }}>
+                      <td key={i} style={{ padding: "6px 8px", fontFamily: FONT_LABEL, fontSize: "13px", fontWeight: "600", color: INK, textAlign: "left", whiteSpace: "nowrap", borderBottom: "none", borderLeft: "none", borderRight: "none" }}>
                         Total
                       </td>
                     );
                   }
                   if (col.name === "Debit") {
                     return (
-                      <td key={i} style={{ padding: "12px 8px 12px 8px", fontFamily: FONT_MONO, fontSize: "13px", fontWeight: "500", color: INK, textAlign: "right", whiteSpace: "nowrap", borderBottom: "none", borderLeft: "none", borderRight: "none" }}>
+                      <td key={i} style={{ padding: "6px 8px", fontFamily: FONT_MONO, fontSize: "13px", fontWeight: "500", color: INK, textAlign: "right", whiteSpace: "nowrap", borderBottom: "none", borderLeft: "none", borderRight: "none" }}>
                         <PriceTag value={debitTotal} />
                       </td>
                     );
                   }
                   if (col.name === "Credit") {
                     return (
-                      <td key={i} style={{ padding: "12px 8px 12px 8px", fontFamily: FONT_MONO, fontSize: "13px", fontWeight: "500", color: INK, textAlign: "right", whiteSpace: "nowrap", borderBottom: "none", borderLeft: "none", borderRight: "none" }}>
+                      <td key={i} style={{ padding: "6px 8px", fontFamily: FONT_MONO, fontSize: "13px", fontWeight: "500", color: INK, textAlign: "right", whiteSpace: "nowrap", borderBottom: "none", borderLeft: "none", borderRight: "none" }}>
                         <PriceTag value={creditTotal} />
                       </td>
                     );
@@ -367,15 +355,22 @@ const FolioInvoicePrint = React.forwardRef(({ printData, adminName, hideLetterhe
                 {cols.map((col, i) => {
                   if (col.name === "Room") {
                     return (
-                      <td key={i} style={{ padding: "12px 8px 12px 8px", fontFamily: FONT_LABEL, fontSize: "13px", fontWeight: "600", color: INK, textAlign: "left", whiteSpace: "nowrap", borderBottom: "none", borderLeft: "none", borderRight: "none" }}>
+                      <td key={i} style={{ padding: "6px 8px", fontFamily: FONT_LABEL, fontSize: "13px", fontWeight: "600", color: INK, textAlign: "left", whiteSpace: "nowrap", borderBottom: "none", borderLeft: "none", borderRight: "none" }}>
                         Balance
                       </td>
                     );
                   }
-                  if (col.name === "Debit") {
+                  if (col.name === "Debit" && debitTotal > creditTotal) {
                     return (
-                      <td key={i} style={{ padding: "12px 8px 12px 8px", fontFamily: FONT_MONO, fontSize: "13px", fontWeight: "500", color: INK, textAlign: "right", whiteSpace: "nowrap", borderBottom: "none", borderLeft: "none", borderRight: "none" }}>
-                         <PriceTag value={balanceTotal} />
+                      <td key={i} style={{ padding: "6px 8px", fontFamily: FONT_MONO, fontSize: "13px", fontWeight: "500", color: INK, textAlign: "right", whiteSpace: "nowrap", borderBottom: "none", borderLeft: "none", borderRight: "none" }}>
+                        <PriceTag value={balanceTotal} />
+                      </td>
+                    );
+                  }
+                  if (col.name === "Credit" && debitTotal <= creditTotal) {
+                    return (
+                      <td key={i} style={{ padding: "6px 8px", fontFamily: FONT_MONO, fontSize: "13px", fontWeight: "500", color: INK, textAlign: "right", whiteSpace: "nowrap", borderBottom: "none", borderLeft: "none", borderRight: "none" }}>
+                        <PriceTag value={balanceTotal} />
                       </td>
                     );
                   }
@@ -387,30 +382,30 @@ const FolioInvoicePrint = React.forwardRef(({ printData, adminName, hideLetterhe
           </table>
 
           {/* ══ SUMMARY BOX ════════════════════════════════════════════ */}
-          <div style={{ marginTop: "24px", width: "300px", marginLeft: "auto" }}>
+          <div style={{ marginTop: "5px", width: "300px", marginLeft: "auto" }}>
             <table style={{ width: "100%", borderCollapse: "collapse", border: `1px solid ${RULE}` }}>
               <tbody>
                 <tr>
-                  <td style={{ padding: "10px 16px", fontFamily: FONT_LABEL, fontSize: "12px", fontWeight: "500", color: INK, borderBottom: `1px solid ${RULE}`, borderRight: `1px solid ${RULE}`, width: "50%" }}>
+                  <td style={{ padding: "5px 5px", fontFamily: FONT_LABEL, fontSize: "12px", fontWeight: "500", color: INK, borderBottom: `1px solid ${RULE}`, borderRight: `1px solid ${RULE}`, width: "50%" }}>
                     Sub Total
                   </td>
-                  <td style={{ padding: "10px 16px", fontFamily: FONT_MONO, fontSize: "13px", fontWeight: "500", color: INK, textAlign: "right", borderBottom: `1px solid ${RULE}` }}>
+                  <td style={{ padding: "5px 5px", fontFamily: FONT_MONO, fontSize: "13px", fontWeight: "500", color: INK, textAlign: "right", borderBottom: `1px solid ${RULE}` }}>
                     <PriceTag value={subTotal} /> MMK
                   </td>
                 </tr>
                 <tr>
-                  <td style={{ padding: "10px 16px", fontFamily: FONT_LABEL, fontSize: "12px", fontWeight: "500", color: INK, borderBottom: `1px solid ${RULE}`, borderRight: `1px solid ${RULE}` }}>
+                  <td style={{ padding: "5px 5px", fontFamily: FONT_LABEL, fontSize: "12px", fontWeight: "500", color: INK, borderBottom: `1px solid ${RULE}`, borderRight: `1px solid ${RULE}` }}>
                     Tax
                   </td>
-                  <td style={{ padding: "10px 16px", fontFamily: FONT_MONO, fontSize: "13px", fontWeight: "500", color: INK, textAlign: "right", borderBottom: `1px solid ${RULE}` }}>
+                  <td style={{ padding: "5px 5px", fontFamily: FONT_MONO, fontSize: "13px", fontWeight: "500", color: INK, textAlign: "right", borderBottom: `1px solid ${RULE}` }}>
                     <PriceTag value={taxTotal} /> MMK
                   </td>
                 </tr>
                 <tr>
-                  <td style={{ padding: "10px 16px", fontFamily: FONT_LABEL, fontSize: "13px", fontWeight: "700", color: INK, borderRight: `1px solid ${RULE}` }}>
+                  <td style={{ padding: "5px 5px", fontFamily: FONT_LABEL, fontSize: "13px", fontWeight: "700", color: INK, borderRight: `1px solid ${RULE}` }}>
                     Grand Total
                   </td>
-                  <td style={{ padding: "10px 16px", fontFamily: FONT_MONO, fontSize: "14px", fontWeight: "700", color: INK, textAlign: "right" }}>
+                  <td style={{ padding: "5px 5px", fontFamily: FONT_MONO, fontSize: "14px", fontWeight: "700", color: INK, textAlign: "right" }}>
                     <PriceTag value={grandTotal} /> MMK
                   </td>
                 </tr>
@@ -419,30 +414,29 @@ const FolioInvoicePrint = React.forwardRef(({ printData, adminName, hideLetterhe
           </div>
 
           {/* ══ SIGNATURES ════════════════════════════════════════════ */}
-          <div style={{ marginTop: "48px", display: "flex", justifyContent: "space-between" }}>
+          <div style={{ marginTop: "15px", display: "flex", justifyContent: "space-between" }}>
             <div style={{ width: "30%" }}>
-              <div style={{ fontFamily: FONT_LABEL, fontSize: "12px", fontWeight: "600", color: INK, marginBottom: "40px" }}>
+              <div style={{ fontFamily: FONT_LABEL, fontSize: "12px", fontWeight: "600", color: INK, marginBottom: "20px" }}>
                 Cashier Signature
               </div>
-              <div style={{ height: "1px", background: INK, marginBottom: "8px" }} />
+              <div style={{ height: "1px", background: INK_MUTED , marginBottom: "5px" , fontWeight: "200"}} />
             </div>
             <div style={{ width: "30%" }}>
-              <div style={{ fontFamily: FONT_LABEL, fontSize: "12px", fontWeight: "600", color: INK, marginBottom: "40px" }}>
+              <div style={{ fontFamily: FONT_LABEL, fontSize: "12px", fontWeight: "600", color: INK, marginBottom: "20px" }}>
                 Client Signature
               </div>
-              <div style={{ height: "1px", background: INK, marginBottom: "8px" }} />
+              <div style={{ height: "1px", background: INK_MUTED , marginBottom: "5px", fontWeight: "200" }} />
             </div>
           </div>
 
           {/* ══ FOOTER ══════════════════════════════════════════════ */}
-          <div style={{ marginTop: "32px" }}>
-            <div style={{ height: "1px", background: RULE, marginBottom: "20px" }} />
+          <div style={{ marginTop: "15px" }}>
             <table style={{ width: "100%", borderCollapse: "collapse" }}>
               <tbody>
                 <tr>
                   <td style={{ verticalAlign: "bottom", width: "55%", padding: 0 }}>
-                    <div style={{ fontFamily: FONT_LABEL, fontSize: "12px", color: INK_SOFT, lineHeight: "1.7", fontWeight: "400" }}>
-                      <span style={{ color: INK, fontWeight: "600" }}>Thank you</span> for choosing Azura.
+                    <div style={{ fontFamily: FONT_LABEL, fontSize: "12px", color: INK_SOFT, lineHeight: "1.7", fontWeight: "400", whiteSpace: "nowrap" }}>
+                      <span style={{ color: INK, fontWeight: "600" }}>Thank you</span> for choosing {propertyData?.name || ""}.
                       We look forward to welcoming you back.
                     </div>
                     <div style={{ fontFamily: FONT_LABEL, fontSize: "11px", color: INK_MUTED, marginTop: "4px", fontWeight: "400" }}>
@@ -458,24 +452,12 @@ const FolioInvoicePrint = React.forwardRef(({ printData, adminName, hideLetterhe
                       {adminName}
                     </div>
                     <div style={{ fontFamily: FONT_LABEL, fontSize: "11px", color: INK_MUTED, marginTop: "3px" }}>
-                      {propertyData?.name || ""}
+                      {adminRole || ""}
                     </div>
                   </td>
                 </tr>
               </tbody>
             </table>
-            <div style={{
-              textAlign: "center",
-              marginTop: "16px",
-              fontFamily: FONT_LABEL,
-              fontSize: "10px",
-              fontWeight: "400",
-              color: INK_MUTED,
-              borderTop: `1px solid ${RULE}`,
-              paddingTop: "8px",
-            }}>
-              Document generated {dayjs().format("DD MMM YYYY [at] HH:mm")}
-            </div>
           </div>
         </div>
       </div>

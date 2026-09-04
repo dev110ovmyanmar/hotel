@@ -208,7 +208,7 @@ export default function RoomMoveModal({
                     {selectRoomToMove && (
                         <Row gutter={16} className="pt-4">
                             <Col span={11}>
-                                <div className='flex justify-between border border-gray-300 p-3 rounded-md'>
+                                <div className='flex justify-between border border-gray-300 py-3 px-2 rounded-md'>
                                     <div className='flex gap-2'>
                                         <GiBed fontSize={25} className='text-gray-500' />
                                         <div className='text-md'>{record?.room?.roomNo}</div>
@@ -227,7 +227,7 @@ export default function RoomMoveModal({
                                 ?.filter(searchroom => searchroom?.uuid === selectRoomUuid)
                                 ?.map(searchroom => (
                                     <Col span={11} key={searchroom.uuid}>
-                                        <div className={`flex justify-between border-2 border-[#4C16FF] bg-[#F0EBFF] p-3 rounded-md ${upgradeAndDownRoomDarkMode}`}>
+                                        <div className={`flex justify-between border-2 border-[#4C16FF] bg-[#F0EBFF] py-3 px-2 rounded-md ${upgradeAndDownRoomDarkMode}`}>
                                             <div className='flex gap-2'>
                                                 <GiBed fontSize={25} className='text-green-500' />
                                                 <div className='text-md text-green-500'>{searchroom?.roomNo}</div>

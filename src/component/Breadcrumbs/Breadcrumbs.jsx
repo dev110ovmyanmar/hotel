@@ -38,7 +38,7 @@ const Breadcrumbs = () => {
 
   if (location.pathname.includes("/night-audit/") && nightAuditStarted) {
     return (
-      <NightAuditTopBar setNightAuditStarted={setNightAuditStarted} />
+      <NightAuditTopBar />
     );
   }
 

@@ -51,6 +51,7 @@ const FolioOperationsList = () => {
     params: { uuid: adminUuid },
   });
   const adminName = `${loginAdminDetails?.name}`;
+  const adminRole = `${loginAdminDetails?.role?.name}`;
 
   // Property image
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
@@ -287,6 +288,7 @@ const FolioOperationsList = () => {
             <FolioInvoicePrint
               printData={printTarget}
               adminName={adminName}
+              adminRole={adminRole}
               propertyData={propertyData}
             />
           </div>,
@@ -337,6 +339,7 @@ const FolioOperationsList = () => {
             <FolioInvoicePrint
               printData={printTarget}
               adminName={adminName}
+              adminRole={adminRole}
               propertyData={propertyData}
               hideLetterhead
             />
