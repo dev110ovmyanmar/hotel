@@ -50,6 +50,8 @@ const SubFolioTable = ({ record, lineColumns, onMoveTo, isTransferring }) => {
   const isFolioClosed =
     record.closedAt !== null && record.closedAt !== undefined;
 
+  
+
   const rowSelection = {
     selectedRowKeys,
     onChange: (selectedKeys) => {
@@ -144,7 +146,14 @@ const SubFolioTable = ({ record, lineColumns, onMoveTo, isTransferring }) => {
         size="small"
         bordered
         summary={summary}
-        rowClassName={(record) => record.voidedAt ? 'void-folioLine-row' : ''}
+        rowClassName={(record) => {
+          const classes = [];
+          if (record.voidedAt) classes.push('void-folioLine-row');
+          const isChildLine = !!record.parentLineId;
+          const hasExcludedItemType = ['tax', 'service_charge', 'discount', 'incentive'].includes(record.itemType);
+          if (isChildLine && hasExcludedItemType) classes.push('hide-checkbox-row');
+          return classes.join(' ');
+        }}
       />
     </div>
   );
@@ -459,15 +468,12 @@ const FolioOperationsTable = ({
   const handleAdjustmentConfirm = async (adjustmentData) => {
     try {
       await onAdjustLine(adjustmentData);
-      // const total = adjustmentData.unitPrice * adjustmentData.quantity;
       Toast.success(
-        // `Adjustment Successful — ${adjustmentData.postingType.toUpperCase()} ${total.toLocaleString()} ${selectedLine?.currency?.symbol || "MMK"} — ${adjustmentData.description}`
         `Adjustment Successful`
       );
       setAdjustmentDrawerOpen(false);
       setSelectedLine(null);
     } catch (error) {
-      // Toast.error(`Adjustment Failed — ${error?.message || "Something went wrong"}`);
       console.log(error);
       throw error;
     }
@@ -476,17 +482,12 @@ const FolioOperationsTable = ({
     const handleRebateConfirm = async (rebateData) => {
     try {
       await onRebateLine(rebateData);
-      // const amountText = rebateData.amount
-      //   ? `${rebateData.amount.toLocaleString()} ${selectedLine?.currency?.symbol || "MMK"}`
-      //   : "Full Amount";
       Toast.success(
-        // `Rebate Successful — ${amountText} — ${rebateData.description}`
         `Rebate Successful`
       );
       setRebateDrawerOpen(false);
       setSelectedLine(null);
     } catch (error) {
-      // Toast.error(`Rebate Failed — ${error?.message || "Something went wrong"}`);
       console.log(error);
       throw error;
     }
@@ -496,7 +497,6 @@ const FolioOperationsTable = ({
     try {
       await onVoidLine(voidData);
       Toast.success(
-        // `Void Successful — ${selectedLine?.itemNameSnapshot || "Line"} — ${voidData.remark}`
         `Void Successful`
       );
       setVoidDrawerOpen(false);
