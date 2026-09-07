@@ -2,12 +2,11 @@ import { useNavigate } from "react-router-dom";
 import { preAuditCheck } from "../../../api/nightAuditApi";
 import useApiQuery from "../../../hooks/useApiQuery";
 import { Spin } from "antd";
-import PreAuditCheckStatus from "./PreAuditCheckStatus";
-import PreAuditTable from "./PreAuditTable";
-import IssueAndWarningCard from "./IssueAndWarningCard";
+import DailyChargeStatus from "./DailyChargeStatus";
 import CheckBookingHeader from "../CheckBookingHeader";
+import DailyChargePostingTable from "./DailyChargePostingTable";
 
-const PreAuditCheckPage = ({
+const DailyChargePostingPage = ({
     stepValue,
 }) => {
     const navigate = useNavigate();
@@ -30,8 +29,8 @@ const PreAuditCheckPage = ({
     return (
         <div className="w-full px-6 py-2">
             <CheckBookingHeader />
-            <PreAuditCheckStatus preAuditChecksData={preAuditChecksData} preNightAudit={true}/>
-            <PreAuditTable
+            <DailyChargeStatus preAuditChecksData={preAuditChecksData} />
+            <DailyChargePostingTable
                 colorCheckBooking={() => {
                     window.dispatchEvent(
                         new CustomEvent("breadcrumb_updated", {
@@ -40,13 +39,12 @@ const PreAuditCheckPage = ({
                             },
                         })
                     );
-                    navigate("/night-audit/daily-charge-posting")
+                    navigate("/night-audit/folio-&-payment-review")
                 }}
                 preAuditChecksData={preAuditChecksData?.checks}
             />
-            <IssueAndWarningCard preAuditChecksData={preAuditChecksData} />
         </div>
     )
 }
 
-export default PreAuditCheckPage;
+export default DailyChargePostingPage;
