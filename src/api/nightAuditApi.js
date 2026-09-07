@@ -35,7 +35,7 @@ export const nightAuditCheckBookings = async(params) => {
 
 export const preAuditCheck = async(params) => {
     const { data } = await apiClient.get(
-        "/night-audit/pre-audit-check",
+        "/night-audit/pre-check",
         {params}
     );
     return data.response;

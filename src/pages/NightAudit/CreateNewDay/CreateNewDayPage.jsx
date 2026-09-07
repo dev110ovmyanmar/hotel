@@ -8,6 +8,7 @@ import { useState } from "react";
 
 
 const CreateNewDayPage = () => {
+    const navigate = useNavigate();
     const [hideSteps,setHideSteps] = useState(false);
     const { data: preAuditChecksData, isLoading, error } = useApiQuery({
         fetchQueryName: "pre-audit-checks",
@@ -32,6 +33,8 @@ const CreateNewDayPage = () => {
             }
             <CreateNewDay createNewDayClick={() => {
                 setHideSteps(true);
+                navigate("/night-audit/unlock")
+                
             }} />
 
         </div>
