@@ -42,7 +42,9 @@ const CreateNewDay = ({
     });
 
     const handleNext = () => {
-        systemUnlockMutation.mutate();
+        // systemUnlockMutation.mutate();
+        createNewDayClick()
+
     };
 
     useEffect(() => {
