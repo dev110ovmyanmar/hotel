@@ -5,9 +5,7 @@ import { useLocation } from "react-router-dom";
 import useApiQuery from "../../hooks/useApiQuery";
 import { preAuditCheck } from "../../api/nightAuditApi";
 
-const NightAuditTopBar = ({
-    setNightAuditStarted
-}) => {
+const NightAuditTopBar = () => {
     const location = useLocation();
     const { data: preAuditChecksData, isLoading, error } = useApiQuery({
         fetchQueryName: "pre-audit-checks",
@@ -17,24 +15,41 @@ const NightAuditTopBar = ({
         },
     });
 
+
     const routeStepMap = {
         "/night-audit/pre-audit-check": 0,
-        "/night-audit/check-booking": 1,
-        "/night-audit/room-charge-table": 2,
-        "/night-audit/unsettled-folios": 3,
-        "/night-audit/night-audit-posting": 4,
+        "/night-audit/daily-charge-posting": 1,
+        "/night-audit/folio-&-payment-review": 2,
+        "/night-audit/reconciliation": 3,
+        "/night-audit/close-business-date": 4,
         "/night-audit/create-new-day": 5,
+        "/night-audit/unlock": 6,
+
+
+        // "/night-audit/daily-charge-posting": 1,
+        // "/night-audit/room-charge-table": 2,
+        // "/night-audit/unsettled-folios": 3,
+        // "/night-audit/night-audit-posting": 4,
+        // "/night-audit/create-new-day": 5,
+        // "/night-audit/check-booking": 6,
     };
 
     const nightAuditSteps = [
         "Pre Audit Check",
-        "Check Booking",
-        "Room Charge",
-        "Unsettled Folios",
-        "Night Audit Posting",
+        "Daily Charge Posting",
+        "Folio & Payment Review",
+        "Reconciliation",
+        "Close Business Date",
         "Create New Day",
-    ];
+        "Unlock"
 
+        // "Check Booking",
+        // "Room Charge",
+        // "Unsettled Folios",
+        // "Night Audit Posting",
+        // "Create New Day",
+    ];
+    console.log(location.pathname,"nightAuditStepLocation")
     const nightAuditStep = routeStepMap[location.pathname] ?? 0;
 
     const cardDesign =

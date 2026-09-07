@@ -1,11 +1,12 @@
-import { Spin } from "antd";
+import { useNavigate } from "react-router-dom";
 import { preAuditCheck } from "../../../api/nightAuditApi";
 import useApiQuery from "../../../hooks/useApiQuery";
+import { Spin } from "antd";
+import CloseBusinessDateStatus from "./CloseBusinessDateStatus";
 import CheckBookingHeader from "../CheckBookingHeader";
-import CheckBookingTable from "../CheckBookingTable";
-import { useNavigate } from "react-router-dom";
+import CloseBusinessDateTable from "./CloseBusinessDateTable";
 
-const CheckBookingPage = ({
+const CloseBusinessDatePage = ({
     stepValue,
 }) => {
     const navigate = useNavigate();
@@ -24,10 +25,12 @@ const CheckBookingPage = ({
             </div>
         )
     }
+
     return (
         <div className="w-full px-6 py-2">
             <CheckBookingHeader />
-            <CheckBookingTable
+            <CloseBusinessDateStatus preAuditChecksData={preAuditChecksData} />
+            <CloseBusinessDateTable
                 colorCheckBooking={() => {
                     window.dispatchEvent(
                         new CustomEvent("breadcrumb_updated", {
@@ -36,10 +39,12 @@ const CheckBookingPage = ({
                             },
                         })
                     );
-                    navigate("/night-audit/room-charge-table")
-                }} />
+                    navigate("/night-audit/create-new-day")
+                }}
+                preAuditChecksData={preAuditChecksData?.checks}
+            />
         </div>
     )
 }
 
-export default CheckBookingPage;
+export default CloseBusinessDatePage;

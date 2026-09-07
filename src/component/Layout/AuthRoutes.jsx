@@ -73,6 +73,12 @@ import RoomChargeTablePage from "../../pages/NightAudit/RoomChargeTable/RoomChar
 import UnsettledFoliosPage from "../../pages/NightAudit/UnsettledFolios/UnsettledFoliosPage";
 import NightAuditPostingPage from "../../pages/NightAudit/NightAuditPosting/NightAuditPostingPage";
 import CreateNewDayPage from "../../pages/NightAudit/CreateNewDay/CreateNewDayPage";
+import DailyChargePostingPage from "../../pages/NightAudit/DailyChargePosting/DailyChargePostingPage";
+import ReconciliationPage from "../../pages/NightAudit/Reconciliation/ReconciliationPage";
+import FolioAndPaymentReviewStatus from "../../pages/NightAudit/FolioAndPaymentReview/FolioAndPaymentReviewStatus";
+import FolioAndPaymentReviewPage from "../../pages/NightAudit/FolioAndPaymentReview/FolioAndPaymentReviewPage";
+import CloseBusinessDatePage from "../../pages/NightAudit/CloseBusinessDate/CloseBusinessDatePage";
+import NightAuditUnlockPage from "../../pages/NightAudit/NightAuditUnlock/NightAuditUnlockPage";
 
 const Dashboard = lazy(() => import("../../pages/Dashboard/Dashboard"));
 const Calendar = lazy(() => import("../../pages/Calendar/Calendar"));
@@ -870,33 +876,63 @@ export const authRoutes = [
     requiredRole: FRONT_OFFICE,
   },
   {
+    key: 13.02,
+    path: "/night-audit/daily-charge-posting",
+    component: <DailyChargePostingPage />,
+    requiredRole: FRONT_OFFICE,
+  },
+  // {
+  //   key: 13.2,
+  //   path: "/night-audit/check-booking",
+  //   component: <CheckBookingPage />,
+  //   requiredRole: FRONT_OFFICE,
+  // },
+  // {
+  //   key: 13.3,
+  //   path: "/night-audit/room-charge-table",
+  //   component: <RoomChargeTablePage />,
+  //   requiredRole: FRONT_OFFICE,
+  // },
+  // {
+  //   key: 13.4,
+  //   path: "/night-audit/unsettled-folios",
+  //   component: <UnsettledFoliosPage />,
+  //   requiredRole: FRONT_OFFICE,
+  // },
+  // {
+  //   key: 13.5,
+  //   path: "/night-audit/night-audit-posting",
+  //   component: <NightAuditPostingPage />,
+  //   requiredRole: FRONT_OFFICE,
+  // },
+  {
     key: 13.2,
-    path: "/night-audit/check-booking",
-    component: <CheckBookingPage />,
+    path: "/night-audit/folio-&-payment-review",
+    component: <FolioAndPaymentReviewPage />,
     requiredRole: FRONT_OFFICE,
   },
   {
     key: 13.3,
-    path: "/night-audit/room-charge-table",
-    component: <RoomChargeTablePage />,
+    path: "/night-audit/reconciliation",
+    component: <ReconciliationPage />,
     requiredRole: FRONT_OFFICE,
   },
   {
     key: 13.4,
-    path: "/night-audit/unsettled-folios",
-    component: <UnsettledFoliosPage />,
+    path: "/night-audit/close-business-date",
+    component: <CloseBusinessDatePage />,
     requiredRole: FRONT_OFFICE,
   },
   {
     key: 13.5,
-    path: "/night-audit/night-audit-posting",
-    component: <NightAuditPostingPage />,
+    path: "/night-audit/create-new-day",
+    component: <CreateNewDayPage />,
     requiredRole: FRONT_OFFICE,
   },
   {
     key: 13.6,
-    path: "/night-audit/create-new-day",
-    component: <CreateNewDayPage />,
+    path: "/night-audit/unlock",
+    component: <NightAuditUnlockPage />,
     requiredRole: FRONT_OFFICE,
   },
   {

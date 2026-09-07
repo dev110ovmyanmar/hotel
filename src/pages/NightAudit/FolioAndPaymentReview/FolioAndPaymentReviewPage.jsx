@@ -1,12 +1,13 @@
 import { useNavigate } from "react-router-dom";
 import { preAuditCheck } from "../../../api/nightAuditApi";
 import useApiQuery from "../../../hooks/useApiQuery";
-import CheckBookingHeader from "../CheckBookingHeader";
-import UnsettledFolios from "../UnsettledFolios";
 import { Spin } from "antd";
+import FolioAndPaymentReviewStatus from "./FolioAndPaymentReviewStatus";
+import CheckBookingHeader from "../CheckBookingHeader";
+import FolioAndPaymentReviewTable from "./FolioAndPaymentReviewTable";
 
-const UnsettledFoliosPage = ({
-    stepValue
+const FolioAndPaymentReviewPage = ({
+    stepValue,
 }) => {
     const navigate = useNavigate();
     const { data: preAuditChecksData, isLoading, error } = useApiQuery({
@@ -24,21 +25,19 @@ const UnsettledFoliosPage = ({
             </div>
         )
     }
+
     return (
         <div className="w-full px-6 py-2">
             <CheckBookingHeader />
-            <UnsettledFolios unsettledFolioClick={() => {
-                window.dispatchEvent(
-                    new CustomEvent("breadcrumb_updated", {
-                        detail: {
-                            stepValue: Number(stepValue),
-                        },
-                    })
-                );
-                navigate("/night-audit/night-audit-posting")
-            }} />
+            <FolioAndPaymentReviewStatus preAuditChecksData={preAuditChecksData} />
+            <FolioAndPaymentReviewTable
+                colorCheckBooking={() => {
+                    navigate("/night-audit/reconciliation")
+                }}
+                preAuditChecksData={preAuditChecksData?.checks}
+            />
         </div>
     )
 }
 
-export default UnsettledFoliosPage
+export default FolioAndPaymentReviewPage;

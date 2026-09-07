@@ -1,6 +1,6 @@
 import { Input, Modal, Form } from "antd"
 import { useApiMutation } from "../../hooks/useApiMutation";
-import { systemLock } from "../../api/nightAuditApi";
+import { systemLock, systemUnlock } from "../../api/nightAuditApi";
 import Toast from "../../component/Toast/Toast";
 import { useNavigate } from "react-router-dom";
 
@@ -56,6 +56,9 @@ const ConfirmModal = ({
                 form.resetFields()
 
             },
+            onError: () => {
+                form.resetFields()
+            }
         },
     });
 
@@ -71,13 +74,40 @@ const ConfirmModal = ({
         catch (error) {
             console.log("Validationfailed:", error);
         }
+        onCancel(false);
     };
 
+    const handleForceLogoutToNavigate = () => {
+        // try {
+        //     const values = await form.validateFields();
+        //     console.log(values, "handleForceLogout")
+
+        //     systemLockMutation.mutate({
+        //         systemLockKey: values?.locking
+        //     });
+        // }
+        // catch (error) {
+        //     console.log("Validationfailed:", error);
+        // }
+        // onCancel(false);
+        window.dispatchEvent(
+            new CustomEvent("breadcrumb_updated", {
+                detail: {
+                    stepValue: 0,
+                    nightAuditStarted: true,
+                },
+            })
+        );
+        navigate("/night-audit/pre-audit-check");
+    };
     return (
         <Modal
             title="Confirm Night Audit"
             open={open}
-            onCancel={onCancel}
+            onCancel={() => {
+                onCancel();
+                form.resetFields()
+            }}
             onOk={handleForceLogout}
             okText="Confirm"
             styles={stylesFn}

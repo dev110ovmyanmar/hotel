@@ -1,11 +1,12 @@
-import { Spin } from "antd";
+import { useNavigate } from "react-router-dom";
 import { preAuditCheck } from "../../../api/nightAuditApi";
 import useApiQuery from "../../../hooks/useApiQuery";
+import { Spin } from "antd";
+import ReconciliationStatus from "./ReconciliationStatus";
 import CheckBookingHeader from "../CheckBookingHeader";
-import CheckBookingTable from "../CheckBookingTable";
-import { useNavigate } from "react-router-dom";
+import ReconciliationTable from "./ReconciliationTable";
 
-const CheckBookingPage = ({
+const ReconciliationPage = ({
     stepValue,
 }) => {
     const navigate = useNavigate();
@@ -24,10 +25,12 @@ const CheckBookingPage = ({
             </div>
         )
     }
+
     return (
         <div className="w-full px-6 py-2">
             <CheckBookingHeader />
-            <CheckBookingTable
+            <ReconciliationStatus preAuditChecksData={preAuditChecksData} />
+            <ReconciliationTable
                 colorCheckBooking={() => {
                     window.dispatchEvent(
                         new CustomEvent("breadcrumb_updated", {
@@ -36,10 +39,12 @@ const CheckBookingPage = ({
                             },
                         })
                     );
-                    navigate("/night-audit/room-charge-table")
-                }} />
+                    navigate("/night-audit/close-business-date")
+                }}
+                preAuditChecksData={preAuditChecksData?.checks}
+            />
         </div>
     )
 }
 
-export default CheckBookingPage;
+export default ReconciliationPage;

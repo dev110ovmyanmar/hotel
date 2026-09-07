@@ -1,11 +1,11 @@
 import { useNavigate } from "react-router-dom";
 import { preAuditCheck } from "../../../api/nightAuditApi";
 import useApiQuery from "../../../hooks/useApiQuery";
-import CheckBookingHeader from "../CheckBookingHeader";
-import IssueAndWarningCard from "../IssueAndWarningCard";
-import PreAuditTable from "../PreAuditTable";
-import PreAuditCheckStatus from "../PreAuditCheckStatus";
 import { Spin } from "antd";
+import PreAuditCheckStatus from "./PreAuditCheckStatus";
+import PreAuditTable from "./PreAuditTable";
+import IssueAndWarningCard from "./IssueAndWarningCard";
+import CheckBookingHeader from "../CheckBookingHeader";
 
 const PreAuditCheckPage = ({
     stepValue,
@@ -40,7 +40,7 @@ const PreAuditCheckPage = ({
                             },
                         })
                     );
-                    navigate("/night-audit/check-booking")
+                    navigate("/night-audit/daily-charge-posting")
                 }}
                 preAuditChecksData={preAuditChecksData?.checks}
             />

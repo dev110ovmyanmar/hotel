@@ -1,43 +1,70 @@
-import { EditOutlined, EyeOutlined, MoreOutlined } from "@ant-design/icons";
+import { CloseCircleOutlined, EditOutlined, EyeOutlined, MoreOutlined, WarningOutlined } from "@ant-design/icons";
 import { Button, Dropdown, Space, Table, Tag } from "antd";
-import PriceTag from "../../component/PriceTag/PriceTag";
 import { AiOutlineRight } from "react-icons/ai";
+import { CircleCheck } from "lucide-react";
 
 
-const RoomChargeTable = ({
-    roomChargeClick
+const NightAuditUnlockTable = ({
+    colorCheckBooking,
+    preAuditChecksData
 }) => {
     const columns = [
+        // {
+        //     title: "Id",
+        //     dataIndex: "id",
+        //     key: "id",
+        //     render: (text) => <div>{text}</div>
+        // },
         {
-            title: "Order Id",
-            dataIndex: "orderId",
-            key: "orderId",
-            render: (text) => <div>{text}</div>
+            title: "Name",
+            dataIndex: "name",
+            key: "name",
         },
         {
-            title: "Check In Date, Time",
-            dataIndex: "checkInDateTime",
-            key: "checkInDateTime",
-            render: (text) => <div>{text}</div>
+            title: "Status",
+            dataIndex: "status",
+            key: "status",
+            align: "center",
+            render: (text) => {
+                const blocking = text === "BLOCKING";
+                const passed = text === "PASSED";
+                const warning = text === "WARNING"
+                console.log(text, "TextStatus")
+                return (
+                    <Tag color={blocking ? "red" : warning ? "orange" : "green"}
+                        className={
+                            `!rounded ${blocking
+                                ? "!border-red-500"
+                                : warning
+                                    ? "!border-orange-500"
+                                    : "!border-green-500"
+                            }`
+                        }>
+                        <div className="flex gap-x-2 items-center">
+                            {passed
+                                ? <CircleCheck size={15}/>
+                                : warning
+                                    ? <WarningOutlined className="!text-[15px]"/>
+                                    : <CloseCircleOutlined className="!text-[15px]"/>
+                            }
+                            <div>{text?.charAt(0).toUpperCase() + text?.slice(1).toLowerCase()}</div>
+                        </div>
+                    </Tag>
+                )
+            }
         },
         {
-            title: "Check Out Date, Time",
-            dataIndex: "checkOutDateTime",
-            key: "checkOutDateTime",
-            render: (text) => <div>{text}</div>
+            title: "Count",
+            dataIndex: "count",
+            key: "count",
         },
-        {
-            title: "Room",
-            dataIndex: "room",
-            key: "room",
-            render: (text) => <div>{text}</div>
-        },
-        {
-            title: "Total (MMK)",
-            dataIndex: "total",
-            key: "total",
-            render: (text) => <PriceTag value={text} />
-        },
+        // {
+        //     title: "Details",
+        //     dataIndex: "details",
+        //     key: "details",
+        //     align:"center"
+        // },
+
         {
             title: "Action",
             name: "action",
@@ -99,38 +126,10 @@ const RoomChargeTable = ({
 
     ];
 
-    const dataSource = [
-        {
-            key: "1",
-            orderId: "1000",
-            checkInDateTime: "21/1/2026 1:00 PM",
-            checkOutDateTime: "22/1/2026 5:00 PM",
-            room: "DBD 301",
-            total: 180000,
-        },
-        {
-            key: "2",
-            orderId: "1000",
-            checkInDateTime: "21/1/2026 1:00 PM",
-            checkOutDateTime: "22/1/2026 5:00 PM",
-            room: "DBD 302",
-            total: 180000,
-        },
-        {
-            key: "3",
-            orderId: "1000",
-            checkInDateTime: "21/1/2026 1:00 PM",
-            checkOutDateTime: "22/1/2026 5:00 PM",
-            room: "DBD 303",
-            total: 180000,
-        },
-
-
-    ];
     return (
         <Table
             columns={columns}
-            dataSource={dataSource}
+            dataSource={preAuditChecksData}
             pagination={false}
             summary={() => (
                 <Table.Summary fixed>
@@ -138,12 +137,10 @@ const RoomChargeTable = ({
                         <Table.Summary.Cell index={0}></Table.Summary.Cell>
                         <Table.Summary.Cell index={1}></Table.Summary.Cell>
                         <Table.Summary.Cell index={2}></Table.Summary.Cell>
-                        <Table.Summary.Cell index={3}></Table.Summary.Cell>
-                        <Table.Summary.Cell index={4}></Table.Summary.Cell>
-                        <Table.Summary.Cell index={5}>
+                        <Table.Summary.Cell index={3}>
                             <Button
                                 type="primary"
-                                onClick={roomChargeClick}
+                                onClick={colorCheckBooking}
                             >
                                 Next Step
                                 <AiOutlineRight />
@@ -156,4 +153,4 @@ const RoomChargeTable = ({
     )
 }
 
-export default RoomChargeTable
+export default NightAuditUnlockTable
