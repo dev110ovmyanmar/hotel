@@ -39,7 +39,26 @@ export const preAuditCheck = async(params) => {
         {params}
     );
     return data.response;
+};
+
+export const recheckPreAudit = async (params) => {
+  const { data } = await apiClient.post("/night-audit/pre-check/recheck", params);
+  return data.response;
+};
+
+export const dailyChargePosing = async(params) => {
+    const { data } = await apiClient.get(
+        "/night-audit/daily-charges",
+        {params}
+    );
+    return data.response;
 }
+
+export const reloadDailyPostCharges = async (params) => {
+  const { data } = await apiClient.post("/night-audit/daily-charges/post", params);
+  return data.response;
+};
+
 
 export const folioReview = async(params) => {
     const { data } = await apiClient.get(

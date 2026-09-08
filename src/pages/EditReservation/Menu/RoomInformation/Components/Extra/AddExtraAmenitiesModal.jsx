@@ -39,10 +39,7 @@ import {
   textColorDarkMode,
   textWhiteInDarkStyle,
 } from "../../../../../../utils";
-import {
-  priceFormatter,
-  priceParser,
-} from "../../../../../../component/PriceTag/PriceTag";
+import PriceInput from "../../../../../../component/PriceInput/PriceInput";
 
 const { Text } = Typography;
 
@@ -244,7 +241,7 @@ const AddExtraAmenitiesModal = ({ isOpen, onClose, record }) => {
         {
           uuid: editingAsset.uuid,
           quantity: values.quantity,
-          unitPrice: values.unitPrice,
+          unitPrice: Number(values.unitPrice),
         },
         {
           onSuccess: () => {
@@ -1005,14 +1002,11 @@ const AddExtraAmenitiesModal = ({ isOpen, onClose, record }) => {
               }
               name="unitPrice"
               rules={[{ required: true, message: "Unit price is required" }]}
+              getValueProps={(value) => ({
+                value: value !== null && value !== undefined ? String(value) : "",
+              })}
             >
-              <InputNumber
-                min={0}
-                style={{ width: "100%", borderRadius: "7px" }}
-                placeholder="Enter unit price"
-                formatter={priceFormatter}
-                parser={priceParser}
-              />
+              <PriceInput min={0} placeholder="Enter unit price" />
             </Form.Item>
           </Form>
         </div>

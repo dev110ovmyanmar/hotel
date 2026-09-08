@@ -8,7 +8,6 @@ import {
   Switch,
   Row,
   Col,
-  InputNumber,
 } from "antd";
 import Toast from "../../../../component/Toast/Toast";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
@@ -19,10 +18,7 @@ import { createTax, editTax, TaxDetails } from "../../../../api/taxApi";
 import TextArea from "antd/es/input/TextArea";
 import Loader from "../../../../component/Loader/Loader";
 import Status from "../../../../component/Status/Status";
-import {
-  priceFormatter,
-  priceParser,
-} from "../../../../component/PriceTag/PriceTag";
+import PriceInput from "../../../../component/PriceInput/PriceInput";
 import usePermission from "../../../../hooks/usePermission";
 import { PERMISSIONS } from "../../../../variables/permission";
 
@@ -126,6 +122,7 @@ const TaxForm = ({
     if (isAdd) {
       const createValues = {
         ...values,
+        chargeValue: Number(values.chargeValue),
         isInclusive: values.isInclusive === true ? 1 : 0,
         chargeCategory: { uuid: values.charge_category },
         chargeType: { uuid: values.charge_type },
@@ -147,6 +144,7 @@ const TaxForm = ({
     if (isEdit) {
       const editValues = {
         ...values,
+        chargeValue: Number(values.chargeValue),
         isInclusive: values.isInclusive === true ? 1 : 0,
         chargeCategory: { uuid: values.charge_category },
         chargeType: { uuid: values.charge_type },
@@ -361,9 +359,11 @@ const TaxForm = ({
                       },
                     },
                   ]}
+                  getValueProps={(value) => ({
+                    value: value !== null && value !== undefined ? String(value) : "",
+                  })}
                 >
-                  <InputNumber
-                    style={{ width: "100%" }}
+                  <PriceInput
                     min={1}
                     suffix={(() => {
                       const selected = initData?.statuses?.charge_type?.find(
@@ -373,8 +373,6 @@ const TaxForm = ({
                     })()}
                     readOnly={isView}
                     placeholder="Enter Charge Value"
-                    formatter={priceFormatter}
-                    parser={priceParser}
                   />
                 </Form.Item>
               </Col>

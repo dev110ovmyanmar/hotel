@@ -24,10 +24,7 @@ import dayjs from "dayjs";
 import { getFormattedDate } from "../../../../utils";
 import { PERMISSIONS } from "../../../../variables/permission";
 import usePermission from "../../../../hooks/usePermission";
-import {
-  priceFormatter,
-  priceParser,
-} from "../../../../component/PriceTag/PriceTag";
+import PriceInput from "../../../../component/PriceInput/PriceInput";
 
 const sharedProps = {
   mode: "spinner",
@@ -184,6 +181,7 @@ const ExtraBedRateForm = ({
     if (isAdd) {
       const createValues = {
         ...values,
+        price: Number(values.price),
         extraType: { uuid: values.extraType },
         roomType: { uuid: values.roomTypeUuid },
         ratePlan: { uuid: values.ratePlanUuid },
@@ -204,6 +202,7 @@ const ExtraBedRateForm = ({
     if (isEdit) {
       const editValues = {
         ...values,
+        price: Number(values.price),
         extraType: { uuid: values?.extraType },
         roomType: { uuid: values.roomTypeUuid },
         ratePlan: { uuid: values.ratePlanUuid },
@@ -433,14 +432,14 @@ const ExtraBedRateForm = ({
             label="Price"
             name="price"
             rules={[{ required: true, message: "Price is Required" }]}
+            getValueProps={(value) => ({
+              value: value !== null && value !== undefined ? String(value) : "",
+            })}
           >
-            <InputNumber
+            <PriceInput
               readOnly={isView}
               suffix="MMK"
               placeholder="Enter price"
-              style={{ width: "100%" }}
-              formatter={priceFormatter}
-              parser={priceParser}
             />
           </Form.Item>
 

@@ -35,7 +35,7 @@ import { values } from "lodash";
 import { AiOutlineCheckSquare } from "react-icons/ai";
 import { AiOutlineCloseSquare } from "react-icons/ai";
 import { BookTemplateIcon, Check } from "lucide-react";
-import PriceTag, { priceFormatter, priceParser } from "../../../../../../component/PriceTag/PriceTag";
+import PriceInput from "../../../../../../component/PriceInput/PriceInput";
 import { InfoRow, SectionCard } from "../../../RoomInformation/Components/RoomInformationForms/DailyBreakDownDetailFormDrawer";
 
 
@@ -1115,17 +1115,9 @@ const FoodBeverageOrderForm = ({
                                         <Form.Item
                                           label="Price Per Qty"
                                           name={[name, "pricePerQty"]}
+                                          getValueProps={(value) => ({ value: value !== null && value !== undefined ? String(value) : "" })}
                                         >
-                                          <InputNumber
-                                            className="!w-full"
-                                            min={0}
-                                            suffix={
-                                              <div className="dark:!text-gray-200">
-                                                MMK
-                                              </div>
-                                            }
-                                            formatter={priceFormatter}
-                                            parser={priceParser}
+                                          <PriceInput
                                             disabled
                                           />
                                         </Form.Item>

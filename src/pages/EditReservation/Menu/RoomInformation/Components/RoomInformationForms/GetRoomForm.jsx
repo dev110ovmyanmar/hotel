@@ -13,6 +13,7 @@ import {
   textColorDarkMode,
   textWhiteInDarkStyle,
 } from "../../../../../../utils";
+import ColorStatusTag from "../../../../../../component/ColorStatusTag/ColorStatusTag";
 
 const GetRoomForm = ({ selectedData, onSelectRoom, onClose, floorUuid }) => {
   const statusColorMap = {
@@ -130,6 +131,8 @@ const GetRoomForm = ({ selectedData, onSelectRoom, onClose, floorUuid }) => {
                 {room.roomType?.name}
               </span>
             </div>
+
+            <ColorStatusTag status={room?.cleanStatus} />
 
             <div className="flex items-center gap-25">
               <span className={statusColorMap[room.status?.name]}>

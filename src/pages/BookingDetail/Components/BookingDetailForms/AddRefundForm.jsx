@@ -11,8 +11,7 @@ import {
   Card,
   Divider,
   Segmented,
-  Button,
-  InputNumber
+  Button
 } from "antd";
 import FormButtons from "../../../../component/FormButtons/FormButtons";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
@@ -21,7 +20,7 @@ import { reservationMeta } from "../../../../api/reservationSectionApi";
 import { numberValidator } from "../../../../variables/constants";
 import { useApiQuery } from "../../../../hooks/useApiQuery";
 import Loader from "../../../../component/Loader/Loader";
-import { priceFormatter, priceParser } from "../../../../component/PriceTag/PriceTag";
+import PriceInput from "../../../../component/PriceInput/PriceInput";
 
 const { Title, Text } = Typography;
 
@@ -151,7 +150,7 @@ const AddRefundForm = ({
       guest: { uuid: values.guest },
       folio: { uuid: values.folio },
       paymentMethod: { uuid: values.paymentMethod },
-      amount: values.amount,
+      amount: Number(values.amount),
     };
     createFolioRefund(payload);
   };
@@ -313,18 +312,15 @@ const AddRefundForm = ({
               <Form.Item
                 label={<span className=" font-medium">Amount</span>}
                 name="amount"
+                getValueProps={(value) => ({ value: value !== null && value !== undefined ? String(value) : "" })}
                 rules={[
                   { required: true, message: "Amount required" },
                   { validator: numberValidator }
                 ]}
               >
-                <InputNumber
+                <PriceInput
                   min={0}
-                  style={{ width: "100%" }}
                   placeholder="0.00"
-                  // suffix="MMK"
-                  formatter={priceFormatter}
-                  parser={priceParser}
                 />
               </Form.Item>
             </Col>

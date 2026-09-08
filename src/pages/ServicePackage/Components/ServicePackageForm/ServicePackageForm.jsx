@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Form, Input, Button, Select, Drawer, InputNumber, Modal } from "antd";
+import { Form, Input, Button, Select, Drawer, Modal } from "antd";
 import Toast from "../../../../component/Toast/Toast";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
 import useApiQuery from "../../../../hooks/useApiQuery";
@@ -12,7 +12,7 @@ import {
 import { getServiceMeta } from "../../../../api/serviceInventoryApi";
 import FormButtons from "../../../../component/FormButtons/FormButtons";
 import Loader from "../../../../component/Loader/Loader";
-import { priceFormatter, priceParser } from "../../../../component/PriceTag/PriceTag";
+import PriceInput from "../../../../component/PriceInput/PriceInput";
 import usePermission from "../../../../hooks/usePermission";
 import { PERMISSIONS } from "../../../../variables/permission";
 
@@ -115,7 +115,7 @@ const ServicePackageForm = ({
         ...values,
         name: values.name,
         service: { uuid: values.service },
-        basePrice: values.basePrice,
+        basePrice: Number(values.basePrice),
         description: values.description,
         status: { uuid: values.status },
       };
@@ -136,7 +136,7 @@ const ServicePackageForm = ({
       const originalPrice = data?.basePrice;
 
       const currentServiceUuid = values.service;
-      const currentPrice = values.basePrice;
+      const currentPrice = Number(values.basePrice);
 
       const finalValues = {
         ...values,
@@ -268,15 +268,13 @@ const ServicePackageForm = ({
               label="Base Price"
               name="basePrice"
               rules={[{ required: true, message: "Base Price is Required" }]}
+              getValueProps={(value) => ({ value: value !== null && value !== undefined ? String(value) : "" })}
             >
-              <InputNumber
-                className="w-full!"
-                min={0}
+              <PriceInput
                 readOnly={isView}
                 placeholder="Enter Base Price"
                 suffix="MMK"
-                formatter={priceFormatter}
-                parser={priceParser}
+                min={0}
               />
             </Form.Item>
 

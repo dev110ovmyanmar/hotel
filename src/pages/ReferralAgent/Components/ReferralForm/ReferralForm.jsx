@@ -7,7 +7,6 @@ import {
   Select,
   Row,
   Col,
-  InputNumber,
 } from "antd";
 import Toast from "../../../../component/Toast/Toast";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
@@ -24,10 +23,7 @@ import ImageUpload from "../../../../component/ImageUpload/ImageUpload";
 import { deleteImageUpload } from "../../../../api/deleteImageApi";
 import { validatePhoneNumber } from "../../../../utils";
 import { emailValidator } from "../../../../variables/constants";
-import {
-  priceFormatter,
-  priceParser,
-} from "../../../../component/PriceTag/PriceTag";
+import PriceInput from "../../../../component/PriceInput/PriceInput";
 import usePermission from "../../../../hooks/usePermission";
 import { PERMISSIONS } from "../../../../variables/permission";
 
@@ -114,6 +110,7 @@ const ReferralForm = ({
   const onFinish = (values) => {
     const modifiedValues = {
       ...values,
+      chargeValue: Number(values.chargeValue),
       partnerType: "Referral Agent",
     };
     if (isAdd) {
@@ -129,6 +126,7 @@ const ReferralForm = ({
     if (isEdit) {
       const editValues = {
         ...values,
+        chargeValue: Number(values.chargeValue),
         partnerType: "Referral Agent",
         uuid: selectedData?.uuid,
       };
@@ -195,14 +193,13 @@ const ReferralForm = ({
           validateTrigger="onSubmit"
           onFinish={onFinish}
         >
-          <Form.Item
-            label="Name"
-            name="name"
-            rules={[{ required: true }]}
-          >
-            <Input readOnly={isView} placeholder="Enter Referral Agent Name" />
-          </Form.Item>
-
+              <Form.Item
+                label="Name"
+                name="name"
+                rules={[{ required: true }]}
+              >
+                <Input readOnly={isView} placeholder="Enter Referral Agent Name" />
+              </Form.Item>
           <Form.Item
             label="Card No"
             name="cardNo"
@@ -289,9 +286,11 @@ const ReferralForm = ({
                     },
                   },
                 ]}
+                getValueProps={(value) => ({
+                  value: value !== null && value !== undefined ? String(value) : "",
+                })}
               >
-                <InputNumber
-                  className="!w-full"
+                <PriceInput
                   min={1}
                   suffix={(() => {
                     const selected = chargeType?.find(
@@ -301,8 +300,6 @@ const ReferralForm = ({
                   })()}
                   readOnly={isView}
                   placeholder="Enter Charge Value"
-                  formatter={priceFormatter}
-                  parser={priceParser}
                   maxLength={15}
                 />
               </Form.Item>

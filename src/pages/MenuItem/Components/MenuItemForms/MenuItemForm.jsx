@@ -9,7 +9,6 @@ import {
   Row,
   Col,
   Card,
-  InputNumber,
 } from "antd";
 import { Checkbox } from "antd";
 import Toast from "../../../../component/Toast/Toast";
@@ -19,10 +18,7 @@ import useApiQuery from "../../../../hooks/useApiQuery";
 import { menuDetails, menuMeta, upsertMenu } from "../../../../api/menuApi";
 import { queryClient } from "../../../../app/queryClient";
 import { sellingPriceValidator } from "../../../../variables/constants";
-import {
-  priceFormatter,
-  priceParser,
-} from "../../../../component/PriceTag/PriceTag";
+import PriceInput from "../../../../component/PriceInput/PriceInput";
 import usePermission from "../../../../hooks/usePermission";
 import { PERMISSIONS } from "../../../../variables/permission";
 import { textWhiteInDarkStyle } from "../../../../utils";
@@ -111,6 +107,8 @@ const MenuItemForm = ({
     if (isAdd) {
       const createValues = {
         ...values,
+        price: Number(values.price),
+        cost: Number(values.cost),
         status: { uuid: values.status },
         menuCategory: { uuid: values.menuCategoryUuid },
         menuModifier: { ids: values.menuModifier },
@@ -130,6 +128,8 @@ const MenuItemForm = ({
     if (isEdit) {
       const editValues = {
         ...values,
+        price: Number(values.price),
+        cost: Number(values.cost),
         status: { uuid: values.status },
         menuCategory: { uuid: values.menuCategoryUuid },
         menuModifier: { ids: values.menuModifier },
@@ -237,14 +237,14 @@ const MenuItemForm = ({
                   { required: true, message: "Please enter selling price" },
                   sellingPriceValidator("cost"),
                 ]}
+                getValueProps={(value) => ({
+                  value: value !== null && value !== undefined ? String(value) : "",
+                })}
               >
-                <InputNumber
+                <PriceInput
                   readOnly={isView}
                   suffix="MMK"
-                  style={{ width: "100%" }}
                   placeholder="Enter Selling Price"
-                  formatter={priceFormatter}
-                  parser={priceParser}
                 />
               </Form.Item>
             </Col>
@@ -256,14 +256,14 @@ const MenuItemForm = ({
                 rules={[
                   { required: true, message: "Purchase Price is Required" },
                 ]}
+                getValueProps={(value) => ({
+                  value: value !== null && value !== undefined ? String(value) : "",
+                })}
               >
-                <InputNumber
+                <PriceInput
                   readOnly={isView}
                   suffix="MMK"
-                  style={{ width: "100%" }}
                   placeholder="Enter Purchase Price"
-                  formatter={priceFormatter}
-                  parser={priceParser}
                 />
               </Form.Item>
             </Col>

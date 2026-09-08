@@ -295,3 +295,13 @@ export const sellingPriceValidator = (fieldName) => ({ getFieldValue }) => ({
 export const SYSTEM_LOCK_KEY = {
   nightAudit: "night_audit",
 }
+
+const nightAuditStorage = JSON.parse(
+  localStorage.getItem("nightAudit")
+);
+
+export const businessDate =
+  nightAuditStorage?.businessDate;
+
+export const isLocked =
+  nightAuditStorage?.isLocked;

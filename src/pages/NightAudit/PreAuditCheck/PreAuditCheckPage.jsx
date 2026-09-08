@@ -7,18 +7,12 @@ import PreAuditTable from "./PreAuditTable";
 import IssueAndWarningCard from "./IssueAndWarningCard";
 import CheckBookingHeader from "../CheckBookingHeader";
 import useInfiniteApiQuery from "../../../hooks/useInfiniteApiQuery";
+import { businessDate } from "../../../variables/constants";
 
 const PreAuditCheckPage = ({
     stepValue,
 }) => {
     const navigate = useNavigate();
-
-    const nightAuditStorage = JSON.parse(
-        localStorage.getItem("nightAudit")
-    );
-
-    const businessDate =
-        nightAuditStorage?.businessDate;
 
     const { data: preAuditChecksData, isLoading, error } = useApiQuery({
         fetchQueryName: "pre-audit-checks",

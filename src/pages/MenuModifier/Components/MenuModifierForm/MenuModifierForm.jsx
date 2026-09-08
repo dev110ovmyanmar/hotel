@@ -5,7 +5,6 @@ import {
   Button,
   Select,
   Drawer,
-  InputNumber,
   Row,
   Col,
 } from "antd";
@@ -20,10 +19,7 @@ import {
 } from "../../../../api/menuModifierApi";
 import Loader from "../../../../component/Loader/Loader";
 import { sellingPriceValidator } from "../../../../variables/constants";
-import {
-  priceFormatter,
-  priceParser,
-} from "../../../../component/PriceTag/PriceTag";
+import PriceInput from "../../../../component/PriceInput/PriceInput";
 import { PERMISSIONS } from "../../../../variables/permission";
 
 const MenuModifierForm = ({
@@ -77,8 +73,14 @@ const MenuModifierForm = ({
   };
 
   const onFinish = (values) => {
+    const formattedValues = {
+      ...values,
+      unitPrice: Number(values.unitPrice),
+      unitCost: Number(values.unitCost),
+    };
+
     if (isAdd) {
-      upsertMenuModifiers.mutate(values, {
+      upsertMenuModifiers.mutate(formattedValues, {
         onSuccess: () => {
           form.resetFields();
           handleClose();
@@ -90,7 +92,7 @@ const MenuModifierForm = ({
     }
     if (isEdit) {
       const editValues = {
-        ...values,
+        ...formattedValues,
         uuid: menuModifierDetailData?.uuid,
       };
 
@@ -163,15 +165,15 @@ const MenuModifierForm = ({
                     { required: true, message: "Please enter selling price" },
                     sellingPriceValidator("unitCost", "unitPrice", true),
                   ]}
+                  getValueProps={(value) => ({
+                    value: value !== null && value !== undefined ? String(value) : "",
+                  })}
                 >
-                  <InputNumber
+                  <PriceInput
                     readOnly={isView}
                     min={1}
-                    className="!w-full"
                     placeholder="Enter Price"
                     suffix="MMK"
-                    formatter={priceFormatter}
-                    parser={priceParser}
                   />
                 </Form.Item>
               </Col>
@@ -182,15 +184,15 @@ const MenuModifierForm = ({
                   rules={[
                     { required: true, message: "Purchase Price is Required" },
                   ]}
+                  getValueProps={(value) => ({
+                    value: value !== null && value !== undefined ? String(value) : "",
+                  })}
                 >
-                  <InputNumber
+                  <PriceInput
                     readOnly={isView}
                     min={1}
-                    className="!w-full"
                     placeholder="Enter Price"
                     suffix="MMK"
-                    formatter={priceFormatter}
-                    parser={priceParser}
                   />
                 </Form.Item>
               </Col>

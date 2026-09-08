@@ -1,6 +1,9 @@
 import { CloseCircleOutlined, ReloadOutlined, SafetyOutlined, WarningOutlined } from "@ant-design/icons";
 import { Button, Card } from "antd";
 import { CircleCheck } from "lucide-react";
+import { recheckPreAudit } from "../../../api/nightAuditApi";
+import { useApiMutation } from "../../../hooks/useApiMutation";
+import { businessDate } from "../../../variables/constants";
 
 const PreAuditCheckStatus = ({
     preAuditChecksData,
@@ -9,6 +12,18 @@ const PreAuditCheckStatus = ({
     const cardDesign = `!w-full !max-w-[500px] !shadow-md !m-0 !p-0 `;
     const warning = preAuditChecksData?.overallStatus === "WARNING";
     const passed = preAuditChecksData?.overallStatus === "PASSED";
+
+    const recheckPreAudits = useApiMutation({
+        mutationFn: recheckPreAudit,
+        invalidateKeys: [["pre-audit-checks"]],
+    });
+
+    const recheckAllPreAudits = () => {
+        recheckPreAudits.mutate({
+            businessDate
+        })
+    };
+    
     return (
         <div>
             <div className="items-center grid lg:grid-cols-2 md:grid-cols-1 gap-x-10 !my-5">
@@ -67,9 +82,13 @@ const PreAuditCheckStatus = ({
 
             {
                 preNightAudit ?
-                    <div className="flex justify-end">
-                        
-                        <Button type="primary"><ReloadOutlined/> Recheck</Button>
+                    <div className="flex justify-end my-4">
+                        <Button
+                            type="primary"
+                            onClick={recheckAllPreAudits}
+                        >
+                            <ReloadOutlined /> Recheck All
+                        </Button>
                     </div>
                     : null
             }
