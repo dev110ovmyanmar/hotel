@@ -4,7 +4,6 @@ import {
   Form,
   Select,
   Switch,
-  InputNumber,
   Checkbox,
 } from "antd";
 import Toast from "../../../../component/Toast/Toast";
@@ -18,10 +17,7 @@ import { useApiMutation } from "../../../../hooks/useApiMutation";
 import { queryClient } from "../../../../app/queryClient";
 import { useEffect } from "react";
 import FormButtons from "../../../../component/FormButtons/FormButtons";
-import {
-  priceFormatter,
-  priceParser,
-} from "../../../../component/PriceTag/PriceTag";
+import PriceInput from "../../../../component/PriceInput/PriceInput";
 
 const RoomAttributesForm = ({
   mode,
@@ -79,7 +75,7 @@ const RoomAttributesForm = ({
   };
   const onFinish = (values) => {
     const payload = {
-      extraPrice: values.extraPrice,
+      extraPrice: Number(values.extraPrice),
       isFree: Boolean(values.isFree),
       amenity: { uuid: values.roomTypeAmenityUuid },
       roomType: { uuid: roomTypeUuid },
@@ -205,14 +201,12 @@ const RoomAttributesForm = ({
               label="Extra Price"
               name="extraPrice"
               rules={[{ required: true, message: "Please enter extra price!" }]}
+              getValueProps={(value) => ({ value: value !== null && value !== undefined ? String(value) : "" })}
             >
-              <InputNumber
-                className="!w-full"
+              <PriceInput
                 min={1}
                 placeholder="Enter Extra Price"
                 suffix="MMK"
-                formatter={priceFormatter}
-                parser={priceParser}
               />
             </Form.Item>
           )}

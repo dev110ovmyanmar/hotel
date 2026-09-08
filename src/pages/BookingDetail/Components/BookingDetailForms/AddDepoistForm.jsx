@@ -13,16 +13,12 @@ import {
   Card,
   Divider,
   Segmented,
-  InputNumber,
 } from "antd";
 import { createFolioPaymentDeposit } from "../../../../api/reservationSectionApi";
 import { reservationMeta } from "../../../../api/reservationSectionApi";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
 import { useApiQuery } from "../../../../hooks/useApiQuery";
-import {
-  priceFormatter,
-  priceParser,
-} from "../../../../component/PriceTag/PriceTag";
+import PriceInput from "../../../../component/PriceInput/PriceInput";
 import { textWhiteInDarkStyle } from "../../../../utils";
 import { numberValidator } from "../../../../variables/constants";
 import Loader from "../../../../component/Loader/Loader";
@@ -194,7 +190,7 @@ const AddDepoistForm = ({
       folio: { uuid: selectedFolioUuid },
       paymentMethod: { uuid: values.paymentMethod },
       paymentStatus: { uuid: values.paymentStatus },
-      amount: values.amount,
+      amount: Number(values.amount),
       transactionNo: values.transactionNo,
       externalReference: values.externalReference,
       remarks: values.remark,
@@ -463,6 +459,7 @@ const AddDepoistForm = ({
               <Form.Item
                 label={<span className="font-medium">Amount</span>}
                 name="amount"
+                getValueProps={(value) => ({ value: value !== null && value !== undefined ? String(value) : "" })}
                 rules={[
                   {
                     required: true,
@@ -483,14 +480,9 @@ const AddDepoistForm = ({
                   },
                 ]}
               >
-                <InputNumber
+                <PriceInput
                   min={0}
-                  style={{
-                    width: "100%",
-                  }}
                   placeholder="0.00"
-                  formatter={priceFormatter}
-                  parser={priceParser}
                 />
               </Form.Item>
             </Col>

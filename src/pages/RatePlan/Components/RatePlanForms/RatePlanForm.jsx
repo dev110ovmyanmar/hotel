@@ -9,7 +9,6 @@ import {
   Select,
   Checkbox,
   Switch,
-  InputNumber,
   Radio,
   Space,
 } from "antd";
@@ -29,10 +28,7 @@ import {
 import Loader from "../../../../component/Loader/Loader";
 import { PERMISSIONS } from "../../../../variables/permission";
 import usePermission from "../../../../hooks/usePermission";
-import {
-  priceFormatter,
-  priceParser,
-} from "../../../../component/PriceTag/PriceTag";
+import PriceInput from "../../../../component/PriceInput/PriceInput";
 import { textWhiteInDarkStyle } from "../../../../utils";
 
 const RatePlanForm = ({
@@ -168,7 +164,7 @@ const RatePlanForm = ({
 
     const formattedRoomTypes = roomTypes.map((rt) => ({
       uuid: rt.value,
-      price: String(values[rt.value]),
+      price: Number(values[rt.value]),
     }));
 
     const createValues = {
@@ -573,14 +569,13 @@ const RatePlanForm = ({
                             rules={[
                               { required: true, message: "Rate is required!" },
                             ]}
+                            getValueProps={(value) => ({
+                              value: value !== null && value !== undefined ? String(value) : "",
+                            })}
                           >
-                            <InputNumber
-                              min={0}
-                              style={{ width: "100%" }}
+                            <PriceInput
                               placeholder="Enter Rate"
                               suffix="MMK"
-                              formatter={priceFormatter}
-                              parser={priceParser}
                             />
                           </Form.Item>
                         </Col>

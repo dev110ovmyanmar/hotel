@@ -8,7 +8,7 @@ import Status from "./../../../component/Status/Status";
 import ColorStatusTag from "./../../../component/ColorStatusTag/ColorStatusTag";
 import { PERMISSIONS } from "../../../variables/permission";
 import usePermission from "../../../hooks/usePermission";
-import PriceTag, { priceFormatter } from "../../../component/PriceTag/PriceTag";
+import PriceTag from "../../../component/PriceTag/PriceTag";
 
 const MeanPlanTable = ({
   data,

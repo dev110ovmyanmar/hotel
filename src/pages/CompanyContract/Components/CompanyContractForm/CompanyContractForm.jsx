@@ -10,7 +10,6 @@ import {
   Select,
   Space,
   DatePicker,
-  InputNumber,
 } from "antd";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
 import useApiQuery from "../../../../hooks/useApiQuery";
@@ -29,7 +28,7 @@ import ImageUpload from "../../../../component/ImageUpload/ImageUpload";
 import { fetchCompanyUpload } from "../../../../api/partnerApi";
 import { deleteImageUpload } from "../../../../api/deleteImageApi";
 import { PERMISSIONS } from "../../../../variables/permission";
-import { priceFormatter, priceParser } from "../../../../component/PriceTag/PriceTag";
+import PriceInput from "../../../../component/PriceInput/PriceInput";
 
 const CompanyContractForm = ({
   mode,
@@ -113,7 +112,7 @@ const CompanyContractForm = ({
       chargeType: {
         uuid: values?.chargeType?.uuid
       },
-      chargeValue: values?.chargeValue,
+      chargeValue: Number(values?.chargeValue),
       property: {
         uuid: propertyName?.uuid,
       },
@@ -141,7 +140,7 @@ const CompanyContractForm = ({
         chargeType: {
           uuid: values?.chargeType?.uuid
         },
-        chargeValue: values?.chargeValue,
+        chargeValue: Number(values?.chargeValue),
         property: {
           uuid: propertyName?.uuid,
         },
@@ -260,6 +259,9 @@ const CompanyContractForm = ({
               <Form.Item
                 label="Charge Value "
                 name="chargeValue"
+                getValueProps={(value) => ({
+                  value: value !== null && value !== undefined ? String(value) : "",
+                })}
                 rules={[
                   { required: true, message: "Charge Value is Required" },
                   {
@@ -281,8 +283,7 @@ const CompanyContractForm = ({
                   },
                 ]}
               >
-                <InputNumber
-                  className="!w-full"
+                <PriceInput
                   min={1}
                   suffix={(() => {
                     const selected = chargeType?.find(
@@ -292,9 +293,6 @@ const CompanyContractForm = ({
                   })()}
                   readOnly={isView}
                   placeholder="Enter Charge Value"
-                  formatter={priceFormatter}
-                  parser={priceParser}
-                  maxLength={15}
                 />
               </Form.Item>
             </Col>
