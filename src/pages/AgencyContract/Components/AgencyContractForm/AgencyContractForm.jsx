@@ -10,7 +10,6 @@ import {
   Select,
   Space,
   DatePicker,
-  InputNumber,
 } from "antd";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
 import useApiQuery from "../../../../hooks/useApiQuery";
@@ -29,7 +28,7 @@ import ImageUpload from "../../../../component/ImageUpload/ImageUpload";
 import { fetchAgencyUpload } from "../../../../api/partnerApi";
 import { deleteImageUpload } from "../../../../api/deleteImageApi";
 import { PERMISSIONS } from "../../../../variables/permission";
-import { priceFormatter, priceParser } from "../../../../component/PriceTag/PriceTag";
+import PriceInput from "../../../../component/PriceInput/PriceInput";
 
 const AgencyContractForm = ({
   mode,
@@ -113,7 +112,7 @@ const AgencyContractForm = ({
       chargeType: {
         uuid: values?.chargeType?.uuid
       },
-      chargeValue: values?.chargeValue,
+      chargeValue: Number(values?.chargeValue),
       property: {
         uuid: propertyName?.uuid,
       },
@@ -141,7 +140,7 @@ const AgencyContractForm = ({
         chargeType: {
           uuid: values?.chargeType?.uuid
         },
-        chargeValue: values?.chargeValue,
+        chargeValue: Number(values?.chargeValue),
         property: {
           uuid: propertyName?.uuid,
         },
@@ -280,9 +279,11 @@ const AgencyContractForm = ({
                     },
                   },
                 ]}
+                getValueProps={(value) => ({
+                  value: value !== null && value !== undefined ? String(value) : "",
+                })}
               >
-                <InputNumber
-                  style={{ width: "100%" }}
+                <PriceInput
                   min={1}
                   suffix={(() => {
                     const selected = chargeType?.find(
@@ -292,8 +293,6 @@ const AgencyContractForm = ({
                   })()}
                   readOnly={isView}
                   placeholder="Enter Charge Value"
-                  formatter={priceFormatter}
-                  parser={priceParser}
                   maxLength={15}
                 />
               </Form.Item>

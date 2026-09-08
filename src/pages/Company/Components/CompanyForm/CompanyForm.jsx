@@ -7,7 +7,6 @@ import {
   Select,
   Row,
   Col,
-  InputNumber,
 } from "antd";
 import Toast from "../../../../component/Toast/Toast";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
@@ -23,10 +22,7 @@ import Status from "./../../../../component/Status/Status";
 import ImageUpload from "../../../../component/ImageUpload/ImageUpload";
 import { deleteImageUpload } from "../../../../api/deleteImageApi";
 import { validatePhoneNumber } from "../../../../utils";
-import {
-  priceFormatter,
-  priceParser,
-} from "../../../../component/PriceTag/PriceTag";
+import PriceInput from "../../../../component/PriceInput/PriceInput";
 import usePermission from "../../../../hooks/usePermission";
 import { PERMISSIONS } from "../../../../variables/permission";
 
@@ -114,6 +110,7 @@ const CompanyForm = ({
   const onFinish = (values) => {
     const modifiedValues = {
       ...values,
+      chargeValue: values.chargeValue ? Number(values.chargeValue) : values.chargeValue,
       partnerType: "Company",
     };
     if (isAdd) {
@@ -129,6 +126,7 @@ const CompanyForm = ({
     if (isEdit) {
       const editValues = {
         ...values,
+        chargeValue: values.chargeValue ? Number(values.chargeValue) : values.chargeValue,
         partnerType: "Company",
         uuid: selectedData?.uuid,
       };
@@ -299,9 +297,11 @@ const CompanyForm = ({
                     },
                   },
                 ]}
+                getValueProps={(value) => ({
+                  value: value !== null && value !== undefined ? String(value) : "",
+                })}
               >
-                <InputNumber
-                  className="!w-full"
+                <PriceInput
                   min={1}
                   suffix={(() => {
                     const selected = chargeType?.find(
@@ -311,9 +311,6 @@ const CompanyForm = ({
                   })()}
                   readOnly={isView}
                   placeholder="Enter Charge Value"
-                  formatter={priceFormatter}
-                  parser={priceParser}
-                  maxLength={15}
                 />
               </Form.Item>
             </Col>

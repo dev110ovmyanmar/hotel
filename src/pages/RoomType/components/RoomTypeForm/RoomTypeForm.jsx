@@ -29,10 +29,8 @@ import RoomTypeAmenityForm from "./RoomTypeAmenityForm";
 import { EditOutlined, PlusOutlined } from "@ant-design/icons";
 import Loader from "../../../../component/Loader/Loader";
 import ImageUpload from "../../../../component/ImageUpload/ImageUpload";
-import PriceTag, {
-  priceFormatter,
-  priceParser,
-} from "../../../../component/PriceTag/PriceTag";
+import PriceTag from "../../../../component/PriceTag/PriceTag";
+import PriceInput from "../../../../component/PriceInput/PriceInput";
 import { PERMISSIONS } from "../../../../variables/permission";
 import usePermission from "../../../../hooks/usePermission";
 import { deleteImageUpload } from "../../../../api/deleteImageApi";
@@ -147,7 +145,7 @@ const RoomTypeForm = ({
   const onFinish = (values) => {
     const formattedRatePlans = ratePlans.map((rp) => ({
       uuid: rp.value,
-      price: String(values[rp.value]),
+      price: Number(values[rp.value]),
     }));
 
     const roomTypeCreatePayload = {
@@ -492,14 +490,16 @@ const RoomTypeForm = ({
                             rules={[
                               { required: true, message: "Rate is required!" },
                             ]}
+                            getValueProps={(value) => ({
+                              value:
+                                value !== null && value !== undefined
+                                  ? String(value)
+                                  : "",
+                            })}
                           >
-                            <InputNumber
+                            <PriceInput
                               min={0}
-                              style={{ width: "100%" }}
                               placeholder="Enter Rate"
-                              suffix="MMK"
-                              formatter={priceFormatter}
-                              parser={priceParser}
                             />
                           </Form.Item>
                         </Col>

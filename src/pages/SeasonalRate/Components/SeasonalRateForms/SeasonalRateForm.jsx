@@ -6,7 +6,6 @@ import {
   Drawer,
   Select,
   DatePicker,
-  InputNumber,
   Row,
   Col,
   Checkbox,
@@ -27,11 +26,8 @@ import Loader from "../../../../component/Loader/Loader";
 import usePermission from "../../../../hooks/usePermission";
 import { PERMISSIONS } from "../../../../variables/permission";
 import { queryClient } from "../../../../app/queryClient";
-import {
-  priceFormatter,
-  priceParser,
-} from "../../../../component/PriceTag/PriceTag";
 import PriceTag from "../../../../component/PriceTag/PriceTag";
+import PriceInput from "../../../../component/PriceInput/PriceInput";
 
 const SeasonalRateForm = ({
   mode,
@@ -172,13 +168,13 @@ const SeasonalRateForm = ({
       endDate: end ? getFormattedDate(end, false) : null,
       price: Number(values.price),
       weekdays: {
-        mon: values?.mon ? values?.mon : null,
-        tue: values?.tue ? values?.tue : null,
-        wed: values?.wed ? values?.wed : null,
-        thu: values?.thu ? values?.thu : null,
-        fri: values?.fri ? values?.fri : null,
-        sat: values?.sat ? values?.sat : null,
-        sun: values?.sun ? values?.sun : null,
+        mon: values?.mon ? Number(values.mon) : null,
+        tue: values?.tue ? Number(values.tue) : null,
+        wed: values?.wed ? Number(values.wed) : null,
+        thu: values?.thu ? Number(values.thu) : null,
+        fri: values?.fri ? Number(values.fri) : null,
+        sat: values?.sat ? Number(values.sat) : null,
+        sun: values?.sun ? Number(values.sun) : null,
       },
     };
 
@@ -376,15 +372,14 @@ const SeasonalRateForm = ({
                   label={<span>Price{mappedPrice !== null && <> (Original Price: <PriceTag value={mappedPrice} /> MMK)</>}</span>}
                   name="price"
                   rules={[{ required: true }]}
+                  getValueProps={(value) => ({
+                    value: value !== null && value !== undefined ? String(value) : "",
+                  })}
                 >
-                  <InputNumber
-                    className="!w-full"
+                  <PriceInput
                     min={0}
                     readOnly={isView}
                     placeholder="Price"
-                    suffix="MMK"
-                    formatter={priceFormatter}
-                    parser={priceParser}
                   />
                 </Form.Item>
               </Col>
@@ -452,15 +447,15 @@ const SeasonalRateForm = ({
                       rules={[
                         { required: isEnabled, message: "Price is required" },
                       ]}
+                      getValueProps={(value) => ({
+                        value: value !== null && value !== undefined ? String(value) : "",
+                      })}
+                      normalize={(value) => (value ? Number(value) : value)}
                     >
-                      <InputNumber
+                      <PriceInput
                         placeholder="Enter Price"
-                        style={{ width: "100%" }}
                         min={0}
                         readOnly={!isEnabled || isView}
-                        suffix="MMK"
-                        formatter={priceFormatter}
-                        parser={priceParser}
                       />
                     </Form.Item>
                   </Col>

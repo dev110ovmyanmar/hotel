@@ -20,10 +20,8 @@ import Loader from "../../../../component/Loader/Loader";
 import { PERMISSIONS } from "../../../../variables/permission";
 import usePermission from "../../../../hooks/usePermission";
 import Status from "../../../../component/Status/Status";
-import {
-  priceFormatter,
-  priceParser,
-} from "../../../../component/PriceTag/PriceTag";
+
+import PriceInput from "../../../../component/PriceInput/PriceInput";
 
 const MeanPlanForm = ({
   mode,
@@ -121,6 +119,8 @@ const MeanPlanForm = ({
 
     const payload = {
       ...values,
+      adultPrice: values.adultPrice ? Number(values.adultPrice) : values.adultPrice,
+      childPrice: values.childPrice ? Number(values.childPrice) : values.childPrice,
       includesBreakfast: includes.includes("breakfast"),
       includesLunch: includes.includes("lunch"),
       includesDinner: includes.includes("dinner"),
@@ -294,15 +294,14 @@ const MeanPlanForm = ({
                       message: "Enter Adult Price",
                     },
                   ]}
+                  getValueProps={(value) => ({
+                    value: value !== null && value !== undefined ? String(value) : "",
+                  })}
                 >
-                  <InputNumber
-                    style={{ width: "100%" }}
+                  <PriceInput
                     min={0}
                     readOnly={isView}
-                    suffix="MMK"
                     placeholder="Enter Adult Price"
-                    formatter={priceFormatter}
-                    parser={priceParser}
                     disabled={!mealChecked}
                   />
                 </Form.Item>
@@ -318,15 +317,14 @@ const MeanPlanForm = ({
                       message: "Enter Child Price",
                     },
                   ]}
+                  getValueProps={(value) => ({
+                    value: value !== null && value !== undefined ? String(value) : "",
+                  })}
                 >
-                  <InputNumber
-                    style={{ width: "100%" }}
+                  <PriceInput
                     min={0}
                     readOnly={isView}
-                    suffix="MMK"
                     placeholder="Enter Child Price"
-                    formatter={priceFormatter}
-                    parser={priceParser}
                     disabled={!mealChecked}
                   />
                 </Form.Item>

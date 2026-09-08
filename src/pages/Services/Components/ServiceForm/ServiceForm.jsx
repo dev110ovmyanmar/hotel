@@ -5,7 +5,6 @@ import {
   Button,
   Select,
   Drawer,
-  InputNumber,
   Row,
   Col,
   Checkbox,
@@ -17,10 +16,7 @@ import { queryClient } from "../../../../app/queryClient";
 import { getServiceDetails, upsertService } from "../../../../api/serviceApi";
 import FormButtons from "../../../../component/FormButtons/FormButtons";
 import Loader from "../../../../component/Loader/Loader";
-import {
-  priceFormatter,
-  priceParser,
-} from "../../../../component/PriceTag/PriceTag";
+import PriceInput from "../../../../component/PriceInput/PriceInput";
 import usePermission from "../../../../hooks/usePermission";
 import { PERMISSIONS } from "../../../../variables/permission";
 
@@ -145,7 +141,7 @@ const ServiceForm = ({
         serviceStage: {
           ids: stages || [],
         },
-        basePrice: formValues.basePrice,
+        basePrice: Number(formValues.basePrice),
       };
     };
 
@@ -329,16 +325,16 @@ const ServiceForm = ({
                 label="Base Price"
                 name="basePrice"
                 rules={[{ required: true }]}
+                getValueProps={(value) => ({
+                  value: value !== null && value !== undefined ? String(value) : "",
+                })}
               >
-                <InputNumber
-                  className="w-full!"
+                <PriceInput
                   min={0}
                   readOnly={isView || (!isEdit && usesInventory)}
                   disabled={isView || (isEdit && usesInventory)}
                   placeholder="Enter Base Price"
                   suffix="MMK"
-                  formatter={priceFormatter}
-                  parser={priceParser}
                 />
               </Form.Item>
             </div>
