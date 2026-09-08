@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Dropdown, Table } from "antd";
+import { Dropdown, Space, Table } from "antd";
 import dayjs from "dayjs";
 import { PlusOutlined, MessageOutlined, EyeOutlined } from "@ant-design/icons";
 import { CalendarPlus2, Gift } from "lucide-react";
@@ -142,17 +142,79 @@ const RoomInformationTable = ({
 
   const columns = [
     { title: "ID", dataIndex: "id", key: "id", width: 70 },
+    // {
+    //   title: "Room No",
+    //   key: "room",
+    //   dataIndex: "room",
+    //   render: (text, record) => {
+    //     const isRoomNull = !text;
+    //     const isClickable =
+    //       record?.assignStatus === true && !record?.expiredStatus;
+
+    //     const shouldHighlightRoom =
+    //       !isRoomNull && record?.assignStatus === true;
+
+    //     const canClick = isClickable || shouldHighlightRoom;
+
+    //     return (
+    //       <span
+    //         style={{
+    //           color: isRoomNull
+    //             ? isClickable
+    //               ? "#1890ff"
+    //               : "#bfbfbf"
+    //             : shouldHighlightRoom
+    //               ? "#1890ff"
+    //               : "inherit",
+
+    //           cursor: canClick ? "pointer" : "default",
+    //           textDecoration: canClick ? "underline" : "none",
+    //         }}
+    //         onClick={(e) => {
+    //           if (!canClick) return;
+
+    //           e.stopPropagation();
+    //           setSelectedData(record);
+    //           setAssignRoomOpen(true);
+    //         }}
+    //       >
+    //         {text?.roomNo || "Assign Room"}
+
+    //         {record?.isComplimentary === true &&
+    //           record?.complimentaryType && (
+    //             <div className="inline-flex items-center gap-0.5 px-1.5 py-0.5 text-[10px] font-semibold rounded-full bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 w-fit">
+    //               <Gift size={12} />
+    //               {capitalizeFirstLetter(record?.complimentaryType)}
+    //             </div>
+    //           )}
+
+    //         {!isRoomNull && (
+    //           <div className="mt-1 flex items-center gap-2">
+    //             <span>
+    //               <ColorStatusTag status={record?.room?.status} />
+    //             </span>
+
+    //             <span>
+    //               <ColorStatusTag status={record?.room?.cleanStatus} />
+    //             </span>
+    //           </div>
+    //         )}
+    //       </span>
+    //     );
+    //   },
+    // },
     {
       title: "Room No",
       key: "room",
       dataIndex: "room",
-      width: 130,
       render: (text, record) => {
         const isRoomNull = !text;
         const isClickable =
           record?.assignStatus === true && !record?.expiredStatus;
+
         const shouldHighlightRoom =
           !isRoomNull && record?.assignStatus === true;
+
         const canClick = isClickable || shouldHighlightRoom;
 
         return (
@@ -165,9 +227,7 @@ const RoomInformationTable = ({
                 : shouldHighlightRoom
                   ? "#1890ff"
                   : "inherit",
-
               cursor: canClick ? "pointer" : "default",
-
               textDecoration: canClick ? "underline" : "none",
             }}
             onClick={(e) => {
@@ -179,16 +239,24 @@ const RoomInformationTable = ({
             }}
           >
             {text?.roomNo || "Assign Room"}
-            {record?.isComplimentary == true && record?.complimentaryType && (
-              <div className="inline-flex items-center gap-0.5 px-1.5 py-0.5 text-[10px] font-semibold rounded-full bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 w-fit">
-                <Gift size={12} />
-                {capitalizeFirstLetter(record?.complimentaryType)}
+
+            {!isRoomNull && (
+              <div className="mt-1 flex items-center gap-2">
+                <span>
+                  <ColorStatusTag status={record?.room?.status} />
+                </span>
+
+                <span>
+                  <ColorStatusTag status={record?.room?.cleanStatus} />
+                </span>
               </div>
             )}
           </span>
         );
       },
     },
+
+
     { title: "Room Type", dataIndex: ["roomType", "name"], key: "name" },
     { title: "Rate Plan", dataIndex: ["ratePlan", "name"], key: "ratePlan" },
     {
@@ -212,19 +280,41 @@ const RoomInformationTable = ({
       render: (_, record) => <ColorStatusTag status={record?.roomStatus} />,
       width: 110,
     },
+    // {
+    //   title: "Total Charges",
+    //   dataIndex: "grandTotal",
+    //   align: "center",
+    //   key: "grandTotal",
+    //   render: (value) => (
+    //     <div className="flex justify-end items-center gap-1">
+    //       <PriceTag value={value} />
+    //       <span className=" font-medium">MMK</span>
+    //     </div>
+    //   ),
+    // },
     {
       title: "Total Charges",
       dataIndex: "grandTotal",
       align: "center",
       key: "grandTotal",
-      render: (value) => (
-        <div className="flex justify-end items-center gap-1">
-          <PriceTag value={value} />
-          <span className=" font-medium">MMK</span>
+      render: (value, record) => (
+        <div className="flex flex-col items-end gap-1">
+          <div className="flex justify-end items-center gap-1">
+            <PriceTag value={value} />
+            <span className="font-medium">MMK</span>
+          </div>
+
+          {record?.isComplimentary === true &&
+            record?.complimentaryType && (
+              <div className="inline-flex items-center gap-0.5 px-1.5 py-0.5 text-[10px] font-semibold rounded-full bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 w-fit">
+                <Gift size={12} />
+                {capitalizeFirstLetter(record?.complimentaryType)}
+              </div>
+            )}
         </div>
       ),
-      width: 150,
     },
+
     {
       title: "Action",
       width: 80,
