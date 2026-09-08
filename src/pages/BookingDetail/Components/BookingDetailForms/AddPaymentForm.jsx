@@ -14,10 +14,11 @@ import {
     Upload,
     Divider,
     Segmented,
-    InputNumber
+    InputNumber,
+    Alert // Add this import
 } from "antd";
 import FormButtons from "../../../../component/FormButtons/FormButtons";
-import { PlusOutlined } from "@ant-design/icons";
+import { PlusOutlined, AlertOutlined } from "@ant-design/icons";
 import { createFolioAddPayment } from "../../../../api/reservationSectionApi";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
 import { reservationMeta } from "../../../../api/reservationSectionApi";
@@ -27,6 +28,7 @@ import { borderDarkMode, darkModeStyle, textColorDarkMode, textWhiteInDarkStyle 
 import Loader from "../../../../component/Loader/Loader";
 import { priceFormatter, priceParser } from "../../../../component/PriceTag/PriceTag";
 import { numberValidator } from "../../../../variables/constants";
+import PriceTag from "../../../../component/PriceTag/PriceTag";
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -46,7 +48,6 @@ const AddPaymentForm = ({
     open,
     onClose,
     bookingDetails,
-    // paymentMethodsData,
     paymentCompletedStatus,
     providerTypes,
     reservationUuid,
@@ -70,12 +71,15 @@ const AddPaymentForm = ({
 
     // Track selected category filter by UUID state
     const [selectedProviderUuid, setSelectedProviderUuid] = useState("all");
+    const [selectedFolioGrandTotal, setSelectedFolioGrandTotal] = useState(null);
+    const [isGrandTotalZero, setIsGrandTotalZero] = useState(false);
 
     const selectedMethod = Form.useWatch("paymentMethod", form);
+    const selectedFolioUuid = Form.useWatch("folio", form);
 
     const cashsMethod = paymentMethodsData.find(
-          (method) => method.name?.trim().toLowerCase() === "cashs",
-        );
+        (method) => method.name?.trim().toLowerCase() === "cashs",
+    );
 
     // --- Transform providerTypes into Ant Design Segmented options ---
     const segmentedOptions = useMemo(() => {
@@ -112,6 +116,8 @@ const AddPaymentForm = ({
         return foliosArray.map((folio) => ({
             label: folio.folioNo || "Unknown",
             value: folio.uuid,
+            // Store grandTotal for reference
+            grandTotal: folio.grandTotal,
         }));
     }, [folios]);
 
@@ -129,6 +135,24 @@ const AddPaymentForm = ({
         });
     }, [guests]);
 
+    // --- Check grandTotal when folio selection changes ---
+    useEffect(() => {
+        if (selectedFolioUuid && folios.length > 0) {
+            const selectedFolio = folios.find(folio => folio.uuid === selectedFolioUuid);
+            if (selectedFolio) {
+                const total = selectedFolio.grandTotal;
+                setSelectedFolioGrandTotal(total);
+                setIsGrandTotalZero(total === 0 || total === null || total === undefined);
+                // Auto-fill amount with selectedFolio.grandTotal based on selected folio
+                // form.setFieldsValue({ amount: selectedFolio.grandTotal || 0 });
+            }
+        } else {
+            setSelectedFolioGrandTotal(null);
+            setIsGrandTotalZero(false);
+            // form.setFieldsValue({ amount: 0 });
+        }
+    }, [selectedFolioUuid, folios]);
+
     const { mutate: createFolioPayment, isPending } = useApiMutation({
         mutationFn: createFolioAddPayment,
         invalidateKeys: [["reservation-details"], ["folios"]],
@@ -137,11 +161,19 @@ const AddPaymentForm = ({
                 onClose();
                 form.resetFields();
                 setSelectedProviderUuid("all");
+                setIsGrandTotalZero(false);
+                setSelectedFolioGrandTotal(null);
             },
         },
     });
 
     const onFinish = (values) => {
+        // Prevent submission if grandTotal is zero
+        if (isGrandTotalZero) {
+            Toast.error("Cannot add payment. The selected folio has a zero balance.");
+            return;
+        }
+
         const payload = {
             reservation: { uuid: bookingDetails?.reservation?.uuid || bookingDetails?.uuid },
             guest: { uuid: values.guest },
@@ -168,6 +200,14 @@ const AddPaymentForm = ({
     text-slate-600 font-medium ${textWhiteInDarkStyle}
     `;
 
+    // Get selected folio details for display
+    const getSelectedFolioDetails = () => {
+        if (!selectedFolioUuid) return null;
+        return folios.find(folio => folio.uuid === selectedFolioUuid);
+    };
+
+    const selectedFolio = getSelectedFolioDetails();
+
     return (
         <Drawer
             open={open}
@@ -179,6 +219,8 @@ const AddPaymentForm = ({
                     paymentMethod: cashsMethod?.uuid,
                 });
                 setSelectedProviderUuid("all");
+                setIsGrandTotalZero(false);
+                setSelectedFolioGrandTotal(null);
             }}
             size={550}
             title={
@@ -190,6 +232,7 @@ const AddPaymentForm = ({
                             form.submit();
                         }}
                         loading={isPending}
+                        disabled={isGrandTotalZero} // Disable Create button if grandTotal is zero
                     >
                         Create
                     </Button>
@@ -296,103 +339,148 @@ const AddPaymentForm = ({
                                     />
                                 </Form.Item>
                             </Col>
-                            <Col span={12}>
-                                <Form.Item
-                                    label={<span className={textSlateToWhiteInDark}>Guest</span>}
-                                    name="guest"
-                                >
-                                    <Select
-                                        showSearch={{
-                                            filterOption: (input, option) =>
-                                                (option?.label ?? '').toLowerCase().includes(input.toLowerCase()),
-                                        }}
-                                        placeholder="Select a guest"
-                                        options={guestOptions}
-                                        className="w-full rounded"
-                                    />
-                                </Form.Item>
-                            </Col>
+                            {
+                                !isGrandTotalZero && (
+                                    <Col span={12}>
+                                        <Form.Item
+                                            label={<span className={textSlateToWhiteInDark}>Guest</span>}
+                                            name="guest"
+                                        >
+                                            <Select
+                                                showSearch={{
+                                                    filterOption: (input, option) =>
+                                                        (option?.label ?? '').toLowerCase().includes(input.toLowerCase()),
+                                                }}
+                                                placeholder="Select a guest"
+                                                options={guestOptions}
+                                                className="w-full rounded"
+                                            />
+                                        </Form.Item>
+                                    </Col>
+                                )
+                            }
+
                         </Row>
 
-                        {/* --- STATUS & AMOUNT ROW --- */}
-                        <Row gutter={16}>
-                            <Col span={12}>
-                                <Form.Item
-                                    label={<span className={textSlateToWhiteInDark}>Status</span>}
-                                    name="paymentStatus"
-                                    rules={[{ required: true, message: "Required" }]}
-                                >
-                                    <Select placeholder="Select status" className="w-full rounded">
-                                        {paymentCompletedStatus?.uuid && (
-                                            <Option value={paymentCompletedStatus.uuid}>
-                                                <div className="flex items-center gap-2">
-                                                    <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
-                                                    <span className=" font-medium">
-                                                        {paymentCompletedStatus.name}
-                                                    </span>
-                                                </div>
-                                            </Option>
-                                        )}
-                                    </Select>
-                                </Form.Item>
-                            </Col>
-                            <Col span={12}>
-                                <Form.Item
-                                    label={<span className={textSlateToWhiteInDark}>Amount</span>}
-                                    name="amount" rules={[{ required: true, message: "Amount required" },
-                                    { validator: numberValidator }
-                                    ]}
-                                >
-                                    <InputNumber
-                                        min={0}
-                                        style={{ width: "100%" }}
-                                        placeholder="0.00"
-                                        // suffix="MMK"
-                                        formatter={priceFormatter}
-                                        parser={priceParser}
+                        {/* --- ALERT: Show when grandTotal is zero --- */}
+                        {selectedFolio && isGrandTotalZero && (
+                            <Alert
+                                message="Cannot Add Payment"
+                                description={
+                                    <div>
+                                        <p className="mb-1">
+                                            <strong>Folio:</strong> {selectedFolio.folioNo}
+                                        </p>
+                                        <p className="mb-0">
+                                            <strong>Grand Total:</strong> {selectedFolio.grandTotal !== null && selectedFolio.grandTotal !== undefined
+                                                ? `${selectedFolio.grandTotal.toLocaleString()} MMK`
+                                                : '0 MMK'}
+                                        </p>
+                                         <p className="mt-2 mb-0 text-red-600">
+                                            This folio has a zero balance. No payments can be added.
+                                        </p>
+                                    </div>
+                                }
+                                type="warning"
+                                showIcon
+                                className="mb-4"
+                            />
+                        )}
 
-                                    />
-                                </Form.Item>
-                            </Col>
-                        </Row>
+                        {/* --- CONDITIONALLY RENDER OTHER FIELDS --- */}
+                        {!isGrandTotalZero && (
+                            <>
+                                {/* --- STATUS & AMOUNT ROW --- */}
+                                <Row gutter={16}>
+                                    <Col span={12}>
+                                        <Form.Item
+                                            label={<span className={textSlateToWhiteInDark}>Status</span>}
+                                            name="paymentStatus"
+                                            rules={[{ required: true, message: "Required" }]}
+                                        >
+                                            <Select placeholder="Select status" className="w-full rounded">
+                                                {paymentCompletedStatus?.uuid && (
+                                                    <Option value={paymentCompletedStatus.uuid}>
+                                                        <div className="flex items-center gap-2">
+                                                            <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
+                                                            <span className=" font-medium">
+                                                                {paymentCompletedStatus.name}
+                                                            </span>
+                                                        </div>
+                                                    </Option>
+                                                )}
+                                            </Select>
+                                        </Form.Item>
+                                    </Col>
+                                    <Col span={12}>
+                                        <Form.Item
+                                            label={<span className={textSlateToWhiteInDark}>Amount{selectedFolioGrandTotal !== null && <> (Max: <PriceTag value={selectedFolioGrandTotal} /> MMK)</>}</span>}
+                                            name="amount"
+                                            rules={[
+                                                { required: true, message: "Amount required" },
+                                                { validator: numberValidator },
+                                                {
+                                                    validator: (_, value) => {
+                                                        if (value !== undefined && value !== null && value < 1) {
+                                                            return Promise.reject(
+                                                                new Error("Amount must be at least 1 MMK")
+                                                            );
+                                                        }
+                                                        return Promise.resolve();
+                                                    },
+                                                },
+                                                {
+                                                    validator: (_, value) => {
+                                                        if (selectedFolioGrandTotal !== null && value > selectedFolioGrandTotal) {
+                                                            return Promise.reject(
+                                                                new Error(`Amount cannot exceed grand total of ${selectedFolioGrandTotal.toLocaleString()} MMK`)
+                                                            );
+                                                        }
+                                                        return Promise.resolve();
+                                                    }
+                                                }
+                                            ]}
+                                        >
+                                            <InputNumber
+                                                min={0}
+                                                style={{ width: "100%" }}
+                                                placeholder="0.00"
+                                                formatter={priceFormatter}
+                                                parser={priceParser}
+                                            />
+                                        </Form.Item>
+                                    </Col>
+                                </Row>
 
-                        {/* --- PAYMENT DATE & TRANSACTION NO ROW --- */}
-                        <Row gutter={16}>
-                            <Col span={12}>
-                                <Form.Item label={<span className={textSlateToWhiteInDark}>Payment Date</span>} name="paymentDate">
-                                    <DatePicker className="w-full rounded" showTime format="YYYY-MM-DD HH:mm:ss" />
-                                </Form.Item>
-                            </Col>
-                            <Col span={12}>
-                                <Form.Item label={<span className={textSlateToWhiteInDark}>Transaction No</span>} name="transactionNo">
-                                    <Input placeholder="Enter Transaction Number" className="rounded w-full" />
-                                </Form.Item>
-                            </Col>
-                        </Row>
+                                {/* --- PAYMENT DATE & TRANSACTION NO ROW --- */}
+                                <Row gutter={16}>
+                                    <Col span={12}>
+                                        <Form.Item label={<span className={textSlateToWhiteInDark}>Payment Date</span>} name="paymentDate">
+                                            <DatePicker className="w-full rounded" showTime format="YYYY-MM-DD HH:mm:ss" />
+                                        </Form.Item>
+                                    </Col>
+                                    <Col span={12}>
+                                        <Form.Item label={<span className={textSlateToWhiteInDark}>Transaction No</span>} name="transactionNo">
+                                            <Input placeholder="Enter Transaction Number" className="rounded w-full" />
+                                        </Form.Item>
+                                    </Col>
+                                </Row>
 
-                        {/* --- EXTERNAL REFERENCE ROW --- */}
-                        <Row gutter={16}>
-                            <Col span={12}>
-                                <Form.Item label={<span className={textSlateToWhiteInDark}>External Reference</span>} name="externalReference">
-                                    <Input placeholder="Enter External Reference" className="rounded w-full" />
+                                {/* --- EXTERNAL REFERENCE ROW --- */}
+                                <Row gutter={16}>
+                                    <Col span={12}>
+                                        <Form.Item label={<span className={textSlateToWhiteInDark}>External Reference</span>} name="externalReference">
+                                            <Input placeholder="Enter External Reference" className="rounded w-full" />
+                                        </Form.Item>
+                                    </Col>
+                                </Row>
+
+                                {/* --- REMARK FIELD --- */}
+                                <Form.Item label={<span className={textSlateToWhiteInDark}>Remark</span>} name="remark">
+                                    <TextArea rows={3} placeholder="Add operational adjustments or audit notes here..." className="rounded w-full" />
                                 </Form.Item>
-                            </Col>
-                        </Row>
-
-                        {/* --- REMARK FIELD --- */}
-                        <Form.Item label={<span className={textSlateToWhiteInDark}>Remark</span>} name="remark">
-                            <TextArea rows={3} placeholder="Add operational adjustments or audit notes here..." className="rounded w-full" />
-                        </Form.Item>
-
-                        {/* --- ATTACHMENT SLIPS --- */}
-                        {/* <Form.Item label={<strong className="text-slate-700">Payment Transfer Slips Upload</strong>} name="upload">
-                    <Upload listType="picture-card" beforeUpload={() => false}>
-                        <div>
-                            <PlusOutlined />
-                            <div className="mt-2 text-xs text-slate-500">Upload</div>
-                        </div>
-                    </Upload>
-                </Form.Item> */}
+                            </>
+                        )}
                     </Form>
             }
         </Drawer>

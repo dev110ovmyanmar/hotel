@@ -7,38 +7,23 @@ import NightAuditTopBarBeforeLock from "../../pages/NightAudit/NightAuditTopBarB
 
 const Breadcrumbs = () => {
   const location = useLocation();
-  const [nightAuditStarted, setNightAuditStarted] = useState(false);
 
-  useEffect(() => {
-    const handleUpdate = (event) => {
-      console.log(event,"EventHandleUpdate")
-      if (event.detail?.nightAuditStarted !== undefined) {
-        setNightAuditStarted(event.detail.nightAuditStarted);
-      }
-    };
+  const nightAuditStorage = JSON.parse(
+    localStorage.getItem("nightAudit")
+  );
 
-    window.addEventListener(
-      "breadcrumb_updated",
-      handleUpdate
-    );
+  const isLocked =
+    nightAuditStorage?.isLocked;
 
-    return () => {
-      window.removeEventListener(
-        "breadcrumb_updated",
-        handleUpdate
-      );
-    };
-  }, []);
-
-  if (location.pathname.includes("/night-audit") && !nightAuditStarted) {
+  if (location.pathname.includes("/night-audit") && !isLocked) {
     return (
       <NightAuditTopBarBeforeLock />
     );
   }
 
-  if (location.pathname.includes("/night-audit/") && nightAuditStarted) {
+  if (location.pathname.includes("/night-audit/") && isLocked) {
     return (
-      <NightAuditTopBar setNightAuditStarted={setNightAuditStarted} />
+      <NightAuditTopBar />
     );
   }
 

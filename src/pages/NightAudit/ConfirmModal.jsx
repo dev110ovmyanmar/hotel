@@ -1,15 +1,16 @@
 import { Input, Modal, Form } from "antd"
 import { useApiMutation } from "../../hooks/useApiMutation";
 import { systemLock, systemUnlock } from "../../api/nightAuditApi";
-import { SYSTEM_LOCK_KEY } from "../../variables/constants";
 import Toast from "../../component/Toast/Toast";
 import { useNavigate } from "react-router-dom";
 
 
 const ConfirmModal = ({
     open,
-    onCancel
+    onCancel,
+    activeAdminDatas
 }) => {
+    console.log(activeAdminDatas?.pages[0]?.nightAudit?.targetBusinessDate, "activeAdminDatasINConfrimMOdal")
     const [form] = Form.useForm();
     const navigate = useNavigate();
 
@@ -38,13 +39,21 @@ const ConfirmModal = ({
         footer: "dark:!bg-[#1F1F1F] dark:!border-[#e5e5e5]"
     }
 
+    const nightAuditStorage = {
+        isLocked: activeAdminDatas?.pages[0]?.systemLock?.isLocked,
+        businessDate: activeAdminDatas?.pages[0]?.nightAudit?.targetBusinessDate,
+    };
+    console.log(nightAuditStorage,"nightAuditStorage")
     const systemLockMutation = useApiMutation({
-        // mutationFn: systemLock,
-        mutationFn: systemUnlock,
+        mutationFn: systemLock,
         shouldInvalidate: false,
         options: {
             onSuccess: (data) => {
                 Toast.success("System locked successfully");
+                localStorage.setItem(
+                    "nightAudit",
+                    JSON.stringify(nightAuditStorage)
+                );
                 onCancel(false);
                 window.dispatchEvent(
                     new CustomEvent("breadcrumb_updated", {
@@ -58,30 +67,58 @@ const ConfirmModal = ({
                 form.resetFields()
 
             },
+            onError: () => {
+                form.resetFields()
+            }
         },
     });
 
     const handleForceLogout = async () => {
         try {
             const values = await form.validateFields();
-            console.log(values,"handleForceLogout")
+            console.log(values, "handleForceLogout")
 
-            if (values?.locking === SYSTEM_LOCK_KEY?.nightAudit) {
-                systemLockMutation.mutate({
-                    systemLockKey: values?.locking
-                });
-            }
+            systemLockMutation.mutate({
+                systemLockKey: values?.locking
+            });
         }
         catch (error) {
-            console.log("Validation failed:", error);
+            console.log("Validationfailed:", error);
         }
+        onCancel(false);
     };
 
+    const handleForceLogoutToNavigate = () => {
+        // try {
+        //     const values = await form.validateFields();
+        //     console.log(values, "handleForceLogout")
+
+        //     systemLockMutation.mutate({
+        //         systemLockKey: values?.locking
+        //     });
+        // }
+        // catch (error) {
+        //     console.log("Validationfailed:", error);
+        // }
+        // onCancel(false);
+        window.dispatchEvent(
+            new CustomEvent("breadcrumb_updated", {
+                detail: {
+                    stepValue: 0,
+                    nightAuditStarted: true,
+                },
+            })
+        );
+        navigate("/night-audit/pre-audit-check");
+    };
     return (
         <Modal
             title="Confirm Night Audit"
             open={open}
-            onCancel={onCancel}
+            onCancel={() => {
+                onCancel();
+                form.resetFields()
+            }}
             onOk={handleForceLogout}
             okText="Confirm"
             styles={stylesFn}

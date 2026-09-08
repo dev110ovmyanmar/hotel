@@ -7,9 +7,6 @@ import {
   Button,
   Select,
   Radio,
-  Space,
-  Popover,
-  List,
 } from "antd";
 import useApiQuery from "../../../../../../hooks/useApiQuery";
 import { useApiMutation } from "../../../../../../hooks/useApiMutation";
@@ -22,7 +19,6 @@ import {
 import FormButtons from "../../../../../../component/FormButtons/FormButtons";
 import { queryClient } from "../../../../../../app/queryClient";
 import Toast from "../../../../../../component/Toast/Toast";
-import { EyeOutlined } from "@ant-design/icons";
 import {
   getFormattedDate,
   textWhiteInDarkStyle,
@@ -44,17 +40,34 @@ const ServiceOrderForm = ({
   onSuccess,
 }) => {
   const [form] = Form.useForm();
+
   const isView = mode === "view";
   const isAdd = mode === "add";
   const isEdit = mode === "edit";
 
-  const initData = queryClient.getQueryData(["initData", "authenticated"]);
-  const selectedOrderType = Form.useWatch("orderType", form);
+  const initData = queryClient.getQueryData([
+    "initData",
+    "authenticated",
+  ]);
+
+  const selectedOrderType = Form.useWatch(
+    "orderType",
+    form,
+  );
+
+  const selectedServiceUuid = Form.useWatch(
+    "selectService",
+    form,
+  );
 
   const reservationUuid = isAdd
     ? serviceData?.uuid
-    : serviceData?.reservation?.uuid || serviceData?.reservationUuid;
-  const serviceOrderUuid = isAdd ? null : serviceData?.uuid;
+    : serviceData?.reservation?.uuid ||
+      serviceData?.reservationUuid;
+
+  const serviceOrderUuid = isAdd
+    ? null
+    : serviceData?.uuid;
 
   const { data: reservationRoom } = useApiQuery({
     fetchQueryFunction: reservationRoomMeta,
@@ -63,14 +76,21 @@ const ServiceOrderForm = ({
         uuid: reservationUuid,
       },
     },
-    options: { enabled: !!reservationUuid },
+    options: {
+      enabled: !!reservationUuid,
+    },
   });
 
   const { data: orderDetails } = useApiQuery({
     fetchQueryName: "service-orders",
     fetchQueryFunction: serviceOrderDetails,
-    params: { uuid: serviceOrderUuid },
-    options: { enabled: !!serviceOrderUuid && !isAdd },
+    params: {
+      uuid: serviceOrderUuid,
+    },
+    options: {
+      enabled:
+        !!serviceOrderUuid && !isAdd,
+    },
   });
 
   const createServiceOrder = useApiMutation({
@@ -82,63 +102,91 @@ const ServiceOrderForm = ({
     invalidateKeys: [["service-order"]],
   });
 
-  const orderType = Form.useWatch("orderType", form);
-  const selectedServiceUuid = Form.useWatch("selectService", form);
+  const consumptionType =
+    initData?.statuses?.consumption_type?.map(
+      (item) => ({
+        value: item.uuid,
+        label: item.name,
+      }),
+    ) || [];
 
-  const consumptionType = initData?.statuses?.consumption_type?.map((item) => ({
-    value: item.uuid,
-    label: item.name,
-  }));
+  const currentStatusCode =
+    orderDetails?.orderStatus?.code;
 
-  const currentStatusCode = orderDetails?.orderStatus?.code;
   const orderStatus =
     initData?.statuses?.order_status
       ?.filter((status) => {
         if (isEdit) {
-          if (currentStatusCode === "completed") {
+          if (
+            currentStatusCode ===
+            "completed"
+          ) {
             return status.code === "completed";
           }
-          if (currentStatusCode === "cancelled") {
+
+          if (
+            currentStatusCode ===
+            "cancelled"
+          ) {
             return status.code === "cancelled";
           }
-          if (currentStatusCode === "in_progress") {
+
+          if (
+            currentStatusCode ===
+            "in_progress"
+          ) {
             return (
-              status.code === "in_progress" ||
+              status.code ===
+                "in_progress" ||
               status.code === "completed" ||
               status.code === "cancelled"
             );
           }
+
           return true;
         }
 
-        return status.code === "pending" || status.code === "in_progress";
+        return (
+          status.code === "pending" ||
+          status.code === "in_progress"
+        );
       })
       ?.map((status) => ({
         value: status.uuid,
         label: status.name,
       })) || [];
 
-  const defaultStatus = initData?.statuses?.order_status?.find(
-    (status) => status.code === "pending",
-  );
+  const defaultStatus =
+    initData?.statuses?.order_status?.find(
+      (status) => status.code === "pending",
+    );
 
   const rooms =
     reservationRoom?.rooms
       ?.filter((room) => {
-        // View mode: show the current room even if it is not checked-in
         if (isView) {
           return (
-            room?.roomStatus?.code === "checked_in" ||
-            room?.uuid === orderDetails?.reservationRoom?.uuid
+            room?.roomStatus?.code ===
+              "checked_in" ||
+            room?.uuid ===
+              orderDetails?.reservationRoom
+                ?.uuid
           );
         }
 
-        // Add/Edit: only show checked-in rooms
-        return room?.roomStatus?.code === "checked_in";
+        return (
+          room?.roomStatus?.code ===
+          "checked_in"
+        );
       })
       .map((room) => {
-        const checkin = getFormattedDate(room?.checkinDate);
-        const checkout = getFormattedDate(room?.checkoutDate);
+        const checkin = getFormattedDate(
+          room?.checkinDate,
+        );
+
+        const checkout = getFormattedDate(
+          room?.checkoutDate,
+        );
 
         return {
           value: room?.uuid,
@@ -149,19 +197,29 @@ const ServiceOrderForm = ({
   const services =
     reservationRoom?.services
       ?.filter((service) => {
-        // View mode: show the current service even if its stage
-        // is not in_house, pre_departure, or anytime
         if (isView) {
           return (
-            service?.serviceStages?.some((stage) =>
-              ["in_house", "pre_departure", "anytime"].includes(stage),
-            ) || service?.uuid === orderDetails?.service?.uuid
+            service?.serviceStages?.some(
+              (stage) =>
+                [
+                  "in_house",
+                  "pre_departure",
+                  "anytime",
+                ].includes(stage),
+            ) ||
+            service?.uuid ===
+              orderDetails?.service
+                ?.uuid
           );
         }
 
-        // Add/Edit: only show allowed service stages
-        return service?.serviceStages?.some((stage) =>
-          ["in_house", "pre_departure", "anytime"].includes(stage),
+        return service?.serviceStages?.some(
+          (stage) =>
+            [
+              "in_house",
+              "pre_departure",
+              "anytime",
+            ].includes(stage),
         );
       })
       ?.map((service) => ({
@@ -170,104 +228,245 @@ const ServiceOrderForm = ({
       })) || [];
 
   const servicesPackage =
-    reservationRoom?.service_packages?.map((pkg) => ({
-      value: pkg?.uuid,
-      label: pkg?.name,
-      packageItems: pkg?.servicePackageItems || [],
-      basePrice: pkg?.basePrice,
-    })) || [];
+    reservationRoom?.service_packages?.map(
+      (pkg) => ({
+        value: pkg?.uuid,
+        label: pkg?.name,
+        packageItems:
+          pkg?.servicePackageItems || [],
+        basePrice: pkg?.basePrice,
+        parentServiceUuid:
+          pkg?.parentService?.uuid ||
+          pkg?.service?.uuid ||
+          pkg?.parentServiceUuid,
+      }),
+    ) || [];
 
-  const currentServiceObj = React.useMemo(() => {
-    return reservationRoom?.services?.find(
-      (service) => service.uuid === selectedServiceUuid,
-    );
-  }, [reservationRoom, selectedServiceUuid]);
+  const currentServiceObj =
+    React.useMemo(() => {
+      return reservationRoom?.services?.find(
+        (service) =>
+          service?.uuid ===
+          selectedServiceUuid,
+      );
+    }, [
+      reservationRoom,
+      selectedServiceUuid,
+    ]);
 
-  const serviceInventories = React.useMemo(() => {
-    if (!currentServiceObj?.serviceInventories) return [];
+  const serviceInventories =
+    React.useMemo(() => {
+      if (
+        !currentServiceObj?.serviceInventories
+      ) {
+        return [];
+      }
 
-    return currentServiceObj.serviceInventories
-      .filter((inv) => inv?.serviceInventoryItem?.uuid)
-      .map((inv) => ({
-        value: inv.serviceInventoryItem.uuid,
-        label: inv.serviceInventoryItem.name,
-        maxLimit: inv.quantityPerService,
-      }));
-  }, [currentServiceObj]);
+      return currentServiceObj.serviceInventories
+        .filter(
+          (inv) =>
+            inv?.serviceInventoryItem
+              ?.uuid,
+        )
+        .map((inv) => ({
+          value:
+            inv.serviceInventoryItem.uuid,
+          label:
+            inv.serviceInventoryItem.name,
+          maxLimit:
+            inv.quantityPerService,
+        }));
+    }, [currentServiceObj]);
 
   useEffect(() => {
-    if (!isEdit && defaultStatus?.uuid) {
+    if (
+      !isEdit &&
+      defaultStatus?.uuid
+    ) {
       form.setFieldsValue({
-        orderStatus: defaultStatus.uuid,
+        orderStatus:
+          defaultStatus.uuid,
       });
     }
-  }, [defaultStatus, isEdit]);
+  }, [
+    defaultStatus,
+    isEdit,
+    form,
+  ]);
 
   useEffect(() => {
-    if (orderDetails && (isView || isEdit)) {
-      const hasPackage = !!orderDetails?.servicePackage?.uuid;
+    if (
+      orderDetails &&
+      (isView || isEdit)
+    ) {
+      const hasPackage =
+        !!orderDetails?.servicePackage
+          ?.uuid;
 
       form.setFieldsValue({
-        orderType: hasPackage ? "package" : "service",
-        roomNo: orderDetails?.reservationRoom?.uuid,
-        selectService: orderDetails?.service?.uuid,
-        servicePackage: orderDetails?.servicePackage?.uuid,
-        consumptionType: orderDetails?.consumptionType?.uuid,
-        orderStatus: orderDetails?.orderStatus?.uuid,
+        orderType: hasPackage
+          ? "package"
+          : "service",
+
+        roomNo:
+          orderDetails?.reservationRoom
+            ?.uuid,
+
+        selectService:
+          orderDetails?.service?.uuid,
+
+        servicePackage:
+          orderDetails?.servicePackage
+            ?.uuid,
+
+        consumptionType:
+          orderDetails?.consumptionType
+            ?.uuid,
+
+        orderStatus:
+          orderDetails?.orderStatus?.uuid,
+
         inventoryItems:
-          orderDetails?.serviceOrderItems?.map((item) => ({
-            value: item?.serviceInventoryItem?.uuid,
-            label: item?.serviceInventoryItem?.name,
-            quantity: item?.quantity,
-          })) || [],
+          orderDetails?.serviceOrderItems?.map(
+            (item) => ({
+              value:
+                item?.serviceInventoryItem
+                  ?.uuid,
+              label:
+                item?.serviceInventoryItem
+                  ?.name,
+              quantity:
+                item?.quantity ?? 0,
+            }),
+          ) || [],
 
-        quantity: orderDetails?.serviceOrderItem?.quantity ?? 1,
+        quantity:
+          orderDetails?.serviceOrderItem
+            ?.quantity ?? 1,
       });
     }
-  }, [orderDetails, isView, isEdit]);
+  }, [
+    orderDetails,
+    isView,
+    isEdit,
+    form,
+  ]);
 
   const handleSubmit = (values) => {
-    let calculatedServiceUuid = values.selectService;
-    if (values.orderType === "package" && values.servicePackage) {
-      const selectedPkg = servicesPackage.find(
-        (p) => p.value === values.servicePackage,
-      );
-      if (selectedPkg) {
-        calculatedServiceUuid = selectedPkg.parentServiceUuid;
+    if (
+      values.orderType === "service" &&
+      serviceInventories.length > 0
+    ) {
+      const hasAtLeastOneQuantity =
+        values.inventoryItems?.some(
+          (item) =>
+            Number(item?.quantity || 0) >=
+            1,
+        );
+
+      if (!hasAtLeastOneQuantity) {
+        Toast.error(
+          "Please enter at least 1 quantity for one inventory item.",
+        );
+        return;
       }
     }
+
+    let calculatedServiceUuid =
+      values.selectService;
+
+    if (
+      values.orderType === "package" &&
+      values.servicePackage
+    ) {
+      const selectedPkg =
+        servicesPackage.find(
+          (p) =>
+            p.value ===
+            values.servicePackage,
+        );
+
+      if (selectedPkg) {
+        calculatedServiceUuid =
+          selectedPkg.parentServiceUuid;
+      }
+    }
+
     const inventoryItems =
-      values.inventoryItems?.map((item, index) => ({
-        uuid: serviceInventories[index].value,
-        quantity: item.quantity,
-      })) || [];
+      values.inventoryItems?.map(
+        (item) => ({
+          uuid: item?.value,
+          quantity: Number(
+            item?.quantity || 0,
+          ),
+        }),
+      ) || [];
 
     const payload = {
-      reservation: { uuid: reservationUuid },
-      reservationRoom: values.roomNo ? { uuid: values.roomNo } : null,
-      service: calculatedServiceUuid ? { uuid: calculatedServiceUuid } : null,
+      reservation: {
+        uuid: reservationUuid,
+      },
+
+      reservationRoom: values.roomNo
+        ? {
+            uuid: values.roomNo,
+          }
+        : null,
+
+      service: calculatedServiceUuid
+        ? {
+            uuid: calculatedServiceUuid,
+          }
+        : null,
+
       servicePackage:
-        values.orderType === "package" && values.servicePackage
-          ? { uuid: values.servicePackage }
+        values.orderType === "package" &&
+        values.servicePackage
+          ? {
+              uuid: values.servicePackage,
+            }
           : null,
+
       quantity: values.quantity,
 
-      inventoryItems: values.orderType === "service" ? inventoryItems : [],
-      consumptionType: values.consumptionType
-        ? { uuid: values.consumptionType }
-        : null,
-      orderStatus: values.orderStatus ? { uuid: values.orderStatus } : null,
+      inventoryItems:
+        values.orderType === "service"
+          ? inventoryItems
+          : [],
+
+      consumptionType:
+        values.consumptionType
+          ? {
+              uuid: values.consumptionType,
+            }
+          : null,
+
+      orderStatus:
+        values.orderStatus
+          ? {
+              uuid: values.orderStatus,
+            }
+          : null,
     };
 
     if (isAdd) {
-      createServiceOrder.mutate(payload, {
-        onSuccess: () => {
-          form.resetFields();
-          handleClose();
-          if (onSuccess) onSuccess();
-          Toast.success("Service Order Created Successfully!");
+      createServiceOrder.mutate(
+        payload,
+        {
+          onSuccess: () => {
+            form.resetFields();
+            handleClose();
+
+            if (onSuccess) {
+              onSuccess();
+            }
+
+            Toast.success(
+              "Service Order Created Successfully!",
+            );
+          },
         },
-      });
+      );
     }
 
     if (isEdit) {
@@ -276,19 +475,96 @@ const ServiceOrderForm = ({
         uuid: serviceOrderUuid,
       };
 
-      updateServiceOrders.mutate(editValues, {
-        onSuccess: () => {
-          handleClose();
-          if (onSuccess) onSuccess();
-          Toast.success("Service Order Updated Successfully!");
+      updateServiceOrders.mutate(
+        editValues,
+        {
+          onSuccess: () => {
+            handleClose();
+
+            if (onSuccess) {
+              onSuccess();
+            }
+
+            Toast.success(
+              "Service Order Updated Successfully!",
+            );
+          },
         },
-      });
+      );
     }
   };
 
   const handleClose = () => {
     form.resetFields();
-    if (onClose) onClose();
+
+    if (onClose) {
+      onClose();
+    }
+  };
+
+  const handleOrderTypeChange = (e) => {
+    const currentSelection =
+      e.target.value;
+
+    const targetStatus = isEdit
+      ? orderDetails?.orderStatus?.uuid
+      : defaultStatus?.uuid;
+
+    if (
+      currentSelection === "service"
+    ) {
+      form.setFieldsValue({
+        servicePackage: undefined,
+        selectService: undefined,
+        inventoryItems: undefined,
+        quantity: 1,
+        consumptionType: undefined,
+        orderStatus: targetStatus,
+      });
+    }
+
+    if (
+      currentSelection === "package"
+    ) {
+      form.setFieldsValue({
+        selectService: undefined,
+        inventoryItems: undefined,
+        servicePackage: undefined,
+        quantity: 1,
+        consumptionType: undefined,
+        orderStatus: targetStatus,
+      });
+    }
+  };
+
+  const handleServiceChange = (value) => {
+    const selectedService =
+      reservationRoom?.services?.find(
+        (service) =>
+          service?.uuid === value,
+      );
+
+    const inventoryItems =
+      selectedService?.serviceInventories
+        ?.filter(
+          (inv) =>
+            inv?.serviceInventoryItem
+              ?.uuid,
+        )
+        ?.map((inv, index) => ({
+          value:
+            inv.serviceInventoryItem.uuid,
+          label:
+            inv.serviceInventoryItem.name,
+          quantity:
+            index === 0 ? 1 : 0,
+        })) || [];
+
+    form.setFieldsValue({
+      selectService: value,
+      inventoryItems,
+      quantity: 1,
+    });
   };
 
   return (
@@ -306,17 +582,27 @@ const ServiceOrderForm = ({
                 ? "Edit Service Order"
                 : "Add Service Order"}
           </span>
+
           {isView ? (
-            serviceData?.orderStatus?.code !== "completed" && (
-              <Button type="primary" onClick={() => setMode("edit")}>
+            serviceData?.orderStatus
+              ?.code !== "completed" && (
+              <Button
+                type="primary"
+                onClick={() =>
+                  setMode("edit")
+                }
+              >
                 Edit
               </Button>
             )
           ) : (
             <FormButtons
-              onClick={() => form.submit()}
+              onClick={() =>
+                form.submit()
+              }
               isPending={
-                createServiceOrder.isPending || updateServiceOrders.isPending
+                createServiceOrder.isPending ||
+                updateServiceOrders.isPending
               }
               mode={mode}
             />
@@ -332,150 +618,168 @@ const ServiceOrderForm = ({
         initialValues={{
           orderType: "service",
           quantity: 1,
-          orderStatus: !isEdit ? defaultStatus?.uuid : undefined,
+          orderStatus:
+            !isEdit
+              ? defaultStatus?.uuid
+              : undefined,
         }}
       >
-        {(!isView || orderDetails?.reservationRoom !== null) && (
+        {(!isView ||
+          orderDetails?.reservationRoom !==
+            null) && (
           <Form.Item
             label="Room No"
             name="roomNo"
-            rules={[{ required: true }]}
+            rules={[
+              {
+                required: true,
+              },
+            ]}
             getValueProps={(value) => ({
               value: isView
-                ? rooms.find((item) => item.value === value)?.label
+                ? rooms.find(
+                    (item) =>
+                      item.value ===
+                      value,
+                  )?.label
                 : value,
             })}
           >
             {isView ? (
               <Input readOnly />
             ) : (
-              <Select options={rooms} placeholder="Select a Room" />
+              <Select
+                options={rooms}
+                placeholder="Select a Room"
+              />
             )}
           </Form.Item>
         )}
 
-        <Form.Item label="Selection Types" name="orderType">
+        <Form.Item
+          label="Selection Types"
+          name="orderType"
+        >
           <Radio.Group
             disabled={isView}
-            onChange={(e) => {
-              const currentSelection = e.target.value;
-
-              const targetStatus = isEdit
-                ? orderDetails?.orderStatus?.uuid
-                : defaultStatus?.uuid;
-
-              if (currentSelection === "service") {
-                form.setFieldsValue({
-                  // Clear package specific field completely
-                  servicePackage: undefined,
-                  // Explicitly clear the service selection input text
-                  selectService: undefined,
-                  inventoryItems: undefined,
-                  quantity: 1,
-                  consumptionType: undefined,
-                  orderStatus: targetStatus,
-                });
-              } else if (currentSelection === "package") {
-                form.setFieldsValue({
-                  // Clear service specific fields completely
-                  selectService: undefined,
-                  inventoryItems: undefined,
-                  // Explicitly clear the package selection field text
-                  servicePackage: undefined,
-                  quantity: 1,
-                  consumptionType: undefined,
-                  orderStatus: targetStatus,
-                });
-              }
-            }}
+            onChange={
+              handleOrderTypeChange
+            }
           >
             <Radio
               value="service"
               className={
-                selectedOrderType === "service"
+                selectedOrderType ===
+                "service"
                   ? "custom-disabled-checkbox"
                   : ""
               }
             >
-              <span className={isView ? textWhiteInDarkStyle : ""}>
+              <span
+                className={
+                  isView
+                    ? textWhiteInDarkStyle
+                    : ""
+                }
+              >
                 Service
               </span>
             </Radio>
+
             <Radio
               value="package"
               className={
-                selectedOrderType === "package"
+                selectedOrderType ===
+                "package"
                   ? "custom-disabled-checkbox"
                   : ""
               }
             >
-              <span className={isView ? textWhiteInDarkStyle : ""}>
+              <span
+                className={
+                  isView
+                    ? textWhiteInDarkStyle
+                    : ""
+                }
+              >
                 Package
               </span>
             </Radio>
           </Radio.Group>
         </Form.Item>
 
-        {orderType === "service" && (
+        {selectedOrderType ===
+          "service" && (
           <>
             <div className="grid grid-cols-2 gap-4">
               <Form.Item
                 label="Select Service"
                 name="selectService"
-                rules={[{ required: true }]}
+                rules={[
+                  {
+                    required: true,
+                  },
+                ]}
                 getValueProps={(value) => ({
                   value: isView
-                    ? services.find((item) => item.value === value)?.label
+                    ? services.find(
+                        (item) =>
+                          item.value ===
+                          value,
+                      )?.label
                     : value,
                 })}
               >
                 {isView ? (
-                  <Input readOnly={isView} />
+                  <Input readOnly />
                 ) : (
                   <Select
                     showSearch={{
-                      filterOption: (input, option) =>
-                        (option?.label ?? "")
+                      filterOption: (
+                        input,
+                        option,
+                      ) =>
+                        (
+                          option?.label ??
+                          ""
+                        )
                           .toLowerCase()
-                          .includes(input.toLowerCase()),
+                          .includes(
+                            input.toLowerCase(),
+                          ),
                     }}
                     options={services}
                     placeholder="Select a Service"
-                    open={isView ? !isView : undefined}
-                    onChange={(v) => {
-                      const selectedService = reservationRoom?.services?.find(
-                        (service) => service?.uuid === v,
-                      );
-
-                      const inventoryItems =
-                        selectedService?.serviceInventories
-                          ?.filter((inv) => inv?.serviceInventoryItem?.uuid)
-                          ?.map((inv, index) => ({
-                            value: inv.serviceInventoryItem.uuid,
-                            label: inv.serviceInventoryItem.name,
-                            quantity: index === 0 ? 1 : 0,
-                          })) || [];
-
-                      form.setFieldsValue({
-                        selectService: v,
-                        inventoryItems,
-                        quantity: 1,
-                      });
-                    }}
+                    onChange={
+                      handleServiceChange
+                    }
                   />
                 )}
               </Form.Item>
-              {(serviceInventories.length === 0 ||
-                (isView && orderDetails?.consumptionType === null)) && (
+
+              {(serviceInventories.length ===
+                0 ||
+                (isView &&
+                  orderDetails?.consumptionType ===
+                    null)) && (
                 <Form.Item
                   label="Quantity"
                   name="quantity"
-                  rules={[{ required: true }, { type: "number" }]}
+                  rules={[
+                    {
+                      required: true,
+                    },
+                    {
+                      type: "number",
+                    },
+                  ]}
                   className="minus-icon"
                 >
                   <InputNumber
                     {...sharedProps}
-                    style={{ width: "100%" }}
+                    style={{
+                      width: "100%",
+                    }}
                     readOnly={isView}
                   />
                 </Form.Item>
@@ -483,84 +787,131 @@ const ServiceOrderForm = ({
             </div>
 
             {selectedServiceUuid &&
-              !(isView && orderDetails?.consumptionType === null) && (
+              !(
+                isView &&
+                orderDetails?.consumptionType ===
+                  null
+              ) && (
                 <div>
-                  <label className="text-xs font-bold uppercase tracking-wider block">
-                    {serviceInventories.length > 0
-                      ? "Service Inventory Items"
-                      : ""}
-                  </label>
+                  {serviceInventories.length >
+                    0 && (
+                    <>
+                      <label className="text-xs font-bold uppercase tracking-wider block">
+                        Service Inventory Items
+                      </label>
 
-                  {serviceInventories.length > 0 && (
-                    <div className="mb-5 mt-3 py-3 px-1 border border-gray-200 border-2 rounded-xl overflow-hidden bg-white">
-                      {serviceInventories?.map((item, index) => (
-                        <div
-                          key={item.value}
-                          className="flex items-center justify-between py-1 px-3.5 hover:bg-gray-50/70 transition-colors duration-150 dark:hover:bg-gray-900 dark:hover:backdrop-filter-lg"
-                        >
-                          <Form.Item
-                            name={["inventoryItems", index, "value"]}
-                            initialValue={item.value}
-                            hidden
-                          >
-                            <input type="hidden" />
-                          </Form.Item>
-                          <Form.Item
-                            name={["inventoryItems", index, "label"]}
-                            initialValue={item.label}
-                            hidden
-                          >
-                            <input type="hidden" />
-                          </Form.Item>
-
-                          <div className="flex items-center space-x-3 min-w-0 flex-1 pr-4">
-                            <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 flex-shrink-0" />
-                            <span
-                              className={`font-medium text-gray-700 truncate  ${textWhiteInDarkStyle}`}
-                              title={item.label}
+                      <div className="mb-5 mt-3 py-3 px-1 border border-gray-200 border-2 rounded-xl overflow-hidden bg-white">
+                        {serviceInventories.map(
+                          (
+                            item,
+                            index,
+                          ) => (
+                            <div
+                              key={
+                                item.value
+                              }
+                              className="flex items-center justify-between py-1 px-3.5 hover:bg-gray-50/70 transition-colors duration-150 dark:hover:bg-gray-900 dark:hover:backdrop-filter-lg"
                             >
-                              {item.label}
-                            </span>
-                            <span className="inline-flex items-center  text-xs font-medium  text-gray-500 dark:text-gray-400 flex-shrink-0">
-                              ( Max: {item.maxLimit ?? "N/A"} )
-                            </span>
-                          </div>
+                              <Form.Item
+                                name={[
+                                  "inventoryItems",
+                                  index,
+                                  "value",
+                                ]}
+                                hidden
+                              >
+                                <Input type="hidden" />
+                              </Form.Item>
 
-                          <div className="flex-shrink-0">
-                            <Form.Item
-                              name={["inventoryItems", index, "quantity"]}
-                              initialValue={index === 0 ? 1 : 0}
-                              className="!mb-0 minus-icon"
-                              rules={[
-                                { required: true, message: "Required" },
-                                {
-                                  type: "number",
-                                  min: 0,
-                                  message: "Quantity cannot be less than 0",
-                                },
-                                ...(item.maxLimit
-                                  ? [
-                                      {
-                                        type: "number",
-                                        max: item.maxLimit,
-                                        message: `Max is ${item.maxLimit}`,
-                                      },
-                                    ]
-                                  : []),
-                              ]}
-                            >
-                              <InputNumber
-                                {...sharedProps}
-                                min={0}
-                                max={item.maxLimit}
-                                placeholder="Qty:"
-                                className="w-24 h-8 rounded-lg text-center"
-                              />
-                            </Form.Item>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
+                              <Form.Item
+                                name={[
+                                  "inventoryItems",
+                                  index,
+                                  "label",
+                                ]}
+                                hidden
+                              >
+                                <Input type="hidden" />
+                              </Form.Item>
+
+                              <div className="flex items-center space-x-3 min-w-0 flex-1 pr-4">
+                                <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 flex-shrink-0" />
+
+                                <span
+                                  className={`font-medium text-gray-700 truncate ${textWhiteInDarkStyle}`}
+                                  title={
+                                    item.label
+                                  }
+                                >
+                                  {
+                                    item.label
+                                  }
+                                </span>
+
+                                <span className="inline-flex items-center text-xs font-medium text-gray-500 dark:text-gray-400 flex-shrink-0">
+                                  (
+                                  {" "}
+                                  Max:{" "}
+                                  {item.maxLimit ??
+                                    "N/A"}{" "}
+                                  )
+                                </span>
+                              </div>
+
+                              <div className="flex-shrink-0">
+                                <Form.Item
+                                  name={[
+                                    "inventoryItems",
+                                    index,
+                                    "quantity",
+                                  ]}
+                                  initialValue={
+                                    index ===
+                                    0
+                                      ? 1
+                                      : 0
+                                  }
+                                  className="!mb-0 minus-icon"
+                                  rules={[
+                                    {
+                                      required:
+                                        true,
+                                      message:
+                                        "Required",
+                                    },
+                                    {
+                                      type: "number",
+                                      min: 0,
+                                      message:
+                                        "Quantity cannot be less than 0",
+                                    },
+                                    ...(item.maxLimit
+                                      ? [
+                                          {
+                                            type: "number",
+                                            max: item.maxLimit,
+                                            message: `Max is ${item.maxLimit}`,
+                                          },
+                                        ]
+                                      : []),
+                                  ]}
+                                >
+                                  <InputNumber
+                                    {...sharedProps}
+                                    min={0}
+                                    max={
+                                      item.maxLimit
+                                    }
+                                    placeholder="Qty:"
+                                    className="w-24 h-8 rounded-lg text-center"
+                                  />
+                                </Form.Item>
+                              </div>
+                            </div>
+                          ),
+                        )}
+                      </div>
+                    </>
                   )}
                 </div>
               )}
@@ -568,33 +919,51 @@ const ServiceOrderForm = ({
         )}
 
         <div className="grid grid-cols-2 gap-4">
-          {orderType === "package" && (
+          {selectedOrderType ===
+            "package" && (
             <>
               <Form.Item
                 name="servicePackage"
                 label="Select Package"
                 rules={[
-                  { required: true, message: "Please select a package!" },
+                  {
+                    required: true,
+                    message:
+                      "Please select a package!",
+                  },
                 ]}
                 getValueProps={(value) => ({
                   value: isView
-                    ? servicesPackage.find((item) => item.value === value)
-                        ?.label
+                    ? servicesPackage.find(
+                        (item) =>
+                          item.value ===
+                          value,
+                      )?.label
                     : value,
                 })}
               >
                 {isView ? (
-                  <Input readOnly={isView} />
+                  <Input readOnly />
                 ) : (
                   <Select
                     showSearch={{
-                      filterOption: (input, option) =>
-                        (option?.label ?? "")
+                      filterOption: (
+                        input,
+                        option,
+                      ) =>
+                        (
+                          option?.label ??
+                          ""
+                        )
                           .toLowerCase()
-                          .includes(input.toLowerCase()),
+                          .includes(
+                            input.toLowerCase(),
+                          ),
                     }}
                     placeholder="Select a package"
-                    options={servicesPackage}
+                    options={
+                      servicesPackage
+                    }
                   />
                 )}
               </Form.Item>
@@ -602,20 +971,32 @@ const ServiceOrderForm = ({
               <Form.Item
                 label="Quantity"
                 name="quantity"
-                rules={[{ required: true }, { type: "number" }]}
+                rules={[
+                  {
+                    required: true,
+                  },
+                  {
+                    type: "number",
+                  },
+                ]}
                 className="minus-icon"
               >
                 <InputNumber
                   {...sharedProps}
-                  style={{ width: "100%" }}
-                  // readOnly={isView}
+                  style={{
+                    width: "100%",
+                  }}
+                  readOnly={isView}
                 />
               </Form.Item>
             </>
           )}
         </div>
+
         <div className="grid grid-cols-2 gap-4">
-          {(!isView || orderDetails?.consumptionType !== null) && (
+          {(!isView ||
+            orderDetails?.consumptionType !==
+              null) && (
             <Form.Item
               label="Consumption Type"
               name="consumptionType"
@@ -623,12 +1004,17 @@ const ServiceOrderForm = ({
               rules={[
                 {
                   required: true,
-                  message: "Please select a Consumption Type",
+                  message:
+                    "Please select a Consumption Type",
                 },
               ]}
               getValueProps={(value) => ({
                 value: isView
-                  ? consumptionType.find((item) => item.value === value)?.label
+                  ? consumptionType.find(
+                      (item) =>
+                        item.value ===
+                        value,
+                    )?.label
                   : value,
               })}
             >
@@ -637,45 +1023,80 @@ const ServiceOrderForm = ({
               ) : (
                 <Select
                   showSearch
-                  filterOption={(input, option) =>
-                    (option?.label ?? "")
+                  filterOption={(
+                    input,
+                    option,
+                  ) =>
+                    (
+                      option?.label ?? ""
+                    )
                       .toLowerCase()
-                      .includes(input.toLowerCase())
+                      .includes(
+                        input.toLowerCase(),
+                      )
                   }
-                  options={consumptionType}
+                  options={
+                    consumptionType
+                  }
                   placeholder="Select a Consumption Type"
                 />
               )}
             </Form.Item>
           )}
+
           <Form.Item
             label="Order Status"
             name="orderStatus"
             className="col-span-1"
             rules={[
-              { required: true, message: "Please select an Order Status" },
+              {
+                required: true,
+                message:
+                  "Please select an Order Status",
+              },
             ]}
             getValueProps={(value) => {
               if (isView) {
                 const label =
-                  orderDetails?.orderStatus?.name ||
+                  orderDetails
+                    ?.orderStatus
+                    ?.name ||
                   initData?.statuses?.order_status?.find(
-                    (item) => item.uuid === value,
+                    (item) =>
+                      item.uuid ===
+                      value,
                   )?.name;
-                return { value: label || value };
+
+                return {
+                  value:
+                    label || value,
+                };
               }
-              return { value };
+
+              return {
+                value,
+              };
             }}
           >
             {isView ? (
-              <Input readOnly className="bg-gray-50" />
+              <Input
+                readOnly
+                className="bg-gray-50"
+              />
             ) : (
               <Select
                 showSearch
-                filterOption={(input, option) =>
-                  (option?.label ?? "")
+                filterOption={(
+                  input,
+                  option,
+                ) =>
+                  (
+                    option?.label ?? ""
+                  )
                     .toLowerCase()
-                    .includes(input.toLowerCase())
+                    .includes(
+                      input.toLowerCase(),
+                    )
                 }
                 options={orderStatus}
                 placeholder="Select an Order Status"
@@ -689,1080 +1110,3 @@ const ServiceOrderForm = ({
 };
 
 export default ServiceOrderForm;
-
-// import React, { useEffect } from "react";
-// import {
-//   Drawer,
-//   Form,
-//   Input,
-//   InputNumber,
-//   Button,
-//   Select,
-//   Radio,
-// } from "antd";
-// import useApiQuery from "../../../../../../hooks/useApiQuery";
-// import { useApiMutation } from "../../../../../../hooks/useApiMutation";
-// import {
-//   reservationRoomMeta,
-//   serviceOrderCreate,
-//   serviceOrderDetails,
-//   updateServiceOrder,
-// } from "../../../../../../api/reservationSectionApi";
-// import FormButtons from "../../../../../../component/FormButtons/FormButtons";
-// import { queryClient } from "../../../../../../app/queryClient";
-// import Toast from "../../../../../../component/Toast/Toast";
-// import {
-//   getFormattedDate,
-//   textWhiteInDarkStyle,
-// } from "../../../../../../utils";
-
-// const sharedProps = {
-//   mode: "spinner",
-//   min: 1,
-//   max: 10,
-//   style: { width: 150 },
-// };
-
-// const ServiceOrderForm = ({
-//   mode,
-//   setMode,
-//   serviceData,
-//   open,
-//   onClose,
-//   onSuccess,
-// }) => {
-//   const [form] = Form.useForm();
-
-//   const isView = mode === "view";
-//   const isAdd = mode === "add";
-//   const isEdit = mode === "edit";
-
-//   const initData = queryClient.getQueryData(["initData", "authenticated"]);
-
-//   const selectedOrderType = Form.useWatch("orderType", form);
-//   const orderType = Form.useWatch("orderType", form);
-//   const selectedServiceUuid = Form.useWatch("selectService", form);
-
-//   const reservationUuid = isAdd
-//     ? serviceData?.uuid
-//     : serviceData?.reservation?.uuid || serviceData?.reservationUuid;
-
-//   const serviceOrderUuid = isAdd ? null : serviceData?.uuid;
-
-//   /* =========================
-//      RESERVATION ROOM META
-//   ========================= */
-
-//   const { data: reservationRoom } = useApiQuery({
-//     fetchQueryFunction: reservationRoomMeta,
-//     params: {
-//       reservation: {
-//         uuid: reservationUuid,
-//       },
-//     },
-//     options: {
-//       enabled: !!reservationUuid,
-//     },
-//   });
-
-//   /* =========================
-//      SERVICE ORDER DETAILS
-//   ========================= */
-
-//   const { data: orderDetails } = useApiQuery({
-//     fetchQueryName: "service-orders",
-//     fetchQueryFunction: serviceOrderDetails,
-//     params: {
-//       uuid: serviceOrderUuid,
-//     },
-//     options: {
-//       enabled: !!serviceOrderUuid && !isAdd,
-//     },
-//   });
-
-//   /* =========================
-//      MUTATIONS
-//   ========================= */
-
-//   const createServiceOrder = useApiMutation({
-//     mutationFn: serviceOrderCreate,
-//   });
-
-//   const updateServiceOrders = useApiMutation({
-//     mutationFn: updateServiceOrder,
-//     invalidateKeys: [["service-order"]],
-//   });
-
-//   /* =========================
-//      CONSUMPTION TYPES
-//   ========================= */
-
-//   const consumptionType =
-//     initData?.statuses?.consumption_type?.map((item) => ({
-//       value: item.uuid,
-//       label: item.name,
-//     })) || [];
-
-//   /* =========================
-//      ORDER STATUS
-//   ========================= */
-
-//   const currentStatusCode = orderDetails?.orderStatus?.code;
-
-//   const orderStatus =
-//     initData?.statuses?.order_status
-//       ?.filter((status) => {
-//         if (isEdit) {
-//           if (currentStatusCode === "completed") {
-//             return status.code === "completed";
-//           }
-
-//           if (currentStatusCode === "cancelled") {
-//             return status.code === "cancelled";
-//           }
-
-//           if (currentStatusCode === "in_progress") {
-//             return (
-//               status.code === "in_progress" ||
-//               status.code === "completed" ||
-//               status.code === "cancelled"
-//             );
-//           }
-
-//           return true;
-//         }
-
-//         return (
-//           status.code === "pending" ||
-//           status.code === "in_progress"
-//         );
-//       })
-//       ?.map((status) => ({
-//         value: status.uuid,
-//         label: status.name,
-//       })) || [];
-
-//   const defaultStatus = initData?.statuses?.order_status?.find(
-//     (status) => status.code === "pending",
-//   );
-
-//   /* =========================
-//      ROOMS
-//   ========================= */
-
-//   const rooms =
-//     reservationRoom?.rooms
-//       ?.filter((room) => {
-//         // View mode:
-//         // show current room even if it is not checked-in
-//         if (isView) {
-//           return (
-//             room?.roomStatus?.code === "checked_in" ||
-//             room?.uuid === orderDetails?.reservationRoom?.uuid
-//           );
-//         }
-
-//         // Add/Edit:
-//         // only checked-in rooms
-//         return room?.roomStatus?.code === "checked_in";
-//       })
-//       ?.map((room) => {
-//         const checkin = getFormattedDate(room?.checkinDate);
-//         const checkout = getFormattedDate(room?.checkoutDate);
-
-//         return {
-//           value: room?.uuid,
-//           label: `${room?.room?.roomNo} (${checkin} / ${checkout})`,
-//         };
-//       }) || [];
-
-//   /* =========================
-//      SERVICES
-//   ========================= */
-
-//   const services =
-//     reservationRoom?.services
-//       ?.filter((service) => {
-//         // View mode:
-//         // show current service even if stage is not allowed
-//         if (isView) {
-//           return (
-//             service?.serviceStages?.some((stage) =>
-//               ["in_house", "pre_departure", "anytime"].includes(stage),
-//             ) ||
-//             service?.uuid === orderDetails?.service?.uuid
-//           );
-//         }
-
-//         // Add/Edit:
-//         // only allowed service stages
-//         return service?.serviceStages?.some((stage) =>
-//           ["in_house", "pre_departure", "anytime"].includes(stage),
-//         );
-//       })
-//       ?.map((service) => ({
-//         value: service?.uuid,
-//         label: service?.name,
-//       })) || [];
-
-//   /* =========================
-//      SERVICE PACKAGES
-//   ========================= */
-
-//   const servicesPackage =
-//     reservationRoom?.service_packages?.map((pkg) => ({
-//       value: pkg?.uuid,
-//       label: pkg?.name,
-//       packageItems: pkg?.servicePackageItems || [],
-//       basePrice: pkg?.basePrice,
-
-//       // Important for payload
-//       parentServiceUuid:
-//         pkg?.parentService?.uuid || pkg?.parentServiceUuid,
-//     })) || [];
-
-//   /* =========================
-//      CURRENT SERVICE
-//   ========================= */
-
-//   const currentServiceObj = React.useMemo(() => {
-//     return reservationRoom?.services?.find(
-//       (service) => service?.uuid === selectedServiceUuid,
-//     );
-//   }, [reservationRoom, selectedServiceUuid]);
-
-//   /* =========================
-//      SERVICE INVENTORY ITEMS
-//   ========================= */
-
-//   const serviceInventories = React.useMemo(() => {
-//     if (!currentServiceObj?.serviceInventories) {
-//       return [];
-//     }
-
-//     return currentServiceObj.serviceInventories
-//       .filter((inv) => inv?.serviceInventoryItem?.uuid)
-//       .map((inv) => ({
-//         value: inv?.serviceInventoryItem?.uuid,
-//         label: inv?.serviceInventoryItem?.name,
-//         maxLimit: inv?.quantityPerService,
-//       }));
-//   }, [currentServiceObj]);
-
-//   /* =========================
-//      DEFAULT STATUS
-//   ========================= */
-
-//   useEffect(() => {
-//     if (!isEdit && defaultStatus?.uuid) {
-//       form.setFieldsValue({
-//         orderStatus: defaultStatus.uuid,
-//       });
-//     }
-//   }, [defaultStatus, isEdit, form]);
-
-//   /* =========================
-//      LOAD EDIT / VIEW DATA
-//   ========================= */
-
-//   useEffect(() => {
-//     if (orderDetails && (isView || isEdit)) {
-//       const hasPackage = !!orderDetails?.servicePackage?.uuid;
-
-//       form.setFieldsValue({
-//         orderType: hasPackage ? "package" : "service",
-
-//         roomNo: orderDetails?.reservationRoom?.uuid,
-
-//         selectService: orderDetails?.service?.uuid,
-
-//         servicePackage: orderDetails?.servicePackage?.uuid,
-
-//         consumptionType: orderDetails?.consumptionType?.uuid,
-
-//         orderStatus: orderDetails?.orderStatus?.uuid,
-
-//         inventoryItems:
-//           orderDetails?.serviceOrderItems?.map((item) => ({
-//             value: item?.serviceInventoryItem?.uuid,
-//             label: item?.serviceInventoryItem?.name,
-
-//             // Keep backend quantity in edit/view mode.
-//             // If backend gives null/undefined, use 1.
-//             quantity:
-//               item?.quantity !== null &&
-//               item?.quantity !== undefined
-//                 ? Number(item.quantity)
-//                 : 1,
-//           })) || [],
-
-//         quantity:
-//           orderDetails?.serviceOrderItem?.quantity ?? 1,
-//       });
-//     }
-//   }, [orderDetails, isView, isEdit, form]);
-
-//   /* =========================
-//      SERVICE CHANGE
-
-//      IMPORTANT:
-//      First inventory = 1
-//      Other inventories = 0
-//   ========================= */
-
-//   const handleServiceChange = (serviceUuid) => {
-//     const selectedService = reservationRoom?.services?.find(
-//       (service) => service?.uuid === serviceUuid,
-//     );
-
-//     const inventories =
-//       selectedService?.serviceInventories
-//         ?.filter((inv) => inv?.serviceInventoryItem?.uuid)
-//         ?.map((inv, index) => ({
-//           value: inv?.serviceInventoryItem?.uuid,
-//           label: inv?.serviceInventoryItem?.name,
-
-//           // First item = 1
-//           // Other items = 0
-//           quantity: index === 0 ? 1 : 0,
-//         })) || [];
-
-//     form.setFieldsValue({
-//       selectService: serviceUuid,
-
-//       // Reset inventory quantities whenever
-//       // a different service is selected.
-//       inventoryItems: inventories,
-
-//       // Reset service quantity
-//       quantity: 1,
-//     });
-//   };
-
-//   /* =========================
-//      SELECTION TYPE CHANGE
-//   ========================= */
-
-//   const handleOrderTypeChange = (e) => {
-//     const currentSelection = e.target.value;
-
-//     const targetStatus = isEdit
-//       ? orderDetails?.orderStatus?.uuid
-//       : defaultStatus?.uuid;
-
-//     if (currentSelection === "service") {
-//       form.setFieldsValue({
-//         servicePackage: undefined,
-//         selectService: undefined,
-//         inventoryItems: undefined,
-//         quantity: 1,
-//         consumptionType: undefined,
-//         orderStatus: targetStatus,
-//       });
-//     }
-
-//     if (currentSelection === "package") {
-//       form.setFieldsValue({
-//         selectService: undefined,
-//         inventoryItems: undefined,
-//         servicePackage: undefined,
-//         quantity: 1,
-//         consumptionType: undefined,
-//         orderStatus: targetStatus,
-//       });
-//     }
-//   };
-
-//   /* =========================
-//      SUBMIT
-//   ========================= */
-
-//   const handleSubmit = (values) => {
-//     let calculatedServiceUuid = values?.selectService;
-
-//     /* =========================
-//        PACKAGE SERVICE UUID
-//     ========================= */
-
-//     if (
-//       values?.orderType === "package" &&
-//       values?.servicePackage
-//     ) {
-//       const selectedPkg = servicesPackage.find(
-//         (pkg) => pkg?.value === values?.servicePackage,
-//       );
-
-//       if (selectedPkg) {
-//         calculatedServiceUuid =
-//           selectedPkg?.parentServiceUuid;
-//       }
-//     }
-
-//     /* =========================
-//        INVENTORY PAYLOAD
-//     ========================= */
-
-//     const inventoryItems =
-//       values?.orderType === "service"
-//         ? (values?.inventoryItems || [])
-//             .map((item, index) => {
-//               const inventory = serviceInventories[index];
-
-//               if (!inventory) {
-//                 return null;
-//               }
-
-//               return {
-//                 uuid: inventory?.value,
-
-//                 // Make sure quantity is a number
-//                 // and never below 0.
-//                 quantity: Math.max(
-//                   Number(item?.quantity) || 0,
-//                   0,
-//                 ),
-//               };
-//             })
-//             .filter(Boolean)
-//         : [];
-
-//     /* =========================
-//        PAYLOAD
-//     ========================= */
-
-//     const payload = {
-//       reservation: {
-//         uuid: reservationUuid,
-//       },
-
-//       reservationRoom: values?.roomNo
-//         ? {
-//             uuid: values.roomNo,
-//           }
-//         : null,
-
-//       service: calculatedServiceUuid
-//         ? {
-//             uuid: calculatedServiceUuid,
-//           }
-//         : null,
-
-//       servicePackage:
-//         values?.orderType === "package" &&
-//         values?.servicePackage
-//           ? {
-//               uuid: values.servicePackage,
-//             }
-//           : null,
-
-//       quantity: values?.quantity,
-
-//       inventoryItems,
-
-//       consumptionType: values?.consumptionType
-//         ? {
-//             uuid: values.consumptionType,
-//           }
-//         : null,
-
-//       orderStatus: values?.orderStatus
-//         ? {
-//             uuid: values.orderStatus,
-//           }
-//         : null,
-//     };
-
-//     /* =========================
-//        CREATE
-//     ========================= */
-
-//     if (isAdd) {
-//       createServiceOrder.mutate(payload, {
-//         onSuccess: () => {
-//           form.resetFields();
-
-//           handleClose();
-
-//           if (onSuccess) {
-//             onSuccess();
-//           }
-
-//           Toast.success(
-//             "Service Order Created Successfully!",
-//           );
-//         },
-//       });
-//     }
-
-//     /* =========================
-//        UPDATE
-//     ========================= */
-
-//     if (isEdit) {
-//       const editValues = {
-//         ...payload,
-//         uuid: serviceOrderUuid,
-//       };
-
-//       updateServiceOrders.mutate(editValues, {
-//         onSuccess: () => {
-//           handleClose();
-
-//           if (onSuccess) {
-//             onSuccess();
-//           }
-
-//           Toast.success(
-//             "Service Order Updated Successfully!",
-//           );
-//         },
-//       });
-//     }
-//   };
-
-//   /* =========================
-//      CLOSE
-//   ========================= */
-
-//   const handleClose = () => {
-//     form.resetFields();
-
-//     if (onClose) {
-//       onClose();
-//     }
-//   };
-
-//   /* =========================
-//      RENDER
-//   ========================= */
-
-//   return (
-//     <Drawer
-//       destroyOnClose
-//       size={600}
-//       open={open}
-//       onClose={handleClose}
-//       title={
-//         <div className="flex justify-between items-center">
-//           <span>
-//             {isView
-//               ? "Service Order Details"
-//               : isEdit
-//                 ? "Edit Service Order"
-//                 : "Add Service Order"}
-//           </span>
-
-//           {isView ? (
-//             serviceData?.orderStatus?.code !==
-//               "completed" && (
-//               <Button
-//                 type="primary"
-//                 onClick={() => setMode("edit")}
-//               >
-//                 Edit
-//               </Button>
-//             )
-//           ) : (
-//             <FormButtons
-//               onClick={() => form.submit()}
-//               isPending={
-//                 createServiceOrder.isPending ||
-//                 updateServiceOrders.isPending
-//               }
-//               mode={mode}
-//             />
-//           )}
-//         </div>
-//       }
-//     >
-//       <Form
-//         layout="vertical"
-//         form={form}
-//         onFinish={handleSubmit}
-//         disabled={isView}
-//         initialValues={{
-//           orderType: "service",
-//           quantity: 1,
-//           orderStatus: !isEdit
-//             ? defaultStatus?.uuid
-//             : undefined,
-//         }}
-//       >
-//         {/* =========================
-//             ROOM
-//         ========================= */}
-
-//         {(!isView ||
-//           orderDetails?.reservationRoom !== null) && (
-//           <Form.Item
-//             label="Room No"
-//             name="roomNo"
-//             rules={[
-//               {
-//                 required: true,
-//               },
-//             ]}
-//             getValueProps={(value) => ({
-//               value: isView
-//                 ? rooms.find(
-//                     (item) => item.value === value,
-//                   )?.label
-//                 : value,
-//             })}
-//           >
-//             {isView ? (
-//               <Input readOnly />
-//             ) : (
-//               <Select
-//                 options={rooms}
-//                 placeholder="Select a Room"
-//               />
-//             )}
-//           </Form.Item>
-//         )}
-
-//         {/* =========================
-//             SELECTION TYPE
-//         ========================= */}
-
-//         <Form.Item
-//           label="Selection Types"
-//           name="orderType"
-//         >
-//           <Radio.Group
-//             disabled={isView}
-//             onChange={handleOrderTypeChange}
-//           >
-//             <Radio
-//               value="service"
-//               className={
-//                 selectedOrderType === "service"
-//                   ? "custom-disabled-checkbox"
-//                   : ""
-//               }
-//             >
-//               <span
-//                 className={
-//                   isView ? textWhiteInDarkStyle : ""
-//                 }
-//               >
-//                 Service
-//               </span>
-//             </Radio>
-
-//             <Radio
-//               value="package"
-//               className={
-//                 selectedOrderType === "package"
-//                   ? "custom-disabled-checkbox"
-//                   : ""
-//               }
-//             >
-//               <span
-//                 className={
-//                   isView ? textWhiteInDarkStyle : ""
-//                 }
-//               >
-//                 Package
-//               </span>
-//             </Radio>
-//           </Radio.Group>
-//         </Form.Item>
-
-//         {/* =========================
-//             SERVICE
-//         ========================= */}
-
-//         {orderType === "service" && (
-//           <>
-//             <div className="grid grid-cols-2 gap-4">
-//               <Form.Item
-//                 label="Select Service"
-//                 name="selectService"
-//                 rules={[
-//                   {
-//                     required: true,
-//                   },
-//                 ]}
-//                 getValueProps={(value) => ({
-//                   value: isView
-//                     ? services.find(
-//                         (item) => item.value === value,
-//                       )?.label
-//                     : value,
-//                 })}
-//               >
-//                 {isView ? (
-//                   <Input readOnly />
-//                 ) : (
-//                   <Select
-//                     showSearch={{
-//                       filterOption: (
-//                         input,
-//                         option,
-//                       ) =>
-//                         (option?.label ?? "")
-//                           .toLowerCase()
-//                           .includes(
-//                             input.toLowerCase(),
-//                           ),
-//                     }}
-//                     options={services}
-//                     placeholder="Select a Service"
-//                     onChange={handleServiceChange}
-//                   />
-//                 )}
-//               </Form.Item>
-
-//               {/* =========================
-//                   SERVICE QUANTITY
-//               ========================= */}
-
-//               {(serviceInventories.length === 0 ||
-//                 (isView &&
-//                   orderDetails?.consumptionType ===
-//                     null)) && (
-//                 <Form.Item
-//                   label="Quantity"
-//                   name="quantity"
-//                   rules={[
-//                     {
-//                       required: true,
-//                     },
-//                     {
-//                       type: "number",
-//                     },
-//                   ]}
-//                   className="minus-icon"
-//                 >
-//                   <InputNumber
-//                     {...sharedProps}
-//                     style={{
-//                       width: "100%",
-//                     }}
-//                     readOnly={isView}
-//                   />
-//                 </Form.Item>
-//               )}
-//             </div>
-
-//             {/* =========================
-//                 SERVICE INVENTORY
-//             ========================= */}
-
-//             {selectedServiceUuid &&
-//               !(
-//                 isView &&
-//                 orderDetails?.consumptionType === null
-//               ) && (
-//                 <div>
-//                   <label className="text-xs font-bold uppercase tracking-wider block">
-//                     {serviceInventories.length > 0
-//                       ? "Service Inventory Items"
-//                       : ""}
-//                   </label>
-
-//                   {serviceInventories.length > 0 && (
-//                     <div className="mb-5 mt-3 py-3 px-1 border border-gray-200 border-2 rounded-xl overflow-hidden bg-white">
-//                       {serviceInventories.map(
-//                         (item, index) => (
-//                           <div
-//                             key={item.value}
-//                             className="flex items-center justify-between py-1 px-3.5 hover:bg-gray-50/70 transition-colors duration-150 dark:hover:bg-gray-900 dark:hover:backdrop-filter-lg"
-//                           >
-//                             {/* =========================
-//                                 HIDDEN UUID
-//                             ========================= */}
-
-//                             <Form.Item
-//                               name={[
-//                                 "inventoryItems",
-//                                 index,
-//                                 "value",
-//                               ]}
-//                               hidden
-//                             >
-//                               <input type="hidden" />
-//                             </Form.Item>
-
-//                             {/* =========================
-//                                 HIDDEN LABEL
-//                             ========================= */}
-
-//                             <Form.Item
-//                               name={[
-//                                 "inventoryItems",
-//                                 index,
-//                                 "label",
-//                               ]}
-//                               hidden
-//                             >
-//                               <input type="hidden" />
-//                             </Form.Item>
-
-//                             {/* =========================
-//                                 ITEM NAME
-//                             ========================= */}
-
-//                             <div className="flex items-center space-x-3 min-w-0 flex-1 pr-4">
-//                               <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 flex-shrink-0" />
-
-//                               <span
-//                                 className={`font-medium text-gray-700 truncate ${textWhiteInDarkStyle}`}
-//                                 title={item.label}
-//                               >
-//                                 {item.label}
-//                               </span>
-
-//                               <span className="inline-flex items-center text-xs font-medium text-gray-500 dark:text-gray-400 flex-shrink-0">
-//                                 (
-//                                 {" Max: "}
-//                                 {item.maxLimit ??
-//                                   "N/A"}
-//                                 )
-//                               </span>
-//                             </div>
-
-//                             {/* =========================
-//                                 QUANTITY
-
-//                                 FIRST ITEM = 1
-//                                 OTHER ITEMS = 0
-//                             ========================= */}
-
-//                             <div className="flex-shrink-0">
-//                               <Form.Item
-//                                 name={[
-//                                   "inventoryItems",
-//                                   index,
-//                                   "quantity",
-//                                 ]}
-//                                 initialValue={
-//                                   index === 0
-//                                     ? 1
-//                                     : 0
-//                                 }
-//                                 className="!mb-0 minus-icon"
-//                                 rules={[
-//                                   {
-//                                     required: true,
-//                                     message:
-//                                       "Quantity is required",
-//                                   },
-//                                   {
-//                                     type: "number",
-//                                     min: 0,
-//                                     message:
-//                                       "Quantity cannot be less than 0",
-//                                   },
-//                                   ...(item.maxLimit
-//                                     ? [
-//                                         {
-//                                           type: "number",
-//                                           max: item.maxLimit,
-//                                           message: `Max is ${item.maxLimit}`,
-//                                         },
-//                                       ]
-//                                     : []),
-//                                 ]}
-//                               >
-//                                 <InputNumber
-//                                   {...sharedProps}
-//                                   min={0}
-//                                   max={item.maxLimit}
-//                                   placeholder="Qty:"
-//                                   className="w-24 h-8 rounded-lg text-center"
-//                                 />
-//                               </Form.Item>
-//                             </div>
-//                           </div>
-//                         ),
-//                       )}
-//                     </div>
-//                   )}
-//                 </div>
-//               )}
-//           </>
-//         )}
-
-//         {/* =========================
-//             PACKAGE
-//         ========================= */}
-
-//         <div className="grid grid-cols-2 gap-4">
-//           {orderType === "package" && (
-//             <>
-//               <Form.Item
-//                 name="servicePackage"
-//                 label="Select Package"
-//                 rules={[
-//                   {
-//                     required: true,
-//                     message:
-//                       "Please select a package!",
-//                   },
-//                 ]}
-//                 getValueProps={(value) => ({
-//                   value: isView
-//                     ? servicesPackage.find(
-//                         (item) =>
-//                           item.value === value,
-//                       )?.label
-//                     : value,
-//                 })}
-//               >
-//                 {isView ? (
-//                   <Input readOnly />
-//                 ) : (
-//                   <Select
-//                     showSearch={{
-//                       filterOption: (
-//                         input,
-//                         option,
-//                       ) =>
-//                         (option?.label ?? "")
-//                           .toLowerCase()
-//                           .includes(
-//                             input.toLowerCase(),
-//                           ),
-//                     }}
-//                     placeholder="Select a package"
-//                     options={servicesPackage}
-//                   />
-//                 )}
-//               </Form.Item>
-
-//               <Form.Item
-//                 label="Quantity"
-//                 name="quantity"
-//                 rules={[
-//                   {
-//                     required: true,
-//                   },
-//                   {
-//                     type: "number",
-//                   },
-//                 ]}
-//                 className="minus-icon"
-//               >
-//                 <InputNumber
-//                   {...sharedProps}
-//                   style={{
-//                     width: "100%",
-//                   }}
-//                   readOnly={isView}
-//                 />
-//               </Form.Item>
-//             </>
-//           )}
-//         </div>
-
-//         {/* =========================
-//             CONSUMPTION + STATUS
-//         ========================= */}
-
-//         <div className="grid grid-cols-2 gap-4">
-//           {(!isView ||
-//             orderDetails?.consumptionType !== null) && (
-//             <Form.Item
-//               label="Consumption Type"
-//               name="consumptionType"
-//               className="col-span-1"
-//               rules={[
-//                 {
-//                   required: true,
-//                   message:
-//                     "Please select a Consumption Type",
-//                 },
-//               ]}
-//               getValueProps={(value) => ({
-//                 value: isView
-//                   ? consumptionType.find(
-//                       (item) =>
-//                         item.value === value,
-//                     )?.label
-//                   : value,
-//               })}
-//             >
-//               {isView ? (
-//                 <Input readOnly />
-//               ) : (
-//                 <Select
-//                   showSearch
-//                   filterOption={(
-//                     input,
-//                     option,
-//                   ) =>
-//                     (option?.label ?? "")
-//                       .toLowerCase()
-//                       .includes(
-//                         input.toLowerCase(),
-//                       )
-//                   }
-//                   options={consumptionType}
-//                   placeholder="Select a Consumption Type"
-//                 />
-//               )}
-//             </Form.Item>
-//           )}
-
-//           <Form.Item
-//             label="Order Status"
-//             name="orderStatus"
-//             className="col-span-1"
-//             rules={[
-//               {
-//                 required: true,
-//                 message:
-//                   "Please select an Order Status",
-//               },
-//             ]}
-//             getValueProps={(value) => {
-//               if (isView) {
-//                 const label =
-//                   orderDetails?.orderStatus?.name ||
-//                   initData?.statuses?.order_status?.find(
-//                     (item) =>
-//                       item.uuid === value,
-//                   )?.name;
-
-//                 return {
-//                   value: label || value,
-//                 };
-//               }
-
-//               return {
-//                 value,
-//               };
-//             }}
-//           >
-//             {isView ? (
-//               <Input
-//                 readOnly
-//                 className="bg-gray-50"
-//               />
-//             ) : (
-//               <Select
-//                 showSearch
-//                 filterOption={(
-//                   input,
-//                   option,
-//                 ) =>
-//                   (option?.label ?? "")
-//                     .toLowerCase()
-//                     .includes(
-//                       input.toLowerCase(),
-//                     )
-//                 }
-//                 options={orderStatus}
-//                 placeholder="Select an Order Status"
-//               />
-//             )}
-//           </Form.Item>
-//         </div>
-//       </Form>
-//     </Drawer>
-//   );
-// };
-
-// export default ServiceOrderForm;

@@ -20,8 +20,6 @@ import {
 } from "../../../../../../utils";
 import PriceTag from "../../../../../../component/PriceTag/PriceTag";
 import TextArea from "antd/es/input/TextArea";
-import { reservationRoomDetails } from "../../../../../../api/reservationSectionApi";
-import useApiQuery from "../../../../../../hooks/useApiQuery";
 import { capitalizeFirstLetter } from "../../../../../../utils";
 
 export default function UpdateRateModal({
@@ -33,18 +31,6 @@ export default function UpdateRateModal({
   const [form] = Form.useForm();
   const watchRates = Form.useWatch("rates", form);
   const watchReason = Form.useWatch("reason", form);
-  console.log(watchReason, "WatchRateforreason")
-
-  const {
-    data: reservationRoomsDataDetails,
-    isLoading: reservationRoomsDataDetailsLoading,
-    refetch: refetchReservationRoomsRoomDetails,
-  } = useApiQuery({
-    fetchQueryName: ["reservation-room-details", record?.uuid],
-    fetchQueryFunction: reservationRoomDetails,
-    params: { uuid: record?.uuid },
-    options: { enabled: !!record?.uuid && isOpen },
-  });
 
   const createRoomAmendmentMutation = useApiMutation({
     mutationFn: createRoomAmendment,
@@ -58,17 +44,17 @@ export default function UpdateRateModal({
 
   // Context headers
   const reservationNo =
-    reservationRoomsDataDetails?.reservation?.reservationNo || `ID-${reservationRoomsDataDetails?.id}`;
-  const roomNo = reservationRoomsDataDetails?.room?.roomNo;
+    record?.reservation?.reservationNo || `ID-${record?.id}`;
+  const roomNo = record?.room?.roomNo;
   // Establish strict date boundaries from API record
-  const boundsStart = reservationRoomsDataDetails?.checkinDate ? dayjs(reservationRoomsDataDetails.checkinDate) : null;
-  const boundsEnd = reservationRoomsDataDetails?.checkoutDate ? dayjs(reservationRoomsDataDetails.checkoutDate) : null;
+  const boundsStart = record?.checkinDate ? dayjs(record.checkinDate) : null;
+  const boundsEnd = record?.checkoutDate ? dayjs(record.checkoutDate) : null;
 
   // EFFECT: Map incoming API array data directly into Form.List initial items
   useEffect(() => {
-    if (isOpen && reservationRoomsDataDetails?.rates) {
+    if (isOpen && record?.rates) {
       // Clean up the strings like "2026-05-27(for only rate_change)"
-      const cleanedInitialRates = reservationRoomsDataDetails.rates.map((item) => {
+      const cleanedInitialRates = record.rates.map((item) => {
         const cleanDate = item?.date;
         const cleanPrice = item?.price;
         const isComplimentary = item?.isComplimentary;
@@ -89,7 +75,7 @@ export default function UpdateRateModal({
       // Fallback if no initial rates are supplied by API
       form.setFieldsValue({ rates: [{ date: null, price: null, isComplimentary: false, complimentaryType: null }] });
     }
-  }, [isOpen, reservationRoomsDataDetails, form]);
+  }, [isOpen, record, form]);
 
   // Proceed from form inputs to summary review screen
   const handleProceedToSummary = async () => {
@@ -113,7 +99,7 @@ export default function UpdateRateModal({
 
       const payload = {
         amendmentType: { uuid: rateChangeUuid },
-        reservationRoom: { uuid: reservationRoomsDataDetails?.uuid },
+        reservationRoom: { uuid: record?.uuid },
         rates: dynamicRatesPayload,
         reason: pendingValues?.reason,
       };

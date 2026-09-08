@@ -29,6 +29,8 @@ const LeavePageModal = ({
         title="Leave Page Confirmation"
         onOk={handleStay}
         onCancel={handleLeave}
+        closable={false}
+        maskClosable={false}
         footer={(_, { OkBtn, CancelBtn }) => (
           <>
             <CancelBtn />
@@ -37,6 +39,7 @@ const LeavePageModal = ({
         )}
         cancelText="Leave"
         okText="Stay"
+
 
       >
         <p>

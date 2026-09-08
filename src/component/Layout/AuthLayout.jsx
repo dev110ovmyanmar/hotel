@@ -26,8 +26,6 @@ const AuthLayout = () => {
   // Footer Theme Color
   // const [footerColor, setFooterColor] = useState(localStorage.getItem("footerColor"));
 
-
-
   const { height: appHeight, sessionExpired } = useSelector(appSelector);
 
   const { width, height } = useWindowSize();

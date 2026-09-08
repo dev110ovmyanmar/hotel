@@ -10,24 +10,24 @@ const SystemLocked = () => {
   const [countdown, setCountdown] = useState(30);
 
   // Auto-refresh countdown
-  useEffect(() => {
-    if (!systemLocked) {
-      setCountdown(30);
-      return;
-    }
+  // useEffect(() => {
+  //   if (!systemLocked) {
+  //     setCountdown(30);
+  //     return;
+  //   }
 
-    const timer = setInterval(() => {
-      setCountdown((prev) => {
-        if (prev <= 1) {
-          window.location.reload();
-          return 30;
-        }
-        return prev - 1;
-      });
-    }, 1000);
+  //   const timer = setInterval(() => {
+  //     setCountdown((prev) => {
+  //       if (prev <= 1) {
+  //         window.location.reload();
+  //         return 30;
+  //       }
+  //       return prev - 1;
+  //     });
+  //   }, 1000);
 
-    return () => clearInterval(timer);
-  }, [systemLocked]);
+  //   return () => clearInterval(timer);
+  // }, [systemLocked]);
 
   const handleRefresh = () => {
     window.location.reload();

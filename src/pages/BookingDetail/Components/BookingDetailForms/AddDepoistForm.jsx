@@ -23,6 +23,7 @@ import {
   priceFormatter,
   priceParser,
 } from "../../../../component/PriceTag/PriceTag";
+import { textWhiteInDarkStyle } from "../../../../utils";
 import { numberValidator } from "../../../../variables/constants";
 import Loader from "../../../../component/Loader/Loader";
 
@@ -68,11 +69,38 @@ const AddDepoistForm = ({
 
   // Track selected category filter by UUID state
   const [selectedProviderUuid, setSelectedProviderUuid] = useState("all");
+  const [selectedFolioGrandTotal, setSelectedFolioGrandTotal] = useState(null);
+  const [selectedFolioUuid, setSelectedFolioUuid] = useState(null);
+
   const selectedMethod = Form.useWatch("paymentMethod", form);
 
   const cashMethod = paymentMethodsData.find(
       (method) => method.name?.trim().toLowerCase() === "cashs",
     );
+
+  // --- Check grandTotal when folio selection changes ---
+  useEffect(() => {
+    if (selectedFolioUuid && folios.length > 0) {
+      const selectedFolio = folios.find(folio => folio.uuid === selectedFolioUuid);
+      if (selectedFolio) {
+        const total = selectedFolio.grandTotal;
+        setSelectedFolioGrandTotal(total);
+      }
+    } else {
+      setSelectedFolioGrandTotal(null);
+    }
+  }, [selectedFolioUuid, folios]);
+
+  // --- Set default folio to master folio after data loads ---
+  useEffect(() => {
+    if (folios.length > 0 && open) {
+      const masterFolio = folios.find(folio => folio?.isMasterFolio == true);
+      if (masterFolio) {
+        setSelectedFolioUuid(masterFolio.uuid);
+        
+      }
+    }
+  }, [folios, open]);
 
   // --- Transform providerTypes into Ant Design Segmented options ---
   const segmentedOptions = useMemo(() => {
@@ -122,7 +150,6 @@ const AddDepoistForm = ({
 
     return folios.map((folio) => ({
       label: folio.folioNo || "Unknown",
-
       value: folio.uuid,
     }));
   }, [folios]);
@@ -153,6 +180,8 @@ const AddDepoistForm = ({
       onSuccess: () => {
         form.resetFields();
         setSelectedProviderUuid("all");
+        setSelectedFolioGrandTotal(null);
+        setSelectedFolioUuid(null);
         onClose();
       },
     },
@@ -162,7 +191,7 @@ const AddDepoistForm = ({
     const payload = {
       reservation: { uuid: bookingDetails?.reservation?.uuid },
       guest: { uuid: values.guest },
-      folio: { uuid: values.folio },
+      folio: { uuid: selectedFolioUuid },
       paymentMethod: { uuid: values.paymentMethod },
       paymentStatus: { uuid: values.paymentStatus },
       amount: values.amount,
@@ -187,6 +216,12 @@ const AddDepoistForm = ({
     return method.type?.uuid === selectedProviderUuid;
   });
 
+  // Get selected folio details for display
+  const getSelectedFolioDetails = () => {
+    if (!selectedFolioUuid) return null;
+    return folios.find(folio => folio.uuid === selectedFolioUuid);
+  };
+
   return (
     <Drawer
       open={open}
@@ -198,6 +233,16 @@ const AddDepoistForm = ({
           paymentMethod: cashMethod?.uuid,
         });
         setSelectedProviderUuid("all");
+        setSelectedFolioGrandTotal(null);
+
+        // Set default folio to master folio when drawer opens
+        if (folios.length > 0) {
+          const masterFolio = folios.find(folio => folio?.isMasterFolio == true);
+          if (masterFolio) {
+            setSelectedFolioUuid(masterFolio.uuid);
+            setSelectedFolioGrandTotal(masterFolio.grandTotal);
+          }
+        }
       }}
       size={550}
       destroyOnHidden
@@ -358,18 +403,10 @@ const AddDepoistForm = ({
             <Col span={12}>
               <Form.Item
                 label={<span className="font-medium">Folio No</span>}
-                name="folio"
-                rules={[
-                  {
-                    required: true,
-                    message: "Required",
-                  },
-                ]}
               >
-                <Select
-                  placeholder="Select folio"
-                  className="w-full rounded"
-                  options={folioOptions}
+                <Input
+                  readOnly
+                  value={folios.find(f => f.uuid === selectedFolioUuid)?.folioNo || ""}
                 />
               </Form.Item>
             </Col>
@@ -434,6 +471,16 @@ const AddDepoistForm = ({
                   {
                     validator: numberValidator,
                   },
+                  {
+                    validator: (_, value) => {
+                      if (value !== undefined && value !== null && value < 1) {
+                        return Promise.reject(
+                          new Error("Amount must be at least 1 MMK")
+                        );
+                      }
+                      return Promise.resolve();
+                    },
+                  },
                 ]}
               >
                 <InputNumber
@@ -441,7 +488,6 @@ const AddDepoistForm = ({
                   style={{
                     width: "100%",
                   }}
-                  suffix="MMK"
                   placeholder="0.00"
                   formatter={priceFormatter}
                   parser={priceParser}

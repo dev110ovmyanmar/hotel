@@ -2,7 +2,6 @@ import { useNavigate } from "react-router-dom";
 import { preAuditCheck } from "../../../api/nightAuditApi";
 import useApiQuery from "../../../hooks/useApiQuery";
 import CheckBookingHeader from "../CheckBookingHeader";
-import IssueAndWarningCard from "../IssueAndWarningCard";
 import UnsettledFolios from "../UnsettledFolios";
 import { Spin } from "antd";
 
@@ -27,7 +26,7 @@ const UnsettledFoliosPage = ({
     }
     return (
         <div className="w-full px-6 py-2">
-            <CheckBookingHeader preAuditChecksData={preAuditChecksData} />
+            <CheckBookingHeader />
             <UnsettledFolios unsettledFolioClick={() => {
                 window.dispatchEvent(
                     new CustomEvent("breadcrumb_updated", {

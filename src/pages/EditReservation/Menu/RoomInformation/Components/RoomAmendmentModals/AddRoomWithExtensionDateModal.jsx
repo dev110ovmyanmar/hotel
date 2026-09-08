@@ -2,23 +2,16 @@ import React, { useState } from "react";
 import { Modal, Form, Input, Descriptions, Button, Divider, Space } from "antd";
 import dayjs from "dayjs";
 import {
-  ArrowRightOutlined,
-  CheckCircleOutlined,
   PlusOutlined,
   MinusOutlined,
   WarningOutlined,
 } from "@ant-design/icons";
-import { createRoomAmendment } from "../../../../../../api/roomAmendmentApi";
-import { useApiMutation } from "../../../../../../hooks/useApiMutation";
-import Toast from "../../../../../../component/Toast/Toast";
 import AddRoomExtensionLikeUpgradeDesignModal from "./AddRoomExtensionLikeUpgradeDesignModal";
 import {
   borderDarkMode,
   darkModeStyle,
   textWhiteInDarkStyle,
 } from "../../../../../../utils";
-import { reservationRoomDetails } from "../../../../../../api/reservationSectionApi";
-import useApiQuery from "../../../../../../hooks/useApiQuery";
 
 export default function AddRoomWithExtensionDateModal({
   isOpen,
@@ -36,34 +29,22 @@ export default function AddRoomWithExtensionDateModal({
   const [daysToAdd, setDaysToAdd] = useState(1);
   const [pendingValues, setPendingValues] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [availabilitySearchRoomList, setAvailabilitySearchRoomList] =
-    useState(false);
+  const [availabilitySearchRoomList, setAvailabilitySearchRoomList] = useState(false);
   const [backToExtensionStayDate, setBackToExtensionStayDate] = useState(false);
 
-  const {
-    data: reservationRoomsDataDetails,
-    isLoading: reservationRoomsDataDetailsLoading,
-    refetch: refetchReservationRoomsRoomDetails,
-  } = useApiQuery({
-    fetchQueryName: ["reservation-room-details", record?.uuid],
-    fetchQueryFunction: reservationRoomDetails,
-    params: { uuid: record?.uuid },
-    options: { enabled: !!record?.uuid && isOpen },
-  });
-
   // Parse baseline properties out of your JSON structure
-  const reservationNo = reservation?.reservationNo || `ID-${reservationRoomsDataDetails?.id}`;
+  const reservationNo = reservation?.reservationNo || `ID-${record?.id}`;
   const guestName = reservation?.guest?.name || "Unknown Guest";
-  const roomTypeName = reservationRoomsDataDetails?.roomType?.name;
+  const roomTypeName = record?.roomType?.name;
   console.log(record?.reservation?.room?.uuid, "ReservationUUId");
 
-  const originalCheckin = reservationRoomsDataDetails?.checkinDate ? dayjs(reservationRoomsDataDetails.checkinDate) : "";
-  const originalCheckout = reservationRoomsDataDetails?.checkoutDate
-    ? dayjs(reservationRoomsDataDetails.checkoutDate)
+  const originalCheckin = record?.checkinDate ? dayjs(record.checkinDate) : "";
+  const originalCheckout = record?.checkoutDate
+    ? dayjs(record.checkoutDate)
     : "";
 
   const maxDayExtension =
-    reservationRoomsDataDetails?.maxExtend !== undefined ? Number(reservationRoomsDataDetails.maxExtend) : 0;
+    record?.maxExtend !== undefined ? Number(record.maxExtend) : 0;
 
   // Compute live mathematical timeline additions safely
   const newCheckoutDate = originalCheckout
@@ -83,13 +64,12 @@ export default function AddRoomWithExtensionDateModal({
         uuid: reservation?.uuid,
       },
       room: {
-        uuid: reservationRoomsDataDetails?.room?.uuid ? reservationRoomsDataDetails?.room?.uuid : null,
+        uuid: record?.room?.uuid ? record?.room?.uuid : null,
       },
     };
     availabilitySearchs.mutate(payload, {
       onSuccess: () => {
         setAvailabilitySearchRoomList(true);
-        // onClose(false)
         setBackToExtensionStayDate(false);
       },
     });
@@ -109,7 +89,7 @@ export default function AddRoomWithExtensionDateModal({
         <AddRoomExtensionLikeUpgradeDesignModal
           isOpen={availabilitySearchRoomList}
           onClose={() => setAvailabilitySearchRoomList(false)}
-          reservationRoomsDataDetails={reservationRoomsDataDetails}
+          record={record}
           addRoomUuid={addRoomUuid}
           roomList={availabilitySearchs?.data}
           availabilitySearchsPendings={availabilitySearchs?.isPending}
@@ -124,23 +104,6 @@ export default function AddRoomWithExtensionDateModal({
 
       {(!availabilitySearchRoomList || backToExtensionStayDate) && (
         <Modal
-          // title={
-          //   currentStep === "form" ? (
-          //     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          //       <div style={{ width: '4px', height: '18px', background: '#1677ff', borderRadius: '2px' }} />
-          //       <span style={{ fontWeight: 600 }}>Add New Room</span>
-          //     </div>
-          //   ) : (
-          //     <span className="flex items-center gap-2">
-          //       {/* <CheckCircleOutlined className="text-green-500" />  */}
-          //       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          //         <div style={{ width: '4px', height: '18px', background: '#1677ff', borderRadius: '2px' }} />
-          //         <span style={{ fontWeight: 600 }}>Review Stay Extension Summary</span>
-          //       </div>
-
-          //     </span>
-          //   )
-          // }
           title={
             <div className="flex items-center gap-2">
               <div className="h-[18px] w-1 rounded-sm bg-[#1677ff]" />
@@ -155,9 +118,6 @@ export default function AddRoomWithExtensionDateModal({
           footer={
             currentStep === "form"
               ? [
-                // <Button key="back" onClick={handleCloseReset}>
-                //   Cancel
-                // </Button>,
                 <Button
                   key="submit"
                   type="primary"

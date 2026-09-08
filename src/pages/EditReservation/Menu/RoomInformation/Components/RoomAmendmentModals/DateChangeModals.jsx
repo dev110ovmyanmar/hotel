@@ -6,9 +6,6 @@ import { textColorDarkMode, textWhiteInDarkStyle } from '../../../../../../utils
 import { createRoomAmendment, dateChangeCheck } from '../../../../../../api/roomAmendmentApi';
 import { useApiMutation } from '../../../../../../hooks/useApiMutation';
 import Toast from '../../../../../../component/Toast/Toast';
-import { Info } from 'lucide-react';
-import { reservationRoomDetails } from '../../../../../../api/reservationSectionApi';
-import useApiQuery from '../../../../../../hooks/useApiQuery';
 
 export default function DateChangeModal({
     isOpen,
@@ -19,19 +16,8 @@ export default function DateChangeModal({
     const { RangePicker } = DatePicker;
     const [form] = Form.useForm();
 
-    const {
-        data: reservationRoomsDataDetails,
-        isLoading: reservationRoomsDataDetailsLoading,
-        refetch: refetchReservationRoomsRoomDetails,
-    } = useApiQuery({
-        fetchQueryName: ["reservation-room-details", record?.uuid],
-        fetchQueryFunction: reservationRoomDetails,
-        params: { uuid: record?.uuid },
-        options: { enabled: !!record?.uuid && isOpen },
-    });
-
-    const currentCheckInDate = dayjs(reservationRoomsDataDetails?.checkinDate).format("DD-MM-YYYY");
-    const currentCheckOutDate = dayjs(reservationRoomsDataDetails?.checkoutDate).format("DD-MM-YYYY");
+    const currentCheckInDate = dayjs(record?.checkinDate).format("DD-MM-YYYY");
+    const currentCheckOutDate = dayjs(record?.checkoutDate).format("DD-MM-YYYY");
     const watchDates = Form.useWatch("dates", form);
     const watchCheckInDate = watchDates?.[0];
     const watchCheckOutDate = watchDates?.[1];
@@ -71,7 +57,7 @@ export default function DateChangeModal({
             checkinDate: formatCheckInDate,
             checkoutDate: formatCheckOutDate,
             reservationRoom: {
-                uuid: reservationRoomsDataDetails?.uuid
+                uuid: record?.uuid
             }
         }
 
@@ -99,7 +85,7 @@ export default function DateChangeModal({
                     uuid: dateChangeUuid
                 },
                 reservationRoom: {
-                    uuid: reservationRoomsDataDetails?.uuid
+                    uuid: record?.uuid
                 }
 
             };
@@ -121,16 +107,16 @@ export default function DateChangeModal({
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     // Deep parsing row record metadata structures
-    const reservationNo = reservationRoomsDataDetails?.reservation?.reservationNo || `ID-${reservationRoomsDataDetails?.id}`;
-    const roomName = reservationRoomsDataDetails?.room ? reservationRoomsDataDetails?.room?.roomNo : null;
+    const reservationNo = record?.reservation?.reservationNo || `ID-${record?.id}`;
+    const roomName = record?.room ? record?.room?.roomNo : null;
 
     // Original Values parsed safely into dayjs instances
-    const originalCheckin = reservationRoomsDataDetails?.checkinDate ? dayjs(reservationRoomsDataDetails.checkinDate) : dayjs();
-    const originalCheckout = reservationRoomsDataDetails?.checkoutDate ? dayjs(reservationRoomsDataDetails.checkoutDate) : dayjs();
-    const originalReason = reservationRoomsDataDetails?.reservation?.reason;
+    const originalCheckin = record?.checkinDate ? dayjs(record.checkinDate) : dayjs();
+    const originalCheckout = record?.checkoutDate ? dayjs(record.checkoutDate) : dayjs();
+    const originalReason = record?.reservation?.reason;
 
     // Fallback calculation directly uses the item's baseline night state
-    const originalNights = reservationRoomsDataDetails?.totalNight ?? originalCheckout.diff(originalCheckin, 'day');
+    const originalNights = record?.totalNight ?? originalCheckout.diff(originalCheckin, 'day');
 
     // Step 1: Validate form entry and generate the summary preview
     const handleProceedToSummary = async () => {
@@ -149,8 +135,8 @@ export default function DateChangeModal({
         try {
             // Structuring final API request body values
             const payload = {
-                room_uuid: reservationRoomsDataDetails?.uuid,
-                reservation_uuid: reservationRoomsDataDetails?.reservation?.uuid,
+                room_uuid: record?.uuid,
+                reservation_uuid: record?.reservation?.uuid,
                 checkin_date: pendingValues.checkin.format('YYYY-MM-DD'),
                 checkout_date: pendingValues.checkout.format('YYYY-MM-DD'),
                 reason: pendingValues.reason

@@ -1,10 +1,7 @@
 import { Button, Card, DatePicker, Form } from "antd";
-import { useForm } from "antd/es/form/Form";
 import dayjs from "dayjs";
-import { IoIosCheckmarkCircle, IoIosCheckmarkCircleOutline } from "react-icons/io";
 import HaveANiceDay from "./HaveANiceDay";
 import { useEffect, useState } from "react";
-import emailjs from '@emailjs/browser';
 import { useSelector } from "react-redux";
 import { appSelector } from "../../services/appSlice";
 import { useApiMutation } from "../../hooks/useApiMutation";
@@ -45,7 +42,9 @@ const CreateNewDay = ({
     });
 
     const handleNext = () => {
-        systemUnlockMutation.mutate();
+        // systemUnlockMutation.mutate();
+        createNewDayClick()
+
     };
 
     useEffect(() => {
@@ -61,8 +60,6 @@ const CreateNewDay = ({
 
     return (
         <>
-
-
             {haveNiceDay ? (
                 <div
                     className={`fixed top-16 right-0 bottom-0 ${isCollapsed ? "left-20" : "left-60"

@@ -131,24 +131,24 @@ const EventFacilityOrderTable = ({
     // },
     ...(!actionDisable
       ? [
-          {
-            title: "Action",
-            key: "action",
-            fixed: "end",
-            align: "center",
-            render: (_, record) => (
-              <Space size="middle">
-                <Tooltip title="View Details">
-                  <EyeOutlined
-                    className="cursor-pointer text-blue-500 hover:text-blue-700"
-                    onClick={() => {
-                      setDrawerOpen(true);
-                      setMode("view");
-                      setSelectedData(record);
-                    }}
-                  />
-                </Tooltip>
+        {
+          title: "Action",
+          key: "action",
+          fixed: "end",
+          render: (_, record) => (
+            <Space size="middle">
+              <Tooltip title="View Details">
+                <EyeOutlined
+                  className="cursor-pointer text-blue-500 hover:text-blue-700"
+                  onClick={() => {
+                    setDrawerOpen(true);
+                    setMode("view");
+                    setSelectedData(record);
+                  }}
+                />
+              </Tooltip>
 
+              {record?.status?.code !== "completed" && (
                 <Tooltip title="Edit">
                   <EditOutlined
                     className="cursor-pointer text-amber-500 hover:text-amber-700"
@@ -158,11 +158,11 @@ const EventFacilityOrderTable = ({
                       setSelectedData(record);
                     }}
                   />
-                </Tooltip>
-              </Space>
-            ),
-          },
-        ]
+                </Tooltip>)}
+            </Space>
+          ),
+        },
+      ]
       : []),
   ];
 

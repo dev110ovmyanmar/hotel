@@ -1,6 +1,5 @@
 import { EditOutlined, EyeOutlined, MoreOutlined } from "@ant-design/icons";
 import { Button, Dropdown, Space, Table, Tag } from "antd";
-import { data } from "react-router-dom";
 import PriceTag from "../../component/PriceTag/PriceTag";
 import { AiOutlineRight } from "react-icons/ai";
 

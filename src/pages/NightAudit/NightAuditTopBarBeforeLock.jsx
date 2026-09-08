@@ -1,9 +1,6 @@
 import { FaMoon } from "react-icons/fa";
-import { useLocation } from "react-router-dom";
 
 const NightAuditTopBarBeforeLock = () => {
-    const location = useLocation();
-
     return (
         <div className="flex justify-between items-center my-2">
             <div className="flex items-center gap-4 px-6 py-4">

@@ -1,5 +1,3 @@
-import React from 'react';
-
 const HaveANiceDay = () => {
     const phrase = "Have a nice day";
     const characters = phrase.split("");

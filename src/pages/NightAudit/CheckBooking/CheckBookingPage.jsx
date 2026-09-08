@@ -3,7 +3,6 @@ import { preAuditCheck } from "../../../api/nightAuditApi";
 import useApiQuery from "../../../hooks/useApiQuery";
 import CheckBookingHeader from "../CheckBookingHeader";
 import CheckBookingTable from "../CheckBookingTable";
-import IssueAndWarningCard from "../IssueAndWarningCard";
 import { useNavigate } from "react-router-dom";
 
 const CheckBookingPage = ({
@@ -27,7 +26,7 @@ const CheckBookingPage = ({
     }
     return (
         <div className="w-full px-6 py-2">
-            <CheckBookingHeader  preAuditChecksData={preAuditChecksData} />
+            <CheckBookingHeader />
             <CheckBookingTable
                 colorCheckBooking={() => {
                     window.dispatchEvent(
