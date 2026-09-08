@@ -49,8 +49,23 @@ const SeasonalRateForm = ({
 
   const { RangePicker } = DatePicker;
 
+  // const disabledDate = (current) => {
+  //   return current && current < dayjs().startOf("day");
+  // };
   const disabledDate = (current) => {
-    return current && current < dayjs().startOf("day");
+    if (!current) return false;
+
+    const today = dayjs().startOf("day");
+
+    if (isEdit && data?.startDate) {
+      const existingStartDate = dayjs(data.startDate).startOf("day");
+
+      if (current.isSame(existingStartDate, "day")) {
+        return false;
+      }
+    }
+
+    return current.isBefore(today, "day");
   };
 
   const { hasPermission } = usePermission();
@@ -346,7 +361,7 @@ const SeasonalRateForm = ({
                   getValueProps={(value) => ({
                     value: isView
                       ? rateCategoryOptions?.find((item) => item.value == value)
-                          ?.label
+                        ?.label
                       : value,
                   })}
                 >
@@ -396,7 +411,7 @@ const SeasonalRateForm = ({
                 >
                   <RangePicker
                     disabledDate={disabledDate}
-                    open={isView? !isView : undefined}
+                    open={isView ? !isView : undefined}
                     inputReadOnly={isView}
                     suffixIcon={isView ? null : undefined}
                     allowClear={!isView}
@@ -405,7 +420,7 @@ const SeasonalRateForm = ({
               </Col>
 
               <Col span={12}>
-                <Form.Item label="Week Days"className={`mb-4 ${isView? "pointer-events-none": ""}`}>
+                <Form.Item label="Week Days" className={`mb-4 ${isView ? "pointer-events-none" : ""}`}>
                   <div className="flex flex-wrap gap-x-3 gap-y-2 p-0.5">
                     {days.map((day) => (
                       <div
@@ -420,7 +435,7 @@ const SeasonalRateForm = ({
                           name={`enable_${day.key}`}
                           valuePropName="checked"
                           noStyle
-                          
+
                         >
                           <Checkbox
                             className="ant-checkbox-small"

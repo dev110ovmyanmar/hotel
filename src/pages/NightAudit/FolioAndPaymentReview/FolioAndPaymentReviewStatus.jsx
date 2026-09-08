@@ -82,10 +82,6 @@ const FolioAndPaymentReviewStatus = ({
 
                 </div>
             </div>
-
-            <div className="flex justify-end mb-3">
-                <Button type="primary"><ReloadOutlined /> Post Charge</Button>
-            </div>
         </div>
     );
 };
