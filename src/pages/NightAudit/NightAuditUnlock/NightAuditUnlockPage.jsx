@@ -1,15 +1,32 @@
 import { useNavigate } from "react-router-dom";
-import { preAuditCheck } from "../../../api/nightAuditApi";
+import { preAuditCheck, systemUnlock } from "../../../api/nightAuditApi";
 import useApiQuery from "../../../hooks/useApiQuery";
 import { Spin } from "antd";
 import NightAuditUnlockStatus from "./NightAuditUnlockStatus";
 import CheckBookingHeader from "../CheckBookingHeader";
 import NightAuditUnlockTable from "./NightAuditUnlockTable";
+import { useApiMutation } from "../../../hooks/useApiMutation";
 
 const NightAuditUnlockPage = ({
     stepValue,
 }) => {
     const navigate = useNavigate();
+    const systemUnlockMutation = useApiMutation({
+        mutationFn: systemUnlock,
+        options: {
+            onSuccess: (data) => {
+                Toast.success("System Unlocked successfully");
+                // setHaveNiceDay(true);
+                // createNewDayClick()
+                navigate("/dashboard")
+            },
+            onError: (error) => {
+                console.error("System lock error:", error);
+                Toast.error(error?.response?.data?.error?.text || "Failed to unlock system");
+            },
+        },
+    });
+
     const { data: preAuditChecksData, isLoading, error } = useApiQuery({
         fetchQueryName: "pre-audit-checks",
         fetchQueryFunction: preAuditCheck,
@@ -39,7 +56,11 @@ const NightAuditUnlockPage = ({
                             },
                         })
                     );
-                    navigate("/night-audit/folio-&-payment-review")
+                    // systemUnlockMutation.mutate();
+                    localStorage.removeItem("nightAudit");
+                    navigate("/dashboard")
+                    
+                    
                 }}
                 preAuditChecksData={preAuditChecksData?.checks}
             />

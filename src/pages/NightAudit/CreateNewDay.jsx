@@ -60,8 +60,6 @@ const CreateNewDay = ({
 
     return (
         <>
-
-
             {haveNiceDay ? (
                 <div
                     className={`fixed top-16 right-0 bottom-0 ${isCollapsed ? "left-20" : "left-60"
