@@ -11,7 +11,7 @@ const ReconciliationStatus = ({
     const passed = preAuditChecksData?.overallStatus === "PASSED";
     return (
         <div>
-            <div className="border ">
+            <div>
                 <div className="items-center grid lg:grid-cols-3 md:grid-cols-2 gap-x-10 !my-3">
 
                     <Card className={`!bg-[#F6FFED] !text-[#389E0D] !border-[#B7EB8F] ${cardDesign}`}>

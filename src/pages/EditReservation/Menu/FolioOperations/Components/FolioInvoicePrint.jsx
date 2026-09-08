@@ -414,18 +414,19 @@ const FolioInvoicePrint = React.forwardRef(({ printData, adminName, adminRole, h
           </div>
 
           {/* ══ SIGNATURES ════════════════════════════════════════════ */}
-          <div style={{ marginTop: "15px", display: "flex", justifyContent: "space-between" }}>
+          <div style={{ marginTop: "25px", display: "flex", justifyContent: "space-between" }}>
             <div style={{ width: "30%" }}>
+              <div style={{ height: "1px", background: INK_MUTED , marginBottom: "5px" , fontWeight: "200"}} />
               <div style={{ fontFamily: FONT_LABEL, fontSize: "12px", fontWeight: "600", color: INK, marginBottom: "20px" }}>
                 Cashier Signature
               </div>
-              <div style={{ height: "1px", background: INK_MUTED , marginBottom: "5px" , fontWeight: "200"}} />
             </div>
             <div style={{ width: "30%" }}>
+              <div style={{ height: "1px", background: INK_MUTED , marginBottom: "5px", fontWeight: "200" }} />
               <div style={{ fontFamily: FONT_LABEL, fontSize: "12px", fontWeight: "600", color: INK, marginBottom: "20px" }}>
                 Client Signature
               </div>
-              <div style={{ height: "1px", background: INK_MUTED , marginBottom: "5px", fontWeight: "200" }} />
+              {/* <div style={{ height: "1px", background: INK_MUTED , marginBottom: "5px", fontWeight: "200" }} /> */}
             </div>
           </div>
 

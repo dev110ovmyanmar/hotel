@@ -5,25 +5,18 @@ import { AiOutlineDesktop } from 'react-icons/ai';
 import useInfiniteApiQuery from '../../hooks/useInfiniteApiQuery';
 import { activeAdmins } from '../../api/nightAuditApi';
 
-const ActiveAdmins = () => {
+const ActiveAdmins = ({
+  activeAdminDatas,
+  isLoading,
+  isFetchingNextPage,
+  fetchNextPage,
+  hasNextPage
+
+}) => {
   const scrollRef = useRef(null);
 
-  const {
-    data,
-    isLoading,
-    isFetchingNextPage,
-    fetchNextPage,
-    hasNextPage,
-  } = useInfiniteApiQuery({
-    fetchQueryName: "activeAdmins",
-    fetchQueryFunction: activeAdmins,
-    params: {
-      perPage: 20,
-    },
-  });
-
   // Flatten all pages into single array
-  const sessions = data?.pages?.flatMap(page => page?.data || []) || [];
+  const sessions = activeAdminDatas?.pages?.flatMap(page => page?.data || []) || [];
 
   const columns = [
     {

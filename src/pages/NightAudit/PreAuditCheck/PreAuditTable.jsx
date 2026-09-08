@@ -14,13 +14,16 @@ const PreAuditTable = ({
     colorCheckBooking,
     preAuditChecksData
 }) => {
+    const isNextStep = preAuditChecksData?.overallStatus === "PASSED";
+
     const columns = [
-        // {
-        //     title: "Id",
-        //     dataIndex: "id",
-        //     key: "id",
-        //     render: (text) => <div>{text}</div>
-        // },
+        {
+            title: "No",
+            key: "no",
+            render: (_, __, index) => {
+                return <div>{index + 1}</div>;
+            },
+        },
         {
             title: "Name",
             dataIndex: "name",
@@ -35,7 +38,6 @@ const PreAuditTable = ({
                 const blocking = text === "BLOCKING";
                 const passed = text === "PASSED";
                 const warning = text === "WARNING"
-                console.log(text, "TextStatus")
                 return (
                     <Tag color={blocking ? "red" : warning ? "orange" : "green"}
                         className={
@@ -48,10 +50,10 @@ const PreAuditTable = ({
                         }>
                         <div className="flex gap-x-2 items-center">
                             {passed
-                                ? <CircleCheck size={15}/>
+                                ? <CircleCheck size={15} />
                                 : warning
-                                    ? <WarningOutlined className="!text-[15px]"/>
-                                    : <CloseCircleOutlined className="!text-[15px]"/>
+                                    ? <WarningOutlined className="!text-[15px]" />
+                                    : <CloseCircleOutlined className="!text-[15px]" />
                             }
                             <div>{text?.charAt(0).toUpperCase() + text?.slice(1).toLowerCase()}</div>
                         </div>
@@ -135,7 +137,7 @@ const PreAuditTable = ({
     return (
         <Table
             columns={columns}
-            dataSource={preAuditChecksData}
+            dataSource={preAuditChecksData?.checks}
             pagination={false}
             summary={() => (
                 <Table.Summary fixed>
@@ -143,14 +145,18 @@ const PreAuditTable = ({
                         <Table.Summary.Cell index={0}></Table.Summary.Cell>
                         <Table.Summary.Cell index={1}></Table.Summary.Cell>
                         <Table.Summary.Cell index={2}></Table.Summary.Cell>
-                        <Table.Summary.Cell index={3}>
-                            <Button
-                                type="primary"
-                                onClick={colorCheckBooking}
-                            >
-                                Next Step
-                                <AiOutlineRight />
-                            </Button>
+                        <Table.Summary.Cell index={3}></Table.Summary.Cell>
+                        <Table.Summary.Cell index={4}>
+                            {
+                                // isNextStep &&
+                                <Button
+                                    type="primary"
+                                    onClick={colorCheckBooking}
+                                >
+                                    Next Step
+                                    <AiOutlineRight />
+                                </Button>
+                            }
                         </Table.Summary.Cell>
                     </Table.Summary.Row>
                 </Table.Summary>

@@ -28,6 +28,7 @@ import { borderDarkMode, darkModeStyle, textColorDarkMode, textWhiteInDarkStyle 
 import Loader from "../../../../component/Loader/Loader";
 import { priceFormatter, priceParser } from "../../../../component/PriceTag/PriceTag";
 import { numberValidator } from "../../../../variables/constants";
+import PriceTag from "../../../../component/PriceTag/PriceTag";
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -142,10 +143,13 @@ const AddPaymentForm = ({
                 const total = selectedFolio.grandTotal;
                 setSelectedFolioGrandTotal(total);
                 setIsGrandTotalZero(total === 0 || total === null || total === undefined);
+                // Auto-fill amount with selectedFolio.grandTotal based on selected folio
+                // form.setFieldsValue({ amount: selectedFolio.grandTotal || 0 });
             }
         } else {
             setSelectedFolioGrandTotal(null);
             setIsGrandTotalZero(false);
+            // form.setFieldsValue({ amount: 0 });
         }
     }, [selectedFolioUuid, folios]);
 
@@ -410,11 +414,31 @@ const AddPaymentForm = ({
                                     </Col>
                                     <Col span={12}>
                                         <Form.Item
-                                            label={<span className={textSlateToWhiteInDark}>Amount</span>}
+                                            label={<span className={textSlateToWhiteInDark}>Amount{selectedFolioGrandTotal !== null && <> (Max: <PriceTag value={selectedFolioGrandTotal} /> MMK)</>}</span>}
                                             name="amount"
                                             rules={[
                                                 { required: true, message: "Amount required" },
-                                                { validator: numberValidator }
+                                                { validator: numberValidator },
+                                                {
+                                                    validator: (_, value) => {
+                                                        if (value !== undefined && value !== null && value < 1) {
+                                                            return Promise.reject(
+                                                                new Error("Amount must be at least 1 MMK")
+                                                            );
+                                                        }
+                                                        return Promise.resolve();
+                                                    },
+                                                },
+                                                {
+                                                    validator: (_, value) => {
+                                                        if (selectedFolioGrandTotal !== null && value > selectedFolioGrandTotal) {
+                                                            return Promise.reject(
+                                                                new Error(`Amount cannot exceed grand total of ${selectedFolioGrandTotal.toLocaleString()} MMK`)
+                                                            );
+                                                        }
+                                                        return Promise.resolve();
+                                                    }
+                                                }
                                             ]}
                                         >
                                             <InputNumber

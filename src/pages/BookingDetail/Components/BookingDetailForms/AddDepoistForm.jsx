@@ -14,17 +14,16 @@ import {
   Divider,
   Segmented,
   InputNumber,
-  Alert,
 } from "antd";
 import { createFolioPaymentDeposit } from "../../../../api/reservationSectionApi";
 import { reservationMeta } from "../../../../api/reservationSectionApi";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
 import { useApiQuery } from "../../../../hooks/useApiQuery";
-import Toast from "../../../../component/Toast/Toast";
 import {
   priceFormatter,
   priceParser,
 } from "../../../../component/PriceTag/PriceTag";
+import { textWhiteInDarkStyle } from "../../../../utils";
 import { numberValidator } from "../../../../variables/constants";
 import Loader from "../../../../component/Loader/Loader";
 
@@ -71,10 +70,9 @@ const AddDepoistForm = ({
   // Track selected category filter by UUID state
   const [selectedProviderUuid, setSelectedProviderUuid] = useState("all");
   const [selectedFolioGrandTotal, setSelectedFolioGrandTotal] = useState(null);
-  const [isGrandTotalZero, setIsGrandTotalZero] = useState(false);
+  const [selectedFolioUuid, setSelectedFolioUuid] = useState(null);
 
   const selectedMethod = Form.useWatch("paymentMethod", form);
-  const selectedFolioUuid = Form.useWatch("folio", form);
 
   const cashMethod = paymentMethodsData.find(
       (method) => method.name?.trim().toLowerCase() === "cashs",
@@ -87,13 +85,22 @@ const AddDepoistForm = ({
       if (selectedFolio) {
         const total = selectedFolio.grandTotal;
         setSelectedFolioGrandTotal(total);
-        setIsGrandTotalZero(total === 0 || total === null || total === undefined);
       }
     } else {
       setSelectedFolioGrandTotal(null);
-      setIsGrandTotalZero(false);
     }
   }, [selectedFolioUuid, folios]);
+
+  // --- Set default folio to master folio after data loads ---
+  useEffect(() => {
+    if (folios.length > 0 && open) {
+      const masterFolio = folios.find(folio => folio?.isMasterFolio == true);
+      if (masterFolio) {
+        setSelectedFolioUuid(masterFolio.uuid);
+        
+      }
+    }
+  }, [folios, open]);
 
   // --- Transform providerTypes into Ant Design Segmented options ---
   const segmentedOptions = useMemo(() => {
@@ -143,7 +150,6 @@ const AddDepoistForm = ({
 
     return folios.map((folio) => ({
       label: folio.folioNo || "Unknown",
-
       value: folio.uuid,
     }));
   }, [folios]);
@@ -174,24 +180,18 @@ const AddDepoistForm = ({
       onSuccess: () => {
         form.resetFields();
         setSelectedProviderUuid("all");
-        setIsGrandTotalZero(false);
         setSelectedFolioGrandTotal(null);
+        setSelectedFolioUuid(null);
         onClose();
       },
     },
   });
 
   const onFinish = (values) => {
-    // Prevent submission if grandTotal is zero
-    if (isGrandTotalZero) {
-      Toast.error("Cannot add deposit. The selected folio has a zero balance.");
-      return;
-    }
-
     const payload = {
       reservation: { uuid: bookingDetails?.reservation?.uuid },
       guest: { uuid: values.guest },
-      folio: { uuid: values.folio },
+      folio: { uuid: selectedFolioUuid },
       paymentMethod: { uuid: values.paymentMethod },
       paymentStatus: { uuid: values.paymentStatus },
       amount: values.amount,
@@ -222,8 +222,6 @@ const AddDepoistForm = ({
     return folios.find(folio => folio.uuid === selectedFolioUuid);
   };
 
-  const selectedFolio = getSelectedFolioDetails();
-
   return (
     <Drawer
       open={open}
@@ -235,8 +233,16 @@ const AddDepoistForm = ({
           paymentMethod: cashMethod?.uuid,
         });
         setSelectedProviderUuid("all");
-        setIsGrandTotalZero(false);
         setSelectedFolioGrandTotal(null);
+
+        // Set default folio to master folio when drawer opens
+        if (folios.length > 0) {
+          const masterFolio = folios.find(folio => folio?.isMasterFolio == true);
+          if (masterFolio) {
+            setSelectedFolioUuid(masterFolio.uuid);
+            setSelectedFolioGrandTotal(masterFolio.grandTotal);
+          }
+        }
       }}
       size={550}
       destroyOnHidden
@@ -250,7 +256,6 @@ const AddDepoistForm = ({
               form.submit();
             }}
             loading={isPending}
-            disabled={isGrandTotalZero}
           >
             Create
           </Button>
@@ -398,72 +403,34 @@ const AddDepoistForm = ({
             <Col span={12}>
               <Form.Item
                 label={<span className="font-medium">Folio No</span>}
-                name="folio"
-                rules={[
-                  {
-                    required: true,
-                    message: "Required",
-                  },
-                ]}
               >
-                <Select
-                  placeholder="Select folio"
-                  className="w-full rounded"
-                  options={folioOptions}
+                <Input
+                  readOnly
+                  value={folios.find(f => f.uuid === selectedFolioUuid)?.folioNo || ""}
                 />
               </Form.Item>
             </Col>
 
-            {!isGrandTotalZero && (
-              <Col span={12}>
-                <Form.Item
-                  label={<span className="font-medium">Guest</span>}
-                  name="guest"
-                >
-                  <Select
-                    showSearch={{
-                      filterOption: (input, option) =>
-                        (option?.label ?? "")
-                          .toLowerCase()
-                          .includes(input.toLowerCase()),
-                    }}
-                    placeholder="Select a guest"
-                    options={guestOptions}
-                    className="w-full rounded"
-                  />
-                </Form.Item>
-              </Col>
-            )}
+            <Col span={12}>
+              <Form.Item
+                label={<span className="font-medium">Guest</span>}
+                name="guest"
+              >
+                <Select
+                  showSearch={{
+                    filterOption: (input, option) =>
+                      (option?.label ?? "")
+                        .toLowerCase()
+                        .includes(input.toLowerCase()),
+                  }}
+                  placeholder="Select a guest"
+                  options={guestOptions}
+                  className="w-full rounded"
+                />
+              </Form.Item>
+            </Col>
           </Row>
 
-          {/* --- ALERT: Show when grandTotal is zero --- */}
-          {selectedFolio && isGrandTotalZero && (
-            <Alert
-              message="Cannot Add Deposit"
-              description={
-                <div>
-                  <p className="mb-1">
-                    <strong>Folio:</strong> {selectedFolio.folioNo}
-                  </p>
-                  <p className="mb-0">
-                    <strong>Grand Total:</strong> {selectedFolio.grandTotal !== null && selectedFolio.grandTotal !== undefined
-                      ? `${selectedFolio.grandTotal.toLocaleString()} MMK`
-                      : '0 MMK'}
-                  </p>
-                   <p className="mt-2 mb-0 text-red-600">
-                      This folio has a zero balance. No deposits can be added.
-                  </p>
-                </div>
-              }
-              type="warning"
-              showIcon
-              className="mb-4"
-            />
-          )}
-
-          {/* --- CONDITIONALLY RENDER OTHER FIELDS --- */}
-          {!isGrandTotalZero && (
-            <>
           <Row gutter={16}>
             <Col span={12}>
               <Form.Item
@@ -504,6 +471,16 @@ const AddDepoistForm = ({
                   {
                     validator: numberValidator,
                   },
+                  {
+                    validator: (_, value) => {
+                      if (value !== undefined && value !== null && value < 1) {
+                        return Promise.reject(
+                          new Error("Amount must be at least 1 MMK")
+                        );
+                      }
+                      return Promise.resolve();
+                    },
+                  },
                 ]}
               >
                 <InputNumber
@@ -511,7 +488,6 @@ const AddDepoistForm = ({
                   style={{
                     width: "100%",
                   }}
-                  suffix="MMK"
                   placeholder="0.00"
                   formatter={priceFormatter}
                   parser={priceParser}
@@ -570,8 +546,6 @@ const AddDepoistForm = ({
               className="rounded w-full"
             />
           </Form.Item>
-            </>
-          )}
         </Form>
       )}
     </Drawer>

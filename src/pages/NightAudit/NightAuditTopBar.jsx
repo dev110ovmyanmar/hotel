@@ -7,11 +7,24 @@ import { preAuditCheck } from "../../api/nightAuditApi";
 
 const NightAuditTopBar = () => {
     const location = useLocation();
+
+    const nightAuditStorage = JSON.parse(
+        localStorage.getItem("nightAudit")
+    );
+
+    const businessDate =
+        nightAuditStorage?.businessDate;
+
+
     const { data: preAuditChecksData, isLoading, error } = useApiQuery({
         fetchQueryName: "pre-audit-checks",
         fetchQueryFunction: preAuditCheck,
         params: {
-            businessDate: '2026-09-02'
+            businessDate: businessDate
+        },
+        options: {
+            staleTime: 1000 * 60 * 5,
+            refetchOnWindowFocus: false,
         },
     });
 
@@ -49,7 +62,6 @@ const NightAuditTopBar = () => {
         // "Night Audit Posting",
         // "Create New Day",
     ];
-    console.log(location.pathname,"nightAuditStepLocation")
     const nightAuditStep = routeStepMap[location.pathname] ?? 0;
 
     const cardDesign =
