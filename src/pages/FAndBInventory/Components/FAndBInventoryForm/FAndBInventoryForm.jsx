@@ -13,10 +13,7 @@ import Status from "../../../../component/Status/Status";
 import Loader from "../../../../component/Loader/Loader";
 import { queryClient } from "../../../../app/queryClient";
 import { sellingPriceValidator } from "../../../../variables/constants";
-import {
-  priceFormatter,
-  priceParser,
-} from "../../../../component/PriceTag/PriceTag";
+import PriceInput from "../../../../component/PriceInput/PriceInput";
 import usePermission from "../../../../hooks/usePermission";
 import { PERMISSIONS } from "../../../../variables/permission";
 
@@ -110,6 +107,8 @@ const FAndBInventoryForm = ({
     if (isAdd) {
       const createValues = {
         ...values,
+        unitPrice: Number(values.unitPrice),
+        unitCost: Number(values.unitCost),
         category: { uuid: values.category },
         unit: { uuid: values.unit },
         supplier: { uuid: values.supplier },
@@ -128,6 +127,8 @@ const FAndBInventoryForm = ({
     if (isEdit) {
       const editValues = {
         ...values,
+        unitPrice: Number(values.unitPrice),
+        unitCost: Number(values.unitCost),
         category: { uuid: values.category },
         unit: { uuid: values.unit },
         supplier: { uuid: values.supplier },
@@ -289,15 +290,15 @@ const FAndBInventoryForm = ({
                   { required: true, message: "Selling Price is Required" },
                   sellingPriceValidator("unitCost"),
                 ]}
+                getValueProps={(value) => ({
+                  value: value !== null && value !== undefined ? String(value) : "",
+                })}
               >
-                <InputNumber
-                  className="w-full!"
+                <PriceInput
                   min={0}
                   placeholder="Selling Price"
                   readOnly={isView}
                   suffix="MMK"
-                  formatter={priceFormatter}
-                  parser={priceParser}
                 />
               </Form.Item>
 
@@ -307,15 +308,15 @@ const FAndBInventoryForm = ({
                 rules={[
                   { required: true, message: "Purchase Price is Required" },
                 ]}
+                getValueProps={(value) => ({
+                  value: value !== null && value !== undefined ? String(value) : "",
+                })}
               >
-                <InputNumber
-                  className="w-full!"
+                <PriceInput
                   min={0}
                   placeholder="Purchase Price"
                   readOnly={isView}
                   suffix="MMK"
-                  formatter={priceFormatter}
-                  parser={priceParser}
                 />
               </Form.Item>
             </div>

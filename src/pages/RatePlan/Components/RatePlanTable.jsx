@@ -14,6 +14,7 @@ import { TableColumns } from "../../../component/TableColumns/TableColumns";
 import RoomRateForm from "../../RoomRate/Components/RoomRateForm/RoomRateForm";
 import { textGrayInDarkStyle, textWhiteInDarkStyle } from "../../../utils";
 import PriceTag from "../../../component/PriceTag/PriceTag";
+import ColorStatusTag from "../../../component/ColorStatusTag/ColorStatusTag"
 
 const RatePlanTable = ({
   data,
@@ -101,6 +102,13 @@ const RatePlanTable = ({
         if (!text) return "";
         return text.charAt(0).toUpperCase() + text.slice(1);
       },
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      width: 80,
+      render: (status) => <ColorStatusTag status={status} />,
     },
     {
       title: "Action",

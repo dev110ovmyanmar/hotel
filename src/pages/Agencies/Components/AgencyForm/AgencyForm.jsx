@@ -5,7 +5,6 @@ import {
   Button,
   Drawer,
   Select,
-  InputNumber,
   Row,
   Col,
 } from "antd";
@@ -23,7 +22,7 @@ import Status from "./../../../../component/Status/Status";
 import ImageUpload from "../../../../component/ImageUpload/ImageUpload";
 import { deleteImageUpload } from "../../../../api/deleteImageApi";
 import { validatePhoneNumber } from "../../../../utils";
-import { priceFormatter, priceParser } from "../../../../component/PriceTag/PriceTag";
+import PriceInput from "../../../../component/PriceInput/PriceInput";
 import usePermission from "../../../../hooks/usePermission";
 import { PERMISSIONS } from "../../../../variables/permission";
 
@@ -114,6 +113,7 @@ const AgencyForm = ({
   const onFinish = (values) => {
     const modifiedValues = {
       ...values,
+      chargeValue: Number(values.chargeValue),
       partnerType: "Agency",
     };
     if (isAdd) {
@@ -129,6 +129,7 @@ const AgencyForm = ({
     if (isEdit) {
       const editValues = {
         ...values,
+        chargeValue: Number(values.chargeValue),
         partnerType: "Agency",
         uuid: selectedData?.uuid,
       };
@@ -311,9 +312,11 @@ const AgencyForm = ({
                     },
                   },
                 ]}
+                getValueProps={(value) => ({
+                  value: value !== null && value !== undefined ? String(value) : "",
+                })}
               >
-                <InputNumber
-                  style={{ width: "100%" }}
+                <PriceInput
                   min={1}
                   suffix={(() => {
                     const selected = chargeType?.find(
@@ -323,8 +326,6 @@ const AgencyForm = ({
                   })()}
                   readOnly={isView}
                   placeholder="Enter Charge Value"
-                  formatter={priceFormatter}
-                  parser={priceParser}
                   maxLength={15}
                 />
               </Form.Item>

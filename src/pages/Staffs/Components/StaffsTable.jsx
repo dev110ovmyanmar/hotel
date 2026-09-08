@@ -10,6 +10,7 @@ import {
 import usePermission from "../../../hooks/usePermission";
 import { PERMISSIONS } from "../../../variables/permission";
 import StaffUploadForm from "./StaffsForms/StaffUploadForm";
+import ColorStatusTag from "../../../component/ColorStatusTag/ColorStatusTag";
 
 const StaffsTable = ({
   data,
@@ -47,7 +48,12 @@ const StaffsTable = ({
       dataIndex: "joinedAt",
       key: "joinedAt",
     },
-
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      render: (status) => <ColorStatusTag status={status} />,
+    },
     {
       title: "Action",
       width: 80,

@@ -14,7 +14,6 @@ import {
     Upload,
     Divider,
     Segmented,
-    InputNumber,
     Alert // Add this import
 } from "antd";
 import FormButtons from "../../../../component/FormButtons/FormButtons";
@@ -26,7 +25,7 @@ import Toast from "../../../../component/Toast/Toast";
 import { useApiQuery } from "../../../../hooks/useApiQuery";
 import { borderDarkMode, darkModeStyle, textColorDarkMode, textWhiteInDarkStyle } from "../../../../utils";
 import Loader from "../../../../component/Loader/Loader";
-import { priceFormatter, priceParser } from "../../../../component/PriceTag/PriceTag";
+import PriceInput from "../../../../component/PriceInput/PriceInput";
 import { numberValidator } from "../../../../variables/constants";
 import PriceTag from "../../../../component/PriceTag/PriceTag";
 
@@ -180,7 +179,7 @@ const AddPaymentForm = ({
             folio: { uuid: values.folio },
             paymentMethod: { uuid: values.paymentMethod },
             paymentStatus: { uuid: values.paymentStatus },
-            amount: values.amount,
+            amount: Number(values.amount),
             transactionNo: values.transactionNo,
             externalReference: values.externalReference,
             remarks: values.remark,
@@ -416,6 +415,7 @@ const AddPaymentForm = ({
                                         <Form.Item
                                             label={<span className={textSlateToWhiteInDark}>Amount{selectedFolioGrandTotal !== null && <> (Max: <PriceTag value={selectedFolioGrandTotal} /> MMK)</>}</span>}
                                             name="amount"
+                                            getValueProps={(value) => ({ value: value !== null && value !== undefined ? String(value) : "" })}
                                             rules={[
                                                 { required: true, message: "Amount required" },
                                                 { validator: numberValidator },
@@ -441,12 +441,9 @@ const AddPaymentForm = ({
                                                 }
                                             ]}
                                         >
-                                            <InputNumber
+                                            <PriceInput
                                                 min={0}
-                                                style={{ width: "100%" }}
                                                 placeholder="0.00"
-                                                formatter={priceFormatter}
-                                                parser={priceParser}
                                             />
                                         </Form.Item>
                                     </Col>

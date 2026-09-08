@@ -94,18 +94,6 @@ const PreAuditTable = ({
                         //     setSelectedData(record);
                         // },
                     },
-                    {
-                        key: "edit",
-                        label: "Edit",
-                        icon: <EditOutlined style={{ fontSize: "12px" }} />,
-                        // permission: PERMISSIONS.ADMIN_EDIT,
-                        // onClick: () => {
-                        //     setDrawerOpen(true);
-                        //     setMode("edit");
-                        //     setSelectedData(record);
-                        // },
-                    },
-
                 ];
 
                 // Filter actions based on permission & hidden flags

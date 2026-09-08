@@ -25,10 +25,7 @@ import usePermission from "../../../../hooks/usePermission";
 import { PERMISSIONS } from "../../../../variables/permission";
 import dayjs from "dayjs";
 import Status from "../../../../component/Status/Status";
-import {
-  priceFormatter,
-  priceParser,
-} from "../../../../component/PriceTag/PriceTag";
+import PriceInput from "../../../../component/PriceInput/PriceInput";
 
 const FacilityPackageForm = ({
   mode,
@@ -134,6 +131,9 @@ const FacilityPackageForm = ({
         includedHours: values.includedHours
           ? values.includedHours.format("HH:mm:ss")
           : null,
+        basePrice: Number(values.basePrice),
+        extraPaxPrice: Number(values.extraPaxPrice),
+        extraHourPrice: Number(values.extraHourPrice),
       };
 
       createFacility.mutate(createValues, {
@@ -195,6 +195,9 @@ const FacilityPackageForm = ({
         includedHours: values.includedHours
           ? values.includedHours.format("HH:mm:ss")
           : null,
+        basePrice: Number(values.basePrice),
+        extraPaxPrice: Number(values.extraPaxPrice),
+        extraHourPrice: Number(values.extraHourPrice),
         uuid: data?.uuid,
       };
 
@@ -362,20 +365,12 @@ const FacilityPackageForm = ({
                 label="Base Price"
                 name="basePrice"
                 rules={[{ required: true, message: "Base Price is Required" }]}
+                getValueProps={(value) => ({ value: value !== null && value !== undefined ? String(value) : "" })}
               >
-                {/* <Space.Compact>
-              <Input readOnly={isView} />
-              {addon}
-            </Space.Compact> */}
-                {/* <Input readOnly={isView} suffix="MMK" /> */}
-                <InputNumber
-                  className="!w-full"
+                <PriceInput
                   min={0}
                   readOnly={isView}
                   placeholder="Enter Base Price"
-                  suffix="MMK"
-                  formatter={priceFormatter}
-                  parser={priceParser}
                 />
               </Form.Item>
             </div>
@@ -387,15 +382,12 @@ const FacilityPackageForm = ({
                 rules={[
                   { required: true, message: "ExtraPax Price is Required" },
                 ]}
+                getValueProps={(value) => ({ value: value !== null && value !== undefined ? String(value) : "" })}
               >
-                <InputNumber
-                  className="!w-full"
+                <PriceInput
                   min={0}
                   readOnly={isView}
                   placeholder="Enter Extra Pax Price"
-                  suffix="MMK"
-                  formatter={priceFormatter}
-                  parser={priceParser}
                 />
               </Form.Item>
 
@@ -405,15 +397,12 @@ const FacilityPackageForm = ({
                 rules={[
                   { required: true, message: "Extra Hour Price is Required" },
                 ]}
+                getValueProps={(value) => ({ value: value !== null && value !== undefined ? String(value) : "" })}
               >
-                <InputNumber
-                  className="!w-full"
+                <PriceInput
                   min={0}
                   readOnly={isView}
                   placeholder="Enter Extra Hour Price"
-                  suffix="MMK"
-                  formatter={priceFormatter}
-                  parser={priceParser}
                 />
               </Form.Item>
             </div>

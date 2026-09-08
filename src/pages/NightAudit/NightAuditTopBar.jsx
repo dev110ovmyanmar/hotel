@@ -4,18 +4,11 @@ import { FaMoon } from "react-icons/fa";
 import { useLocation } from "react-router-dom";
 import useApiQuery from "../../hooks/useApiQuery";
 import { preAuditCheck } from "../../api/nightAuditApi";
+import { businessDate } from "../../variables/constants";
 
 const NightAuditTopBar = () => {
     const location = useLocation();
-
-    const nightAuditStorage = JSON.parse(
-        localStorage.getItem("nightAudit")
-    );
-
-    const businessDate =
-        nightAuditStorage?.businessDate;
-
-
+    
     const { data: preAuditChecksData, isLoading, error } = useApiQuery({
         fetchQueryName: "pre-audit-checks",
         fetchQueryFunction: preAuditCheck,
@@ -65,7 +58,7 @@ const NightAuditTopBar = () => {
     const nightAuditStep = routeStepMap[location.pathname] ?? 0;
 
     const cardDesign =
-        "flex items-center justify-around gap-x-2 border border-gray-300 p-3 rounded shadow-md";
+        "flex items-center justify-around gap-x-3 border border-gray-300 p-3 rounded shadow-md";
 
     const textStyleFromCard = "!text-gray-400";
 
@@ -88,7 +81,7 @@ const NightAuditTopBar = () => {
                 </span>
             </div>
 
-            <div className="flex justify-around gap-x-5">
+            <div className="flex justify-around gap-x-5 lg:mr-5">
                 <div className={cardDesign}>
                     <Calendar1 className="text-blue-500" />
 
