@@ -1,21 +1,30 @@
 import { useNavigate } from "react-router-dom";
-import { preAuditCheck } from "../../../api/nightAuditApi";
+import { activeAdmins, preAuditCheck } from "../../../api/nightAuditApi";
 import useApiQuery from "../../../hooks/useApiQuery";
 import { Spin } from "antd";
 import PreAuditCheckStatus from "./PreAuditCheckStatus";
 import PreAuditTable from "./PreAuditTable";
 import IssueAndWarningCard from "./IssueAndWarningCard";
 import CheckBookingHeader from "../CheckBookingHeader";
+import useInfiniteApiQuery from "../../../hooks/useInfiniteApiQuery";
 
 const PreAuditCheckPage = ({
     stepValue,
 }) => {
     const navigate = useNavigate();
+
+    const nightAuditStorage = JSON.parse(
+        localStorage.getItem("nightAudit")
+    );
+
+    const businessDate =
+        nightAuditStorage?.businessDate;
+
     const { data: preAuditChecksData, isLoading, error } = useApiQuery({
         fetchQueryName: "pre-audit-checks",
         fetchQueryFunction: preAuditCheck,
         params: {
-            businessDate: '2026-09-02'
+            businessDate: businessDate
         },
     });
 
@@ -30,7 +39,7 @@ const PreAuditCheckPage = ({
     return (
         <div className="w-full px-6 py-2">
             <CheckBookingHeader />
-            <PreAuditCheckStatus preAuditChecksData={preAuditChecksData} preNightAudit={true}/>
+            <PreAuditCheckStatus preAuditChecksData={preAuditChecksData} preNightAudit={true} />
             <PreAuditTable
                 colorCheckBooking={() => {
                     window.dispatchEvent(
@@ -42,7 +51,7 @@ const PreAuditCheckPage = ({
                     );
                     navigate("/night-audit/daily-charge-posting")
                 }}
-                preAuditChecksData={preAuditChecksData?.checks}
+                preAuditChecksData={preAuditChecksData}
             />
             <IssueAndWarningCard preAuditChecksData={preAuditChecksData} />
         </div>
