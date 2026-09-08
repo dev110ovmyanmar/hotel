@@ -7,8 +7,10 @@ import { useNavigate } from "react-router-dom";
 
 const ConfirmModal = ({
     open,
-    onCancel
+    onCancel,
+    activeAdminDatas
 }) => {
+    console.log(activeAdminDatas?.pages[0]?.nightAudit?.targetBusinessDate, "activeAdminDatasINConfrimMOdal")
     const [form] = Form.useForm();
     const navigate = useNavigate();
 
@@ -37,12 +39,21 @@ const ConfirmModal = ({
         footer: "dark:!bg-[#1F1F1F] dark:!border-[#e5e5e5]"
     }
 
+    const nightAuditStorage = {
+        isLocked: activeAdminDatas?.pages[0]?.systemLock?.isLocked,
+        businessDate: activeAdminDatas?.pages[0]?.nightAudit?.targetBusinessDate,
+    };
+    console.log(nightAuditStorage,"nightAuditStorage")
     const systemLockMutation = useApiMutation({
         mutationFn: systemLock,
         shouldInvalidate: false,
         options: {
             onSuccess: (data) => {
                 Toast.success("System locked successfully");
+                localStorage.setItem(
+                    "nightAudit",
+                    JSON.stringify(nightAuditStorage)
+                );
                 onCancel(false);
                 window.dispatchEvent(
                     new CustomEvent("breadcrumb_updated", {

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import {
   Form,
   Input,
@@ -31,6 +31,7 @@ import {
   priceFormatter,
   priceParser,
 } from "../../../../component/PriceTag/PriceTag";
+import PriceTag from "../../../../component/PriceTag/PriceTag";
 
 const SeasonalRateForm = ({
   mode,
@@ -43,6 +44,8 @@ const SeasonalRateForm = ({
 }) => {
   const [form] = Form.useForm();
   const formValues = Form.useWatch([], form);
+  const selectedRatePlanUuid = Form.useWatch("ratePlanUuid", form);
+  const selectedRoomTypeUuid = Form.useWatch("roomTypeUuid", form);
 
   const isView = mode === "view";
   const isEdit = mode === "edit";
@@ -71,6 +74,28 @@ const SeasonalRateForm = ({
     value: rate.uuid,
     label: rate.name,
   }));
+
+  const roomRateMapping = ratePlanMetaData?.room_rate_mappings;
+
+  // Look up mapped price from roomRateMapping based on selected ratePlan and roomType
+  const mappedPrice = useMemo(() => {
+    if (!selectedRatePlanUuid || !selectedRoomTypeUuid || !Array.isArray(roomRateMapping)) {
+      return null;
+    }
+    const match = roomRateMapping.find(
+      (item) =>
+        item.ratePlanUUid === selectedRatePlanUuid &&
+        item.roomTypeUUid === selectedRoomTypeUuid
+    );
+    return match?.price ?? null;
+  }, [selectedRatePlanUuid, selectedRoomTypeUuid, roomRateMapping]);
+
+  // Auto-fill Base Price when mappedPrice changes
+  useEffect(() => {
+    if (mappedPrice !== null) {
+      form.setFieldsValue({ price: mappedPrice });
+    }
+  }, [mappedPrice]);
 
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
   const mapOptions = (data) =>
@@ -348,7 +373,7 @@ const SeasonalRateForm = ({
 
               <Col span={12}>
                 <Form.Item
-                  label="Base Price"
+                  label={<span>Price{mappedPrice !== null && <> (Original Price: <PriceTag value={mappedPrice} /> MMK)</>}</span>}
                   name="price"
                   rules={[{ required: true }]}
                 >

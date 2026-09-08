@@ -55,7 +55,7 @@ const PreAuditCheckStatus = ({
 
                     <Card className={`${cardDesign} !border !border-gray-300 dark:!text-gray-200 text-center`}>
                         <div>
-                            <div>Total Checks</div>
+                            <div>Total</div>
                             <div>
                                 {preAuditChecksData?.summary?.totalChecks}
 

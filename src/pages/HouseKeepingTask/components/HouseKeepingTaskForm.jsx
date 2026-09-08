@@ -59,11 +59,20 @@ const HouseKeepingTaskForm = ({
 
     const priorityOptions = useMemo(() => mapOptions(initData?.statuses?.priority_level), [initData]);
     const taskTypeOptions = useMemo(() => mapOptions(initData?.statuses?.task_type), [initData]);
-    // const hkStatusOptions = useMemo(() => mapOptions(initData?.statuses?.housekeeping_status), [initData]);
 
-    const editCurrentStatus = selectedRow?.housekeepingStatus?.code;
+    // ===== Fetch Detail =====
+    const { data: detail, isLoading } = useApiQuery({
+        fetchQueryName: "housekeeping-task-detail",
+        fetchQueryFunction: getHouseKeepingTaskDetail,
+        params: { uuid: selectedRow?.uuid },
+        options: { enabled: !!selectedRow?.uuid && drawerOpen },
+    });
+
+    const statusCode = detail?.housekeepingStatus?.code;
+    const editCurrentStatus = statusCode || selectedRow?.housekeepingStatus?.code;
+    const isDisableEdit = statusCode === "completed" || statusCode === "cancelled";
+
     const hkStatusOptions = initData?.statuses?.housekeeping_status?.map((item) => {
-        console.log(item, "ItemHKStatus")
         return (
             {
                 value: item.uuid,
@@ -88,18 +97,6 @@ const HouseKeepingTaskForm = ({
             }
         )
     });
-
-
-    // ===== Fetch Detail =====
-    const { data: detail, isLoading } = useApiQuery({
-        fetchQueryName: "housekeeping-task-detail",
-        fetchQueryFunction: getHouseKeepingTaskDetail,
-        params: { uuid: selectedRow?.uuid },
-        options: { enabled: !!selectedRow?.uuid && drawerOpen },
-    });
-
-    const statusCode = detail?.housekeepingStatus?.code;
-    const isDisableEdit = statusCode === "completed" || statusCode === "cancelled";
 
     // ===== Fill Form =====
     useEffect(() => {

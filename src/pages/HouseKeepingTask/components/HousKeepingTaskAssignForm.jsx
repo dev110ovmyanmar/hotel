@@ -81,17 +81,17 @@ const HouseKeepingTaskAssignForm = ({
     // 5. Mutations
     const createMutation = useApiMutation({
         mutationFn: createHouseKeepingTaskAssign,
-        invalidateKeys: [["housekeeping-task-detail"], ["houseKeeping-tasks"]],
+        invalidateKeys: [["housekeeping-task-detail"], ["houseKeeping-tasks"], ["housekeeping-task-assign-detail"]],
     });
 
     const updateMutation = useApiMutation({
         mutationFn: updateHouseKeepingTaskAssign,
-        invalidateKeys: [["housekeeping-task-detail"], ["houseKeeping-tasks"], ["admin-meta"]],
+        invalidateKeys: [["housekeeping-task-detail"], ["houseKeeping-tasks"], ["admin-meta"], ["housekeeping-task-assign-detail"]],
     });
 
     const deleteMutation = useApiMutation({
         mutationFn: deleteHouseKeepingTaskAssign,
-        invalidateKeys: [["housekeeping-task-detail"], ["houseKeeping-tasks"]],
+        invalidateKeys: [["housekeeping-task-detail"], ["houseKeeping-tasks"], ["housekeeping-task-assign-detail"]],
     })
 
     const formatDateTime = (dateSource, timeSource) => {
