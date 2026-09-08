@@ -6,65 +6,63 @@ import { CircleCheck } from "lucide-react";
 
 const DailyChargePostingTable = ({
     colorCheckBooking,
-    preAuditChecksData
+    dailyChargePostingData
 }) => {
     const columns = [
-        // {
-        //     title: "Id",
-        //     dataIndex: "id",
-        //     key: "id",
-        //     render: (text) => <div>{text}</div>
-        // },
         {
-            title: "Name",
-            dataIndex: "name",
-            key: "name",
+            title: "No",
+            key: "no",
+            render: (_, __, index) => <div>{index + 1}</div>,
+        },
+        {
+            title: "Room No",
+            dataIndex: ["reservationRoom", "room", "roomNo"],
+            key: "roomNo",
         },
         {
             title: "Status",
-            dataIndex: "status",
-            key: "status",
+            dataIndex: "chargeStatus",
+            key: "chargeStatus",
             align: "center",
-            render: (text) => {
-                const blocking = text === "BLOCKING";
-                const passed = text === "PASSED";
-                const warning = text === "WARNING"
-                console.log(text, "TextStatus")
+            render: (record) => {
+                const posted = record?.code === "posted";
+                const unposted = record?.code === "unposted";
+                const total = record?.code === "total";
+
                 return (
-                    <Tag color={blocking ? "red" : warning ? "orange" : "green"}
+                    <Tag color={posted ? "red" : unposted ? "orange" : "green"}
                         className={
-                            `!rounded ${blocking
+                            `!rounded ${posted
                                 ? "!border-red-500"
-                                : warning
+                                : unposted
                                     ? "!border-orange-500"
                                     : "!border-green-500"
                             }`
                         }>
                         <div className="flex gap-x-2 items-center">
-                            {passed
-                                ? <CircleCheck size={15}/>
-                                : warning
-                                    ? <WarningOutlined className="!text-[15px]"/>
-                                    : <CloseCircleOutlined className="!text-[15px]"/>
+                            {posted
+                                ? <CircleCheck size={15} />
+                                : unposted
+                                    ? <WarningOutlined className="!text-[15px]" />
+                                    : <CloseCircleOutlined className="!text-[15px]" />
                             }
-                            <div>{text?.charAt(0).toUpperCase() + text?.slice(1).toLowerCase()}</div>
+                            <div>{record?.name?.charAt(0).toUpperCase() + record?.name?.slice(1).toLowerCase()}</div>
                         </div>
                     </Tag>
                 )
             }
         },
         {
-            title: "Count",
-            dataIndex: "count",
-            key: "count",
+            title: "Grand Total",
+            dataIndex: "grandTotal",
+            key: "grandTotal",
+            render: (text) => {
+                return (
+                    <div className="text-end">{text?.toLocaleString()}</div>
+                )
+            },
+            align: "right"
         },
-        // {
-        //     title: "Details",
-        //     dataIndex: "details",
-        //     key: "details",
-        //     align:"center"
-        // },
-
         {
             title: "Action",
             name: "action",
@@ -83,17 +81,6 @@ const DailyChargePostingTable = ({
                         // onClick: () => {
                         //     setDrawerOpen(true);
                         //     setMode("view");
-                        //     setSelectedData(record);
-                        // },
-                    },
-                    {
-                        key: "edit",
-                        label: "Edit",
-                        icon: <EditOutlined style={{ fontSize: "12px" }} />,
-                        // permission: PERMISSIONS.ADMIN_EDIT,
-                        // onClick: () => {
-                        //     setDrawerOpen(true);
-                        //     setMode("edit");
                         //     setSelectedData(record);
                         // },
                     },
@@ -129,7 +116,7 @@ const DailyChargePostingTable = ({
     return (
         <Table
             columns={columns}
-            dataSource={preAuditChecksData}
+            dataSource={dailyChargePostingData?.charges}
             pagination={false}
             summary={() => (
                 <Table.Summary fixed>
@@ -137,7 +124,8 @@ const DailyChargePostingTable = ({
                         <Table.Summary.Cell index={0}></Table.Summary.Cell>
                         <Table.Summary.Cell index={1}></Table.Summary.Cell>
                         <Table.Summary.Cell index={2}></Table.Summary.Cell>
-                        <Table.Summary.Cell index={3}>
+                        <Table.Summary.Cell index={3}></Table.Summary.Cell>
+                        <Table.Summary.Cell index={4}>
                             <Button
                                 type="primary"
                                 onClick={colorCheckBooking}

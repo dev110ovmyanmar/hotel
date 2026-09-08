@@ -43,7 +43,7 @@ const ConfirmModal = ({
         isLocked: activeAdminDatas?.pages[0]?.systemLock?.isLocked,
         businessDate: activeAdminDatas?.pages[0]?.nightAudit?.targetBusinessDate,
     };
-    console.log(nightAuditStorage,"nightAuditStorage")
+    
     const systemLockMutation = useApiMutation({
         mutationFn: systemLock,
         shouldInvalidate: false,
