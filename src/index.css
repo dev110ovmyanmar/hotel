@@ -740,6 +740,10 @@ span .ant-upload {
   cursor: not-allowed;
 }
 
+.hide-checkbox-row .ant-table-selection-column {
+  visibility: hidden;
+}
+
 .dark .active-reservation-row td {
   background-color: rgba(1, 65, 46, 0.35) !important;
   backdrop-filter: blur(12px) !important;

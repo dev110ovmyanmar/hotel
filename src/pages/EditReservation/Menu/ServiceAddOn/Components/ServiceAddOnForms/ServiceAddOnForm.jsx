@@ -69,41 +69,81 @@ const ServiceAddOnForm = ({
 
 
   const currentStatusCode = orderDetails?.addonStatus?.code;
+  console.log(currentStatusCode, "currentStatusCode")
+
+
+  // const addonStatus =
+  //   initData?.statuses?.addon_status
+  //     ?.filter((status) => {
+  //       if (status.code === "completed" || status.code === "no_show") {
+  //         return false;
+  //       }
+
+  //       if (isView) {
+  //         return status.code === currentStatusCode ||  status.code === "completed";
+  //       }
+
+  //       if (isEdit) {
+  //         if (currentStatusCode === "cancelled") {
+  //           return status.code === "cancelled";
+  //         }
+
+  //         if (currentStatusCode === "in_progress") {
+  //           return (
+  //             status.code === "in_progress" ||
+  //             status.code === "cancelled"
+  //           );
+  //         }
+
+  //         return true;
+  //       }
+
+  //       return (
+  //         status.code === "pending" ||
+  //         status.code === "in_progress"
+  //       );
+  //     })
+  //     ?.map((status) => ({
+  //       value: status.uuid,
+  //       label: status.name,
+  //     })) || [];
+
   const addonStatus =
-     initData?.statuses?.addon_status
-     ?.filter((status) => {
-      if (status.code === "completed" || status.code === "no_show") {
-        return false;
-      }
-
-      if (isView) {
-        return status.code === currentStatusCode;
-      }
-
-      if (isEdit) {
-        if (currentStatusCode === "cancelled") {
-          return status.code === "cancelled";
+    initData?.statuses?.addon_status
+      ?.filter((status) => {
+        if (isView) {
+          return status.code === "completed" || status.code === currentStatusCode;
         }
 
-        if (currentStatusCode === "in_progress") {
-          return (
-            status.code === "in_progress" ||
-            status.code === "cancelled"
-          );
+        if (status.code === "completed" || status.code === "no_show") {
+          return false;
         }
 
-        return true;
-      }
+        if (isEdit) {
+          if (currentStatusCode === "cancelled") {
+            return status.code === "cancelled";
+          }
 
-      return (
-        status.code === "pending" ||
-        status.code === "in_progress"
-      );
-    })
-    ?.map((status) => ({
-      value: status.uuid,
-      label: status.name,
-    })) || [];
+          if (currentStatusCode === "in_progress") {
+            return (
+              status.code === "in_progress" ||
+              status.code === "cancelled"
+            );
+          }
+
+          return true;
+        }
+
+        return (
+          status.code === "pending" ||
+          status.code === "in_progress"
+        );
+      })
+      ?.map((status) => ({
+        value: status.uuid,
+        label: status.name,
+      })) || [];
+
 
   const defaultStatus = initData?.statuses?.addon_status?.find(
     (status) => status.code === "pending",
@@ -122,13 +162,49 @@ const ServiceAddOnForm = ({
         };
       }) || [];
 
+  // const services =
+  //   reservationRoom?.services
+  //     ?.filter((service) => service?.serviceStages?.includes("pre_arrival"))
+  //     ?.map((service) => ({
+  //       value: service?.uuid,
+  //       label: service?.name,
+  //     })) || [];
+  // const services =
+  //   reservationRoom?.services
+  //     ?.filter((service) => service?.usesInventory === false)
+  //     ?.map((service) => ({
+  //       value: service?.uuid,
+  //       label: service?.name,
+  //     })) || [];
+
+  // const services =
+  //   reservationRoom?.services
+  //     ?.filter(
+  //       (service) =>
+  //         service?.serviceStages?.includes("pre_arrival") &&
+  //         service?.usesInventory === false
+  //     )
+  //     ?.map((service) => ({
+  //       value: service?.uuid,
+  //       label: service?.name,
+  //     })) || [];
+
+
+  const currentServiceUuid = orderDetails?.service?.uuid;
+
   const services =
     reservationRoom?.services
-      ?.filter((service) => service?.serviceStages?.includes("pre_arrival"))
+      ?.filter(
+        (service) =>
+          (service?.serviceStages?.includes("pre_arrival") &&
+            service?.usesInventory === false) ||
+          service?.uuid === currentServiceUuid
+      )
       ?.map((service) => ({
         value: service?.uuid,
         label: service?.name,
       })) || [];
+
 
   useEffect(() => {
     if (orderDetails && (isView || isEdit)) {
@@ -214,9 +290,11 @@ const ServiceAddOnForm = ({
                 : "Add Service"}
           </span>
           {isView ? (
-            <Button type="primary" onClick={() => setMode("edit")}>
-              Edit
-            </Button>
+            currentStatusCode !== "completed" && (
+              <Button type="primary" onClick={() => setMode("edit")}>
+                Edit
+              </Button>
+            )
           ) : (
             <FormButtons
               onClick={() => form.submit()}
@@ -309,7 +387,7 @@ const ServiceAddOnForm = ({
         <Form.Item label="Note" name="note">
           <TextArea />
         </Form.Item>
-      
+
         <Form.Item
           label="Add On Status"
           name="status"

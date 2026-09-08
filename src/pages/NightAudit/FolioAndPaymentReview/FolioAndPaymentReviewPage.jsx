@@ -1,43 +1,49 @@
 import { useNavigate } from "react-router-dom";
-import { preAuditCheck } from "../../../api/nightAuditApi";
+import { folioReview } from "../../../api/nightAuditApi";
 import useApiQuery from "../../../hooks/useApiQuery";
 import { Spin } from "antd";
 import FolioAndPaymentReviewStatus from "./FolioAndPaymentReviewStatus";
 import CheckBookingHeader from "../CheckBookingHeader";
 import FolioAndPaymentReviewTable from "./FolioAndPaymentReviewTable";
 
-const FolioAndPaymentReviewPage = ({
-    stepValue,
-}) => {
+const FolioAndPaymentReviewPage = ()  => {
     const navigate = useNavigate();
-    const { data: preAuditChecksData, isLoading, error } = useApiQuery({
-        fetchQueryName: "pre-audit-checks",
-        fetchQueryFunction: preAuditCheck,
+
+    const {
+        data: folioData,
+        isLoading: folioLoading,
+    } = useApiQuery({
+        fetchQueryName: "folio-review",
+        fetchQueryFunction: folioReview,
         params: {
-            businessDate: '2026-09-02'
+            businessDate: "2026-09-02",
         },
     });
 
-    if (!preAuditChecksData) {
+    if (folioLoading) {
         return (
-            <div className="!flex !items-center !justify-center">
+            <div className="flex items-center justify-center">
                 <Spin />
             </div>
-        )
+        );
     }
 
     return (
         <div className="w-full px-6 py-2">
             <CheckBookingHeader />
-            <FolioAndPaymentReviewStatus preAuditChecksData={preAuditChecksData} />
+
+            <FolioAndPaymentReviewStatus
+                data={folioData}
+            />
+
             <FolioAndPaymentReviewTable
+                data={folioData}
                 colorCheckBooking={() => {
-                    navigate("/night-audit/reconciliation")
+                    navigate("/night-audit/reconciliation");
                 }}
-                preAuditChecksData={preAuditChecksData?.checks}
             />
         </div>
-    )
-}
+    );
+};
 
 export default FolioAndPaymentReviewPage;

@@ -7,6 +7,7 @@ import dayjs from "dayjs";
 import ColorStatusTag from "../../../../../component/ColorStatusTag/ColorStatusTag";
 
 const ServiceAddOnTable = ({ data }) => {
+  console.log(data, "data")
   const [mode, setMode] = useState("add");
   const [selectedData, setSelectedData] = useState(null);
   const [serviceOpen, setServiceOpen] = useState(false);
@@ -22,12 +23,6 @@ const ServiceAddOnTable = ({ data }) => {
       key: "id",
       width: 70,
     },
-    // {
-    //   title: "Room No",
-    //   dataIndex: ["reservationRoom", "room", "roomNo"],
-    //   key: "roomNo",
-    //   render: (text) => <div>{text ? text : "-"}</div>,
-    // },
     {
       title: "Service Name",
       dataIndex: ["service", "name"],
@@ -64,7 +59,6 @@ const ServiceAddOnTable = ({ data }) => {
       title: "Action",
       key: "action",
       fixed: "end",
-      align: "center",
       render: (_, record) => (
         <Space size="middle">
           <Tooltip title="View Details">
@@ -78,16 +72,18 @@ const ServiceAddOnTable = ({ data }) => {
             />
           </Tooltip>
 
-          <Tooltip title="Edit">
-            <EditOutlined
-              className="cursor-pointer text-amber-500 hover:text-amber-700"
-              onClick={() => {
-                setSelectedData(record);
-                setMode("edit");
-                setServiceOpen(true);
-              }}
-            />
-          </Tooltip>
+          {record?.addonStatus?.code !== "completed" && (
+            <Tooltip title="Edit">
+              <EditOutlined
+                className="cursor-pointer text-amber-500 hover:text-amber-700"
+                onClick={() => {
+                  setSelectedData(record);
+                  setMode("edit");
+                  setServiceOpen(true);
+                }}
+              />
+            </Tooltip>
+          )}
         </Space>
       ),
     },

@@ -5,6 +5,7 @@ import TaxForm from "./TaxForms/TaxForm";
 import usePermission from "../../../hooks/usePermission";
 import { PERMISSIONS } from "../../../variables/permission";
 import PriceTag from "../../../component/PriceTag/PriceTag";
+import ColorStatusTag from "../../../component/ColorStatusTag/ColorStatusTag";
 
 const TaxTable = ({
   data,
@@ -74,8 +75,14 @@ const TaxTable = ({
       align: "end",
     },
     {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      render: (status) => <ColorStatusTag status={status} />,
+    },
+    {
       title: "Action",
-      fixed:"end",
+      fixed: "end",
       align: "center",
       render: (_, record) => {
         const smallStyle = { fontSize: "12px" };

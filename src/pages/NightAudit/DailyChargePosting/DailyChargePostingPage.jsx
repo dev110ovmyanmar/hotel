@@ -1,24 +1,27 @@
 import { useNavigate } from "react-router-dom";
-import { preAuditCheck } from "../../../api/nightAuditApi";
+import { dailyChargePosing, preAuditCheck } from "../../../api/nightAuditApi";
 import useApiQuery from "../../../hooks/useApiQuery";
 import { Spin } from "antd";
 import DailyChargeStatus from "./DailyChargeStatus";
 import CheckBookingHeader from "../CheckBookingHeader";
 import DailyChargePostingTable from "./DailyChargePostingTable";
+import { businessDate } from "../../../variables/constants";
 
 const DailyChargePostingPage = ({
     stepValue,
 }) => {
     const navigate = useNavigate();
-    const { data: preAuditChecksData, isLoading, error } = useApiQuery({
-        fetchQueryName: "pre-audit-checks",
-        fetchQueryFunction: preAuditCheck,
+
+    const { data: dailyChargePostingData, dailyChargeDataLoading, dailyChargeDataError } = useApiQuery({
+        fetchQueryName: "daily-charge-postings",
+        fetchQueryFunction: dailyChargePosing,
         params: {
-            businessDate: '2026-09-02'
+            businessDate: businessDate
         },
     });
+    console.log(dailyChargePostingData,"dailyChargePostingData")
 
-    if (!preAuditChecksData) {
+    if (!dailyChargePostingData) {
         return (
             <div className="!flex !items-center !justify-center">
                 <Spin />
@@ -29,7 +32,7 @@ const DailyChargePostingPage = ({
     return (
         <div className="w-full px-6 py-2">
             <CheckBookingHeader />
-            <DailyChargeStatus preAuditChecksData={preAuditChecksData} />
+            <DailyChargeStatus dailyChargePostingData={dailyChargePostingData} />
             <DailyChargePostingTable
                 colorCheckBooking={() => {
                     window.dispatchEvent(
@@ -41,7 +44,7 @@ const DailyChargePostingPage = ({
                     );
                     navigate("/night-audit/folio-&-payment-review")
                 }}
-                preAuditChecksData={preAuditChecksData?.checks}
+                dailyChargePostingData={dailyChargePostingData}
             />
         </div>
     )

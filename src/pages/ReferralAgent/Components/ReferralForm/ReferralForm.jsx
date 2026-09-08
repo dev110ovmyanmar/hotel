@@ -195,25 +195,13 @@ const ReferralForm = ({
           validateTrigger="onSubmit"
           onFinish={onFinish}
         >
-          <Row gutter={24}>
-            <Col span={16}>
-              <Form.Item
-                label="Name"
-                name="name"
-                rules={[{ required: true }]}
-              >
-                <Input readOnly={isView} placeholder="Enter Referral Agent Name" />
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item
-                label="Code"
-                name="code"
-              >
-                <Input readOnly={isView} placeholder="Enter Referral Code" />
-              </Form.Item>
-            </Col>
-          </Row>
+          <Form.Item
+            label="Name"
+            name="name"
+            rules={[{ required: true }]}
+          >
+            <Input readOnly={isView} placeholder="Enter Referral Agent Name" />
+          </Form.Item>
 
           <Form.Item
             label="Card No"
