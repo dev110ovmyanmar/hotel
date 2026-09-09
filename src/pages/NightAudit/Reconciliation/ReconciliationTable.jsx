@@ -1,6 +1,7 @@
 import { Button, Table } from "antd";
 import { AiOutlineRight } from "react-icons/ai";
 import PriceTag from "../../../component/PriceTag/PriceTag";
+import { nextStepButtonDesign } from "../../../variables/constants";
 
 const ReconciliationTable = ({ colorCheckBooking, data }) => {
   const tableData = data?.folios;
@@ -119,29 +120,42 @@ const ReconciliationTable = ({ colorCheckBooking, data }) => {
   ];
 
   return (
-    <Table
-      columns={columns}
-      dataSource={tableData}
-      pagination={false}
-      summary={() => (
-        <Table.Summary fixed>
-          <Table.Summary.Row>
-            <Table.Summary.Cell index={0} colSpan={columns.length}>
-              <div className="flex justify-end items-center w-full py-1">
-                <Button
-                  type="primary"
-                  onClick={colorCheckBooking}
-                  className="flex items-center gap-1"
-                >
-                  Next Step
-                  <AiOutlineRight />
-                </Button>
-              </div>
-            </Table.Summary.Cell>
-          </Table.Summary.Row>
-        </Table.Summary>
-      )}
-    />
+    <div>
+      <Table
+        columns={columns}
+        dataSource={tableData}
+        pagination={false}
+      // summary={() => (
+      //   <Table.Summary fixed>
+      //     <Table.Summary.Row>
+      //       <Table.Summary.Cell index={0} colSpan={columns.length}>
+      //         <div className="flex justify-end items-center w-full py-1">
+      //           <Button
+      //             type="primary"
+      //             onClick={colorCheckBooking}
+      //             className="flex items-center gap-1"
+      //           >
+      //             Next Step
+      //             <AiOutlineRight />
+      //           </Button>
+      //         </div>
+      //       </Table.Summary.Cell>
+      //     </Table.Summary.Row>
+      //   </Table.Summary>
+      // )}
+      />
+
+      <div className={nextStepButtonDesign}>
+        <Button
+          type="primary"
+          onClick={colorCheckBooking}
+          className="flex items-center gap-1"
+        >
+          Next Step
+          <AiOutlineRight />
+        </Button>
+      </div>
+    </div>
   );
 };
 

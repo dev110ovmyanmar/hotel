@@ -3,7 +3,7 @@ import { Button, Card, Checkbox, Col, Dropdown, Form, Row, Space, Table, Tag } f
 import { AiOutlineRight } from "react-icons/ai";
 import { Calendar1Icon, CalendarRange, CircleCheck, LockKeyhole } from "lucide-react";
 import dayjs from "dayjs";
-import { addDays } from "../../../variables/constants";
+import { addDays, nextStepButtonDesign } from "../../../variables/constants";
 import { useApiMutation } from "../../../hooks/useApiMutation";
 import { clickCloseBusinessDate, clickCreateNewDay } from "../../../api/nightAuditApi";
 import { useState } from "react";
@@ -14,12 +14,7 @@ const CloseBusinessDateTable = ({
 }) => {
 
     const [form] = Form.useForm();
-    const currentTime = dayjs().format("YYYY-MM-DD");
-    const isConfirmCheck = Form.useWatch("confirmCheck", form);
-    console.log(isConfirmCheck, "isConfirmCheck");
     const nextBusinessDate = addDays(preAuditChecksData?.businessDate, 1);
-    const [showNewBusinessDayCard, setShowNewBusinessDayCard] = useState(false);
-    console.log(preAuditChecksData?.businessDate, "nextBusinessDate");
 
     const closeBusinessDateMutate = useApiMutation({
         mutationFn: clickCloseBusinessDate,
@@ -142,7 +137,7 @@ const CloseBusinessDateTable = ({
                                     </div>
                                     <div className="text-green-600">
                                         <div>Ready To Close</div>
-                                        <div className="!text-[10px]">All Ready</div>
+                                        <div className="!text-[10px]">All Required checks are completed. No blocking issues found.</div>
                                     </div>
                                 </div>
                             </div>
@@ -151,7 +146,7 @@ const CloseBusinessDateTable = ({
                         <div>
                             <div>
                                 <div className="text-lg font-bold">Final Confirmation</div>
-                                <div className="!text-[10px]">Once close</div>
+                                <div className="!text-[10px]">Once closed, the current business date will be finalized and a new day will be created.</div>
                             </div>
 
                             <div className="flex flex-col gap-y-2 border border-blue-200 rounded bg-blue-50 p-3 !my-5">
@@ -186,41 +181,15 @@ const CloseBusinessDateTable = ({
                                         </div>
                                     </Button>
                                 </Form.Item>
-
-                                <Form.Item>
-                                    <Button
-                                        className="!w-full"
-                                        type="primary"
-                                        onClick={handlecreateNewDay}
-                                    >
-                                        <div className="flex gap-x-5">
-                                            <div><Calendar1Icon /></div>
-                                            <div>Create New Day</div>
-                                        </div>
-                                    </Button>
-                                </Form.Item>
                             </Form>
 
-                            {
-                                showNewBusinessDayCard &&
-                                <div className="border border-blue-200 rounded bg-blue-50 p-3">
-                                    <div className="flex gap-x-6">
-                                        <div><CalendarRange /></div>
-
-                                        <div>
-                                            <div>New Business Day</div>
-                                            <div>{nextBusinessDate}</div>
-                                            <div>This System will automatically be ready for the next day after closing.</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            }
+                            
                         </div>
                     </Card>
                 </Col>
             </Row>
 
-            <div className="flex justify-end items-center w-full py-1">
+            <div className={nextStepButtonDesign}>
                 <Button
                     type="primary"
                     onClick={colorCheckBooking}
