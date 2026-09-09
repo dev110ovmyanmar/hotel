@@ -318,3 +318,13 @@ export const addDays = (date, days) => {
   return result.toISOString().split("T")[0];
 };
 
+export const nextStepButtonDesign = `flex justify-end items-center w-full py-1 my-2`;
+
+export const textSizeDependOnScreen = `
+    !text-base
+    sm:!text-xs
+    md:!text-xs
+    lg:!text-sm
+    xl:!text-sm
+    2xl:!text-sm
+  `;

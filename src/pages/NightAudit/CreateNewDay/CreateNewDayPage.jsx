@@ -5,16 +5,21 @@ import { Spin } from "antd";
 import CreateNewDay from "../CreateNewDay";
 import CheckBookingHeader from "../CheckBookingHeader";
 import { useState } from "react";
+import { getNightAuditData } from "../../../variables/constants";
 
 
 const CreateNewDayPage = () => {
     const navigate = useNavigate();
-    const [hideSteps,setHideSteps] = useState(false);
+    const [hideSteps, setHideSteps] = useState(false);
+    const nightAuditData = getNightAuditData();
+
+    const businessDate = nightAuditData?.businessDate;
+
     const { data: preAuditChecksData, isLoading, error } = useApiQuery({
         fetchQueryName: "pre-audit-checks",
         fetchQueryFunction: preAuditCheck,
         params: {
-            businessDate: '2026-09-02'
+            businessDate
         },
     });
 
@@ -31,11 +36,12 @@ const CreateNewDayPage = () => {
                 !hideSteps &&
                 <CheckBookingHeader />
             }
-            <CreateNewDay createNewDayClick={() => {
-                setHideSteps(true);
-                navigate("/night-audit/unlock")
-                
-            }} />
+            <CreateNewDay
+                createNewDayClick={() => {
+                    setHideSteps(true)
+                }}
+                preAuditChecksData={preAuditChecksData} 
+            />
 
         </div>
     )
