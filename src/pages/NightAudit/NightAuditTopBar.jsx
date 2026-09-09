@@ -33,7 +33,6 @@ const NightAuditTopBar = () => {
         "/night-audit/reconciliation": 3,
         "/night-audit/close-business-date": 4,
         "/night-audit/create-new-day": 5,
-        "/night-audit/unlock": 6,
 
 
         // "/night-audit/daily-charge-posting": 1,

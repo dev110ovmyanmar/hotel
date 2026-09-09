@@ -2,6 +2,7 @@ import { CloseCircleOutlined, EditOutlined, EyeOutlined, MoreOutlined, WarningOu
 import { Button, Dropdown, Space, Table, Tag } from "antd";
 import { AiOutlineRight } from "react-icons/ai";
 import { CircleCheck } from "lucide-react";
+import { nextStepButtonDesign } from "../../../variables/constants";
 
 
 const PreAuditTable = ({
@@ -147,7 +148,7 @@ const PreAuditTable = ({
                 // )}
             />
 
-            <div className="flex justify-end items-center w-full py-1">
+            <div className={nextStepButtonDesign}>
                 <Button
                     type="primary"
                     onClick={colorCheckBooking}

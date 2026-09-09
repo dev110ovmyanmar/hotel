@@ -930,12 +930,6 @@ export const authRoutes = [
     requiredRole: FRONT_OFFICE,
   },
   {
-    key: 13.6,
-    path: "/night-audit/unlock",
-    component: <NightAuditUnlockPage />,
-    requiredRole: FRONT_OFFICE,
-  },
-  {
     key: 14,
     id: "/hr-management",
     label: "HR Management",
