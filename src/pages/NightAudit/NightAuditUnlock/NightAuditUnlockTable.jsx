@@ -42,10 +42,10 @@ const NightAuditUnlockTable = ({
                         }>
                         <div className="flex gap-x-2 items-center">
                             {passed
-                                ? <CircleCheck size={15}/>
+                                ? <CircleCheck size={15} />
                                 : warning
-                                    ? <WarningOutlined className="!text-[15px]"/>
-                                    : <CloseCircleOutlined className="!text-[15px]"/>
+                                    ? <WarningOutlined className="!text-[15px]" />
+                                    : <CloseCircleOutlined className="!text-[15px]" />
                             }
                             <div>{text?.charAt(0).toUpperCase() + text?.slice(1).toLowerCase()}</div>
                         </div>
@@ -132,19 +132,19 @@ const NightAuditUnlockTable = ({
             dataSource={preAuditChecksData}
             pagination={false}
             summary={() => (
-                <Table.Summary fixed>
+                <Table.Summary fixed="bottom">
                     <Table.Summary.Row>
-                        <Table.Summary.Cell index={0}></Table.Summary.Cell>
-                        <Table.Summary.Cell index={1}></Table.Summary.Cell>
-                        <Table.Summary.Cell index={2}></Table.Summary.Cell>
-                        <Table.Summary.Cell index={3}>
-                            <Button
-                                type="primary"
-                                onClick={colorCheckBooking}
-                            >
-                                Next Step
-                                <AiOutlineRight />
-                            </Button>
+                        <Table.Summary.Cell index={0} colSpan={columns.length}>
+                            <div className="flex justify-end items-center w-full py-1">
+                                <Button
+                                    type="primary"
+                                    onClick={colorCheckBooking}
+                                    className="flex items-center gap-1"
+                                >
+                                    Next Step
+                                    <AiOutlineRight />
+                                </Button>
+                            </div>
                         </Table.Summary.Cell>
                     </Table.Summary.Row>
                 </Table.Summary>

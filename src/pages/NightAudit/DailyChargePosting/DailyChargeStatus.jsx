@@ -1,33 +1,58 @@
 import { CloseCircleOutlined, ReloadOutlined, SafetyOutlined, WarningOutlined } from "@ant-design/icons";
 import { Button, Card } from "antd";
-import { CircleCheck } from "lucide-react";
+import { Calendar, CircleCheck } from "lucide-react";
 import { useApiMutation } from "../../../hooks/useApiMutation";
 import { reloadDailyPostCharges } from "../../../api/nightAuditApi";
-import { businessDate } from "../../../variables/constants";
+import { getNightAuditData } from "../../../variables/constants";
+import RunPostingModal from "./RunPostingModal";
+import { useState } from "react";
 
 const DailyChargeStatus = ({
     dailyChargePostingData,
     preNightAudit
 }) => {
+    const [runPostingModalOpen,setRunPostingModalOpen] = useState(false);
+
     const cardDesign = `!w-full !max-w-[500px] !shadow-md !m-0 !p-0 !border-l-0 !border-r-0`;
     const warning = dailyChargePostingData?.overallStatus === "WARNING";
     const passed = dailyChargePostingData?.overallStatus === "PASSED";
 
+    const nightAuditData = getNightAuditData();
+
+    const businessDate = nightAuditData?.businessDate;
+
     const reloadPostCharge = useApiMutation({
-        mutationFn: reloadDailyPostCharges ,
+        mutationFn: reloadDailyPostCharges,
         invalidateKeys: [["daily-charge-postings"]],
     });
 
     const retryPostCharge = () => {
         reloadPostCharge.mutate({
             businessDate
+        },
+        {
+            onSuccess: () =>{
+                setRunPostingModalOpen(false)
+            }
         })
     };
 
     return (
         <div>
-            <div className="flex flex-wrap justify-end">
-                <div className="items-end grid lg:grid-cols-3 md:grid-cols-2 gap-x-5 !my-3 md:gap-y-3">
+            <div>
+                <div className="items-center grid lg:grid-cols-4 md:grid-cols-2 gap-x-5 !my-3 md:gap-y-3">
+                    <Card className={`!bg-[#EFF6FF] !text-[#314B99] !border-[#A1CFFF] ${cardDesign} !p-2`}>
+                        <div className="text-center">
+                            <div className="flex justify-between items-center">
+                                <div className="flex gap-x-2">
+                                    <Calendar />
+                                    <div className="text-base">Posting Date : </div>
+                                </div>
+                                <div className="text-base">{dailyChargePostingData?.businessDate}</div>
+                            </div>
+                        </div>
+                    </Card>
+
                     <Card className={`!bg-[#F6FFED] !text-[#389E0D] !border-[#B7EB8F] ${cardDesign}`}>
                         <div className="text-center">
                             <div className="flex justify-between">
@@ -72,11 +97,19 @@ const DailyChargeStatus = ({
             <div className="flex justify-end my-4">
                 <Button
                     type="primary"
-                    onClick={retryPostCharge}
+                    // onClick={retryPostCharge}
+                    onClick={()=>setRunPostingModalOpen(true)}
                 >
                     <ReloadOutlined /> Run Posting
                 </Button>
             </div>
+
+            <RunPostingModal 
+                onCancel={()=>setRunPostingModalOpen(false)}
+                onOk={retryPostCharge}
+                open={runPostingModalOpen}
+                confirmLoading={reloadPostCharge?.isPending}
+            />
         </div>
     )
 }

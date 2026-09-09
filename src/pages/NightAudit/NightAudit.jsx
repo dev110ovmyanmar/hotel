@@ -32,21 +32,23 @@ const NightAudit = () => {
     });
     const isLocked = activeAdminDatas?.pages[0]?.systemLock?.isLocked;
     const businessDate = activeAdminDatas?.pages[0]?.nightAudit?.targetBusinessDate;
+    const checkStatus = activeAdminDatas?.pages[0]?.nightAudit?.status;
 
     useEffect(() => {
-        if (isLocked) {
+        if (isLocked && businessDate) {
             localStorage.setItem(
                 "nightAudit",
                 JSON.stringify({
-                    isLocked : isLocked,
-                    businessDate : businessDate
+                    isLocked: isLocked,
+                    businessDate: businessDate,
+                    nightAuditStatus: checkStatus
                 })
             );
             navigate("/night-audit/pre-audit-check");
         }
-    }, [isLocked, navigate]);
+    }, [isLocked, navigate, businessDate]);
 
-    if (isLoading) {
+    if (!activeAdminDatas || isLoading) {
         return (
             <div className="flex justify-center items-center h-screen">
                 <Spin size="large" />
@@ -104,9 +106,7 @@ const NightAudit = () => {
                                                 The Night Audit will close the current business date, including its accounting, transactions, and operations. The system will be temporarily locked during the audit. Once the Night Audit is complete, the system will be unlocked and ready for the next business date.
                                             </p>
 
-                                            {
-                                                <ActiveAdmins activeAdminDatas={activeAdminDatas} />
-                                            }
+                                            <ActiveAdmins activeAdminDatas={activeAdminDatas} />
 
                                             <div className="flex justify-center items-center w-full h-full bg-[#FFF1F0] my-5 rounded-sm py-2 sm:p-3">
                                                 <MdWarningAmber className="!font-bold !text-[#CF1322] text-xl" />
