@@ -58,6 +58,7 @@ const RoomTypeGroup = ({
     getRateData,
     handleRestrictionEditOpen,
     roomDateMap,
+    rtDateMap,
 }) => {
     const ratePlansToRender = filteredRatePlansMap ? (filteredRatePlansMap[rt.id] ?? []) : (rt.ratePlans ?? []);
     const roomsToRender = filteredRoomsMap ? filteredRoomsMap[rt.id] : (rt.rooms ?? []);
@@ -162,17 +163,19 @@ const RoomTypeGroup = ({
                 {daysMeta.map(({ dateStr, cellClass, isPast, isToday }, i) => {
                     const avail = getAvailability(rt.id, dateStr);
                     const isEditing = editingCell?.rtId === rt.id && editingCell?.dateStr === dateStr;
+                    const totalRooms = avail.totalRooms ?? 0;
+                    const soldRooms = avail.soldRooms ?? 0;
+                    const availableRooms = totalRooms - soldRooms;
                     const isLoading = loadingStates.availability[avail?.uuid];
                     const isDisabled = isPast || avail.stopSell || isLoading;
-
                     const editingValue = isEditing ? parseInt(editingCell.value, 10) : NaN;
                     const isOverLimit = isEditing && !isNaN(editingValue) && editingValue > avail.availableRooms;
                     return (
                         <td
                             key={i}
-                            className={`border-b border-[#dee2e6] text-center text-[13px] font-bold text-green-600 ${cellClass} ${isToday ? todayDarkModeStyle : darkModeStyle}`}
+                            className={`border-b border-[#dee2e6] text-center text-[13px] font-bold ${cellClass} ${isToday ? todayDarkModeStyle : darkModeStyle}`}
                         >
-                            {avail?.uuid && !isPast ? (
+                            {avail?.uuid && !isPast && !avail.stopSell ? (
                                 <Tooltip
                                     open={isOverLimit}
                                     title={`Max: ${avail?.availableRooms}`}
@@ -185,7 +188,8 @@ const RoomTypeGroup = ({
                                         status={isOverLimit ? 'error' : undefined}
                                         disabled={isDisabled}
                                         readOnly
-                                        value={isEditing ? editingCell.value : avail.stopSell ? 0 : avail.availableRooms}
+                                        // value={isEditing ? editingCell.value : availableRooms}
+                                        value={availableRooms}
                                         onFocus={() =>
                                             setEditingCell({ rtId: rt.id, dateStr, value: avail.availableRooms })
                                         }
@@ -229,7 +233,7 @@ const RoomTypeGroup = ({
                                 </Tooltip>
                             ) : (
                                 <span className={isPast ? 'text-gray-400' : ''}>
-                                    {avail.stopSell ? 0 : avail.availableRooms}
+                                    {avail.stopSell ? <span className="text-red-500">0</span> : availableRooms}
                                 </span>
                             )}
                         </td>
@@ -247,9 +251,8 @@ const RoomTypeGroup = ({
                     return (
                         <td
                             key={i}
-                            className={`border-b border-[#dee2e6] text-center text-[13px] font-bold text-red-500 ${cellClass} dark:!text-red-500 ${isToday ? todayDarkModeStyle : darkModeStyle}`}
+                            className={`border-b border-[#dee2e6] text-center text-[13px] font-bold text-green-500 ${cellClass} dark:!text-green-500 ${isToday ? todayDarkModeStyle : darkModeStyle}`}
                         >
-                            {/* {avail.sold} */}
                             {avail.soldRooms}
                         </td>
                     );
@@ -279,6 +282,7 @@ const RoomTypeGroup = ({
                         getAvailability={getAvailability}
                         roomDateMap={roomDateMap}
                         rtId={rt.id}
+                        rtDateMap={rtDateMap}
                     />
                 ))}
         </React.Fragment>

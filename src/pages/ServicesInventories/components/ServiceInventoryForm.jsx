@@ -32,10 +32,7 @@ import {
   MAX_STOCK_QUANTITY,
   sellingPriceValidator,
 } from "../../../variables/constants";
-import {
-  priceFormatter,
-  priceParser,
-} from "../../../component/PriceTag/PriceTag";
+import PriceInput from "../../../component/PriceInput/PriceInput";
 import usePermission from "../../../hooks/usePermission";
 import { PERMISSIONS } from "../../../variables/permission";
 
@@ -114,8 +111,8 @@ const ServiceInventoryForm = ({
   const handleSubmit = (values) => {
     const basePayload = {
       name: values.name,
-      unitPrice: values.unitPrice,
-      unitCost: values.unitCost,
+      unitPrice: Number(values.unitPrice),
+      unitCost: Number(values.unitCost),
       stockQuantity: values.stockQuantity,
       laundryStatus: values.laundryStatus ? 1 : 0,
       isFree: values.isFree ? 1 : 0,
@@ -226,15 +223,14 @@ const ServiceInventoryForm = ({
                   { required: true, message: "Please enter selling price" },
                   sellingPriceValidator("unitCost"),
                 ]}
+                getValueProps={(value) => ({
+                  value: value !== null && value !== undefined ? String(value) : "",
+                })}
               >
-                <InputNumber
-                  className="!w-full"
+                <PriceInput
                   min={0}
                   readOnly={isView}
                   placeholder="Enter Selling Price"
-                  suffix="MMK"
-                  formatter={priceFormatter}
-                  parser={priceParser}
                 />
               </Form.Item>
 
@@ -243,15 +239,14 @@ const ServiceInventoryForm = ({
                   label="Purchase Price"
                   name="unitCost"
                   rules={[{ required: true }]}
+                  getValueProps={(value) => ({
+                    value: value !== null && value !== undefined ? String(value) : "",
+                  })}
                 >
-                  <InputNumber
-                    className="!w-full"
+                  <PriceInput
                     min={0}
                     readOnly={isView}
                     placeholder="Enter Purchase Price"
-                    suffix="MMK"
-                    formatter={priceFormatter}
-                    parser={priceParser}
                   />
                 </Form.Item>
               }

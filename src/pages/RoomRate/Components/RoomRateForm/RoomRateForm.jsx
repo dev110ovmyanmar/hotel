@@ -8,7 +8,6 @@ import {
   Drawer,
   Row,
   Col,
-  InputNumber,
   Checkbox,
 } from "antd";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
@@ -19,10 +18,7 @@ import Toast from "./../../../../component/Toast/Toast";
 import usePermission from "./../../../../hooks/usePermission";
 import { upsertRoomRate, roomRateDetails } from "../../../../api/roomRateApi";
 import { ratePlanMeta } from "../../../../api/ratePlanApi";
-import {
-  priceFormatter,
-  priceParser,
-} from "../../../../component/PriceTag/PriceTag";
+import PriceInput from "../../../../component/PriceInput/PriceInput";
 
 const RoomRateForm = ({
   mode,
@@ -209,7 +205,7 @@ const RoomRateForm = ({
       const isEnabled = values[`enable_${key}`];
       acc[key] =
         isEnabled && values[key] !== undefined && values[key] !== null
-          ? values[key]
+          ? Number(values[key])
           : null;
       return acc;
     }, {});
@@ -220,6 +216,7 @@ const RoomRateForm = ({
       ratePlan: { uuid: activeRatePlanUuid },
       roomType: values?.roomType,
       status: { uuid: values?.status },
+      price: Number(values?.price),
       weekdays: weekdaysObj,
     };
 
@@ -326,14 +323,11 @@ const RoomRateForm = ({
                 label="Price"
                 name="price"
                 rules={[{ required: true, message: "Price is Required" }]}
+                getValueProps={(value) => ({
+                  value: value !== null && value !== undefined ? String(value) : "",
+                })}
               >
-                <InputNumber
-                  readOnly={isView}
-                  suffix="MMK"
-                  style={{ width: "100%" }}
-                  formatter={priceFormatter}
-                  parser={priceParser}
-                />
+                <PriceInput readOnly={isView} suffix="MMK" />
               </Form.Item>
             </Col>
 
@@ -426,15 +420,15 @@ const RoomRateForm = ({
                     rules={[
                       { required: isEnabled, message: "Price is required" },
                     ]}
+                    getValueProps={(value) => ({
+                      value: value !== null && value !== undefined ? String(value) : "",
+                    })}
                   >
-                    <InputNumber
+                    <PriceInput
                       placeholder="Enter Price"
-                      style={{ width: "100%" }}
                       min={0}
                       readOnly={!isEnabled || isView}
                       suffix="MMK"
-                      formatter={priceFormatter}
-                      parser={priceParser}
                     />
                   </Form.Item>
                 </Col>

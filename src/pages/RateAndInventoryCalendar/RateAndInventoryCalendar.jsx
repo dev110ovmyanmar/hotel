@@ -198,24 +198,7 @@ const RateAndInventoryCalendar = () => {
             }));
             updateStopSelling.mutate({ uuid: availableUuid, stopSell: newStopSellValue }, {
                 onSuccess: () => {
-                    queryClient.setQueriesData({ queryKey: ['rateInventoryCalendar'] }, (old) => {
-                        if (!old) return old;
-                        return {
-                            ...old,
-                            roomTypes: old.roomTypes.map((rt) =>
-                                rt.id === rtId
-                                    ? {
-                                        ...rt,
-                                        dates: rt.dates.map((d) =>
-                                            d.availability?.uuid === availableUuid
-                                                ? { ...d, availability: { ...d.availability, stopSell: newStopSellValue } }
-                                                : d
-                                        ),
-                                    }
-                                    : rt
-                            ),
-                        };
-                    });
+                    queryClient.invalidateQueries({ queryKey: ['rateInventoryCalendar'] });
                     Toast.success('Stop Selling Updated Successfully!');
                 },
                 onSettled: () => {
@@ -687,6 +670,7 @@ const RateAndInventoryCalendar = () => {
                                     handleAvailableUpdate={handleAvailableUpdate}
                                     loadingStates={loadingStates}
                                     editingCell={editingCell}
+                                    rtDateMap={rtDateMap}
                                     setEditingCell={setEditingCell}
                                     getRateData={getRateData}
                                     handleRestrictionEditOpen={handleRestrictionEditOpen}

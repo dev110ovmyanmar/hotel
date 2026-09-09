@@ -75,3 +75,13 @@ export const folioReviewPayment = async(params) => {
     );
     return data.response;
 }
+
+export const clickCloseBusinessDate = async (params) => {
+  const { data } = await apiClient.post("/night-audit/close-business-date", params);
+  return data.response;
+};
+
+export const clickCreateNewDay = async (params) => {
+  const { data } = await apiClient.post("/night-audit/create-new-day", params);
+  return data.response;
+};

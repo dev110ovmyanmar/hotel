@@ -1,5 +1,5 @@
 import { EyeOutlined, MoreOutlined } from "@ant-design/icons";
-import { Button, Dropdown, Space, Table } from "antd";
+import { Button, Table } from "antd";
 import { AiOutlineRight } from "react-icons/ai";
 import PriceTag from "../../../component/PriceTag/PriceTag";
 import FolioAndPaymentReviewDetails from "./FolioAndPaymentReviewDetails";
@@ -24,7 +24,7 @@ const FolioAndPaymentReviewTable = ({
             title: "Id",
             dataIndex: "folioId",
             key: "folioId",
-            render: (text) => <div>{text}</div>
+            render: (text) => <div>{text}</div>,
         },
         {
             title: "Folio No.",
@@ -40,6 +40,7 @@ const FolioAndPaymentReviewTable = ({
             title: "Guest Name",
             dataIndex: "guestName",
             key: "guestName",
+            width: 150,
         },
         {
             title: "Grand Total",
@@ -50,7 +51,7 @@ const FolioAndPaymentReviewTable = ({
                     <PriceTag value={value} />
                 </div>
             ),
-            align: "end"
+            align: "end",
         },
         {
             title: "Paid Amount",
@@ -61,7 +62,7 @@ const FolioAndPaymentReviewTable = ({
                     <PriceTag value={value} />
                 </div>
             ),
-            align: "end"
+            align: "end",
         },
         {
             title: "Balance Amount",
@@ -72,7 +73,7 @@ const FolioAndPaymentReviewTable = ({
                     <PriceTag value={value} />
                 </div>
             ),
-            align: "end"
+            align: "end",
         },
         {
             title: "Financial Status",
@@ -88,47 +89,15 @@ const FolioAndPaymentReviewTable = ({
             key: "hasUnpostedCharges",
             render: (hasUnpostedCharges) => (
                 <div
-                    className={hasUnpostedCharges === true ? "text-[#389E0D]" : "text-[#CF1322]"}
+                    className={
+                        hasUnpostedCharges === true
+                            ? "text-[#389E0D]"
+                            : "text-[#CF1322]"
+                    }
                 >
                     {hasUnpostedCharges === true ? "True" : "False"}
                 </div>
             ),
-        },
-        {
-            title: "Action",
-            key: "action",
-            fixed: "right",
-            align: "center",
-            render: (_, record) => {
-                const actions = [
-                    {
-                        key: "view",
-                        label: (
-                            <Space
-                                size={4}
-                                onClick={() => handleView(record)}
-                            >
-                                <EyeOutlined style={{ fontSize: "12px" }} />
-                                <span>View</span>
-                            </Space>
-                        ),
-                    },
-                ];
-
-                return (
-                    <Dropdown
-                        menu={{ items: actions }}
-                        trigger={["click"]}
-                    >
-                        <MoreOutlined
-                            style={{
-                                fontSize: "16px",
-                                cursor: "pointer",
-                            }}
-                        />
-                    </Dropdown>
-                );
-            },
         },
     ];
 
@@ -138,6 +107,16 @@ const FolioAndPaymentReviewTable = ({
                 columns={columns}
                 dataSource={tableData}
                 pagination={false}
+                rowKey="folioId"
+                onRow={(record) => ({
+                    onClick: () => handleView(record),
+                    className: "cursor-pointer",
+                })}
+                rowClassName={(record) =>
+                    selectedFolio?.folioId === record.folioId
+                        ? "selected-folio-row"
+                        : ""
+                }
                 summary={() => (
                     <Table.Summary fixed="bottom">
                         <Table.Summary.Row>
@@ -157,6 +136,8 @@ const FolioAndPaymentReviewTable = ({
                     </Table.Summary>
                 )}
             />
+
+
             {drawerOpen && (
                 <FolioAndPaymentReviewDetails
                     open={drawerOpen}

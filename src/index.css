@@ -1023,3 +1023,21 @@ span .ant-upload {
 .plain-table .ant-table-tbody>tr:hover>td {
   background: transparent !important;
 }
+
+/*  */
+
+.selected-folio-row > td {
+    background-color: #e7f8f4 !important;
+}
+
+.selected-folio-row:hover > td {
+    background-color: #e7f8f4 !important;
+}
+
+.dark .selected-folio-row > td {
+    background-color: #1e2926 !important;
+}
+
+.dark .selected-folio-row:hover > td {
+    background-color: #1e2825 !important;
+}
