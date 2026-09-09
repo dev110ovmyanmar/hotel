@@ -4,10 +4,14 @@ import { FaMoon } from "react-icons/fa";
 import { useLocation } from "react-router-dom";
 import useApiQuery from "../../hooks/useApiQuery";
 import { preAuditCheck } from "../../api/nightAuditApi";
-import { businessDate } from "../../variables/constants";
+import { getNightAuditData } from "../../variables/constants";
 
 const NightAuditTopBar = () => {
     const location = useLocation();
+
+    const nightAuditData = getNightAuditData();
+    
+    const businessDate = nightAuditData?.businessDate;
     
     const { data: preAuditChecksData, isLoading, error } = useApiQuery({
         fetchQueryName: "pre-audit-checks",

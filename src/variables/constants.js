@@ -296,12 +296,25 @@ export const SYSTEM_LOCK_KEY = {
   nightAudit: "night_audit",
 }
 
-const nightAuditStorage = JSON.parse(
-  localStorage.getItem("nightAudit")
-);
+export const getNightAuditData = () => {
+  const data = localStorage.getItem("nightAudit");
 
-export const businessDate =
-  nightAuditStorage?.businessDate;
+  return data ? JSON.parse(data) : null;
+};
 
-export const isLocked =
-  nightAuditStorage?.isLocked;
+export const addDays = (date, days) => {
+  if (!date) {
+    return null;
+  }
+
+  const result = new Date(date);
+
+  if (isNaN(result.getTime())) {
+    return null;
+  }
+
+  result.setDate(result.getDate() + days);
+
+  return result.toISOString().split("T")[0];
+};
+

@@ -3,7 +3,7 @@ import { Button, Card } from "antd";
 import { CircleCheck } from "lucide-react";
 import { recheckPreAudit } from "../../../api/nightAuditApi";
 import { useApiMutation } from "../../../hooks/useApiMutation";
-import { businessDate } from "../../../variables/constants";
+import { getNightAuditData } from "../../../variables/constants";
 
 const PreAuditCheckStatus = ({
     preAuditChecksData,
@@ -13,6 +13,10 @@ const PreAuditCheckStatus = ({
     const warning = preAuditChecksData?.overallStatus === "WARNING";
     const passed = preAuditChecksData?.overallStatus === "PASSED";
 
+    const nightAuditData = getNightAuditData();
+    
+    const businessDate = nightAuditData?.businessDate;
+
     const recheckPreAudits = useApiMutation({
         mutationFn: recheckPreAudit,
         invalidateKeys: [["pre-audit-checks"]],
@@ -20,7 +24,7 @@ const PreAuditCheckStatus = ({
 
     const recheckAllPreAudits = () => {
         recheckPreAudits.mutate({
-            businessDate
+            businessDate : businessDate
         })
     };
     

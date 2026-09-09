@@ -5,18 +5,22 @@ import { Spin } from "antd";
 import DailyChargeStatus from "./DailyChargeStatus";
 import CheckBookingHeader from "../CheckBookingHeader";
 import DailyChargePostingTable from "./DailyChargePostingTable";
-import { businessDate } from "../../../variables/constants";
+import { getNightAuditData } from "../../../variables/constants";
 
 const DailyChargePostingPage = ({
     stepValue,
 }) => {
     const navigate = useNavigate();
 
+    const nightAuditData = getNightAuditData();
+    
+    const businessDate = nightAuditData?.businessDate;
+
     const { data: dailyChargePostingData, dailyChargeDataLoading, dailyChargeDataError } = useApiQuery({
         fetchQueryName: "daily-charge-postings",
         fetchQueryFunction: dailyChargePosing,
         params: {
-            businessDate: businessDate
+            businessDate
         },
     });
     console.log(dailyChargePostingData,"dailyChargePostingData")

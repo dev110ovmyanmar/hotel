@@ -49,7 +49,7 @@ const CloseBusinessDateStatus = ({
                 </div>
             </div>
 
-            <div className="flex justify-end">
+            <div className="flex justify-end my-4">
                 <Button type="primary"><ReloadOutlined /> Post Charge</Button>
             </div>
         </div>
