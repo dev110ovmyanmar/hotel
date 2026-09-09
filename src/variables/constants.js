@@ -296,12 +296,35 @@ export const SYSTEM_LOCK_KEY = {
   nightAudit: "night_audit",
 }
 
-const nightAuditStorage = JSON.parse(
-  localStorage.getItem("nightAudit")
-);
+export const getNightAuditData = () => {
+  const data = localStorage.getItem("nightAudit");
 
-export const businessDate =
-  nightAuditStorage?.businessDate;
+  return data ? JSON.parse(data) : null;
+};
 
-export const isLocked =
-  nightAuditStorage?.isLocked;
+export const addDays = (date, days) => {
+  if (!date) {
+    return null;
+  }
+
+  const result = new Date(date);
+
+  if (isNaN(result.getTime())) {
+    return null;
+  }
+
+  result.setDate(result.getDate() + days);
+
+  return result.toISOString().split("T")[0];
+};
+
+export const nextStepButtonDesign = `flex justify-end items-center w-full py-1 my-2`;
+
+export const textSizeDependOnScreen = `
+    !text-base
+    sm:!text-xs
+    md:!text-xs
+    lg:!text-sm
+    xl:!text-sm
+    2xl:!text-sm
+  `;

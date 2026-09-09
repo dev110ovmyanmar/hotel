@@ -5,6 +5,7 @@ import PriceTag from "../../../component/PriceTag/PriceTag";
 import FolioAndPaymentReviewDetails from "./FolioAndPaymentReviewDetails";
 import { useState } from "react";
 import FinancialStatusTag from "../../../component/FinancialStatusTag/FinancialStatusTag";
+import { nextStepButtonDesign } from "../../../variables/constants";
 
 const FolioAndPaymentReviewTable = ({
     data,
@@ -40,7 +41,7 @@ const FolioAndPaymentReviewTable = ({
             title: "Guest Name",
             dataIndex: "guestName",
             key: "guestName",
-            width: 150,
+            // width: 150,
         },
         {
             title: "Grand Total",
@@ -87,6 +88,7 @@ const FolioAndPaymentReviewTable = ({
             title: "Has Unposted Charges",
             dataIndex: "hasUnpostedCharges",
             key: "hasUnpostedCharges",
+            width: 140,
             render: (hasUnpostedCharges) => (
                 <div
                     className={
@@ -117,26 +119,36 @@ const FolioAndPaymentReviewTable = ({
                         ? "selected-folio-row"
                         : ""
                 }
-                summary={() => (
-                    <Table.Summary fixed="bottom">
-                        <Table.Summary.Row>
-                            <Table.Summary.Cell index={0} colSpan={columns.length}>
-                                <div className="flex justify-end items-center w-full py-1">
-                                    <Button
-                                        type="primary"
-                                        onClick={colorCheckBooking}
-                                        className="flex items-center gap-1"
-                                    >
-                                        Next Step
-                                        <AiOutlineRight />
-                                    </Button>
-                                </div>
-                            </Table.Summary.Cell>
-                        </Table.Summary.Row>
-                    </Table.Summary>
-                )}
+            // summary={() => (
+            //     <Table.Summary fixed="bottom">
+            //         <Table.Summary.Row>
+            //             <Table.Summary.Cell index={0} colSpan={columns.length}>
+            //                 <div className="flex justify-end items-center w-full py-1">
+            //                     <Button
+            //                         type="primary"
+            //                         onClick={colorCheckBooking}
+            //                         className="flex items-center gap-1"
+            //                     >
+            //                         Next Step
+            //                         <AiOutlineRight />
+            //                     </Button>
+            //                 </div>
+            //             </Table.Summary.Cell>
+            //         </Table.Summary.Row>
+            //     </Table.Summary>
+            // )}
             />
 
+            <div className={nextStepButtonDesign}>
+                <Button
+                    type="primary"
+                    onClick={colorCheckBooking}
+                    className="flex items-center gap-1"
+                >
+                    Next Step
+                    <AiOutlineRight />
+                </Button>
+            </div>
 
             {drawerOpen && (
                 <FolioAndPaymentReviewDetails

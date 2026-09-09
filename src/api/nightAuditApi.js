@@ -75,3 +75,26 @@ export const folioReviewPayment = async(params) => {
     );
     return data.response;
 }
+
+export const clickCloseBusinessDate = async (params) => {
+  const { data } = await apiClient.post("/night-audit/close-business-date", params);
+  return data.response;
+};
+
+export const clickCreateNewDay = async (params) => {
+  const { data } = await apiClient.post("/night-audit/create-new-day", params);
+  return data.response;
+};
+
+export const reconciliation = async(params) => {
+    const { data } = await apiClient.get(
+        "/night-audit/reconciliation",
+        {params}
+    );
+    return data.response;
+}
+
+export const reconciliationConfirm = async (params) => {
+  const { data } = await apiClient.post("/night-audit/reconciliation/confirm", params);
+  return data.response;
+};

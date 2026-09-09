@@ -5,16 +5,23 @@ import { Spin } from "antd";
 import CloseBusinessDateStatus from "./CloseBusinessDateStatus";
 import CheckBookingHeader from "../CheckBookingHeader";
 import CloseBusinessDateTable from "./CloseBusinessDateTable";
+import { getNightAuditData } from "../../../variables/constants";
 
 const CloseBusinessDatePage = ({
     stepValue,
 }) => {
     const navigate = useNavigate();
+
+    const nightAuditData = getNightAuditData();
+
+    const businessDate = nightAuditData?.businessDate;
+
     const { data: preAuditChecksData, isLoading, error } = useApiQuery({
         fetchQueryName: "pre-audit-checks",
         fetchQueryFunction: preAuditCheck,
         params: {
-            businessDate: '2026-09-02'
+            businessDate
+
         },
     });
 
@@ -29,7 +36,7 @@ const CloseBusinessDatePage = ({
     return (
         <div className="w-full px-6 py-2">
             <CheckBookingHeader />
-            <CloseBusinessDateStatus preAuditChecksData={preAuditChecksData} />
+            {/* <CloseBusinessDateStatus preAuditChecksData={preAuditChecksData} /> */}
             <CloseBusinessDateTable
                 colorCheckBooking={() => {
                     window.dispatchEvent(
@@ -41,7 +48,7 @@ const CloseBusinessDatePage = ({
                     );
                     navigate("/night-audit/create-new-day")
                 }}
-                preAuditChecksData={preAuditChecksData?.checks}
+                preAuditChecksData={preAuditChecksData}
             />
         </div>
     )

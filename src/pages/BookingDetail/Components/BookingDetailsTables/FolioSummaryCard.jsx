@@ -44,6 +44,18 @@ const FolioSummaryCard = ({ data }) => {
         </div>
       </Row>
 
+      {
+        reservation?.paidAmount === 0 ?
+          <Row justify="space-between">
+            <Text>Deposit</Text>
+            <div className="flex  justify-end gap-1">
+              <PriceTag value={reservation?.depositAmount} />
+              <span>MMK</span>
+            </div>
+          </Row> : null
+      }
+
+
       <Row justify="space-between">
         <Text>Payment</Text>
         <div className="flex  justify-end gap-1">

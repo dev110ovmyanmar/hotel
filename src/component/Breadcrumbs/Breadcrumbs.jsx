@@ -4,10 +4,14 @@ import { Link, useLocation } from "react-router-dom";
 import StepsComponent from "../Steps/StepsComponent";
 import NightAuditTopBar from "../../pages/NightAudit/NightAuditTopBar";
 import NightAuditTopBarBeforeLock from "../../pages/NightAudit/NightAuditTopBarBeforeLock";
-import { isLocked } from "../../variables/constants";
+import { getNightAuditData } from "../../variables/constants";
 
 const Breadcrumbs = () => {
   const location = useLocation();
+
+  const nightAuditData = getNightAuditData();
+  
+  const isLocked = nightAuditData?.isLocked;
 
   if (location.pathname.includes("/night-audit") && !isLocked) {
     return (

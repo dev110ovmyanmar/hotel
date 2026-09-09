@@ -1,13 +1,8 @@
 import { CloseCircleOutlined, EditOutlined, EyeOutlined, MoreOutlined, WarningOutlined } from "@ant-design/icons";
 import { Button, Dropdown, Space, Table, Tag } from "antd";
-import { data } from "react-router-dom";
-import PriceTag from "../../../component/PriceTag/PriceTag";
 import { AiOutlineRight } from "react-icons/ai";
-import { nightAuditCheckBookings } from "../../../api/nightAuditApi";
-import useApiQuery from "../../../hooks/useApiQuery";
-import dayjs from "dayjs";
-import ColorStatusTag from "../../../component/ColorStatusTag/ColorStatusTag";
 import { CircleCheck } from "lucide-react";
+import { nextStepButtonDesign } from "../../../variables/constants";
 
 
 const PreAuditTable = ({
@@ -60,6 +55,11 @@ const PreAuditTable = ({
                     </Tag>
                 )
             }
+        },
+        {
+            title: "Description",
+            dataIndex: "description",
+            key: "description",
         },
         {
             title: "Count",
@@ -123,33 +123,43 @@ const PreAuditTable = ({
     ];
 
     return (
-        <Table
-            columns={columns}
-            dataSource={preAuditChecksData?.checks}
-            pagination={false}
-            summary={() => (
-                <Table.Summary fixed>
-                    <Table.Summary.Row>
-                        <Table.Summary.Cell index={0}></Table.Summary.Cell>
-                        <Table.Summary.Cell index={1}></Table.Summary.Cell>
-                        <Table.Summary.Cell index={2}></Table.Summary.Cell>
-                        <Table.Summary.Cell index={3}></Table.Summary.Cell>
-                        <Table.Summary.Cell index={4}>
-                            {
-                                // isNextStep &&
-                                <Button
-                                    type="primary"
-                                    onClick={colorCheckBooking}
-                                >
-                                    Next Step
-                                    <AiOutlineRight />
-                                </Button>
-                            }
-                        </Table.Summary.Cell>
-                    </Table.Summary.Row>
-                </Table.Summary>
-            )}
-        />
+        <div>
+            <Table
+                columns={columns}
+                dataSource={preAuditChecksData?.checks}
+                pagination={false}
+                // summary={() => (
+                //     <Table.Summary fixed="bottom">
+                //         <Table.Summary.Row>
+                //             <Table.Summary.Cell index={0} colSpan={columns.length}>
+                //                 <div className="flex justify-end items-center w-full py-1">
+                //                     <Button
+                //                         type="primary"
+                //                         onClick={colorCheckBooking}
+                //                         className="flex items-center gap-1"
+                //                     >
+                //                         Next Step
+                //                         <AiOutlineRight />
+                //                     </Button>
+                //                 </div>
+                //             </Table.Summary.Cell>
+                //         </Table.Summary.Row>
+                //     </Table.Summary>
+                // )}
+            />
+
+            <div className={nextStepButtonDesign}>
+                <Button
+                    type="primary"
+                    onClick={colorCheckBooking}
+                    className="flex items-center gap-1"
+                >
+                    Next Step
+                    <AiOutlineRight />
+                </Button>
+            </div>
+
+        </div>
     )
 }
 

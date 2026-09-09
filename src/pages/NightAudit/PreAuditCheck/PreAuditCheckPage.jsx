@@ -1,24 +1,30 @@
 import { useNavigate } from "react-router-dom";
-import { activeAdmins, preAuditCheck } from "../../../api/nightAuditApi";
+import { preAuditCheck } from "../../../api/nightAuditApi";
 import useApiQuery from "../../../hooks/useApiQuery";
 import { Spin } from "antd";
 import PreAuditCheckStatus from "./PreAuditCheckStatus";
 import PreAuditTable from "./PreAuditTable";
 import IssueAndWarningCard from "./IssueAndWarningCard";
 import CheckBookingHeader from "../CheckBookingHeader";
-import useInfiniteApiQuery from "../../../hooks/useInfiniteApiQuery";
-import { businessDate } from "../../../variables/constants";
+import { getNightAuditData } from "../../../variables/constants";
 
 const PreAuditCheckPage = ({
     stepValue,
 }) => {
     const navigate = useNavigate();
 
+    const nightAuditData = getNightAuditData();
+
+    const businessDate = nightAuditData?.businessDate;
+
     const { data: preAuditChecksData, isLoading, error } = useApiQuery({
         fetchQueryName: "pre-audit-checks",
         fetchQueryFunction: preAuditCheck,
         params: {
             businessDate: businessDate
+        },
+        options: {
+            enabled: !!businessDate,
         },
     });
 
@@ -47,7 +53,7 @@ const PreAuditCheckPage = ({
                 }}
                 preAuditChecksData={preAuditChecksData}
             />
-            <IssueAndWarningCard preAuditChecksData={preAuditChecksData} />
+            {/* <IssueAndWarningCard preAuditChecksData={preAuditChecksData} /> */}
         </div>
     )
 }
