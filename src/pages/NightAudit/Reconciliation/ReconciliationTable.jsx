@@ -1,156 +1,148 @@
-import { CloseCircleOutlined, EditOutlined, EyeOutlined, MoreOutlined, WarningOutlined } from "@ant-design/icons";
-import { Button, Dropdown, Space, Table, Tag } from "antd";
+import { Button, Table } from "antd";
 import { AiOutlineRight } from "react-icons/ai";
-import { CircleCheck } from "lucide-react";
+import PriceTag from "../../../component/PriceTag/PriceTag";
 
+const ReconciliationTable = ({ colorCheckBooking, data }) => {
+  const tableData = data?.folios;
 
-const ReconciliationTable = ({
-    colorCheckBooking,
-    preAuditChecksData
-}) => {
-    const columns = [
-        // {
-        //     title: "Id",
-        //     dataIndex: "id",
-        //     key: "id",
-        //     render: (text) => <div>{text}</div>
-        // },
-        {
-            title: "Name",
-            dataIndex: "name",
-            key: "name",
-        },
-        {
-            title: "Status",
-            dataIndex: "status",
-            key: "status",
-            align: "center",
-            render: (text) => {
-                const blocking = text === "BLOCKING";
-                const passed = text === "PASSED";
-                const warning = text === "WARNING"
-                console.log(text, "TextStatus")
-                return (
-                    <Tag color={blocking ? "red" : warning ? "orange" : "green"}
-                        className={
-                            `!rounded ${blocking
-                                ? "!border-red-500"
-                                : warning
-                                    ? "!border-orange-500"
-                                    : "!border-green-500"
-                            }`
-                        }>
-                        <div className="flex gap-x-2 items-center">
-                            {passed
-                                ? <CircleCheck size={15}/>
-                                : warning
-                                    ? <WarningOutlined className="!text-[15px]"/>
-                                    : <CloseCircleOutlined className="!text-[15px]"/>
-                            }
-                            <div>{text?.charAt(0).toUpperCase() + text?.slice(1).toLowerCase()}</div>
-                        </div>
-                    </Tag>
-                )
-            }
-        },
-        {
-            title: "Count",
-            dataIndex: "count",
-            key: "count",
-        },
-        // {
-        //     title: "Details",
-        //     dataIndex: "details",
-        //     key: "details",
-        //     align:"center"
-        // },
+  const columns = [
+    {
+      title: "Id",
+      dataIndex: "folioId",
+      key: "folioId",
+      render: (text) => <div>{text}</div>,
+    },
+    {
+      title: "Folio No.",
+      dataIndex: "folioNo",
+      key: "folioNo",
+    },
+    {
+      title: "Reservation No.",
+      dataIndex: "reservationNo",
+      key: "reservationNo",
+    },
+    {
+      title: "Expected Charges",
+      dataIndex: "expectedCharges",
+      key: "expectedCharges",
+      render: (value) => (
+        <div className="flex justify-end items-center gap-1">
+          <PriceTag value={value} />
+        </div>
+      ),
+      align: "end",
+    },
+    {
+      title: "Posted Charges",
+      dataIndex: "postedCharges",
+      key: "postedCharges",
+      render: (value) => (
+        <div className="flex justify-end items-center gap-1">
+          <PriceTag value={value} />
+        </div>
+      ),
+      align: "end",
+    },
+    {
+      title: "Unposted Charges",
+      dataIndex: "unpostedCharges",
+      key: "unpostedCharges",
+      render: (value) => (
+        <div className="flex justify-end items-center gap-1">
+          <PriceTag value={value} />
+        </div>
+      ),
+      align: "end",
+    },
+    {
+      title: "Expected Payment",
+      dataIndex: "expectedPayments",
+      key: "expectedPayments",
+      render: (value) => (
+        <div className="flex justify-end items-center gap-1">
+          <PriceTag value={value} />
+        </div>
+      ),
+      align: "end",
+    },
+    {
+      title: "Actual Payment",
+      dataIndex: "actualPayments",
+      key: "actualPayments",
+      render: (value) => (
+        <div className="flex justify-end items-center gap-1">
+          <PriceTag value={value} />
+        </div>
+      ),
+      align: "end",
+    },
+    {
+      title: "Folio Payment",
+      dataIndex: "folioBalance",
+      key: "folioBalance",
+      render: (value) => (
+        <div className="flex justify-end items-center gap-1">
+          <PriceTag value={value} />
+        </div>
+      ),
+      align: "end",
+    },
+    {
+      title: "Grand Total",
+      dataIndex: "folioGrandTotal",
+      key: "folioGrandTotal",
+      render: (value) => (
+        <div className="flex justify-end items-center gap-1">
+          <PriceTag value={value} />
+        </div>
+      ),
+      align: "end",
+    },
+    {
+      title: "Paid Amount",
+      dataIndex: "folioPaidAmount",
+      key: "folioPaidAmount",
+      render: (value) => (
+        <div className="flex justify-end items-center gap-1">
+          <PriceTag value={value} />
+        </div>
+      ),
+      align: "end",
+    },
+    {
+      title: "Status",
+      //   dataIndex: "status",
+      key: "status",
+      align: "center",
+    },
+  ];
 
-        {
-            title: "Action",
-            name: "action",
-            dataIndex: "action",
-            fixed: "end",
-            align: "center",
-            render: (_, record) => {
-                const smallStyle = { fontSize: "12px" };
+  return (
+    <Table
+      columns={columns}
+      dataSource={tableData}
+      pagination={false}
+      summary={() => (
+        <Table.Summary fixed>
+          <Table.Summary.Row>
+            <Table.Summary.Cell index={0} colSpan={columns.length}>
+              <div className="flex justify-end items-center w-full py-1">
+                <Button
+                  type="primary"
+                  onClick={colorCheckBooking}
+                  className="flex items-center gap-1"
+                >
+                  Next Step
+                  <AiOutlineRight />
+                </Button>
+              </div>
+            </Table.Summary.Cell>
+          </Table.Summary.Row>
+        </Table.Summary>
+      )}
+    />
+  );
+};
 
-                const actions = [
-                    {
-                        key: "view",
-                        label: "View",
-                        icon: <EyeOutlined style={{ fontSize: "12px" }} />,
-                        // permission: PERMISSIONS.ADMIN_VIEW,
-                        // onClick: () => {
-                        //     setDrawerOpen(true);
-                        //     setMode("view");
-                        //     setSelectedData(record);
-                        // },
-                    },
-                    {
-                        key: "edit",
-                        label: "Edit",
-                        icon: <EditOutlined style={{ fontSize: "12px" }} />,
-                        // permission: PERMISSIONS.ADMIN_EDIT,
-                        // onClick: () => {
-                        //     setDrawerOpen(true);
-                        //     setMode("edit");
-                        //     setSelectedData(record);
-                        // },
-                    },
-
-                ];
-
-                // Filter actions based on permission & hidden flags
-                const items = actions
-                    .filter(
-                        (action) =>
-                            (!action.permission || hasPermission(action.permission)) && !action.hidden,
-                    )
-                    .map((action) => ({
-                        key: action.key,
-                        label: (
-                            <Space size={4} style={smallStyle} onClick={action.onClick}>
-                                {action.icon}
-                                <span style={{ fontSize: "14px" }}>{action.label}</span>
-                            </Space>
-                        ),
-                    }));
-
-                return (
-                    <Dropdown menu={{ items }} trigger={["click"]}>
-                        <MoreOutlined style={{ fontSize: "16px" }} />
-                    </Dropdown>
-                );
-            },
-        },
-
-    ];
-
-    return (
-        <Table
-            columns={columns}
-            dataSource={preAuditChecksData}
-            pagination={false}
-            summary={() => (
-                <Table.Summary fixed>
-                    <Table.Summary.Row>
-                        <Table.Summary.Cell index={0}></Table.Summary.Cell>
-                        <Table.Summary.Cell index={1}></Table.Summary.Cell>
-                        <Table.Summary.Cell index={2}></Table.Summary.Cell>
-                        <Table.Summary.Cell index={3}>
-                            <Button
-                                type="primary"
-                                onClick={colorCheckBooking}
-                            >
-                                Next Step
-                                <AiOutlineRight />
-                            </Button>
-                        </Table.Summary.Cell>
-                    </Table.Summary.Row>
-                </Table.Summary>
-            )}
-        />
-    )
-}
-
-export default ReconciliationTable
+export default ReconciliationTable;

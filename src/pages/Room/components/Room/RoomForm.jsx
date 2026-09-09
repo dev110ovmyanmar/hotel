@@ -45,15 +45,38 @@ const RoomForm = ({
 
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
 
-  const statuses = initData?.statuses?.room_status?.map((status) => ({
-    value: status.uuid,
-    label: status.name,
-  }));
+  // const statuses = initData?.statuses?.room_status?.map((status) => ({
+  //   value: status.uuid,
+  //   label: status.name,
+  // }));
 
   const { data: roomMetaData } = useApiQuery({
     fetchQueryName: "roomMetaData",
     fetchQueryFunction: roomMeta,
   });
+
+  const { data, isLoading } = useApiQuery({
+    fetchQueryName: "roomData",
+    fetchQueryFunction: roomDetails,
+    params: { uuid: selectedData?.uuid },
+    options: { enabled: !!selectedData?.uuid },
+  });
+
+  const currentStatus = data?.status?.code?.toLowerCase();
+
+  const allowedStatuses = isAdd
+    ? ["available"]
+    : ["available", "out_of_order", "out_of_service"].includes(currentStatus)
+      ? ["available", "out_of_order", "out_of_service"]
+      : currentStatus === "occupied"
+        ? ["occupied"]
+        : [currentStatus];
+
+  const statuses = initData?.statuses?.room_status?.map((status) => ({
+    value: status.uuid,
+    label: status.name,
+    disabled: !allowedStatuses.includes(status.code?.toLowerCase()),
+  }));
 
   const roomType = roomMetaData?.room_types?.map((type) => ({
     value: type.uuid,
@@ -75,13 +98,6 @@ const RoomForm = ({
   const editRooms = useApiMutation({
     mutationFn: editRoom,
     invalidateKeys: [["roomData"]],
-  });
-
-  const { data, isLoading } = useApiQuery({
-    fetchQueryName: "roomData",
-    fetchQueryFunction: roomDetails,
-    params: { uuid: selectedData?.uuid },
-    options: { enabled: !!selectedData?.uuid },
   });
 
   useEffect(() => {

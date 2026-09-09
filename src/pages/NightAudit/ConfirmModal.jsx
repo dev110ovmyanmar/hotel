@@ -113,14 +113,14 @@ const ConfirmModal = ({
     };
     return (
         <Modal
-            title="Confirm Night Audit"
+            title="Start Night Audit"
             open={open}
             onCancel={() => {
                 onCancel();
                 form.resetFields()
             }}
             onOk={handleForceLogout}
-            okText="Confirm"
+            okText="Start"
             styles={stylesFn}
             classNames={tailwindcss}
             confirmLoading={systemLockMutation?.isPending}
@@ -131,10 +131,11 @@ const ConfirmModal = ({
                 <Form.Item
                     name="locking"
                     layout="vertical"
-                    label="Locking"
-                    rules={[{ required: true, message: 'Please input locking !' }]}
+                    label="Night Audit Key"
+                    rules={[{ required: true, message: 'Please enter the Night Audit Key' }]}
+                    
                 >
-                    <Input />
+                    <Input placeholder="Enter Night Audit Key"/>
                 </Form.Item>
             </Form>
             {/* Admins will remain logged in but will not be able to perform any operations while the Night Audit is in progress. Do you wish to continue? */}
@@ -142,4 +143,4 @@ const ConfirmModal = ({
     )
 }
 
-export default ConfirmModal
+export default ConfirmModal;
