@@ -26,7 +26,6 @@ import { useApiQuery } from "../../../../hooks/useApiQuery";
 import { borderDarkMode, darkModeStyle, textColorDarkMode, textWhiteInDarkStyle } from "../../../../utils";
 import Loader from "../../../../component/Loader/Loader";
 import PriceInput from "../../../../component/PriceInput/PriceInput";
-import { numberValidator } from "../../../../variables/constants";
 import PriceTag from "../../../../component/PriceTag/PriceTag";
 
 const { Title, Text } = Typography;
@@ -72,6 +71,7 @@ const AddPaymentForm = ({
     const [selectedProviderUuid, setSelectedProviderUuid] = useState("all");
     const [selectedFolioGrandTotal, setSelectedFolioGrandTotal] = useState(null);
     const [isGrandTotalZero, setIsGrandTotalZero] = useState(false);
+    const [submitting, setSubmitting] = useState(false);
 
     const selectedMethod = Form.useWatch("paymentMethod", form);
     const selectedFolioUuid = Form.useWatch("folio", form);
@@ -157,11 +157,15 @@ const AddPaymentForm = ({
         invalidateKeys: [["reservation-details"], ["folios"]],
         options: {
             onSuccess: () => {
+                setSubmitting(false);
                 onClose();
                 form.resetFields();
                 setSelectedProviderUuid("all");
                 setIsGrandTotalZero(false);
                 setSelectedFolioGrandTotal(null);
+            },
+            onError: () => {
+                setSubmitting(false);
             },
         },
     });
@@ -173,6 +177,7 @@ const AddPaymentForm = ({
             return;
         }
 
+        setSubmitting(true);
         const payload = {
             reservation: { uuid: bookingDetails?.reservation?.uuid || bookingDetails?.uuid },
             guest: { uuid: values.guest },
@@ -231,7 +236,7 @@ const AddPaymentForm = ({
                             form.submit();
                         }}
                         loading={isPending}
-                        disabled={isGrandTotalZero} // Disable Create button if grandTotal is zero
+                        disabled={submitting || isGrandTotalZero}
                     >
                         Create
                     </Button>
@@ -418,7 +423,6 @@ const AddPaymentForm = ({
                                             getValueProps={(value) => ({ value: value !== null && value !== undefined ? String(value) : "" })}
                                             rules={[
                                                 { required: true, message: "Amount required" },
-                                                { validator: numberValidator },
                                                 {
                                                     validator: (_, value) => {
                                                         if (value !== undefined && value !== null && value < 1) {

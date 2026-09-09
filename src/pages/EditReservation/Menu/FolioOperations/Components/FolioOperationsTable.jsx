@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, Divider, Dropdown, Modal, Radio, Space, Spin, Table } from "antd";
+import { Button, Divider, Dropdown, Modal, Radio, Space, Spin, Table, Tag } from "antd";
 import {
   SwapOutlined,
   InfoCircleOutlined,
@@ -31,6 +31,7 @@ import VoidDrawer from "./VoidDrawer";
 import FolioEditFormDrawer from "./FolioEditFormDrawer";
 import Toast from "../../../../../component/Toast/Toast";
 
+
 const FolioTitle = ({ rest }) => (
   <span>
     <span>Folio</span>
@@ -50,7 +51,7 @@ const SubFolioTable = ({ record, lineColumns, onMoveTo, isTransferring }) => {
   const isFolioClosed =
     record.closedAt !== null && record.closedAt !== undefined;
 
-  
+
 
   const rowSelection = {
     selectedRowKeys,
@@ -114,11 +115,10 @@ const SubFolioTable = ({ record, lineColumns, onMoveTo, isTransferring }) => {
         <Button
           onClick={() => setSelectedRowKeys([])}
           disabled={selectedRowKeys.length === 0 || isTransferring}
-          className={`rounded-lg ${
-            selectedRowKeys.length === 0 || isTransferring
+          className={`rounded-lg ${selectedRowKeys.length === 0 || isTransferring
               ? "text-gray-400"
               : "text-gray-700 dark:text-gray-300 hover:border-blue-500"
-          }`}
+            }`}
         >
           Cancel
         </Button>
@@ -127,11 +127,10 @@ const SubFolioTable = ({ record, lineColumns, onMoveTo, isTransferring }) => {
           type="primary"
           disabled={selectedRowKeys.length === 0 || isTransferring}
           onClick={() => onMoveTo(record, selectedRowKeys)}
-          className={`rounded-lg ${
-            selectedRowKeys.length === 0 || isTransferring
+          className={`rounded-lg ${selectedRowKeys.length === 0 || isTransferring
               ? "bg-gray-300 dark:bg-gray-600"
               : "bg-blue-600 hover:bg-blue-700"
-          }`}
+            }`}
         >
           Move To
         </Button>
@@ -266,7 +265,7 @@ const FolioOperationsTable = ({
         const isChildLine = !!record.parentLineId;
         const isAdjustment = record.transactionType?.code === "adjustment";
         const canAdjust = !isVoided && !isChildLine && !isAdjustment;
-        const canRebate = record?.postingType === "debit"  && !isChildLine && !isVoided;
+        const canRebate = record?.postingType === "debit" && !isChildLine && !isVoided;
 
         let tooltipTextforAdjust = "Adjust this line";
         let tooltipTextforRebate = "Rebate this line";
@@ -355,27 +354,41 @@ const FolioOperationsTable = ({
       width: 200,
     },
     {
-      title: "Owner Type",
-      key: "type",
-      render: (_, record) => record.folioOwnerType?.name || "-",
+      title: "Guest",
+      key: "guest",
+      render: (_, record) =>
+        <div className="grid grid-cols-1 gap-1">
+          <span className="text-sm text-gray-900 dark:text-gray-100">
+            {record?.guest?.fullName || '-'}
+          </span>
+          <Tag color="blue" style={{ borderRadius: "9999px" }} className="px-3 py-0.5 text-xs font-medium w-fit">
+            {record?.folioOwnerType?.name || 'Unassigned'}
+          </Tag>
+        </div>
     },
     {
       title: "Total Amount (MMK)",
-      key:"grandTotal",
+      key: "grandTotal",
       align: "right",
-      render: (_, record) => <PriceTag value={record.grandTotal || 0}/>,
+      render: (_, record) => <PriceTag value={record.grandTotal || 0} />,
     },
     {
       title: "Payment (MMK)",
       key: "paidAmount",
-      align:"right",
-      render: (_, record) => <PriceTag value={record.paidAmount || 0}/>,
+      align: "right",
+      render: (_, record) => <PriceTag value={record.paidAmount || 0} />,
     },
     {
       title: "Balance (MMK)",
       key: "balanceAmount",
-      align:"right",
-      render: (_, record) => <PriceTag value={record.balanceAmount || 0}/>,
+      align: "right",
+      render: (_, record) => <PriceTag value={record.balanceAmount || 0} />,
+    },
+    {
+      title: "Status",
+      key: "status",
+      align: "center",
+      render: (_, record) => record?.financialStatus?.name
     },
     {
       title: "Action",
@@ -479,7 +492,7 @@ const FolioOperationsTable = ({
     }
   };
 
-    const handleRebateConfirm = async (rebateData) => {
+  const handleRebateConfirm = async (rebateData) => {
     try {
       await onRebateLine(rebateData);
       Toast.success(
@@ -620,10 +633,9 @@ const FolioOperationsTable = ({
                         }
                         className={`
                           group relative flex items-center justify-between p-3 rounded-xl border transition-all duration-200 mx-2
-                          ${
-                            isClosed
-                              ? "border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50 opacity-60 cursor-not-allowed"
-                              : isSelected
+                          ${isClosed
+                            ? "border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50 opacity-60 cursor-not-allowed"
+                            : isSelected
                               ? "border-blue-500 bg-blue-50/40 dark:bg-blue-900/30 shadow-sm ring-1 ring-blue-500 cursor-pointer"
                               : "border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-700 hover:bg-gray-50/50 dark:hover:bg-gray-700/50 cursor-pointer"
                           }
@@ -639,11 +651,10 @@ const FolioOperationsTable = ({
                           )}
                           <div className="flex items-center gap-2">
                             <span
-                              className={`font-semibold text-sm ${
-                                isClosed
+                              className={`font-semibold text-sm ${isClosed
                                   ? "text-gray-400 dark:text-gray-500"
                                   : "text-gray-800 dark:text-gray-200 group-hover:text-blue-600 dark:group-hover:text-blue-400"
-                              } transition-colors ${textColorDarkMode}`}
+                                } transition-colors ${textColorDarkMode}`}
                             >
                               {folio.folioNo}
                             </span>

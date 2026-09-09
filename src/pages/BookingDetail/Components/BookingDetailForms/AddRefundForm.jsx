@@ -59,6 +59,8 @@ const AddRefundForm = ({
   const folios = reservationMetaData?.folios || [];
   const depositStatus = bookingDetails?.reservation?.depositStatus;
 
+  const [submitting, setSubmitting] = useState(false);
+
   // Track selected category filter by UUID state
   const [selectedProviderUuid, setSelectedProviderUuid] = useState("all");
 
@@ -137,14 +139,19 @@ const AddRefundForm = ({
     invalidateKeys: [["reservation-details"]],
     options: {
       onSuccess: () => {
+        setSubmitting(false);
         onClose();
         form.resetFields();
         setSelectedProviderUuid("all");
+      },
+      onError: () => {
+        setSubmitting(false);
       },
     },
   });
 
   const onFinish = (values) => {
+    setSubmitting(true);
     const payload = {
       reservation: { uuid: bookingDetails?.reservation?.uuid },
       guest: { uuid: values.guest },
@@ -174,7 +181,7 @@ const AddRefundForm = ({
               form.submit();
             }}
             loading={isPending}
-            disabled={depositStatus === false}
+            disabled={submitting || depositStatus === false}
           >
             Create
           </Button>
