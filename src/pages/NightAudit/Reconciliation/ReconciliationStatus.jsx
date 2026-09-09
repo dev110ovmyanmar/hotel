@@ -1,59 +1,137 @@
-import { CloseCircleOutlined, ReloadOutlined, SafetyOutlined, WarningOutlined } from "@ant-design/icons";
-import { Button, Card } from "antd";
-import { CircleCheck } from "lucide-react";
+// import React from "react";
+// import {
+//   CARD_CONFIGS,
+//   StatusCard,
+// } from "../../../component/NightAuditCard/ReconciliationStatusCards";
+// import { Alert, Button, Space } from "antd";
+// import { CheckCircleFilled, CheckOutlined } from "@ant-design/icons";
+// import { Text } from "lucide-react";
+
+// const ReconciliationStatus = ({ data, hasBlockingDifferences }) => {
+//   console.log(data, "data");
+//   return (
+//     <div className="mb-2">
+//       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 items-center !my-3">
+//         {CARD_CONFIGS.map((config) => (
+//           <StatusCard
+//             key={config.key}
+//             config={config}
+//             value={data?.[config.key]}
+//             currency="MMK"
+//           />
+//         ))}
+//       </div>
+
+//       <Alert
+//         type="success"
+//         showIcon
+//         icon={<CheckCircleFilled style={{ color: "#52c41a" }} />}
+//         message="All folios are balanced. No blocking differences found."
+//         action={
+//           <Space size={16}>
+//             <Space size={4}>
+//               <CheckCircleFilled style={{ color: "#52c41a" }} />
+//               <p style={{ color: "#274916" }}>Can Confirm</p>
+//             </Space>
+//             <Button type="primary" icon={<CheckOutlined />}>
+//               Confirm Reconciliation
+//             </Button>
+//           </Space>
+//         }
+//         style={{ alignItems: "center" }}
+//       />
+//     </div>
+//   );
+// };
+
+// export default ReconciliationStatus;
+
+import React from "react";
+import {
+  CARD_CONFIGS,
+  StatusCard,
+} from "../../../component/NightAuditCard/ReconciliationStatusCards";
+import { Alert, Button, Space, Typography } from "antd";
+import {
+  CheckCircleFilled,
+  CheckOutlined,
+  CloseCircleFilled,
+  WarningOutlined,
+} from "@ant-design/icons";
+
+const { Text } = Typography;
 
 const ReconciliationStatus = ({
-    preAuditChecksData,
-    preNightAudit
+  data,
+  hasBlockingDifferences,
 }) => {
-    const cardDesign = `!w-full !max-w-[500px] !shadow-md !m-0 !p-0 `;
-    const warning = preAuditChecksData?.overallStatus === "WARNING";
-    const passed = preAuditChecksData?.overallStatus === "PASSED";
-    return (
-        <div>
-            <div>
-                <div className="items-center grid lg:grid-cols-3 md:grid-cols-2 gap-x-10 !my-3">
+  console.log(data, "data");
 
-                    <Card className={`!bg-[#F6FFED] !text-[#389E0D] !border-[#B7EB8F] ${cardDesign}`}>
-                        <div>
-                            <div>Total</div>
-                            <div className="flex justify-between items-center">
-                                <div>{preAuditChecksData?.summary?.total}</div>
-                                <div>{preAuditChecksData?.summary?.totalAmount}</div>
-                                <CircleCheck />
-                            </div>
-                        </div>
-                    </Card>
+  const isBalanced = hasBlockingDifferences === false;
 
-                    <Card className={`!bg-[#FFF4F1] !text-[#FF7800] !border-[#FFBD9F] ${cardDesign}`}>
-                        <div>
-                            <div>Posted</div>
-                            <div className="flex justify-between items-center">
-                                <div>{preAuditChecksData?.summary?.posted}</div>
-                                <div>{preAuditChecksData?.summary?.postedAmount}</div>
-                                <WarningOutlined />
-                            </div>
-                        </div>
-                    </Card>
+  return (
+    <div className="mb-2">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 items-center !my-3">
+        {CARD_CONFIGS.map((config) => (
+          <StatusCard
+            key={config.key}
+            config={config}
+            value={data?.[config.key]}
+            currency="MMK"
+          />
+        ))}
+      </div>
 
-                    <Card className={`!bg-[#FFF1F0] !text-[#CF1322] !border-[#FFA39E] ${cardDesign}`}>
-                        <div>
-                            <div>Unposted</div>
-                            <div className="flex justify-between items-center">
-                                <div>{preAuditChecksData?.summary?.unposted}</div>
-                                <div>{preAuditChecksData?.summary?.unpostedAmount}</div>
-                                <CloseCircleOutlined />
-                            </div>
-                        </div>
-                    </Card>
-                </div>
-            </div>
+      <Alert
+        type={isBalanced ? "success" : "error"}
+        showIcon
+        icon={
+          isBalanced ? (
+            <CheckCircleFilled style={{ color: "#52c41a" }} />
+          ) : (
+            <CloseCircleFilled style={{ color: "#ff4d4f" }} />
+          )
+        }
+        message={
+          isBalanced
+            ? "Reconciliation is balanced. No blocking differences found."
+            : "Reconciliation cannot be confirmed. Blocking differences were found."
+        }
+        action={
+          <Space size={16}>
+            <Space size={4}>
+              {isBalanced ? (
+                <>
+                  <CheckCircleFilled style={{ color: "#52c41a" }} />
+                  <Text style={{ color: "#274916" }}>Can Confirm</Text>
+                </>
+              ) : (
+                <>
+                  <WarningOutlined style={{ color: "#ff4d4f" }} />
+                  <Text style={{ color: "#a8071a" }}>Cannot Confirm</Text>
+                </>
+              )}
+            </Space>
 
-            <div className="flex justify-end">
-                <Button type="primary"><ReloadOutlined /> Post Charge</Button>
-            </div>
-        </div>
-    )
-}
+            <Button
+              type="primary"
+              danger={!isBalanced}
+              disabled={!isBalanced}
+              icon={
+                isBalanced ? <CheckOutlined /> : <WarningOutlined />
+              }
+            >
+              {isBalanced
+                ? "Confirm Reconciliation"
+                : "Resolve Differences"}
+            </Button>
+          </Space>
+        }
+        style={{ alignItems: "center" }}
+      />
+    </div>
+  );
+};
 
 export default ReconciliationStatus;
+
