@@ -40,7 +40,7 @@ const FolioAndPaymentReviewTable = ({
             title: "Guest Name",
             dataIndex: "guestName",
             key: "guestName",
-            width: 150,
+            // width: 150,
         },
         {
             title: "Grand Total",
@@ -87,6 +87,7 @@ const FolioAndPaymentReviewTable = ({
             title: "Has Unposted Charges",
             dataIndex: "hasUnpostedCharges",
             key: "hasUnpostedCharges",
+            width:140,
             render: (hasUnpostedCharges) => (
                 <div
                     className={
