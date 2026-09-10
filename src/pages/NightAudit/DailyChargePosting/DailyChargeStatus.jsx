@@ -15,8 +15,6 @@ const DailyChargeStatus = ({
 
     const dailyChargeDisabled = dailyChargePostingData?.charges.length <= 0;
     const cardDesign = `!w-full !max-w-[500px] !shadow-md !m-0 !p-0 !border-l-0 !border-r-0`;
-    const warning = dailyChargePostingData?.overallStatus === "WARNING";
-    const passed = dailyChargePostingData?.overallStatus === "PASSED";
 
     const nightAuditData = getNightAuditData();
 
@@ -61,7 +59,7 @@ const DailyChargeStatus = ({
                         </div>
                     </Card>
 
-                    <Card className={`!bg-[#F6FFED] !text-[#389E0D] !border-[#B7EB8F] ${cardDesign}`}>
+                    <Card className={`!border-gray-300 ${cardDesign}`}>
                         <div className="w-full max-w-md mx-auto text-center">
                             <div className="flex justify-between items-center gap-4">
                                 <span className="shrink-0">Total</span>

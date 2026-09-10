@@ -4,6 +4,7 @@ import RoomChargeTable from "../RoomChargeTable";
 import { preAuditCheck } from "../../../api/nightAuditApi";
 import useApiQuery from "../../../hooks/useApiQuery";
 import { Spin } from "antd";
+import { spinLoadingCenter } from "../../../variables/constants";
 
 const RoomChargeTablePage = ({
     stepValue
@@ -19,7 +20,7 @@ const RoomChargeTablePage = ({
 
     if (!preAuditChecksData) {
         return (
-            <div className="!flex !items-center !justify-center">
+            <div className={spinLoadingCenter}>
                 <Spin/>
             </div>
         )

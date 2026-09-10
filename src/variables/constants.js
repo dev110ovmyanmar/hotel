@@ -328,3 +328,5 @@ export const textSizeDependOnScreen = `
     xl:!text-sm
     2xl:!text-sm
   `;
+
+export const spinLoadingCenter = "!flex !items-center !justify-center !h-screen";
