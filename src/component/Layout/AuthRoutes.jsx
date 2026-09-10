@@ -938,7 +938,7 @@ export const authRoutes = [
   },
   {
     key: 14,
-    id: "/hr-management",
+    id: "/hR-management",
     label: "HR Management",
     isPrivate: false,
     icon: <GrUserSettings style={{ fontSize: "20px" }} />,
@@ -964,7 +964,7 @@ export const authRoutes = [
   },
   {
     key: 15,
-    id: "/manage-access",
+    id: "/access-control",
     label: "Manage Access",
     isPrivate: false,
     icon: <SafetyOutlined style={{ fontSize: "20px" }} />,
