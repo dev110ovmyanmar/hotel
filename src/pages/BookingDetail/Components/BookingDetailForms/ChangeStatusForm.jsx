@@ -134,77 +134,86 @@ const ChangeStatusForm = ({ reservationDetails, open, onClose }) => {
     );
   }, [selectedStatusUuid, reservationStatuses]);
 
-  // const roomOptions = useMemo(() => {
-  //   if (!data?.data || !currentActiveStatus) return [];
+//   const roomOptions = useMemo(() => {
+//   if (!data?.data || !currentActiveStatus) return [];
 
-  //   const roomsArray = Array.isArray(data.data) ? data.data : [data.data];
+//   const roomsArray = Array.isArray(data.data) ? data.data : [data.data];
 
-  //   const statusColorMap = {
-  //     booked: "text-[#0958D9] bg-[#E6F4FF] text-xs p-1 rounded ",
-  //     confirmed: "text-[#389E0D] bg-[#F6FFED] text-xs p-1 rounded",
-  //     checked_in: "text-[#08979C] bg-[#E6FFFB] text-xs p-1 rounded",
-  //   };
+//   return roomsArray
+//     .filter((roomItem) => {
+//       const allowableStatuses = Array.isArray(roomItem?.checkStatus)
+//         ? roomItem.checkStatus.map((s) => String(s).toLowerCase())
+//         : [];
 
-  //   return roomsArray
-  //     .filter((roomItem) => {
-  //       const allowableStatuses = Array.isArray(roomItem?.checkStatus)
-  //         ? roomItem.checkStatus.map((s) => String(s).toLowerCase())
-  //         : [];
+//       return allowableStatuses.includes(currentActiveStatus.code);
+//     })
+//     .map((roomItem) => {
+//       const checkIn = roomItem?.checkinDate
+//         ? dayjs(roomItem.checkinDate).format("YYYY-MM-DD")
+//         : "";
 
-  //       return allowableStatuses.includes(currentActiveStatus.code);
-  //     })
-  //     .map((roomItem) => {
-  //       const checkIn = roomItem?.checkinDate
-  //         ? dayjs(roomItem.checkinDate).format("YYYY-MM-DD")
-  //         : "";
-  //       const checkOut = roomItem?.checkoutDate
-  //         ? dayjs(roomItem.checkoutDate).format("YYYY-MM-DD")
-  //         : "";
+//       const checkOut = roomItem?.checkoutDate
+//         ? dayjs(roomItem.checkoutDate).format("YYYY-MM-DD")
+//         : "";
 
-  //       const roomNo = roomItem?.room?.roomNo || roomItem?.roomNo;
-  //       const roomTypeName = roomItem?.roomType?.name || "Standard Room";
-  //       const roomStatus = roomItem?.roomStatus?.name || "";
-  //       const statusCode = roomStatus.toLowerCase().replace(/\s+/g, "_");
-  //       const statusColorClass =
-  //         statusColorMap[statusCode] ||
-  //         "text-gray-600 bg-gray-100 text-xs p-1 rounded";
+//       const roomNo = roomItem?.room?.roomNo || roomItem?.roomNo;
+//       const roomTypeName =
+//         roomItem?.roomType?.name || "Standard Room";
 
-  //       const isCheckedInStatusSelected =
-  //         currentActiveStatus.code === "checked_in";
-  //       const isRoomNull = !roomNo;
-  //       const isDisabledRoom = isCheckedInStatusSelected && isRoomNull;
+//       const roomStatus = roomItem?.roomStatus || null;
 
-  //       return {
-  //         label: (
-  //           <div
-  //             className={`flex flex-col line-height-tight py-0.5 ${isDisabledRoom ? "opacity-50" : ""}`}
-  //           >
-  //             <span className={`font-medium text-slate-800 ${textColorDarkMode}`}>
-  //               {roomNo ? `${roomNo} - ` : ""}
-  //               {roomTypeName}{" "}
-  //               {roomStatus && (
-  //                 <span className={statusColorClass}>{roomStatus}</span>
-  //               )}
-  //               {isDisabledRoom && (
-  //                 <span className="text-red-500 bg-red-50 text-xs p-1 rounded ml-2 font-normal">
-  //                   Assign room first
-  //                 </span>
-  //               )}
-  //             </span>
-  //             {checkIn && checkOut && (
-  //               <span className={`text-xs text-slate-500 ${textWhiteInDarkStyle}`}>
-  //                 ({checkIn} - {checkOut})
-  //               </span>
-  //             )}
-  //           </div>
-  //         ),
-  //         value: roomItem?.id,
-  //         disabled: isDisabledRoom,
-  //       };
-  //     });
-  // }, [data, currentActiveStatus]);
+//       const isCheckedInStatusSelected =
+//         currentActiveStatus.code === "checked_in";
 
-  const roomOptions = useMemo(() => {
+//       const isRoomNull = !roomNo;
+
+//       const isDisabledRoom =
+//         isCheckedInStatusSelected && isRoomNull;
+
+//       return {
+//         label: (
+//           <div
+//             className={`flex flex-col line-height-tight py-0.5 ${
+//               isDisabledRoom ? "opacity-50" : ""
+//             }`}
+//           >
+//             <span
+//               className={`font-medium text-slate-800 ${textColorDarkMode}`}
+//             >
+//               {roomNo ? `${roomNo} - ` : ""}
+//               {roomTypeName}
+
+//               {/* ONLY STATUS DESIGN CHANGED */}
+//               {roomStatus && (
+//                 <span className="ml-2 inline-flex align-middle">
+//                   <ReservationStatusColor status={roomStatus} />
+//                 </span>
+//               )}
+
+//               {isDisabledRoom && (
+//                 <span className="text-red-500 bg-red-50 text-xs p-1 rounded ml-2 font-normal">
+//                   Assign room first
+//                 </span>
+//               )}
+//             </span>
+
+//             {checkIn && checkOut && (
+//               <span
+//                 className={`text-xs text-slate-500 ${textWhiteInDarkStyle}`}
+//               >
+//                 ({checkIn} - {checkOut})
+//               </span>
+//             )}
+//           </div>
+//         ),
+
+//         value: roomItem?.id,
+//         disabled: isDisabledRoom,
+//       };
+//     });
+// }, [data, currentActiveStatus]);
+
+const roomOptions = useMemo(() => {
   if (!data?.data || !currentActiveStatus) return [];
 
   const roomsArray = Array.isArray(data.data) ? data.data : [data.data];
@@ -227,18 +236,30 @@ const ChangeStatusForm = ({ reservationDetails, open, onClose }) => {
         : "";
 
       const roomNo = roomItem?.room?.roomNo || roomItem?.roomNo;
-      const roomTypeName =
-        roomItem?.roomType?.name || "Standard Room";
-
+      const roomTypeName = roomItem?.roomType?.name || "Standard Room";
       const roomStatus = roomItem?.roomStatus || null;
 
       const isCheckedInStatusSelected =
         currentActiveStatus.code === "checked_in";
 
+      const isCheckedOutStatusSelected =
+        currentActiveStatus.code === "checked_out";
+
       const isRoomNull = !roomNo;
 
-      const isDisabledRoom =
+      // Disable checked-in rooms when no room has been assigned
+      const isAssignRoomDisabled =
         isCheckedInStatusSelected && isRoomNull;
+
+      const isSameDayCheckIn =
+        !!roomItem?.checkinDate &&
+        dayjs(roomItem.checkinDate).isSame(dayjs(), "day");
+
+      const isAtLeastOneStayDisabled =
+        isCheckedOutStatusSelected && isSameDayCheckIn;
+
+      const isDisabledRoom =
+        isAssignRoomDisabled || isAtLeastOneStayDisabled;
 
       return {
         label: (
@@ -253,16 +274,21 @@ const ChangeStatusForm = ({ reservationDetails, open, onClose }) => {
               {roomNo ? `${roomNo} - ` : ""}
               {roomTypeName}
 
-              {/* ONLY STATUS DESIGN CHANGED */}
               {roomStatus && (
                 <span className="ml-2 inline-flex align-middle">
                   <ReservationStatusColor status={roomStatus} />
                 </span>
               )}
 
-              {isDisabledRoom && (
+              {isAssignRoomDisabled && (
                 <span className="text-red-500 bg-red-50 text-xs p-1 rounded ml-2 font-normal">
                   Assign room first
+                </span>
+              )}
+
+              {isAtLeastOneStayDisabled && (
+                <span className="text-red-500 bg-red-50 text-xs p-1 rounded ml-2 font-normal">
+                  At least one stay
                 </span>
               )}
             </span>
@@ -282,6 +308,7 @@ const ChangeStatusForm = ({ reservationDetails, open, onClose }) => {
       };
     });
 }, [data, currentActiveStatus]);
+
 
   const enabledRoomOptions = useMemo(
     () => roomOptions.filter((o) => !o.disabled),
