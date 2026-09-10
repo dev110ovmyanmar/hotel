@@ -36,6 +36,11 @@ const FolioAndPaymentReviewTable = ({
             title: "Res No.",
             dataIndex: "reservationNo",
             key: "reservationNo",
+            render: (_, record) => (
+                <span className="font-medium text-indigo-800">
+                    {record?.reservationNo || "-"}
+                </span> 
+            ),
         },
         {
             title: "Guest Name",
@@ -109,6 +114,7 @@ const FolioAndPaymentReviewTable = ({
                 columns={columns}
                 dataSource={tableData}
                 pagination={false}
+                scroll={{ x: 1000 }}
                 rowKey="folioId"
                 onRow={(record) => ({
                     onClick: () => handleView(record),

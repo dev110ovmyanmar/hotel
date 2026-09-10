@@ -11,8 +11,8 @@ const FolioAndPaymentReviewStatus = ({ data }) => {
     (acc, folio) => {
       const status = folio?.financialStatus?.trim()?.toLowerCase();
 
-      if (status === "fully paid") {
-        acc.fullyPaid += 1;
+      if (status === "paid") {
+        acc.paid += 1;
       } else if (status === "partially paid") {
         acc.partiallyPaid += 1;
       } else if (status === "unpaid") {
@@ -20,10 +20,10 @@ const FolioAndPaymentReviewStatus = ({ data }) => {
       }
       return acc;
     },
-    { fullyPaid: 0, partiallyPaid: 0, unpaid: 0 },
+    { paid: 0, partiallyPaid: 0, unpaid: 0 },
   );
 
-  const cardDesign = `!w-full !max-w-[500px] !shadow-md !m-0 !p-0 `;
+  const cardDesign = `!w-full !h-full !shadow-md !m-0 !p-0 `;
   const total = data?.totalFolios || data?.folios?.length || 0;
 
   return (
@@ -33,7 +33,7 @@ const FolioAndPaymentReviewStatus = ({ data }) => {
           {/* Total Card */}
           <Card
             className={`!bg-[#E6F4FF] !border-none !rounded-lg ${cardDesign}`}
-            styles={{ body: { paddingTop: "10px", paddingLeft: "6px" } }}
+            styles={{ body: { padding: "10px 6px" } }}
           >
             <div className="flex items-center p-3">
               {/* Icon Container */}
@@ -61,8 +61,7 @@ const FolioAndPaymentReviewStatus = ({ data }) => {
           {/* Fully Paid Card */}
           <Card
             className={`!bg-[#F6FFED] !border-none !rounded-lg ${cardDesign}`}
-            styles={{ body: { paddingTop: "10px", paddingLeft: "6px" } }}
-          >
+            styles={{ body: { padding: "10px 6px" } }}          >
             <div className="flex items-center p-3">
               {/* Icon Container */}
               <div className="flex items-center justify-center w-10 h-10 rounded-full bg-[#D9F7BE] shrink-0">
@@ -79,7 +78,7 @@ const FolioAndPaymentReviewStatus = ({ data }) => {
 
                 <div className="text-base font-bold text-[#389E0D]">
                   <div className="flex gap-1 text-xl font-semibold ml-3">
-                    {folioCounts.fullyPaid}
+                    {folioCounts.paid}
                   </div>
                 </div>
               </div>
@@ -89,8 +88,7 @@ const FolioAndPaymentReviewStatus = ({ data }) => {
           {/* Partially Paid Card */}
           <Card
             className={`!bg-[#FFFBE6] !border-none !rounded-lg ${cardDesign}`}
-            styles={{ body: { paddingTop: "10px", paddingLeft: "6px" } }}
-          >
+            styles={{ body: { padding: "10px 6px" } }}          >
             <div className="flex items-center p-3">
               {/* Icon Container */}
               <div className="flex items-center justify-center w-10 h-10 rounded-full bg-[#FFE58F] shrink-0">
@@ -117,8 +115,7 @@ const FolioAndPaymentReviewStatus = ({ data }) => {
           {/* Unpaid Card */}
           <Card
             className={`!bg-[#FFF0F6] !border-none !rounded-lg ${cardDesign}`}
-            styles={{ body: { paddingTop: "10px", paddingLeft: "6px" } }}
-          >
+            styles={{ body: { padding: "10px 6px" } }}          >
             <div className="flex items-center p-3">
               {/* Icon Container */}
               <div className="flex items-center justify-center w-10 h-10 rounded-full bg-[#FFD6E7] shrink-0">
