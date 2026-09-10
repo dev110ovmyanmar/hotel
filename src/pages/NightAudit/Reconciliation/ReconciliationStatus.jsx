@@ -54,7 +54,9 @@ const ReconciliationStatus = ({
               {isBalanced ? (
                 <>
                   <CheckCircleFilled style={{ color: "#52c41a" }} />
-                  <Text style={{ color: "#274916" }}>Can Confirm</Text>
+                  <Text className="text-[#274916] dark:text-[#A8D58D]">
+                    Can Confirm
+                  </Text>
                 </>
               ) : (
                 <>

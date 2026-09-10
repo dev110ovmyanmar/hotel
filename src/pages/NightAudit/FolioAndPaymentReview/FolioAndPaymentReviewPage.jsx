@@ -16,7 +16,7 @@ const FolioAndPaymentReviewPage = () => {
 
     const {
         data: folioData,
-        isLoading: folioLoading,
+        isFetching: folioLoading,
     } = useApiQuery({
         fetchQueryName: "folio-review",
         fetchQueryFunction: folioReview,

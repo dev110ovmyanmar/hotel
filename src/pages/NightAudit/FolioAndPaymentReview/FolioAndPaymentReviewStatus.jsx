@@ -64,7 +64,7 @@ const FolioAndPaymentReviewStatus = ({ data }) => {
             styles={{ body: { padding: "10px 6px" } }}          >
             <div className="flex items-center p-3">
               {/* Icon Container */}
-              <div className="flex items-center justify-center w-10 h-10 rounded-full bg-[#D9F7BE] shrink-0">
+              <div className="flex items-center justify-center w-10 h-10 rounded-full bg-[#B7EB8F] shrink-0">
                 <div className="flex items-center justify-center w-8 h-8 rounded-full bg-[#F6FFED]">
                   <CheckCircleOutlined className="!text-[#389E0D] !text-lg" />
                 </div>
@@ -72,7 +72,7 @@ const FolioAndPaymentReviewStatus = ({ data }) => {
 
               {/* Content Container */}
               <div className="ml-3 flex-1">
-                <div className="text-xs font-medium text-[#135200] mb-1 ml-3">
+                <div className="text-xs font-medium text-[#389E0D] mb-1 ml-3">
                   Fully Paid
                 </div>
 
@@ -87,23 +87,24 @@ const FolioAndPaymentReviewStatus = ({ data }) => {
 
           {/* Partially Paid Card */}
           <Card
-            className={`!bg-[#FFFBE6] !border-none !rounded-lg ${cardDesign}`}
-            styles={{ body: { padding: "10px 6px" } }}          >
+            className={`!bg-[#FFF4F1]  !rounded-lg ${cardDesign}`}
+            styles={{ body: { padding: "10px 6px" } }}
+          >
             <div className="flex items-center p-3">
               {/* Icon Container */}
-              <div className="flex items-center justify-center w-10 h-10 rounded-full bg-[#FFE58F] shrink-0">
-                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-[#FFFBE6]">
-                  <PieChartOutlined className="!text-[#D48806] !text-lg" />
+              <div className="flex items-center justify-center w-10 h-10 rounded-full bg-[#FFBD9F] shrink-0">
+                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-[#FFF4F1]">
+                  <PieChartOutlined className="!text-[#FF7800] !text-lg" />
                 </div>
               </div>
 
               {/* Content Container */}
               <div className="ml-3 flex-1">
-                <div className="text-xs font-medium text-[#874D00] mb-1 ml-3">
+                <div className="text-xs font-medium text-[#FF7800] mb-1 ml-3">
                   Partially Paid
                 </div>
 
-                <div className="text-base font-bold text-[#D48806]">
+                <div className="text-base font-bold text-[#FF7800]">
                   <div className="flex gap-1 text-xl font-semibold ml-3">
                     {folioCounts.partiallyPaid}
                   </div>
@@ -112,25 +113,27 @@ const FolioAndPaymentReviewStatus = ({ data }) => {
             </div>
           </Card>
 
+
           {/* Unpaid Card */}
           <Card
-            className={`!bg-[#FFF0F6] !border-none !rounded-lg ${cardDesign}`}
-            styles={{ body: { padding: "10px 6px" } }}          >
+            className={`!bg-[#FDFFE0] !rounded-lg ${cardDesign}`}
+            styles={{ body: { padding: "10px 6px" } }}
+          >
             <div className="flex items-center p-3">
               {/* Icon Container */}
-              <div className="flex items-center justify-center w-10 h-10 rounded-full bg-[#FFD6E7] shrink-0">
-                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-[#FFF0F6]">
-                  <ExclamationCircleOutlined className="!text-[#C41D7F] !text-lg" />
+              <div className="flex items-center justify-center w-10 h-10 rounded-full bg-[#FFF8B3] shrink-0">
+                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-[#FDFFE0]">
+                  <ExclamationCircleOutlined className="!text-[#D4A106] !text-lg" />
                 </div>
               </div>
 
               {/* Content Container */}
               <div className="ml-3 flex-1">
-                <div className="text-xs font-medium text-[#780650] mb-1 ml-3">
+                <div className="text-xs font-medium text-[#D4A106] mb-1 ml-3">
                   Unpaid
                 </div>
 
-                <div className="text-base font-bold text-[#C41D7F]">
+                <div className="text-base font-bold text-[#D4A106]">
                   <div className="flex gap-1 text-xl font-semibold ml-3">
                     {folioCounts.unpaid}
                   </div>
@@ -138,6 +141,7 @@ const FolioAndPaymentReviewStatus = ({ data }) => {
               </div>
             </div>
           </Card>
+
         </div>
       </div>
     </div>

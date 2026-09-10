@@ -2,13 +2,17 @@ import React from "react";
 
 const FINANCIAL_STATUS_STYLES = {
   unpaid:
-    "bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-950/40 dark:text-rose-300 dark:border-rose-900/50",
+    "bg-[#FDFFE0] text-[#D4A106] border-[#F4E34F]",
   "partially paid":
-    "bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-900/50",
-  partially_paid:
-    "bg-amber-50 text-amber-400 border-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-900/50",
+    "bg-[#FFF4F1] text-[#FF7800] border-[#FFBD9F]",
   paid:
-    "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-900/50",
+    "bg-[#F6FFED] text-[#389E0D] border-[#B7EB8F]",
+  overdue:
+    "bg-[#FFF1F0] text-[#CF1322] border-[#FFA39E]",
+  refunded:
+    "bg-[#E6F4FF] text-[#0958D9] border-[#91CAFF]",
+  "written off":
+    "bg-[#F5F5F5] text-[#333333] border-[#D9D9D9]",
 };
 
 const DEFAULT_STATUS_STYLE =
@@ -20,7 +24,7 @@ const FinancialStatusTag = ({ status, className = "" }) => {
 
   return (
     <span
-      className={`inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-semibold border ${matchedStyle} ${className}`}
+      className={`inline-flex items-center px-2.5 py-0.5 rounded-md text-xs border ${matchedStyle} ${className}`}
     >
       {status || "N/A"}
     </span>
