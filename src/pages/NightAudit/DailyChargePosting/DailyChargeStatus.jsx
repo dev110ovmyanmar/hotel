@@ -15,8 +15,6 @@ const DailyChargeStatus = ({
 
     const dailyChargeDisabled = dailyChargePostingData?.charges.length <= 0;
     const cardDesign = `!w-full !max-w-[500px] !shadow-md !m-0 !p-0 !border-l-0 !border-r-0`;
-    const warning = dailyChargePostingData?.overallStatus === "WARNING";
-    const passed = dailyChargePostingData?.overallStatus === "PASSED";
 
     const nightAuditData = getNightAuditData();
 
