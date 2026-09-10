@@ -5,9 +5,14 @@ import { Spin } from "antd";
 import FolioAndPaymentReviewStatus from "./FolioAndPaymentReviewStatus";
 import CheckBookingHeader from "../CheckBookingHeader";
 import FolioAndPaymentReviewTable from "./FolioAndPaymentReviewTable";
+import { getNightAuditData } from "../../../variables/constants";
 
-const FolioAndPaymentReviewPage = ()  => {
+const FolioAndPaymentReviewPage = () => {
     const navigate = useNavigate();
+    
+    const nightAuditData = getNightAuditData();
+
+    const businessDate = nightAuditData?.businessDate;
 
     const {
         data: folioData,
@@ -16,7 +21,7 @@ const FolioAndPaymentReviewPage = ()  => {
         fetchQueryName: "folio-review",
         fetchQueryFunction: folioReview,
         params: {
-            businessDate: "2026-09-02",
+            businessDate
         },
     });
 
