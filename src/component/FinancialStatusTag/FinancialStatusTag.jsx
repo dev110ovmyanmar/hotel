@@ -7,7 +7,7 @@ const FINANCIAL_STATUS_STYLES = {
     "bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-900/50",
   partially_paid:
     "bg-amber-50 text-amber-400 border-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-900/50",
-  fully_paid:
+  paid:
     "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-900/50",
 };
 
