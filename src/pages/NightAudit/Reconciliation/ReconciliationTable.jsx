@@ -24,7 +24,7 @@ const ReconciliationTable = ({ colorCheckBooking, data }) => {
       width: 180,
       render: (_, record) => (
         <div className="flex flex-col leading-tight">
-          <span className="font-medium text-indigo-800">
+          <span className="font-medium text-indigo-700 dark:text-indigo-500">
             {record?.reservationNo || "-"}
           </span>
 

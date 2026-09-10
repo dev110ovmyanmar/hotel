@@ -167,14 +167,14 @@ const FolioAndPaymentReviewDetails = ({ open, onClose, data }) => {
             <div className="grid grid-cols-2 border border-slate-200 dark:border-slate-800 rounded-lg bg-slate-50 dark:bg-slate-900/50 mt-3 p-3 divide-x divide-slate-200 dark:divide-slate-800">
               <div className="pr-3">
                 <p className="text-[11px] font-medium text-slate-500 dark:text-slate-400">Total Payments</p>
-                <p className="text-xs font-bold text-slate-900 dark:text-slate-100 mt-1">
+                <p className="text-lg font-bold text-slate-900 dark:text-slate-100 mt-1">
                   {folio?.totalPayments}
                 </p>
               </div>
 
               <div className="pl-3">
                 <p className="text-[11px] font-medium text-slate-500 dark:text-slate-400">Financial Status</p>
-                <div className="text-xs font-bold text-slate-900 dark:text-slate-100 mt-1">
+                <div className="text-xs text-slate-900 dark:text-slate-100 mt-1">
                   <FinancialStatusTag status={folio?.financialStatus} />
                 </div>
               </div>

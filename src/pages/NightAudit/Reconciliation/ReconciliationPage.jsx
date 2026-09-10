@@ -14,7 +14,7 @@ const ReconciliationPage = ({ stepValue }) => {
 
   const businessDate = nightAuditData?.businessDate;
 
-  const { data, isLoading } = useApiQuery({
+  const { data, isFetching } = useApiQuery({
     fetchQueryName: "folio-review",
     fetchQueryFunction: reconciliation,
     params: {
@@ -22,7 +22,7 @@ const ReconciliationPage = ({ stepValue }) => {
     },
   });
 
-  if (isLoading) {
+  if (isFetching) {
     return (
       <div className="flex items-center justify-center">
         <Spin />
