@@ -10,6 +10,7 @@ const ConfirmModal = ({
     onCancel,
     activeAdminDatas
 }) => {
+    console.log(activeAdminDatas?.pages[0]?.nightAudit?.targetBusinessDate, "activeAdminDatasINConfrimMOdal")
     const [form] = Form.useForm();
     const navigate = useNavigate();
 
@@ -39,13 +40,11 @@ const ConfirmModal = ({
     }
 
     const nightAuditStorage = {
-        // isLocked: activeAdminDatas?.pages[0]?.systemLock?.isLocked,
-        // businessDate: activeAdminDatas?.pages[0]?.nightAudit?.targetBusinessDate,
-
-        isLocked: activeAdminDatas?.systemLock?.isLocked,
-        businessDate: activeAdminDatas?.nightAudit?.targetBusinessDate,
+        isLocked: activeAdminDatas?.pages[0]?.systemLock?.isLocked,
+        businessDate: activeAdminDatas?.pages[0]?.nightAudit?.targetBusinessDate,
+        checkStatus : activeAdminDatas?.pages[0]?.nightAudit?.status
     };
-
+    
     const systemLockMutation = useApiMutation({
         mutationFn: systemLock,
         shouldInvalidate: false,
@@ -86,7 +85,7 @@ const ConfirmModal = ({
         catch (error) {
             console.log("Validationfailed:", error);
         }
-
+        
     };
 
     const handleForceLogoutToNavigate = () => {
@@ -134,9 +133,9 @@ const ConfirmModal = ({
                     layout="vertical"
                     label="Night Audit Key"
                     rules={[{ required: true, message: 'Please enter the Night Audit Key' }]}
-
+                    
                 >
-                    <Input placeholder="Enter Night Audit Key" />
+                    <Input placeholder="Enter Night Audit Key"/>
                 </Form.Item>
             </Form>
             {/* Admins will remain logged in but will not be able to perform any operations while the Night Audit is in progress. Do you wish to continue? */}

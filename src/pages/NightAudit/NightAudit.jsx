@@ -20,7 +20,7 @@ const NightAudit = () => {
 
     const {
         data: activeAdminDatas,
-        isLoading,
+        isFetching,
         isFetchingNextPage,
         fetchNextPage,
         hasNextPage,
@@ -33,6 +33,7 @@ const NightAudit = () => {
     });
 
     const isLocked = activeAdminDatas?.pages[0]?.systemLock?.isLocked;
+    // const isLocked = false;
     const businessDate = activeAdminDatas?.pages[0]?.nightAudit?.targetBusinessDate;
     const checkStatus = activeAdminDatas?.pages[0]?.nightAudit?.status;
 
@@ -50,7 +51,7 @@ const NightAudit = () => {
         }
     }, [isLocked, navigate, businessDate]);
 
-    if (!activeAdminDatas || isLoading || isLocked) {
+    if (!activeAdminDatas || isFetching || isLocked) {
         return (
             <div className={spinLoadingCenter}>
                 <Spin />
@@ -110,7 +111,7 @@ const NightAudit = () => {
 
                                             <ActiveAdmins
                                                 activeAdminDatas={activeAdminDatas}
-                                                isLoading={isLoading}
+                                                isFetching={isFetching}
                                                 isFetchingNextPage={isFetchingNextPage}
                                                 fetchNextPage={fetchNextPage}
                                                 hasNextPage={hasNextPage}
