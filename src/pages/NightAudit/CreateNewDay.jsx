@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { appSelector } from "../../services/appSlice";
 import { useApiMutation } from "../../hooks/useApiMutation";
-import { systemUnlock } from "../../api/nightAuditApi";
+import { clickCreateNewDay, systemUnlock } from "../../api/nightAuditApi";
 import Toast from "../../component/Toast/Toast";
 import { CalendarRange } from "lucide-react";
 import { addDays } from "../../variables/constants";
@@ -20,6 +20,11 @@ const CreateNewDay = ({
     const isCollapsed = collapsed && !openDrawer;
 
     const [haveNiceDay, setHaveNiceDay] = useState(false);
+
+    const createNewDayMutate = useApiMutation({
+        mutationFn: clickCreateNewDay,
+        // invalidateKeys: [["admins"]],
+    });
 
     // System Unlock Mutation
     const systemUnlockMutation = useApiMutation({
@@ -38,7 +43,10 @@ const CreateNewDay = ({
     });
 
     const handleNext = () => {
-        systemUnlockMutation.mutate();
+        createNewDayMutate.mutate({
+            businessDate : nextBusinessDate
+        })
+        // systemUnlockMutation.mutate();
         // createNewDayClick()
 
     };
@@ -98,7 +106,7 @@ const CreateNewDay = ({
                         <Button
                             type="primary"
                             onClick={handleNext}
-                            loading={systemUnlockMutation.isPending}
+                            loading={createNewDayMutate.isPending}
                             className="
                                 w-full sm:w-auto
                                 !bg-[#4F63A8]

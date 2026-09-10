@@ -19,7 +19,7 @@ const SidebarContent = ({
 
   const { hasPermission, permissions: userPermissions } = usePermission();
 
-  const { hasUnsavedForm , isSubmitted} = useSelector(createReservationSelector);
+  const { hasUnsavedForm, isSubmitted } = useSelector(createReservationSelector);
 
   const [leavePageModalOpen, setLeavePageModalOpen] = useState(false);
   const [pendingPath, setPendingPath] = useState(null);
@@ -114,12 +114,14 @@ const SidebarContent = ({
 
     return null;
   };
-
+  
   const selectedKey = isCollapsed
     ? findParentKey(menuItems, location.pathname)
-    : location.pathname.includes("/reservations")
-      ? "/reservations"
-      : location.pathname;
+    : !isCollapsed
+      ? findParentKey(menuItems, location.pathname)
+      : location.pathname.includes("/reservations")
+        ? "/reservations"
+        : location.pathname;
 
   return (
     <>

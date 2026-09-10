@@ -5,7 +5,7 @@ import { Spin } from "antd";
 import CloseBusinessDateStatus from "./CloseBusinessDateStatus";
 import CheckBookingHeader from "../CheckBookingHeader";
 import CloseBusinessDateTable from "./CloseBusinessDateTable";
-import { getNightAuditData } from "../../../variables/constants";
+import { getNightAuditData, spinLoadingCenter } from "../../../variables/constants";
 
 const CloseBusinessDatePage = ({
     stepValue,
@@ -25,9 +25,9 @@ const CloseBusinessDatePage = ({
         },
     });
 
-    if (!preAuditChecksData) {
+    if (isLoading) {
         return (
-            <div className="!flex !items-center !justify-center">
+            <div className={spinLoadingCenter}>
                 <Spin />
             </div>
         )

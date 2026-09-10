@@ -61,7 +61,7 @@ const DailyChargeStatus = ({
                         </div>
                     </Card>
 
-                    <Card className={`!bg-[#F6FFED] !text-[#389E0D] !border-[#B7EB8F] ${cardDesign}`}>
+                    <Card className={`!border-gray-300 ${cardDesign}`}>
                         <div className="w-full max-w-md mx-auto text-center">
                             <div className="flex justify-between items-center gap-4">
                                 <span className="shrink-0">Total</span>
