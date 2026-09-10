@@ -6,7 +6,7 @@ import PreAuditCheckStatus from "./PreAuditCheckStatus";
 import PreAuditTable from "./PreAuditTable";
 import IssueAndWarningCard from "./IssueAndWarningCard";
 import CheckBookingHeader from "../CheckBookingHeader";
-import { getNightAuditData } from "../../../variables/constants";
+import { getNightAuditData, spinLoadingCenter } from "../../../variables/constants";
 
 const PreAuditCheckPage = ({
     stepValue,
@@ -30,7 +30,7 @@ const PreAuditCheckPage = ({
 
     if (!preAuditChecksData) {
         return (
-            <div className="!flex !items-center !justify-center">
+            <div className={spinLoadingCenter}>
                 <Spin />
             </div>
         )

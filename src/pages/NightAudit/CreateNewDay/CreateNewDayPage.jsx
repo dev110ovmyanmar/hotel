@@ -5,8 +5,7 @@ import { Spin } from "antd";
 import CreateNewDay from "../CreateNewDay";
 import CheckBookingHeader from "../CheckBookingHeader";
 import { useState } from "react";
-import { getNightAuditData } from "../../../variables/constants";
-
+import { getNightAuditData, spinLoadingCenter } from "../../../variables/constants";
 
 const CreateNewDayPage = () => {
     const navigate = useNavigate();
@@ -25,7 +24,7 @@ const CreateNewDayPage = () => {
 
     if (!preAuditChecksData) {
         return (
-            <div className="!flex !items-center !justify-center">
+            <div className={spinLoadingCenter}>
                 <Spin />
             </div>
         )
