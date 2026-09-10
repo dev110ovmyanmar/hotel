@@ -66,15 +66,15 @@ export const CARD_CONFIGS = [
   },
 ];
 
-export const StatusCard = ({ config, value = "100,000.00", currency = "MMK" }) => {
-  const cardDesign = `!w-full !max-w-[500px] !shadow-md !m-0 !p-0`;
+export const StatusCard = ({ config, value = "0.00", currency}) => {
+  const cardDesign = `!w-full !h-full !shadow-md !m-0 !p-0`;
 
   return (
     <Card
       className={`${config.bgColor} !border-none !rounded-lg ${cardDesign}`}
-      styles={{ body: { paddingTop: "10px", paddingLeft: "6px" } }}
+      styles={{ body: { padding: "10px 6px",height: "100%", } }}
     >
-      <div className="flex items-center p-3">
+      <div className="flex items-center px-1 py-3 h-full min-w-0">
         <div
           className={`flex items-center justify-center w-10 h-10 rounded-full ${config.outerBg} shrink-0`}
         >
@@ -85,15 +85,15 @@ export const StatusCard = ({ config, value = "100,000.00", currency = "MMK" }) =
           </div>
         </div>
 
-        <div className="ml-3 flex-1">
-          <div className={`text-xs font-medium ${config.titleColor} mb-1`}>
+        <div className="ml-3 flex-1 min-w-0">
+          <div className={`text-xs font-medium ${config.titleColor} mb-1 leading-tight`}>
             {config.title}
           </div>
 
-          <div className={`text-base font-bold ${config.textColor}`}>
-            <div className="flex gap-1">
+          <div className={`text-[16px] font-bold ${config.textColor} whitespace-nowrap`}>
+            <div className="flex gap-1 items-center">
               <PriceTag value={value} />
-              <span className={`font-bold text-xs mt-1 ${config.currencyColor}`}>
+              <span className={`font-bold text-[12px] mt-1 ${config.currencyColor} `}>
                 {currency}
               </span>
             </div>

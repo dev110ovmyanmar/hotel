@@ -5,18 +5,24 @@ import { Spin } from "antd";
 import ReconciliationStatus from "./ReconciliationStatus";
 import CheckBookingHeader from "../CheckBookingHeader";
 import ReconciliationTable from "./ReconciliationTable";
+import { getNightAuditData } from "../../../variables/constants";
 
 const ReconciliationPage = ({ stepValue }) => {
   const navigate = useNavigate();
-  const { data, isLoading } = useApiQuery({
+
+  const nightAuditData = getNightAuditData();
+
+  const businessDate = nightAuditData?.businessDate;
+
+  const { data, isFetching } = useApiQuery({
     fetchQueryName: "folio-review",
     fetchQueryFunction: reconciliation,
     params: {
-      businessDate: "2026-09-02",
+      businessDate,
     },
   });
 
-  if (isLoading) {
+  if (isFetching) {
     return (
       <div className="flex items-center justify-center">
         <Spin />

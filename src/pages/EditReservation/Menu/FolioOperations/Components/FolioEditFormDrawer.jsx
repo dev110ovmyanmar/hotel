@@ -45,7 +45,7 @@ const FolioEditFormDrawer = ({
       },
     });
 
-  const guests = reservationMetaData?.guests || [];
+  const guests = reservationMetaData?.main_guests || [];
   const folioOwnerTypes = initData?.statuses?.folio_owner_type || [];
   const financialStatuses = initData?.statuses?.financial_status || [];
   const documentStatuses = initData?.statuses?.document_status || [];

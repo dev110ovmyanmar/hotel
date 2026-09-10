@@ -27,25 +27,19 @@ const DailyChargePostingTable = ({
             align: "center",
             render: (record) => {
                 const posted = record?.code === "posted";
-                const unposted = record?.code === "unposted";
-                const total = record?.code === "total";
 
                 return (
-                    <Tag color={posted ? "red" : unposted ? "orange" : "green"}
+                    <Tag color={posted ? "green" : "red"}
                         className={
                             `!rounded ${posted
-                                ? "!border-red-500"
-                                : unposted
-                                    ? "!border-orange-500"
-                                    : "!border-green-500"
+                                ? "!border-green-500"
+                                : "!border-red-500"
                             }`
                         }>
                         <div className="flex gap-x-2 items-center">
                             {posted
                                 ? <CircleCheck size={15} />
-                                : unposted
-                                    ? <WarningOutlined className="!text-[15px]" />
-                                    : <CloseCircleOutlined className="!text-[15px]" />
+                                : <CloseCircleOutlined className="!text-[15px]" />
                             }
                             <div>{record?.name?.charAt(0).toUpperCase() + record?.name?.slice(1).toLowerCase()}</div>
                         </div>
@@ -63,55 +57,7 @@ const DailyChargePostingTable = ({
                 )
             },
             align: "right"
-        },
-        {
-            title: "Action",
-            name: "action",
-            dataIndex: "action",
-            fixed: "end",
-            align: "center",
-            render: (_, record) => {
-                const smallStyle = { fontSize: "12px" };
-
-                const actions = [
-                    {
-                        key: "view",
-                        label: "View",
-                        icon: <EyeOutlined style={{ fontSize: "12px" }} />,
-                        // permission: PERMISSIONS.ADMIN_VIEW,
-                        // onClick: () => {
-                        //     setDrawerOpen(true);
-                        //     setMode("view");
-                        //     setSelectedData(record);
-                        // },
-                    },
-
-                ];
-
-                // Filter actions based on permission & hidden flags
-                const items = actions
-                    .filter(
-                        (action) =>
-                            (!action.permission || hasPermission(action.permission)) && !action.hidden,
-                    )
-                    .map((action) => ({
-                        key: action.key,
-                        label: (
-                            <Space size={4} style={smallStyle} onClick={action.onClick}>
-                                {action.icon}
-                                <span style={{ fontSize: "14px" }}>{action.label}</span>
-                            </Space>
-                        ),
-                    }));
-
-                return (
-                    <Dropdown menu={{ items }} trigger={["click"]}>
-                        <MoreOutlined style={{ fontSize: "16px" }} />
-                    </Dropdown>
-                );
-            },
-        },
-
+        }
     ];
 
     return (
@@ -120,26 +66,7 @@ const DailyChargePostingTable = ({
                 columns={columns}
                 dataSource={dailyChargePostingData?.charges}
                 pagination={false}
-            // summary={() => (
-            //     <Table.Summary fixed="bottom">
-            //         <Table.Summary.Row>
-            //             <Table.Summary.Cell index={0} colSpan={columns.length}>
-            //                 <div className="flex justify-end items-center w-full py-1">
-            //                     <Button
-            //                         type="primary"
-            //                         onClick={colorCheckBooking}
-            //                         className="flex items-center gap-1"
-            //                     >
-            //                         Next Step
-            //                         <AiOutlineRight />
-            //                     </Button>
-            //                 </div>
-            //             </Table.Summary.Cell>
-            //         </Table.Summary.Row>
-            //     </Table.Summary>
-            // )}
             />
-
             <div className={nextStepButtonDesign}>
                 <Button
                     type="primary"

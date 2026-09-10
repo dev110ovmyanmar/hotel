@@ -5,7 +5,7 @@ import { Spin } from "antd";
 import DailyChargeStatus from "./DailyChargeStatus";
 import CheckBookingHeader from "../CheckBookingHeader";
 import DailyChargePostingTable from "./DailyChargePostingTable";
-import { getNightAuditData } from "../../../variables/constants";
+import { getNightAuditData, spinLoadingCenter } from "../../../variables/constants";
 
 const DailyChargePostingPage = ({
     stepValue,
@@ -27,7 +27,7 @@ const DailyChargePostingPage = ({
 
     if (!dailyChargePostingData) {
         return (
-            <div className="!flex !items-center !justify-center">
+            <div className={spinLoadingCenter}>
                 <Spin />
             </div>
         )

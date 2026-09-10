@@ -19,8 +19,6 @@ import { reservationMeta } from "../../../../api/reservationSectionApi";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
 import { useApiQuery } from "../../../../hooks/useApiQuery";
 import PriceInput from "../../../../component/PriceInput/PriceInput";
-import { textWhiteInDarkStyle } from "../../../../utils";
-import { numberValidator } from "../../../../variables/constants";
 import Loader from "../../../../component/Loader/Loader";
 
 const { Title, Text } = Typography;
@@ -67,6 +65,7 @@ const AddDepoistForm = ({
   const [selectedProviderUuid, setSelectedProviderUuid] = useState("all");
   const [selectedFolioGrandTotal, setSelectedFolioGrandTotal] = useState(null);
   const [selectedFolioUuid, setSelectedFolioUuid] = useState(null);
+  const [submitting, setSubmitting] = useState(false);
 
   const selectedMethod = Form.useWatch("paymentMethod", form);
 
@@ -174,16 +173,21 @@ const AddDepoistForm = ({
 
     options: {
       onSuccess: () => {
+        setSubmitting(false);
         form.resetFields();
         setSelectedProviderUuid("all");
         setSelectedFolioGrandTotal(null);
         setSelectedFolioUuid(null);
         onClose();
       },
+      onError: () => {
+        setSubmitting(false);
+      },
     },
   });
 
   const onFinish = (values) => {
+    setSubmitting(true);
     const payload = {
       reservation: { uuid: bookingDetails?.reservation?.uuid },
       guest: { uuid: values.guest },
@@ -252,6 +256,7 @@ const AddDepoistForm = ({
               form.submit();
             }}
             loading={isPending}
+            disabled={submitting}
           >
             Create
           </Button>
@@ -464,9 +469,6 @@ const AddDepoistForm = ({
                   {
                     required: true,
                     message: "Amount required",
-                  },
-                  {
-                    validator: numberValidator,
                   },
                   {
                     validator: (_, value) => {

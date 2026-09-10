@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Form,
   Input,
@@ -43,6 +43,7 @@ const RatePlanForm = ({
   ratePlanList,
 }) => {
   const [form] = Form.useForm();
+  const [submitting, setSubmitting] = useState(false);
   const { hasPermission } = usePermission();
   const canEdit = hasPermission(PERMISSIONS.RATE_PLAN_EDIT);
   const mealPricingType = Form.useWatch("pricingType", form);
@@ -154,6 +155,7 @@ const RatePlanForm = ({
   };
 
   const onFinish = (values) => {
+    setSubmitting(true);
     console.log("Values", values);
     const channelVisibility = {};
     channelOptions.forEach((channel) => {
@@ -187,11 +189,15 @@ const RatePlanForm = ({
     if (isAdd) {
       createRatePlans.mutate(createValues, {
         onSuccess: () => {
+          setSubmitting(false);
           form.resetFields();
           setDrawerOpen(false);
           setPage(1);
           handleClose();
           Toast.success("Rate plan Created Successfully!");
+        },
+        onError: () => {
+          setSubmitting(false);
         },
       });
     }
@@ -215,9 +221,13 @@ const RatePlanForm = ({
         },
         {
           onSuccess: () => {
+            setSubmitting(false);
             setDrawerOpen(false);
             handleClose();
             Toast.success("Rate Plan Updated Successfully!");
+          },
+          onError: () => {
+            setSubmitting(false);
           },
         },
       );
@@ -269,6 +279,7 @@ const RatePlanForm = ({
                 onClick={() => form.submit()}
                 isPending={createRatePlans.isPending || editRatePlans.isPending}
                 mode={mode}
+                disabled={submitting}
               />
             )}
           </div>
@@ -501,8 +512,7 @@ const RatePlanForm = ({
                 />
               </Form.Item>
 
-            </div>
-            <Form.Item
+              <Form.Item
               label="Meal Pricing"
               name="mealPricingMode"
               rules={[
@@ -514,10 +524,12 @@ const RatePlanForm = ({
               <Radio.Group disabled={isView}>
                 <Space direction="horizontal">
                   <Radio value="included" className="custom-disabled-checkbox"> Included in Room Rate</Radio>
-                  <Radio value="separate" className="custom-disabled-checkbox"> Charge Separately</Radio>
+                  {/* <Radio value="separate" className="custom-disabled-checkbox"> Charge Separately</Radio> */}
                 </Space>
               </Radio.Group>
             </Form.Item>
+
+            </div>
 
             {isAdd && (
               <div className="border-2 px-4  py-4 rounded mb-2">

@@ -4,6 +4,7 @@ import useApiQuery from "../../../hooks/useApiQuery";
 import CheckBookingHeader from "../CheckBookingHeader";
 import UnsettledFolios from "../UnsettledFolios";
 import { Spin } from "antd";
+import { spinLoadingCenter } from "../../../variables/constants";
 
 const UnsettledFoliosPage = ({
     stepValue
@@ -19,7 +20,7 @@ const UnsettledFoliosPage = ({
 
     if (!preAuditChecksData) {
         return (
-            <div className="!flex !items-center !justify-center">
+            <div className={spinLoadingCenter}>
                 <Spin />
             </div>
         )
