@@ -141,11 +141,17 @@ const GetRoomForm = ({ selectedData, onSelectRoom, onClose, floorUuid }) => {
 
               <Button
                 loading={assignMutation.isLoading}
+                disabled={["Out of Service", "Out of Order"].includes(room.status?.name)}
                 onClick={() => handleAssignClick(room)}
-                className="custom-blue-btn"
+                className={
+                  ["Out of Service", "Out of Order"].includes(room.status?.name)
+                    ? ""
+                    : "custom-blue-btn"
+                }
               >
                 Assign
               </Button>
+
             </div>
           </div>
         ))
