@@ -9,12 +9,16 @@ import {
   useNavigate,
 } from "react-router-dom";
 import AssignRoomForm from "./Components/RoomInformationForms/AssignRoomForm";
+import AddDepoistForm from "../../../BookingDetail/Components/BookingDetailForms/AddDepoistForm";
+import ReservationNoteForm from "../../../BookingDetail/Components/BookingDetailForms/ReservationNoteForm";
 import { Button } from "antd";
+import { PlusOutlined } from "@ant-design/icons";
 import ChangeStatusForm from "../../../BookingDetail/Components/BookingDetailForms/ChangeStatusForm";
 import Loader from "../../../../component/Loader/Loader";
 import { reservationRoomList } from "../../../../api/reservationSectionApi";
 import useApiQuery from "../../../../hooks/useApiQuery";
 import { LIMITS } from "../../../../variables/constants";
+import { queryClient } from "../../../../app/queryClient";
 
 const RoomInformationList = () => {
   const navigate = useNavigate();
@@ -41,8 +45,15 @@ const RoomInformationList = () => {
   const [perPage, setPerPage] = useState(LIMITS.PAGE_SIZE);
   const [assignRoomOpen, setAssignRoomOpen] = useState(false);
   const [open, setOpen] = useState(false);
+  const [addDepositOpen, setAddDepositOpen] = useState(false);
+  const [noteOpen, setNoteOpen] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState(null);
   const [selectedRoomUuid, setSelectedRoomUuid] = useState(bookingId);
+
+  const initData = queryClient.getQueryData(["initData", "authenticated"]);
+  const providerTypes = initData?.statuses.provider_type;
+  const paymentStatuses = initData?.statuses?.payment_status;
+  const paymentCompletedStatus = paymentStatuses.find((item) => item?.code == "completed");
 
     useEffect(() => {
     if (bookingId) {
@@ -102,6 +113,12 @@ const RoomInformationList = () => {
     setDrawerOpen(true);
   };
 
+  const isConfirmed = ["confirmed"].includes(
+  listData?.reservationRoom?.roomStatus?.code
+  );
+
+  const reservationUuid = listData?.reservation?.uuid;
+
   if (isListLoading) {
     return (
       <div className="flex items-center justify-center h-full min-h-[300px]">
@@ -125,6 +142,23 @@ const RoomInformationList = () => {
         <Button className="custom-blue-btn" onClick={() => setOpen(true)}>
           Change Status
         </Button>
+
+        {
+          isConfirmed && 
+          <Button className="custom-blue-btn" 
+          onClick={() => setAddDepositOpen(true)}
+          icon={<PlusOutlined style={{ fontSize: "12px" }} />}>
+          Add Deposit
+        </Button>
+        }
+
+        <Button className="custom-blue-btn" 
+         onClick={() => setNoteOpen(true)}
+         icon={<PlusOutlined style={{ fontSize: "12px" }} />}
+         >
+          Add Note
+        </Button>
+        
       </div>
 
       {open && (
@@ -173,6 +207,21 @@ const RoomInformationList = () => {
           reservationUuid={listData || []}
         />
       )}
+
+      <AddDepoistForm
+        open={addDepositOpen}
+        onClose={() => setAddDepositOpen(false)}
+        // bookingDetails={data}
+        providerTypes={providerTypes}
+        paymentCompletedStatus={paymentCompletedStatus}
+        reservationUuid={reservationUuid}
+      />
+
+      <ReservationNoteForm
+          open={noteOpen}
+          onClose={() => setNoteOpen(false)}
+          reservationUuid={reservationUuid}
+      />
     </div>
   );
 };

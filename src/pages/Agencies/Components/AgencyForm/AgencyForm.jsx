@@ -25,6 +25,7 @@ import { validatePhoneNumber } from "../../../../utils";
 import PriceInput from "../../../../component/PriceInput/PriceInput";
 import usePermission from "../../../../hooks/usePermission";
 import { PERMISSIONS } from "../../../../variables/permission";
+import Loader from "../../../../component/Loader/Loader";
 
 const { TextArea } = Input;
 
@@ -66,7 +67,7 @@ const AgencyForm = ({
     shouldInvalidate: isEdit ? true : page === 1,
   });
 
-  const { data, isPending, error } = useApiQuery({
+  const { data, isFetching, error } = useApiQuery({
     fetchQueryName: "agency-details",
     fetchQueryFunction: partnerDetails,
     params: {
@@ -196,7 +197,13 @@ const AgencyForm = ({
             )}
           </div>
         }
-      >
+      >   
+      {
+        isFetching ? 
+        <div className="flex items-center justify-center h-full min-h-[300px]">
+          <Loader />
+        </div>
+        :
         <Form
           form={form}
           layout="vertical"
@@ -345,10 +352,12 @@ const AgencyForm = ({
           </Form.Item>
 
           <Status isView={isView} statusValue={initDataStatus} />
-        </Form>
+        </Form> 
+      }
       </Drawer>
 
       <ImageUpload
+        isFetching={isFetching}
         partneruuid={selectedData?.uuid}
         agencyFileList={data?.agencyFiles}
         handleUploadMutation={agencyUpload}

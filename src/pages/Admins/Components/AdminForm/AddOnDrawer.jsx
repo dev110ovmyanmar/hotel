@@ -65,7 +65,7 @@ const AddOnDrawer = ({
           {mode === "allow" && (
             <div className="flex justify-between gap-4">
               <Button type="primary" onClick={() => onSave(checkedIds)} loading={loading}>
-                Save
+                Update
               </Button>
             </div>
           )}
@@ -107,12 +107,7 @@ const AddOnDrawer = ({
                     disabled={mode === "notAllow"}
                     onChange={() => togglePermission(p.id)}
                   >
-                    <span
-                      className={`text-sm ${allChecked
-                        ? "text-green-700 font-semibold"
-                        : ""
-                        }`}
-                    >
+                    <span>
                       {p.name}
                     </span>
                     <span className="text-xs text-gray-500 ml-2">

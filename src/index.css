@@ -736,8 +736,8 @@ span .ant-upload {
   backdrop-filter: blur(6px) !important;
   border-top: 1px solid rgba(239, 68, 68, 0.3) !important;
   border-bottom: 1px solid rgba(239, 68, 68, 0.3) !important;
-  opacity: 0.65;
-  cursor: not-allowed;
+  opacity: 1;
+  /* cursor: not-allowed; */
 }
 
 .hide-checkbox-row .ant-table-selection-column {

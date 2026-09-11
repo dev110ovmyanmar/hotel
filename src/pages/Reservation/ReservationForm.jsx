@@ -52,6 +52,11 @@ const ReservationForm = ({
         value: item.uuid,
     })) || [];
 
+    let referralAgentOptions = reservationMetas?.referral_agents.map((item) => ({
+        label: item.name,
+        value: item.uuid,
+    })) || [];
+
 
     let roomTypeOptions = reservationMetas?.room_types?.filter(item => item?.status.code === "active")
         .map((item) => ({
@@ -172,7 +177,7 @@ const ReservationForm = ({
 
         return false;
     };
-
+    console.log(selectedSourceType, "selectedSourceType")
     return (
         <Card
             className="!bg-gradient-to-r from-[#215282] to-[#000B60]"
@@ -331,7 +336,8 @@ const ReservationForm = ({
                     <div className="w-60 md:w-52 lg:w-50 flex-auto md:flex-initial">
                         {
                             (selectedSourceType === "Agency" ||
-                                selectedSourceType === "Company") && (
+                                selectedSourceType === "Company" ||
+                                selectedSourceType === "Referral Agent") && (
 
                                 <Form.Item
                                     name="source"
@@ -345,7 +351,9 @@ const ReservationForm = ({
                                                 agenciesOptions?.find(item => item?.value === value)?.label :
                                                 (afterRoomConfirm && selectedSourceType === "Company") ?
                                                     companyOptions?.find(item => item?.value === value)?.label :
-                                                    value
+                                                    (afterRoomConfirm && selectedSourceType === "Referral Agent") ?
+                                                        referralAgentOptions?.find(item => item?.value === value)?.label :
+                                                        value
                                         }
                                     }}
                                 >
@@ -356,7 +364,7 @@ const ReservationForm = ({
                                                 readOnly={afterRoomConfirm}
                                             /> :
                                             <Select
-                                                options={selectedSourceType === "Agency" ? agenciesOptions : companyOptions}
+                                                options={selectedSourceType === "Agency" ? agenciesOptions : selectedSourceType === "Company"? companyOptions : referralAgentOptions}
                                                 placeholder="Select Source Name"
                                                 className="!w-[100%]"
                                             ></Select>
