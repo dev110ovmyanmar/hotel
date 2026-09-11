@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, Divider, Dropdown, Modal, Radio, Space, Spin, Table, Tag } from "antd";
+import { Alert, Button, Divider, Dropdown, Modal, Radio, Space, Spin, Table, Tag } from "antd";
 import {
   SwapOutlined,
   InfoCircleOutlined,
@@ -12,7 +12,9 @@ import {
   MoreOutlined,
   WarningOutlined,
   LoadingOutlined,
-  CrownOutlined
+  CrownOutlined,
+  BranchesOutlined,
+  LinkOutlined,
 } from "@ant-design/icons";
 import dayjs from "dayjs";
 import {
@@ -201,10 +203,44 @@ const FolioOperationsTable = ({
       render: (_, record, index) => index + 1,
     },
     {
+      title: "Date",
+      dataIndex: "postedAt",
+      key: "postedAt",
+      render: (_, record) => dayjs(record?.postedAt).format("YYYY-MM-DD"),
+    },
+    {
       title: "Description",
       dataIndex: "descriptionSnapshot",
       key: "descriptionSnapshot",
       render: (_, record) => record.descriptionSnapshot || "-",
+    },
+    {
+      title: "Relation",
+      dataIndex: "parentLineId",
+      key: "parentLineId",
+      width: 150,
+      render: (_, record) => {
+        const isChild = record?.parentLineId != null;
+        return isChild ? (
+          <Tag
+            icon={<LinkOutlined />}
+            color="processing"
+            style={{ borderRadius: "9999px" }}
+            className="px-3 py-0.5 text-xs font-medium"
+          >
+            Child of #{record.parentLineId}
+          </Tag>
+        ) : (
+          <Tag
+            icon={<BranchesOutlined />}
+            color="warning"
+            style={{ borderRadius: "9999px" }}
+            className="px-3 py-0.5 text-xs font-semibold"
+          >
+            Parent #{record.id}
+          </Tag>
+        );
+      },
     },
     {
       title: "Room",
@@ -214,10 +250,10 @@ const FolioOperationsTable = ({
       render: (_, record) => record.reservationRoom?.room?.roomNo || "-",
     },
     {
-      title: "Quantity",
+      title: "Qty",
       dataIndex: "quantity",
       key: "quantity",
-      align: "right",
+      align: "center",
       render: (_, record) =>
         record.quantity !== undefined && record.quantity !== null
           ? record.quantity
@@ -688,6 +724,14 @@ const FolioOperationsTable = ({
                       </div>
                     );
                   })}
+
+            <Alert
+              message="The selected parent line and its associated child lines will be transferred together to the selected folio."
+              type="warning"
+              showIcon
+              icon={<WarningOutlined />}
+              className="!m-2"
+            />
               </>
             ) : (
               <div

@@ -59,6 +59,7 @@ const GuestListDrawer = ({
       title: "Guest Name",
       dataIndex: ["guest", "fullName"],
       key: "guestName",
+      render: (_, record) => record.guest?.fullName ?? record.name,
     },
     {
       title: "Guest Type",
