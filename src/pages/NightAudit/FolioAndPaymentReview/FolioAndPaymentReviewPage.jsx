@@ -6,13 +6,22 @@ import FolioAndPaymentReviewStatus from "./FolioAndPaymentReviewStatus";
 import CheckBookingHeader from "../CheckBookingHeader";
 import FolioAndPaymentReviewTable from "./FolioAndPaymentReviewTable";
 import { getNightAuditData } from "../../../variables/constants";
+import { useEffect } from "react";
 
 const FolioAndPaymentReviewPage = () => {
     const navigate = useNavigate();
-    
+
     const nightAuditData = getNightAuditData();
 
     const businessDate = nightAuditData?.businessDate;
+
+    useEffect(() => {
+        const nightAudit = localStorage.getItem("nightAudit");
+
+        if (!nightAudit) {
+            navigate("/night-audit", { replace: true });
+        }
+    }, [navigate]);
 
     const {
         data: folioData,
