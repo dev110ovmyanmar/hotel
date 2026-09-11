@@ -6,6 +6,7 @@ import ReconciliationStatus from "./ReconciliationStatus";
 import CheckBookingHeader from "../CheckBookingHeader";
 import ReconciliationTable from "./ReconciliationTable";
 import { getNightAuditData } from "../../../variables/constants";
+import { useEffect } from "react";
 
 const ReconciliationPage = ({ stepValue }) => {
   const navigate = useNavigate();
@@ -13,6 +14,14 @@ const ReconciliationPage = ({ stepValue }) => {
   const nightAuditData = getNightAuditData();
 
   const businessDate = nightAuditData?.businessDate;
+
+  useEffect(() => {
+    const nightAudit = localStorage.getItem("nightAudit");
+
+    if (!nightAudit) {
+      navigate("/night-audit", { replace: true });
+    }
+  }, [navigate]);
 
   const { data, isFetching } = useApiQuery({
     fetchQueryName: "folio-review",

@@ -7,11 +7,13 @@ import ReactTimer from "../../component/ReactTimer/ReactTimer";
 import dayjs from "dayjs";
 import { activeAdmins } from "../../api/nightAuditApi";
 import useInfiniteApiQuery from "../../hooks/useInfiniteApiQuery";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { spinLoadingCenter } from "../../variables/constants";
 
 const NightAudit = () => {
     const navigate = useNavigate();
+    const location = useLocation();
+    console.log(location.pathname,"LocationINNightAudit")
     const [forceLogout, setForceLogout] = useState(false);
     const [confirmModal, setConfirmModal] = useState(false);
     const [step, setStep] = useState("startNightAudit");
@@ -42,7 +44,7 @@ const NightAudit = () => {
             localStorage.setItem(
                 "nightAudit",
                 JSON.stringify({
-                    isLocked: isLocked,
+                    isLocked: true,
                     businessDate: businessDate,
                     nightAuditStatus: checkStatus
                 })

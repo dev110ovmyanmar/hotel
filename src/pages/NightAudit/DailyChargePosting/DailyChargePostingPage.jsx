@@ -6,6 +6,7 @@ import DailyChargeStatus from "./DailyChargeStatus";
 import CheckBookingHeader from "../CheckBookingHeader";
 import DailyChargePostingTable from "./DailyChargePostingTable";
 import { getNightAuditData, spinLoadingCenter } from "../../../variables/constants";
+import { useEffect } from "react";
 
 const DailyChargePostingPage = ({
     stepValue,
@@ -13,8 +14,16 @@ const DailyChargePostingPage = ({
     const navigate = useNavigate();
 
     const nightAuditData = getNightAuditData();
-    
+
     const businessDate = nightAuditData?.businessDate;
+
+    useEffect(() => {
+        const nightAudit = localStorage.getItem("nightAudit");
+
+        if (!nightAudit) {
+            navigate("/night-audit", { replace: true });
+        }
+    }, [navigate]);
 
     const { data: dailyChargePostingData, dailyChargeDataLoading, dailyChargeDataError } = useApiQuery({
         fetchQueryName: "daily-charge-postings",
@@ -23,7 +32,7 @@ const DailyChargePostingPage = ({
             businessDate
         },
     });
-    console.log(dailyChargePostingData,"dailyChargePostingData")
+    console.log(dailyChargePostingData, "dailyChargePostingData")
 
     if (!dailyChargePostingData) {
         return (
