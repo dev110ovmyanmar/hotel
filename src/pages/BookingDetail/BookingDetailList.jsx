@@ -82,8 +82,6 @@ const BookingDetailList = () => {
     );
   }
 
-  console.log(data, "foodbeverageorder");
-
   return (
     <div className="w-full px-6 py-2">
       <ReservationHeader data={data || {}} />

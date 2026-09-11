@@ -56,6 +56,9 @@ const ReservationNoteForm = ({
       keyword,
       reservation: { uuid: uuid },
     },
+    options: {
+      enabled: open,
+    },
   });
 
   const reservationNotesCreate = useApiMutation({

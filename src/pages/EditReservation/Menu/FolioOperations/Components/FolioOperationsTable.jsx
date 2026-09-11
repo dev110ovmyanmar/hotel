@@ -12,6 +12,7 @@ import {
   MoreOutlined,
   WarningOutlined,
   LoadingOutlined,
+  CrownOutlined
 } from "@ant-design/icons";
 import dayjs from "dayjs";
 import {
@@ -30,6 +31,7 @@ import RebateDrawer from "./RebateDrawer";
 import VoidDrawer from "./VoidDrawer";
 import FolioEditFormDrawer from "./FolioEditFormDrawer";
 import Toast from "../../../../../component/Toast/Toast";
+import FinancialStatusTag from "../../../../../component/FinancialStatusTag/FinancialStatusTag";
 
 
 const FolioTitle = ({ rest }) => (
@@ -51,13 +53,12 @@ const SubFolioTable = ({ record, lineColumns, onMoveTo, isTransferring }) => {
   const isFolioClosed =
     record.closedAt !== null && record.closedAt !== undefined;
 
-
-
   const rowSelection = {
     selectedRowKeys,
     onChange: (selectedKeys) => {
       setSelectedRowKeys(selectedKeys);
     },
+    hideSelectAll: true,
     getCheckboxProps: (record) => ({
       disabled: isFolioClosed || !!record.voidedAt,
     }),
@@ -352,6 +353,14 @@ const FolioOperationsTable = ({
       dataIndex: "folioNo",
       key: "folioNo",
       width: 200,
+      render: (_, record) => (
+        <span className="flex items-center gap-1.5">
+          {record?.parentFolioId === null && (
+            <CrownOutlined style={{ color: "#eab308" }} />
+          )}
+          {record.folioNo}
+        </span>
+      ),
     },
     {
       title: "Guest",
@@ -388,7 +397,7 @@ const FolioOperationsTable = ({
       title: "Status",
       key: "status",
       align: "center",
-      render: (_, record) => record?.financialStatus?.name
+      render: (_, record) => <FinancialStatusTag status={record?.financialStatus?.name}/> 
     },
     {
       title: "Action",
@@ -531,6 +540,9 @@ const FolioOperationsTable = ({
           bordered={false}
           size="middle"
           className="custom-folio-table"
+          rowClassName={(record) =>
+            record?.parentFolioId === null ? "active-reservation-row" : "cursor-pointer"
+          }
           expandable={{
             expandedRowRender,
             rowExpandable: (record) =>

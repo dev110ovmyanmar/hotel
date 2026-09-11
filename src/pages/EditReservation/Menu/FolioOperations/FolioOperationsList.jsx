@@ -18,13 +18,12 @@ import {
   getfolioPrint
 } from "../../../../api/folioApi";
 import { LIMITS } from "../../../../variables/constants";
-import { useLocation } from "react-router-dom";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
 import { queryClient } from "../../../../app/queryClient";
 import { loadState } from "../../../../utils";
 import { LOCAL_STORAGE_KEYS } from "../../../../variables/constants";
 import { adminDetails } from "../../../../api/adminApi";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Loader from "../../../../component/Loader/Loader";
 
 const FolioOperationsList = () => {
