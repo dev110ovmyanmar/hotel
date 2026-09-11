@@ -7,6 +7,7 @@ import PreAuditTable from "./PreAuditTable";
 import IssueAndWarningCard from "./IssueAndWarningCard";
 import CheckBookingHeader from "../CheckBookingHeader";
 import { getNightAuditData, spinLoadingCenter } from "../../../variables/constants";
+import { useEffect } from "react";
 
 const PreAuditCheckPage = ({
     stepValue,
@@ -16,6 +17,14 @@ const PreAuditCheckPage = ({
     const nightAuditData = getNightAuditData();
 
     const businessDate = nightAuditData?.businessDate;
+
+    useEffect(() => {
+        const nightAudit = localStorage.getItem("nightAudit");
+
+        if (!nightAudit) {
+            navigate("/night-audit", { replace: true });
+        }
+    }, [navigate]);
 
     const { data: preAuditChecksData, isFetching, error } = useApiQuery({
         fetchQueryName: "pre-audit-checks",

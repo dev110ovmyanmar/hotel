@@ -3,6 +3,7 @@ import { Button, Dropdown, Space, Table, Tag } from "antd";
 import { AiOutlineRight } from "react-icons/ai";
 import { CircleCheck } from "lucide-react";
 import { nextStepButtonDesign } from "../../../variables/constants";
+import PriceTag from "../../../component/PriceTag/PriceTag";
 
 
 const DailyChargePostingTable = ({
@@ -53,7 +54,7 @@ const DailyChargePostingTable = ({
             key: "grandTotal",
             render: (text) => {
                 return (
-                    <div className="text-end">{text?.toLocaleString()}</div>
+                    <PriceTag value={text}/>
                 )
             },
             align: "right"

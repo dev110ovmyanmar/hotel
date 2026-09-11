@@ -6,6 +6,7 @@ import { reloadDailyPostCharges } from "../../../api/nightAuditApi";
 import { getNightAuditData, textSizeDependOnScreen } from "../../../variables/constants";
 import RunPostingModal from "./RunPostingModal";
 import { useState } from "react";
+import PriceTag from "../../../component/PriceTag/PriceTag";
 
 const DailyChargeStatus = ({
     dailyChargePostingData,
@@ -15,6 +16,8 @@ const DailyChargeStatus = ({
 
     const dailyChargeDisabled = dailyChargePostingData?.charges.length <= 0;
     const cardDesign = `!w-full !max-w-[500px] !shadow-md !m-0 !p-0 !border-l-0 !border-r-0`;
+    const warning = dailyChargePostingData?.overallStatus === "WARNING";
+    const passed = dailyChargePostingData?.overallStatus === "PASSED";
 
     const nightAuditData = getNightAuditData();
 
@@ -39,7 +42,7 @@ const DailyChargeStatus = ({
     return (
         <div>
             <div>
-                <div className="items-center grid lg:grid-cols-4 md:grid-cols-2 gap-x-5 !my-3 md:gap-y-3">
+                <div className="items-center grid xl:grid-cols-4 md:grid-cols-2 gap-x-5 !my-3 md:gap-y-3">
                     <Card
                         className={`!bg-[#EFF6FF] !text-[#314B99] !border-[#A1CFFF] ${cardDesign} !p-2`}
                     >
@@ -71,7 +74,8 @@ const DailyChargeStatus = ({
                             <div className="flex justify-between items-center gap-4">
                                 <span className="shrink-0">Total Amount</span>
                                 <span className="text-right break-all">
-                                    {dailyChargePostingData?.summary?.totalAmount}
+                                    <PriceTag value={dailyChargePostingData?.summary?.totalAmount} />
+                                    {" "}MMK
                                 </span>
                             </div>
                         </div>
@@ -89,7 +93,8 @@ const DailyChargeStatus = ({
                             <div className="flex justify-between items-center gap-4">
                                 <span className="shrink-0">Posted Amount</span>
                                 <span className="text-right break-all">
-                                    {dailyChargePostingData?.summary?.postedAmount}
+                                    <PriceTag value={dailyChargePostingData?.summary?.postedAmount} />
+                                    {" "}MMK
                                 </span>
                             </div>
                         </div>
@@ -107,7 +112,8 @@ const DailyChargeStatus = ({
                             <div className="flex justify-between items-center gap-4">
                                 <span className="shrink-0">Unposted Amount</span>
                                 <span className="text-right break-all">
-                                    {dailyChargePostingData?.summary?.unpostedAmount}
+                                    <PriceTag value={dailyChargePostingData?.summary?.unpostedAmount} />
+                                    {" "}MMK
                                 </span>
                             </div>
                         </div>

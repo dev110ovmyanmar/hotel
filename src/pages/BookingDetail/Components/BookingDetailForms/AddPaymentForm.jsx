@@ -52,7 +52,7 @@ const AddPaymentForm = ({
 }) => {
     const [form] = Form.useForm();
 
-    const { data: reservationMetaData, isLoading: reservationMetaLoading } = useApiQuery({
+    const { data: reservationMetaData, isFetching: reservationMetaFetching } = useApiQuery({
         fetchQueryName: "reservation-meta",
         fetchQueryFunction: reservationMeta,
         params: {
@@ -236,7 +236,7 @@ const AddPaymentForm = ({
                             form.submit();
                         }}
                         loading={isPending}
-                        disabled={submitting || isGrandTotalZero}
+                        disabled={submitting || isGrandTotalZero  }
                     >
                         Create
                     </Button>
@@ -244,7 +244,7 @@ const AddPaymentForm = ({
             }
         >
             {
-                reservationMetaLoading ?
+                reservationMetaFetching  ?
                     <div className="flex min-h-screen items-center justify-center">
                         <Loader />
                     </div>

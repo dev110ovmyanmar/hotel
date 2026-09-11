@@ -6,6 +6,7 @@ import CloseBusinessDateStatus from "./CloseBusinessDateStatus";
 import CheckBookingHeader from "../CheckBookingHeader";
 import CloseBusinessDateTable from "./CloseBusinessDateTable";
 import { getNightAuditData, spinLoadingCenter } from "../../../variables/constants";
+import { useEffect } from "react";
 
 const CloseBusinessDatePage = ({
     stepValue,
@@ -15,6 +16,14 @@ const CloseBusinessDatePage = ({
     const nightAuditData = getNightAuditData();
 
     const businessDate = nightAuditData?.businessDate;
+
+    useEffect(() => {
+        const nightAudit = localStorage.getItem("nightAudit");
+
+        if (!nightAudit) {
+            navigate("/night-audit", { replace: true });
+        }
+    }, [navigate]);
 
     const { data: preAuditChecksData, isLoading, error } = useApiQuery({
         fetchQueryName: "pre-audit-checks",
