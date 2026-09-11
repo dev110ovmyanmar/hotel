@@ -863,6 +863,7 @@ export const authRoutes = [
   },
   {
     key: 13,
+    id: "/night-audit",
     label: "Night Audit",
     path: "/night-audit",
     component: <NightAudit />,
@@ -871,12 +872,14 @@ export const authRoutes = [
   },
   {
     key: 13.1,
+    id: "/night-audit",
     path: "/night-audit/pre-audit-check",
     component: <PreAuditCheckPage />,
     requiredRole: FRONT_OFFICE,
   },
   {
     key: 13.02,
+    id: "/night-audit",
     path: "/night-audit/daily-charge-posting",
     component: <DailyChargePostingPage />,
     requiredRole: FRONT_OFFICE,
@@ -907,31 +910,35 @@ export const authRoutes = [
   // },
   {
     key: 13.2,
+    id: "/night-audit",
     path: "/night-audit/folio-&-payment-review",
     component: <FolioAndPaymentReviewPage />,
     requiredRole: FRONT_OFFICE,
   },
   {
     key: 13.3,
+    id: "/night-audit",
     path: "/night-audit/reconciliation",
     component: <ReconciliationPage />,
     requiredRole: FRONT_OFFICE,
   },
   {
     key: 13.4,
+    id: "/night-audit",
     path: "/night-audit/close-business-date",
     component: <CloseBusinessDatePage />,
     requiredRole: FRONT_OFFICE,
   },
   {
     key: 13.5,
+    id: "/night-audit",
     path: "/night-audit/create-new-day",
     component: <CreateNewDayPage />,
     requiredRole: FRONT_OFFICE,
   },
   {
     key: 14,
-    id: "/hr-management",
+    id: "/hR-management",
     label: "HR Management",
     isPrivate: false,
     icon: <GrUserSettings style={{ fontSize: "20px" }} />,
@@ -957,7 +964,7 @@ export const authRoutes = [
   },
   {
     key: 15,
-    id: "/manage-access",
+    id: "/access-control",
     label: "Manage Access",
     isPrivate: false,
     icon: <SafetyOutlined style={{ fontSize: "20px" }} />,

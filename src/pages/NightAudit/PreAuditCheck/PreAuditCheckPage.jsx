@@ -6,7 +6,7 @@ import PreAuditCheckStatus from "./PreAuditCheckStatus";
 import PreAuditTable from "./PreAuditTable";
 import IssueAndWarningCard from "./IssueAndWarningCard";
 import CheckBookingHeader from "../CheckBookingHeader";
-import { getNightAuditData } from "../../../variables/constants";
+import { getNightAuditData, spinLoadingCenter } from "../../../variables/constants";
 
 const PreAuditCheckPage = ({
     stepValue,
@@ -17,7 +17,7 @@ const PreAuditCheckPage = ({
 
     const businessDate = nightAuditData?.businessDate;
 
-    const { data: preAuditChecksData, isLoading, error } = useApiQuery({
+    const { data: preAuditChecksData, isFetching, error } = useApiQuery({
         fetchQueryName: "pre-audit-checks",
         fetchQueryFunction: preAuditCheck,
         params: {
@@ -28,9 +28,9 @@ const PreAuditCheckPage = ({
         },
     });
 
-    if (!preAuditChecksData) {
+    if (isFetching || !preAuditChecksData) {
         return (
-            <div className="!flex !items-center !justify-center">
+            <div className={spinLoadingCenter}>
                 <Spin />
             </div>
         )

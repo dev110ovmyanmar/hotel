@@ -8,6 +8,7 @@ import dayjs from "dayjs";
 import { activeAdmins } from "../../api/nightAuditApi";
 import useInfiniteApiQuery from "../../hooks/useInfiniteApiQuery";
 import { useNavigate } from "react-router-dom";
+import { spinLoadingCenter } from "../../variables/constants";
 
 const NightAudit = () => {
     const navigate = useNavigate();
@@ -19,18 +20,20 @@ const NightAudit = () => {
 
     const {
         data: activeAdminDatas,
-        isLoading,
+        isFetching,
         isFetchingNextPage,
         fetchNextPage,
         hasNextPage,
     } = useInfiniteApiQuery({
-        fetchQueryName: "activeAdmins",
+        fetchQueryName: "acti<veAdmins",
         fetchQueryFunction: activeAdmins,
         params: {
-            perPage: 20,
+            perPage: 10,
         },
     });
+
     const isLocked = activeAdminDatas?.pages[0]?.systemLock?.isLocked;
+    // const isLocked = false;
     const businessDate = activeAdminDatas?.pages[0]?.nightAudit?.targetBusinessDate;
     const checkStatus = activeAdminDatas?.pages[0]?.nightAudit?.status;
 
@@ -48,10 +51,10 @@ const NightAudit = () => {
         }
     }, [isLocked, navigate, businessDate]);
 
-    if (!activeAdminDatas || isLoading) {
+    if (!activeAdminDatas || isFetching || isLocked) {
         return (
-            <div className="flex justify-center items-center h-screen">
-                <Spin size="large" />
+            <div className={spinLoadingCenter}>
+                <Spin />
             </div>
         );
     }
@@ -106,7 +109,13 @@ const NightAudit = () => {
                                                 The Night Audit will close the current business date, including its accounting, transactions, and operations. The system will be temporarily locked during the audit. Once the Night Audit is complete, the system will be unlocked and ready for the next business date.
                                             </p>
 
-                                            <ActiveAdmins activeAdminDatas={activeAdminDatas} />
+                                            <ActiveAdmins
+                                                activeAdminDatas={activeAdminDatas}
+                                                isFetching={isFetching}
+                                                isFetchingNextPage={isFetchingNextPage}
+                                                fetchNextPage={fetchNextPage}
+                                                hasNextPage={hasNextPage}
+                                            />
 
                                             <div className="flex justify-center items-center w-full h-full bg-[#FFF1F0] my-5 rounded-sm py-2 sm:p-3">
                                                 <MdWarningAmber className="!font-bold !text-[#CF1322] text-xl" />

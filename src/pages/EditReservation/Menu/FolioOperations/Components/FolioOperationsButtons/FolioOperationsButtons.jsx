@@ -6,6 +6,7 @@ import { Button, Drawer, Dropdown, Form, Select } from "antd";
 import AddNewServiceOrderForm from "../FolioOperationsForms/AddNewServiceOrderForm";
 import AddNewFacilityOrderForm from "../FolioOperationsForms/AddNewFacilityOrderForm";
 import AddPaymentForm from "../../../../../BookingDetail/Components/BookingDetailForms/AddPaymentForm";
+import AddDepoistForm from "../../../../../BookingDetail/Components/BookingDetailForms/AddDepoistForm";
 import { queryClient } from "../../../../../../app/queryClient";
 
 const FolioOperationsButtons = ({
@@ -21,6 +22,7 @@ const FolioOperationsButtons = ({
   const [serviceOpen, setServiceOpen] = useState(false);
   const [facilityOpen, setFacilityOpen] = useState(false);
   const [paymentOpen, setPaymentOpen] = useState(false);
+  const [addDepositOpen, setAddDepositOpen] = useState(false);
   const [folioOpen, setFolioOpen] = useState(false);
 
   const foliosList = folioUuid?.data || [];
@@ -78,6 +80,14 @@ const FolioOperationsButtons = ({
         </Button>
 
         <Button
+        className="custom-blue-btn"
+        onClick={() => setAddDepositOpen(true)}
+        icon={<PlusOutlined style={{ fontSize: "12px"}}/>}
+        >
+          Add Deposit
+        </Button>
+
+        <Button
           className="custom-blue-btn"
           icon={isPrintAllLoading ? <LoadingOutlined spin /> : <IoPrintOutline />}
           disabled={foliosList.length === 0 || isPrintAllLoading}
@@ -129,6 +139,15 @@ const FolioOperationsButtons = ({
         paymentCompletedStatus={paymentCompletedStatus}
         reservationUuid={data?.uuid}
       />
+
+      <AddDepoistForm
+        open={addDepositOpen}
+        onClose={() => setAddDepositOpen(false)}
+        bookingDetails={data}
+        providerTypes={providerTypes}
+        paymentCompletedStatus={paymentCompletedStatus}
+        reservationUuid={reservationUuid}
+      /> 
     </div>
   );
 };

@@ -549,9 +549,11 @@ const RateAndInventoryCalendar = () => {
                 let totalAvailable = 0, totalSold = 0, totalRooms = 0;
                 roomTypes.forEach((rt) => {
                     const avail = rtDateMap[rt.id]?.[dateStr]?.availability ?? DEFAULT_AVAILABILITY;
-                    totalAvailable += avail.available ?? 0;
-                    totalSold += avail.sold ?? 0;
-                    totalRooms += avail.totalRooms ?? 0;
+                    const totalR = avail.totalRooms ?? 0;
+                    const soldR = avail.soldRooms ?? 0;
+                    totalAvailable += totalR - soldR;
+                    totalSold += soldR;
+                    totalRooms += totalR;
                 });
                 const occupancy = totalRooms > 0 ? Math.round((totalSold / totalRooms) * 100) : 0;
                 return { available: totalAvailable, sold: totalSold, occupancy };

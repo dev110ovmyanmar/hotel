@@ -6,6 +6,7 @@ import NightAuditUnlockStatus from "./NightAuditUnlockStatus";
 import CheckBookingHeader from "../CheckBookingHeader";
 import NightAuditUnlockTable from "./NightAuditUnlockTable";
 import { useApiMutation } from "../../../hooks/useApiMutation";
+import { spinLoadingCenter } from "../../../variables/constants";
 
 const NightAuditUnlockPage = ({
     stepValue,
@@ -37,7 +38,7 @@ const NightAuditUnlockPage = ({
 
     if (!preAuditChecksData) {
         return (
-            <div className="!flex !items-center !justify-center">
+            <div className={spinLoadingCenter}>
                 <Spin />
             </div>
         )

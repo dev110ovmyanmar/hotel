@@ -1,8 +1,7 @@
 import { CloseCircleOutlined, EditOutlined, EyeOutlined, MoreOutlined, WarningOutlined } from "@ant-design/icons";
 import { Button, Card, Checkbox, Col, Dropdown, Form, Row, Space, Table, Tag } from "antd";
 import { AiOutlineRight } from "react-icons/ai";
-import { Calendar1Icon, CalendarRange, CircleCheck, LockKeyhole } from "lucide-react";
-import dayjs from "dayjs";
+import { CalendarRange, CircleCheck, LockKeyhole } from "lucide-react";
 import { addDays, nextStepButtonDesign } from "../../../variables/constants";
 import { useApiMutation } from "../../../hooks/useApiMutation";
 import { clickCloseBusinessDate, clickCreateNewDay } from "../../../api/nightAuditApi";
@@ -15,6 +14,7 @@ const CloseBusinessDateTable = ({
 
     const [form] = Form.useForm();
     const nextBusinessDate = addDays(preAuditChecksData?.businessDate, 1);
+    const [successCloseBusinessDate,setSuccessCloseBusinessDate] = useState(false);
 
     const closeBusinessDateMutate = useApiMutation({
         mutationFn: clickCloseBusinessDate,
@@ -29,7 +29,25 @@ const CloseBusinessDateTable = ({
     const handleCloseBusinessDate = () => {
         closeBusinessDateMutate.mutate({
             businessDate: preAuditChecksData?.businessDate
-        })
+        },
+            {
+                onSuccess : (data) => {
+                    const nightAuditStatus = data?.status === "completed";
+                    const nightAuditData = JSON.parse(
+                        localStorage.getItem("nightAudit")
+                    );
+
+                    localStorage.setItem(
+                        "nightAudit",
+                        JSON.stringify({
+                            ...nightAuditData,
+                            nigitAuditStatus : nightAuditStatus
+                        })
+                    );
+
+                    setSuccessCloseBusinessDate(true)
+                }
+            })
     };
 
     const handlecreateNewDay = () => {
@@ -105,24 +123,24 @@ const CloseBusinessDateTable = ({
                         columns={columns}
                         dataSource={preAuditChecksData?.checks}
                         pagination={false}
-                        // summary={() => (
-                        //     <Table.Summary fixed="bottom">
-                        //         <Table.Summary.Row>
-                        //             <Table.Summary.Cell index={0} colSpan={columns.length}>
-                        //                 <div className="flex justify-end items-center w-full py-1">
-                        //                     <Button
-                        //                         type="primary"
-                        //                         onClick={colorCheckBooking}
-                        //                         className="flex items-center gap-1"
-                        //                     >
-                        //                         Next Step
-                        //                         <AiOutlineRight />
-                        //                     </Button>
-                        //                 </div>
-                        //             </Table.Summary.Cell>
-                        //         </Table.Summary.Row>
-                        //     </Table.Summary>
-                        // )}
+                    // summary={() => (
+                    //     <Table.Summary fixed="bottom">
+                    //         <Table.Summary.Row>
+                    //             <Table.Summary.Cell index={0} colSpan={columns.length}>
+                    //                 <div className="flex justify-end items-center w-full py-1">
+                    //                     <Button
+                    //                         type="primary"
+                    //                         onClick={colorCheckBooking}
+                    //                         className="flex items-center gap-1"
+                    //                     >
+                    //                         Next Step
+                    //                         <AiOutlineRight />
+                    //                     </Button>
+                    //                 </div>
+                    //             </Table.Summary.Cell>
+                    //         </Table.Summary.Row>
+                    //     </Table.Summary>
+                    // )}
                     />
                 </Col>
 
@@ -174,6 +192,7 @@ const CloseBusinessDateTable = ({
                                     <Button
                                         className="!w-full"
                                         onClick={handleCloseBusinessDate}
+                                        disabled = {successCloseBusinessDate}
                                     >
                                         <div className="flex gap-x-5">
                                             <div><LockKeyhole /></div>
@@ -183,7 +202,7 @@ const CloseBusinessDateTable = ({
                                 </Form.Item>
                             </Form>
 
-                            
+
                         </div>
                     </Card>
                 </Col>

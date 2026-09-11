@@ -1,51 +1,3 @@
-// import React from "react";
-// import {
-//   CARD_CONFIGS,
-//   StatusCard,
-// } from "../../../component/NightAuditCard/ReconciliationStatusCards";
-// import { Alert, Button, Space } from "antd";
-// import { CheckCircleFilled, CheckOutlined } from "@ant-design/icons";
-// import { Text } from "lucide-react";
-
-// const ReconciliationStatus = ({ data, hasBlockingDifferences }) => {
-//   console.log(data, "data");
-//   return (
-//     <div className="mb-2">
-//       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 items-center !my-3">
-//         {CARD_CONFIGS.map((config) => (
-//           <StatusCard
-//             key={config.key}
-//             config={config}
-//             value={data?.[config.key]}
-//             currency="MMK"
-//           />
-//         ))}
-//       </div>
-
-//       <Alert
-//         type="success"
-//         showIcon
-//         icon={<CheckCircleFilled style={{ color: "#52c41a" }} />}
-//         message="All folios are balanced. No blocking differences found."
-//         action={
-//           <Space size={16}>
-//             <Space size={4}>
-//               <CheckCircleFilled style={{ color: "#52c41a" }} />
-//               <p style={{ color: "#274916" }}>Can Confirm</p>
-//             </Space>
-//             <Button type="primary" icon={<CheckOutlined />}>
-//               Confirm Reconciliation
-//             </Button>
-//           </Space>
-//         }
-//         style={{ alignItems: "center" }}
-//       />
-//     </div>
-//   );
-// };
-
-// export default ReconciliationStatus;
-
 import React from "react";
 import {
   CARD_CONFIGS,
@@ -65,13 +17,12 @@ const ReconciliationStatus = ({
   data,
   hasBlockingDifferences,
 }) => {
-  console.log(data, "data");
 
   const isBalanced = hasBlockingDifferences === false;
 
   return (
     <div className="mb-2">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 items-center !my-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-2 items-stretch !my-3 w-full">
         {CARD_CONFIGS.map((config) => (
           <StatusCard
             key={config.key}
@@ -103,7 +54,9 @@ const ReconciliationStatus = ({
               {isBalanced ? (
                 <>
                   <CheckCircleFilled style={{ color: "#52c41a" }} />
-                  <Text style={{ color: "#274916" }}>Can Confirm</Text>
+                  <Text className="text-[#274916] dark:text-[#A8D58D]">
+                    Can Confirm
+                  </Text>
                 </>
               ) : (
                 <>

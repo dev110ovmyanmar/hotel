@@ -10,6 +10,7 @@ import {
 } from "@ant-design/icons";
 import { Drawer, Image, Modal, Upload } from "antd";
 import Toast from "../Toast/Toast";
+import Loader from "../Loader/Loader";
 
 const getBase64 = (file) =>
     new Promise((resolve, reject) => {
@@ -20,6 +21,7 @@ const getBase64 = (file) =>
     });
 
 const ImageUpload = ({
+    isFetching,
     partneruuid,
     agencyContractuuid,
     companyContractuuid,
@@ -128,125 +130,135 @@ const ImageUpload = ({
                 open={imageDrawerOpen}
                 onClose={() => setImageDrawerOpen(false)}
             >
-                {previewImage && (
-                    <Image
-                        styles={{ root: { display: "none" } }}
-                        preview={{
-                            open: previewOpen,
-                            onOpenChange: (visible) => setPreviewOpen(visible),
-                            afterOpenChange: (visible) => !visible && setPreviewImage(""),
-                        }}
-                        src={previewImage}
-                    />
-                )}
+                {
+                    isFetching ?
+                    <div className="flex items-center justify-center h-full min-h-[300px]">
+                        <Loader />
+                    </div>
+                    :
+                        <>
+                            {previewImage && (
+                                <Image
+                                    styles={{ root: { display: "none" } }}
+                                    preview={{
+                                        open: previewOpen,
+                                        onOpenChange: (visible) => setPreviewOpen(visible),
+                                        afterOpenChange: (visible) => !visible && setPreviewImage(""),
+                                    }}
+                                    src={previewImage}
+                                />
+                            )}
 
-                <div
-                    id="partner-upload"
-                    style={{
-                        display: "flex",
-                        gap: "20px",
-                        flexWrap: "wrap",
-                    }}
-                >
-                    {/* Upload Button */}
-                    <Upload
-                        listType="picture-card"
-                        fileList={fileList}
-                        customRequest={handleUpload}
-                        // onPreview={handlePreview}
-                        onChange={handleChange}
-                        showUploadList={false}
-                    >
-                        {uploadButton}
-                    </Upload>
-
-                    {/* Images */}
-
-                    {[...(agencyFileList || [])]?.map((file) => {
-                        return (
                             <div
-                                key={file.uuid}
+                                id="partner-upload"
                                 style={{
-                                    width: "150px",
-                                    height: "150px",
-                                    border: "1px dotted gray",
-                                    borderRadius: "8px",
-                                    overflow: "hidden",
-                                    position: "relative",
+                                    display: "flex",
+                                    gap: "20px",
+                                    flexWrap: "wrap",
                                 }}
                             >
-                                {isPDFfile(file?.file) ? (
-                                    <div
-                                        style={{
-                                            width: "100%",
-                                            height: "100%",
-                                            display: "flex",
-                                            justifyContent: "center",
-                                            alignItems: "center",
-                                            background: "#f5f5f5",
-                                            fontWeight: "bold",
-                                            cursor: "pointer"
-                                        }}
-                                        onClick={() => handlePreview(file?.file)}
-                                    >
-                                        <div style={{ textAlign: "center" }}>
-                                            <FilePdfOutlined style={{ fontSize: "30px", color: "red" }} />
-                                            <div >PDF File</div>
-                                        </div>
-                                    </div>
-                                ) : (
-                                    <img
-                                        src={file?.file}
-                                        alt="image"
-                                        style={{
-                                            width: "100%",
-                                            height: "100%",
-                                            objectFit: "cover",
-                                            cursor: "pointer",
-                                        }}
-                                    />
-                                )}
-
-
-                                <div
-                                    style={{
-                                        position: "absolute",
-                                        bottom: 0,
-                                        width: "100%",
-                                        background: "rgba(0,0,0,0.7)",
-                                        display: "flex",
-                                        justifyContent: "space-around",
-                                        padding: "2px 0",
-                                    }}
+                                {/* Upload Button */}
+                                <Upload
+                                    listType="picture-card"
+                                    fileList={fileList}
+                                    customRequest={handleUpload}
+                                    // onPreview={handlePreview}
+                                    onChange={handleChange}
+                                    showUploadList={false}
                                 >
-                                    <span
-                                        style={{ color: "#fff", cursor: "pointer" }}
-                                        onClick={() => handlePreview(file?.file)}
-                                    >
-                                        {/* <EyeOutlined /> */}
-                                        {isPDFfile(file?.file) ? <DownloadOutlined /> : <EyeOutlined />}
-                                    </span>
+                                    {uploadButton}
+                                </Upload>
 
-                                    <span
-                                        style={{ color: "red", cursor: "pointer" }}
-                                        onClick={() => setDeleteModal(true)}
-                                    >
-                                        <DeleteOutlined />
-                                    </span>
-                                </div>
-                                <Modal
-                                    title="Are you sure you want to delete permanently?"
-                                    open={deleteModal}
-                                    onCancel={() => setDeleteModal(false)}
-                                    onOk={() => handelDelete(file)}
-                                    confirmLoading={deleteLoading}
-                                    mask={false}
-                                />
+                                {/* Images */}
+
+                                {[...(agencyFileList || [])]?.map((file) => {
+                                    return (
+                                        <div
+                                            key={file.uuid}
+                                            style={{
+                                                width: "150px",
+                                                height: "150px",
+                                                border: "1px dotted gray",
+                                                borderRadius: "8px",
+                                                overflow: "hidden",
+                                                position: "relative",
+                                            }}
+                                        >
+                                            {isPDFfile(file?.file) ? (
+                                                <div
+                                                    style={{
+                                                        width: "100%",
+                                                        height: "100%",
+                                                        display: "flex",
+                                                        justifyContent: "center",
+                                                        alignItems: "center",
+                                                        background: "#f5f5f5",
+                                                        fontWeight: "bold",
+                                                        cursor: "pointer"
+                                                    }}
+                                                    onClick={() => handlePreview(file?.file)}
+                                                >
+                                                    <div style={{ textAlign: "center" }}>
+                                                        <FilePdfOutlined style={{ fontSize: "30px", color: "red" }} />
+                                                        <div >PDF File</div>
+                                                    </div>
+                                                </div>
+                                            ) : (
+                                                <img
+                                                    src={file?.file}
+                                                    alt="image"
+                                                    style={{
+                                                        width: "100%",
+                                                        height: "100%",
+                                                        objectFit: "cover",
+                                                        cursor: "pointer",
+                                                    }}
+                                                />
+                                            )}
+
+
+                                            <div
+                                                style={{
+                                                    position: "absolute",
+                                                    bottom: 0,
+                                                    width: "100%",
+                                                    background: "rgba(0,0,0,0.7)",
+                                                    display: "flex",
+                                                    justifyContent: "space-around",
+                                                    padding: "2px 0",
+                                                }}
+                                            >
+                                                <span
+                                                    style={{ color: "#fff", cursor: "pointer" }}
+                                                    onClick={() => handlePreview(file?.file)}
+                                                >
+                                                    {/* <EyeOutlined /> */}
+                                                    {isPDFfile(file?.file) ? <DownloadOutlined /> : <EyeOutlined />}
+                                                </span>
+
+                                                <span
+                                                    style={{ color: "red", cursor: "pointer" }}
+                                                    onClick={() => setDeleteModal(true)}
+                                                >
+                                                    <DeleteOutlined />
+                                                </span>
+                                            </div>
+                                            <Modal
+                                                title="Are you sure you want to delete permanently?"
+                                                open={deleteModal}
+                                                onCancel={() => setDeleteModal(false)}
+                                                onOk={() => handelDelete(file)}
+                                                confirmLoading={deleteLoading}
+                                                mask={false}
+                                            />
+                                        </div>
+
+                                    );
+                                })}
                             </div>
+                        </>
 
-                        );
-                    })}
-                </div>
+                }
             </Drawer>
 
 

@@ -42,6 +42,7 @@ const ConfirmModal = ({
     const nightAuditStorage = {
         isLocked: activeAdminDatas?.pages[0]?.systemLock?.isLocked,
         businessDate: activeAdminDatas?.pages[0]?.nightAudit?.targetBusinessDate,
+        checkStatus : activeAdminDatas?.pages[0]?.nightAudit?.status
     };
     
     const systemLockMutation = useApiMutation({
@@ -65,7 +66,6 @@ const ConfirmModal = ({
                 );
                 navigate("/night-audit/pre-audit-check");
                 form.resetFields()
-
             },
             onError: () => {
                 form.resetFields()
@@ -85,7 +85,7 @@ const ConfirmModal = ({
         catch (error) {
             console.log("Validationfailed:", error);
         }
-        onCancel(false);
+        
     };
 
     const handleForceLogoutToNavigate = () => {

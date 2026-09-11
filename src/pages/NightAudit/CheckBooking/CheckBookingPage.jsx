@@ -4,6 +4,7 @@ import useApiQuery from "../../../hooks/useApiQuery";
 import CheckBookingHeader from "../CheckBookingHeader";
 import CheckBookingTable from "../CheckBookingTable";
 import { useNavigate } from "react-router-dom";
+import { spinLoadingCenter } from "../../../variables/constants";
 
 const CheckBookingPage = ({
     stepValue,
@@ -19,7 +20,7 @@ const CheckBookingPage = ({
 
     if (!preAuditChecksData) {
         return (
-            <div className="!flex !items-center !justify-center">
+            <div className={spinLoadingCenter}>
                 <Spin />
             </div>
         )
