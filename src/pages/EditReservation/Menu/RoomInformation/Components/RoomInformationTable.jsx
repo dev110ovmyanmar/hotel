@@ -31,6 +31,9 @@ import { useApiMutation } from "../../../../../hooks/useApiMutation";
 import { availabilitySearch } from "../../../../../api/reservationSectionApi";
 import { getAmendReservationMenuItems } from "./AmendReservationList";
 import { capitalizeFirstLetter } from "../../../../../utils";
+import { GiBroom } from "react-icons/gi";
+import { MdOutlineKingBed } from "react-icons/md";
+import StatusIcon from "../../../../../component/ColorStatusTag/StatusIcon";
 
 const RoomInformationTable = ({
   data,
@@ -207,6 +210,7 @@ const RoomInformationTable = ({
       title: "Room No",
       key: "room",
       dataIndex: "room",
+      width: 200,
       render: (text, record) => {
         const isRoomNull = !text;
         const isClickable =
@@ -241,15 +245,27 @@ const RoomInformationTable = ({
             {text?.roomNo || "Assign Room"}
 
             {!isRoomNull && (
-              <div className="mt-1 flex items-center gap-2">
-                <span>
-                  <ColorStatusTag status={record?.room?.status} />
-                </span>
 
-                <span>
+              <div className="mt-1 flex items-center gap-4">
+                <div className="flex items-center gap-1">
+                  <StatusIcon
+                    icon={MdOutlineKingBed}
+                    status={record?.room?.status}
+                  />
+
+                  <ColorStatusTag status={record?.room?.status} />
+                </div>
+
+                <div className="flex items-center gap-1">
+                  <StatusIcon
+                    icon={GiBroom}
+                    status={record?.room?.cleanStatus}
+                  />
+
                   <ColorStatusTag status={record?.room?.cleanStatus} />
-                </span>
+                </div>
               </div>
+
             )}
           </span>
         );
@@ -280,23 +296,12 @@ const RoomInformationTable = ({
       render: (_, record) => <ColorStatusTag status={record?.roomStatus} />,
       width: 110,
     },
-    // {
-    //   title: "Total Charges",
-    //   dataIndex: "grandTotal",
-    //   align: "center",
-    //   key: "grandTotal",
-    //   render: (value) => (
-    //     <div className="flex justify-end items-center gap-1">
-    //       <PriceTag value={value} />
-    //       <span className=" font-medium">MMK</span>
-    //     </div>
-    //   ),
-    // },
     {
       title: "Total Charges",
       dataIndex: "grandTotal",
       align: "center",
       key: "grandTotal",
+      width: 140,
       render: (value, record) => (
         <div className="flex flex-col items-end gap-1">
           <div className="flex justify-end items-center gap-1">
