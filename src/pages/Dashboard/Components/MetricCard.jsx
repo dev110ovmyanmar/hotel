@@ -1,28 +1,11 @@
-// import React from "react";
-// import { Card } from "antd";
-
-// export default function MetricCard({ title, value }) {
-//   return (
-//     <Card className="shadow-sm rounded-lg border border-gray-200">
-//       <div className="text-sm font-medium mb-1">
-//         {title}
-//       </div>
-
-//       <div className="text-xl font-bold mb-3">
-//         {value}
-//       </div>
-
-//       <span className="text-xs text-gray-400 ml-2">
-//         From last week
-//       </span>
-//     </Card>
-//   );
-// }
 import {
   AccountBookOutlined,
   CalendarOutlined,
+  CheckCircleOutlined,
+  CloseCircleOutlined,
   LoginOutlined,
   LogoutOutlined,
+  UserDeleteOutlined,
 } from "@ant-design/icons";
 import { Card } from "antd";
 
@@ -30,44 +13,85 @@ export const METRIC_CONFIGS = [
   {
     key: "totalRevenue",
     bgColor: "!bg-[#F0FDF4]",
-    outerBg: "bg-[#BBF7D0]",
+    outerBg: "bg-[#BBE7C4]",
     innerBg: "bg-[#F0FDF4]",
-    textColor: "!text-[#166534]",
-    titleColor: "text-[#14532D]",
-    currencyColor: "text-[#15803D]",
+    textColor: "!text-[#3F8F5B]",
+    titleColor: "text-[#357A4B]",
+    currencyColor: "text-[#3F8F5B]",
     title: "Total Revenue",
-    icon: <AccountBookOutlined className="!text-[#166534] !text-lg" />,
+    icon: <AccountBookOutlined className="!text-[#3F8F5B] !text-lg" />,
   },
   {
     key: "totalReservations",
-    bgColor: "!bg-[#EFF6FF]",
-    outerBg: "bg-[#BFDBFE]",
-    innerBg: "bg-[#EFF6FF]",
-    textColor: "!text-[#1D4ED8]",
-    titleColor: "text-[#1E3A8A]",
+    bgColor: "!bg-[#EEF2FF]",
+    outerBg: "bg-[#C7D2FE]",
+    innerBg: "bg-[#EEF2FF]",
+    textColor: "!text-[#4F46E5]",
+    titleColor: "text-[#3730A3]",
     title: "Total Reservation",
-    icon: <CalendarOutlined className="!text-[#1D4ED8] !text-lg" />,
+    icon: <CalendarOutlined className="!text-[#4F46E5] !text-lg" />,
   },
   {
-    key: "totalCheckin",
-    bgColor: "!bg-[#FFFBE6]",
-    outerBg: "bg-[#FFE58F]",
-    innerBg: "bg-[#FFFBE6]",
-    textColor: "!text-[#D48806]",
-    titleColor: "text-[#874D00]",
+    key: "booked",
+    bgColor: "!bg-[#E6F4FF]",
+    outerBg: "bg-[#91CAFF]",
+    innerBg: "bg-[#E6F4FF]",
+    textColor: "!text-[#0958D9]",
+    titleColor: "text-[#0958D9]",
+    title: "Booked",
+    icon: <CalendarOutlined className="!text-[#0958D9] !text-lg" />,
+  },
+  {
+    key: "confirmed",
+    bgColor: "!bg-[#eaf9db]",
+    outerBg: "bg-[#c5f1c8]",
+    innerBg: "bg-[#eaf9db]",
+    textColor: "!text-[#62ab29]",
+    titleColor: "text-[#62ab29]",
+    title: "Confirmed",
+    icon: <CheckCircleOutlined className="!text-[#62ab29] !text-lg" />,
+  },
+  {
+    key: "checkIn",
+    bgColor: "!bg-[#eefcf9]",
+    outerBg: "bg-[#a7eee7]",
+    innerBg: "bg-[#eefcf9]",
+    textColor: "!text-[#189094]",
+    titleColor: "text-[#189094]",
     title: "Check-In",
-    icon: <LoginOutlined className="!text-[#D48806] !text-lg" />,
+    icon: <LoginOutlined className="!text-[#189094] !text-lg" />,
   },
   {
-    key: "totalCheckout",
+    key: "checkOut",
+    bgColor: "!bg-[#FFF4F1]",
+    outerBg: "bg-[#FFBD9F]",
+    innerBg: "bg-[#FFF4F1]",
+    textColor: "!text-[#FF8D28]",
+    titleColor: "text-[#FF8D28]",
+    title: "Check-Out",
+    icon: <LogoutOutlined className="!text-[#FF8D28] !text-lg" />,
+  },
+  {
+    key: "cancelled",
     bgColor: "!bg-[#FFF1F0]",
-    outerBg: "bg-[#FFDBDB]",
+    outerBg: "bg-[#FFA39E]",
     innerBg: "bg-[#FFF1F0]",
     textColor: "!text-[#CF1322]",
-    titleColor: "text-[#8C2F39]",
-    title: "Check-Out",
-    icon: <LogoutOutlined className="!text-[#CF1322] !text-lg" />,
+    titleColor: "text-[#CF1322]",
+    title: "Cancelled",
+    icon: <CloseCircleOutlined className="!text-[#CF1322] !text-lg" />,
   },
+  {
+    key: "noShow",
+    bgColor: "!bg-[#F5F5F5]",
+    outerBg: "bg-[#D9D9D9]",
+    innerBg: "bg-[#F5F5F5]",
+    textColor: "!text-[#262626]",
+    titleColor: "text-[#434343]",
+    title: "No Show",
+    icon: <UserDeleteOutlined className="!text-[#262626] !text-lg" />,
+  },
+
 ];
 
 export const MetricCard = ({ config, value = 0, currency }) => {
