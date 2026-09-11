@@ -150,7 +150,14 @@ const SubFolioTable = ({ record, lineColumns, onMoveTo, isTransferring }) => {
           const classes = [];
           if (record.voidedAt) classes.push('void-folioLine-row');
           const isChildLine = !!record.parentLineId;
-          const hasExcludedItemType = ['tax', 'service_charge', 'discount', 'incentive'].includes(record.itemType);
+          const hasExcludedItemType = [
+            'tax', 
+            'service_charge', 
+            'discount', 
+            'incentive',
+            'adjustment',
+            'rebate'
+          ].includes(record.itemType);
           if (isChildLine && hasExcludedItemType) classes.push('hide-checkbox-row');
           return classes.join(' ');
         }}
