@@ -1,8 +1,10 @@
 import React from "react";
 import { Tag } from "antd";
 import { capitalizeFirstLetter } from '../../utils/Utils';
+import { MdOutlineKingBed } from "react-icons/md";
+import { GiBroom } from "react-icons/gi";
 
-const ColorStatusTag = ({ status }) => {
+const ColorStatusTag = ({ status, iconType, icon }) => {
   const statusColorMap = {
     booked: "#0958D9",
     booked_bg: "#E6F4FF",
@@ -108,17 +110,17 @@ const ColorStatusTag = ({ status }) => {
     void_bg: "#FFF1F0",
     void_border: "#FFA39E",
 
-    unpaid : "#D4A106",
-    unpaid_bg : "#FDFFE0",
-    unpaid_border : "#F4E34F",
+    unpaid: "#D4A106",
+    unpaid_bg: "#FDFFE0",
+    unpaid_border: "#F4E34F",
 
-    overdue : "#CF1322",
+    overdue: "#CF1322",
     overdue_bg: "#FFF1F0",
     overdue_border: "#FFA39E",
 
-    written_off : "#333333",
-    written_off_bg : "#F5F5F5",
-    written_off_border : "#D9D9D9",
+    written_off: "#333333",
+    written_off_bg: "#F5F5F5",
+    written_off_border: "#D9D9D9",
 
     open: "#0958D9",
     open_bg: "#E6F4FF",
@@ -175,7 +177,7 @@ const ColorStatusTag = ({ status }) => {
     out_of_order: "#CF1322",
     out_of_order_bg: "#FFF1F0",
     out_of_order_border: "#FFA39E",
-    
+
     out_of_service: "#333333",
     out_of_service_bg: "#F5F5F5",
     out_of_service_border: "#D9D9D9",
@@ -192,16 +194,32 @@ const ColorStatusTag = ({ status }) => {
   const backgroundColor = statusColorMap[`${code}_bg`];
   const borderColor = statusColorMap[`${code}_border`];
 
+
+  const getIcon = () => {
+    if (icon) return icon;
+    if (iconType === "bed") return <MdOutlineKingBed style={{ color, fontSize: "16px" }} />;
+    if (iconType === "broom") return <GiBroom style={{ color, fontSize: "16px" }} />;
+    return null;
+  };
+
+  const tagIcon = getIcon();
+
   return (
+
     <Tag
-      color={color}
+      icon={tagIcon}
       style={{
         color: `${color}`,
         backgroundColor: `${backgroundColor}`,
         borderColor: `${borderColor}`,
-        borderRadius: "5px"
+        borderRadius: "5px",
+        display: "inline-flex",
+        alignItems: "center",
+        gap: "0.5px",
       }}
-    >{capitalizeFirstLetter(status?.name) || "UNKNOWN"}</Tag>
+    >
+      {capitalizeFirstLetter(status?.name) || "UNKNOWN"}
+    </Tag>
   )
 };
 

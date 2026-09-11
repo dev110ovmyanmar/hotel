@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
-import { Dropdown, Space, Table } from "antd";
+import { useState,  } from "react";
+import { Dropdown,  Table } from "antd";
 import dayjs from "dayjs";
-import { PlusOutlined, MessageOutlined, EyeOutlined } from "@ant-design/icons";
+import { MessageOutlined, EyeOutlined } from "@ant-design/icons";
 import { CalendarPlus2, Gift } from "lucide-react";
 import { IoOptionsSharp } from "react-icons/io5";
 import { Bs0Circle, BsPeople } from "react-icons/bs";
@@ -31,9 +31,6 @@ import { useApiMutation } from "../../../../../hooks/useApiMutation";
 import { availabilitySearch } from "../../../../../api/reservationSectionApi";
 import { getAmendReservationMenuItems } from "./AmendReservationList";
 import { capitalizeFirstLetter } from "../../../../../utils";
-import { GiBroom } from "react-icons/gi";
-import { MdOutlineKingBed } from "react-icons/md";
-import StatusIcon from "../../../../../component/ColorStatusTag/StatusIcon";
 
 const RoomInformationTable = ({
   data,
@@ -144,7 +141,7 @@ const RoomInformationTable = ({
   const closeModal = () => setActiveModal(null);
 
   const columns = [
-    { title: "ID", dataIndex: "id", key: "id", width: 70 },
+    { title: "ID", dataIndex: "id", key: "id", width: 60 },
     // {
     //   title: "Room No",
     //   key: "room",
@@ -210,7 +207,7 @@ const RoomInformationTable = ({
       title: "Room No",
       key: "room",
       dataIndex: "room",
-      width: 200,
+      width: 230,
       render: (text, record) => {
         const isRoomNull = !text;
         const isClickable =
@@ -246,23 +243,14 @@ const RoomInformationTable = ({
 
             {!isRoomNull && (
 
-              <div className="mt-1 flex items-center gap-4">
-                <div className="flex items-center gap-1">
-                  <StatusIcon
-                    icon={MdOutlineKingBed}
-                    status={record?.room?.status}
-                  />
+              <div className="mt-1 flex items-center gap-2">
 
-                  <ColorStatusTag status={record?.room?.status} />
+                <div className="flex items-center gap-0.5">
+                  <ColorStatusTag status={record?.room?.status} iconType="bed" />
                 </div>
 
-                <div className="flex items-center gap-1">
-                  <StatusIcon
-                    icon={GiBroom}
-                    status={record?.room?.cleanStatus}
-                  />
-
-                  <ColorStatusTag status={record?.room?.cleanStatus} />
+                <div className="flex items-center gap-0.5">
+                  <ColorStatusTag status={record?.room?.cleanStatus} iconType="broom" />
                 </div>
               </div>
 

@@ -1,11 +1,10 @@
-import React, { useState } from "react";
+import React from "react";
 import { Button, Spin, Empty, Modal } from "antd";
 import dayjs from "dayjs";
 import {
   reservationRoomAssign,
   reservationRoomSearch,
 } from "./../../../../../../api/reservationSectionApi";
-import { LIMITS } from "../../../../../../variables/constants";
 import useApiQuery from "../../../../../../hooks/useApiQuery";
 import { useApiMutation } from "../../../../../../hooks/useApiMutation";
 import Toast from "../../../../../../component/Toast/Toast";
@@ -16,22 +15,6 @@ import {
 import ColorStatusTag from "../../../../../../component/ColorStatusTag/ColorStatusTag";
 
 const GetRoomForm = ({ selectedData, onSelectRoom, onClose, floorUuid }) => {
-  const statusColorMap = {
-    Available:
-      "text-[#389E0D] bg-[#F6FFED] text-xs p-1 px-2 rounded border border-[#B7EB8F]",
-    Occupied:
-      "text-[#0958D9] bg-[#E6F4FF] text-xs p-1 px-2 rounded border border-[#91CAFF]",
-    Dirty:
-      "text-[#D4A106] bg-[#FDFFE0] text-xs p-1 px-2 rounded border border-[#F4E34F]",
-    Maintenance:
-      "text-[#CF1322] bg-[#FFF1F0] text-xs p-1 px-2 rounded border border-[#FFA39E]",
-    "Out of Order":
-      "text-[#CF1322] bg-[#FFF1F0] text-xs p-1 px-2 rounded border border-[#FFA39E]",
-    "Out of Service":
-      "text-[#CF1322] bg-[#FFF1F0] text-xs p-1 px-2 rounded border border-[#FFA39E]",
-    Cleaning:
-      "text-[#389E0D] bg-[#F6FFED] text-xs p-1 px-2 rounded border border-[#B7EB8F]",
-  };
 
   const { data, isLoading } = useApiQuery({
     fetchQueryName: "reservationRoom",
@@ -132,12 +115,11 @@ const GetRoomForm = ({ selectedData, onSelectRoom, onClose, floorUuid }) => {
               </span>
             </div>
 
-            <ColorStatusTag status={room?.cleanStatus} />
+            <div className="flex items-center gap-14">
 
-            <div className="flex items-center gap-25">
-              <span className={statusColorMap[room.status?.name]}>
-                {room.status?.name}
-              </span>
+              <ColorStatusTag status={room?.status} iconType="broom" />
+
+              <ColorStatusTag status={room?.cleanStatus} iconType="broom" />
 
               <Button
                 loading={assignMutation.isLoading}
