@@ -60,7 +60,8 @@ const SubFolioTable = ({ record, lineColumns, onMoveTo, isTransferring }) => {
     },
     hideSelectAll: true,
     getCheckboxProps: (record) => ({
-      disabled: isFolioClosed || !!record.voidedAt,
+      disabled: isFolioClosed 
+      // || !!record.voidedAt,
     }),
   };
 
