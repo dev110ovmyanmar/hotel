@@ -169,7 +169,8 @@ const AddDepoistForm = ({
 
   const { mutate: createFolioPayment, isPending } = useApiMutation({
     mutationFn: createFolioPaymentDeposit,
-    invalidateKeys: [["reservation-details"]],
+    // invalidateKeys: [["reservation-details"]],
+    invalidateKeys: [["folios"]],
 
     options: {
       onSuccess: () => {
@@ -189,7 +190,7 @@ const AddDepoistForm = ({
   const onFinish = (values) => {
     setSubmitting(true);
     const payload = {
-      reservation: { uuid: bookingDetails?.reservation?.uuid },
+      reservation: { uuid: reservationUuid },
       guest: { uuid: values.guest },
       folio: { uuid: selectedFolioUuid },
       paymentMethod: { uuid: values.paymentMethod },

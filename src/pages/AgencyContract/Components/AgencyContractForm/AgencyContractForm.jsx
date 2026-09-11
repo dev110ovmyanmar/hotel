@@ -29,6 +29,7 @@ import { fetchAgencyUpload } from "../../../../api/partnerApi";
 import { deleteImageUpload } from "../../../../api/deleteImageApi";
 import { PERMISSIONS } from "../../../../variables/permission";
 import PriceInput from "../../../../component/PriceInput/PriceInput";
+import Loader from "../../../../component/Loader/Loader";
 
 const AgencyContractForm = ({
   mode,
@@ -73,7 +74,7 @@ const AgencyContractForm = ({
     shouldInvalidate: isEdit ? true : page === 1,
   });
 
-  const { data: partnerContractDetailData } = useApiQuery({
+  const { data: partnerContractDetailData, isFetching } = useApiQuery({
     fetchQueryName: "partner-contract-details",
     fetchQueryFunction: partnerContractDetails,
     params: {
@@ -208,119 +209,128 @@ const AgencyContractForm = ({
           </div>
         }
       >
-        <Form
-          form={form}
-          layout="vertical"
-          style={{ width: "100%" }}
-          onFinish={onFinish}
-          initialValues={{
-            property: {
-              name: propertyName?.name,
-            },
-            agency: {
-              name: state?.agencyRecord?.name,
-            },
-          }}
-        >
-          <Row gutter={[16, 16]}>
-            <Col span={24}>
-              <div className={`mb-4 p-5 shadow-sm  border border-gray-200 bg-gray-100! ${partnerDarkModeStyle}`}>
-                <span className="text-red-500">* </span>
-                Selected Charge Type and Value effected on Selected Date Range.
-                <span className="text-red-500">* </span>
-              </div>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label="Charge Type"
-                name={["chargeType", "uuid"]}
-                rules={[{ required: true, message: "Charge Type is Required" }]}
-                getValueProps={(value) => ({
-                  value: isView
-                    ? chargeType.find((item) => item.uuid === value)?.name
-                    : value,
-                })}
-              >
-                {isView ? (
-                  <Input readOnly={isView} />
-                ) : (
-                  <Select
-                    options={chargeType?.map((item) => ({
-                      label: item.name,
-                      value: item.uuid,
-                    }))}
-                    placeholder="Select Charge Type"
-                  ></Select>
-                )}
-              </Form.Item>
-            </Col>
+        {
+          isFetching ?
+            <div className="flex items-center justify-center h-full min-h-[300px]">
+              <Loader />
+            </div>
+            :
+            <Form
+              form={form}
+              layout="vertical"
+              style={{ width: "100%" }}
+              onFinish={onFinish}
+              initialValues={{
+                property: {
+                  name: propertyName?.name,
+                },
+                agency: {
+                  name: state?.agencyRecord?.name,
+                },
+              }}
+            >
+              <Row gutter={[16, 16]}>
+                <Col span={24}>
+                  <div className={`mb-4 p-5 shadow-sm  border border-gray-200 bg-gray-100! ${partnerDarkModeStyle}`}>
+                    <span className="text-red-500">* </span>
+                    Selected Charge Type and Value effected on Selected Date Range.
+                    <span className="text-red-500">* </span>
+                  </div>
+                </Col>
+                <Col span={12}>
+                  <Form.Item
+                    label="Charge Type"
+                    name={["chargeType", "uuid"]}
+                    rules={[{ required: true, message: "Charge Type is Required" }]}
+                    getValueProps={(value) => ({
+                      value: isView
+                        ? chargeType.find((item) => item.uuid === value)?.name
+                        : value,
+                    })}
+                  >
+                    {isView ? (
+                      <Input readOnly={isView} />
+                    ) : (
+                      <Select
+                        options={chargeType?.map((item) => ({
+                          label: item.name,
+                          value: item.uuid,
+                        }))}
+                        placeholder="Select Charge Type"
+                      ></Select>
+                    )}
+                  </Form.Item>
+                </Col>
 
-            <Col span={12}>
-              <Form.Item
-                label="Charge Value "
-                name="chargeValue"
-                rules={[
-                  { required: true, message: "Charge Value is Required" },
-                  {
-                    validator: (_, value) => {
-                      const selectedType = chargeType?.find(
-                        (item) => item.uuid === chargeTypeValue,
-                      );
-
-                      if (selectedType?.code === "percentage") {
-                        const numValue = Number(value);
-                        if (isNaN(numValue) || numValue < 1 || numValue > 100) {
-                          return Promise.reject(
-                            new Error("Percentage must be between 1 and 100"),
+                <Col span={12}>
+                  <Form.Item
+                    label="Charge Value "
+                    name="chargeValue"
+                    rules={[
+                      { required: true, message: "Charge Value is Required" },
+                      {
+                        validator: (_, value) => {
+                          const selectedType = chargeType?.find(
+                            (item) => item.uuid === chargeTypeValue,
                           );
-                        }
-                      }
-                      return Promise.resolve();
-                    },
-                  },
-                ]}
-                getValueProps={(value) => ({
-                  value: value !== null && value !== undefined ? String(value) : "",
-                })}
-              >
-                <PriceInput
-                  min={1}
-                  suffix={(() => {
-                    const selected = chargeType?.find(
-                      (item) => item.uuid === chargeTypeValue,
-                    );
-                    return selected?.code === "percentage" ? "%" : "MMK";
-                  })()}
-                  readOnly={isView}
-                  placeholder="Enter Charge Value"
-                  maxLength={15}
-                />
-              </Form.Item>
-            </Col>
-          </Row>
 
-          <Row gutter={16}>
-            <Col span={24}>
-              <Form.Item
-                name="dateRange"
-                label="Date Range"
-                rules={[{ required: true, message: "Please select Date Range" }]}
-              >
-                <RangePicker
-                  disabledDate={disabledDate}
-                  open={isView ? !isView : undefined}
-                  inputReadOnly={isView}
-                  suffixIcon={isView ? null : undefined}
-                  style={{ width: '100%' }}
-                  allowClear={!isView}
-                />
-              </Form.Item>
-            </Col>
-          </Row>
-        </Form>
+                          if (selectedType?.code === "percentage") {
+                            const numValue = Number(value);
+                            if (isNaN(numValue) || numValue < 1 || numValue > 100) {
+                              return Promise.reject(
+                                new Error("Percentage must be between 1 and 100"),
+                              );
+                            }
+                          }
+                          return Promise.resolve();
+                        },
+                      },
+                    ]}
+                    getValueProps={(value) => ({
+                      value: value !== null && value !== undefined ? String(value) : "",
+                    })}
+                  >
+                    <PriceInput
+                      min={1}
+                      suffix={(() => {
+                        const selected = chargeType?.find(
+                          (item) => item.uuid === chargeTypeValue,
+                        );
+                        return selected?.code === "percentage" ? "%" : "MMK";
+                      })()}
+                      readOnly={isView}
+                      placeholder="Enter Charge Value"
+                      maxLength={15}
+                    />
+                  </Form.Item>
+                </Col>
+              </Row>
+
+              <Row gutter={16}>
+                <Col span={24}>
+                  <Form.Item
+                    name="dateRange"
+                    label="Date Range"
+                    rules={[{ required: true, message: "Please select Date Range" }]}
+                  >
+                    <RangePicker
+                      disabledDate={disabledDate}
+                      open={isView ? !isView : undefined}
+                      inputReadOnly={isView}
+                      suffixIcon={isView ? null : undefined}
+                      style={{ width: '100%' }}
+                      allowClear={!isView}
+                    />
+                  </Form.Item>
+                </Col>
+              </Row>
+            </Form>
+        }
+
       </Drawer>
 
       <ImageUpload
+        isFetching={isFetching}
         agencyContractuuid={partnerContractDetailData?.uuid}
         agencyFileList={partnerContractDetailData?.agencyContractFiles}
         handleUploadMutation={partnerUpload}

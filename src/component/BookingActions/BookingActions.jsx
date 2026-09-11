@@ -41,16 +41,31 @@ export const button_config = {
 
 export const status_actions = {
   PENDING: [],
-  BOOKED: ["addNote"],
-  CONFIRMED: ["overtimeCharges", "addNote", "addDeposit"],
-  CHECKED_IN: [
-    "addPayment",
-    "addDeposit",
-    "overtimeCharges",
-    "printInvoice",
-    "addNote",
+  BOOKED: [
+    // "addNote"
   ],
-  CHECKED_OUT: ["addRefund", "printInvoice", "addNote"],
-  CANCELLED: ["overtimeCharges", "addRefund", "addNote"],
-  NO_SHOW: ["overtimeCharges", "addRefund", "ChargeNoshowFee", "addNote"],
+  CONFIRMED: [
+    // "overtimeCharges", 
+    // "addNote"
+  ],
+  CHECKED_IN: [
+    // "addPayment",
+    // "addDeposit",
+    // "overtimeCharges",
+    // "printInvoice",
+    // "addNote",
+  ],
+  CHECKED_OUT: ["addRefund",
+    //  "printInvoice", "addNote"
+    ],
+  CANCELLED: [
+    // "overtimeCharges", 
+    "addRefund",
+    //  "addNote"
+    ],
+  NO_SHOW: [
+    // "overtimeCharges", 
+    "addRefund", 
+    // "ChargeNoshowFee", "addNote"
+  ],
 };
