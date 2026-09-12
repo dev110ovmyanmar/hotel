@@ -300,7 +300,7 @@ const FolioInvoicePrint = React.forwardRef(({ printData, adminName, adminRole, h
                       className="fi-table-row"
                       style={{ background: WHITE }}
                     >
-                      <td style={td("center", true)}>{line.postedAt ? dayjs(line.postedAt).format("DD/MM/YYYY") : "—"}</td>
+                      <td style={td("center", true)}>{line.chargeDate ? dayjs(line.chargeDate).format("DD/MM/YYYY") : "—"}</td>
                       <td style={{ ...td("center", true), color: INK_MUTED }}>{line?.refNo}</td>
                       <td style={{ ...td("left"), color: INK }}>{line.descriptionSnapshot || "—"}</td>
                       <td style={{ ...td("center", true), color: INK }}>{line?.roomNo || "—"}</td>
