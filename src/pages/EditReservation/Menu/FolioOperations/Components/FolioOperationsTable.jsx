@@ -90,25 +90,27 @@ const SubFolioTable = ({ record, lineColumns, onMoveTo, isTransferring }) => {
         <Table.Summary.Cell index={1} />
         <Table.Summary.Cell index={2} />
         <Table.Summary.Cell index={3} />
-        <Table.Summary.Cell index={3}>Total </Table.Summary.Cell>
-        <Table.Summary.Cell index={3} align="right">
+        <Table.Summary.Cell index={4} />
+        <Table.Summary.Cell index={5} />
+        <Table.Summary.Cell index={6}>Total</Table.Summary.Cell>
+        <Table.Summary.Cell index={7} align="right">
           {totalDebit > 0 ? (
             <PriceTag value={Number(totalDebit)} />
           ) : (
             <PriceTag value={0} />
           )}
         </Table.Summary.Cell>
-        <Table.Summary.Cell index={4} align="right">
+        <Table.Summary.Cell index={8} align="right">
           {totalCredit > 0 ? (
             <PriceTag value={Number(totalCredit)} />
           ) : (
             <PriceTag value={0} />
           )}
         </Table.Summary.Cell>
-        <Table.Summary.Cell index={6} align="right">
+        <Table.Summary.Cell index={9} align="right">
           <PriceTag value={Number(totalBalance)} />
         </Table.Summary.Cell>
-        <Table.Summary.Cell index={7} />
+        <Table.Summary.Cell index={10} />
       </Table.Summary.Row>
     </Table.Summary>
   );
@@ -204,21 +206,25 @@ const FolioOperationsTable = ({
     },
     {
       title: "Date",
-      dataIndex: "postedAt",
-      key: "postedAt",
-      render: (_, record) => dayjs(record?.postedAt).format("YYYY-MM-DD"),
+      dataIndex: "chargeDate",
+      key: "chargeDate",
+      align: "center",
+      width: 110,
+      render: (_, record) => dayjs(record?.chargeDate).format("YYYY-MM-DD"),
     },
     {
       title: "Description",
       dataIndex: "descriptionSnapshot",
       key: "descriptionSnapshot",
+      width: 280,
       render: (_, record) => record.descriptionSnapshot || "-",
     },
     {
       title: "Relation",
       dataIndex: "parentLineId",
       key: "parentLineId",
-      width: 150,
+      align: "center",
+      width: 110,
       render: (_, record) => {
         const isChild = record?.parentLineId != null;
         return isChild ? (
@@ -246,6 +252,7 @@ const FolioOperationsTable = ({
       title: "Room",
       dataIndex: "room",
       align: "center",
+      width: 110,
       key: "room",
       render: (_, record) => record.reservationRoom?.room?.roomNo || "-",
     },
@@ -304,7 +311,7 @@ const FolioOperationsTable = ({
       title: "Action",
       key: "adjust",
       align: "center",
-      width: 120,
+      width: 50,
       render: (_, record) => {
         const isVoided = !!record.voidedAt;
         const isChildLine = !!record.parentLineId;
@@ -447,6 +454,7 @@ const FolioOperationsTable = ({
       title: "Action",
       key: "action",
       align: "center",
+      width: 60,
       render: (_, record) => {
         const isThisRowLoading = printingFolioUuid === record.uuid;
 

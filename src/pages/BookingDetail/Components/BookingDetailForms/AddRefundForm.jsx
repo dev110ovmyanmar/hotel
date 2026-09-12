@@ -57,7 +57,8 @@ const AddRefundForm = ({
   const guests = reservationMetaData?.main_guests || [];
   const paymentMethodsData = reservationMetaData?.payment_methods || [];
   const folios = reservationMetaData?.folios || [];
-  const depositStatus = bookingDetails?.reservation?.depositStatus;
+  const refundStatus = bookingDetails?.reservation?.refundStatus;
+  console.log("RefundStatus", refundStatus);
 
   const [submitting, setSubmitting] = useState(false);
 
@@ -181,7 +182,7 @@ const AddRefundForm = ({
               form.submit();
             }}
             loading={isPending}
-            disabled={submitting || depositStatus === false}
+            disabled={submitting || refundStatus === false}
           >
             Create
           </Button>
@@ -192,12 +193,12 @@ const AddRefundForm = ({
         <div className="flex min-h-screen items-center justify-center">
           <Loader />
         </div>
-      ) : depositStatus === false ? (
+      ) : refundStatus === false ? (
         <div className="flex justify-center items-center h-full">
           <Text
             className="border-2 border-red-500 px-6 py-2 rounded-md !text-red-500"
           >
-            No Deposit Found
+            Unavailable to Refund
           </Text>
         </div>
       ) : (
