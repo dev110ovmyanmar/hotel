@@ -58,18 +58,24 @@ const ReservationDetailsForm = ({ open, onClose, onSuccess }) => {
       label: item.name,
     })) || [];
 
+  const referralAgentsOptions =
+    reservationMetas?.referral_agents?.map((item) => ({
+      value: item.uuid,
+      label: item.name,
+    })) || []
+
   const companyOptions =
     reservationMetas?.companies?.map((item) => ({
       value: item.uuid,
       label: item.name,
     })) || [];
 
-  const sourceNameOptions =
-    selectedSourceType === "agency"
-      ? agenciesOptions
-      : selectedSourceType === "company"
-        ? companyOptions
-        : [];
+  const sourceNameOptions = {
+    agency: agenciesOptions,
+    company: companyOptions,
+    referral_agent: referralAgentsOptions,
+  }[selectedSourceType] || [];
+
 
   const reservationsEdit = useApiMutation({
     mutationFn: reservationEdit,
@@ -119,19 +125,19 @@ const ReservationDetailsForm = ({ open, onClose, onSuccess }) => {
       refNo: values.refNo,
       bookedVia: values.bookingSource
         ? {
-            uuid: values.bookingSource,
-          }
+          uuid: values.bookingSource,
+        }
         : undefined,
       sourceType: values.sourceType
         ? {
-            uuid: values.sourceType,
-          }
+          uuid: values.sourceType,
+        }
         : undefined,
       source:
-        ["agency", "company"].includes(selectedSourceType) && values.sourceName
+        ["agency", "company","referral_agent"].includes(selectedSourceType) && values.sourceName
           ? {
-              uuid: values.sourceName,
-            }
+            uuid: values.sourceName,
+          }
           : undefined,
     };
 
@@ -198,7 +204,7 @@ const ReservationDetailsForm = ({ open, onClose, onSuccess }) => {
           />
         </Form.Item>
 
-        {["agency", "company"].includes(selectedSourceType) && (
+        {["agency", "company", "referral_agent"].includes(selectedSourceType) && (
           <Form.Item
             label="Source Name"
             name="sourceName"
@@ -206,14 +212,17 @@ const ReservationDetailsForm = ({ open, onClose, onSuccess }) => {
           >
             <Select
               options={sourceNameOptions}
-              placeholder={`Select ${
-                selectedSourceType === "agency" ? "Agency" : "Company"
-              }`}
-
+              placeholder={`Select ${selectedSourceType === "agency"
+                ? "Agency"
+                : selectedSourceType === "referral_agent"
+                  ? "Referral Agent"
+                  : "Company"
+                }`}
               showSearch
               optionFilterProp="label"
             />
           </Form.Item>
+
         )}
       </Form>
     </Drawer>

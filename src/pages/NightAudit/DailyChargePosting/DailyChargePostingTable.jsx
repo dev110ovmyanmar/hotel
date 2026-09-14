@@ -82,6 +82,8 @@ const DailyChargePostingTable = ({
                     type="primary"
                     onClick={nextStep}
                     className="flex items-center gap-1"
+                    disabled={dailyChargePostingData?.summary?.unposted !== 0}
+
                 >
                     Next Step
                     <AiOutlineRight />
