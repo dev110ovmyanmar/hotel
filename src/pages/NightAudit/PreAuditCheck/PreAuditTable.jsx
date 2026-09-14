@@ -121,10 +121,12 @@ const PreAuditTable = ({
                 pagination={false}
             />
             <div className="sticky bottom-0 flex justify-end bg-gray-50 py-2 px-4 z-10">
+               
                 <Button
                     type="primary"
                     onClick={colorCheckBooking}
                     className="flex items-center gap-1"
+                    disabled={preAuditChecksData?.summary?.blockingIssues !== 0}
                 >
                     Next Step
                     <AiOutlineRight />
