@@ -1,144 +1,238 @@
-import { CloseCircleOutlined, ReloadOutlined, SafetyOutlined, WarningOutlined } from "@ant-design/icons";
-import { Button, Card } from "antd";
-import { Calendar, CircleCheck } from "lucide-react";
-import { useApiMutation } from "../../../hooks/useApiMutation";
-import { reloadDailyPostCharges } from "../../../api/nightAuditApi";
-import { getNightAuditData, textSizeDependOnScreen } from "../../../variables/constants";
-import RunPostingModal from "./RunPostingModal";
+// import {  ReloadOutlined, SafetyOutlined, WarningOutlined } from "@ant-design/icons";
+// import { Button, Card } from "antd";
+// import { Calendar, CircleCheck } from "lucide-react";
+// import { useApiMutation } from "../../../hooks/useApiMutation";
+// import { reloadDailyPostCharges } from "../../../api/nightAuditApi";
+// import { getNightAuditData, textSizeDependOnScreen } from "../../../variables/constants";
+// import RunPostingModal from "./RunPostingModal";
+// import { useState } from "react";
+// import PriceTag from "../../../component/PriceTag/PriceTag";
+
+// const DailyChargeStatus = ({
+//     dailyChargePostingData,
+//     preNightAudit
+// }) => {
+//     const [runPostingModalOpen, setRunPostingModalOpen] = useState(false);
+
+//     const dailyChargeDisabled = dailyChargePostingData?.charges.length <= 0;
+//     const cardDesign = `!w-full !max-w-[500px] !shadow-md !m-0 !p-0 !border-l-0 !border-r-0`;
+
+//     const nightAuditData = getNightAuditData();
+
+//     const businessDate = nightAuditData?.businessDate;
+
+//     const reloadPostCharge = useApiMutation({
+//         mutationFn: reloadDailyPostCharges,
+//         invalidateKeys: [["daily-charge-postings"]],
+//     });
+
+//     const retryPostCharge = () => {
+//         reloadPostCharge.mutate({
+//             businessDate
+//         },
+//             {
+//                 onSuccess: () => {
+//                     setRunPostingModalOpen(false)
+//                 }
+//             })
+//     };
+
+//     return (
+//         <div>
+//             <div>
+//                 <div className="items-center grid xl:grid-cols-4 md:grid-cols-2 gap-x-5 !my-3 md:gap-y-3">
+//                     <Card
+//                         className={`!bg-[#EFF6FF] !text-[#314B99] !border-[#A1CFFF] ${cardDesign} !p-2`}
+//                     >
+//                         <div className="w-full">
+//                             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
+//                                 <div className="flex items-center gap-x-1">
+//                                     <Calendar className="shrink-0" />
+//                                     <span className={textSizeDependOnScreen}>
+//                                         Posting Date:
+//                                     </span>
+//                                 </div>
+
+//                                 <span className={`${textSizeDependOnScreen} text-center sm:text-right`}>
+//                                     {dailyChargePostingData?.businessDate}
+//                                 </span>
+//                             </div>
+//                         </div>
+//                     </Card>
+
+//                     <Card className={`!border-gray-300 ${cardDesign}`}>
+//                         <div className="w-full max-w-md mx-auto text-center">
+//                             <div className="flex justify-between items-center gap-4">
+//                                 <span className="shrink-0">Total</span>
+//                                 <span className="text-right break-all">
+//                                     {dailyChargePostingData?.summary?.total}
+//                                 </span>
+//                             </div>
+
+//                             <div className="flex justify-between items-center gap-4">
+//                                 <span className="shrink-0">Total Amount</span>
+//                                 <span className="text-right break-all">
+//                                     <PriceTag value={dailyChargePostingData?.summary?.totalAmount} />
+//                                     {" "}MMK
+//                                 </span>
+//                             </div>
+//                         </div>
+//                     </Card>
+
+//                     <Card className={`!bg-[#FFF4F1] !text-[#FF7800] !border-[#FFBD9F] ${cardDesign}`}>
+//                         <div className="w-full max-w-md mx-auto text-center">
+//                             <div className="flex justify-between items-center gap-4">
+//                                 <span className="shrink-0">Posted</span>
+//                                 <span className="text-right break-all">
+//                                     {dailyChargePostingData?.summary?.posted}
+//                                 </span>
+//                             </div>
+
+//                             <div className="flex justify-between items-center gap-4">
+//                                 <span className="shrink-0">Posted Amount</span>
+//                                 <span className="text-right break-all">
+//                                     <PriceTag value={dailyChargePostingData?.summary?.postedAmount} />
+//                                     {" "}MMK
+//                                 </span>
+//                             </div>
+//                         </div>
+//                     </Card>
+
+//                     <Card className={`!bg-[#FFF1F0] !text-[#CF1322] !border-[#FFA39E] ${cardDesign}`}>
+//                         <div className="w-full max-w-md mx-auto text-center">
+//                             <div className="flex justify-between items-center gap-4">
+//                                 <span className="shrink-0">Unposted </span>
+//                                 <span className="text-right break-all">
+//                                     {dailyChargePostingData?.summary?.unposted}
+//                                 </span>
+//                             </div>
+
+//                             <div className="flex justify-between items-center gap-4">
+//                                 <span className="shrink-0">Unposted Amount</span>
+//                                 <span className="text-right break-all">
+//                                     <PriceTag value={dailyChargePostingData?.summary?.unpostedAmount} />
+//                                     {" "}MMK
+//                                 </span>
+//                             </div>
+//                         </div>
+//                     </Card>
+//                 </div>
+//             </div>
+
+//             <div className="flex justify-end my-4">
+//                 <Button
+//                     type="primary"
+//                     onClick={() => setRunPostingModalOpen(true)}
+//                     disabled={dailyChargeDisabled}
+//                 >
+//                     <ReloadOutlined /> Run Posting
+//                 </Button>
+//             </div>
+
+//             <RunPostingModal
+//                 onCancel={() => setRunPostingModalOpen(false)}
+//                 onOk={retryPostCharge}
+//                 open={runPostingModalOpen}
+//                 confirmLoading={reloadPostCharge?.isPending}
+//             />
+//         </div>
+//     )
+// }
+
+// export default DailyChargeStatus;
+import { ReloadOutlined } from "@ant-design/icons";
+import { Button } from "antd";
 import { useState } from "react";
-import PriceTag from "../../../component/PriceTag/PriceTag";
+import { reloadDailyPostCharges } from "../../../api/nightAuditApi";
+import { useApiMutation } from "../../../hooks/useApiMutation";
+import { getNightAuditData} from "../../../variables/constants";
+import RunPostingModal from "./RunPostingModal";
+import { CONSOLIDATED_CARD_CONFIGS, DailyStatusCard } from "../../../component/NightAuditCard/DailyChargeCard";
 
-const DailyChargeStatus = ({
-    dailyChargePostingData,
-    preNightAudit
-}) => {
-    const [runPostingModalOpen, setRunPostingModalOpen] = useState(false);
+const DailyChargeStatus = ({ dailyChargePostingData, preNightAudit }) => {
+  const [runPostingModalOpen, setRunPostingModalOpen] = useState(false);
 
-    const dailyChargeDisabled = dailyChargePostingData?.charges.length <= 0;
-    const cardDesign = `!w-full !max-w-[500px] !shadow-md !m-0 !p-0 !border-l-0 !border-r-0`;
-    const warning = dailyChargePostingData?.overallStatus === "WARNING";
-    const passed = dailyChargePostingData?.overallStatus === "PASSED";
+  const dailyChargeDisabled = dailyChargePostingData?.charges.length <= 0;
 
-    const nightAuditData = getNightAuditData();
+  const nightAuditData = getNightAuditData();
+  const businessDate = nightAuditData?.businessDate;
 
-    const businessDate = nightAuditData?.businessDate;
+  const reloadPostCharge = useApiMutation({
+    mutationFn: reloadDailyPostCharges,
+    invalidateKeys: [["daily-charge-postings"]],
+  });
 
-    const reloadPostCharge = useApiMutation({
-        mutationFn: reloadDailyPostCharges,
-        invalidateKeys: [["daily-charge-postings"]],
-    });
+  const retryPostCharge = () => {
+    reloadPostCharge.mutate(
+      { businessDate },
+      {
+        onSuccess: () => setRunPostingModalOpen(false),
+      }
+    );
+  };
 
-    const retryPostCharge = () => {
-        reloadPostCharge.mutate({
-            businessDate
-        },
-            {
-                onSuccess: () => {
-                    setRunPostingModalOpen(false)
-                }
-            })
-    };
+  const summary = dailyChargePostingData?.summary;
 
-    return (
-        <div>
-            <div>
-                <div className="items-center grid xl:grid-cols-4 md:grid-cols-2 gap-x-5 !my-3 md:gap-y-3">
-                    <Card
-                        className={`!bg-[#EFF6FF] !text-[#314B99] !border-[#A1CFFF] ${cardDesign} !p-2`}
-                    >
-                        <div className="w-full">
-                            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
-                                <div className="flex items-center gap-x-1">
-                                    <Calendar className="shrink-0" />
-                                    <span className={textSizeDependOnScreen}>
-                                        Posting Date:
-                                    </span>
-                                </div>
+  const getCardValues = (key) => {
+    switch (key) {
+      case "posted":
+        return {
+          count: summary?.posted ?? 0,
+          amount: summary?.postedAmount ?? "0.00",
+        };
+      case "total":
+        return {
+          count: summary?.total ?? 0,
+          amount: summary?.totalAmount ?? "0.00",
+        };
+      case "unposted":
+        return {
+          count: summary?.unposted ?? 0,
+          amount: summary?.unpostedAmount ?? "0.00",
+        };
+      default:
+        return { count: 0, amount: "0.00" };
+    }
+  };
 
-                                <span className={`${textSizeDependOnScreen} text-center sm:text-right`}>
-                                    {dailyChargePostingData?.businessDate}
-                                </span>
-                            </div>
-                        </div>
-                    </Card>
+  return (
+    <div>
+      <div>
+        <div className="items-center grid xl:grid-cols-3 md:grid-cols-2 gap-x-5 !my-3 gap-y-3">
 
-                    <Card className={`!border-gray-300 ${cardDesign}`}>
-                        <div className="w-full max-w-md mx-auto text-center">
-                            <div className="flex justify-between items-center gap-4">
-                                <span className="shrink-0">Total</span>
-                                <span className="text-right break-all">
-                                    {dailyChargePostingData?.summary?.total}
-                                </span>
-                            </div>
-
-                            <div className="flex justify-between items-center gap-4">
-                                <span className="shrink-0">Total Amount</span>
-                                <span className="text-right break-all">
-                                    <PriceTag value={dailyChargePostingData?.summary?.totalAmount} />
-                                    {" "}MMK
-                                </span>
-                            </div>
-                        </div>
-                    </Card>
-
-                    <Card className={`!bg-[#FFF4F1] !text-[#FF7800] !border-[#FFBD9F] ${cardDesign}`}>
-                        <div className="w-full max-w-md mx-auto text-center">
-                            <div className="flex justify-between items-center gap-4">
-                                <span className="shrink-0">Posted</span>
-                                <span className="text-right break-all">
-                                    {dailyChargePostingData?.summary?.posted}
-                                </span>
-                            </div>
-
-                            <div className="flex justify-between items-center gap-4">
-                                <span className="shrink-0">Posted Amount</span>
-                                <span className="text-right break-all">
-                                    <PriceTag value={dailyChargePostingData?.summary?.postedAmount} />
-                                    {" "}MMK
-                                </span>
-                            </div>
-                        </div>
-                    </Card>
-
-                    <Card className={`!bg-[#FFF1F0] !text-[#CF1322] !border-[#FFA39E] ${cardDesign}`}>
-                        <div className="w-full max-w-md mx-auto text-center">
-                            <div className="flex justify-between items-center gap-4">
-                                <span className="shrink-0">Unposted </span>
-                                <span className="text-right break-all">
-                                    {dailyChargePostingData?.summary?.unposted}
-                                </span>
-                            </div>
-
-                            <div className="flex justify-between items-center gap-4">
-                                <span className="shrink-0">Unposted Amount</span>
-                                <span className="text-right break-all">
-                                    <PriceTag value={dailyChargePostingData?.summary?.unpostedAmount} />
-                                    {" "}MMK
-                                </span>
-                            </div>
-                        </div>
-                    </Card>
-                </div>
-            </div>
-
-            <div className="flex justify-end my-4">
-                <Button
-                    type="primary"
-                    onClick={() => setRunPostingModalOpen(true)}
-                    disabled={dailyChargeDisabled}
-                >
-                    <ReloadOutlined /> Run Posting
-                </Button>
-            </div>
-
-            <RunPostingModal
-                onCancel={() => setRunPostingModalOpen(false)}
-                onOk={retryPostCharge}
-                open={runPostingModalOpen}
-                confirmLoading={reloadPostCharge?.isPending}
-            />
+          {CONSOLIDATED_CARD_CONFIGS.map((config) => {
+            const { count, amount } = getCardValues(config.key);
+            return (
+              <DailyStatusCard
+                key={config.key}
+                config={config}
+                count={count}
+                amount={amount}
+                currency="MMK"
+              />
+            );
+          })}
         </div>
-    )
-}
+      </div>
+
+      <div className="flex justify-end my-4">
+        <Button
+          type="primary"
+          onClick={() => setRunPostingModalOpen(true)}
+          disabled={dailyChargeDisabled}
+        >
+          <ReloadOutlined /> Run Posting
+        </Button>
+      </div>
+
+      <RunPostingModal
+        onCancel={() => setRunPostingModalOpen(false)}
+        onOk={retryPostCharge}
+        open={runPostingModalOpen}
+        confirmLoading={reloadPostCharge?.isPending}
+      />
+    </div>
+  );
+};
 
 export default DailyChargeStatus;
