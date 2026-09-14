@@ -5,7 +5,7 @@ import { Spin } from "antd";
 import ReconciliationStatus from "./ReconciliationStatus";
 import CheckBookingHeader from "../CheckBookingHeader";
 import ReconciliationTable from "./ReconciliationTable";
-import { getNightAuditData } from "../../../variables/constants";
+import { getNightAuditData, spinLoadingCenter } from "../../../variables/constants";
 import { useEffect } from "react";
 
 const ReconciliationPage = ({ stepValue }) => {
@@ -33,7 +33,8 @@ const ReconciliationPage = ({ stepValue }) => {
 
   if (isFetching) {
     return (
-      <div className="flex items-center justify-center">
+      // <div className="flex items-center justify-center">
+      <div className={spinLoadingCenter}>
         <Spin />
       </div>
     );
@@ -47,15 +48,26 @@ const ReconciliationPage = ({ stepValue }) => {
         hasBlockingDifferences={data?.hasBlockingDifferences}
       />
       <ReconciliationTable
-        colorCheckBooking={() => {
+        backStep={() => {
+          window.dispatchEvent(
+            new CustomEvent("breadcrumb_updated", {
+              detail: {
+                stepValue: Number(stepValue) - 1,
+              },
+            })
+          );
+
+          navigate("/night-audit/folio-&-payment-review");
+        }}
+        nextStep={() => {
           window.dispatchEvent(
             new CustomEvent("breadcrumb_updated", {
               detail: {
                 stepValue: Number(stepValue),
               },
-            }),
+            })
           );
-          navigate("/night-audit/close-business-date");
+          navigate("/night-audit/close-business-date")
         }}
         data={data}
       />

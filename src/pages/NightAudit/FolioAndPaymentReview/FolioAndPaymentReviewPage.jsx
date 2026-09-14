@@ -5,10 +5,10 @@ import { Spin } from "antd";
 import FolioAndPaymentReviewStatus from "./FolioAndPaymentReviewStatus";
 import CheckBookingHeader from "../CheckBookingHeader";
 import FolioAndPaymentReviewTable from "./FolioAndPaymentReviewTable";
-import { getNightAuditData } from "../../../variables/constants";
+import { getNightAuditData, spinLoadingCenter } from "../../../variables/constants";
 import { useEffect } from "react";
 
-const FolioAndPaymentReviewPage = () => {
+const FolioAndPaymentReviewPage = ({ stepValue }) => {
     const navigate = useNavigate();
 
     const nightAuditData = getNightAuditData();
@@ -36,7 +36,7 @@ const FolioAndPaymentReviewPage = () => {
 
     if (folioLoading) {
         return (
-            <div className="flex items-center justify-center">
+            <div className={spinLoadingCenter}>
                 <Spin />
             </div>
         );
@@ -52,8 +52,26 @@ const FolioAndPaymentReviewPage = () => {
 
             <FolioAndPaymentReviewTable
                 data={folioData}
-                colorCheckBooking={() => {
-                    navigate("/night-audit/reconciliation");
+                backStep={() => {
+                    window.dispatchEvent(
+                        new CustomEvent("breadcrumb_updated", {
+                            detail: {
+                                stepValue: Number(stepValue) - 1,
+                            },
+                        })
+                    );
+
+                    navigate("/night-audit/daily-charge-posting");
+                }}
+                nextStep={() => {
+                    window.dispatchEvent(
+                        new CustomEvent("breadcrumb_updated", {
+                            detail: {
+                                stepValue: Number(stepValue),
+                            },
+                        })
+                    );
+                    navigate("/night-audit/reconciliation")
                 }}
             />
         </div>

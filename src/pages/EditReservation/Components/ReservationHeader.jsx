@@ -5,6 +5,7 @@ import {MdMeetingRoom,} from "react-icons/md";
 import { BiMoneyWithdraw } from "react-icons/bi";
 import dayjs from "dayjs";
 import ReservationStatusColor from "../../../component/ReservationStatusColor/ReservationStatusColor";
+import FinancialStatusTag from "../../../component/FinancialStatusTag/FinancialStatusTag";
 
 const ReservationHeader = ({ data }) => {
   const reservation = data?.reservationRoom;
@@ -45,17 +46,12 @@ const ReservationHeader = ({ data }) => {
 
           <div className="flex items-center gap-2 py-1 rounded-lg mt-2.5">
             <span className="text-[10px] md:text-[10px] lg:text-[13px] font-medium">
-              {data?.reservation?.depositStatus === true ? (
+                {data?.reservation?.parentFolio?.financialStatus?.name  ? (
                 <div className="flex items-center gap-2">
-                  <BiMoneyWithdraw size={16} className="text-emerald-300" />
-                  <div className="text-[#ffffff]">Deposit Paid</div>
-                </div>
-              ) : (
-                <div className="flex items-center gap-2">
-                  <BiMoneyWithdraw size={16} className="text-red-300" />
-                  <div className="text-[#ffffff]">Deposit Unpaid</div>
-                </div>
-              )}
+                  <BiMoneyWithdraw size={17} className="text-emerald-400"/>
+                    <FinancialStatusTag status={data?.reservation?.parentFolio?.financialStatus?.name}/>
+                </div> ) : null
+                }
             </span>
           </div>
 

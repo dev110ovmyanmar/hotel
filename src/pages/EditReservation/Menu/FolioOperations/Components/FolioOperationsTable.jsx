@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, Divider, Dropdown, Modal, Radio, Space, Spin, Table, Tag } from "antd";
+import { Alert, Button, Divider, Dropdown, Modal, Radio, Space, Spin, Table, Tag } from "antd";
 import {
   SwapOutlined,
   InfoCircleOutlined,
@@ -12,7 +12,9 @@ import {
   MoreOutlined,
   WarningOutlined,
   LoadingOutlined,
-  CrownOutlined
+  CrownOutlined,
+  BranchesOutlined,
+  LinkOutlined,
 } from "@ant-design/icons";
 import dayjs from "dayjs";
 import {
@@ -88,25 +90,27 @@ const SubFolioTable = ({ record, lineColumns, onMoveTo, isTransferring }) => {
         <Table.Summary.Cell index={1} />
         <Table.Summary.Cell index={2} />
         <Table.Summary.Cell index={3} />
-        <Table.Summary.Cell index={3}>Total </Table.Summary.Cell>
-        <Table.Summary.Cell index={3} align="right">
+        <Table.Summary.Cell index={4} />
+        <Table.Summary.Cell index={5} />
+        <Table.Summary.Cell index={6}>Total</Table.Summary.Cell>
+        <Table.Summary.Cell index={7} align="right">
           {totalDebit > 0 ? (
             <PriceTag value={Number(totalDebit)} />
           ) : (
             <PriceTag value={0} />
           )}
         </Table.Summary.Cell>
-        <Table.Summary.Cell index={4} align="right">
+        <Table.Summary.Cell index={8} align="right">
           {totalCredit > 0 ? (
             <PriceTag value={Number(totalCredit)} />
           ) : (
             <PriceTag value={0} />
           )}
         </Table.Summary.Cell>
-        <Table.Summary.Cell index={6} align="right">
+        <Table.Summary.Cell index={9} align="right">
           <PriceTag value={Number(totalBalance)} />
         </Table.Summary.Cell>
-        <Table.Summary.Cell index={7} />
+        <Table.Summary.Cell index={10} />
       </Table.Summary.Row>
     </Table.Summary>
   );
@@ -201,23 +205,62 @@ const FolioOperationsTable = ({
       render: (_, record, index) => index + 1,
     },
     {
+      title: "Date",
+      dataIndex: "chargeDate",
+      key: "chargeDate",
+      align: "center",
+      width: 110,
+      render: (_, record) => dayjs(record?.chargeDate).format("YYYY-MM-DD"),
+    },
+    {
       title: "Description",
       dataIndex: "descriptionSnapshot",
       key: "descriptionSnapshot",
+      width: 280,
       render: (_, record) => record.descriptionSnapshot || "-",
+    },
+    {
+      title: "Relation",
+      dataIndex: "parentLineId",
+      key: "parentLineId",
+      align: "center",
+      width: 110,
+      render: (_, record) => {
+        const isChild = record?.parentLineId != null;
+        return isChild ? (
+          <Tag
+            icon={<LinkOutlined />}
+            color="processing"
+            style={{ borderRadius: "9999px" }}
+            className="px-3 py-0.5 text-xs font-medium"
+          >
+            Child of #{record.parentLineId}
+          </Tag>
+        ) : (
+          <Tag
+            icon={<BranchesOutlined />}
+            color="warning"
+            style={{ borderRadius: "9999px" }}
+            className="px-3 py-0.5 text-xs font-semibold"
+          >
+            Parent #{record.id}
+          </Tag>
+        );
+      },
     },
     {
       title: "Room",
       dataIndex: "room",
       align: "center",
+      width: 110,
       key: "room",
       render: (_, record) => record.reservationRoom?.room?.roomNo || "-",
     },
     {
-      title: "Quantity",
+      title: "Qty",
       dataIndex: "quantity",
       key: "quantity",
-      align: "right",
+      align: "center",
       render: (_, record) =>
         record.quantity !== undefined && record.quantity !== null
           ? record.quantity
@@ -268,7 +311,7 @@ const FolioOperationsTable = ({
       title: "Action",
       key: "adjust",
       align: "center",
-      width: 120,
+      width: 50,
       render: (_, record) => {
         const isVoided = !!record.voidedAt;
         const isChildLine = !!record.parentLineId;
@@ -411,6 +454,7 @@ const FolioOperationsTable = ({
       title: "Action",
       key: "action",
       align: "center",
+      width: 60,
       render: (_, record) => {
         const isThisRowLoading = printingFolioUuid === record.uuid;
 
@@ -688,6 +732,14 @@ const FolioOperationsTable = ({
                       </div>
                     );
                   })}
+
+            <Alert
+              message="The selected parent line and its associated child lines will be transferred together to the selected folio."
+              type="warning"
+              showIcon
+              icon={<WarningOutlined />}
+              className="!m-2"
+            />
               </>
             ) : (
               <div
