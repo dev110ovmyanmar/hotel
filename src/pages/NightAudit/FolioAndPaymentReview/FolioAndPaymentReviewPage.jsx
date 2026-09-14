@@ -5,7 +5,7 @@ import { Spin } from "antd";
 import FolioAndPaymentReviewStatus from "./FolioAndPaymentReviewStatus";
 import CheckBookingHeader from "../CheckBookingHeader";
 import FolioAndPaymentReviewTable from "./FolioAndPaymentReviewTable";
-import { getNightAuditData } from "../../../variables/constants";
+import { getNightAuditData, spinLoadingCenter } from "../../../variables/constants";
 import { useEffect } from "react";
 
 const FolioAndPaymentReviewPage = () => {
@@ -36,7 +36,7 @@ const FolioAndPaymentReviewPage = () => {
 
     if (folioLoading) {
         return (
-            <div className="flex items-center justify-center">
+            <div className={spinLoadingCenter}>
                 <Spin />
             </div>
         );

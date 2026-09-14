@@ -8,28 +8,39 @@ import {
   UserDeleteOutlined,
 } from "@ant-design/icons";
 import { Card } from "antd";
+import { MdOutlineKingBed } from "react-icons/md";
 
 export const METRIC_CONFIGS = [
   {
     key: "totalRevenue",
-    bgColor: "!bg-[#F0FDF4]",
-    outerBg: "bg-[#BBE7C4]",
-    innerBg: "bg-[#F0FDF4]",
-    textColor: "!text-[#3F8F5B]",
-    titleColor: "text-[#357A4B]",
-    currencyColor: "text-[#3F8F5B]",
+    bgColor: "!bg-[#FFFBEB]",
+    outerBg: "bg-[#FDE68A]",
+    innerBg: "bg-[#FFFBEB]",
+    textColor: "!text-[#D97706]",
+    titleColor: "text-[#92400E]",
+    currencyColor: "text-[#D97706]",
     title: "Total Revenue",
-    icon: <AccountBookOutlined className="!text-[#3F8F5B] !text-lg" />,
+    icon: <AccountBookOutlined className="!text-[#D97706] !text-lg" />,
   },
   {
-    key: "totalReservations",
-    bgColor: "!bg-[#EEF2FF]",
-    outerBg: "bg-[#C7D2FE]",
-    innerBg: "bg-[#EEF2FF]",
-    textColor: "!text-[#4F46E5]",
-    titleColor: "text-[#3730A3]",
+    key: "totalReservation",
+    bgColor: "!bg-[#F0F9FF]",
+    outerBg: "bg-[#BAE6FD]",
+    innerBg: "bg-[#F0F9FF]",
+    textColor: "!text-[#0284C7]",
+    titleColor: "text-[#0369A1]",
     title: "Total Reservation",
-    icon: <CalendarOutlined className="!text-[#4F46E5] !text-lg" />,
+    icon: <CalendarOutlined className="!text-[#0284C7] !text-lg" />,
+  },
+  {
+    key: "totalReservationRoom",
+    bgColor: "!bg-[#ECFEFF]",
+    outerBg: "bg-[#A5F3FC]",
+    innerBg: "bg-[#ECFEFF]",
+    textColor: "!text-[#0891B2]",
+    titleColor: "text-[#155E75]",
+    title: "Total Reservation Room",
+    icon: <MdOutlineKingBed className="!text-[#0891B2] !text-lg" />,
   },
   {
     key: "booked",

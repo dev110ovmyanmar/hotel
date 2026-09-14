@@ -50,14 +50,20 @@ export default function HousekeepingStatusCard({
       className="shadow-sm border border-gray-200"
     >
       <div className="py-2">
-        {/* Hover Number */}
-        <div className="h-8 flex items-center justify-center ">
+        <div className="h-8 flex items-center justify-center">
           {hoveredItem && (
-            <div className="flex items-center gap-2">
+            <div
+              className="flex items-center gap-2"
+              style={{
+                animation: "housekeepingFadeIn 0.15s ease",
+              }}
+            >
               <span
                 className="w-2.5 h-2.5 rounded-full"
                 style={{
-                  backgroundColor: hoveredItem.color,
+                  backgroundColor:
+                    hoveredItem.color,
+                  boxShadow: `0 0 0 3px ${hoveredItem.color}20`,
                 }}
               />
 
@@ -70,51 +76,69 @@ export default function HousekeepingStatusCard({
                 {hoveredItem.value}
               </span>
 
-              <span className="text-sm text-gray-500">
+              <span className="text-sm text-gray-500 dark:text-gray-300">
                 {hoveredItem.label}
               </span>
             </div>
           )}
         </div>
 
-        {/* Status Bar */}
         <div className="w-full h-5 flex rounded-full overflow-hidden bg-gray-100 mb-14">
-          {housekeeping.map((item, index) => (
-            <div
-              key={item.label}
-              onMouseEnter={() => setHoveredIndex(index)}
-              onMouseLeave={() => setHoveredIndex(null)}
-              style={{
-                width:
-                  housekeepingTotal > 0
-                    ? `${(item.value / housekeepingTotal) * 100}%`
-                    : "0%",
-                backgroundColor: item.color,
-                opacity:
-                  hoveredIndex === null ||
-                    hoveredIndex === index
-                    ? 1
-                    : 0.3,
-              }}
-              className="
-                h-full
-                cursor-pointer
-                transition-opacity
-                duration-200
-                first:rounded-l-full
-                last:rounded-r-full
-              "
-            />
-          ))}
+          {housekeeping.map((item, index) => {
+            const isHovered =
+              hoveredIndex === index;
+
+            return (
+              <div
+                key={item.label}
+                onMouseEnter={() =>
+                  setHoveredIndex(index)
+                }
+                onMouseLeave={() =>
+                  setHoveredIndex(null)
+                }
+                style={{
+                  width:
+                    housekeepingTotal > 0
+                      ? `${
+                          (item.value /
+                            housekeepingTotal) *
+                          100
+                        }%`
+                      : "0%",
+
+                  backgroundColor:
+                    item.color,
+
+                  opacity: 1,
+
+                  filter: isHovered
+                    ? "brightness(1.15)"
+                    : "none",
+
+                  transition:
+                    "filter 0.2s ease",
+                  
+                  boxShadow: isHovered
+                    ? `0 0 6px ${item.color}66`
+                    : "none",
+                }}
+                className="
+                  h-full
+                  cursor-pointer
+                  first:rounded-l-full
+                  last:rounded-r-full
+                "
+              />
+            );
+          })}
         </div>
 
         <div className="grid grid-cols-2 gap-y-3 text-sm">
-          {housekeeping.map((item, index) => (
+          {housekeeping.map((item) => (
             <div
               key={item.label}
-              className="flex items-center gap-2 cursor-pointer"
-              onMouseEnter={() => setHoveredIndex(index)}
-              onMouseLeave={() => setHoveredIndex(null)}
+              className="flex items-center gap-2"
             >
               <span
                 className="w-3 h-3 rounded-full shrink-0"
@@ -130,6 +154,22 @@ export default function HousekeepingStatusCard({
           ))}
         </div>
       </div>
+
+      <style>
+        {`
+          @keyframes housekeepingFadeIn {
+            from {
+              opacity: 0;
+              transform: translateY(-2px);
+            }
+
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+        `}
+      </style>
     </Card>
   );
 }

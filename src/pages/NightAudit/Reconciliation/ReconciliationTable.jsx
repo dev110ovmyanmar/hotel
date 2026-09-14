@@ -101,17 +101,6 @@ const ReconciliationTable = ({ colorCheckBooking, data }) => {
       align: "end",
     },
     {
-      title: "Folio Balance",
-      dataIndex: "folioBalance",
-      key: "folioBalance",
-      render: (value) => (
-        <div className="flex justify-end items-center gap-1">
-          <PriceTag value={value} />
-        </div>
-      ),
-      align: "end",
-    },
-    {
       title: "Paid Amount",
       dataIndex: "folioPaidAmount",
       key: "folioPaidAmount",
@@ -123,11 +112,23 @@ const ReconciliationTable = ({ colorCheckBooking, data }) => {
       align: "end",
     },
     {
-      title: "Status",
-      //   dataIndex: "status",
-      key: "status",
-      align: "center",
+      title: "Folio Balance",
+      dataIndex: "folioBalance",
+      key: "folioBalance",
+      render: (value) => (
+        <div className="flex justify-end items-center gap-1">
+          <PriceTag value={value} />
+        </div>
+      ),
+      align: "end",
     },
+    
+    // {
+    //   title: "Status",
+    //   //   dataIndex: "status",
+    //   key: "status",
+    //   align: "center",
+    // },
   ];
 
   return (
