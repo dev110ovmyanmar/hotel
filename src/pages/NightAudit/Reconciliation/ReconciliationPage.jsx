@@ -5,7 +5,7 @@ import { Spin } from "antd";
 import ReconciliationStatus from "./ReconciliationStatus";
 import CheckBookingHeader from "../CheckBookingHeader";
 import ReconciliationTable from "./ReconciliationTable";
-import { getNightAuditData } from "../../../variables/constants";
+import { getNightAuditData, spinLoadingCenter } from "../../../variables/constants";
 import { useEffect } from "react";
 
 const ReconciliationPage = ({ stepValue }) => {
@@ -33,7 +33,7 @@ const ReconciliationPage = ({ stepValue }) => {
 
   if (isFetching) {
     return (
-      <div className="flex items-center justify-center">
+      <div className={spinLoadingCenter}>
         <Spin />
       </div>
     );
