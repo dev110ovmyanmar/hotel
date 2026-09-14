@@ -68,7 +68,7 @@ const DailyChargePostingTable = ({
                 pagination={false}
             />
             {/* <div className={`${nextStepButtonDesign} flex gap-4`}> */}
-            <div className="sticky bottom-0 flex justify-end gap-4 bg-gray-50 py-2 px-4 z-10">
+            <div className="sticky bottom-0 flex justify-end gap-4 bg-gray-50 dark:bg-[#121111] py-2 px-4 z-10">
 
                 <Button
                     type="primary"
@@ -83,7 +83,6 @@ const DailyChargePostingTable = ({
                     onClick={nextStep}
                     className="flex items-center gap-1"
                     disabled={dailyChargePostingData?.summary?.unposted !== 0}
-
                 >
                     Next Step
                     <AiOutlineRight />
