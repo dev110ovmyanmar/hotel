@@ -136,7 +136,7 @@ const ReconciliationTable = ({ backStep, nextStep, data }) => {
       </div>
 
       {/* <div className={`${nextStepButtonDesign} flex gap-4 mt-4`}> */}
-      <div className="sticky bottom-0 flex justify-end gap-4 bg-gray-50 py-2 px-4 z-10">
+      <div className="sticky bottom-0 flex justify-end gap-4 bg-gray-50 dark:bg-[#121111] py-2 px-4 z-10">
 
         <Button
           type="primary"

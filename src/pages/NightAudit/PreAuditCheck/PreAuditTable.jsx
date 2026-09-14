@@ -120,8 +120,7 @@ const PreAuditTable = ({
                 dataSource={preAuditChecksData?.checks}
                 pagination={false}
             />
-            <div className="sticky bottom-0 flex justify-end bg-gray-50 py-2 px-4 z-10">
-               
+            <div className="sticky bottom-0 flex justify-end bg-gray-50 dark:bg-[#121111] py-2 px-4 z-10">
                 <Button
                     type="primary"
                     onClick={colorCheckBooking}
