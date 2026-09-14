@@ -11,6 +11,7 @@ const FolioAndPaymentReviewTable = ({
     nextStep,
 }) => {
     const tableData = data?.folios;
+    console.log(tableData, "tableData")
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [selectedFolio, setSelectedFolio] = useState(null);
 
@@ -127,7 +128,7 @@ const FolioAndPaymentReviewTable = ({
             />
 
             {/* <div className={`${nextStepButtonDesign} flex gap-4`}> */}
-            <div className="sticky bottom-0 flex justify-end gap-4 bg-gray-50 py-2 px-4 z-10">
+            <div className="sticky bottom-0 flex justify-end gap-4 bg-gray-50 dark:bg-[#121111] py-2 px-4 z-10">
 
                 <Button
                     type="primary"
@@ -142,6 +143,7 @@ const FolioAndPaymentReviewTable = ({
                     type="primary"
                     onClick={nextStep}
                     className="flex items-center gap-1"
+                    disabled={data?.reviewSummary?.blockingFolios !== 0}
                 >
                     Next Step
                     <AiOutlineRight />
