@@ -204,14 +204,14 @@ const ReservationForm = ({
                                     htmlType="submit"
                                     loading={availabilitySearchResults?.isPending}
                                     disabled={searchButtonDisable}
-                                    // className={
-                                    //     searchButtonDisable
-                                    //         ? "min-w-[125px] !text-gray-400 !border-gray-400/50 cursor-not-allowed"
-                                    //         : "min-w-[125px] !bg-gradient-to-r from-[#000B60] to-[#215282] !border-blue-400/50 !shadow-lg shadow-blue-600/50"
-                                    // }
-                                    className="min-w-[125px] !bg-gradient-to-r from-[#000B60] to-[#215282] !border-blue-400/50 !shadow-lg shadow-blue-600/50"
+                                    className={
+                                        searchButtonDisable
+                                            ? "min-w-[125px] !text-gray-400 !border-gray-400/50 cursor-not-allowed"
+                                            : "min-w-[125px] !bg-gray-100 !text-gray-900 !shadow-lg shadow-gray-900/50"
+                                    }
+                                // className="min-w-[125px] !bg-gradient-to-r from-[#000B60] to-[#215282] !border-blue-400/50 !shadow-lg shadow-blue-600/50"
 
-                                    
+
                                 >
                                     {/* !bg-gradient-to-r from-[#CACDCB] to-[#104171] */}
                                     Search
@@ -440,7 +440,12 @@ const ReservationForm = ({
                                     htmlType="submit"
                                     loading={availabilitySearchResults?.isPending}
                                     disabled={searchButtonDisable}
-                                    className="min-w-[125px] !bg-gradient-to-r from-[#000B60] to-[#215282] !border-blue-400/50 !shadow-lg shadow-blue-600/50"
+                                    className={
+                                        searchButtonDisable
+                                            ? "min-w-[125px] !text-gray-400 !border-gray-400/50 cursor-not-allowed"
+                                            : "min-w-[125px] !bg-gray-100 !text-gray-900 !shadow-lg shadow-gray-900/50"
+                                    }
+                                    // className="min-w-[125px] !bg-gradient-to-r from-[#000B60] to-[#215282] !border-blue-400/50 !shadow-lg shadow-blue-600/50"
                                 >
                                     Search
                                 </Button>

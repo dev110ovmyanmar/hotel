@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Input, Space, Badge, DatePicker, Popover } from 'antd';
+import { Button, Input, Space, Badge, DatePicker, Popover, Modal } from 'antd';
 import {
     LeftOutlined, RightOutlined, DoubleLeftOutlined, DoubleRightOutlined,
     SearchOutlined, FilterOutlined,
@@ -21,6 +21,8 @@ import FilterPopover from './FilterPopover';
  *   onFiltersChange       – (partialUpdate) => void
  *   onReset               – () => void
  *   disabled              – boolean (show skeleton/disabled state during initial load)
+ *   isChangingDate        – boolean (true while date change is loading)
+ *   setIsChangingDate     – (value: boolean) => void
  */
 const CalendarHeader = ({
     currentDate,
@@ -34,6 +36,8 @@ const CalendarHeader = ({
     onFiltersChange,
     onReset,
     disabled = false,
+    isChangingDate = false,
+    setIsChangingDate,
 }) => {
     const hasActiveFilter =
         !!filters.roomType ||
@@ -47,17 +51,40 @@ const CalendarHeader = ({
         setLocalKeyword(keyword);
     }, [keyword]);
 
+    const isDisabled = disabled || isChangingDate;
+    const [confirmModalOpen, setConfirmModalOpen] = React.useState(false);
+    const [pendingDate, setPendingDate] = React.useState(null);
+
+    const confirmDateChange = (newDate) => {
+        setPendingDate(newDate);
+        setConfirmModalOpen(true);
+    };
+
+    const handleConfirmOk = () => {
+        setConfirmModalOpen(false);
+        setTimeout(() => {
+            setIsChangingDate(true);
+            onDateChange(pendingDate);
+            setPendingDate(null);
+        }, 0);
+    };
+
+    const handleConfirmCancel = () => {
+        setConfirmModalOpen(false);
+        setPendingDate(null);
+    };
+
     return (
         <div className="bg-white px-6 py-3 flex justify-between items-center border-b border-[#dee2e6] z-50">
             {/* Month navigation */}
             <Space>
                 <DoubleLeftOutlined
-                    className="text-gray-400 cursor-pointer"
-                    onClick={() => onDateChange(currentDate.subtract(1, 'year'))}
+                    className={`text-gray-400 cursor-pointer hover:text-blue-500 active:text-blue-700 active:scale-90 transition-all duration-150 ${isDisabled ? 'pointer-events-none opacity-50' : ''}`}
+                    onClick={() => confirmDateChange(currentDate.subtract(1, 'year'))}
                 />
                 <LeftOutlined
-                    className="text-gray-400 cursor-pointer"
-                    onClick={() => onDateChange(currentDate.subtract(1, 'month'))}
+                    className={`text-gray-400 cursor-pointer hover:text-blue-500 active:text-blue-700 active:scale-90 transition-all duration-150 ${isDisabled ? 'pointer-events-none opacity-50' : ''}`}
+                    onClick={() => confirmDateChange(currentDate.subtract(1, 'month'))}
                 />
                 <DatePicker
                     picker="month"
@@ -66,19 +93,27 @@ const CalendarHeader = ({
                     allowClear={false}
                     suffixIcon={null}
                     variant="borderless"
+                    disabled={isDisabled}
                     styles={{ input: { textAlign: 'center' } }}
                     className="font-bold text-lg w-36 p-0 cursor-pointer"
-                    onChange={(date) => date && onDateChange(date)}
+                    onChange={(date) => date && confirmDateChange(date)}
                 />
                 <RightOutlined
-                    className="text-gray-400 cursor-pointer"
-                    onClick={() => onDateChange(currentDate.add(1, 'month'))}
+                    className={`text-gray-400 cursor-pointer hover:text-blue-500 active:text-blue-700 active:scale-90 transition-all duration-150 ${isDisabled ? 'pointer-events-none opacity-50' : ''}`}
+                    onClick={() => confirmDateChange(currentDate.add(1, 'month'))}
                 />
                 <DoubleRightOutlined
-                    className="text-gray-400 cursor-pointer"
-                    onClick={() => onDateChange(currentDate.add(1, 'year'))}
+                    className={`text-gray-400 cursor-pointer hover:text-blue-500 active:text-blue-700 active:scale-90 transition-all duration-150 ${isDisabled ? 'pointer-events-none opacity-50' : ''}`}
+                    onClick={() => confirmDateChange(currentDate.add(1, 'year'))}
                 />
             </Space>
+
+
+            <div className="flex items-center gap-4 text-blue-500">
+                <div className="text-lg font-medium w-full text-center">
+                    {currentDate ? currentDate.format('DD MMMM YYYY') : ''}
+                </div>
+            </div>
 
             {/* Actions */}
             <div className="flex items-center gap-3">
@@ -89,12 +124,12 @@ const CalendarHeader = ({
                     value={localKeyword}
                     onChange={(e) => setLocalKeyword(e.target.value)}
                     onPressEnter={() => onKeywordChange(localKeyword)}
-                    disabled={disabled}
+                    disabled={isDisabled}
                 /> */}
-                <Button type="primary" onClick={() => onDateChange(dayjs())}>
+                <Button type="primary" disabled={isDisabled} onClick={() => confirmDateChange(dayjs())}>
                     Today
                 </Button>
-                {disabled ? (
+                {isDisabled ? (
                     <Button icon={<FilterOutlined />} disabled>
                         Filter
                     </Button>
@@ -120,6 +155,19 @@ const CalendarHeader = ({
                     </Popover>
                 )}
             </div>
+
+            <Modal
+                title="Confirm Date Change"
+                open={confirmModalOpen}
+                onOk={handleConfirmOk}
+                onCancel={handleConfirmCancel}
+                okText="Yes"
+                cancelText="No"
+                transitionName=""
+                maskTransitionName=""
+            >
+                {`Are you sure you want to change to ${pendingDate?.format('MMMM YYYY')}?`}
+            </Modal>
         </div>
     );
 };

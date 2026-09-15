@@ -295,6 +295,7 @@ const RedundsList = lazy(
 export const authRoutes = [
   {
     key: 1,
+    id: "/dashboard",
     path: "/dashboard/",
     label: "Dashboard",
     icon: <DashboardOutlined style={{ fontSize: "20px" }} />,
@@ -329,7 +330,7 @@ export const authRoutes = [
   },
   {
     key: 3,
-    id: "/front-office",
+    id: "/reservations",
     label: "Front Office",
     isPrivate: false,
     icon: <ScheduleOutlined style={{ fontSize: "20px" }} />,

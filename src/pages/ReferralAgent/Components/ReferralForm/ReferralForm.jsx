@@ -201,11 +201,10 @@ const ReferralForm = ({
                 <Input readOnly={isView} placeholder="Enter Referral Agent Name" />
               </Form.Item>
           <Form.Item
-            label="Card No"
-            name="cardNo"
-            rules={[{ required: true, message: "Card No is Required" }]}
+            label="Code"
+            name="code"
           >
-            <Input readOnly={isView} placeholder="Enter Card Number" />
+            <Input readOnly={isView} placeholder="Enter  Code" />
           </Form.Item>
 
           <Form.Item

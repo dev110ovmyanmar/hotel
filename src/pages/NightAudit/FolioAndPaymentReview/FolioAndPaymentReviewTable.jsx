@@ -1,17 +1,17 @@
-import { EyeOutlined, MoreOutlined } from "@ant-design/icons";
 import { Button, Table } from "antd";
-import { AiOutlineRight } from "react-icons/ai";
+import { AiOutlineLeft, AiOutlineRight } from "react-icons/ai";
 import PriceTag from "../../../component/PriceTag/PriceTag";
 import FolioAndPaymentReviewDetails from "./FolioAndPaymentReviewDetails";
 import { useState } from "react";
 import FinancialStatusTag from "../../../component/FinancialStatusTag/FinancialStatusTag";
-import { nextStepButtonDesign } from "../../../variables/constants";
 
 const FolioAndPaymentReviewTable = ({
     data,
-    colorCheckBooking,
+    backStep,
+    nextStep,
 }) => {
     const tableData = data?.folios;
+    console.log(tableData, "tableData")
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [selectedFolio, setSelectedFolio] = useState(null);
 
@@ -39,7 +39,7 @@ const FolioAndPaymentReviewTable = ({
             render: (_, record) => (
                 <span className="font-medium text-indigo-700 dark:text-indigo-500">
                     {record?.reservationNo || "-"}
-                </span> 
+                </span>
             ),
         },
         {
@@ -125,31 +125,25 @@ const FolioAndPaymentReviewTable = ({
                         ? "selected-folio-row"
                         : ""
                 }
-            // summary={() => (
-            //     <Table.Summary fixed="bottom">
-            //         <Table.Summary.Row>
-            //             <Table.Summary.Cell index={0} colSpan={columns.length}>
-            //                 <div className="flex justify-end items-center w-full py-1">
-            //                     <Button
-            //                         type="primary"
-            //                         onClick={colorCheckBooking}
-            //                         className="flex items-center gap-1"
-            //                     >
-            //                         Next Step
-            //                         <AiOutlineRight />
-            //                     </Button>
-            //                 </div>
-            //             </Table.Summary.Cell>
-            //         </Table.Summary.Row>
-            //     </Table.Summary>
-            // )}
             />
 
-            <div className={nextStepButtonDesign}>
+            {/* <div className={`${nextStepButtonDesign} flex gap-4`}> */}
+            <div className="sticky bottom-0 flex justify-end gap-4 bg-gray-50 dark:bg-[#121111] py-2 px-4 z-10">
+
                 <Button
                     type="primary"
-                    onClick={colorCheckBooking}
+                    onClick={backStep}
                     className="flex items-center gap-1"
+                >
+                    <AiOutlineLeft />
+                    Back
+                </Button>
+
+                <Button
+                    type="primary"
+                    onClick={nextStep}
+                    className="flex items-center gap-1"
+                    disabled={data?.reviewSummary?.blockingFolios !== 0}
                 >
                     Next Step
                     <AiOutlineRight />

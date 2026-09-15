@@ -1,4 +1,4 @@
-import { Dropdown, Space, Table, Tag, Button } from "antd";
+import { Dropdown, Space, Table } from "antd";
 import { useState } from "react";
 import { EditOutlined, EyeOutlined, FolderAddOutlined, MoreOutlined } from "@ant-design/icons";
 import ReferralForm from './ReferralForm/ReferralForm';
@@ -6,7 +6,6 @@ import ColorStatusTag from './../../../component/ColorStatusTag/ColorStatusTag';
 import { PERMISSIONS } from './../../../variables/permission';
 import usePermission from './../../../hooks/usePermission';
 import PriceTag from "../../../component/PriceTag/PriceTag";
-
 
 const ReferralTable = ({
   data,
@@ -34,6 +33,12 @@ const ReferralTable = ({
       title: "Name",
       dataIndex: "name",
       key: "name",
+      render: (text) => <div>{text}</div>,
+    },
+    {
+      title: "Code",
+      dataIndex: "code",
+      key: "code",
       render: (text) => <div>{text}</div>,
     },
     {
@@ -68,13 +73,15 @@ const ReferralTable = ({
       title: "Status",
       dataIndex: ["status", "name"],
       key: "status",
-       align: "center",
+      width: 120,
+      align: "center",
       render: (_, record) => <ColorStatusTag status={record?.status} />
     },
     {
       title: "Action",
-      fixed:"end",
-      align:"center",
+      fixed: "end",
+      align: "center",
+      width: 80,
       render: (_, record) => {
         const smallStyle = { fontSize: "12px" };
 

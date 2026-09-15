@@ -12,8 +12,14 @@ import useApiQuery from "../../../hooks/useApiQuery";
 import PriceTag from "../../../component/PriceTag/PriceTag";
 import { textColorDarkMode, textWhiteInDarkStyle } from "../../../utils";
 import FinancialStatusTag from "../../../component/FinancialStatusTag/FinancialStatusTag";
+import { getNightAuditData } from "../../../variables/constants";
 
 const FolioAndPaymentReviewDetails = ({ open, onClose, data }) => {
+
+  const nightAuditData = getNightAuditData();
+
+  const businessDate = nightAuditData?.businessDate;
+
   const { data: folioData, isLoading: folioLoading } = useApiQuery({
     fetchQueryName: "folio-review",
     fetchQueryFunction: folioReviewPayment,
@@ -21,6 +27,7 @@ const FolioAndPaymentReviewDetails = ({ open, onClose, data }) => {
       folio: {
         uuid: data?.folioUuid,
       },
+      businessDate
     },
     enabled: !!data?.folioUuid && open,
   });
@@ -168,7 +175,7 @@ const FolioAndPaymentReviewDetails = ({ open, onClose, data }) => {
               <div className="pr-3">
                 <p className="text-[11px] font-medium text-slate-500 dark:text-slate-400">Total Payments</p>
                 <p className="text-lg font-bold text-slate-900 dark:text-slate-100 mt-1">
-                  {folio?.totalPayments}
+                  {folio?.paymentSummary?.totalPayments}
                 </p>
               </div>
 
@@ -271,7 +278,7 @@ const FolioAndPaymentReviewDetails = ({ open, onClose, data }) => {
                   <span className="text-slate-700 dark:text-gray-200">Grand Total</span>
                   <span className="text-indigo-600 dark:text-indigo-400 font-bold">
                     <div className="flex gap-1">
-                      <PriceTag value={folio?.grandTotal || 0} />                      
+                      <PriceTag value={folio?.grandTotal || 0} />
                       <span>MMK</span>
                     </div>
                   </span>

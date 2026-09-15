@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import dayjs from "dayjs";
 import {
   Drawer,
   Form,
@@ -7,6 +8,7 @@ import {
   Button,
   Select,
   Radio,
+  DatePicker,
 } from "antd";
 import useApiQuery from "../../../../../../hooks/useApiQuery";
 import { useApiMutation } from "../../../../../../hooks/useApiMutation";
@@ -326,6 +328,11 @@ const ServiceOrderForm = ({
         orderStatus:
           orderDetails?.orderStatus?.uuid,
 
+        orderedAt:
+          orderDetails?.orderedAt
+            ? dayjs(orderDetails.orderedAt)
+            : undefined,
+
         inventoryItems:
           orderDetails?.serviceOrderItems?.map(
             (item) => ({
@@ -406,6 +413,10 @@ const ServiceOrderForm = ({
       reservation: {
         uuid: reservationUuid,
       },
+
+      orderedAt: values.orderedAt
+        ? values.orderedAt.format("YYYY-MM-DD HH:mm:ss")
+        : null,
 
       reservationRoom: values.roomNo
         ? {
@@ -520,6 +531,7 @@ const ServiceOrderForm = ({
         quantity: 1,
         consumptionType: undefined,
         orderStatus: targetStatus,
+        orderedAt: undefined,
       });
     }
 
@@ -533,6 +545,7 @@ const ServiceOrderForm = ({
         quantity: 1,
         consumptionType: undefined,
         orderStatus: targetStatus,
+        orderedAt: undefined,
       });
     }
   };
@@ -627,33 +640,57 @@ const ServiceOrderForm = ({
         {(!isView ||
           orderDetails?.reservationRoom !==
             null) && (
-          <Form.Item
-            label="Room No"
-            name="roomNo"
-            rules={[
-              {
-                required: true,
-              },
-            ]}
-            getValueProps={(value) => ({
-              value: isView
-                ? rooms.find(
-                    (item) =>
-                      item.value ===
-                      value,
-                  )?.label
-                : value,
-            })}
-          >
-            {isView ? (
-              <Input readOnly />
-            ) : (
-              <Select
-                options={rooms}
-                placeholder="Select a Room"
-              />
-            )}
-          </Form.Item>
+          <div className="grid grid-cols-2 gap-4">
+            <Form.Item
+              label="Room No"
+              name="roomNo"
+              rules={[
+                {
+                  required: true,
+                },
+              ]}
+              getValueProps={(value) => ({
+                value: isView
+                  ? rooms.find(
+                      (item) =>
+                        item.value ===
+                        value,
+                    )?.label
+                  : value,
+              })}
+            >
+              {isView ? (
+                <Input readOnly />
+              ) : (
+                <Select
+                  options={rooms}
+                  placeholder="Select a Room"
+                />
+              )}
+            </Form.Item>
+
+            <Form.Item
+              label="Order At"
+              name="orderedAt"
+              getValueProps={(value) => ({
+                value: isView
+                  ? value
+                    ? value.format("YYYY-MM-DD HH:mm:ss")
+                    : ""
+                  : value,
+              })}
+            >
+              {isView ? (
+                <Input readOnly />
+              ) : (
+                <DatePicker
+                  showTime
+                  className="w-full"
+                  placeholder="Select Date & Time"
+                />
+              )}
+            </Form.Item>
+          </div>
         )}
 
         <Form.Item
