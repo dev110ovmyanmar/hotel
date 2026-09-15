@@ -19,9 +19,6 @@ import {
 import dayjs from "dayjs";
 import {
   darkModeStyle,
-  houseKeepingAndMaintenanceRequestDarkMode,
-  partnerDarkModeStyle,
-  selectedDarkMode,
   textColorDarkMode,
   textWhiteInDarkStyle,
 } from "../../../../../utils";

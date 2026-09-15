@@ -104,7 +104,7 @@ const DailyBreakDownDetailFormDrawer = ({ open, onClose, data }) => {
       <div className="space-y-4">
         <SectionCard title="Room Charge">
           <InfoRow label="Room Rate"
-            isComplimentary={(dc.roomComplimentaryTotal || 0) > 0}
+            isComplimentary={data?.isRoomComplimentary}
             complimentaryType={data.roomComplimentaryType}
             value={dc.roomRate || 0}
           />

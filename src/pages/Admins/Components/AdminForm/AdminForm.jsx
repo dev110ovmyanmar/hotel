@@ -169,7 +169,10 @@ const AdminForm = ({
     const values = form.getFieldsValue();
 
     if (isEdit && initialValue) {
-      const isChanged = values !== initialValue;
+      const initialRole = initialValue?.role?.uuid;
+      const currentRole = values?.role;
+
+      const isChanged = initialRole !== currentRole;
 
       if (isChanged) {
         setFinalValues(values);

@@ -272,6 +272,12 @@ export const PERMISSIONS = {
   ROOM_RESTRICTION_CREATE: "room-restriction.create",
   ROOM_RESTRICTION_EDIT: "room-restriction.edit",
 
+  //Reservation 
+  RESERVATION_LIST: "reservation.list",
+  RESERVATION_VIEW: "reservation.view",
+  RESERVATION_CREATE: "reservation.create",
+  RESERVATION_SEARCH: "reservation.search",
+
   //Reservation room
   RESERVATION_ROOM_LIST: "reservation-room.list",
   RESERVATION_ROOM_VIEW: "reservation-room.create",

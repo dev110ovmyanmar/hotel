@@ -40,6 +40,7 @@ const FolioOperationsList = () => {
   const [previewOpen, setPreviewOpen] = useState(false);
   const [printingFolioUuid, setPrintingFolioUuid] = useState(null);
   const [isPrintAllLoading, setIsPrintAllLoading] = useState(false);
+  const [isSinglePrint, setIsSinglePrint] = useState(false);
 
   // get login admin details
   const adminUuid = loadState(LOCAL_STORAGE_KEYS.loginAdminDetails)?.uuid;
@@ -195,6 +196,7 @@ const FolioOperationsList = () => {
     if (!folioList?.data || folioList.data.length === 0) return;
 
     setIsPrintAllLoading(true);
+    setIsSinglePrint(false);
     try {
       const printData = await queryClient.fetchQuery({
         queryKey: ["allFolioPrintData", { reservation: { uuid: reservationUuid } }],
@@ -212,6 +214,7 @@ const FolioOperationsList = () => {
   //Print Single Folio
   const handlePrintSingleFolio = useCallback(async (folio) => {
           setPrintingFolioUuid(folio.uuid);
+          setIsSinglePrint(true);
           try {
             const printData = await queryClient.fetchQuery({
               queryKey: ["folioPrintData", { reservation: { uuid: reservationUuid }, folio: { uuid: folio.uuid } }],
@@ -289,6 +292,7 @@ const FolioOperationsList = () => {
               adminName={adminName}
               adminRole={adminRole}
               propertyData={propertyData}
+              isSinglePrint={isSinglePrint}
             />
           </div>,
           document.body,
@@ -341,6 +345,7 @@ const FolioOperationsList = () => {
               adminRole={adminRole}
               propertyData={propertyData}
               hideLetterhead
+              isSinglePrint={isSinglePrint}
             />
           </div>
         )}
