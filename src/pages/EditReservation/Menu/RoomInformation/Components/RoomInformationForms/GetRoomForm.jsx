@@ -117,7 +117,7 @@ const GetRoomForm = ({ selectedData, onSelectRoom, onClose, floorUuid }) => {
 
             <div className="flex items-center gap-14">
 
-              <ColorStatusTag status={room?.status} iconType="broom" />
+              <ColorStatusTag status={room?.status} iconType="bed" />
 
               <ColorStatusTag status={room?.cleanStatus} iconType="broom" />
 
