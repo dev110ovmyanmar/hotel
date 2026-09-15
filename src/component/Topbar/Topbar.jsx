@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Button, Layout, Drawer, Popover, Modal } from "antd";
 import withDirection from "../../utils/rtl.jsx";
@@ -35,6 +35,7 @@ import { adminDetails } from "../../api/adminApi";
 import { saveState } from "../../utils/Utils.js";
 import TopBarDropDown from "./TopBarDropDown.jsx";
 import PrintReservation from "./PrintReservation.jsx";
+import { useQueryClient } from "@tanstack/react-query";
 
 const { Header } = Layout;
 
@@ -60,9 +61,35 @@ const Topbar = withDirection(function (props) {
     params: { uuid },
   });
 
+  useEffect(() => {
+    if (loginAdminDetails) {
+      saveState(
+        LOCAL_STORAGE_KEYS.loginAdminDetails,
+        loginAdminDetails
+      );
+    }
+  }, [loginAdminDetails]);
+
   const handleRefetchInitData = async () => {
     try {
       setRefreshing(true);
+
+      await queryClient.refetchQueries({
+        queryKey: ["login-admin-details"],
+      });
+
+      // // 2. Get the newly fetched admin details from cache
+      const freshAdminDetails = queryClient.getQueryData([
+        "login-admin-details",
+      ]);
+
+      // 3. Save latest admin details to localStorage
+      if (freshAdminDetails) {
+        saveState(
+          LOCAL_STORAGE_KEYS.loginAdminDetails,
+          freshAdminDetails
+        );
+      }
 
       await queryClient.refetchQueries({
         queryKey: ["initData", "authenticated"],
@@ -164,15 +191,14 @@ const Topbar = withDirection(function (props) {
   return (
     <>
       <Header
-        className={`bg-white! fixed w-full h-25 flex justify-between z-1000 border-b border-gray-300 transition-all ${
-          isCollapsed
-            ? props["data-rtl"] === "rtl"
-              ? "px-[15px] md:pl-[31px] md:pr-[109px]!"
-              : "px-[15px] md:pr-[31px] md:pl-[109px]!"
-            : props["data-rtl"] === "rtl"
-              ? "pl-[260px] pr-[15px] md:pl-[265px] md:pr-[31px]!"
-              : "pr-[15px] pl-[260px] md:pr-[31px] md:pl-[265px]!"
-        }`}
+        className={`bg-white! fixed w-full h-25 flex justify-between z-1000 border-b border-gray-300 transition-all ${isCollapsed
+          ? props["data-rtl"] === "rtl"
+            ? "px-[15px] md:pl-[31px] md:pr-[109px]!"
+            : "px-[15px] md:pr-[31px] md:pl-[109px]!"
+          : props["data-rtl"] === "rtl"
+            ? "pl-[260px] pr-[15px] md:pl-[265px] md:pr-[31px]!"
+            : "pr-[15px] pl-[260px] md:pr-[31px] md:pl-[265px]!"
+          }`}
       >
         {/* Left Section */}
         <div className="flex items-center py-2 gap-2">
