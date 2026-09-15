@@ -244,7 +244,18 @@ const HouseKeepingTaskForm = ({
                                         }}
                                     >
                                         {isView ? <Input readOnly /> :
-                                            <Select options={roomOptions} disabled={isView} placeholder="Select Room" />}
+                                            <Select
+                                                options={roomOptions}
+                                                disabled={isView}
+                                                placeholder="Select Room"
+                                                showSearch
+                                                optionFilterProp="searchLabel"
+                                                filterOption={(input, option) =>
+                                                    String(option?.searchLabel ?? "")
+                                                        .toLowerCase()
+                                                        .includes(input.toLowerCase())
+                                                }
+                                            />}
                                     </Form.Item>
 
                                     <Form.Item name="taskType" label="Task Type" rules={[{ required: true }]}

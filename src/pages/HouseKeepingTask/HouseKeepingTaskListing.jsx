@@ -64,6 +64,7 @@ const HouseKeepingTaskListing = () => {
     () =>
       adminMetaData?.rooms?.map((r) => ({
         value: r.uuid,
+        searchLabel: r.roomNo, // Add searchable field
         label: (
           <div
             style={{
