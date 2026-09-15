@@ -25,6 +25,7 @@ import { LIMITS } from "../../../../../../variables/constants";
 import { useLocation } from "react-router-dom";
 import { useApiMutation } from "../../../../../../hooks/useApiMutation";
 import Toast from "../../../../../../component/Toast/Toast";
+import Loader from "../../../../../../component/Loader/Loader";
 
 const NoteDrawer = ({ mode, open, onClose, selectedData, onSuccess }) => {
   const location = useLocation();
@@ -179,7 +180,7 @@ const NoteDrawer = ({ mode, open, onClose, selectedData, onSuccess }) => {
         )
       }
     >
-      {!isView && (
+      {/* {!isView && (
         <Form form={form} layout="vertical" onFinish={onFinish}>
           <Form.Item
             label="Note"
@@ -191,6 +192,28 @@ const NoteDrawer = ({ mode, open, onClose, selectedData, onSuccess }) => {
             <Input.TextArea placeholder="Add a new note..." />
           </Form.Item>
         </Form>
+      )} */}
+      {isLoading ? (
+        <div className="flex min-h-screen items-center justify-center">
+          <Loader />
+        </div>
+      ) : (
+        !isView && (
+          <Form form={form} layout="vertical" onFinish={onFinish}>
+            <Form.Item
+              label="Note"
+              name="noteContent"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your note content!",
+                },
+              ]}
+            >
+              <Input.TextArea placeholder="Add a new note..." />
+            </Form.Item>
+          </Form>
+        )
       )}
 
       {data?.data && data.data.length > 0 && (

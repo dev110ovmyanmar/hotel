@@ -63,7 +63,7 @@ export const METRIC_CONFIGS = [
     icon: <CheckCircleOutlined className="!text-[#62ab29] !text-lg" />,
   },
   {
-    key: "checkIn",
+    key: "checkedIn",
     bgColor: "!bg-[#eefcf9]",
     outerBg: "bg-[#a7eee7]",
     innerBg: "bg-[#eefcf9]",
@@ -73,7 +73,7 @@ export const METRIC_CONFIGS = [
     icon: <LoginOutlined className="!text-[#189094] !text-lg" />,
   },
   {
-    key: "checkOut",
+    key: "checkedOut",
     bgColor: "!bg-[#FFF4F1]",
     outerBg: "bg-[#FFBD9F]",
     innerBg: "bg-[#FFF4F1]",

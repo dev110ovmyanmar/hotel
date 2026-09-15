@@ -90,7 +90,7 @@ const FolioAndPaymentReviewTable = ({
             ),
         },
         {
-            title: "Has Unposted Charges",
+            title: "Unposted Charges",
             dataIndex: "hasUnpostedCharges",
             key: "hasUnpostedCharges",
             width: 140,

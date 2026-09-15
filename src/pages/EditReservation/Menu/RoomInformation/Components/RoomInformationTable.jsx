@@ -1,5 +1,5 @@
-import { useState,  } from "react";
-import { Dropdown,  Table } from "antd";
+import { useState, } from "react";
+import { Dropdown, Table } from "antd";
 import dayjs from "dayjs";
 import { MessageOutlined, EyeOutlined } from "@ant-design/icons";
 import { CalendarPlus2, Gift } from "lucide-react";
@@ -146,6 +146,7 @@ const RoomInformationTable = ({
     //   title: "Room No",
     //   key: "room",
     //   dataIndex: "room",
+    //   width: 210,
     //   render: (text, record) => {
     //     const isRoomNull = !text;
     //     const isClickable =
@@ -166,7 +167,6 @@ const RoomInformationTable = ({
     //             : shouldHighlightRoom
     //               ? "#1890ff"
     //               : "inherit",
-
     //           cursor: canClick ? "pointer" : "default",
     //           textDecoration: canClick ? "underline" : "none",
     //         }}
@@ -180,107 +180,118 @@ const RoomInformationTable = ({
     //       >
     //         {text?.roomNo || "Assign Room"}
 
-    //         {record?.isComplimentary === true &&
-    //           record?.complimentaryType && (
-    //             <div className="inline-flex items-center gap-0.5 px-1.5 py-0.5 text-[10px] font-semibold rounded-full bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 w-fit">
-    //               <Gift size={12} />
-    //               {capitalizeFirstLetter(record?.complimentaryType)}
-    //             </div>
-    //           )}
-
     //         {!isRoomNull && (
-    //           <div className="mt-1 flex items-center gap-2">
-    //             <span>
-    //               <ColorStatusTag status={record?.room?.status} />
-    //             </span>
 
-    //             <span>
-    //               <ColorStatusTag status={record?.room?.cleanStatus} />
-    //             </span>
+    //           <div className="mt-1 flex items-center gap-2">
+
+    //             <div className="flex items-center gap-0.5">
+    //               <ColorStatusTag status={record?.room?.status} iconType="bed" />
+    //             </div>
+
+    //             <div className="flex items-center gap-0.5">
+    //               <ColorStatusTag status={record?.room?.cleanStatus} iconType="broom" />
+    //             </div>
     //           </div>
+
     //         )}
     //       </span>
     //     );
     //   },
     // },
     {
-      title: "Room No",
-      key: "room",
-      dataIndex: "room",
-      width: 230,
-      render: (text, record) => {
-        const isRoomNull = !text;
-        const isClickable =
-          record?.assignStatus === true && !record?.expiredStatus;
+  title: "Room No",
+  key: "room",
+  dataIndex: "room",
+  width: 210,
+  render: (text, record) => {
+    const isRoomNull = !text;
+    const isClickable =
+      record?.assignStatus === true && !record?.expiredStatus;
 
-        const shouldHighlightRoom =
-          !isRoomNull && record?.assignStatus === true;
+    const shouldHighlightRoom =
+      !isRoomNull && record?.assignStatus === true;
 
-        const canClick = isClickable || shouldHighlightRoom;
+    const canClick = isClickable || shouldHighlightRoom;
 
-        return (
-          <span
-            style={{
-              color: isRoomNull
-                ? isClickable
-                  ? "#1890ff"
-                  : "#bfbfbf"
-                : shouldHighlightRoom
-                  ? "#1890ff"
-                  : "inherit",
-              cursor: canClick ? "pointer" : "default",
-              textDecoration: canClick ? "underline" : "none",
-            }}
-            onClick={(e) => {
-              if (!canClick) return;
+    return (
+      <span
+        style={{
+          color: isRoomNull
+            ? isClickable
+              ? "#1890ff"
+              : "#bfbfbf"
+            : shouldHighlightRoom
+              ? "#1890ff"
+              : "inherit",
+          cursor: canClick ? "pointer" : "default",
+        }}
+        onClick={(e) => {
+          if (!canClick) return;
 
-              e.stopPropagation();
-              setSelectedData(record);
-              setAssignRoomOpen(true);
-            }}
-          >
-            {text?.roomNo || "Assign Room"}
+          e.stopPropagation();
+          setSelectedData(record);
+          setAssignRoomOpen(true);
+        }}
+      >
+        {/* Only this text gets underline */}
+        <span
+          style={{
+            textDecoration: canClick ? "underline" : "none",
+          }}
+        >
+          {text?.roomNo || "Assign Room"}
+        </span>
 
-            {!isRoomNull && (
+        {!isRoomNull && (
+          <div className="mt-1 flex items-center gap-2">
+            <div className="flex items-center gap-0.5">
+              <ColorStatusTag
+                status={record?.room?.status}
+                iconType="bed"
+              />
+            </div>
 
-              <div className="mt-1 flex items-center gap-2">
-
-                <div className="flex items-center gap-0.5">
-                  <ColorStatusTag status={record?.room?.status} iconType="bed" />
-                </div>
-
-                <div className="flex items-center gap-0.5">
-                  <ColorStatusTag status={record?.room?.cleanStatus} iconType="broom" />
-                </div>
-              </div>
-
-            )}
-          </span>
-        );
-      },
-    },
-
-
-    { title: "Room Type", dataIndex: ["roomType", "name"], key: "name" },
-    { title: "Rate Plan", dataIndex: ["ratePlan", "name"], key: "ratePlan" },
+            <div className="flex items-center gap-0.5">
+              <ColorStatusTag
+                status={record?.room?.cleanStatus}
+                iconType="broom"
+              />
+            </div>
+          </div>
+        )}
+      </span>
+    );
+  },
+},
+    { title: "Room Type", dataIndex: ["roomType", "name"], key: "name", width: 180 },
+    { title: "Rate Plan", dataIndex: ["ratePlan", "name"], key: "ratePlan", width: 180 },
     {
-      title: "Check In",
-      dataIndex: "checkinDate",
-      key: "checkinDate",
-      render: (value) => (value ? dayjs(value).format("YYYY-MM-DD") : "-"),
-      width: 110,
+      title: "Stay Dates",
+      key: "stayDates",
+      align: "center",
+      width:120,
+      render: (_, record) => (
+        <div>
+          <div>
+            {record.checkinDate
+              ? dayjs(record.checkinDate).format("YYYY-MM-DD")
+              : "-"}
+          </div>
+          <div style={{ color: "#6a6767", textAlign: "center" }}>to</div>
+          <div>
+            {record.checkoutDate
+              ? dayjs(record.checkoutDate).format("YYYY-MM-DD")
+              : "-"}
+          </div>
+        </div>
+      ),
     },
-    {
-      title: "Check Out",
-      dataIndex: "checkoutDate",
-      key: "checkoutDate",
-      render: (value) => (value ? dayjs(value).format("YYYY-MM-DD") : "-"),
-      width: 110,
-    },
+
     {
       title: "Status",
       dataIndex: ["roomStatus", "name"],
       key: "roomStatus",
+      align: "center",
       render: (_, record) => <ColorStatusTag status={record?.roomStatus} />,
       width: 110,
     },
@@ -289,7 +300,7 @@ const RoomInformationTable = ({
       dataIndex: "grandTotal",
       align: "center",
       key: "grandTotal",
-      width: 140,
+      width: 150,
       render: (value, record) => (
         <div className="flex flex-col items-end gap-1">
           <div className="flex justify-end items-center gap-1">
