@@ -11,7 +11,6 @@ import { darkModeStyle } from "../../utils";
 
 const { RangePicker } = DatePicker;
 
-
 const ReservationForm = ({
     form,
     afterRoomConfirm,
@@ -177,7 +176,7 @@ const ReservationForm = ({
 
         return false;
     };
-    console.log(selectedSourceType, "selectedSourceType")
+
     return (
         <Card
             className="!bg-gradient-to-r from-[#215282] to-[#000B60]"
@@ -205,11 +204,14 @@ const ReservationForm = ({
                                     htmlType="submit"
                                     loading={availabilitySearchResults?.isPending}
                                     disabled={searchButtonDisable}
-                                    className={
-                                        searchButtonDisable
-                                            ? "min-w-[125px] !bg-gray-200 !text-gray-400 !border-gray-400 cursor-not-allowed"
-                                            : "min-w-[125px] !bg-[#FFFFFF] !text-[#000000] !shadow-lg shadow-gray-300/50"
-                                    }
+                                    // className={
+                                    //     searchButtonDisable
+                                    //         ? "min-w-[125px] !text-gray-400 !border-gray-400/50 cursor-not-allowed"
+                                    //         : "min-w-[125px] !bg-gradient-to-r from-[#000B60] to-[#215282] !border-blue-400/50 !shadow-lg shadow-blue-600/50"
+                                    // }
+                                    className="min-w-[125px] !bg-gradient-to-r from-[#000B60] to-[#215282] !border-blue-400/50 !shadow-lg shadow-blue-600/50"
+
+                                    
                                 >
                                     {/* !bg-gradient-to-r from-[#CACDCB] to-[#104171] */}
                                     Search
@@ -364,7 +366,7 @@ const ReservationForm = ({
                                                 readOnly={afterRoomConfirm}
                                             /> :
                                             <Select
-                                                options={selectedSourceType === "Agency" ? agenciesOptions : selectedSourceType === "Company"? companyOptions : referralAgentOptions}
+                                                options={selectedSourceType === "Agency" ? agenciesOptions : selectedSourceType === "Company" ? companyOptions : referralAgentOptions}
                                                 placeholder="Select Source Name"
                                                 className="!w-[100%]"
                                             ></Select>
@@ -432,13 +434,13 @@ const ReservationForm = ({
                         null
                         :
                         <div className="flex justify-end">
-                            <Form.Item className="block md:hidden mt-4">
+                            <Form.Item className="block md:hidden !mt-4">
                                 <Button
-                                    // type="primary"
+                                    type="primary"
                                     htmlType="submit"
                                     loading={availabilitySearchResults?.isPending}
                                     disabled={searchButtonDisable}
-                                    className="w-full !bg-gradient-to-r from-[#000B60] to-[#215282]"
+                                    className="min-w-[125px] !bg-gradient-to-r from-[#000B60] to-[#215282] !border-blue-400/50 !shadow-lg shadow-blue-600/50"
                                 >
                                     Search
                                 </Button>
@@ -449,6 +451,7 @@ const ReservationForm = ({
             </Form>
 
         </Card >
+
     )
 }
 

@@ -1,17 +1,15 @@
 import { Button, Table } from "antd";
-import { AiOutlineRight } from "react-icons/ai";
+import { AiOutlineLeft, AiOutlineRight } from "react-icons/ai";
 import PriceTag from "../../../component/PriceTag/PriceTag";
-import { nextStepButtonDesign } from "../../../variables/constants";
 
-const ReconciliationTable = ({ colorCheckBooking, data }) => {
-  const tableData = data?.folios;
+const ReconciliationTable = ({ backStep, nextStep, data }) => {
+  const tableData = data?.folios || [];
 
   const columns = [
     {
       title: "Id",
       dataIndex: "folioId",
       key: "folioId",
-      render: (text) => <div>{text}</div>,
     },
     {
       title: "Folio No.",
@@ -38,112 +36,120 @@ const ReconciliationTable = ({ colorCheckBooking, data }) => {
       title: "Expected Charges",
       dataIndex: "expectedCharges",
       key: "expectedCharges",
+      align: "end",
       render: (value) => (
         <div className="flex justify-end items-center gap-1">
           <PriceTag value={value} />
         </div>
       ),
-      align: "end",
     },
     {
       title: "Posted Charges",
       dataIndex: "postedCharges",
       key: "postedCharges",
+      align: "end",
       render: (value) => (
         <div className="flex justify-end items-center gap-1">
           <PriceTag value={value} />
         </div>
       ),
-      align: "end",
     },
     {
       title: "Unposted Charges",
       dataIndex: "unpostedCharges",
       key: "unpostedCharges",
+      align: "end",
       render: (value) => (
         <div className="flex justify-end items-center gap-1">
           <PriceTag value={value} />
         </div>
       ),
-      align: "end",
     },
     {
       title: "Actual Payment",
       dataIndex: "actualPayments",
       key: "actualPayments",
+      align: "end",
       render: (value) => (
         <div className="flex justify-end items-center gap-1">
           <PriceTag value={value} />
         </div>
       ),
-      align: "end",
     },
     {
       title: "Folio Payment",
       dataIndex: "folioBalance",
       key: "folioBalance",
+      align: "end",
       render: (value) => (
         <div className="flex justify-end items-center gap-1">
           <PriceTag value={value} />
         </div>
       ),
-      align: "end",
     },
     {
       title: "Grand Total",
       dataIndex: "folioGrandTotal",
       key: "folioGrandTotal",
+      align: "end",
       render: (value) => (
         <div className="flex justify-end items-center gap-1">
           <PriceTag value={value} />
         </div>
       ),
-      align: "end",
     },
     {
       title: "Paid Amount",
       dataIndex: "folioPaidAmount",
       key: "folioPaidAmount",
+      align: "end",
       render: (value) => (
         <div className="flex justify-end items-center gap-1">
           <PriceTag value={value} />
         </div>
       ),
-      align: "end",
     },
     {
       title: "Folio Balance",
       dataIndex: "folioBalance",
       key: "folioBalance",
+      align: "end",
       render: (value) => (
         <div className="flex justify-end items-center gap-1">
           <PriceTag value={value} />
         </div>
       ),
-      align: "end",
     },
-    
-    // {
-    //   title: "Status",
-    //   //   dataIndex: "status",
-    //   key: "status",
-    //   align: "center",
-    // },
   ];
 
   return (
-    <div>
-      <Table
-        columns={columns}
-        dataSource={tableData}
-        pagination={false}
-        scroll={{ x: 1000 }}
-      />
+    <div className="w-full">
+      <div className="w-full overflow-x-auto">
+        <Table
+          columns={columns}
+          dataSource={tableData}
+          pagination={false}
+          rowKey="folioId"
+          scroll={{ x: 1500 }}
+          className="min-w-[1500px]"
+        />
+      </div>
 
-      <div className={nextStepButtonDesign}>
+      {/* <div className={`${nextStepButtonDesign} flex gap-4 mt-4`}> */}
+      <div className="sticky bottom-0 flex justify-end gap-4 bg-gray-50 dark:bg-[#121111] py-2 px-4 z-10">
+
         <Button
           type="primary"
-          onClick={colorCheckBooking}
+          onClick={backStep}
+          className="flex items-center gap-1"
+        >
+          <AiOutlineLeft />
+          Back
+        </Button>
+
+        <Button
+          type="primary"
+          onClick={nextStep}
           className="flex items-center gap-1"
         >
           Next Step

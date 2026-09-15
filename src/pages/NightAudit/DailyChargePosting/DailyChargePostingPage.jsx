@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { dailyChargePosing, preAuditCheck } from "../../../api/nightAuditApi";
+import { dailyChargePosing } from "../../../api/nightAuditApi";
 import useApiQuery from "../../../hooks/useApiQuery";
 import { Spin } from "antd";
 import DailyChargeStatus from "./DailyChargeStatus";
@@ -47,7 +47,18 @@ const DailyChargePostingPage = ({
             <CheckBookingHeader />
             <DailyChargeStatus dailyChargePostingData={dailyChargePostingData} />
             <DailyChargePostingTable
-                colorCheckBooking={() => {
+                backStep={() => {
+                    window.dispatchEvent(
+                        new CustomEvent("breadcrumb_updated", {
+                            detail: {
+                                stepValue: Number(stepValue) - 1,
+                            },
+                        })
+                    );
+
+                    navigate("/night-audit/pre-audit-check");
+                }}
+                nextStep={() => {
                     window.dispatchEvent(
                         new CustomEvent("breadcrumb_updated", {
                             detail: {
@@ -57,6 +68,7 @@ const DailyChargePostingPage = ({
                     );
                     navigate("/night-audit/folio-&-payment-review")
                 }}
+
                 dailyChargePostingData={dailyChargePostingData}
             />
         </div>

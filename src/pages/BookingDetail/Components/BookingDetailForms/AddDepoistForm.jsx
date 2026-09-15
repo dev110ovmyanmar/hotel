@@ -45,6 +45,7 @@ const AddDepoistForm = ({
 }) => {
   const [form] = Form.useForm();
 
+
   const { data: reservationMetaData, isLoading: reservationMetaDataLoading } =
     useApiQuery({
       fetchQueryName: "reservation-meta",
@@ -58,6 +59,7 @@ const AddDepoistForm = ({
     });
 
   const guests = reservationMetaData?.main_guests || [];
+  const admins = reservationMetaData?.admins || [];
   const paymentMethodsData = reservationMetaData?.payment_methods || [];
   const folios = reservationMetaData?.folios || [];
 
@@ -167,6 +169,16 @@ const AddDepoistForm = ({
     });
   }, [guests]);
 
+  const adminOptions = useMemo(() => {
+    const adminsArray = Array.isArray(admins) ? admins : [];
+    return adminsArray.map((admin) => {
+      return {
+        label: `${admin.name}`,
+        value: admin.uuid,
+      };
+    });
+  }, [admins]);
+
   const { mutate: createFolioPayment, isPending } = useApiMutation({
     mutationFn: createFolioPaymentDeposit,
     // invalidateKeys: [["reservation-details"]],
@@ -197,6 +209,7 @@ const AddDepoistForm = ({
       paymentStatus: { uuid: values.paymentStatus },
       amount: Number(values.amount),
       transactionNo: values.transactionNo,
+      // receivedBy: {uuid: values.receivedBy},
       externalReference: values.externalReference,
       remarks: values.remark,
       paymentDate: values.paymentDate
@@ -518,6 +531,25 @@ const AddDepoistForm = ({
             </Col>
           </Row>
           <Row gutter={16}>
+            <Col span={12}>
+                <Form.Item
+                label={<span className="font-medium">Received By</span>}
+                name="receivedBy"
+                >
+                <Select
+                  showSearch={{
+                    filterOption: (input, option) =>
+                      (option?.label ?? "")
+                        .toLowerCase()
+                        .includes(input.toLowerCase()),
+                  }}
+                  placeholder="Select a admin"
+                  options={adminOptions}
+                  className="w-full rounded"
+                />
+                </Form.Item>
+            </Col>
+
             <Col span={12}>
               <Form.Item
                 label={<span className="font-medium">External Reference</span>}

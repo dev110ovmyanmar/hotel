@@ -374,7 +374,7 @@ const RoomInformationTable = ({
               setReservationRoomUuid(record.uuid);
               setCompOpen(true);
             },
-            hidden: !enableComplimentaryUpdateButton,
+            hidden: !enableComplimentaryUpdateButton || record?.amendStatus !== true,
           },
           {
             key: "dailyOccupaction",

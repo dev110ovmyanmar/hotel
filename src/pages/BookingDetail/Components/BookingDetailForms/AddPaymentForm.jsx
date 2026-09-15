@@ -64,13 +64,14 @@ const AddPaymentForm = ({
     });
 
     const guests = reservationMetaData?.main_guests || [];
+    const admins = reservationMetaData?.admins || [];
     const folios = reservationMetaData?.folios || [];
     const paymentMethodsData = reservationMetaData?.payment_methods || [];
 
     // Track selected category filter by UUID state
     const [selectedProviderUuid, setSelectedProviderUuid] = useState("all");
-    const [selectedFolioGrandTotal, setSelectedFolioGrandTotal] = useState(null);
-    const [isGrandTotalZero, setIsGrandTotalZero] = useState(false);
+    const [selectedFolioBalance, setSelectedFolioBalance] = useState(null);
+    const [isBalanceZero, setIsBalanceZero] = useState(false);
     const [submitting, setSubmitting] = useState(false);
 
     const selectedMethod = Form.useWatch("paymentMethod", form);
@@ -115,8 +116,8 @@ const AddPaymentForm = ({
         return foliosArray.map((folio) => ({
             label: folio.folioNo || "Unknown",
             value: folio.uuid,
-            // Store grandTotal for reference
-            grandTotal: folio.grandTotal,
+            // Store balanceAmount for reference
+            balanceAmount: folio.balanceAmount,
         }));
     }, [folios]);
 
@@ -134,21 +135,28 @@ const AddPaymentForm = ({
         });
     }, [guests]);
 
-    // --- Check grandTotal when folio selection changes ---
+    const adminOptions = useMemo(() => {
+        const adminsArray = Array.isArray(admins) ? admins : [];
+            return adminsArray.map((admin) => {
+            return {
+                label: `${admin.name}`,
+                value: admin.uuid,
+            };
+        });
+    })
+
+    // --- Check balanceAmount when folio selection changes ---
     useEffect(() => {
         if (selectedFolioUuid && folios.length > 0) {
             const selectedFolio = folios.find(folio => folio.uuid === selectedFolioUuid);
             if (selectedFolio) {
-                const total = selectedFolio.grandTotal;
-                setSelectedFolioGrandTotal(total);
-                setIsGrandTotalZero(total === 0 || total === null || total === undefined);
-                // Auto-fill amount with selectedFolio.grandTotal based on selected folio
-                // form.setFieldsValue({ amount: selectedFolio.grandTotal || 0 });
+                const total = selectedFolio.balanceAmount;
+                setSelectedFolioBalance(total);
+                setIsBalanceZero(total === 0 || total === null || total === undefined);
             }
         } else {
-            setSelectedFolioGrandTotal(null);
-            setIsGrandTotalZero(false);
-            // form.setFieldsValue({ amount: 0 });
+            setSelectedFolioBalance(null);
+            setIsBalanceZero(false);
         }
     }, [selectedFolioUuid, folios]);
 
@@ -161,8 +169,8 @@ const AddPaymentForm = ({
                 onClose();
                 form.resetFields();
                 setSelectedProviderUuid("all");
-                setIsGrandTotalZero(false);
-                setSelectedFolioGrandTotal(null);
+                setIsBalanceZero(false);
+                setSelectedFolioBalance(null);
             },
             onError: () => {
                 setSubmitting(false);
@@ -171,8 +179,8 @@ const AddPaymentForm = ({
     });
 
     const onFinish = (values) => {
-        // Prevent submission if grandTotal is zero
-        if (isGrandTotalZero) {
+        // Prevent submission if balanceAmount is zero
+        if (isBalanceZero) {
             Toast.error("Cannot add payment. The selected folio has a zero balance.");
             return;
         }
@@ -186,6 +194,7 @@ const AddPaymentForm = ({
             paymentStatus: { uuid: values.paymentStatus },
             amount: Number(values.amount),
             transactionNo: values.transactionNo,
+            receivedBy: {uuid: values.receivedBy},
             externalReference: values.externalReference,
             remarks: values.remark,
             paymentDate: values.paymentDate ? values.paymentDate.format("YYYY-MM-DD HH:mm:ss") : undefined,
@@ -212,6 +221,8 @@ const AddPaymentForm = ({
 
     const selectedFolio = getSelectedFolioDetails();
 
+    const disablePayment = selectedFolioBalance < 0 || isBalanceZero ;
+
     return (
         <Drawer
             open={open}
@@ -223,8 +234,8 @@ const AddPaymentForm = ({
                     paymentMethod: cashsMethod?.uuid,
                 });
                 setSelectedProviderUuid("all");
-                setIsGrandTotalZero(false);
-                setSelectedFolioGrandTotal(null);
+                setIsBalanceZero(false);
+                setSelectedFolioBalance(null);
             }}
             size={550}
             title={
@@ -236,7 +247,7 @@ const AddPaymentForm = ({
                             form.submit();
                         }}
                         loading={isPending}
-                        disabled={submitting || isGrandTotalZero  }
+                        disabled={submitting || isBalanceZero}
                     >
                         Create
                     </Button>
@@ -244,7 +255,7 @@ const AddPaymentForm = ({
             }
         >
             {
-                reservationMetaFetching  ?
+                reservationMetaFetching ?
                     <div className="flex min-h-screen items-center justify-center">
                         <Loader />
                     </div>
@@ -344,7 +355,7 @@ const AddPaymentForm = ({
                                 </Form.Item>
                             </Col>
                             {
-                                !isGrandTotalZero && (
+                                !disablePayment && (
                                     <Col span={12}>
                                         <Form.Item
                                             label={<span className={textSlateToWhiteInDark}>Guest</span>}
@@ -366,8 +377,8 @@ const AddPaymentForm = ({
 
                         </Row>
 
-                        {/* --- ALERT: Show when grandTotal is zero --- */}
-                        {selectedFolio && isGrandTotalZero && (
+                        {/* --- ALERT: Show when balanceAmount is zero --- */}
+                        {selectedFolio && (isBalanceZero || selectedFolioBalance < 0) && (
                             <Alert
                                 message="Cannot Add Payment"
                                 description={
@@ -376,13 +387,19 @@ const AddPaymentForm = ({
                                             <strong>Folio:</strong> {selectedFolio.folioNo}
                                         </p>
                                         <p className="mb-0">
-                                            <strong>Grand Total:</strong> {selectedFolio.grandTotal !== null && selectedFolio.grandTotal !== undefined
-                                                ? `${selectedFolio.grandTotal.toLocaleString()} MMK`
+                                            <strong>Balance:</strong> {selectedFolio.balanceAmount !== null && selectedFolio.balanceAmount !== undefined
+                                                ? `${selectedFolio.balanceAmount.toLocaleString()} MMK`
                                                 : '0 MMK'}
                                         </p>
-                                         <p className="mt-2 mb-0 text-red-600">
+                                        {
+                                           selectedFolioBalance < 0 ? 
+                                            <p className="mt-2 mb-0 text-red-600">
+                                            This folio is over paid. No payments can be added.
+                                            </p> : 
+                                            <p className="mt-2 mb-0 text-red-600">
                                             This folio has a zero balance. No payments can be added.
-                                        </p>
+                                            </p>
+                                        }
                                     </div>
                                 }
                                 type="warning"
@@ -392,7 +409,7 @@ const AddPaymentForm = ({
                         )}
 
                         {/* --- CONDITIONALLY RENDER OTHER FIELDS --- */}
-                        {!isGrandTotalZero && (
+                        {!disablePayment ? 
                             <>
                                 {/* --- STATUS & AMOUNT ROW --- */}
                                 <Row gutter={16}>
@@ -418,7 +435,7 @@ const AddPaymentForm = ({
                                     </Col>
                                     <Col span={12}>
                                         <Form.Item
-                                            label={<span className={textSlateToWhiteInDark}>Amount{selectedFolioGrandTotal !== null && <> (Max: <PriceTag value={selectedFolioGrandTotal} /> MMK)</>}</span>}
+                                            label={<span className={textSlateToWhiteInDark}>Amount{selectedFolioBalance !== null && <> ({selectedFolioBalance < 0 ? "Over Paid:" : "Balance:"} <PriceTag value={selectedFolioBalance} /> MMK)</>}</span>}
                                             name="amount"
                                             getValueProps={(value) => ({ value: value !== null && value !== undefined ? String(value) : "" })}
                                             rules={[
@@ -435,9 +452,9 @@ const AddPaymentForm = ({
                                                 },
                                                 {
                                                     validator: (_, value) => {
-                                                        if (selectedFolioGrandTotal !== null && value > selectedFolioGrandTotal) {
+                                                        if (selectedFolioBalance !== null && value > selectedFolioBalance) {
                                                             return Promise.reject(
-                                                                new Error(`Amount cannot exceed grand total of ${selectedFolioGrandTotal.toLocaleString()} MMK`)
+                                                                new Error(`Amount cannot exceed balance of ${selectedFolioBalance.toLocaleString()} MMK`)
                                                             );
                                                         }
                                                         return Promise.resolve();
@@ -470,6 +487,25 @@ const AddPaymentForm = ({
                                 {/* --- EXTERNAL REFERENCE ROW --- */}
                                 <Row gutter={16}>
                                     <Col span={12}>
+                                        <Form.Item label={<span className={textSlateToWhiteInDark}
+                                            name="receivedBy">
+                                            Received By
+                                        </span>}>
+                                            <Select
+                                                showSearch={{
+                                                    filterOption: (input, option) =>
+                                                        (option?.label ?? "")
+                                                            .toLowerCase()
+                                                            .includes(input.toLowerCase()),
+                                                }}
+                                                placeholder="Select a admin"
+                                                options={adminOptions}
+                                                className="w-full rounded"
+                                            />
+                                        </Form.Item>
+                                    </Col>
+
+                                    <Col span={12}>
                                         <Form.Item label={<span className={textSlateToWhiteInDark}>External Reference</span>} name="externalReference">
                                             <Input placeholder="Enter External Reference" className="rounded w-full" />
                                         </Form.Item>
@@ -480,8 +516,8 @@ const AddPaymentForm = ({
                                 <Form.Item label={<span className={textSlateToWhiteInDark}>Remark</span>} name="remark">
                                     <TextArea rows={3} placeholder="Add operational adjustments or audit notes here..." className="rounded w-full" />
                                 </Form.Item>
-                            </>
-                        )}
+                            </>  : null
+                        }
                     </Form>
             }
         </Drawer>

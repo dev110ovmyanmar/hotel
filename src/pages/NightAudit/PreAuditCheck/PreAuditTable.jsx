@@ -1,15 +1,12 @@
-import { CloseCircleOutlined, EditOutlined, EyeOutlined, MoreOutlined, WarningOutlined } from "@ant-design/icons";
+import { CloseCircleOutlined, EyeOutlined, MoreOutlined, WarningOutlined } from "@ant-design/icons";
 import { Button, Dropdown, Space, Table, Tag } from "antd";
 import { AiOutlineRight } from "react-icons/ai";
 import { CircleCheck } from "lucide-react";
-import { nextStepButtonDesign } from "../../../variables/constants";
-
 
 const PreAuditTable = ({
     colorCheckBooking,
     preAuditChecksData
 }) => {
-    const isNextStep = preAuditChecksData?.overallStatus === "PASSED";
 
     const columns = [
         {
@@ -65,14 +62,8 @@ const PreAuditTable = ({
             title: "Count",
             dataIndex: "count",
             key: "count",
+            align: "end"
         },
-        // {
-        //     title: "Details",
-        //     dataIndex: "details",
-        //     key: "details",
-        //     align:"center"
-        // },
-
         {
             title: "Action",
             name: "action",
@@ -128,31 +119,13 @@ const PreAuditTable = ({
                 columns={columns}
                 dataSource={preAuditChecksData?.checks}
                 pagination={false}
-                // summary={() => (
-                //     <Table.Summary fixed="bottom">
-                //         <Table.Summary.Row>
-                //             <Table.Summary.Cell index={0} colSpan={columns.length}>
-                //                 <div className="flex justify-end items-center w-full py-1">
-                //                     <Button
-                //                         type="primary"
-                //                         onClick={colorCheckBooking}
-                //                         className="flex items-center gap-1"
-                //                     >
-                //                         Next Step
-                //                         <AiOutlineRight />
-                //                     </Button>
-                //                 </div>
-                //             </Table.Summary.Cell>
-                //         </Table.Summary.Row>
-                //     </Table.Summary>
-                // )}
             />
-
-            <div className={nextStepButtonDesign}>
+            <div className="sticky bottom-0 flex justify-end bg-gray-50 dark:bg-[#121111] py-2 px-4 z-10">
                 <Button
                     type="primary"
                     onClick={colorCheckBooking}
                     className="flex items-center gap-1"
+                    disabled={preAuditChecksData?.summary?.blockingIssues !== 0}
                 >
                     Next Step
                     <AiOutlineRight />
@@ -164,3 +137,4 @@ const PreAuditTable = ({
 }
 
 export default PreAuditTable
+
