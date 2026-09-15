@@ -40,6 +40,7 @@ const RateAndInventoryCalendar = () => {
     const [editingCell, setEditingCell] = useState(null);
     const [restrictionEditModal, setRestrictionEditModal] = useState(null);
     const [loadingStates, setLoadingStates] = useState({ stopSell: {}, availability: {} });
+    const [isChangingDate, setIsChangingDate] = useState(false);
 
     const [restrictionForm] = Form.useForm();
     const gridRef = useRef(null);
@@ -149,6 +150,13 @@ const RateAndInventoryCalendar = () => {
     }, [days, todayStr]);
 
     // ── Effects ───────────────────────────────────────────────────────────────
+
+    // Reset isChangingDate when loading completes
+    useEffect(() => {
+        if (!isLoading && !isFetching) {
+            setIsChangingDate(false);
+        }
+    }, [isLoading, isFetching]);
 
     // Expand first 2 room types when data loads
     // useEffect(() => {
@@ -591,6 +599,8 @@ const RateAndInventoryCalendar = () => {
                     onFiltersChange={() => { }}
                     onReset={() => { }}
                     disabled
+                    isChangingDate={isChangingDate}
+                    setIsChangingDate={setIsChangingDate}
                 />
                 <div className="flex-1 relative overflow-hidden">
                     <div className="absolute inset-0 z-[50] flex items-center justify-center bg-white/40 backdrop-blur-sm">
@@ -641,12 +651,14 @@ const RateAndInventoryCalendar = () => {
                 ratePlanOptions={ratePlanOptions || []}
                 onFiltersChange={handleFiltersChange}
                 onReset={handleResetFilters}
+                isChangingDate={isChangingDate}
+                setIsChangingDate={setIsChangingDate}
             />
 
             {/* Calendar grid */}
             <div className="flex-1 relative overflow-hidden">
                 {/* Loading overlay — covers only the grid area, below the header */}
-                {isFetching && (
+                {(isFetching || isChangingDate) && (
                     <div className="absolute inset-0 z-[50] flex items-center justify-center">
                         <Loader />
                     </div>

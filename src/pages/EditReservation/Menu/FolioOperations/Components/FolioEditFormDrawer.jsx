@@ -45,7 +45,7 @@ const FolioEditFormDrawer = ({
       },
     });
 
-  const guests = reservationMetaData?.main_guests || [];
+  const guests = reservationMetaData?.folio_guests || [];
   const folioOwnerTypes = initData?.statuses?.folio_owner_type || [];
   const financialStatuses = initData?.statuses?.financial_status || [];
   const documentStatuses = initData?.statuses?.document_status || [];
@@ -70,7 +70,6 @@ const FolioEditFormDrawer = ({
   useEffect(() => {
     if (open && folioData) {
       form.setFieldsValue({
-        guest: folioData.guest?.uuid,
         folioOwnerType: folioData.folioOwnerType?.uuid,
         financialStatus: folioData.financialStatus?.uuid,
         documentStatus: folioData.documentStatus?.uuid,
@@ -108,11 +107,13 @@ const FolioEditFormDrawer = ({
 
   const guestOptions = useMemo(() => {
     if (!Array.isArray(guests)) return [];
-    return guests.map((guest) => ({
-      label: guest.name,
-      value: guest.uuid,
-    }));
-  }, [guests]);
+    return guests
+      .filter((guest) => guest.uuid !== folioData?.guest?.uuid)
+      .map((guest) => ({
+        label: guest.name,
+        value: guest.uuid,
+      }));
+  }, [guests, folioData?.guest?.uuid]);
 
   const folioOwnerTypeOptions = useMemo(() => {
     if (!Array.isArray(folioOwnerTypes)) return [];
@@ -174,14 +175,23 @@ const FolioEditFormDrawer = ({
             />
           </Form.Item>
 
-          {/* Guest */}
+          {/* Current Guest (read-only) */}
+          <Form.Item label={<span className="font-medium">Guest</span>}>
+            <Input
+              value={folioData?.guest?.name || ""}
+              readOnly
+              className="rounded w-full bg-gray-50"
+            />
+          </Form.Item>
+
+          {/* Change Guest */}
           <Form.Item
-            label={<span className="font-medium">Guest</span>}
+            label={<span className="font-medium">Change Guest</span>}
             name="guest"
-            rules={[{ required: true, message: "Required" }]}
           >
             <Select
-              placeholder="Select guest"
+              placeholder="Select new guest"
+              allowClear
               options={guestOptions}
               className="w-full rounded"
               showSearch={{
