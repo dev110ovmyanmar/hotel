@@ -28,7 +28,7 @@ export default function SignIn() {
           const sessionToken = data.XSessionToken;
 
           saveState(LOCAL_STORAGE_KEYS.sessionId, sessionToken);
-          saveState(LOCAL_STORAGE_KEYS.adminRole, data.role?.name);
+          // saveState(LOCAL_STORAGE_KEYS.adminRole, data.role?.name);
           saveState(LOCAL_STORAGE_KEYS.loginAdminDetails, data);
 
           // Fetch the AUTHENTICATED version of initData
