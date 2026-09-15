@@ -20,7 +20,7 @@ const RULE = "#cccccc";
 const WHITE = "#ffffff";
 
 // ── Main Component ────────────────────────────────────────────────────────
-const FolioInvoicePrint = React.forwardRef(({ printData, adminName, adminRole, hideLetterhead, propertyData }, ref) => {
+const FolioInvoicePrint = React.forwardRef(({ printData, adminName, adminRole, hideLetterhead, propertyData, isSinglePrint }, ref) => {
   if (!printData) return null;
 
   const propertyImage = propertyData?.propertyFiles?.find(
@@ -195,13 +195,17 @@ const FolioInvoicePrint = React.forwardRef(({ printData, adminName, adminRole, h
                 {/* Guest Info - spans 1 column */}
                 <td style={{ verticalAlign: "top", paddingRight: "10px", paddingLeft: "10px", paddingTop: "10px", borderTop: `1px solid ${RULE}`, borderLeft: `1px solid ${RULE}` }}>
                   {
-                    (sourceType !== "company" && sourceType !== "agency") ? (
+                    isSinglePrint ? (
                       <BillRow label="Guest" value={<strong style={{ color: INK, fontWeight: "600" }}>{guestName}</strong>} />
-                    ) : null
-                  }
-                  {
-                    (sourceType === "company" || sourceType === "agency") && (
-                      <BillRow label="Guest" value={<strong style={{ color: INK, fontWeight: "600" }}>{sourceName}</strong>} />
+                    ) : (
+                      <>
+                        {(sourceType !== "company" && sourceType !== "agency") && (
+                          <BillRow label="Guest" value={<strong style={{ color: INK, fontWeight: "600" }}>{guestName}</strong>} />
+                        )}
+                        {(sourceType === "company" || sourceType === "agency") && (
+                          <BillRow label="Guest" value={<strong style={{ color: INK, fontWeight: "600" }}>{sourceName}</strong>} />
+                        )}
+                      </>
                     )
                   }
                   {
@@ -363,14 +367,14 @@ const FolioInvoicePrint = React.forwardRef(({ printData, adminName, adminRole, h
                   if (col.name === "Debit" && debitTotal > creditTotal) {
                     return (
                       <td key={i} style={{ padding: "6px 8px", fontFamily: FONT_MONO, fontSize: "13px", fontWeight: "500", color: INK, textAlign: "right", whiteSpace: "nowrap", borderBottom: "none", borderLeft: "none", borderRight: "none" }}>
-                        <PriceTag value={balanceTotal} />
+                        <PriceTag value={balanceTotal} /> MMK
                       </td>
                     );
                   }
                   if (col.name === "Credit" && debitTotal <= creditTotal) {
                     return (
                       <td key={i} style={{ padding: "6px 8px", fontFamily: FONT_MONO, fontSize: "13px", fontWeight: "500", color: INK, textAlign: "right", whiteSpace: "nowrap", borderBottom: "none", borderLeft: "none", borderRight: "none" }}>
-                        <PriceTag value={balanceTotal} />
+                        <PriceTag value={balanceTotal} /> MMK
                       </td>
                     );
                   }
@@ -435,25 +439,26 @@ const FolioInvoicePrint = React.forwardRef(({ printData, adminName, adminRole, h
             <table style={{ width: "100%", borderCollapse: "collapse" }}>
               <tbody>
                 <tr>
-                  <td style={{ verticalAlign: "bottom", width: "55%", padding: 0 }}>
-                    <div style={{ fontFamily: FONT_LABEL, fontSize: "12px", color: INK_SOFT, lineHeight: "1.7", fontWeight: "400", whiteSpace: "nowrap" }}>
-                      <span style={{ color: INK, fontWeight: "600" }}>Thank you</span> for choosing {propertyData?.name || ""}.
-                      We look forward to welcoming you back.
-                    </div>
-                    <div style={{ fontFamily: FONT_LABEL, fontSize: "11px", color: INK_MUTED, marginTop: "4px", fontWeight: "400" }}>
-                      Enquiries: {propertyData?.phone || ""} | {propertyData?.email || ""}
-                    </div>
-                  </td>
-                  <td style={{ width: "10%", padding: 0 }} />
-                  <td style={{ verticalAlign: "bottom", textAlign: "center", width: "35%", padding: "0 0 0 16px" }}>
-                    <div style={{ fontFamily: FONT_LABEL, fontSize: "9px", fontWeight: "600", letterSpacing: "1px", color: INK }}>
-                      Printed By
-                    </div>
-                    <div style={{ fontFamily: FONT_LABEL, fontSize: "11px", fontWeight: "600", textTransform: "uppercase", color: INK }}>
-                      {adminName}
-                    </div>
-                    <div style={{ fontFamily: FONT_LABEL, fontSize: "11px", color: INK_MUTED, marginTop: "3px" }}>
-                      {adminRole || ""}
+                  <td style={{ verticalAlign: "bottom", width: "100%", padding: 0 }}>
+                    <div style={{ fontFamily: FONT_LABEL, fontSize: "12px", color: INK_SOFT, lineHeight: "1.7", fontWeight: "400", display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
+                      <div>
+                        <div>
+                          <span style={{ color: INK, fontWeight: "600" }}>Thank you</span> for choosing {propertyData?.name || ""}.
+                          We look forward to welcoming you back.
+                        </div>
+                        <div style={{ fontSize: "11px", color: INK_MUTED, fontWeight: "400" }}>
+                          Enquiries: {propertyData?.phone || ""} | {propertyData?.email || ""}
+                        </div>
+                      </div>
+                      <div style={{ fontFamily: FONT_LABEL, fontSize: "11px", fontWeight: "600", color: INK, display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "2px", flexShrink: 0, marginLeft: "16px" }}>
+                        <div style={{ display: "flex", gap: "6px" }}>
+                          <div style={{ fontSize: "11px", fontWeight: "300", letterSpacing: "1px", color: INK }}>Printed By</div>
+                          <span>{adminName}</span>
+                        </div>
+                        <div style={{ fontSize: "10px", color: INK_MUTED, fontWeight: "400" }}>
+                          {dayjs().format("DD/MM/YYYY HH:mm")}
+                        </div>
+                      </div>
                     </div>
                   </td>
                 </tr>
