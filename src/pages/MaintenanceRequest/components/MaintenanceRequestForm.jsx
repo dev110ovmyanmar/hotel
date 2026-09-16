@@ -55,17 +55,14 @@ const MaintenanceRequestForm = ({
         [initData]);
     const issueTypeOptions = useMemo(() => mapOptions(initData?.statuses?.issue_type),
         [initData]);
-    // const maintenanceStatusOptions = useMemo(() => mapOptions(initData?.statuses?.maintenance_status),
-    //     [initData]);
 
-    const currentStatus = selectedRow?.maintenanceStatus?.code;
+    // const currentStatus = detail?.maintenanceStatus?.code;
     const maintenanceStatusOptions = initData?.statuses?.maintenance_status?.map(item => (
         {
             value: item.uuid,
             label: item.name,
             disabled: isEdit && (
-                currentStatus === "resolved" &&
-                ["reported", "assigned", "in_progress"].includes(item?.code) 
+                ["reported", "assigned", "in_progress"].includes(item?.code)
             )
         }
     ));
@@ -87,7 +84,10 @@ const MaintenanceRequestForm = ({
         [adminMetaData]);
 
     const roomOptions = useMemo(() =>
-        adminMetaData?.rooms?.map(r => ({ value: r.uuid, label: `Room ${r.roomNo}` })), [adminMetaData]);
+        adminMetaData?.rooms?.map(r => ({ 
+            value: r.uuid,
+            searchLabel: r.roomNo, 
+            label: `Room ${r.roomNo}` })), [adminMetaData]);
 
     const departmentOptions = useMemo(() =>
         adminMetaData?.departments?.map(d => ({ value: d.uuid, label: d.name })), [adminMetaData]);
@@ -99,7 +99,9 @@ const MaintenanceRequestForm = ({
         options: { enabled: !!selectedRow?.uuid && drawerOpen },
     });
 
+    const currentStatus = detail?.maintenanceStatus?.code;
     const reportedStatus = initData?.statuses?.maintenance_status?.find(s => s.code === "reported");
+    const assignedStatus = initData?.statuses?.maintenance_status?.find(s => s.code === "assigned");
 
     const isDisableEdit = detail?.maintenanceStatus?.code === "verified";
 
@@ -199,6 +201,9 @@ const MaintenanceRequestForm = ({
 
     };
 
+    const isLockedStatus = ["reported", "assigned", "in_progress"].includes(currentStatus);
+    const showInput = isView || isLockedStatus;
+
     return (
         <>
             <Drawer
@@ -249,7 +254,18 @@ const MaintenanceRequestForm = ({
                                             isView ?
                                                 <Input readOnly={isView} />
                                                 :
-                                                <Select options={roomOptions} disabled={isView || detail?.housekeepingTask} placeholder="Select Room" />
+                                                <Select 
+                                                options={roomOptions} 
+                                                disabled={isView || detail?.housekeepingTask} 
+                                                placeholder="Select Room" 
+                                                showSearch
+                                                optionFilterProp="searchLabel"
+                                                filterOption={(input, option) =>
+                                                    String(option?.searchLabel ?? "")
+                                                        .toLowerCase()
+                                                        .includes(input.toLowerCase())
+                                                }
+                                                />
                                         }
                                     </Form.Item>
 
@@ -299,12 +315,11 @@ const MaintenanceRequestForm = ({
                                             name="maintenanceStatus"
                                             label="Maintenance Status"
                                             rules={[{ required: true, message: "Please select status" }]}
+                                            getValueProps={(value) => ({
+                                                value: maintenanceStatusOptions?.find((item) => item.value === value)?.label || "",
+                                            })}
                                         >
-                                            <Select
-                                                options={maintenanceStatusOptions}
-                                                disabled={true}
-
-                                            />
+                                            <Input readOnly />
                                         </Form.Item>
                                     ) : (
                                         <Form.Item
@@ -312,20 +327,18 @@ const MaintenanceRequestForm = ({
                                             label="Maintenance Status"
                                             rules={[{ required: true }]}
                                             getValueProps={(value) => ({
-                                                value: isView
-                                                    ? maintenanceStatusOptions?.find((item) => item.value === value)?.label
+                                                value: showInput
+                                                    ? maintenanceStatusOptions?.find((item) => item.value === value)?.label || ""
                                                     : value,
                                             })}
                                         >
                                             {
-                                                isView ? <Input readOnly={isView} /> :
-                                                    <Select
+                                                showInput
+                                                    ? <Input readOnly={isView} />
+                                                    : <Select
                                                         options={maintenanceStatusOptions}
-                                                        disabled={currentStatus === "in_progress" ||
-                                                            currentStatus === "reported" ||
-                                                            currentStatus === "assigned"
-                                                        }
-                                                        placeholder="Select Maintenance Status" />
+                                                        placeholder="Select Maintenance Status"
+                                                    />
                                             }
                                         </Form.Item>
                                     )
@@ -411,7 +424,12 @@ const MaintenanceRequestForm = ({
                                         <Col span={12}>
                                             <Form.Item name="staff" label="Staff">
                                                 <Select options={staffOptions} open={isView ? !isView : undefined}
-                                                    mode="multiple" placeholder="Select Staff" />
+                                                    mode="multiple" placeholder="Select Staff"
+                                                    onChange={(value) => {
+                                                        if (value && value.length > 0 && assignedStatus) {
+                                                            form.setFieldsValue({ maintenanceStatus: assignedStatus.uuid });
+                                                        }
+                                                    }} />
                                             </Form.Item>
                                         </Col>
                                     )
