@@ -12,6 +12,7 @@ import FormButtons from "../../../../../../component/FormButtons/FormButtons";
 import TextArea from "antd/es/input/TextArea";
 import { queryClient } from "./../../../../../../app/queryClient";
 import { getFormattedDate } from "../../../../../../utils";
+import Loader from "../../../../../../component/Loader/Loader";
 
 const sharedProps = {
   mode: "spinner",
@@ -41,7 +42,7 @@ const ServiceAddOnForm = ({
     : serviceData?.reservation?.uuid || serviceData?.reservationUuid;
   const serviceOrderUuid = isAdd ? null : serviceData?.uuid;
 
-  const { data: reservationRoom } = useApiQuery({
+  const { data: reservationRoom , isLoading: metaLoading} = useApiQuery({
     fetchQueryFunction: reservationRoomMeta,
     params: {
       reservation: {
@@ -51,7 +52,7 @@ const ServiceAddOnForm = ({
     options: { enabled: !!reservationUuid },
   });
 
-  const { data: orderDetails } = useApiQuery({
+  const { data: orderDetails, isLoading: detailsLoading } = useApiQuery({
     fetchQueryName: "service-addons",
     fetchQueryFunction: serviceAddonDetails,
     params: { uuid: serviceOrderUuid },
@@ -305,117 +306,123 @@ const ServiceAddOnForm = ({
         </div>
       }
     >
-      <Form
-        layout="vertical"
-        form={form}
-        onFinish={handleSubmit}
-        disabled={isView}
-        initialValues={{
-          quantity: 1,
-          status: !isEdit ? defaultStatus?.uuid : undefined,
-        }}
-      >
-        {!isAdd && (
-          <Form.Item
-            label="Room No"
-            name="roomNo"
-            getValueProps={(value) => ({
-              value: isView
-                ? rooms.find((item) => item.value === value)?.label
-                : value,
-            })}
-          >
-            {isView ? (
-              <Input readOnly={isView} />
-            ) : (
-              <Select
-                showSearch={{
-                  filterOption: (input, option) =>
-                    (option?.label ?? "")
-                      .toLowerCase()
-                      .includes(input.toLowerCase()),
-                }}
-                options={rooms}
-                placeholder="Select a Room"
-              />
-            )}
-          </Form.Item>
-        )}
-
-        <div className="grid grid-cols-2 gap-4">
-          <Form.Item
-            label="Select Service"
-            name="selectService"
-            rules={[{ required: true, message: "Please select a service" }]}
-            getValueProps={(value) => ({
-              value: isView
-                ? services.find((item) => item.value === value)?.label
-                : value,
-            })}
-          >
-            {isView ? (
-              <Input readOnly={isView} />
-            ) : (
-              <Select
-                allowClear
-                showSearch={{
-                  filterOption: (input, option) =>
-                    (option?.label ?? "")
-                      .toLowerCase()
-                      .includes(input.toLowerCase()),
-                }}
-                options={services}
-                placeholder="Select Service"
-              />
-            )}
-          </Form.Item>
-
-          <Form.Item
-            label="Quantity"
-            name="quantity"
-            rules={[{ required: true }]}
-            className="minus-icon"
-          >
-            <InputNumber
-              {...sharedProps}
-              placeholder="Outlined"
-              style={{ width: "100%" }}
-            />
-          </Form.Item>
+      {metaLoading || detailsLoading ? (
+        <div className="flex min-h-screen items-center justify-center">
+          <Loader />
         </div>
-
-        <Form.Item label="Note" name="note">
-          <TextArea />
-        </Form.Item>
-
-        <Form.Item
-          label="Add On Status"
-          name="status"
-          rules={[
-            { required: true, message: "Please select an add on status" },
-          ]}
-          getValueProps={(value) => ({
-            value: isView
-              ? addonStatus.find((item) => item.value === value)?.label
-              : value,
-          })}
+      ) : (
+        <Form
+          layout="vertical"
+          form={form}
+          onFinish={handleSubmit}
+          disabled={isView}
+          initialValues={{
+            quantity: 1,
+            status: !isEdit ? defaultStatus?.uuid : undefined,
+          }}
         >
-          {isView ? (
-            <Input readOnly={isView} />
-          ) : (
-            <Select
-              showSearch={{
-                filterOption: (input, option) =>
-                  (option?.label ?? "")
-                    .toLowerCase()
-                    .includes(input.toLowerCase()),
-              }}
-              options={addonStatus}
-              placeholder="Select Add On Status"
-            />
+          {!isAdd && (
+            <Form.Item
+              label="Room No"
+              name="roomNo"
+              getValueProps={(value) => ({
+                value: isView
+                  ? rooms.find((item) => item.value === value)?.label
+                  : value,
+              })}
+            >
+              {isView ? (
+                <Input readOnly={isView} />
+              ) : (
+                <Select
+                  showSearch={{
+                    filterOption: (input, option) =>
+                      (option?.label ?? "")
+                        .toLowerCase()
+                        .includes(input.toLowerCase()),
+                  }}
+                  options={rooms}
+                  placeholder="Select a Room"
+                />
+              )}
+            </Form.Item>
           )}
-        </Form.Item>
-      </Form>
+
+          <div className="grid grid-cols-2 gap-4">
+            <Form.Item
+              label="Select Service"
+              name="selectService"
+              rules={[{ required: true, message: "Please select a service" }]}
+              getValueProps={(value) => ({
+                value: isView
+                  ? services.find((item) => item.value === value)?.label
+                  : value,
+              })}
+            >
+              {isView ? (
+                <Input readOnly={isView} />
+              ) : (
+                <Select
+                  allowClear
+                  showSearch={{
+                    filterOption: (input, option) =>
+                      (option?.label ?? "")
+                        .toLowerCase()
+                        .includes(input.toLowerCase()),
+                  }}
+                  options={services}
+                  placeholder="Select Service"
+                />
+              )}
+            </Form.Item>
+
+            <Form.Item
+              label="Quantity"
+              name="quantity"
+              rules={[{ required: true }]}
+              className="minus-icon"
+            >
+              <InputNumber
+                {...sharedProps}
+                placeholder="Outlined"
+                style={{ width: "100%" }}
+              />
+            </Form.Item>
+          </div>
+
+          <Form.Item label="Note" name="note">
+            <TextArea />
+          </Form.Item>
+
+          <Form.Item
+            label="Add On Status"
+            name="status"
+            rules={[
+              { required: true, message: "Please select an add on status" },
+            ]}
+            getValueProps={(value) => ({
+              value: isView
+                ? addonStatus.find((item) => item.value === value)?.label
+                : value,
+            })}
+          >
+            {isView ? (
+              <Input readOnly={isView} />
+            ) : (
+              <Select
+                showSearch={{
+                  filterOption: (input, option) =>
+                    (option?.label ?? "")
+                      .toLowerCase()
+                      .includes(input.toLowerCase()),
+                }}
+                options={addonStatus}
+                placeholder="Select Add On Status"
+              />
+            )}
+          </Form.Item>
+        </Form>
+      )}
     </Drawer>
   );
 };

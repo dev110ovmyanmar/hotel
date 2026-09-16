@@ -6,11 +6,7 @@ export default function HousekeepingStatusCard({
 }) {
   const [hoveredIndex, setHoveredIndex] = useState(null);
 
-  const housekeepingTotal =
-    (housekeepingData?.dirty || 0) +
-    (housekeepingData?.clean || 0) +
-    (housekeepingData?.inspected || 0) +
-    (housekeepingData?.inprogress || 0);
+  const housekeepingTotal = housekeepingData?.total 
 
   const housekeeping = [
     {
