@@ -154,11 +154,11 @@ const MaintenanceRequestFromHK = ({
                                         name="maintenanceStatus"
                                         label="Maintenance Status"
                                         rules={[{ required: true, message: "Please select status" }]}
+                                        getValueProps={(value) => ({
+                                            value: maintenanceStatusOptions?.find((item) => item.value === value)?.label || "",
+                                        })}
                                     >
-                                        <Select
-                                            options={maintenanceStatusOptions}
-                                            disabled={true}
-                                        />
+                                        <Input readOnly />
                                     </Form.Item>
                                 ) : (
                                     <Form.Item name="maintenanceStatus" label="Maintenance Status" rules={[{ required: true }]}>
