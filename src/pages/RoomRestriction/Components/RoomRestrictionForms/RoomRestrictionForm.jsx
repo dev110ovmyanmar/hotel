@@ -7,8 +7,6 @@ import {
   Drawer,
   DatePicker,
   InputNumber,
-  Row,
-  Col,
   Switch,
 } from "antd";
 import Toast from "../../../../component/Toast/Toast";
@@ -17,9 +15,7 @@ import FormButtons from "../../../../component/FormButtons/FormButtons";
 import useApiQuery from "../../../../hooks/useApiQuery";
 import { queryClient } from "../../../../app/queryClient";
 import {
-  extraBedRateDetails,
   ratePlanMeta,
-  upsertExtraBedRate,
 } from "../../../../api/exteraBedRateApi";
 import dayjs from "dayjs";
 import { getFormattedDate } from "../../../../utils";
@@ -27,6 +23,7 @@ import {
   roomRestrictionDetails,
   upsertRoomRestriction,
 } from "../../../../api/roomrestriction";
+import Loader from "../../../../component/Loader/Loader";
 
 const RoomRestrictionForm = ({
   mode,
@@ -77,7 +74,7 @@ const RoomRestrictionForm = ({
     invalidateKeys: [["roomRestriction"]],
   });
 
-  const { data } = useApiQuery({
+  const { data, isFetching } = useApiQuery({
     fetchQueryName: "roomRestriction-details",
     fetchQueryFunction: roomRestrictionDetails,
     params: { uuid: selectedData?.uuid },
@@ -120,7 +117,7 @@ const RoomRestrictionForm = ({
           setDrawerOpen(false);
           setPage(1);
           handleClose();
-          Toast.success("ExtraBed Rate Created Successfully!");
+          Toast.success("Room Restriction Created Successfully!");
         },
       });
     }
@@ -138,30 +135,29 @@ const RoomRestrictionForm = ({
         onSuccess: () => {
           setDrawerOpen(false);
           handleClose();
-          Toast.success("ExtraBed Rate Updated Successfully!");
+          Toast.success("Room Restriction Updated Successfully!");
         },
       });
     }
   };
-  const onChange = (value) => {
-    console.log("changed", value);
-  };
 
-  // const sharedProps = {
-  //   mode: "spinner",
-  //   min: 1,
-  //   max: 10,
-  //   defaultValue: 1,
-  //   onChange,
-  //   style: { width: 150 },
-  // };
+  const disabledDate = (current) => {
+    if (!current) return false;
+    const today = dayjs().startOf("day");
+    const existingDate = data?.date ? dayjs(data.date).startOf("day") : null;
+
+    if (isEdit && existingDate && current.isSame(existingDate, "day")) {
+      return false;
+    }
+
+    return !current.isAfter(today, "day");
+  };
 
   const childSharedProps = {
     mode: "spinner",
     min: 0,
     max: 10,
     defaultValue: 0,
-    onChange,
     style: { width: 150 },
   };
 
@@ -202,7 +198,13 @@ const RoomRestrictionForm = ({
           </div>
         }
       >
-        <Form
+        {
+          isFetching ?
+          <div className="flex items-center justify-center h-full min-h-[300px]">
+          <Loader />
+          </div>
+          : 
+          <Form
           form={form}
           layout="vertical"
           style={{ width: "100%" }}
@@ -274,10 +276,11 @@ const RoomRestrictionForm = ({
           >
             <DatePicker
               className="w-60"
-              open={isView? !isView : undefined}
+              open={isView ? !isView : undefined}
               inputReadOnly={isView}
               suffixIcon={isView ? null : undefined}
               allowClear={!isView}
+              disabledDate={!isView ? disabledDate : undefined}
             />
           </Form.Item>
 
@@ -341,6 +344,7 @@ const RoomRestrictionForm = ({
             </Form.Item>
           </div>
         </Form>
+        }
       </Drawer>
     </div>
   );
