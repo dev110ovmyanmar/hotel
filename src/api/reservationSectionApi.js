@@ -196,3 +196,9 @@ export const complimentaryUpdate = async (params) => {
   const { data } = await apiClient.put("complimentary/update", params);
   return data.response;
 }
+
+// Room Post Upate
+export const roomPost = async (params) => {
+  const { data } = await apiClient.post("/daily-charge/room-posted", params);
+  return data.response; 
+}
