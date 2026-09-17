@@ -1,15 +1,26 @@
 import React, { useState } from "react";
-import { Drawer, Button, Tag } from "antd";
+import { Drawer, Button, Tag, Modal } from "antd";
 import dayjs from "dayjs";
-import { Gift } from "lucide-react";
-import { EyeOutlined, EditOutlined } from "@ant-design/icons";
-import { reservationRoomDetails } from "../../../../../../api/reservationSectionApi";
+import { Gift, BedDouble, AlertTriangle } from "lucide-react";
+
+// Custom styles for modal without footer
+const modalStyles = `
+  .room-post-modal .ant-modal-body {
+    min-height: 80px;
+    display: flex;
+    align-items: center;
+  }
+`;
+import { EditOutlined, CheckCircleFilled } from "@ant-design/icons";
+import { reservationRoomDetails, roomPost } from "../../../../../../api/reservationSectionApi";
+import Toast from "../../../../../../component/Toast/Toast";
 import {
   textColorDarkMode,
   textWhiteInDarkStyle,
 } from "../../../../../../utils";
 import DailyBreakDownDetailFormDrawer from "./DailyBreakDownDetailFormDrawer";
 import { useApiQuery } from "../../../../../../hooks/useApiQuery";
+import { useApiMutation } from "../../../../../../hooks/useApiMutation";
 import PriceTag from "../../../../../../component/PriceTag/PriceTag";
 import ReservationStatusColor from "../../../../../../component/ReservationStatusColor/ReservationStatusColor";
 
@@ -34,6 +45,7 @@ const RoomInformationDetailsForm = ({
     setDailyBreakDownDetailFormDrawerOpen,
   ] = useState(false);
   const [selectedDailyOccupancy, setSelectedDailyOccupancy] = useState(null);
+  const [selectedStayDate, setSelectedStayDate] = useState(null);
   const [editMode, setEditMode] = useState(false);
 
   const {
@@ -58,22 +70,34 @@ const RoomInformationDetailsForm = ({
     );
     if (matched) {
       setSelectedDailyOccupancy(matched);
+      setSelectedStayDate(dayjs(rateDate).format("YYYY-MM-DD"));
       setDailyBreakDownDetailFormDrawerOpen(true);
     }
   };
 
-  // const handleEditDailyOccupancy = (rateDate) => {
-  //   setEditMode(true);
-  //   const matched = d?.dailyOccupancies?.find(
-  //     (occ) =>
-  //       dayjs(occ.stayDate).format("YYYY-MM-DD") ===
-  //       dayjs(rateDate).format("YYYY-MM-DD"),
-  //   );
-  //   if (matched) {
-  //     setSelectedDailyOccupancy(matched);
-  //     setDailyBreakDownDetailFormDrawerOpen(true);
-  //   }
-  // };
+    const updateRoomPost = useApiMutation({
+      mutationFn: roomPost,
+      invalidateKeys: [["reservation-room-details"]],
+    });
+
+    const [roomPostModal, setRoomPostModal] = useState({ open: false, stayDate: null });
+
+    const handleRoomPostConfirm = () => {
+      updateRoomPost.mutate(
+        {
+          reservationRoom: { uuid: d?.uuid },
+          stayDate: dayjs(roomPostModal.stayDate).format("YYYY-MM-DD"),
+        },
+        {
+          onSuccess: () => {
+            setRoomPostModal({ open: false, stayDate: null });
+            Toast.success("Room Posted Successfully!");
+          },
+        }
+      );
+    };
+
+
 
   const handleClose = () => {
     setDrawerOpen(false);
@@ -85,10 +109,12 @@ const RoomInformationDetailsForm = ({
 
   const textWhiteDark = `flex justify-between items-center text-slate-600 ${textWhiteInDarkStyle}`;
   return (
-    <Drawer
+    <>
+      <style>{modalStyles}</style>
+      <Drawer
       open={drawerOpen}
       onClose={handleClose}
-      size={650}
+      size={850}
       title={
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-3">
@@ -104,9 +130,6 @@ const RoomInformationDetailsForm = ({
               </span>
             </div>
           </div>
-          <Button className="custom-blue-btn" onClick={handleClose}>
-            Close
-          </Button>
         </div>
       }
     >
@@ -222,11 +245,25 @@ const RoomInformationDetailsForm = ({
                 className={`text-xs text-slate-900 mt-0.5 ${textWhiteInDarkStyle}`}
               >
                 {d?.reservation?.sourceType?.name || "—"}
+
                 {d?.reservation?.source?.name && (
-                  <span className="text-purple-600">
-                    {" "}({d.reservation.source.name})
-                  </span>
-                )}                   </div>
+                  <div className="text-indigo-600 text-[11px] font-semibold">
+                    (
+                    {d.reservation.source.name} -{" "}
+                    {d.reservation.source.chargeType?.code === "flat" ? (
+                      <>
+                        <PriceTag value={d.reservation.source.chargeValue} /> MMK
+                      </>
+                    ) : (
+                      <>
+                        {d.reservation.source.chargeValue} %
+                      </>
+                    )}
+                    )
+                  </div>
+                )}
+              </div>
+
             </div>
           </div>
         </div>
@@ -359,8 +396,8 @@ const RoomInformationDetailsForm = ({
                     <th className="px-3 py-2.5 text-right text-[14px] tracking-wider">
                       Total(MMK)
                     </th>
-                    <th className="px-1 py-2.5 text-center text-[14px] tracking-wider w-8">
-                      Action
+                    <th className="px-3 py-2.5 text-center text-[14px] tracking-wider w-24">
+                      Room Posting
                     </th>
                   </tr>
                 </thead>
@@ -381,7 +418,14 @@ const RoomInformationDetailsForm = ({
                     return (
                       <tr
                         key={r.uuid}
-                        className={`hover:bg-slate-50/80 dark:hover:bg-gray-700/40 transition-colors ${textWhiteInDarkStyle} ${idx % 2 === 0 ? "bg-white dark:bg-gray-800" : "bg-slate-50/50 dark:bg-gray-800/50"}`}
+                        onClick={() => handleViewDailyOccupancy(r.stayDate)}
+                        className={`cursor-pointer transition-colors ${textWhiteInDarkStyle} ${
+                          selectedStayDate === dayjs(r.stayDate).format("YYYY-MM-DD")
+                            ? "bg-indigo-100 dark:bg-indigo-900/30 ring-1 ring-indigo-300 dark:ring-indigo-700"
+                            : idx % 2 === 0
+                              ? "bg-white dark:bg-gray-800"
+                              : "bg-slate-50/50 dark:bg-gray-800/50"
+                        } hover:bg-slate-50/80 dark:hover:bg-gray-700/40`}
                       >
                         <td className="px-3 py-2 whitespace-nowrap">
                           <span className="font-medium text-slate-700 dark:text-gray-200">
@@ -410,11 +454,29 @@ const RoomInformationDetailsForm = ({
                             </span>
                           </div>
                         </td>
-                        <td className="px-3 py-2 text-center">
-                          <EyeOutlined
-                            onClick={() => handleViewDailyOccupancy(r.stayDate)}
-                            title="View Details"
-                          />
+                        <td className="px-3 py-2 text-center" onClick={(e) => e.stopPropagation()}>
+                          {r?.dailyCharge?.postedToFolio === true ? (
+                            <div className="flex items-center justify-center gap-2 border-2 border-green-400 p-2 rounded bg-green-50">
+                              <CheckCircleFilled className="!text-green-600 "/>
+                              <div className="flex flex-col">
+                                <span className="text-green-600 whitespace-nowrap">Posted</span>
+                                {r?.dailyCharge?.postedAt && (
+                                  <span className="text-black text-xs whitespace-nowrap">
+                                    {dayjs(r?.dailyCharge?.postedAt).format("YYYY-MM-DD HH:mm")}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                          ) : (
+                            <div
+                              className="flex items-center justify-center gap-2 border-2 border-blue-400 bg-blue-50 p-2 rounded cursor-pointer hover:bg-blue-100"
+                              onClick={() => setRoomPostModal({ open: true, stayDate: r.stayDate })}
+                              title="Room Post"
+                            >
+                              <BedDouble className="text-blue-500" size={20} />
+                              <span className="text-blue-500 whitespace-nowrap">Post Room</span>
+                            </div>
+                          )}
                         </td>
                       </tr>
                     );
@@ -431,6 +493,7 @@ const RoomInformationDetailsForm = ({
         onClose={() => {
           setDailyBreakDownDetailFormDrawerOpen(false);
           setSelectedDailyOccupancy(null);
+          setSelectedStayDate(null);
           setEditMode(false);
         }}
         data={selectedDailyOccupancy}
@@ -438,7 +501,31 @@ const RoomInformationDetailsForm = ({
         initialEditMode={editMode}
         disableEdit={true}
       />
+
+      <Modal
+        title="Room Posted"
+        open={roomPostModal.open}
+        onOk={d?.roomStatus?.code === "checked_in" ? handleRoomPostConfirm : undefined}
+        onCancel={() => setRoomPostModal({ open: false, stayDate: null })}
+        okText="Confirm"
+        cancelText="Cancel"
+        confirmLoading={updateRoomPost.isPending}
+        footer={d?.roomStatus?.code === "checked_in" ? undefined : null}
+        className={d?.roomStatus?.code !== "checked_in" ? "room-post-modal" : ""}
+      >
+        {d?.roomStatus?.code === "checked_in" ? (
+          <p>Are you sure you want to post this room for {dayjs(roomPostModal.stayDate).format("YYYY-MM-DD")}?</p>
+        ) : (
+          <div className="flex items-center gap-3 py-4">
+            <AlertTriangle className="w-6 h-6 flex-shrink-0 text-red-500" />
+            <p className="font-medium text-red-500">
+              Room status must be "Checked In" to post this room.
+            </p>
+          </div>
+        )}
+      </Modal>
     </Drawer>
+    </>
   );
 };
 

@@ -17,7 +17,7 @@ const CategoryListing = () => {
   const [perPage, setPerPage] = useState(LIMITS.PAGE_SIZE);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
-  const { data, isLoading, error } = useApiQuery({
+  const { data, isFetching, error } = useApiQuery({
     fetchQueryName: "categories",
     fetchQueryFunction: getCategories,
     params: {
@@ -76,7 +76,7 @@ const CategoryListing = () => {
         dataSource={categories} // Filtered by keyword via API or useMemo
         onView={handleView}
         onEdit={handleEdit}
-        loading={isLoading}
+        loading={isFetching}
         page={data?.response?.pagination?.currentPage || page}
         perPage={data?.response?.pagination?.perPage || perPage}
         total={data?.response?.pagination?.total}
@@ -91,7 +91,7 @@ const CategoryListing = () => {
         drawerOpen={drawerOpen}
         setDrawerOpen={setDrawerOpen}
         switchToEdit={switchToEdit}
-        loading={isLoading}
+        loading={isFetching}
         selectedRow={selectedRow}
         setSelectedRow={setSelectedRow}
       />

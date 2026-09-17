@@ -89,6 +89,19 @@ const DailyOccupactionsTableDrawer = ({
     const guestName = data?.guestName;
     const roomLabel = data?.roomType?.name + (data?.roomNo ? ` (${data?.roomNo})` : "");
 
+    const sourceType = data?.sourceType?.name;
+    const sourceName = data?.source?.name;
+    const chargeValue = data?.source?.chargeValue;
+
+    const isSourceWithCharge = [
+        "agency",
+        "company",
+        "referral_agent",
+    ].includes(data?.sourceType?.code);
+
+    const isFlat = data?.source?.chargeType?.code === "flat";
+    const chargeType = isFlat ? "MMK" : "%";
+
 
     const columns = [
         {
@@ -178,13 +191,13 @@ const DailyOccupactionsTableDrawer = ({
                                 if (key === "1") handleOpenDetail(record, false);
                                 if (key === "2") handleOpenDetail(record, true);
                                 if (key === "3") handleOpenFOC(record);
-                              
-                               
+
+
                             },
                             items: [
                                 { key: "1", label: "View", icon: <EyeOutlined /> },
                                 !isDatePast(record.stayDate) && { key: "2", label: "Edit", icon: <EditOutlined /> },
-                                { key: "3", label: "FOC", icon: <Bs0Circle/>},
+                                { key: "3", label: "FOC", icon: <Bs0Circle /> },
                             ],
                         }}
                         trigger={["click"]}
@@ -219,6 +232,34 @@ const DailyOccupactionsTableDrawer = ({
                                 <InfoLine label="Guest" value={guestName || "-"} />
                                 <InfoLine label="Room" value={roomLabel || "-"} />
                                 <InfoLine label="Stay" value={stayText || "-"} />
+                                <InfoLine
+                                    label="Source"
+                                    value={
+                                        sourceType ? (
+                                            <>
+                                                {sourceType}
+                                                {isSourceWithCharge && (
+                                                    <>
+                                                        <span className="text-indigo-600">
+                                                          {" "}( {sourceName} - 
+                                                        </span>{" "}
+                                                        
+                                                        <span className="text-indigo-600">
+                                                            {isFlat ? (
+                                                                <PriceTag value={chargeValue} />
+                                                            ) : (
+                                                                chargeValue
+                                                            )}{" "}
+                                                            {chargeType} )
+                                                        </span>
+                                                    </>
+                                                )}
+                                            </>
+                                        ) : (
+                                            "-"
+                                        )
+                                    }
+                                />
                             </div>
                         </div>
                     </div>

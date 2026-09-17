@@ -316,7 +316,7 @@ export const authRoutes = [
         icon: <CalendarOutlined style={{ fontSize: "20px" }} />,
         component: <Calendar />,
         isPrivate: false,
-        permission: PERMISSIONS.AVAILABILITY_CALENDAR_LIST,
+        permission: PERMISSIONS.RESERVATION_CALENDAR,
       },
       {
         key: 2.2,
@@ -324,7 +324,8 @@ export const authRoutes = [
         path: "/calendar/rate-&-inventory-calendar",
         component: <RateAndInventoryCalendar />,
         icon: <CalendarOutlined style={{ fontSize: "20px" }} />,
-        isPrivate: false
+        isPrivate: false,
+        permission: PERMISSIONS.RATE_AND_INVENTORY_CALENDAR_LIST,
       },
     ]
   },
@@ -341,6 +342,7 @@ export const authRoutes = [
         icon: <ScheduleOutlined style={{ fontSize: "20px" }} />,
         component: <Reservation />,
         isPrivate: false,
+        permission: PERMISSIONS.RESERVATION_CREATE
       },
       {
         key: 3.2,
@@ -350,6 +352,7 @@ export const authRoutes = [
         icon: <ScheduleOutlined style={{ fontSize: "20px" }} />,
         component: <ReservationsMenu />,
         isPrivate: false,
+        permission: PERMISSIONS.RESERVATION_LIST
       }
     ],
   },
@@ -1016,9 +1019,9 @@ export const authRoutes = [
         label: "Payment History",
         path: "/payment-&-billing/payment-history",
         icon: <MdPayments style={{ fontSize: "20px" }} />,
-        // isPrivate: true,
+        isPrivate: false,
         component: <PaymentHistoryAllList />,
-        // permission: PERMISSIONS.PAYMENT_LIST,
+        permission: PERMISSIONS.PAYMENT_LIST,
       },
       {
         key: 16.2,
@@ -1026,7 +1029,7 @@ export const authRoutes = [
         path: "/payment-&-billing/pending-payment",
         icon: <DollarOutlined style={{ fontSize: "20px" }} />,
         component: <PendingPaymentsList />,
-        // permission: PERMISSIONS.TAX_LIST,
+        permission: PERMISSIONS.TAX_LIST,
       },
       {
         key: 16.3,

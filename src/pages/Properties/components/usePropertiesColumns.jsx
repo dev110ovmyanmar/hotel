@@ -9,6 +9,7 @@ export default function usePropertiesColumns(onEdit, onView, onUpload) {
   const { hasPermission } = usePermission();
   const viewPermission = hasPermission(PERMISSIONS.PROPERTY_VIEW);
   const editPermission = hasPermission(PERMISSIONS.PROPERTY_EDIT);
+  const isImageDocument = hasPermission(PERMISSIONS.PROPERTY_IMAGE_DOCUMENT);
   return [
     {
       title: "ID",
@@ -74,7 +75,7 @@ export default function usePropertiesColumns(onEdit, onView, onUpload) {
               items: [
                 viewPermission && { key: "1", label: "View", icon: <EyeOutlined /> },
                 editPermission && { key: "2", label: "Edit", icon: <EditOutlined /> },
-                { key: "3", label: "Manage Files", icon: <FolderAddOutlined /> }
+                isImageDocument && { key: "3", label: "Manage Files", icon: <FolderAddOutlined /> }
               ],
             }}
             trigger={["click"]}
