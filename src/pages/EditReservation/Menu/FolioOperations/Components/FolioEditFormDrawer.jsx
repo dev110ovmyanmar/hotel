@@ -88,7 +88,7 @@ const FolioEditFormDrawer = ({
 
   const onFinish = (values) => {
     const payload = {
-      folio: {uuid: folioData?.uuid},
+      folio: { uuid: folioData?.uuid },
       guest: values.guest ? { uuid: values.guest } : undefined,
       folioOwnerType: values.folioOwnerType
         ? { uuid: values.folioOwnerType }
@@ -172,7 +172,7 @@ const FolioEditFormDrawer = ({
         <Form form={form} layout="vertical" onFinish={onFinish}>
           {/* Folio Number (read-only) */}
           <Form.Item label={<span className="font-medium">Folio No</span>}
-          rules={[{ required: true, message: "Required" }]}>
+            rules={[{ required: true, message: "Required" }]}>
             <Input
               value={folioData?.folioNo || ""}
               // disabled
@@ -181,33 +181,38 @@ const FolioEditFormDrawer = ({
             />
           </Form.Item>
 
-          {/* Current Guest (read-only) with edit icon */}
+          {/* Guest label + change guest select in one Form.Item */}
           <Form.Item
             label={
               <span className="font-medium flex items-center gap-1">
-                Guest
+                Guest: <strong>{folioData?.guest?.fullName || ""}</strong>
                 <Button
                   size="small"
+                  type="text"
                   icon={<EditOutlined />}
                   onClick={() => setShowChangeGuest((prev) => !prev)}
-                  className="!text-blue-500 hover:!text-blue-700 !border-blue-500 hover:!border-blue-700"
+                  className="!text-blue-500 hover:!text-blue-700"
                 />
               </span>
             }
+            name={showChangeGuest ? "guest" : undefined}
+            className={showChangeGuest ? "" : "!mb-0"}
           >
-            <Input
-              value={folioData?.guest?.fullName || ""}
-              readOnly
-              className="rounded w-full bg-gray-50"
-            />
-          </Form.Item>
-
-          {/* Change Guest (conditionally visible) */}
-          {showChangeGuest && (
-            <Form.Item
-              label={<span className="font-medium">Change Guest</span>}
-              name="guest"
-            >
+            {
+              !showChangeGuest &&
+              <Form.Item
+                label={<span className="font-medium">Folio Owner Type</span>}
+                name="folioOwnerType"
+                rules={[{ required: true, message: "Required" }]}
+              >
+                <Select
+                  placeholder="Select owner type"
+                  options={folioOwnerTypeOptions}
+                  className="w-full rounded"
+                />
+              </Form.Item>
+            }
+            {showChangeGuest && (
               <Select
                 placeholder="Select new guest"
                 allowClear
@@ -220,21 +225,24 @@ const FolioEditFormDrawer = ({
                       .includes(input.toLowerCase()),
                 }}
               />
-            </Form.Item>
-          )}
+            )}
+          </Form.Item>
 
           {/* Folio Owner Type */}
-          <Form.Item
-            label={<span className="font-medium">Folio Owner Type</span>}
-            name="folioOwnerType"
-            rules={[{ required: true, message: "Required" }]}
-          >
-            <Select
-              placeholder="Select owner type"
-              options={folioOwnerTypeOptions}
-              className="w-full rounded"
-            />
-          </Form.Item>
+          {
+            showChangeGuest &&
+            <Form.Item
+              label={<span className="font-medium">Folio Owner Type</span>}
+              name="folioOwnerType"
+              rules={[{ required: true, message: "Required" }]}
+            >
+              <Select
+                placeholder="Select owner type"
+                options={folioOwnerTypeOptions}
+                className="w-full rounded"
+              />
+            </Form.Item>
+          }
 
           {/* Financial Status */}
           {/* <Form.Item
