@@ -44,7 +44,7 @@ const NightAudit = () => {
             localStorage.setItem(
                 "nightAudit",
                 JSON.stringify({
-                    isLocked: true,
+                    isLocked: isLocked,
                     businessDate: businessDate,
                     nightAuditStatus: checkStatus
                 })
