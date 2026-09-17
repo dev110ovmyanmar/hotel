@@ -12,6 +12,8 @@ import { useApiQuery } from "./../../../../hooks/useApiQuery";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { textColorDarkMode, textWhiteInDarkStyle } from "../../../../utils";
 import ReservationStatusColor from "../../../../component/ReservationStatusColor/ReservationStatusColor";
+import Loader from "../../../../component/Loader/Loader";
+import ColorStatusTag from "../../../../component/ColorStatusTag/ColorStatusTag";
 
 const ChangeStatusForm = ({ reservationDetails, open, onClose }) => {
   const [form] = Form.useForm();
@@ -23,7 +25,7 @@ const ChangeStatusForm = ({ reservationDetails, open, onClose }) => {
   const selectedRooms = Form.useWatch("reservationRooms", form) || [];
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
 
-  const { data } = useApiQuery({
+  const { data, isLoading } = useApiQuery({
     fetchQueryFunction: reservationRoomList,
     params: {
       reservationRoom: {
@@ -134,180 +136,190 @@ const ChangeStatusForm = ({ reservationDetails, open, onClose }) => {
     );
   }, [selectedStatusUuid, reservationStatuses]);
 
-//   const roomOptions = useMemo(() => {
-//   if (!data?.data || !currentActiveStatus) return [];
+  //   const roomOptions = useMemo(() => {
+  //   if (!data?.data || !currentActiveStatus) return [];
 
-//   const roomsArray = Array.isArray(data.data) ? data.data : [data.data];
+  //   const roomsArray = Array.isArray(data.data) ? data.data : [data.data];
 
-//   return roomsArray
-//     .filter((roomItem) => {
-//       const allowableStatuses = Array.isArray(roomItem?.checkStatus)
-//         ? roomItem.checkStatus.map((s) => String(s).toLowerCase())
-//         : [];
+  //   return roomsArray
+  //     .filter((roomItem) => {
+  //       const allowableStatuses = Array.isArray(roomItem?.checkStatus)
+  //         ? roomItem.checkStatus.map((s) => String(s).toLowerCase())
+  //         : [];
 
-//       return allowableStatuses.includes(currentActiveStatus.code);
-//     })
-//     .map((roomItem) => {
-//       const checkIn = roomItem?.checkinDate
-//         ? dayjs(roomItem.checkinDate).format("YYYY-MM-DD")
-//         : "";
+  //       return allowableStatuses.includes(currentActiveStatus.code);
+  //     })
+  //     .map((roomItem) => {
+  //       const checkIn = roomItem?.checkinDate
+  //         ? dayjs(roomItem.checkinDate).format("YYYY-MM-DD")
+  //         : "";
 
-//       const checkOut = roomItem?.checkoutDate
-//         ? dayjs(roomItem.checkoutDate).format("YYYY-MM-DD")
-//         : "";
+  //       const checkOut = roomItem?.checkoutDate
+  //         ? dayjs(roomItem.checkoutDate).format("YYYY-MM-DD")
+  //         : "";
 
-//       const roomNo = roomItem?.room?.roomNo || roomItem?.roomNo;
-//       const roomTypeName =
-//         roomItem?.roomType?.name || "Standard Room";
+  //       const roomNo = roomItem?.room?.roomNo || roomItem?.roomNo;
+  //       const roomTypeName =
+  //         roomItem?.roomType?.name || "Standard Room";
 
-//       const roomStatus = roomItem?.roomStatus || null;
+  //       const roomStatus = roomItem?.roomStatus || null;
 
-//       const isCheckedInStatusSelected =
-//         currentActiveStatus.code === "checked_in";
+  //       const isCheckedInStatusSelected =
+  //         currentActiveStatus.code === "checked_in";
 
-//       const isRoomNull = !roomNo;
+  //       const isRoomNull = !roomNo;
 
-//       const isDisabledRoom =
-//         isCheckedInStatusSelected && isRoomNull;
+  //       const isDisabledRoom =
+  //         isCheckedInStatusSelected && isRoomNull;
 
-//       return {
-//         label: (
-//           <div
-//             className={`flex flex-col line-height-tight py-0.5 ${
-//               isDisabledRoom ? "opacity-50" : ""
-//             }`}
-//           >
-//             <span
-//               className={`font-medium text-slate-800 ${textColorDarkMode}`}
-//             >
-//               {roomNo ? `${roomNo} - ` : ""}
-//               {roomTypeName}
+  //       return {
+  //         label: (
+  //           <div
+  //             className={`flex flex-col line-height-tight py-0.5 ${
+  //               isDisabledRoom ? "opacity-50" : ""
+  //             }`}
+  //           >
+  //             <span
+  //               className={`font-medium text-slate-800 ${textColorDarkMode}`}
+  //             >
+  //               {roomNo ? `${roomNo} - ` : ""}
+  //               {roomTypeName}
 
-//               {/* ONLY STATUS DESIGN CHANGED */}
-//               {roomStatus && (
-//                 <span className="ml-2 inline-flex align-middle">
-//                   <ReservationStatusColor status={roomStatus} />
-//                 </span>
-//               )}
+  //               {/* ONLY STATUS DESIGN CHANGED */}
+  //               {roomStatus && (
+  //                 <span className="ml-2 inline-flex align-middle">
+  //                   <ReservationStatusColor status={roomStatus} />
+  //                 </span>
+  //               )}
 
-//               {isDisabledRoom && (
-//                 <span className="text-red-500 bg-red-50 text-xs p-1 rounded ml-2 font-normal">
-//                   Assign room first
-//                 </span>
-//               )}
-//             </span>
+  //               {isDisabledRoom && (
+  //                 <span className="text-red-500 bg-red-50 text-xs p-1 rounded ml-2 font-normal">
+  //                   Assign room first
+  //                 </span>
+  //               )}
+  //             </span>
 
-//             {checkIn && checkOut && (
-//               <span
-//                 className={`text-xs text-slate-500 ${textWhiteInDarkStyle}`}
-//               >
-//                 ({checkIn} - {checkOut})
-//               </span>
-//             )}
-//           </div>
-//         ),
+  //             {checkIn && checkOut && (
+  //               <span
+  //                 className={`text-xs text-slate-500 ${textWhiteInDarkStyle}`}
+  //               >
+  //                 ({checkIn} - {checkOut})
+  //               </span>
+  //             )}
+  //           </div>
+  //         ),
 
-//         value: roomItem?.id,
-//         disabled: isDisabledRoom,
-//       };
-//     });
-// }, [data, currentActiveStatus]);
+  //         value: roomItem?.id,
+  //         disabled: isDisabledRoom,
+  //       };
+  //     });
+  // }, [data, currentActiveStatus]);
 
-const roomOptions = useMemo(() => {
-  if (!data?.data || !currentActiveStatus) return [];
+  const roomOptions = useMemo(() => {
+    if (!data?.data || !currentActiveStatus) return [];
 
-  const roomsArray = Array.isArray(data.data) ? data.data : [data.data];
+    const roomsArray = Array.isArray(data.data) ? data.data : [data.data];
 
-  return roomsArray
-    .filter((roomItem) => {
-      const allowableStatuses = Array.isArray(roomItem?.checkStatus)
-        ? roomItem.checkStatus.map((s) => String(s).toLowerCase())
-        : [];
+    return roomsArray
+      .filter((roomItem) => {
+        const allowableStatuses = Array.isArray(roomItem?.checkStatus)
+          ? roomItem.checkStatus.map((s) => String(s).toLowerCase())
+          : [];
 
-      return allowableStatuses.includes(currentActiveStatus.code);
-    })
-    .map((roomItem) => {
-      const checkIn = roomItem?.checkinDate
-        ? dayjs(roomItem.checkinDate).format("YYYY-MM-DD")
-        : "";
+        return allowableStatuses.includes(currentActiveStatus.code);
+      })
+      .map((roomItem) => {
+        const checkIn = roomItem?.checkinDate
+          ? dayjs(roomItem.checkinDate).format("YYYY-MM-DD")
+          : "";
 
-      const checkOut = roomItem?.checkoutDate
-        ? dayjs(roomItem.checkoutDate).format("YYYY-MM-DD")
-        : "";
+        const checkOut = roomItem?.checkoutDate
+          ? dayjs(roomItem.checkoutDate).format("YYYY-MM-DD")
+          : "";
 
-      const roomNo = roomItem?.room?.roomNo || roomItem?.roomNo;
-      const roomTypeName = roomItem?.roomType?.name || "Standard Room";
-      const roomStatus = roomItem?.roomStatus || null;
+        const roomNo = roomItem?.room?.roomNo || roomItem?.roomNo;
+        const roomTypeName = roomItem?.roomType?.name || "Standard Room";
+        const roomStatus = roomItem?.roomStatus || null;
+        const room = roomItem?.room;
+        const roomCleanStatus = room?.cleanStatus;
+        const status = room?.status;
 
-      const isCheckedInStatusSelected =
-        currentActiveStatus.code === "checked_in";
+        const isCheckedInStatusSelected =
+          currentActiveStatus.code === "checked_in";
 
-      const isCheckedOutStatusSelected =
-        currentActiveStatus.code === "checked_out";
+        const isCheckedOutStatusSelected =
+          currentActiveStatus.code === "checked_out";
 
-      const isRoomNull = !roomNo;
+        const isRoomNull = !roomNo;
 
-      // Disable checked-in rooms when no room has been assigned
-      const isAssignRoomDisabled =
-        isCheckedInStatusSelected && isRoomNull;
+        // Disable checked-in rooms when no room has been assigned
+        const isAssignRoomDisabled =
+          isCheckedInStatusSelected && isRoomNull;
 
-      const isSameDayCheckIn =
-        !!roomItem?.checkinDate &&
-        dayjs(roomItem.checkinDate).isSame(dayjs(), "day");
+        const isSameDayCheckIn =
+          !!roomItem?.checkinDate &&
+          dayjs(roomItem.checkinDate).isSame(dayjs(), "day");
 
-      const isAtLeastOneStayDisabled =
-        isCheckedOutStatusSelected && isSameDayCheckIn;
+        const isAtLeastOneStayDisabled =
+          isCheckedOutStatusSelected && isSameDayCheckIn;
 
-      const isDisabledRoom =
-        isAssignRoomDisabled || isAtLeastOneStayDisabled;
+        const isDisabledRoom =
+          isAssignRoomDisabled || isAtLeastOneStayDisabled;
 
-      return {
-        label: (
-          <div
-            className={`flex flex-col line-height-tight py-0.5 ${
-              isDisabledRoom ? "opacity-50" : ""
-            }`}
-          >
-            <span
-              className={`font-medium text-slate-800 ${textColorDarkMode}`}
+        return {
+          label: (
+            <div
+              className={`flex flex-col line-height-tight py-0.5 ${isDisabledRoom ? "opacity-50" : ""
+                }`}
             >
-              {roomNo ? `${roomNo} - ` : ""}
-              {roomTypeName}
-
-              {roomStatus && (
-                <span className="ml-2 inline-flex align-middle">
-                  <ReservationStatusColor status={roomStatus} />
-                </span>
-              )}
-
-              {isAssignRoomDisabled && (
-                <span className="text-red-500 bg-red-50 text-xs p-1 rounded ml-2 font-normal">
-                  Assign room first
-                </span>
-              )}
-
-              {isAtLeastOneStayDisabled && (
-                <span className="text-red-500 bg-red-50 text-xs p-1 rounded ml-2 font-normal">
-                  At least one stay
-                </span>
-              )}
-            </span>
-
-            {checkIn && checkOut && (
               <span
-                className={`text-xs text-slate-500 ${textWhiteInDarkStyle}`}
+                className={`font-medium text-slate-800 ${textColorDarkMode}`}
               >
-                ({checkIn} - {checkOut})
-              </span>
-            )}
-          </div>
-        ),
+                {roomNo ? `${roomNo} - ` : ""}
+                {roomTypeName}
 
-        value: roomItem?.id,
-        disabled: isDisabledRoom,
-      };
-    });
-}, [data, currentActiveStatus]);
+                {roomStatus && (
+                  <span className="ml-2 inline-flex align-middle">
+                    <ReservationStatusColor status={roomStatus} />
+                  </span>
+                )}
+
+                {isAssignRoomDisabled && (
+                  <span className="text-red-500 bg-red-50 text-xs p-1 rounded ml-2 font-normal">
+                    Assign room first
+                  </span>
+                )}
+
+                {isAtLeastOneStayDisabled && (
+                  <span className="text-red-500 bg-red-50 text-xs p-1 rounded ml-2 font-normal">
+                    At least one stay
+                  </span>
+                )}
+              </span>
+
+              <div className="mt-1 flex items-center gap-2">
+                {checkIn && checkOut && (
+                  <span className={`text-xs text-slate-500 ${textWhiteInDarkStyle}`}>
+                    ({checkIn} - {checkOut})
+                  </span>
+                )}
+
+                {room && (
+                  <>
+                    <ColorStatusTag status={status} iconType="bed" />
+                    <ColorStatusTag status={roomCleanStatus} iconType="broom" />
+                  </>
+                )}
+              </div>
+
+            </div>
+          ),
+
+          value: roomItem?.id,
+          disabled: isDisabledRoom,
+        };
+      });
+  }, [data, currentActiveStatus]);
 
 
   const enabledRoomOptions = useMemo(
@@ -393,11 +405,10 @@ const roomOptions = useMemo(() => {
             type="primary"
             disabled={isButtonDisabled}
             onClick={() => form.submit()}
-            className={`transition-all duration-300 ${
-              isButtonDisabled
-                ? "!bg-blue-100 !text-blue-400 !border-blue-200 opacity-60 filter blur-[0.4px] cursor-not-allowed"
-                : "bg-blue-600 hover:bg-blue-700"
-            }`}
+            className={`transition-all duration-300 ${isButtonDisabled
+              ? "!bg-blue-100 !text-blue-400 !border-blue-200 opacity-60 filter blur-[0.4px] cursor-not-allowed"
+              : "bg-blue-600 hover:bg-blue-700"
+              }`}
             loading={updateReservationStatusMutation.isPending}
           >
             Update
@@ -405,76 +416,80 @@ const roomOptions = useMemo(() => {
         </div>
       }
     >
-      <Form layout="vertical" form={form} onFinish={onFinish}>
-        <Form.Item
-          label={<span>Change Booking Status</span>}
-          name="changeBookingStatusTo"
-          rules={[{ required: true, message: "Please select a status" }]}
-        >
-          <Select
-            showSearch
-            className="w-full"
-            placeholder="Select a reservation status..."
-            options={reservationStatuses}
-            filterOption={(input, option) =>
-              (option?.searchText ?? "")
-                .toLowerCase()
-                .includes(input.toLowerCase())
-            }
-            optionRender={(option) => (
-              <div
-                className={`w-full transition-opacity duration-200 ${
-                  option.data.disabled
+      {isLoading ? (
+        <div className="flex min-h-screen items-center justify-center">
+          <Loader />
+        </div>
+      ) : (
+        <Form layout="vertical" form={form} onFinish={onFinish}>
+          <Form.Item
+            label={<span>Change Booking Status</span>}
+            name="changeBookingStatusTo"
+            rules={[{ required: true, message: "Please select a status" }]}
+          >
+            <Select
+              showSearch
+              className="w-full"
+              placeholder="Select a reservation status..."
+              options={reservationStatuses}
+              filterOption={(input, option) =>
+                (option?.searchText ?? "")
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
+              }
+              optionRender={(option) => (
+                <div
+                  className={`w-full transition-opacity duration-200 ${option.data.disabled
                     ? "opacity-40 cursor-not-allowed pointer-events-none filter grayscale"
                     : "opacity-100"
-                }`}
-              >
-                {option.data.label}
-              </div>
-            )}
-          />
-        </Form.Item>
-
-        {shouldShowRoomSelection && (
-          <div className="mb-4">
-            <Form.Item
-              label={
-                <div className="flex">
-                  <span className={`text-slate-800 ${textWhiteInDarkStyle}`}>Select Room to Update</span>
-                  <div className="text-slate-800 ml-65 font-medium">
-                    <Checkbox
-                      className='room-select'
-                      indeterminate={isIndeterminate}
-                      onChange={handleSelectAllChange}
-                      checked={isAllSelected}
-                    >
-                      Select All
-                    </Checkbox>
-                  </div>
+                    }`}
+                >
+                  {option.data.label}
                 </div>
-              }
-              name="reservationRooms"
-              rules={[
-                { required: true, message: "Please select at least one room" },
-              ]}
-            >
-              <Checkbox.Group
-                options={roomOptions}
-                className='flex flex-col gap-2 w-full'
-              />
-            </Form.Item>
-          </div>
-        )}
-
-        {isCancelledSelected && (
-          <Form.Item label={<span>Cancellation Reason</span>} name="reason">
-            <Input.TextArea
-              rows={3}
-              placeholder="Please provide a reason for cancelling this reservation..."
+              )}
             />
           </Form.Item>
-        )}
-      </Form>
+
+          {shouldShowRoomSelection && (
+            <div className="mb-4">
+              <Form.Item
+                label={
+                  <div className="flex">
+                    <span className={`text-slate-800 ${textWhiteInDarkStyle}`}>Select Room to Update</span>
+                    <div className="text-slate-800 ml-65 font-medium">
+                      <Checkbox
+                        className='room-select'
+                        indeterminate={isIndeterminate}
+                        onChange={handleSelectAllChange}
+                        checked={isAllSelected}
+                      >
+                        Select All
+                      </Checkbox>
+                    </div>
+                  </div>
+                }
+                name="reservationRooms"
+                rules={[
+                  { required: true, message: "Please select at least one room" },
+                ]}
+              >
+                <Checkbox.Group
+                  options={roomOptions}
+                  className='flex flex-col gap-2 w-full'
+                />
+              </Form.Item>
+            </div>
+          )}
+
+          {isCancelledSelected && (
+            <Form.Item label={<span>Cancellation Reason</span>} name="reason">
+              <Input.TextArea
+                rows={3}
+                placeholder="Please provide a reason for cancelling this reservation..."
+              />
+            </Form.Item>
+          )}
+        </Form>)}
     </Drawer>
   );
 };

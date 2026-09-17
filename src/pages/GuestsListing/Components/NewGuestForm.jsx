@@ -18,6 +18,8 @@ import useApiQuery from "../../../hooks/useApiQuery";
 import { useApiMutation } from "../../../hooks/useApiMutation";
 import { upsertGuest, getGuestDetail } from "../../../api/guestApi";
 import { validatePhoneNumber } from "../../../utils";
+import usePermission from "../../../hooks/usePermission";
+import { PERMISSIONS } from "../../../variables/permission";
 
 const { TextArea } = Input;
 
@@ -33,6 +35,9 @@ const GuestForm = ({
 }) => {
   const [form] = Form.useForm();
   const queryClient = useQueryClient();
+  const { hasPermission } = usePermission();
+  const canEdit = hasPermission(PERMISSIONS.GUEST_EDIT);
+
   const phoneValue = Form.useWatch("phone", form);
   const [selectedCountryUuid, setSelectedCountryUuid] = useState(null);
 
@@ -230,6 +235,7 @@ const GuestForm = ({
       open={drawerOpen}
       extra={
         isView ? (
+          canEdit &&
           <Button type="primary" onClick={() => setMode("edit")}>
             Edit
           </Button>

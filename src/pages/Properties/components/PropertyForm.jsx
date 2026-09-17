@@ -51,7 +51,7 @@ const PropertyForm = ({
   const isAdd = mode === "add";
 
   const { hasPermission } = usePermission();
-  const canEdit = hasPermission(PERMISSIONS.PARTNER_EDIT);
+  const canEdit = hasPermission(PERMISSIONS.PROPERTY_EDIT);
 
   const timezone = dayjs.tz.guess();
 

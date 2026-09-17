@@ -25,6 +25,7 @@ import Toast from "../../../../component/Toast/Toast";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { LIMITS } from "../../../../variables/constants";
 import useApiQuery from "../../../../hooks/useApiQuery";
+import Loader from "../../../../component/Loader/Loader";
 
 const ReservationNoteForm = ({
   mode,
@@ -36,7 +37,7 @@ const ReservationNoteForm = ({
 }) => {
   const [form] = Form.useForm();
   const uuid = reservationUuid;
-  
+
   const [editingKey, setEditingKey] = useState("");
   const [editValue, setEditValue] = useState("");
   const [keyword, setKeyword] = useState("");
@@ -188,19 +189,29 @@ const ReservationNoteForm = ({
         )
       }
     >
-      {!isView && (
-        <Form form={form} layout="vertical" onFinish={onFinish}>
-          <Form.Item
-            label="Note"
-            name="noteContent"
-            rules={[
-              { required: true, message: "Please input your note content!" },
-            ]}
-          >
-            <Input.TextArea placeholder="Add a new note..." />
-          </Form.Item>
-        </Form>
+      {isLoading ? (
+        <div className="flex min-h-screen items-center justify-center">
+          <Loader />
+        </div>
+      ) : (
+        !isView && (
+          <Form form={form} layout="vertical" onFinish={onFinish}>
+            <Form.Item
+              label="Note"
+              name="noteContent"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your note content!",
+                },
+              ]}
+            >
+              <Input.TextArea placeholder="Add a new note..." />
+            </Form.Item>
+          </Form>
+        )
       )}
+
 
       {data?.data && data.data.length > 0 && (
         <>

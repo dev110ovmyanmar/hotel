@@ -198,7 +198,7 @@ const DailyOccupationDetailDrawer = ({
                                     <CalendarOutlined className="text-lg" />
                                 </div>
                                 <div>
-                                    <span className="text-xs font-medium text-slate-400 block uppercase tracking-wider">
+                                    <span className="text-[12px] font-medium text-s-500 font-semibold block tracking-wider">
                                         Stay Date
                                     </span>
                                     <span className="text-base font-bold text-slate-800 dark:text-white">

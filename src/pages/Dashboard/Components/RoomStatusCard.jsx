@@ -4,22 +4,18 @@ import { Card } from "antd";
 export default function RoomStatusCard({ roomData = {} }) {
   const [hoveredIndex, setHoveredIndex] = useState(null);
 
-  const roomTotal =
-    (roomData?.available || 0) +
-    (roomData?.occupied || 0) +
-    (roomData?.outOfService || 0) +
-    (roomData?.outOfOrder || 0);
+  const roomTotal = roomData?.total
 
   const roomStatus = [
-    {
-      label: "Occupied",
-      color: "#1890ff",
-      value: roomData?.occupied || 0,
-    },
     {
       label: "Available",
       color: "#52c41a",
       value: roomData?.available || 0,
+    },
+    {
+      label: "Out of Order",
+      color: "#f5222d",
+      value: roomData?.outOfOrder || 0,
     },
     {
       label: "Out of Service",
@@ -27,9 +23,9 @@ export default function RoomStatusCard({ roomData = {} }) {
       value: roomData?.outOfService || 0,
     },
     {
-      label: "Out of Order",
-      color: "#f5222d",
-      value: roomData?.outOfOrder || 0,
+      label: "Occupied",
+      color: "#1890ff",
+      value: roomData?.occupied || 0,
     },
   ];
 
@@ -212,22 +208,6 @@ export default function RoomStatusCard({ roomData = {} }) {
           ))}
         </div>
       </div>
-
-      {/* <style>
-        {`
-          @keyframes roomHoverIn {
-            from {
-              opacity: 0;
-              transform: translate(5px, -50%);
-            }
-
-            to {
-              opacity: 1;
-              transform: translate(0, -50%);
-            }
-          }
-        `}
-      </style> */}
     </Card>
   );
 }

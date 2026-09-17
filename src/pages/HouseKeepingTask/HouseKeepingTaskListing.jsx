@@ -64,6 +64,7 @@ const HouseKeepingTaskListing = () => {
     () =>
       adminMetaData?.rooms?.map((r) => ({
         value: r.uuid,
+        searchLabel: r.roomNo, // Add searchable field
         label: (
           <div
             style={{
@@ -72,7 +73,7 @@ const HouseKeepingTaskListing = () => {
               width: "100%",
             }}
           >
-            <span>{r.roomNo}</span>
+            <span>Room {r.roomNo}</span>
             <ColorStatusTag
               status={{
                 code: r.housekeepingStatus?.cleanStatus?.code,

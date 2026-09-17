@@ -41,20 +41,23 @@ const ReservationForm = ({
         fetchQueryFunction: reservationMeta,
     });
 
-    let agenciesOptions = reservationMetas?.agencies.map((item) => ({
-        label: item.name,
-        value: item.uuid,
-    })) || [];
+   let agenciesOptions = reservationMetas?.agencies?.filter(item => item?.status.code === "active")
+        .map((item) => ({
+            label: item?.name,
+            value: item.uuid
+        }));
 
-    let companyOptions = reservationMetas?.companies.map((item) => ({
-        label: item.name,
-        value: item.uuid,
-    })) || [];
+    let companyOptions = reservationMetas?.companies?.filter(item => item?.status.code === "active")
+        .map((item) => ({
+            label: item?.name,
+            value: item.uuid
+        }));
 
-    let referralAgentOptions = reservationMetas?.referral_agents.map((item) => ({
-        label: item.name,
-        value: item.uuid,
-    })) || [];
+    let referralAgentOptions = reservationMetas?.referral_agents?.filter(item => item?.status.code === "active")
+        .map((item) => ({
+            label: item?.name,
+            value: item.uuid
+        }));
 
 
     let roomTypeOptions = reservationMetas?.room_types?.filter(item => item?.status.code === "active")
@@ -445,7 +448,7 @@ const ReservationForm = ({
                                             ? "min-w-[125px] !text-gray-400 !border-gray-400/50 cursor-not-allowed"
                                             : "min-w-[125px] !bg-gray-100 !text-gray-900 !shadow-lg shadow-gray-900/50"
                                     }
-                                    // className="min-w-[125px] !bg-gradient-to-r from-[#000B60] to-[#215282] !border-blue-400/50 !shadow-lg shadow-blue-600/50"
+                                // className="min-w-[125px] !bg-gradient-to-r from-[#000B60] to-[#215282] !border-blue-400/50 !shadow-lg shadow-blue-600/50"
                                 >
                                     Search
                                 </Button>
