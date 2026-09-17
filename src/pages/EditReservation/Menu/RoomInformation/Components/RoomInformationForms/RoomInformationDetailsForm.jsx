@@ -222,11 +222,25 @@ const RoomInformationDetailsForm = ({
                 className={`text-xs text-slate-900 mt-0.5 ${textWhiteInDarkStyle}`}
               >
                 {d?.reservation?.sourceType?.name || "—"}
+
                 {d?.reservation?.source?.name && (
-                  <span className="text-purple-600">
-                    {" "}({d.reservation.source.name})
-                  </span>
-                )}                   </div>
+                  <div className="text-indigo-600 text-[11px] font-semibold">
+                    (
+                    {d.reservation.source.name} -{" "}
+                    {d.reservation.source.chargeType?.code === "flat" ? (
+                      <>
+                        <PriceTag value={d.reservation.source.chargeValue} /> MMK
+                      </>
+                    ) : (
+                      <>
+                        {d.reservation.source.chargeValue} %
+                      </>
+                    )}
+                    )
+                  </div>
+                )}
+              </div>
+
             </div>
           </div>
         </div>
