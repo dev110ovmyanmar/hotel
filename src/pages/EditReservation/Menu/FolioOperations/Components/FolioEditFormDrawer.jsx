@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Drawer,
   Form,
@@ -10,6 +10,7 @@ import {
   DatePicker,
   Typography,
 } from "antd";
+import { EditOutlined } from "@ant-design/icons";
 import { useApiMutation } from "../../../../../hooks/useApiMutation";
 import { useApiQuery } from "../../../../../hooks/useApiQuery";
 import { reservationMeta } from "../../../../../api/reservationSectionApi";
@@ -31,6 +32,7 @@ const FolioEditFormDrawer = ({
   onSuccess,
 }) => {
   const [form] = Form.useForm();
+  const [showChangeGuest, setShowChangeGuest] = useState(false);
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
 
   const { data: reservationMetaData, isLoading: reservationMetaLoading } =
@@ -78,6 +80,10 @@ const FolioEditFormDrawer = ({
         remark: folioData.remark || "",
       });
     }
+
+    if (!open) {
+      setShowChangeGuest(false);
+    }
   }, [open, folioData, form]);
 
   const onFinish = (values) => {
@@ -110,7 +116,7 @@ const FolioEditFormDrawer = ({
     return guests
       .filter((guest) => guest.uuid !== folioData?.guest?.uuid)
       .map((guest) => ({
-        label: guest.name,
+        label: guest.fullName,
         value: guest.uuid,
       }));
   }, [guests, folioData?.guest?.uuid]);
@@ -175,33 +181,47 @@ const FolioEditFormDrawer = ({
             />
           </Form.Item>
 
-          {/* Current Guest (read-only) */}
-          <Form.Item label={<span className="font-medium">Guest</span>}>
+          {/* Current Guest (read-only) with edit icon */}
+          <Form.Item
+            label={
+              <span className="font-medium flex items-center gap-1">
+                Guest
+                <Button
+                  size="small"
+                  icon={<EditOutlined />}
+                  onClick={() => setShowChangeGuest((prev) => !prev)}
+                  className="!text-blue-500 hover:!text-blue-700 !border-blue-500 hover:!border-blue-700"
+                />
+              </span>
+            }
+          >
             <Input
-              value={folioData?.guest?.name || ""}
+              value={folioData?.guest?.fullName || ""}
               readOnly
               className="rounded w-full bg-gray-50"
             />
           </Form.Item>
 
-          {/* Change Guest */}
-          <Form.Item
-            label={<span className="font-medium">Change Guest</span>}
-            name="guest"
-          >
-            <Select
-              placeholder="Select new guest"
-              allowClear
-              options={guestOptions}
-              className="w-full rounded"
-              showSearch={{
-                filterOption: (input, option) =>
-                  (option?.label ?? "")
-                    .toLowerCase()
-                    .includes(input.toLowerCase()),
-              }}
-            />
-          </Form.Item>
+          {/* Change Guest (conditionally visible) */}
+          {showChangeGuest && (
+            <Form.Item
+              label={<span className="font-medium">Change Guest</span>}
+              name="guest"
+            >
+              <Select
+                placeholder="Select new guest"
+                allowClear
+                options={guestOptions}
+                className="w-full rounded"
+                showSearch={{
+                  filterOption: (input, option) =>
+                    (option?.label ?? "")
+                      .toLowerCase()
+                      .includes(input.toLowerCase()),
+                }}
+              />
+            </Form.Item>
+          )}
 
           {/* Folio Owner Type */}
           <Form.Item

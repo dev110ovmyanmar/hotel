@@ -229,7 +229,7 @@ const HouseKeepingTaskForm = ({
                                             const room = adminMetaData?.rooms?.find((r) => r.uuid === value);
                                             if (isView) {
                                                 return {
-                                                    value: room?.roomNo,
+                                                    value: `Room ${room?.roomNo}`,
                                                     suffix: (
                                                         <ColorStatusTag
                                                             status={{
@@ -298,12 +298,13 @@ const HouseKeepingTaskForm = ({
                                                 name="housekeepingStatus"
                                                 label="Housekeeping Status"
                                                 rules={[{ required: true, message: "Please select status" }]}
-
+                                                getValueProps={(value) => ({
+                                                    value: isCreate
+                                                        ? hkStatusOptions?.find((item) => item.value === value)?.label
+                                                        : value,
+                                                })}
                                             >
-                                                <Select
-                                                    options={hkStatusOptions}
-                                                    disabled={true}
-                                                />
+                                                <Input readOnly={isCreate} /> 
                                             </Form.Item>
                                         ) : (
                                             <Form.Item name="housekeepingStatus"

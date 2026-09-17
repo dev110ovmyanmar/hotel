@@ -73,7 +73,7 @@ const HouseKeepingTaskListing = () => {
               width: "100%",
             }}
           >
-            <span>{r.roomNo}</span>
+            <span>Room {r.roomNo}</span>
             <ColorStatusTag
               status={{
                 code: r.housekeepingStatus?.cleanStatus?.code,

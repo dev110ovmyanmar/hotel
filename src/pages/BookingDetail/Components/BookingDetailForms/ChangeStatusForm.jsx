@@ -13,6 +13,7 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { textColorDarkMode, textWhiteInDarkStyle } from "../../../../utils";
 import ReservationStatusColor from "../../../../component/ReservationStatusColor/ReservationStatusColor";
 import Loader from "../../../../component/Loader/Loader";
+import ColorStatusTag from "../../../../component/ColorStatusTag/ColorStatusTag";
 
 const ChangeStatusForm = ({ reservationDetails, open, onClose }) => {
   const [form] = Form.useForm();
@@ -239,6 +240,9 @@ const ChangeStatusForm = ({ reservationDetails, open, onClose }) => {
         const roomNo = roomItem?.room?.roomNo || roomItem?.roomNo;
         const roomTypeName = roomItem?.roomType?.name || "Standard Room";
         const roomStatus = roomItem?.roomStatus || null;
+        const room = roomItem?.room;
+        const roomCleanStatus = room?.cleanStatus;
+        const status = room?.status;
 
         const isCheckedInStatusSelected =
           currentActiveStatus.code === "checked_in";
@@ -293,13 +297,21 @@ const ChangeStatusForm = ({ reservationDetails, open, onClose }) => {
                 )}
               </span>
 
-              {checkIn && checkOut && (
-                <span
-                  className={`text-xs text-slate-500 ${textWhiteInDarkStyle}`}
-                >
-                  ({checkIn} - {checkOut})
-                </span>
-              )}
+              <div className="mt-1 flex items-center gap-2">
+                {checkIn && checkOut && (
+                  <span className={`text-xs text-slate-500 ${textWhiteInDarkStyle}`}>
+                    ({checkIn} - {checkOut})
+                  </span>
+                )}
+
+                {room && (
+                  <>
+                    <ColorStatusTag status={status} iconType="bed" />
+                    <ColorStatusTag status={roomCleanStatus} iconType="broom" />
+                  </>
+                )}
+              </div>
+
             </div>
           ),
 
@@ -394,8 +406,8 @@ const ChangeStatusForm = ({ reservationDetails, open, onClose }) => {
             disabled={isButtonDisabled}
             onClick={() => form.submit()}
             className={`transition-all duration-300 ${isButtonDisabled
-                ? "!bg-blue-100 !text-blue-400 !border-blue-200 opacity-60 filter blur-[0.4px] cursor-not-allowed"
-                : "bg-blue-600 hover:bg-blue-700"
+              ? "!bg-blue-100 !text-blue-400 !border-blue-200 opacity-60 filter blur-[0.4px] cursor-not-allowed"
+              : "bg-blue-600 hover:bg-blue-700"
               }`}
             loading={updateReservationStatusMutation.isPending}
           >
@@ -428,8 +440,8 @@ const ChangeStatusForm = ({ reservationDetails, open, onClose }) => {
               optionRender={(option) => (
                 <div
                   className={`w-full transition-opacity duration-200 ${option.data.disabled
-                      ? "opacity-40 cursor-not-allowed pointer-events-none filter grayscale"
-                      : "opacity-100"
+                    ? "opacity-40 cursor-not-allowed pointer-events-none filter grayscale"
+                    : "opacity-100"
                     }`}
                 >
                   {option.data.label}

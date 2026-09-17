@@ -11,6 +11,8 @@ import { queryClient } from "../../../../app/queryClient";
 import useApiQuery from "../../../../hooks/useApiQuery";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
 import Toast from "../../../../component/Toast/Toast";
+import Loader from "../../../../component/Loader/Loader";
+import PriceTag from "../../../../component/PriceTag/PriceTag";
 
 const ReservationDetailsForm = ({ open, onClose, onSuccess }) => {
   const [form] = Form.useForm();
@@ -18,7 +20,7 @@ const ReservationDetailsForm = ({ open, onClose, onSuccess }) => {
   const [selectedSourceType, setSelectedSourceType] = useState(null);
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
 
-  const { data, isLoading } = useApiQuery({
+  const { data, isLoading: detailsLoading } = useApiQuery({
     fetchQueryName: "reservation-details",
     fetchQueryFunction: reservationDetails,
     params: {
@@ -31,13 +33,41 @@ const ReservationDetailsForm = ({ open, onClose, onSuccess }) => {
     },
   });
 
-  const { data: reservationMetas } = useApiQuery({
+  const { data: reservationMetas, isLoading: metaLoading } = useApiQuery({
     fetchQueryName: "reservation-meta",
     fetchQueryFunction: reservationMeta,
     options: {
       enabled: open,
     },
   });
+
+  const formatSourceLabel = (item) => {
+    if (!item) return "";
+
+    const value = item.chargeValue;
+    const typeCode = item.chargeType?.code?.trim()?.toLowerCase();
+
+    if (value === null || value === undefined) {
+      return item.name;
+    }
+
+    return (
+      <span>
+        {item.name}{" "}
+        ({" "}
+        {typeCode === "flat" ? (
+          <>
+            <PriceTag value={value} /> MMK
+          </>
+        ) : (
+          <>
+            {value} %
+          </>
+        )}
+        {" "} )
+      </span>
+    );
+  };
 
   const bookedVia =
     initData?.statuses?.booked_via?.map((item) => ({
@@ -55,19 +85,19 @@ const ReservationDetailsForm = ({ open, onClose, onSuccess }) => {
   const agenciesOptions =
     reservationMetas?.agencies?.map((item) => ({
       value: item.uuid,
-      label: item.name,
+      label: formatSourceLabel(item),
     })) || [];
 
   const referralAgentsOptions =
     reservationMetas?.referral_agents?.map((item) => ({
       value: item.uuid,
-      label: item.name,
+      label: formatSourceLabel(item),
     })) || []
 
   const companyOptions =
     reservationMetas?.companies?.map((item) => ({
       value: item.uuid,
-      label: item.name,
+      label: formatSourceLabel(item),
     })) || [];
 
   const sourceNameOptions = {
@@ -134,7 +164,7 @@ const ReservationDetailsForm = ({ open, onClose, onSuccess }) => {
         }
         : undefined,
       source:
-        ["agency", "company","referral_agent"].includes(selectedSourceType) && values.sourceName
+        ["agency", "company", "referral_agent"].includes(selectedSourceType) && values.sourceName
           ? {
             uuid: values.sourceName,
           }
@@ -172,7 +202,7 @@ const ReservationDetailsForm = ({ open, onClose, onSuccess }) => {
       size={550}
       open={open}
       onClose={handleClose}
-      loading={isLoading}
+      loading={detailsLoading}
       title={
         <div className="flex items-center justify-between">
           <span>Edit Reservation Details</span>
@@ -184,47 +214,52 @@ const ReservationDetailsForm = ({ open, onClose, onSuccess }) => {
         </div>
       }
     >
-      <Form form={form} layout="vertical" onFinish={handleFinish}>
-        <Form.Item label="Ref No." name="refNo">
-          <Input placeholder="Enter Ref No." />
-        </Form.Item>
+      {metaLoading || detailsLoading ? (
+        <div className="flex min-h-screen items-center justify-center">
+          <Loader />
+        </div>
+      ) : (
+        <Form form={form} layout="vertical" onFinish={handleFinish}>
+          <Form.Item label="Ref No." name="refNo">
+            <Input placeholder="Enter Ref No." />
+          </Form.Item>
 
-        <Form.Item label="Booking Source" name="bookingSource">
-          <Select
-            options={bookedVia}
-            placeholder="Select Booking Source"
-          />
-        </Form.Item>
-
-        <Form.Item label="Source Type" name="sourceType">
-          <Select
-            options={sourceType}
-            placeholder="Select Source Type"
-            onChange={handleSourceTypeChange}
-          />
-        </Form.Item>
-
-        {["agency", "company", "referral_agent"].includes(selectedSourceType) && (
-          <Form.Item
-            label="Source Name"
-            name="sourceName"
-            rules={[{ required: true }]}
-          >
+          <Form.Item label="Booking Source" name="bookingSource">
             <Select
-              options={sourceNameOptions}
-              placeholder={`Select ${selectedSourceType === "agency"
-                ? "Agency"
-                : selectedSourceType === "referral_agent"
-                  ? "Referral Agent"
-                  : "Company"
-                }`}
-              showSearch
-              optionFilterProp="label"
+              options={bookedVia}
+              placeholder="Select Booking Source"
             />
           </Form.Item>
 
-        )}
-      </Form>
+          <Form.Item label="Source Type" name="sourceType">
+            <Select
+              options={sourceType}
+              placeholder="Select Source Type"
+              onChange={handleSourceTypeChange}
+            />
+          </Form.Item>
+
+          {["agency", "company", "referral_agent"].includes(selectedSourceType) && (
+            <Form.Item
+              label="Source Name"
+              name="sourceName"
+              rules={[{ required: true }]}
+            >
+              <Select
+                options={sourceNameOptions}
+                placeholder={`Select ${selectedSourceType === "agency"
+                  ? "Agency"
+                  : selectedSourceType === "referral_agent"
+                    ? "Referral Agent"
+                    : "Company"
+                  }`}
+                showSearch
+              />
+            </Form.Item>
+
+          )}
+        </Form>
+      )}
     </Drawer>
   );
 };

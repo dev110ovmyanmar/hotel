@@ -31,8 +31,7 @@ const FolioInvoicePrint = React.forwardRef(({ printData, adminName, adminRole, h
   const foliosList = printData.data || [];
   const folioNo = printData.folio?.folioNo || "-";
   const isfolioExist = printData.folio != null ? true : false;
-  const guestName = printData.folio?.guest?.name || printData.guest || "—";
-  const guestPhone = printData.folio?.guest?.phone || "—";
+  const guestName = printData.guest || "—";
   const tourCode = printData.tourCode || null;
   const sourceType = printData.sourceType;
   const sourceName = printData.sourceName;
@@ -418,7 +417,7 @@ const FolioInvoicePrint = React.forwardRef(({ printData, adminName, adminRole, h
           </div>
 
           {/* ══ SIGNATURES ════════════════════════════════════════════ */}
-          <div style={{ marginTop: "25px", display: "flex", justifyContent: "space-between" }}>
+          <div style={{ marginTop: "40px", display: "flex", justifyContent: "space-between" }}>
             <div style={{ width: "30%" }}>
               <div style={{ height: "1px", background: INK_MUTED , marginBottom: "5px" , fontWeight: "200"}} />
               <div style={{ fontFamily: FONT_LABEL, fontSize: "12px", fontWeight: "600", color: INK, marginBottom: "20px" }}>
