@@ -15,9 +15,16 @@ const PreAuditCheckDetails = ({
     const isTodayArrivals = selectedData?.code === "today_arrivals";
     const isUnassignedRooms = selectedData?.code === "unassigned_rooms";
 
+    console.log(selectedData,"PreAuditCheckDetailsSelectedData")
     const { data } = useApiQuery({
+        fetchQueryName: "reservationRoomList",
         fetchQueryFunction: reservationRoomList,
-        enabled: open && isTodayArrivals,
+        params: {
+            uuid: selectedData?.uuid,
+        },
+        options: {
+            enabled: open && !!selectedData && isTodayArrivals,
+        },
     });
 
     console.log(data, "DataInPreAuditCheckDetails")
@@ -33,7 +40,9 @@ const PreAuditCheckDetails = ({
         //   keyword,
         //   status: normalStatus,
         // },
-        enabled: open && isUnassignedRooms,
+        options:{
+            enabled: open && !!selectedData && isUnassignedRooms,
+        }
     });
 
     const columns = [
