@@ -118,7 +118,7 @@ const UnitForm = ({
                 </Button>
               )
             ) : (
-              <FormButtons onClick={() => form.submit()} mode={mode} />
+              <FormButtons onClick={() => form.submit()} mode={mode} isPending={editUnit?.isPending} />
             )
           }
         </div>

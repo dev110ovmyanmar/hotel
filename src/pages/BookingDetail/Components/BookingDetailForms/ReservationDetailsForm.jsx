@@ -83,6 +83,7 @@ const ReservationDetailsForm = ({ open, onClose, onSuccess }) => {
     })) || [];
 
   const agenciesOptions =
+<<<<<<< Updated upstream
     reservationMetas?.agencies?.map((item) => ({
       value: item.uuid,
       label: formatSourceLabel(item),
@@ -99,6 +100,28 @@ const ReservationDetailsForm = ({ open, onClose, onSuccess }) => {
       value: item.uuid,
       label: formatSourceLabel(item),
     })) || [];
+=======
+    reservationMetas?.agencies?.filter(item => item?.status.code === "active")
+      .map((item) => ({
+        label: item?.name,
+        value: item.uuid
+      })) || [];
+
+  const referralAgentsOptions =
+    reservationMetas?.referral_agents?.filter(item => item?.status.code === "active")
+      .map((item) => ({
+        label: item?.name,
+        value: item.uuid
+      })) || []
+
+  const companyOptions =
+    reservationMetas?.companies?.filter(item => item?.status.code === "active")
+      .map((item) => ({
+        label: item?.name,
+        value: item.uuid
+      })) || [];
+
+>>>>>>> Stashed changes
 
   const sourceNameOptions = {
     agency: agenciesOptions,
