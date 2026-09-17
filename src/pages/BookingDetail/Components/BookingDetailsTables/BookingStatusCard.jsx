@@ -3,6 +3,7 @@ import { Typography, Card, Space, Tag, Button, Tooltip, Form } from "antd";
 import { MdOutlineMeetingRoom } from "react-icons/md";
 import { EditOutlined } from "@ant-design/icons";
 import ReservationDetailsForm from "../BookingDetailForms/ReservationDetailsForm";
+import PriceTag from "../../../../component/PriceTag/PriceTag";
 
 const { Text } = Typography;
 
@@ -59,8 +60,22 @@ const BookingStatusCard = ({ data }) => {
         {data?.reservation?.source?.name && (
           <div>
             <Text>Source Name: </Text>
-            <Text strong>{data?.reservation?.source?.name}</Text>
+            <Text strong>{data?.reservation?.source?.name}</Text>{" "}
+            <span>
+              ( Charge: {" "}
+              {data?.reservation?.source?.chargeType?.code === "flat" ? (
+                <>
+                  <PriceTag value={data?.reservation?.source?.chargeValue} />  MMK
+                </>
+              ) : (
+                <>
+                  {data?.reservation?.source?.chargeValue} %
+                </>
+              )}
+              )
+            </span>
           </div>
+
         )}
       </Card>
 
