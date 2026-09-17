@@ -109,7 +109,7 @@ export default function useGuestColumns(
             key: "manage-files",
             label: "Manage Files",
             icon: <UploadOutlined style={{ fontSize: "12px" }} />,
-            permission: PERMISSIONS.GUEST_FILE_MANAGE,
+            permission: PERMISSIONS.GUEST_IMAGE_DOCUMENT,
             onClick: () => onFileUpload(record),
           },
         ];

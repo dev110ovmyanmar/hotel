@@ -16,6 +16,8 @@ import useApiQuery from "../../../hooks/useApiQuery";
 import { useApiMutation } from "../../../hooks/useApiMutation";
 import { upsertPermission, getPermissionDetail } from "../../../api/permissionApi";
 import { queryClient } from "../../../app/queryClient";
+import usePermission from "../../../hooks/usePermission";
+import { PERMISSIONS } from "../../../variables/permission";
 
 const { TextArea } = Input;
 
@@ -36,6 +38,9 @@ const PermissionForm = ({
   const isView = mode === "view";
   const isEdit = mode === "edit";
   const isAdd = mode === "add";
+
+  const { hasPermission } = usePermission();
+  const canEdit = hasPermission(PERMISSIONS.PERMISSION_EDIT);
 
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
   const permissionsArray = initData?.permissions;
@@ -152,11 +157,12 @@ const PermissionForm = ({
           <div className="flex items-center justify-between">
             <span>{DrawerTitle}</span>
             {isView ? (
+              canEdit &&
               <Button type="primary" onClick={switchToEdit}>
                 Edit
               </Button>
             ) : (
-              <FormButtons onClick={() => form.submit()} mode={mode} />
+              <FormButtons onClick={() => form.submit()} mode={mode} isPending={isAdd ? createPermission.isPending : editPermission?.isPending} />
             )}
           </div>
         }

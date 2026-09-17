@@ -25,6 +25,7 @@ const MenuCategoryForm = ({
 }) => {
   const [form] = Form.useForm();
   const { hasPermission } = usePermission();
+  const canEdit = hasPermission(PERMISSIONS.MENU_CATEGORY_EDIT);
 
   const isView = mode === "view";
   const isEdit = mode === "edit";
@@ -32,7 +33,6 @@ const MenuCategoryForm = ({
 
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
   const status = initData?.statuses?.status;
-  const canEdit = hasPermission(PERMISSIONS.PAYMENT_EDIT);
 
   const statusList = status
     ?.filter((item) => item.code !== "blocked")
@@ -140,6 +140,7 @@ const MenuCategoryForm = ({
                   : "Create Menu Category"}
             </span>
             {isView ? (
+              canEdit &&
               <Button
                 type="primary"
                 onClick={() => {
@@ -152,7 +153,9 @@ const MenuCategoryForm = ({
               <FormButtons
                 onClick={() => form.submit()}
                 isPending={
-                  createMenuCategories.isPending || editMenuCategories.isPending
+                  isAdd
+                    ? createMenuCategories.isPending
+                    : editMenuCategories.isPending
                 }
                 mode={mode}
               />

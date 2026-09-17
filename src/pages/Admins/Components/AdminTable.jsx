@@ -100,7 +100,7 @@ const AdminTable = ({
             key: "reset",
             label: "Reset Password",
             icon: <KeyOutlined style={{ fontSize: "12px" }} />,
-
+            permission: PERMISSIONS.ADMIN_RESET_PASSWORD,
             hidden: localAdminDetails === record?.uuid,
             onClick: () => {
               setConfirmModal(true);

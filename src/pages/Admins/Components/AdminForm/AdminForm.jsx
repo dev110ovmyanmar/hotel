@@ -42,6 +42,7 @@ const AdminForm = ({
   const [form] = Form.useForm();
 
   const { hasPermission } = usePermission();
+  const canEdit = hasPermission(PERMISSIONS.ADMIN_EDIT);
 
   const isView = mode === "view";
   const isEdit = mode === "edit";
@@ -195,7 +196,7 @@ const AdminForm = ({
   };
 
   const onFinish = (values) => {
-    console.log(values,"onfinish")
+    console.log(values, "onfinish")
     if (isAdd) {
       const createValues = {
         ...values,
@@ -258,6 +259,7 @@ const AdminForm = ({
                   : "Create Admin"}
             </span>
             {isView ? (
+              canEdit &&
               <Button
                 type="primary"
                 onClick={() => {

@@ -19,6 +19,7 @@ import { reservationRoomList } from "../../../../api/reservationSectionApi";
 import useApiQuery from "../../../../hooks/useApiQuery";
 import { LIMITS } from "../../../../variables/constants";
 import { queryClient } from "../../../../app/queryClient";
+import { PERMISSIONS } from "../../../../variables/permission";
 
 const RoomInformationList = () => {
   const navigate = useNavigate();
