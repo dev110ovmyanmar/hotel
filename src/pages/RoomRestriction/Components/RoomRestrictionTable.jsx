@@ -17,7 +17,7 @@ import isSameOrBeforePlugin from "dayjs/plugin/isSameOrBefore";
 
 dayjs.extend(isSameOrBeforePlugin);
 
-const RoomRestrictionTable = ({ data, page, setPage }) => {
+const RoomRestrictionTable = ({ data, page, setPage, loading }) => {
   const { hasPermission } = usePermission();
 
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -238,6 +238,7 @@ const RoomRestrictionTable = ({ data, page, setPage }) => {
         scroll={{ x: 1000 }}
         columns={columns}
         dataSource={data}
+        loading={loading}
         rowKey={(record) => record.roomType?.id}
         pagination={false}
         expandable={{ expandedRowRender, defaultExpandedRowKeys: ["0"] }}
