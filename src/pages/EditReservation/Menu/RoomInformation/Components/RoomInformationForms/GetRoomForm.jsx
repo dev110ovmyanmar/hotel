@@ -106,7 +106,7 @@ const GetRoomForm = ({ selectedData, onSelectRoom, onClose, floorUuid }) => {
               <span
                 className={`font-bold text-gray-800 text-sm ${textColorDarkMode}`}
               >
-                Room {room.roomNo}
+                {room.roomNo}
               </span>
               <span
                 className={`text-[11px] text-gray-500 ${textWhiteInDarkStyle}`}

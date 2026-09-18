@@ -7,24 +7,9 @@ import {
 import { Card } from "antd";
 
 const FolioAndPaymentReviewStatus = ({ data }) => {
-  const folioCounts = (data?.folios || []).reduce(
-    (acc, folio) => {
-      const status = folio?.financialStatus?.trim()?.toLowerCase();
-
-      if (status === "paid") {
-        acc.paid += 1;
-      } else if (status === "partially paid") {
-        acc.partiallyPaid += 1;
-      } else if (status === "unpaid") {
-        acc.unpaid += 1;
-      }
-      return acc;
-    },
-    { paid: 0, partiallyPaid: 0, unpaid: 0 },
-  );
+  const folioCounts = data?.reviewSummary
 
   const cardDesign = `!w-full !h-full !shadow-md !m-0 !p-0 `;
-  const total = data?.totalFolios || data?.folios?.length || 0;
 
   return (
     <div>
@@ -46,12 +31,12 @@ const FolioAndPaymentReviewStatus = ({ data }) => {
               {/* Content Container */}
               <div className="ml-3 flex-1">
                 <div className="text-xs font-medium text-[#002C8C] mb-1 ml-3">
-                  Total Folio
+                  Passed
                 </div>
 
                 <div className="text-base font-bold text-[#003EB3]">
                   <div className="flex gap-1 text-xl font-semibold ml-3">
-                    {total}
+                    {folioCounts.clearFolios}
                   </div>
                 </div>
               </div>
@@ -73,12 +58,12 @@ const FolioAndPaymentReviewStatus = ({ data }) => {
               {/* Content Container */}
               <div className="ml-3 flex-1">
                 <div className="text-xs font-medium text-[#389E0D] mb-1 ml-3">
-                  Fully Paid
+                  Warning
                 </div>
 
                 <div className="text-base font-bold text-[#389E0D]">
                   <div className="flex gap-1 text-xl font-semibold ml-3">
-                    {folioCounts.paid}
+                    {folioCounts.warningFolios}
                   </div>
                 </div>
               </div>
@@ -101,12 +86,12 @@ const FolioAndPaymentReviewStatus = ({ data }) => {
               {/* Content Container */}
               <div className="ml-3 flex-1">
                 <div className="text-xs font-medium text-[#FF7800] mb-1 ml-3">
-                  Partially Paid
+                  Blocked
                 </div>
 
                 <div className="text-base font-bold text-[#FF7800]">
                   <div className="flex gap-1 text-xl font-semibold ml-3">
-                    {folioCounts.partiallyPaid}
+                    {folioCounts.blockingFolios}
                   </div>
                 </div>
               </div>
@@ -130,12 +115,12 @@ const FolioAndPaymentReviewStatus = ({ data }) => {
               {/* Content Container */}
               <div className="ml-3 flex-1">
                 <div className="text-xs font-medium text-[#D4A106] mb-1 ml-3">
-                  Unpaid
+                  Total
                 </div>
 
                 <div className="text-base font-bold text-[#D4A106]">
                   <div className="flex gap-1 text-xl font-semibold ml-3">
-                    {folioCounts.unpaid}
+                    {folioCounts.totalFolios}
                   </div>
                 </div>
               </div>
