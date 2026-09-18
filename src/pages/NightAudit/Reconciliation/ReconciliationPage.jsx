@@ -46,8 +46,11 @@ const ReconciliationPage = ({ stepValue }) => {
       <ReconciliationStatus
         data={data?.summary}
         hasBlockingDifferences={data?.hasBlockingDifferences}
+        canConfirm={data?.canConfirm}
+        isConfirm={data?.isConfirmed}
       />
       <ReconciliationTable
+       isConfirm={data?.isConfirmed}
         backStep={() => {
           window.dispatchEvent(
             new CustomEvent("breadcrumb_updated", {

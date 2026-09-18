@@ -119,6 +119,17 @@ const ReservationNoteForm = ({
   };
 
   const columns = [
+  {
+    title: "Room",
+    dataIndex: "room",
+    key: "room",
+    align: "center",
+    render: (_, record) => {
+        return record?.reservationRoom == null
+            ? "-"
+            : <span className="text-black">{record?.reservationRoom?.room?.roomNo}</span>;
+    },
+    },
     {
       title: "Note",
       dataIndex: "note",

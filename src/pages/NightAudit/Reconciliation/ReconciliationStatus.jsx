@@ -10,15 +10,36 @@ import {
   CloseCircleFilled,
   WarningOutlined,
 } from "@ant-design/icons";
+import { reconciliationConfirm } from "../../../api/nightAuditApi";
+import { getNightAuditData } from "../../../variables/constants";
+import { useApiMutation } from "../../../hooks/useApiMutation";
 
 const { Text } = Typography;
 
-const ReconciliationStatus = ({
-  data,
-  hasBlockingDifferences,
-}) => {
+const ReconciliationStatus = ({ data, hasBlockingDifferences, canConfirm, isConfirm }) => {
 
-  const isBalanced = hasBlockingDifferences === false;
+  const confirmed = canConfirm === true;
+  const confirm = isConfirm === true;
+  const hasBlockingDifference = hasBlockingDifferences === false;
+
+  // const isBalanced = hasBlockingDifference && confirm && confirmed;
+  const isBalanced = hasBlockingDifference && confirm && confirmed;
+
+  const nightAuditData = getNightAuditData();
+  const businessDate = nightAuditData?.businessDate;
+
+  const reconciliationConfirmed = useApiMutation({
+    mutationFn: reconciliationConfirm,
+    // invalidateKeys: [["folio-review"]],
+  });
+
+  const reconciliation = () => {
+    reconciliationConfirmed.mutate({
+      businessDate,
+    });
+  };
+
+  const isConfirmed = reconciliationConfirmed.isSuccess;
 
   return (
     <div className="mb-2">
@@ -55,7 +76,7 @@ const ReconciliationStatus = ({
                 <>
                   <CheckCircleFilled style={{ color: "#52c41a" }} />
                   <Text className="text-[#274916] dark:text-[#A8D58D]">
-                    Can Confirm
+                    {isConfirmed ? "Confirmed" : "Can Confirm"}
                   </Text>
                 </>
               ) : (
@@ -66,25 +87,30 @@ const ReconciliationStatus = ({
               )}
             </Space>
 
-            <Button
-              type="primary"
-              danger={!isBalanced}
-              disabled={!isBalanced}
-              icon={
-                isBalanced ? <CheckOutlined /> : <WarningOutlined />
-              }
-            >
-              {isBalanced
-                ? "Confirm Reconciliation"
-                : "Resolve Differences"}
-            </Button>
+            {/* Hide button if confirmed; otherwise render based on isBalanced */}
+            {!isConfirmed && (
+              <Button
+                type="primary"
+                danger={!isBalanced}
+                disabled={!isBalanced}
+                loading={reconciliationConfirmed.isPending}
+                onClick={reconciliation}
+                icon={
+                  isBalanced ? <CheckOutlined /> : <WarningOutlined />
+                }
+              >
+                {isBalanced
+                  ? "Confirm Reconciliation"
+                  : "Resolve Differences"}
+              </Button>
+            )}
           </Space>
         }
         style={{ alignItems: "center" }}
       />
+    
     </div>
   );
 };
 
 export default ReconciliationStatus;
-

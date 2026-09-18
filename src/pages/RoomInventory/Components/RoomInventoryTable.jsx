@@ -21,6 +21,7 @@ const RoomInventoryTable = ({
   data,
   page,
   setPage,
+  loading,
   perPage,
   total,
   changePage,
@@ -233,6 +234,7 @@ const RoomInventoryTable = ({
         pagination={false}
         dataSource={data}
         rowKey="uuid"
+        loading={loading}
         expandable={{ expandedRowRender, defaultExpandedRowKeys: ["0"] }}
       />
 
