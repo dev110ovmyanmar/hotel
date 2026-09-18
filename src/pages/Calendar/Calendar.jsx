@@ -38,6 +38,7 @@ const Calendar = () => {
   const gridRef = useRef(null);
   const [filterOpen, setFilterOpen] = useState(false);
   const [localFilters, setLocalFilters] = useState({ roomType: null, floor: null, statuses: null });
+  const [isChangingDate, setIsChangingDate] = useState(false);
 
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
   const reservationRoomStatus = useMemo(
@@ -75,7 +76,7 @@ const Calendar = () => {
     reservationRoomStatus: filters.statuses ? { uuid: filters.statuses } : null,
   }), [month, keyword, filters]);
 
-  const { data: apiData, isLoading, isFetching } = useApiQuery({
+  const { data: apiData, isLoading, isFetching, isPending } = useApiQuery({
     fetchQueryName: 'reservationCalendar',
     fetchQueryFunction: getReservationCalendar,
     params: calendarParams,
@@ -117,6 +118,10 @@ const Calendar = () => {
       setAllData([]);
     }
   }, [apiData]);
+
+  useEffect(() => {
+    if (!isFetching) setIsChangingDate(false);
+  }, [isFetching]);
 
   const filteredData = useMemo(() => {
     if (searchQuery) return allData;
@@ -186,6 +191,8 @@ const Calendar = () => {
         setCurrentDate={setCurrentDate}
         isLoading={isLoading}
         isFetching={isFetching}
+        isChangingDate={isChangingDate}
+        setIsChangingDate={setIsChangingDate}
         searchInput={searchInput}
         setSearchInput={setSearchInput}
         setSearchQuery={setSearchQuery}
@@ -201,7 +208,7 @@ const Calendar = () => {
       />
 
       <div className="flex-1 relative overflow-hidden flex flex-col">
-        {(isLoading || isFetching) && (
+        {(isLoading || isFetching || isChangingDate || isPending) && (
           <div className="absolute inset-0 z-[70] flex items-center justify-center">
             <Loader />
           </div>
