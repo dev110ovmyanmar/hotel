@@ -7,6 +7,7 @@ import Toast from '../../../../../../component/Toast/Toast';
 import RoomUpgradeReview from './RoomUpgradeReview';
 import { FaStar } from 'react-icons/fa';
 import { darkModeStyle, selectedDarkMode, textWhiteInDarkStyle } from '../../../../../../utils';
+import ColorStatusTag from '../../../../../../component/ColorStatusTag/ColorStatusTag';
 
 const { Text, Title } = Typography;
 
@@ -23,9 +24,9 @@ export default function RoomUpgradeModal({
     const [selectedRoom, setSelectedRoom] = useState(null);
     const [toReviewPage, setToReviewPage] = useState(null);
     const [selectedRoomTypeName, setSelectedRoomTypeName] = useState({});
-    console.log(selectedRoomTypeName, "selectedRoomTypeName")
     const [reviewData, setReviewData] = useState(null);
     const [checkSelectedRoom, setCheckSelectedRoom] = useState(false);
+    const isRoomCheckIn = record?.roomStatus?.code === "checked_in";
 
     // API Mutation engine handling state invalidation
     const createRoomAmendmentMutation = useApiMutation({
@@ -46,7 +47,6 @@ export default function RoomUpgradeModal({
         setReviewData()
     };
 
-    console.log(record, "Record")
     // Submits data directly using single-pane architectural validation structures
     const handleSubmit = async () => {
         try {
@@ -100,7 +100,22 @@ export default function RoomUpgradeModal({
         ?.filter(room => room?.roomType?.uuid === selectedRoom)
         .flatMap(room => (
             room.rooms.map(r => (
-                { value: r.uuid, label: r.roomNo, rank: r.roomType.rank, }
+                {
+                    value: r.uuid,
+                    label: (
+                        <div className="flex flex-col justify-between">
+                            <span>{r.roomNo}</span>
+
+                            <div className='flex gap-1.5'>
+                                <ColorStatusTag status={r.status} iconType="bed" />
+                                <ColorStatusTag status={r.cleanStatus} iconType="broom" />
+                            </div>
+                        </div>
+                    ),
+                    roomNo: r.roomNo,
+                    rank: r.roomType.rank,
+                    disabled : isRoomCheckIn && (r.cleanStatus.code !== "clean" || r.status.code === "occupied")                       
+                }
             )
             )));
 
@@ -111,10 +126,12 @@ export default function RoomUpgradeModal({
             const selectedRoomData = roomUuidOptions.find(
                 room => room.value === values.roomUuid.value
             );
+            console.log(selectedRoomData,"selectedRoomDataselectedRoomData")
 
             const data = {
                 ...values,
                 rank: selectedRoomData?.rank,
+                roomNo: selectedRoomData?.roomNo
             };
 
 
@@ -151,7 +168,7 @@ export default function RoomUpgradeModal({
                 type="primary"
                 onClick={handleReview}
                 disabled={!checkSelectedRoom}
-                 className={
+                className={
                     !checkSelectedRoom ? "text-default" : ""
                 }
             >
@@ -187,8 +204,8 @@ export default function RoomUpgradeModal({
             }
             open={isOpen}
             onCancel={handleCloseReset}
-            width={500}  
-            destroyOnHidden         
+            width={500}
+            destroyOnHidden
             footer={footerContent}
         >
             {
@@ -211,7 +228,7 @@ export default function RoomUpgradeModal({
                                 border: '1px solid #e2e8f0',
                                 fontSize: '13px'
                             }}
-                            className={darkModeStyle}
+                                className={darkModeStyle}
                             >
                                 <Text type="secondary"><strong style={{ color: '#475569' }} className={textWhiteInDarkStyle}>Room Type:</strong> <span className={textWhiteInDarkStyle}>{currentRoomType}</span></Text>
 
@@ -232,76 +249,76 @@ export default function RoomUpgradeModal({
                                         <Row gutter={[16, 16]}>
 
                                             {roomList?.rooms
-                                            ?.filter(room=>room?.rooms.length > 0)
-                                            ?.map(room => {
-                                                return (
-                                                    <Col span={12}> 
+                                                ?.filter(room => room?.rooms.length > 0)
+                                                ?.map(room => {
+                                                    return (
+                                                        <Col span={12}>
 
-                                                        <div
-                                                            className={`  
-                                                            flex
-                                                            justify-between
-                                                            p-4                                                          
-                                                            cursor-pointer 
-                                                            shadow-md 
-                                                            transition-all 
-                                                            !border-2 
-                                                            !duration-500
-                                                            rounded-2xl 
-                                                            ${selectedRoom === room.roomType.uuid
-                                                                    ? `!border-blue-500 !bg-blue-50 !shadow-lg ${selectedDarkMode}`
-                                                                    : '!border-blue-200 !shadow-md hover:!border-blue-300 hover:-translate-y-1'}
-                                                                                                            `}
-                                                            onClick={() => {
-                                                                const matchedRatePlan = room.ratePlans.find(
-                                                                    rp => rp.uuid === ratePlanUuid
-                                                                );
-                                                                console.log(room, "RoomInSearch")
-                                                                setSelectedRoom(room.roomType.uuid);
-                                                                setSelectedRoomTypeName(room.roomType);
-                                                                setCheckSelectedRoom(true);
-                                                                form.resetFields(["roomUuid"]);
-                                                                form.setFieldsValue({
-                                                                    roomUuid: undefined
-                                                                });
-                                                                form.setFieldsValue({
-                                                                    roomType: room?.roomType?.uuid
-                                                                });
-                                                                if (matchedRatePlan) {
+                                                            <div
+                                                                className={`  
+                                                                    flex
+                                                                    justify-between
+                                                                    p-4                                                          
+                                                                    cursor-pointer 
+                                                                    shadow-md 
+                                                                    transition-all 
+                                                                    !border-2 
+                                                                    !duration-500
+                                                                    rounded-2xl 
+                                                                    ${selectedRoom === room.roomType.uuid
+                                                                        ? `!border-blue-400/20 !bg-blue-500/15 backdrop-blur-lg !shadow-lg ${selectedDarkMode}`
+                                                                        : '!border-blue-200 !shadow-md hover:!border-blue-500/30 hover:-translate-y-1'}
+                                                                    `}
+                                                                onClick={() => {
+                                                                    const matchedRatePlan = room.ratePlans.find(
+                                                                        rp => rp.uuid === ratePlanUuid
+                                                                    );
+                                                                    console.log(room, "RoomInSearch")
+                                                                    setSelectedRoom(room.roomType.uuid);
+                                                                    setSelectedRoomTypeName(room.roomType);
+                                                                    setCheckSelectedRoom(true);
+                                                                    form.resetFields(["roomUuid"]);
                                                                     form.setFieldsValue({
-                                                                        ratePlan: {
-                                                                            value: matchedRatePlan.uuid,
-                                                                            label: matchedRatePlan.name,
-                                                                        },
+                                                                        roomUuid: undefined
                                                                     });
-                                                                };
-                                                            }}
+                                                                    form.setFieldsValue({
+                                                                        roomType: room?.roomType?.uuid
+                                                                    });
+                                                                    if (matchedRatePlan) {
+                                                                        form.setFieldsValue({
+                                                                            ratePlan: {
+                                                                                value: matchedRatePlan.uuid,
+                                                                                label: matchedRatePlan.name,
+                                                                            },
+                                                                        });
+                                                                    };
+                                                                }}
 
 
-                                                        >
-                                                            <div className="!text-xs">
-                                                                {room?.roomType?.name}
-                                                            </div>
-
-                                                            <div className="grid place-items-center w-fit -mt-2">
-                                                                <FaStar className={
-                                                                    `
-                                                                ${selectedRoom === room.roomType.uuid ? "text-amber-500" : "text-amber-200 "
-                                                                    }
-                                                                text-3xl 
-                                                                col-start-1 
-                                                                row-start-1
-                                                                                                                                                                            `
-                                                                } />
-                                                                <div className="col-start-1 row-start-1 text-gray-900 font-bold text-xs mt-1 ml-1 mr-1">
-                                                                    {room?.roomType?.rank}
+                                                            >
+                                                                <div className="!text-xs">
+                                                                    {room?.roomType?.name}
                                                                 </div>
-                                                            </div>
 
-                                                        </div>
-                                                    </Col>
-                                                )
-                                            })}
+                                                                <div className="grid place-items-center w-fit -mt-2">
+                                                                    <FaStar className={
+                                                                        `
+                                                                ${selectedRoom === room.roomType.uuid ? "text-amber-500" : "text-amber-200 "
+                                                                        }
+                                                                        text-3xl 
+                                                                        col-start-1 
+                                                                        row-start-1
+                                                                                                                                                                            `
+                                                                    } />
+                                                                    <div className="col-start-1 row-start-1 text-gray-900 font-bold text-xs mt-1 ml-1 mr-1">
+                                                                        {room?.roomType?.rank}
+                                                                    </div>
+                                                                </div>
+
+                                                            </div>
+                                                        </Col>
+                                                    )
+                                                })}
 
                                             {/* </Row> */}
                                             {/* </Col> */}

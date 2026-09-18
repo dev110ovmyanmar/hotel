@@ -9,6 +9,7 @@ const RoomDowngradeReview = ({
     selectedRoomTypeName,
     reviewData
 }) => {
+    console.log(reviewData,"ReviewDataInRoomDownGradeReview")
     const dataSource = [
         {
             key: "1",
@@ -16,7 +17,7 @@ const RoomDowngradeReview = ({
             current: record?.roomType?.name,
             arrow: <SwapRightOutlined/>,
             downgrade: selectedRoomTypeName?.name,
-            color: "border-2 border-[#4C16FF] bg-[#F0EBFF]",
+            color: "border-2 text-purple-500 border-purple-400/60 !bg-purple-500/15 l !backdrop-blur-lg shadow-md",
         },
         {
             key: "2",
@@ -24,15 +25,15 @@ const RoomDowngradeReview = ({
             current: record?.roomType?.rank,
             arrow: <SwapRightOutlined/>,
             downgrade: reviewData?.rank,
-            color: "border-2 border-[#4C16FF] bg-[#F0EBFF]",
+            color: "border-2 text-purple-500 border-purple-400/60 !bg-purple-500/15 l !backdrop-blur-lg shadow-md",
         },
         {
             key: "3",
             field: <div className='font-bold'>Room No</div>,
             current: record?.room?.roomNo,
             arrow: <SwapRightOutlined/>,
-            downgrade: reviewData?.roomUuid?.label,
-            color: "border-2 border-[#4C16FF] bg-[#F0EBFF]",
+            downgrade: reviewData?.roomNo,
+            color: "border-2 text-purple-500 border-purple-400/60 !bg-purple-500/15 l !backdrop-blur-lg shadow-md",
         },
         {
             key: "4",
@@ -40,7 +41,7 @@ const RoomDowngradeReview = ({
             current: record?.ratePlan?.name,
             arrow: <SwapRightOutlined/>,
             downgrade: reviewData?.ratePlan?.label,
-            color: "border-2 border-[#4C16FF] bg-[#F0EBFF]",
+            color: "border-2 text-purple-500 border-purple-400/60 !bg-purple-500/15 l !backdrop-blur-lg shadow-md",
         },
     ];
 
@@ -87,29 +88,3 @@ const RoomDowngradeReview = ({
 }
 
 export default RoomDowngradeReview
-
-
-{/* <Row gutter={16}>
-                                <Col span={12} >
-                                    <Card className='!shadow-md'>
-                                        <div className='!font-bold !mb-3 '>Current Room</div>
-                                        <div>{record?.roomType.name}</div>
-                                        <div>Rank - {record?.roomType?.rank}</div>
-                                        {record?.room?.roomNo &&
-                                            <div>Room No - {record?.room?.roomNo}</div>
-                                        }
-                                        <div>{record?.ratePlan?.name}</div>
-                                    </Card>
-                                </Col>
-
-                                <Col span={12}>
-                                    <Card className='!shadow-md !bg-purple-400 !text-gray-100'>
-                                        <div className='!font-bold !mb-3'>downgrade Room</div>
-                                        <div>{selectedRoomTypeName?.name}</div>
-                                        <div> Rank - {reviewData?.rank}</div>
-                                        <div>Room No - {reviewData?.roomUuid?.label}</div>
-                                        <div>{reviewData?.ratePlan?.label}</div>
-                                    </Card>
-                                </Col>
-
-                            </Row> */}
