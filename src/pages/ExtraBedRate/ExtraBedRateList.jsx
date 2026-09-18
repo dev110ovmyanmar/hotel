@@ -23,7 +23,7 @@ const ExtraBedRateList = () => {
     filter.endDate = endDate;
   }
 
-  const { data } = useApiQuery({
+  const { data , isLoading} = useApiQuery({
     fetchQueryName: "extraBedRate",
     fetchQueryFunction: fetchExtraBedRate,
     params: {
@@ -59,7 +59,7 @@ const ExtraBedRateList = () => {
         />
       </div>
 
-      <ExtraBedRateTable data={data?.data || []} />
+      <ExtraBedRateTable data={data?.data || []} loading={isLoading}/>
 
       <ExtraBedRateForm
         drawerOpen={drawerOpen}

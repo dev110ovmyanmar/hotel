@@ -16,6 +16,7 @@ const MenuItemTable = ({
   setPage,
   perPage,
   total,
+  loading,
   changePage,
   changePerPage,
 }) => {
@@ -213,6 +214,7 @@ const MenuItemTable = ({
             columns={expandColumns}
             dataSource={record.menuInventoryMappings || []}
             rowKey="uuid"
+            loading={loading} 
             pagination={
               record.menuInventoryMappings?.length > 10 ? true : false
             }
@@ -231,6 +233,7 @@ const MenuItemTable = ({
         columns={columns}
         expandable={{ expandedRowRender, defaultExpandedRowKeys: ["0"] }}
         dataSource={data}
+        loading={loading} 
         rowKey="uuid"
         pagination={{
           current: page,
