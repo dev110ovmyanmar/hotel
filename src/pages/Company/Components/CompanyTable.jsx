@@ -19,6 +19,7 @@ const CompanyTable = ({
   page,
   perPage,
   total,
+  loading,
   changePage,
   changePerPage,
 }) => {
@@ -181,6 +182,7 @@ const CompanyTable = ({
         columns={columns}
         dataSource={data}
         rowKey="uuid"
+        loading={loading}
         pagination={{
           current: page,
           pageSize: perPage,

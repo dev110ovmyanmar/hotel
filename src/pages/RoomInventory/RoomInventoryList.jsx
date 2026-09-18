@@ -65,7 +65,7 @@ const RoomInventoryList = () => {
         />
       </div>
 
-      <RoomInventoryTable data={roomTypeData || []} />
+      <RoomInventoryTable data={roomTypeData || []} loading={isLoading}/>
 
       {mode === "add" ? (
         <RoomInventoryCreateForm
