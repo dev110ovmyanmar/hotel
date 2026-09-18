@@ -120,7 +120,7 @@ const PreAuditTable = ({
                     type="primary"
                     onClick={colorCheckBooking}
                     className="flex items-center gap-1"
-                    disabled={preAuditChecksData?.summary?.blockingIssues !== 0}
+                    disabled={preAuditChecksData?.summary?.blockingIssues == 0}
                 >
                     Next Step
                     <AiOutlineRight />

@@ -47,7 +47,18 @@ const CloseBusinessDatePage = ({
             <CheckBookingHeader />
             {/* <CloseBusinessDateStatus preAuditChecksData={preAuditChecksData} /> */}
             <CloseBusinessDateTable
-                colorCheckBooking={() => {
+                backStep={() => {
+                    window.dispatchEvent(
+                        new CustomEvent("breadcrumb_updated", {
+                            detail: {
+                                stepValue: Number(stepValue) - 1,
+                            },
+                        })
+                    );
+
+                    navigate("/night-audit/reconciliation");
+                }}
+                nextStep={() => {
                     window.dispatchEvent(
                         new CustomEvent("breadcrumb_updated", {
                             detail: {
