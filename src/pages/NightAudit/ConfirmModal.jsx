@@ -39,17 +39,23 @@ const ConfirmModal = ({
         footer: "dark:!bg-[#1F1F1F] dark:!border-[#e5e5e5]"
     }
 
-    const nightAuditStorage = {
-        isLocked: activeAdminDatas?.pages[0]?.systemLock?.isLocked,
-        businessDate: activeAdminDatas?.pages[0]?.nightAudit?.targetBusinessDate,
-        checkStatus : activeAdminDatas?.pages[0]?.nightAudit?.status
-    };
-    
+    // const nightAuditStorage = {
+    //     isLocked: activeAdminDatas?.pages[0]?.systemLock?.isLocked,
+    //     businessDate: activeAdminDatas?.pages[0]?.nightAudit?.targetBusinessDate,
+    //     checkStatus: activeAdminDatas?.pages[0]?.nightAudit?.status
+    // };
+
     const systemLockMutation = useApiMutation({
         mutationFn: systemLock,
         shouldInvalidate: false,
         options: {
             onSuccess: (data) => {
+                console.log(data,"DATAINSystemLockMutation")
+                const nightAuditStorage = {
+                    isLocked: data?.isLocked,
+                    businessDate: data?.businessDate,
+                    auditStatus: data?.auditStatus
+                };
                 Toast.success("System locked successfully");
                 localStorage.setItem(
                     "nightAudit",
@@ -85,7 +91,7 @@ const ConfirmModal = ({
         catch (error) {
             console.log("Validationfailed:", error);
         }
-        
+
     };
 
     const handleForceLogoutToNavigate = () => {
@@ -133,9 +139,9 @@ const ConfirmModal = ({
                     layout="vertical"
                     label="Night Audit Key"
                     rules={[{ required: true, message: 'Please enter the Night Audit Key' }]}
-                    
+
                 >
-                    <Input placeholder="Enter Night Audit Key"/>
+                    <Input placeholder="Enter Night Audit Key" />
                 </Form.Item>
             </Form>
             {/* Admins will remain logged in but will not be able to perform any operations while the Night Audit is in progress. Do you wish to continue? */}

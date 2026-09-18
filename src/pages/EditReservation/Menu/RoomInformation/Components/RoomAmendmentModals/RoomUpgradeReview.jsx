@@ -10,6 +10,7 @@ const RoomUpgradeReview = ({
     reviewData,
     isAddNewRoom
 }) => {
+    console.log(reviewData,"REviewData")
     const dataSource = [
         {
             key: "1",
@@ -17,7 +18,7 @@ const RoomUpgradeReview = ({
             current:record?.roomType?.name,
             arrow: <SwapRightOutlined/>,
             upgrade: selectedRoomTypeName?.name,
-            color: "border-2 border-[#4C16FF] bg-[#F0EBFF]",
+            color: "border-2 text-purple-500 border-purple-400/60 !bg-purple-500/15 l !backdrop-blur-lg shadow-md",
         },
         {
             key: "2",
@@ -25,15 +26,15 @@ const RoomUpgradeReview = ({
             current:record?.roomType?.rank,
             arrow: <SwapRightOutlined/>,
             upgrade: reviewData?.rank,
-            color: "border-2 border-[#4C16FF] bg-[#F0EBFF]",
+            color: "border-2 text-purple-500 border-purple-400/60 !bg-purple-500/15 l !backdrop-blur-lg shadow-md",
         },
         {
             key: "3",
             field: <div className='font-bold'>Room No</div>,
-            current:record?.room?.roomNo ?record?.room?.roomNo : "-" ,
+            current:record?.room?.roomNo ? record?.room?.roomNo : "-" ,
             arrow: <SwapRightOutlined/>,
-            upgrade: reviewData?.roomUuid?.label,
-            color: "border-2 border-[#4C16FF] bg-[#F0EBFF]",
+            upgrade: reviewData?.roomNo,
+            color: "border-2 text-purple-500 border-purple-400/60 !bg-purple-500/15 l !backdrop-blur-lg shadow-md",
         },
         {
             key: "4",
@@ -41,7 +42,7 @@ const RoomUpgradeReview = ({
             current:record?.ratePlan?.name,
             arrow: <SwapRightOutlined/>,
             upgrade: reviewData?.ratePlan?.label,
-            color: "border-2 border-[#4C16FF] bg-[#F0EBFF]",
+            color: "border-2 text-purple-500 border-purple-400/60 !bg-purple-500/15 l !backdrop-blur-lg shadow-md",
         },
     ];
 
