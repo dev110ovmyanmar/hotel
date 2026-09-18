@@ -55,7 +55,7 @@ const VoidDrawer = ({
     <Drawer
       title="Void Line"
       placement="right"
-      width={480}
+      size={550}
       open={open}
       onClose={onClose}
       destroyOnClose
