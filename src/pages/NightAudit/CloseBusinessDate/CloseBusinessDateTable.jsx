@@ -1,6 +1,6 @@
 import { CloseCircleOutlined, EditOutlined, EyeOutlined, MoreOutlined, WarningOutlined } from "@ant-design/icons";
 import { Button, Card, Checkbox, Col, Dropdown, Form, Row, Space, Table, Tag } from "antd";
-import { AiOutlineRight } from "react-icons/ai";
+import { AiOutlineLeft, AiOutlineRight } from "react-icons/ai";
 import { CalendarRange, CircleCheck, LockKeyhole } from "lucide-react";
 import { addDays, nextStepButtonDesign } from "../../../variables/constants";
 import { useApiMutation } from "../../../hooks/useApiMutation";
@@ -8,13 +8,14 @@ import { clickCloseBusinessDate, clickCreateNewDay } from "../../../api/nightAud
 import { useState } from "react";
 
 const CloseBusinessDateTable = ({
-    colorCheckBooking,
+    backStep,
+    nextStep,
     preAuditChecksData
 }) => {
 
     const [form] = Form.useForm();
     const nextBusinessDate = addDays(preAuditChecksData?.businessDate, 1);
-    const [successCloseBusinessDate,setSuccessCloseBusinessDate] = useState(false);
+    const [successCloseBusinessDate, setSuccessCloseBusinessDate] = useState(false);
 
     const closeBusinessDateMutate = useApiMutation({
         mutationFn: clickCloseBusinessDate,
@@ -31,7 +32,7 @@ const CloseBusinessDateTable = ({
             businessDate: preAuditChecksData?.businessDate
         },
             {
-                onSuccess : (data) => {
+                onSuccess: (data) => {
                     const nightAuditStatus = data?.status === "completed";
                     const nightAuditData = JSON.parse(
                         localStorage.getItem("nightAudit")
@@ -41,7 +42,7 @@ const CloseBusinessDateTable = ({
                         "nightAudit",
                         JSON.stringify({
                             ...nightAuditData,
-                            nigitAuditStatus : nightAuditStatus
+                            auditStatus : nightAuditStatus
                         })
                     );
 
@@ -60,7 +61,6 @@ const CloseBusinessDateTable = ({
         })
     };
 
-    console.log(nextBusinessDate, "nextBusinessDate")
     const columns = [
         {
             title: "No",
@@ -192,7 +192,7 @@ const CloseBusinessDateTable = ({
                                     <Button
                                         className="!w-full"
                                         onClick={handleCloseBusinessDate}
-                                        disabled = {successCloseBusinessDate}
+                                        disabled={successCloseBusinessDate}
                                     >
                                         <div className="flex gap-x-5">
                                             <div><LockKeyhole /></div>
@@ -208,11 +208,32 @@ const CloseBusinessDateTable = ({
                 </Col>
             </Row>
 
-            <div className={nextStepButtonDesign}>
+            {/* <div className={nextStepButtonDesign}>
                 <Button
                     type="primary"
                     onClick={colorCheckBooking}
                     className="flex items-center gap-1"
+                >
+                    Next Step
+                    <AiOutlineRight />
+                </Button>
+            </div> */}
+            <div className="sticky bottom-0 flex justify-end gap-4 bg-gray-50 dark:bg-[#121111] py-2 px-4 z-10">
+
+                <Button
+                    type="primary"
+                    onClick={backStep}
+                    className="flex items-center gap-1"
+                >
+                    <AiOutlineLeft />
+                    Back
+                </Button>
+
+                <Button
+                    type="primary"
+                    onClick={nextStep}
+                    className="flex items-center gap-1"
+                    // disabled={data?.isConfirmed == "false"}
                 >
                     Next Step
                     <AiOutlineRight />

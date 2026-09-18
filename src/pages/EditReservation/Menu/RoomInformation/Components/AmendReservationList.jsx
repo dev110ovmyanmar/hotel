@@ -48,7 +48,6 @@ export const getAmendReservationMenuItems = ({
   };
 
   const confirmStatusDisabled = record?.roomStatus?.code !== "confirmed";
-
   return [
     { type: "divider" },
     {
@@ -108,7 +107,7 @@ export const getAmendReservationMenuItems = ({
               key: "room_move",
               label: "Change Room",
               icon: <MdOutlineMeetingRoom />,
-              disabled: checkDisabled("room_move") || !hasRoom,
+              disabled: checkDisabled("room_move") || !hasRoom || dayjs(record?.checkoutDate).isSame(dayjs(), "day"),
               ...getDisabledStyles("room_move"),
               onClick: () => {
                 if (!checkDisabled("room_move")) {
@@ -120,7 +119,7 @@ export const getAmendReservationMenuItems = ({
                   setRoomMoveOpen(true);
                 }
               },
-              style: !hasRoom
+              style: !hasRoom || dayjs(record?.checkoutDate).isSame(dayjs(), "day")
                 ? {
                   color: "#a2a0a0",
                   cursor: "not-allowed",

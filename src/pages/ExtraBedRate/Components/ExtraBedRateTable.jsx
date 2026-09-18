@@ -6,7 +6,7 @@ import usePermission from "../../../hooks/usePermission";
 import ExtraBedRateForm from "./ExtraBedRateForms/ExtraBedRateForm";
 import PriceTag from "../../../component/PriceTag/PriceTag";
 
-const ExtraBedRateTable = ({ data, page, setPage }) => {
+const ExtraBedRateTable = ({ data, page, setPage, loading }) => {
   const { hasPermission } = usePermission();
 
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -220,6 +220,7 @@ const ExtraBedRateTable = ({ data, page, setPage }) => {
         columns={columns}
         dataSource={data}
         pagination={false}
+        loading={loading}
         rowKey={(record) => record.roomType?.id}
         expandable={{
           expandedRowKeys,

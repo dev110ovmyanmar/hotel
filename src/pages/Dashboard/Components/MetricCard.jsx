@@ -120,7 +120,7 @@ export const MetricCard = ({ config, value = 0, currency }) => {
     >
       <div className="flex items-center px-1 py-3 h-full min-w-0">
         <div
-          className={`flex items-center justify-center w-10 h-10 rounded-full ${config.outerBg} shrink-0`}
+          className={`animate-pulse flex items-center justify-center w-10 h-10 rounded-full ${config.outerBg} shrink-0`}
         >
           <div
             className={`flex items-center justify-center w-8 h-8 rounded-full ${config.innerBg}`}
@@ -151,10 +151,6 @@ export const MetricCard = ({ config, value = 0, currency }) => {
               )}
             </div>
           </div>
-
-          {/* <span className="text-[10px] text-gray-400">
-            From last week
-          </span> */}
         </div>
       </div>
     </Card>

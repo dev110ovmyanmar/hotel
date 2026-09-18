@@ -24,11 +24,11 @@ export default function HousekeepingStatusCard({
       color: "#fa8c16",
       value: housekeepingData?.inprogress || 0,
     },
-    {
-      label: "Inspected",
-      color: "#1890ff",
-      value: housekeepingData?.inspected || 0,
-    },
+    // {
+    //   label: "Inspected",
+    //   color: "#1890ff",
+    //   value: housekeepingData?.inspected || 0,
+    // },
   ];
 
   const hoveredItem =
@@ -130,7 +130,7 @@ export default function HousekeepingStatusCard({
           })}
         </div>
 
-        <div className="grid grid-cols-2 gap-y-3 text-sm">
+        <div className="grid grid-cols-3 gap-y-3 text-sm">
           {housekeeping.map((item) => (
             <div
               key={item.label}

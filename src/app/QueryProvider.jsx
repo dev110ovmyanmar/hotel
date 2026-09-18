@@ -34,7 +34,7 @@ export default function QueryProvider({ children }) {
       }}
     >
       {children}
-      {import.meta.env.DEV && <ReactQueryDevtools initialIsOpen={false} />}
+      {/* {import.meta.env.DEV && <ReactQueryDevtools initialIsOpen={false} />} */}
     </PersistQueryClientProvider>
   );
 }

@@ -36,7 +36,6 @@ export default function AddRoomWithExtensionDateModal({
   const reservationNo = reservation?.reservationNo || `ID-${record?.id}`;
   const guestName = reservation?.guest?.name || "Unknown Guest";
   const roomTypeName = record?.roomType?.name;
-  console.log(record?.reservation?.room?.uuid, "ReservationUUId");
 
   const originalCheckin = record?.checkinDate ? dayjs(record.checkinDate) : "";
   const originalCheckout = record?.checkoutDate
@@ -164,65 +163,44 @@ export default function AddRoomWithExtensionDateModal({
           {/* --- STEP 1: INCREMENTOR INTERFACE --- */}
           {currentStep === "form" && (
             <Form form={form} layout="vertical">
-              {/* HIGHLIGHT WARNING BANNER: Visible only when max extension is zero */}
-              {maxDayExtension === 0 ? (
-                <div className="bg-red-50 border border-red-200 p-4 rounded-lg mb-5 flex gap-3 items-start">
-                  <WarningOutlined className="text-red-500 text-base mt-0.5" />
-                  <div>
-                    <div className="font-semibold text-red-600 text-sm mb-0.5">
-                      Extension Limit Reached (0 Days Remaining)
-                    </div>
-                    <div className="text-xs text-neutral-500 leading-relaxed">
-                      This stay cannot be extended further because the maximum
-                      extension allocation for this room is currently zero. This
-                      is usually due to upcoming bookings or room restrictions.
-                    </div>
-                  </div>
+              <div
+                className={`bg-slate-50 p-4 rounded-lg mb-5 ${darkModeStyle}`}
+              >
+                <div className="flex justify-between items-center mb-2">
+                  <label
+                    className={`block text-sm font-medium text-slate-600 ${textWhiteInDarkStyle}`}
+                  >
+                    Provision Additional Days
+                  </label>
                 </div>
-              ) : (
-                // Standard Interactive Incrementer
-                <div
-                  className={`bg-slate-50 p-4 rounded-lg mb-5 ${darkModeStyle}`}
-                >
-                  <div className="flex justify-between items-center mb-2">
-                    <label
-                      className={`block text-sm font-medium text-slate-600 ${textWhiteInDarkStyle}`}
-                    >
-                      Provision Additional Days
-                    </label>
-                    {/* MAX EXTENSION BADGE */}
-                    {/* <span className="bg-blue-50 text-blue-600 text-xs font-semibold px-2.5 py-0.5 rounded-full border border-blue-100">
-                                            Max Extension: {maxDayExtension} Day(s)
-                                        </span> */}
-                  </div>
 
-                  <Space size="middle" className="flex items-center">
-                    <Button
-                      shape="circle"
-                      icon={<MinusOutlined />}
-                      onClick={() =>
-                        setDaysToAdd((prev) => Math.max(1, prev - 1))
-                      }
-                      disabled={daysToAdd <= 1}
-                    />
-                    <span className="text-xl font-bold min-w-[30px] text-center inline-block">
-                      {daysToAdd}
-                    </span>
+                <Space size="middle" className="flex items-center">
+                  <Button
+                    shape="circle"
+                    icon={<MinusOutlined />}
+                    onClick={() =>
+                      setDaysToAdd((prev) => Math.max(1, prev - 1))
+                    }
+                    disabled={daysToAdd <= 1}
+                  />
+                  <span className="text-xl font-bold min-w-[30px] text-center inline-block">
+                    {daysToAdd}
+                  </span>
 
-                    <Button
-                      shape="circle"
-                      icon={<PlusOutlined />}
-                      onClick={() => setDaysToAdd((prev) => prev + 1)}
-                    // disabled={daysToAdd >= maxDayExtension}
-                    />
-                    <span
-                      className={`text-sm text-slate-500 font-medium ${textWhiteInDarkStyle}`}
-                    >
-                      Extra Day(s)
-                    </span>
-                  </Space>
-                </div>
-              )}
+                  <Button
+                    shape="circle"
+                    icon={<PlusOutlined />}
+                    onClick={() => setDaysToAdd((prev) => prev + 1)}
+                  // disabled={daysToAdd >= maxDayExtension}
+                  />
+                  <span
+                    className={`text-sm text-slate-500 font-medium ${textWhiteInDarkStyle}`}
+                  >
+                    Extra Day(s)
+                  </span>
+                </Space>
+              </div>
+              
 
               {/* Timeline Data Footer */}
               <div

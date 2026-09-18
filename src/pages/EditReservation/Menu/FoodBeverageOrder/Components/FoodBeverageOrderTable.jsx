@@ -75,6 +75,11 @@ const FoodBeverageOrderTable = ({
       )
     },
     {
+      title: "Check No",
+      dataIndex: "refNo",
+      key: "refNo",
+    },
+    {
       title: "Action",
       key: "action",
       fixed: "end",

@@ -23,7 +23,7 @@ const RoomRestrictionList = () => {
     filter.endDate = endDate;
   }
 
-  const { data } = useApiQuery({
+  const { data , isLoading} = useApiQuery({
     fetchQueryName: "roomRestriction",
     fetchQueryFunction: fetchRoomRestriction,
     params: {
@@ -59,7 +59,7 @@ const RoomRestrictionList = () => {
         />
       </div>
 
-      <RoomRestrictionTable data={data?.data || []} />
+      <RoomRestrictionTable data={data?.data || []} loading={isLoading}/>
 
       <RoomRestrictionForm
         drawerOpen={drawerOpen}

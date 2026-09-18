@@ -42,7 +42,7 @@ export default function RoomMoveModal({
         !!checkoutDate &&
         !!roomTypeUuid;
 
-    const { data: reservationRoomSearchDetails, isPending: isQueryLoading , isFetching : isQueryFetching } = useApiQuery({
+    const { data: reservationRoomSearchDetails, isPending: isQueryLoading, isFetching: isQueryFetching } = useApiQuery({
         fetchQueryName: ["reservation-room-search", roomTypeUuid, checkinDate, checkoutDate],
         fetchQueryFunction: reservationRoomSearch,
         params: {
@@ -56,7 +56,7 @@ export default function RoomMoveModal({
         },
         options: {
             enabled: isEnabled,
-            
+
         }
     });
 
@@ -87,7 +87,7 @@ export default function RoomMoveModal({
 
     // Clean structural conditions
     const hasNoRooms = !isQueryFetching && reservationRoomSearchDetails?.rooms?.length === 0;
-
+    console.log(record, "reservationRoomSearchDetailsRecord")
     return (
         <Modal
             title={
@@ -164,42 +164,82 @@ export default function RoomMoveModal({
                             {
                                 isQueryFetching
                                     ?
-                                    <Spin></Spin>
+                                    <div className='flex justify-center items-center'>
+                                        <Spin></Spin>
+                                    </div>
                                     :
                                     <Row gutter={[16, 16]}>
-                                        {reservationRoomSearchDetails?.rooms?.map((room) => (
-                                            <Col span={12} key={room.uuid}>
-                                                <Card
-                                                    onClick={() => setSelectRoomUuid(room.uuid)}
-                                                    className={`
-                                                !overflow-hidden !border !p-3 shadow-md cursor-pointer
-                                                hover:!border-sky-300 hover:!shadow-lg hover:-translate-y-1 
-                                                ${selectRoomUuid === room.uuid ? `!border-sky-600 !bg-sky-100 ${selectedDarkMode}` : '!border-sky-200'}
-                                                
-                                            `}
-                                                    styles={{
-                                                        body: {
-                                                            padding: 0,
-                                                            display: 'flex',
-                                                            flexDirection: 'column',
-                                                            height: '100%',
-                                                        },
-                                                    }}
-                                                >
-                                                    <div className="flex justify-between items-start mb-3">
-                                                        <div className="flex gap-1">
-                                                            <GiBed fontSize={30} className='text-green-500 dark:text-green-400 ' />
-                                                            <h3 className="text-base font-black text-green-500   dark:text-green-400leading-tight">
-                                                                {room?.roomNo || "---"}
-                                                            </h3>
+                                        {reservationRoomSearchDetails?.rooms?.map((room) => {
+                                            const isRoomDisabled =
+                                                room?.status?.code === "out_of_order" ||
+                                                room?.status?.code === "out_of_service";
+
+                                            const isRoomCheckedIn = record?.roomStatus?.code === "checked_in";
+                                            const isCleanRoom = room?.cleanStatus?.code === "clean";
+                                            const isRoomCheckedInAndNotClean = isRoomCheckedIn && !isCleanRoom;
+
+                                            const isOccupied = room?.status?.code === "occupied";
+                                            const isRoomCheckedInAndOccupied = isRoomCheckedIn && isOccupied;
+
+                                            return (
+                                                <Col span={12} key={room.uuid}>
+                                                    <Card
+                                                        onClick={() => {
+                                                            if (isRoomDisabled || isRoomCheckedInAndNotClean || isRoomCheckedInAndOccupied) return;
+
+                                                            setSelectRoomUuid(room.uuid);
+                                                        }}
+                                                        className={`
+                                                            !overflow-hidden !border !p-3 shadow-md !items-center
+                                                            ${isRoomDisabled || isRoomCheckedInAndNotClean || isRoomCheckedInAndOccupied
+                                                                ? "cursor-not-allowed opacity-50 !border-gray-300"
+                                                                : "cursor-pointer hover:!border-green-300 hover:!shadow-lg hover:-translate-y-1"
+                                                            }
+                                                            
+                                                            ${selectRoomUuid === room.uuid
+                                                                ? `!border-green-400 !bg-green-200/60 backdrop-blur-md shadow-[0_4px_20px_rgba(56,189,248,0.20)] ${selectedDarkMode}`
+                                                                : "!border-green-200"
+                                                            } 
+                                                        `}
+                                                        styles={{
+                                                            body: {
+                                                                padding: 0,
+                                                                display: "flex",
+                                                                flexDirection: "column",
+                                                                height: "100%",
+                                                            },
+                                                        }}
+                                                    >
+                                                        <div className="flex justify-between items-center mb-3">
+                                                            <div className="flex gap-1">
+                                                                <GiBed
+                                                                    fontSize={30}
+                                                                    className={
+                                                                        isRoomDisabled || isRoomCheckedInAndNotClean || isRoomCheckedInAndOccupied
+                                                                            ? "text-gray-400"
+                                                                            : "text-green-500 dark:text-green-400"
+                                                                    }
+                                                                />
+
+                                                                <h3
+                                                                    className={`text-base font-black leading-tight ${isRoomDisabled || isRoomCheckedInAndNotClean || isRoomCheckedInAndOccupied
+                                                                        ? "text-gray-400"
+                                                                        : "text-green-500 dark:text-green-400"
+                                                                        }`}
+                                                                >
+                                                                    {room?.roomNo || "---"}
+                                                                </h3>
+                                                            </div>
+
+                                                            <div className="flex flex-col items-end gap-1.5">
+                                                                <ColorStatusTag status={room?.status} iconType="bed" />
+                                                                <ColorStatusTag status={room?.cleanStatus} iconType="broom" />
+                                                            </div>
                                                         </div>
-                                                        <div className="flex flex-col items-end gap-1.5">
-                                                            <ColorStatusTag status={room?.status} />
-                                                        </div>
-                                                    </div>
-                                                </Card>
-                                            </Col>
-                                        ))}
+                                                    </Card>
+                                                </Col>
+                                            );
+                                        })}
                                     </Row>
                             }
                         </>
@@ -227,12 +267,15 @@ export default function RoomMoveModal({
                                 ?.filter(searchroom => searchroom?.uuid === selectRoomUuid)
                                 ?.map(searchroom => (
                                     <Col span={11} key={searchroom.uuid}>
-                                        <div className={`flex justify-between border-2 border-[#4C16FF] bg-[#F0EBFF] py-3 px-2 rounded-md ${upgradeAndDownRoomDarkMode}`}>
+                                        <div className={`flex justify-between items-center border-2 border-purple-400/60 !bg-purple-500/15 l !backdrop-blur-lg shadow-md py-3 px-2 rounded-md ${upgradeAndDownRoomDarkMode}`}>
                                             <div className='flex gap-2'>
-                                                <GiBed fontSize={25} className='text-green-500' />
-                                                <div className='text-md text-green-500'>{searchroom?.roomNo}</div>
+                                                <GiBed fontSize={25} className='text-purple-500' />
+                                                <div className='text-md text-purple-500'>{searchroom?.roomNo}</div>
                                             </div>
-                                            <ColorStatusTag status={searchroom?.status} />
+                                            <div className='flex flex-col gap-1.5'>
+                                                <ColorStatusTag status={searchroom?.status} iconType="bed" />
+                                                <ColorStatusTag status={searchroom?.cleanStatus} iconType="broom" />
+                                            </div>
                                         </div>
                                     </Col>
                                 ))}

@@ -2,7 +2,7 @@ import { Button, Table } from "antd";
 import { AiOutlineLeft, AiOutlineRight } from "react-icons/ai";
 import PriceTag from "../../../component/PriceTag/PriceTag";
 
-const ReconciliationTable = ({ backStep, nextStep, data }) => {
+const ReconciliationTable = ({ backStep, nextStep, data ,isBalanced ,isConfirm}) => {
   const tableData = data?.folios || [];
 
   const columns = [
@@ -136,6 +136,7 @@ const ReconciliationTable = ({ backStep, nextStep, data }) => {
       </div>
 
       {/* <div className={`${nextStepButtonDesign} flex gap-4 mt-4`}> */}
+      
       <div className="sticky bottom-0 flex justify-end gap-4 bg-gray-50 dark:bg-[#121111] py-2 px-4 z-10">
 
         <Button
@@ -151,6 +152,7 @@ const ReconciliationTable = ({ backStep, nextStep, data }) => {
           type="primary"
           onClick={nextStep}
           className="flex items-center gap-1"
+          disabled={isConfirm !== "true"}
         >
           Next Step
           <AiOutlineRight />

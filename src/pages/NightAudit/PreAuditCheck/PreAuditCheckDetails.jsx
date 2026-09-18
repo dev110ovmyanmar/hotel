@@ -15,7 +15,7 @@ const PreAuditCheckDetails = ({
     const isTodayArrivals = selectedData?.code === "today_arrivals";
     const isUnassignedRooms = selectedData?.code === "unassigned_rooms";
 
-    console.log(selectedData,"PreAuditCheckDetailsSelectedData")
+    console.log(selectedData, "PreAuditCheckDetailsSelectedData")
     const { data } = useApiQuery({
         fetchQueryName: "reservationRoomList",
         fetchQueryFunction: reservationRoomList,
@@ -40,7 +40,7 @@ const PreAuditCheckDetails = ({
         //   keyword,
         //   status: normalStatus,
         // },
-        options:{
+        options: {
             enabled: open && !!selectedData && isUnassignedRooms,
         }
     });
@@ -100,7 +100,6 @@ const PreAuditCheckDetails = ({
             align: "center",
             width: 30,
             render: (record) => {
-
                 const handlePreAuditView = () => {
                     if (record?.uuid) {
                         navigate(`/reservations/${record?.uuid}/room-information`);
