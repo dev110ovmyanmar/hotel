@@ -771,6 +771,8 @@ const GuestForm = ({
   const uuid = reservationUuid?.uuid;
   const [form] = Form.useForm();
   const { hasPermission } = usePermission();
+  const canEdit = hasPermission(PERMISSIONS.GUEST_EDIT);
+
   const watchedSrNo = Form.useWatch("srcNo", form);
   const guestAgeType = Form.useWatch("isAdult", form);
   const selectedTitle = Form.useWatch("title", form);
@@ -1025,6 +1027,7 @@ const GuestForm = ({
           </span>
 
           {isView ? (
+            canEdit && 
             <Button type="primary" onClick={() => setMode("edit")}>
               Edit
             </Button>

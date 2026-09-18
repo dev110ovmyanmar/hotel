@@ -51,7 +51,7 @@ const DepartmentsList = () => {
           setKeyword={setKeyword}
           addButtonText="Add New Department"
           onAdd={handleAdd}
-          permission={PERMISSIONS.DEPARTMENT_LIST}
+          permission={PERMISSIONS.DEPARTMENT_CREATE}
         />
       </div>
 

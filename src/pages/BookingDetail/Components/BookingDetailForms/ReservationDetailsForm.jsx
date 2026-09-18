@@ -83,22 +83,26 @@ const ReservationDetailsForm = ({ open, onClose, onSuccess }) => {
     })) || [];
 
   const agenciesOptions =
-    reservationMetas?.agencies?.map((item) => ({
-      value: item.uuid,
-      label: formatSourceLabel(item),
-    })) || [];
+    reservationMetas?.agencies?.filter(item => item?.status.code === "active")
+      .map((item) => ({
+        label: item?.name,
+        value: item.uuid
+      })) || [];
 
   const referralAgentsOptions =
-    reservationMetas?.referral_agents?.map((item) => ({
-      value: item.uuid,
-      label: formatSourceLabel(item),
-    })) || []
+    reservationMetas?.referral_agents?.filter(item => item?.status.code === "active")
+      .map((item) => ({
+        label: item?.name,
+        value: item.uuid
+      })) || []
 
   const companyOptions =
-    reservationMetas?.companies?.map((item) => ({
-      value: item.uuid,
-      label: formatSourceLabel(item),
-    })) || [];
+    reservationMetas?.companies?.filter(item => item?.status.code === "active")
+      .map((item) => ({
+        label: item?.name,
+        value: item.uuid
+      })) || [];
+
 
   const sourceNameOptions = {
     agency: agenciesOptions,

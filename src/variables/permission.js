@@ -19,6 +19,7 @@ export const PERMISSIONS = {
   ADMIN_CREATE: "admin.create",
   ADMIN_EDIT: "admin.edit",
   ADMIN_PERMISSION: "admin.permission",
+  ADMIN_RESET_PASSWORD:"	admin.reset-password",
 
   //role
   ROLE_LIST: "role.list",
@@ -38,6 +39,7 @@ export const PERMISSIONS = {
   PROPERTY_VIEW: "property.view",
   PROPERTY_CREATE: "property.create",
   PROPERTY_EDIT: "property.edit",
+  PROPERTY_IMAGE_DOCUMENT: "property.image-document",
 
   // Policy
   POLICY_LIST: "policy.list",
@@ -121,6 +123,12 @@ export const PERMISSIONS = {
   SERVICE_CREATE: "service.create",
   SERVICE_EDIT: "service.edit",
 
+  // Inventory Category 
+  // INVENTORY_LIST: "inventory.list",
+  // SERVICE_INVENTORY_ITEM_VIEW: "inventory.view",
+  // SERVICE_INVENTORY_ITEM_CREATE: "inventory.create",
+  // SERVICE_INVENTORY_ITEM_EDIT: "inventory.edit",
+
   // Service Inventory Item
   SERVICE_INVENTORY_ITEM_LIST: "inventory.list",
   SERVICE_INVENTORY_ITEM_VIEW: "inventory.view",
@@ -168,6 +176,7 @@ export const PERMISSIONS = {
   GUEST_VIEW: "guest.view",
   GUEST_CREATE: "guest.create",
   GUEST_EDIT: "guest.edit",
+  GUEST_IMAGE_DOCUMENT : "guest.image-document",
 
   // Guest Note
   GUEST_NOTE_LIST: "guest-note.list",
@@ -217,11 +226,22 @@ export const PERMISSIONS = {
   SEASONAL_RATE_CREATE: "seasonal-rate.create",
   SEASONAL_RATE_EDIT: "seasonal-rate.edit",
 
+  // Reservation Calendar
+  RESERVATION_CALENDAR:"calendar.reservation",
+
   // Availability Calendar
   AVAILABILITY_CALENDAR_LIST: "availability-calendar.list",
   AVAILABILITY_CALENDAR_VIEW: "availability-calendar.view",
   AVAILABILITY_CALENDAR_CREATE: "availability-calendar.create",
   AVAILABILITY_CALENDAR_UPDATE: "availability-calendar.edit",
+
+  // Availability Calendar
+  RATE_AND_INVENTORY_CALENDAR_LIST: "calendar.rate-inventory",
+  // AVAILABILITY_CALENDAR_VIEW: "availability-calendar.view",
+  // AVAILABILITY_CALENDAR_CREATE: "availability-calendar.create",
+  // AVAILABILITY_CALENDAR_UPDATE: "availability-calendar.edit",
+
+  
 
   //Supplier
   SUPPLIER_LIST: "supplier.list",
@@ -280,9 +300,11 @@ export const PERMISSIONS = {
 
   //Reservation room
   RESERVATION_ROOM_LIST: "reservation-room.list",
-  RESERVATION_ROOM_VIEW: "reservation-room.create",
-  RESERVATION_ROOM_CREATE: "reservation-room.view",
+  RESERVATION_ROOM_VIEW: "reservation-room.view",
+  RESERVATION_ROOM_CREATE: "reservation-room.create",
   RESERVATION_ROOM_SEARCH: "reservation-room.search",
+  RESERVATION_ROOM_NOTE: "reservation-room.note",
+  // RESERVATION_ROOM_SEARCH: "reservation-room.search",
 
   //HouseKeeping Status
   HK_STATUS_LIST: "hk-status.list",

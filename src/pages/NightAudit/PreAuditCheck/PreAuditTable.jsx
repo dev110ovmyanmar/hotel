@@ -1,12 +1,19 @@
-import { CloseCircleOutlined, EyeOutlined, MoreOutlined, WarningOutlined } from "@ant-design/icons";
-import { Button, Dropdown, Space, Table, Tag } from "antd";
+import { CloseCircleOutlined, EyeOutlined, LockOutlined, MoreOutlined, WarningOutlined } from "@ant-design/icons";
+import { Button, Dropdown, Space, Table, Tag, Tooltip } from "antd";
 import { AiOutlineRight } from "react-icons/ai";
 import { CircleCheck } from "lucide-react";
+import { PERMISSIONS } from "../../../variables/permission";
+import PreAuditCheckDetails from "./PreAuditCheckDetails";
+import { useState } from "react";
+import useApiQuery from "../../../hooks/useApiQuery";
+import { reservationRoomList } from "../../../api/reservationSectionApi";
 
 const PreAuditTable = ({
     colorCheckBooking,
     preAuditChecksData
 }) => {
+    const [drawerOpen, setDrawerOpen] = useState(false);
+    const [selectedData,setSelectedData] = useState({});
 
     const columns = [
         {
@@ -71,44 +78,32 @@ const PreAuditTable = ({
             fixed: "end",
             align: "center",
             render: (_, record) => {
-                const smallStyle = { fontSize: "12px" };
+                const hasPermissionForReservationList = PERMISSIONS?.RESERVATION_LIST;
 
-                const actions = [
-                    {
-                        key: "view",
-                        label: "View",
-                        icon: <EyeOutlined style={{ fontSize: "12px" }} />,
-                        // permission: PERMISSIONS.ADMIN_VIEW,
-                        // onClick: () => {
-                        //     setDrawerOpen(true);
-                        //     setMode("view");
-                        //     setSelectedData(record);
-                        // },
-                    },
-                ];
-
-                // Filter actions based on permission & hidden flags
-                const items = actions
-                    .filter(
-                        (action) =>
-                            (!action.permission || hasPermission(action.permission)) && !action.hidden,
-                    )
-                    .map((action) => ({
-                        key: action.key,
-                        label: (
-                            <Space size={4} style={smallStyle} onClick={action.onClick}>
-                                {action.icon}
-                                <span style={{ fontSize: "14px" }}>{action.label}</span>
-                            </Space>
-                        ),
-                    }));
+                const handlePreAuditView = () => {
+                    setDrawerOpen(true);
+                    setSelectedData(record)
+                }
 
                 return (
-                    <Dropdown menu={{ items }} trigger={["click"]}>
-                        <MoreOutlined style={{ fontSize: "16px" }} />
-                    </Dropdown>
-                );
-            },
+                    <>
+                        {
+                            record?.count > 0
+                                ?
+                                <Tooltip title="View Details">
+                                    <EyeOutlined
+                                        onClick={handlePreAuditView}
+                                    />
+                                </Tooltip>
+                                :
+                                <Tooltip title="Locked" >
+                                    <LockOutlined disabled className="!text-gray-400 cursor-not-allowed"/>
+                                </Tooltip>
+                        }
+
+                    </>
+                )
+            }
         },
 
     ];
@@ -125,12 +120,18 @@ const PreAuditTable = ({
                     type="primary"
                     onClick={colorCheckBooking}
                     className="flex items-center gap-1"
-                    disabled={preAuditChecksData?.summary?.blockingIssues !== 0}
+                    disabled={preAuditChecksData?.summary?.blockingIssues == 0}
                 >
                     Next Step
                     <AiOutlineRight />
                 </Button>
             </div>
+
+            <PreAuditCheckDetails
+                onClose={() => setDrawerOpen(false)}
+                open={drawerOpen}
+                selectedData={selectedData}
+            />
 
         </div>
     )

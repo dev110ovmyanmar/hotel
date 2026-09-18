@@ -78,7 +78,7 @@ const CategoryForm = ({
     invalidateKeys: [["categories"]],
   });
 
-
+editCategory
   const onFinish = (values) => {
     const basePayload = {
       name: values.name,
@@ -136,7 +136,7 @@ const CategoryForm = ({
                 <Button type="primary" onClick={switchToEdit}>Edit</Button>
               )
             ) : (
-              <FormButtons onClick={() => form.submit()} mode={mode} />
+              <FormButtons onClick={() => form.submit()} mode={mode} isPending={editCategory?.isPending} />
             )
           }
         </div>

@@ -136,85 +136,6 @@ const ChangeStatusForm = ({ reservationDetails, open, onClose }) => {
     );
   }, [selectedStatusUuid, reservationStatuses]);
 
-  //   const roomOptions = useMemo(() => {
-  //   if (!data?.data || !currentActiveStatus) return [];
-
-  //   const roomsArray = Array.isArray(data.data) ? data.data : [data.data];
-
-  //   return roomsArray
-  //     .filter((roomItem) => {
-  //       const allowableStatuses = Array.isArray(roomItem?.checkStatus)
-  //         ? roomItem.checkStatus.map((s) => String(s).toLowerCase())
-  //         : [];
-
-  //       return allowableStatuses.includes(currentActiveStatus.code);
-  //     })
-  //     .map((roomItem) => {
-  //       const checkIn = roomItem?.checkinDate
-  //         ? dayjs(roomItem.checkinDate).format("YYYY-MM-DD")
-  //         : "";
-
-  //       const checkOut = roomItem?.checkoutDate
-  //         ? dayjs(roomItem.checkoutDate).format("YYYY-MM-DD")
-  //         : "";
-
-  //       const roomNo = roomItem?.room?.roomNo || roomItem?.roomNo;
-  //       const roomTypeName =
-  //         roomItem?.roomType?.name || "Standard Room";
-
-  //       const roomStatus = roomItem?.roomStatus || null;
-
-  //       const isCheckedInStatusSelected =
-  //         currentActiveStatus.code === "checked_in";
-
-  //       const isRoomNull = !roomNo;
-
-  //       const isDisabledRoom =
-  //         isCheckedInStatusSelected && isRoomNull;
-
-  //       return {
-  //         label: (
-  //           <div
-  //             className={`flex flex-col line-height-tight py-0.5 ${
-  //               isDisabledRoom ? "opacity-50" : ""
-  //             }`}
-  //           >
-  //             <span
-  //               className={`font-medium text-slate-800 ${textColorDarkMode}`}
-  //             >
-  //               {roomNo ? `${roomNo} - ` : ""}
-  //               {roomTypeName}
-
-  //               {/* ONLY STATUS DESIGN CHANGED */}
-  //               {roomStatus && (
-  //                 <span className="ml-2 inline-flex align-middle">
-  //                   <ReservationStatusColor status={roomStatus} />
-  //                 </span>
-  //               )}
-
-  //               {isDisabledRoom && (
-  //                 <span className="text-red-500 bg-red-50 text-xs p-1 rounded ml-2 font-normal">
-  //                   Assign room first
-  //                 </span>
-  //               )}
-  //             </span>
-
-  //             {checkIn && checkOut && (
-  //               <span
-  //                 className={`text-xs text-slate-500 ${textWhiteInDarkStyle}`}
-  //               >
-  //                 ({checkIn} - {checkOut})
-  //               </span>
-  //             )}
-  //           </div>
-  //         ),
-
-  //         value: roomItem?.id,
-  //         disabled: isDisabledRoom,
-  //       };
-  //     });
-  // }, [data, currentActiveStatus]);
-
   const roomOptions = useMemo(() => {
     if (!data?.data || !currentActiveStatus) return [];
 
@@ -252,6 +173,9 @@ const ChangeStatusForm = ({ reservationDetails, open, onClose }) => {
 
         const isRoomNull = !roomNo;
 
+        const isRoomNotReady =
+          roomCleanStatus.code !== "clean" || status.code !== "available";
+
         // Disable checked-in rooms when no room has been assigned
         const isAssignRoomDisabled =
           isCheckedInStatusSelected && isRoomNull;
@@ -263,8 +187,11 @@ const ChangeStatusForm = ({ reservationDetails, open, onClose }) => {
         const isAtLeastOneStayDisabled =
           isCheckedOutStatusSelected && isSameDayCheckIn;
 
+        const isRoomDisabled =
+          isCheckedInStatusSelected && isRoomNotReady;
+
         const isDisabledRoom =
-          isAssignRoomDisabled || isAtLeastOneStayDisabled;
+          isAssignRoomDisabled || isAtLeastOneStayDisabled || isRoomDisabled;;
 
         return {
           label: (
@@ -295,6 +222,12 @@ const ChangeStatusForm = ({ reservationDetails, open, onClose }) => {
                     At least one stay
                   </span>
                 )}
+
+                {isRoomNotReady && isCheckedInStatusSelected && (
+                  <span className="text-red-500 bg-red-50 text-xs p-1 rounded ml-2 font-normal">
+                    Room not ready
+                  </span>
+                )}
               </span>
 
               <div className="mt-1 flex items-center gap-2">
@@ -320,7 +253,6 @@ const ChangeStatusForm = ({ reservationDetails, open, onClose }) => {
         };
       });
   }, [data, currentActiveStatus]);
-
 
   const enabledRoomOptions = useMemo(
     () => roomOptions.filter((o) => !o.disabled),
