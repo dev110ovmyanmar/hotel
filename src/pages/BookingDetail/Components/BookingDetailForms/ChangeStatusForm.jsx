@@ -161,9 +161,9 @@ const ChangeStatusForm = ({ reservationDetails, open, onClose }) => {
         const roomNo = roomItem?.room?.roomNo || roomItem?.roomNo;
         const roomTypeName = roomItem?.roomType?.name || "Standard Room";
         const roomStatus = roomItem?.roomStatus || null;
-        const room = roomItem?.room;
-        const roomCleanStatus = room?.cleanStatus;
-        const status = room?.status;
+        const room = roomItem?.room || null;
+        const roomCleanStatus = room?.cleanStatus || null;
+        const status = room?.status || null;
 
         const isCheckedInStatusSelected =
           currentActiveStatus.code === "checked_in";
@@ -174,7 +174,8 @@ const ChangeStatusForm = ({ reservationDetails, open, onClose }) => {
         const isRoomNull = !roomNo;
 
         const isRoomNotReady =
-          roomCleanStatus.code !== "clean" || status.code !== "available";
+          roomCleanStatus?.code !== "clean" || status?.code !== "available";
+        ;
 
         // Disable checked-in rooms when no room has been assigned
         const isAssignRoomDisabled =
