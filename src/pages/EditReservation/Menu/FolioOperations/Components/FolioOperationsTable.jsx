@@ -252,7 +252,7 @@ const FolioOperationsTable = ({
       align: "center",
       width: 110,
       key: "room",
-      render: (_, record) => record.reservationRoom?.room?.roomNo || "-",
+      render: (_, record) => record?.roomNo || "-",
     },
     {
       title: "Qty",

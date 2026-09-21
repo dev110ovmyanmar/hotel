@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Drawer, Button, Tag, Modal } from "antd";
 import dayjs from "dayjs";
 import { Gift, BedDouble, AlertTriangle, CalendarDays } from "lucide-react";
+import Loader from "../../../../../../component/Loader/Loader"
 
 // Custom styles for modal without footer
 const modalStyles = `
@@ -50,7 +51,7 @@ const RoomInformationDetailsForm = ({
 
   const {
     data: reservationRoomsDetails,
-    isLoading: reservationRoomsDetailsLoading,
+    isFetching: reservationRoomsDetailFetching,
     refetch: refetchReservationRoomsDetails,
   } = useApiQuery({
     fetchQueryName: "reservation-room-details",
@@ -77,7 +78,7 @@ const RoomInformationDetailsForm = ({
 
   const updateRoomPost = useApiMutation({
     mutationFn: roomPost,
-    invalidateKeys: [["reservation-room-details"]],
+    invalidateKeys: [["reservation-room-details"], ["reservation-room"]],
   });
 
   const [roomPostModal, setRoomPostModal] = useState({ open: false, stayDate: null });
@@ -125,16 +126,25 @@ const RoomInformationDetailsForm = ({
                 >
                   Room Information
                 </span>
-                <span className="text-indigo-700 dark:text-indigo-500 font-semibold text-xs">
+                {
+                  reservationRoomsDetailFetching ? null : 
+                  <span className="text-indigo-700 dark:text-indigo-500 font-semibold text-xs">
                   {" "}
                   {d?.reservation?.reservationNo || "—"}
                 </span>
+                }
               </div>
             </div>
           </div>
         }
       >
-        <div className="space-y-2">
+      {
+        reservationRoomsDetailFetching ? 
+          <div className="flex items-center justify-center h-full min-h-[300px]">
+            <Loader />
+          </div>
+            :
+          <div className="space-y-2">
           {/* Check-In / Check-Out Card */}
           <div className="bg-gradient-to-r from-indigo-50 via-white to-purple-50 dark:from-[#1f1f1f] dark:via-[#1f1f1f] dark:to-[#1f1f1f] rounded-2xl border border-slate-200/60 dark:border-gray-600 p-3 shadow-sm">
             <div className="grid grid-cols-2 gap-3">
@@ -416,7 +426,7 @@ const RoomInformationDetailsForm = ({
                       // const incentiveCharges = dc?.incentiveTotal || 0;
                       const taxTotal = dc?.taxTotal || 0;
 
-                      const isToday = dayjs(r.stayDate).isSame(dayjs(), 'day');
+                      const isTodayOrPast = !dayjs(r.stayDate).isAfter(dayjs(), 'day');
 
                       return (
                         <tr
@@ -471,17 +481,17 @@ const RoomInformationDetailsForm = ({
                               </div>
                             ) : (
                               <div
-                                className={`flex items-center justify-center gap-2 border-2 p-2 rounded ${isToday
+                                className={`flex items-center justify-center gap-2 border-2 p-2 rounded ${isTodayOrPast
                                   ? 'border-blue-400 bg-blue-50 cursor-pointer hover:bg-blue-100'
                                   : 'border-gray-300 bg-gray-100 cursor-not-allowed opacity-50 pointer-events-none'
                                   }`}
                                 onClick={() =>
-                                  isToday && setRoomPostModal({ open: true, stayDate: r.stayDate })
+                                  isTodayOrPast && setRoomPostModal({ open: true, stayDate: r.stayDate })
                                 }
-                                title={isToday ? 'Room Post' : 'Only available today'}
+                                title={isTodayOrPast ? 'Room Post' : 'Only available today'}
                               >
-                                <BedDouble className={isToday ? 'text-blue-500' : 'text-gray-400'} size={20} />
-                                <span className={`whitespace-nowrap ${isToday ? 'text-blue-500' : 'text-gray-400'}`}>
+                                <BedDouble className={isTodayOrPast ? 'text-blue-500' : 'text-gray-400'} size={20} />
+                                <span className={`whitespace-nowrap ${isTodayOrPast ? 'text-blue-500' : 'text-gray-400'}`}>
                                   Post Room
                                 </span>
                               </div>
@@ -495,7 +505,8 @@ const RoomInformationDetailsForm = ({
               </div>
             </div>
           )}
-        </div>
+        </div> 
+      }
 
         <DailyBreakDownDetailFormDrawer
           open={dailyBreakDownDetailFormDrawerOpen}
