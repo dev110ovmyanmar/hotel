@@ -48,12 +48,10 @@ const GetRoomForm = ({ selectedData, onSelectRoom, onClose, floorUuid }) => {
       },
     };
 
-    assignMutation.mutate(payload, {
-      onSuccess: () => {
-        Toast.success(`Room ${room.roomNo} assigned successfully!`);
-        if (onSelectRoom) onSelectRoom(room);
-        onClose();
-      },
+    return assignMutation.mutateAsync(payload).then(() => {
+      Toast.success(`Room ${room.roomNo} assigned successfully!`);
+      if (onSelectRoom) onSelectRoom(room);
+      onClose();
     });
   };
 
@@ -80,9 +78,7 @@ const GetRoomForm = ({ selectedData, onSelectRoom, onClose, floorUuid }) => {
         className: "bg-blue-600 hover:bg-blue-500 text-white border-none",
       },
       cancelText: "Cancel",
-      onOk: () => {
-        executeRoomAssignment(room);
-      },
+      onOk: () => executeRoomAssignment(room),
       rootClassName: "dark-confirm-modal",
     });
   };

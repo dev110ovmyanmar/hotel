@@ -28,7 +28,7 @@ const MaintenanceRequestFromHK = ({
         [initData]);
 
     const roomOptions = useMemo(() =>
-        adminMetaData?.rooms?.map(r => ({ value: r.uuid, label: `Room ${r.roomNo}` })), [adminMetaData]);
+        adminMetaData?.rooms?.map(r => ({ value: r.uuid, label: `${r.roomNo}` })), [adminMetaData]);
 
     const departmentOptions = useMemo(() =>
         adminMetaData?.departments?.map(d => ({ value: d.uuid, label: d.name })), [adminMetaData]);

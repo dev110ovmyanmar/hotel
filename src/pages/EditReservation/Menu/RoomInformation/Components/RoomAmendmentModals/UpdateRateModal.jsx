@@ -19,6 +19,7 @@ import {
   textWhiteInDarkStyle,
 } from "../../../../../../utils";
 import PriceTag from "../../../../../../component/PriceTag/PriceTag";
+import PriceInput from "../../../../../../component/PriceInput/PriceInput";
 import TextArea from "antd/es/input/TextArea";
 import { capitalizeFirstLetter } from "../../../../../../utils";
 
@@ -248,19 +249,9 @@ export default function UpdateRateModal({
                             className="m-0"
 
                           >
-                            <InputNumber
-                              className="!w-full"
-                              placeholder="Rate Amount"
-                              formatter={(value) =>
-                                `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-                              }
-                              parser={(value) => value.replace(/[\s,]/g, "")}
-                              min={0}
-                              prefix={
-                                <span className="text-xs font-semibold text-slate-500 dark:text-slate-300">
-                                  MMK
-                                </span>
-                              }
+                              <PriceInput
+                              placeholder="Enter Rate Amount"
+                              suffix="MMK"
                               disabled={isPriceDisabled}
                             />
                           </Form.Item>
