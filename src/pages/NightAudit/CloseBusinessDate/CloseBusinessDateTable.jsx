@@ -42,7 +42,7 @@ const CloseBusinessDateTable = ({
                         "nightAudit",
                         JSON.stringify({
                             ...nightAuditData,
-                            nigitAuditStatus: nightAuditStatus
+                            auditStatus : nightAuditStatus
                         })
                     );
 
@@ -61,7 +61,6 @@ const CloseBusinessDateTable = ({
         })
     };
 
-    console.log(nextBusinessDate, "nextBusinessDate")
     const columns = [
         {
             title: "No",

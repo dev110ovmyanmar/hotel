@@ -43,6 +43,7 @@ import {
 } from "../../../../../../utils";
 import dayjs from "dayjs";
 import PriceTag from "../../../../../../component/PriceTag/PriceTag";
+import ColorStatusTag from "../../../../../../component/ColorStatusTag/ColorStatusTag";
 
 const { Text, Title } = Typography;
 
@@ -67,6 +68,7 @@ export default function AddRoomExtensionLikeUpgradeDesignModal({
   const [reviewData, setReviewData] = useState(null);
   const [checkSelectedRoom, setCheckSelectedRoom] = useState(false);
   const [selectRoomNo, setSelectRoomNo] = useState(false);
+  const isRoomCheckIn = record?.roomStatus?.code === "checked_in";
 
   // API Mutation engine handling state invalidation
   const createRoomAmendmentMutation = useApiMutation({
@@ -75,7 +77,6 @@ export default function AddRoomExtensionLikeUpgradeDesignModal({
   });
 
   // Baseline property safe fallback metrics extraction
-  console.log(record,"currentRoomType")
   const currentRoomType = record?.roomType?.name;
 
   // Handles absolute clean form execution resets
@@ -143,8 +144,20 @@ export default function AddRoomExtensionLikeUpgradeDesignModal({
     .flatMap((room) =>
       room.rooms.map((r) => ({
         value: r.uuid,
-        label: r.roomNo,
+        label: (
+          <div className="flex flex-col justify-between">
+            <span>{r.roomNo}</span>
+
+            <div className='flex gap-1.5'>
+              <ColorStatusTag status={r.status} iconType="bed" />
+              <ColorStatusTag status={r.cleanStatus} iconType="broom" />
+            </div>
+          </div>
+        ),
+        roomNo: r.roomNo,
         rank: r.roomType.rank,
+        disabled : isRoomCheckIn && (r.cleanStatus.code !== "clean" || r.status.code === "occupied")                       
+
       })),
     );
 
@@ -159,6 +172,7 @@ export default function AddRoomExtensionLikeUpgradeDesignModal({
       const data = {
         ...values,
         rank: selectedRoomData?.rank,
+        roomNo: selectedRoomData?.roomNo
       };
 
       setReviewData(data);
@@ -350,13 +364,10 @@ export default function AddRoomExtensionLikeUpgradeDesignModal({
                               !border-2 
                               !duration-500
                               rounded-2xl 
-                              ${
-                                selectedRoom ===
-                                room.roomType.uuid
-                                  ? `!border-blue-500 !bg-blue-50 !shadow-lg ${selectedDarkMode}`
-                                  : "!border-blue-200 !shadow-md hover:!border-blue-300 hover:-translate-y-1"
-                              }
-                          `}
+                              ${selectedRoom === room.roomType.uuid
+                              ? `!border-blue-400/20 !bg-blue-500/15 backdrop-blur-lg !shadow-lg ${selectedDarkMode}`
+                              : '!border-blue-200 !shadow-md hover:!border-blue-500/30 hover:-translate-y-1'}
+                            `}
                           onClick={() => selectRoom(room)}
                         >
                           <div className="!text-xs">{room?.roomType?.name}</div>
@@ -364,11 +375,10 @@ export default function AddRoomExtensionLikeUpgradeDesignModal({
                           <div className="grid place-items-center w-fit -mt-2">
                             <FaStar
                               className={`
-                                ${
-                                  selectedRoom ===
+                                ${selectedRoom ===
                                   room.roomType.uuid
-                                    ? "text-amber-500"
-                                    : "text-amber-200 "
+                                  ? "text-amber-500"
+                                  : "text-amber-200 "
                                 }
                                 text-3xl 
                                 col-start-1 

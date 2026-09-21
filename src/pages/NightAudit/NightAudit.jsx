@@ -35,7 +35,6 @@ const NightAudit = () => {
     });
 
     const isLocked = activeAdminDatas?.pages[0]?.systemLock?.isLocked;
-    // const isLocked = false;
     const businessDate = activeAdminDatas?.pages[0]?.nightAudit?.targetBusinessDate;
     const checkStatus = activeAdminDatas?.pages[0]?.nightAudit?.status;
 
@@ -46,7 +45,7 @@ const NightAudit = () => {
                 JSON.stringify({
                     isLocked: isLocked,
                     businessDate: businessDate,
-                    nightAuditStatus: checkStatus
+                    auditStatus: checkStatus
                 })
             );
             navigate("/night-audit/pre-audit-check");

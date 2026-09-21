@@ -7,6 +7,7 @@ import Toast from '../../../../../../component/Toast/Toast';
 import RoomDowngradeReview from './RoomDowngradeReview';
 import { FaStar } from 'react-icons/fa';
 import { darkModeStyle, selectedDarkMode, textWhiteInDarkStyle } from '../../../../../../utils';
+import ColorStatusTag from '../../../../../../component/ColorStatusTag/ColorStatusTag';
 
 const { Text, Title } = Typography;
 
@@ -24,7 +25,8 @@ export default function RoomDowngradeModal({
     const [toReviewPage, setToReviewPage] = useState(null);
     const [selectedRoomTypeName, setSelectedRoomTypeName] = useState({});
     const [reviewData, setReviewData] = useState(null);
-    const [checkSelectedRoom, setCheckSelectedRoom] = useState(false)
+    const [checkSelectedRoom, setCheckSelectedRoom] = useState(false);
+    const isRoomCheckIn = record?.roomStatus?.code === "checked_in";
 
     // API Mutation engine handling state invalidation
     const createRoomAmendmentMutation = useApiMutation({
@@ -95,7 +97,23 @@ export default function RoomDowngradeModal({
         ?.filter(room => room?.roomType?.uuid === selectedRoom)
         .flatMap(room => (
             room.rooms.map(r => (
-                { value: r.uuid, label: r.roomNo, rank: r.roomType.rank, }
+                {
+                    value: r.uuid,
+                    label: (
+                        <div className="flex flex-col justify-between">
+                            <span>{r.roomNo}</span>
+
+                            <div className='flex gap-1.5'>
+                                <ColorStatusTag status={r.status} iconType="bed" />
+                                <ColorStatusTag status={r.cleanStatus} iconType="broom" />
+                            </div>
+                        </div>
+                    ),
+                    roomNo: r.roomNo,
+                    rank: r.roomType.rank,
+                    disabled: isRoomCheckIn && (r.cleanStatus.code !== "clean" || r.status.code === "occupied")
+
+                }
             )
             )));
 
@@ -107,11 +125,15 @@ export default function RoomDowngradeModal({
                 room => room.value === values.roomUuid.value
             );
 
+            console.log(selectedRoomData,"selectedRoomDataselectedRoomData")
+
             const data = {
                 ...values,
                 rank: selectedRoomData?.rank,
+                roomNo: selectedRoomData?.roomNo
             };
 
+            console.log(values,"ValueInDataHnaldeReview")
 
             setReviewData(data);
             setToReviewPage(true);
@@ -246,9 +268,9 @@ export default function RoomDowngradeModal({
                                                                 !duration-500
                                                                 rounded-2xl 
                                                                 ${selectedRoom === room.roomType.uuid
-                                                                        ? `!border-blue-500 !bg-blue-50 !shadow-lg ${selectedDarkMode}`
-                                                                        : '!border-blue-200 !shadow-md hover:!border-blue-300 hover:-translate-y-1'}
-                                                                                                                                                                `}
+                                                                    ? `!border-blue-400/20 !bg-blue-500/15 backdrop-blur-lg !shadow-lg ${selectedDarkMode}`
+                                                                    : '!border-blue-200 !shadow-md hover:!border-blue-500/30 hover:-translate-y-1'}
+                                                                `}
                                                                 onClick={() => {
                                                                     const matchedRatePlan = room.ratePlans.find(
                                                                         rp => rp.uuid === ratePlanUuid
