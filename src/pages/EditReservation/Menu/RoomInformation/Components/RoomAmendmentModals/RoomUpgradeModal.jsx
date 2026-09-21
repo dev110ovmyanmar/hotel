@@ -52,8 +52,6 @@ export default function RoomUpgradeModal({
         try {
             const values = await form.validateFields();
 
-            console.log(reviewData, "ReviewData")
-
             const payload = {
                 amendmentType: { uuid: roomUpgradeUuid },
                 reservationRoom: { uuid: record?.uuid },
@@ -78,8 +76,6 @@ export default function RoomUpgradeModal({
             console.error("Form validation requirements missing:", err);
         }
     };
-
-    console.log(selectedRoomTypeName, "selectedRoomTypeName")
 
     const options = roomList?.rooms?.map(room => (
         { value: room?.roomType?.uuid, label: room?.roomType?.name }
@@ -114,7 +110,7 @@ export default function RoomUpgradeModal({
                     ),
                     roomNo: r.roomNo,
                     rank: r.roomType.rank,
-                    disabled : isRoomCheckIn && (r.cleanStatus.code !== "clean" || r.status.code === "occupied")                       
+                    disabled: isRoomCheckIn && (r?.cleanStatus?.code !== "clean" || r?.status?.code === "occupied")
                 }
             )
             )));
@@ -126,7 +122,6 @@ export default function RoomUpgradeModal({
             const selectedRoomData = roomUuidOptions.find(
                 room => room.value === values.roomUuid.value
             );
-            console.log(selectedRoomData,"selectedRoomDataselectedRoomData")
 
             const data = {
                 ...values,
@@ -137,13 +132,10 @@ export default function RoomUpgradeModal({
 
             setReviewData(data);
             setToReviewPage(true);
-            console.log(data, "DataINHandleReview");
         } catch (error) {
             console.log(error);
         }
     };
-
-    console.log(reviewData, "reviewDatarateStatus")
 
     const backToSetFields = () => {
         setToReviewPage(false);
@@ -273,7 +265,6 @@ export default function RoomUpgradeModal({
                                                                     const matchedRatePlan = room.ratePlans.find(
                                                                         rp => rp.uuid === ratePlanUuid
                                                                     );
-                                                                    console.log(room, "RoomInSearch")
                                                                     setSelectedRoom(room.roomType.uuid);
                                                                     setSelectedRoomTypeName(room.roomType);
                                                                     setCheckSelectedRoom(true);
@@ -349,6 +340,9 @@ export default function RoomUpgradeModal({
                                                             <Select
                                                                 options={ratePlanOptions}
                                                                 labelInValue
+                                                                showSearch
+                                                                optionFilterProp="label"
+
                                                             >
                                                             </Select>
                                                         </Form.Item>
@@ -370,6 +364,15 @@ export default function RoomUpgradeModal({
                                                             <Select
                                                                 options={roomUuidOptions}
                                                                 labelInValue
+                                                                showSearch
+                                                                filterOption={(input, option) => {
+                                                                    return (
+                                                                        String(option?.roomNo ?? "")
+                                                                            .toLowerCase()
+                                                                            .includes(input.toLowerCase())
+                                                                    )
+                                                                }
+                                                                }
                                                             >
                                                             </Select>
                                                         </Form.Item>

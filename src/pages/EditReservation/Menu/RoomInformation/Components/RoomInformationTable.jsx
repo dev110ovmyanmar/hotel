@@ -105,7 +105,6 @@ const RoomInformationTable = ({
   const dateChangeUuid = amendmentType?.find(
     (item) => item.code === "date_change",
   )?.uuid;
-  console.log(amendmentType, "dateChangeUuid");
 
   const availabilitySearchs = useApiMutation({
     mutationFn: availabilitySearch,
@@ -116,15 +115,26 @@ const RoomInformationTable = ({
     setSelectedData(record);
     setActiveModal(key);
 
-    const checkinDate = dayjs().startOf("day");
-    const checkoutDate = dayjs(record?.checkoutDate).startOf("day");
-    const totalNights = checkoutDate.diff(checkinDate, "day", true);
+    const checkinDateInRecord = dayjs(record?.checkinDate).startOf("day");
+    const today = dayjs().startOf("day");
+
+    const checkinDateForPayload = checkinDateInRecord.isBefore(today)
+      ? today
+      : checkinDateInRecord;
+
+    const checkoutDateForPayload = dayjs(record?.checkoutDate).startOf("day");
+
+    const totalNights = checkoutDateForPayload.diff(
+      checkinDateForPayload,
+      "day",
+      true
+    );
 
     const modifiedValues = {
       reservation: { uuid: reservation?.uuid },
       filter: {
-        checkinDate: dayjs().format("YYYY-MM-DD"),
-        checkoutDate: dayjs(record?.checkoutDate).format("YYYY-MM-DD"),
+        checkinDate: checkinDateForPayload.format("YYYY-MM-DD"),
+        checkoutDate: checkoutDateForPayload.format("YYYY-MM-DD"),
       },
       totalNight: totalNights,
       rank: record?.roomType?.rank,
@@ -199,77 +209,77 @@ const RoomInformationTable = ({
     //   },
     // },
     {
-  title: "Room No",
-  key: "room",
-  dataIndex: "room",
-  width: 210,
-  render: (text, record) => {
-    const isRoomNull = !text;
-    const isClickable =
-      record?.assignStatus === true && !record?.expiredStatus;
+      title: "Room No",
+      key: "room",
+      dataIndex: "room",
+      width: 210,
+      render: (text, record) => {
+        const isRoomNull = !text;
+        const isClickable =
+          record?.assignStatus === true && !record?.expiredStatus;
 
-    const shouldHighlightRoom =
-      !isRoomNull && record?.assignStatus === true;
+        const shouldHighlightRoom =
+          !isRoomNull && record?.assignStatus === true;
 
-    const canClick = isClickable || shouldHighlightRoom;
+        const canClick = isClickable || shouldHighlightRoom;
 
-    return (
-      <span
-        style={{
-          color: isRoomNull
-            ? isClickable
-              ? "#1890ff"
-              : "#bfbfbf"
-            : shouldHighlightRoom
-              ? "#1890ff"
-              : "inherit",
-          cursor: canClick ? "pointer" : "default",
-        }}
-        onClick={(e) => {
-          if (!canClick) return;
+        return (
+          <span
+            style={{
+              color: isRoomNull
+                ? isClickable
+                  ? "#1890ff"
+                  : "#bfbfbf"
+                : shouldHighlightRoom
+                  ? "#1890ff"
+                  : "inherit",
+              cursor: canClick ? "pointer" : "default",
+            }}
+            onClick={(e) => {
+              if (!canClick) return;
 
-          e.stopPropagation();
-          setSelectedData(record);
-          setAssignRoomOpen(true);
-        }}
-      >
-        {/* Only this text gets underline */}
-        <span
-          style={{
-            textDecoration: canClick ? "underline" : "none",
-          }}
-        >
-          {text?.roomNo || "Assign Room"}
-        </span>
+              e.stopPropagation();
+              setSelectedData(record);
+              setAssignRoomOpen(true);
+            }}
+          >
+            {/* Only this text gets underline */}
+            <span
+              style={{
+                textDecoration: canClick ? "underline" : "none",
+              }}
+            >
+              {text?.roomNo || "Assign Room"}
+            </span>
 
-        {!isRoomNull && (
-          <div className="mt-1 flex items-center gap-2">
-            <div className="flex items-center gap-0.5">
-              <ColorStatusTag
-                status={record?.room?.status}
-                iconType="bed"
-              />
-            </div>
+            {!isRoomNull && (
+              <div className="mt-1 flex items-center gap-2">
+                <div className="flex items-center gap-0.5">
+                  <ColorStatusTag
+                    status={record?.room?.status}
+                    iconType="bed"
+                  />
+                </div>
 
-            <div className="flex items-center gap-0.5">
-              <ColorStatusTag
-                status={record?.room?.cleanStatus}
-                iconType="broom"
-              />
-            </div>
-          </div>
-        )}
-      </span>
-    );
-  },
-},
+                <div className="flex items-center gap-0.5">
+                  <ColorStatusTag
+                    status={record?.room?.cleanStatus}
+                    iconType="broom"
+                  />
+                </div>
+              </div>
+            )}
+          </span>
+        );
+      },
+    },
     { title: "Room Type", dataIndex: ["roomType", "name"], key: "name", width: 180 },
     { title: "Rate Plan", dataIndex: ["ratePlan", "name"], key: "ratePlan", width: 180 },
     {
       title: "Stay Dates",
       key: "stayDates",
       align: "center",
-      width:120,
+      width: 120,
       render: (_, record) => (
         <div>
           <div>
