@@ -55,10 +55,16 @@ const HouseKeepingTaskForm = ({
     const initData = queryClient.getQueryData(["initData", "authenticated"]);
 
     const mapOptions = (data) =>
-        data?.map((item) => ({ value: item.uuid, label: item.name })) || [];
+        data?.map((item) => ({ value: item.uuid, label: item.name, code: item.code })) || [];
 
     const priorityOptions = useMemo(() => mapOptions(initData?.statuses?.priority_level), [initData]);
-    const taskTypeOptions = useMemo(() => mapOptions(initData?.statuses?.task_type), [initData]);
+    const taskTypeOptions = useMemo(() => {
+    const options = mapOptions(initData?.statuses?.task_type);
+    return options.map((opt) => ({
+    ...opt,
+    disabled: opt.code === "checkout_cleaning",
+    }));
+    }, [initData, isCreate]);
 
     // ===== Fetch Detail =====
     const { data: detail, isLoading } = useApiQuery({
@@ -71,6 +77,12 @@ const HouseKeepingTaskForm = ({
     const statusCode = detail?.housekeepingStatus?.code;
     const editCurrentStatus = statusCode || selectedRow?.housekeepingStatus?.code;
     const isDisableEdit = statusCode === "completed" || statusCode === "cancelled";
+
+
+    // Diable the select option if task type is checkout cleaning
+    const selectedTaskType = Form.useWatch("taskType", form);
+    const selectedOption = taskTypeOptions.find((o) => o.value === selectedTaskType);
+    const isCheckoutCleaning = selectedOption?.code === "checkout_cleaning";
 
     const hkStatusOptions = initData?.statuses?.housekeeping_status?.map((item) => {
         return (
@@ -90,6 +102,11 @@ const HouseKeepingTaskForm = ({
                             (
                                 editCurrentStatus === "in_progress" &&
                                 ["pending", "cancelled"].includes(item.code)
+                            ) 
+                            ||
+                            (
+                                isCheckoutCleaning &&
+                                ["cancelled"].includes(item.code)
                             )
                         )
                     )
@@ -229,7 +246,7 @@ const HouseKeepingTaskForm = ({
                                             const room = adminMetaData?.rooms?.find((r) => r.uuid === value);
                                             if (isView) {
                                                 return {
-                                                    value: `Room ${room?.roomNo}`,
+                                                    value: `${room?.roomNo}`,
                                                     suffix: (
                                                         <ColorStatusTag
                                                             status={{
@@ -260,13 +277,16 @@ const HouseKeepingTaskForm = ({
 
                                     <Form.Item name="taskType" label="Task Type" rules={[{ required: true }]}
                                         getValueProps={(value) => ({
-                                            value: isView
+                                            value: isView || isCheckoutCleaning
                                                 ? taskTypeOptions?.find((item) => item.value === value)?.label
                                                 : value,
                                         })}>
                                         {
-                                            isView ? <Input readOnly={isView} /> :
-                                                <Select options={taskTypeOptions} disabled={isView} placeholder="Select Task Type" />
+                                            isView || isCheckoutCleaning ? <Input readOnly={isView || isCheckoutCleaning} /> :
+                                                <Select 
+                                                options={taskTypeOptions} 
+                                                // disabled={isView} 
+                                                placeholder="Select Task Type" />
                                         }
                                     </Form.Item>
 

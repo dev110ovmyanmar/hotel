@@ -87,7 +87,7 @@ const MaintenanceRequestForm = ({
         adminMetaData?.rooms?.map(r => ({ 
             value: r.uuid,
             searchLabel: r.roomNo, 
-            label: `Room ${r.roomNo}` })), [adminMetaData]);
+            label: `${r.roomNo}` })), [adminMetaData]);
 
     const departmentOptions = useMemo(() =>
         adminMetaData?.departments?.map(d => ({ value: d.uuid, label: d.name })), [adminMetaData]);
