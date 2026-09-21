@@ -36,7 +36,7 @@ const ReservationForm = ({
         (selectedRoomTypes?.length ?? 0) > 0 ||
         (selectedRatePlans?.length ?? 0) > 0;
 
-    const { data: reservationMetas } = useApiQuery({
+    const { data: reservationMetas, isFetching: reservationMetaFetching } = useApiQuery({
         fetchQueryName: "reservation-meta",
         fetchQueryFunction: reservationMeta,
     });
@@ -401,6 +401,7 @@ const ReservationForm = ({
                                     showSearch={!afterRoomConfirm}
                                     suffixIcon={afterRoomConfirm ? null : undefined}
                                     optionFilterProp="label"
+                                    loading={reservationMetaFetching}
                                 />
                             </Form.Item>
                         </div>
@@ -425,6 +426,7 @@ const ReservationForm = ({
                                     showSearch={!afterRoomConfirm}
                                     suffixIcon={afterRoomConfirm ? null : undefined}
                                     optionFilterProp="label"
+                                    loading={reservationMetaFetching}
                                 />
                             </Form.Item>
                         </div>
