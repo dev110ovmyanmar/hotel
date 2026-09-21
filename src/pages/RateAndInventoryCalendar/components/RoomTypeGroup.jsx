@@ -124,12 +124,18 @@ const RoomTypeGroup = ({
                                 <Switch
                                     size="small"
                                     checked={avail.stopSell}
-                                    onChange={() =>
-                                        handleStopSellToggle(rt.id, dateStr, avail.stopSell, avail.uuid)
-                                    }
-                                    style={{ backgroundColor: avail.stopSell ? '#ff4d4f' : '#5CB85C' }}
+                                    // onChange={() =>
+                                    //     handleStopSellToggle(rt.id, dateStr, avail.stopSell, avail.uuid)
+                                    // }
+                                    // style={{ backgroundColor: avail.stopSell ? '#ff4d4f' : '#5CB85C' }}
+                                    style={{
+                                    backgroundColor: avail.stopSell ? '#ff4d4f' : '#5CB85C',
+                                    cursor: 'default',
+                                    pointerEvents: 'none',   // blocks all clicks, no onChange needed
+                                    }}
                                     disabled={isPast || isLoading || isToday}
-                                    loading={isLoading}
+                                    // disabled={true}
+                                    // loading={isLoading} 
                                 />
                             ) : null}
                         </td>

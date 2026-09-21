@@ -1,145 +1,76 @@
-import { Drawer, Table, Tooltip } from "antd"
-import useApiQuery from "../../../hooks/useApiQuery";
-import { reservationRoomList } from "../../../api/reservationSectionApi";
-import { fetchRoom } from "../../../api/roomApi";
-import ColorStatusTag from "../../../component/ColorStatusTag/ColorStatusTag";
-import { EyeOutlined } from "@ant-design/icons";
-import { useNavigate } from "react-router-dom";
+import { Drawer, Space, Table, Tooltip } from "antd";
+import { EditOutlined } from "@ant-design/icons";
+import usePermission from "../../../hooks/usePermission";
+import { PERMISSIONS } from "../../../variables/permission";
 
 const PreAuditCheckDetails = ({
     onClose,
     open,
     selectedData
 }) => {
-    const navigate = useNavigate();
-    const isTodayArrivals = selectedData?.code === "today_arrivals";
-    const isUnassignedRooms = selectedData?.code === "unassigned_rooms";
+    const { hasPermission } = usePermission();
+    const handleMenuClick = (item) => {
 
-    console.log(selectedData,"PreAuditCheckDetailsSelectedData")
-    const { data } = useApiQuery({
-        fetchQueryName: "reservationRoomList",
-        fetchQueryFunction: reservationRoomList,
-        params: {
-            uuid: selectedData?.uuid,
-        },
-        options: {
-            enabled: open && !!selectedData && isTodayArrivals,
-        },
-    });
-
-    console.log(data, "DataInPreAuditCheckDetails")
-
-    const { data: fetchRoomData, isLoading } = useApiQuery({
-        fetchQueryName: "roomData",
-        fetchQueryFunction: fetchRoom,
-        // params: {
-        //   pagination: {
-        //     page: page,
-        //     perPage: perPage,
-        //   },
-        //   keyword,
-        //   status: normalStatus,
-        // },
-        options:{
-            enabled: open && !!selectedData && isUnassignedRooms,
+        if (item?.reservationRoomUuid) {
+            const url = `/reservations/${item.reservationRoomUuid}/room-information`;
+            window.open(url, "_blank", "noopener,noreferrer");
         }
-    });
+    };
+
+    const tableData = selectedData?.details ?? [];
 
     const columns = [
         {
             title: "ID",
-            dataIndex: "id",
-            key: "id",
+            dataIndex: "reservationId",
+            key: "reservationId",
             width: 60,
         },
         {
             title: "Guest Name",
-            dataIndex: ["guest", "fullName"],
+            dataIndex: "guestName",
             key: "guestName",
-            width: 60,
         },
         {
-            title: "Room Type",
-            key: "roomTyoe",
-            width: 60,
-            render: (record) => {
-
-                return (
-                    <>
-                        <div>{record?.roomType?.name}</div>
-                        {
-                            record?.room
-                                ?
-                                <span>({record?.room?.roomNo})</span>
-                                :
-                                null
-                        }
-
-                    </>
-                )
-
-            }
-        },
-        {
-            title: "Room Status",
-            dataIndex: "roomStatus",
-            key: "roomTyoe",
-            width: 60,
-            render: (text) => {
-                return (
-                    <ColorStatusTag status={text} />
-                )
-
-            }
+            title: "Room No",
+            dataIndex: "roomNo",
+            key: "roomNo",
         },
         {
             title: "Action",
             key: "action",
-            // dataIndex: "action",
             fixed: "end",
             align: "center",
-            width: 30,
-            render: (record) => {
-
-                const handlePreAuditView = () => {
-                    if (record?.uuid) {
-                        navigate(`/reservations/${record?.uuid}/room-information`);
-                    }
-                }
-
-                return (
-                    <>
-
-                        <Tooltip title="View Details">
-                            <EyeOutlined
-                                onClick={handlePreAuditView}
-                            />
-                        </Tooltip>
-
-                    </>
-                )
-            }
+            width: 60,
+            render: (_, record) => (
+                <Tooltip title="View Details">
+                    <EditOutlined
+                        style={{ cursor: "pointer" }}
+                        onClick={() => handleMenuClick(record)}
+                    />
+                </Tooltip>
+            ),
         },
-
     ];
 
     return (
         <Drawer
             title="Pre Audit Check Details"
-            closable={{ 'aria-label': 'Close Button' }}
+            closable={{ "aria-label": "Close Button" }}
             onClose={onClose}
             open={open}
             size={550}
         >
             <Table
                 columns={columns}
-                dataSource={data?.data}
+                dataSource={tableData}
                 pagination={false}
-
+                rowKey={(record) => record.reservationRoomUuid}
             />
-
         </Drawer>
-    )
-}
+    );
+};
 
-export default PreAuditCheckDetails
+export default PreAuditCheckDetails;
+
+

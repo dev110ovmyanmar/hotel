@@ -1,5 +1,6 @@
-import React from 'react';
-import { Button, Input, Space, Badge, DatePicker, Popover } from 'antd';
+import React, { useState, useCallback } from 'react';
+import { flushSync } from 'react-dom';
+import { Button, Input, Badge, DatePicker, Popover, Modal } from 'antd';
 import {
   LeftOutlined, RightOutlined, DoubleLeftOutlined, DoubleRightOutlined,
   SearchOutlined, FilterOutlined,
@@ -12,6 +13,8 @@ const CalendarHeader = ({
   setCurrentDate,
   isLoading,
   isFetching,
+  isChangingDate,
+  setIsChangingDate,
   searchInput,
   setSearchInput,
   setSearchQuery,
@@ -25,7 +28,32 @@ const CalendarHeader = ({
   floorOptions,
   reservationRoomStatus,
 }) => {
-  const disabled = isLoading || isFetching;
+  const isDisabled = isLoading || isFetching || isChangingDate;
+  const [confirmModalOpen, setConfirmModalOpen] = useState(false);
+  const [pendingDate, setPendingDate] = useState(null);
+
+  const confirmDateChange = (newDate) => {
+    setPendingDate(newDate);
+    setConfirmModalOpen(true);
+  };
+
+  const handleConfirmOk = useCallback(() => {
+    // Step 1: disable buttons (flushSync forces immediate render → paint)
+    flushSync(() => {
+      setIsChangingDate(true);
+    });
+    // Step 2: close modal + fire API (next frame, after disabled buttons paint)
+    requestAnimationFrame(() => {
+      setConfirmModalOpen(false);
+      setCurrentDate(pendingDate);
+      setPendingDate(null);
+    });
+  }, [pendingDate, setIsChangingDate, setCurrentDate]);
+
+  const handleConfirmCancel = () => {
+    setConfirmModalOpen(false);
+    setPendingDate(null);
+  };
 
   const filterContent = (
     <FilterPopover
@@ -44,36 +72,36 @@ const CalendarHeader = ({
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-2">
           <DoubleLeftOutlined
-            className={`text-gray-400 cursor-pointer hover:text-blue-500 active:text-blue-700 active:scale-90 transition-all duration-150 ${disabled ? 'pointer-events-none opacity-50' : ''}`}
+            className={`text-gray-400 cursor-pointer hover:text-blue-500 active:text-blue-700 active:scale-90 transition-all duration-150 ${isDisabled ? 'pointer-events-none opacity-50' : ''}`}
             onMouseDown={(e) => e.stopPropagation()}
-            onClick={() => setCurrentDate(currentDate.subtract(1, 'year'))}
+            onClick={() => confirmDateChange(currentDate.subtract(1, 'year'))}
           />
           <LeftOutlined
-            className={`text-gray-400 cursor-pointer hover:text-blue-500 active:text-blue-700 active:scale-90 transition-all duration-150 ${disabled ? 'pointer-events-none opacity-50' : ''}`}
+            className={`text-gray-400 cursor-pointer hover:text-blue-500 active:text-blue-700 active:scale-90 transition-all duration-150 ${isDisabled ? 'pointer-events-none opacity-50' : ''}`}
             onMouseDown={(e) => e.stopPropagation()}
-            onClick={() => setCurrentDate(currentDate.subtract(1, 'month'))}
+            onClick={() => confirmDateChange(currentDate.subtract(1, 'month'))}
           />
           <DatePicker
-            picker="date"
+            picker="month"
             value={currentDate}
             format="MMMM YYYY"
             allowClear={false}
             suffixIcon={null}
             variant="borderless"
-            disabled={disabled}
+            disabled={isDisabled}
             styles={{ input: { textAlign: 'center' } }}
             className="font-bold text-lg w-44 p-0 cursor-pointer"
-            onChange={(date) => date && setCurrentDate(date)}
+            onChange={(date) => date && confirmDateChange(date)}
           />
           <RightOutlined
-            className={`text-gray-400 cursor-pointer hover:text-blue-500 active:text-blue-700 active:scale-90 transition-all duration-150 ${disabled ? 'pointer-events-none opacity-50' : ''}`}
+            className={`text-gray-400 cursor-pointer hover:text-blue-500 active:text-blue-700 active:scale-90 transition-all duration-150 ${isDisabled ? 'pointer-events-none opacity-50' : ''}`}
             onMouseDown={(e) => e.stopPropagation()}
-            onClick={() => setCurrentDate(currentDate.add(1, 'month'))}
+            onClick={() => confirmDateChange(currentDate.add(1, 'month'))}
           />
           <DoubleRightOutlined
-            className={`text-gray-400 cursor-pointer hover:text-blue-500 active:text-blue-700 active:scale-90 transition-all duration-150 ${disabled ? 'pointer-events-none opacity-50' : ''}`}
+            className={`text-gray-400 cursor-pointer hover:text-blue-500 active:text-blue-700 active:scale-90 transition-all duration-150 ${isDisabled ? 'pointer-events-none opacity-50' : ''}`}
             onMouseDown={(e) => e.stopPropagation()}
-            onClick={() => setCurrentDate(currentDate.add(1, 'year'))}
+            onClick={() => confirmDateChange(currentDate.add(1, 'year'))}
           />
         </div>
       </div>
@@ -88,43 +116,58 @@ const CalendarHeader = ({
         <Input
           prefix={
             !searchInput ? (
-              <SearchOutlined className={`${disabled ? 'text-gray-300' : 'text-gray-400'}`} />
+              <SearchOutlined className={`${isDisabled ? 'text-gray-300' : 'text-gray-400'}`} />
             ) : null
           }
           suffix={
             searchInput ? (
               <SearchOutlined
-                className={`cursor-pointer ${disabled ? 'text-gray-300' : 'text-blue-500 hover:text-blue-600'}`}
-                onClick={() => !disabled && setSearchQuery(searchInput)}
+                className={`cursor-pointer ${isDisabled ? 'text-gray-300' : 'text-blue-500 hover:text-blue-600'}`}
+                onClick={() => !isDisabled && setSearchQuery(searchInput)}
               />
             ) : null
           }
           placeholder="Search Room No..."
           className="w-64"
           value={searchInput}
-          disabled={disabled}
+          disabled={isDisabled}
           onChange={e => setSearchInput(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && setSearchQuery(searchInput)}
           allowClear
           onClear={() => { setSearchInput(''); setSearchQuery(''); }}
         />
-        <Button type="primary" disabled={disabled} onClick={() => setCurrentDate(dayjs())}>Today</Button>
+        <Button type="primary" disabled={isDisabled} onClick={() => confirmDateChange(dayjs())}>Today</Button>
         <Popover
           content={filterContent}
           title="Filter Rooms"
           trigger="click"
           placement="bottomRight"
-          open={filterOpen && !disabled}
+          open={filterOpen && !isDisabled}
           onOpenChange={(v) => {
             if (v) setLocalFilters({ ...filters });
             setFilterOpen(v);
           }}
         >
           <Badge dot={Object.values(filters).some(f => f && f.length > 0)}>
-            <Button icon={<FilterOutlined />} disabled={disabled}>Filter</Button>
+            <Button icon={<FilterOutlined />} disabled={isDisabled}>Filter</Button>
           </Badge>
         </Popover>
       </div>
+
+      <Modal
+        title="Confirm Date Change"
+        open={confirmModalOpen}
+        onOk={handleConfirmOk}
+        onCancel={handleConfirmCancel}
+        okText="Yes"
+        cancelText="No"
+        okButtonProps={{ disabled: isChangingDate, className: isChangingDate ? 'opacity-100' : '' }}
+        cancelButtonProps={{ disabled: isChangingDate, className: isChangingDate ? 'opacity-100' : '' }}
+        transitionName=""
+        maskTransitionName=""
+      >
+        {`Are you sure you want to change to ${pendingDate?.format('MMMM YYYY')}?`}
+      </Modal>
     </div>
   );
 };

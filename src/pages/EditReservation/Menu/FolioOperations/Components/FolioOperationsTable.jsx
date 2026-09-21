@@ -199,6 +199,7 @@ const FolioOperationsTable = ({
       title: "No",
       dataIndex: "lineNo",
       key: "lineNo",
+      align: "center",
       render: (_, record, index) => index + 1,
     },
     {

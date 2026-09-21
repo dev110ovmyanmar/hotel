@@ -13,7 +13,7 @@ const PreAuditTable = ({
     preAuditChecksData
 }) => {
     const [drawerOpen, setDrawerOpen] = useState(false);
-    const [selectedData,setSelectedData] = useState({});
+    const [selectedData, setSelectedData] = useState({});
 
     const columns = [
         {
@@ -88,7 +88,7 @@ const PreAuditTable = ({
                 return (
                     <>
                         {
-                            record?.count > 0
+                           record?.details?.length > 0
                                 ?
                                 <Tooltip title="View Details">
                                     <EyeOutlined
@@ -97,7 +97,7 @@ const PreAuditTable = ({
                                 </Tooltip>
                                 :
                                 <Tooltip title="Locked" >
-                                    <LockOutlined disabled className="!text-gray-400 cursor-not-allowed"/>
+                                    <LockOutlined disabled className="!text-gray-400 cursor-not-allowed" />
                                 </Tooltip>
                         }
 
@@ -120,7 +120,7 @@ const PreAuditTable = ({
                     type="primary"
                     onClick={colorCheckBooking}
                     className="flex items-center gap-1"
-                    disabled={preAuditChecksData?.summary?.blockingIssues == 0}
+                    disabled={preAuditChecksData?.summary?.blockingIssues !== 0}
                 >
                     Next Step
                     <AiOutlineRight />
