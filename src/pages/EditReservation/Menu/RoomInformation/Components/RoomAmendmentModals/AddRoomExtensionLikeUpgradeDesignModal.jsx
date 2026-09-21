@@ -156,7 +156,7 @@ export default function AddRoomExtensionLikeUpgradeDesignModal({
         ),
         roomNo: r.roomNo,
         rank: r.roomType.rank,
-        disabled : isRoomCheckIn && (r.cleanStatus.code !== "clean" || r.status.code === "occupied")                       
+        disabled: isRoomCheckIn && (r?.cleanStatus?.code !== "clean" || r?.status?.code === "occupied")
 
       })),
     );
@@ -422,7 +422,9 @@ export default function AddRoomExtensionLikeUpgradeDesignModal({
                           <Select
                             options={ratePlanOptions}
                             labelInValue
-                          ></Select>
+                            showSearch
+                            optionFilterProp="label"
+                          />
                         </Form.Item>
                       </Col>
 
@@ -442,7 +444,16 @@ export default function AddRoomExtensionLikeUpgradeDesignModal({
                             options={roomUuidOptions}
                             labelInValue
                             onChange={() => setSelectRoomNo(true)}
-                          ></Select>
+                            showSearch
+                            filterOption={(input, option) => {
+                              return (
+                                String(option?.roomNo ?? "")
+                                  .toLowerCase()
+                                  .includes(input.toLowerCase())
+                              )
+                            }
+                            }
+                          />
                         </Form.Item>
                       </Col>
                     </Row>

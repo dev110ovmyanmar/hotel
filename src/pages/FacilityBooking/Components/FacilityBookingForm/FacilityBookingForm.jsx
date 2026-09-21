@@ -286,7 +286,7 @@ const FacilityBookingForm = ({
             ) : (
               <FormButtons
                 onClick={() => form.submit()}
-                isPending={editFacilityBooking.isPending}
+                isPending={isAdd? createFacilityBookings?.isPending : editFacilityBookings?.isPending}
                 mode={mode}
               />
             )}
