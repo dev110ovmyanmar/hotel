@@ -1,4 +1,4 @@
-import { Dropdown, Space, Table } from "antd";
+import { Dropdown, Table } from "antd";
 import { useState } from "react";
 import {
   MoreOutlined,
@@ -9,9 +9,9 @@ import {
 import usePermission from "../../../hooks/usePermission";
 import { PERMISSIONS } from "../../../variables/permission";
 import RoomTypeForm from "./RoomTypeForm/RoomTypeForm";
-import PriceTag from "../../../component/PriceTag/PriceTag";
 import { TableColumns } from "../../../component/TableColumns/TableColumns";
 import ColorStatusTag from "../../../component/ColorStatusTag/ColorStatusTag";
+import { FaStar } from "react-icons/fa";
 
 const RoomTypeTable = ({
   data,
@@ -76,6 +76,14 @@ const RoomTypeTable = ({
       key: "rank",
       align: "center",
       width: 100,
+      render: (rank) => (
+        <div className="relative w-8 h-8 mx-auto flex items-center justify-center">
+          <FaStar className="absolute text-amber-200 text-[30px]" />
+          <span className="relative z-10 text-gray-800 font-bold text-[12px] mt-1">
+            {rank}
+          </span>
+        </div>
+      )
     },
     {
       title: "Status",
@@ -90,7 +98,6 @@ const RoomTypeTable = ({
       align: "center",
       width: 80,
       render: (_, record) => {
-        const smallStyle = { fontSize: "12px" };
 
         const actions = [
           {
@@ -136,12 +143,12 @@ const RoomTypeTable = ({
             icon: action.icon,
             label: (
               // <Space size={4} style={smallStyle} onClick={action.onClick}>
-                // {action.icon}
-                <span style={{ fontSize: "14px" }}>{action.label}</span>
+              // {action.icon}
+              <span style={{ fontSize: "14px" }}>{action.label}</span>
               // </Space>
-              
+
             ),
-             onClick: action.onClick,
+            onClick: action.onClick,
           }));
 
         if (items.length === 0) return null;
