@@ -5,7 +5,6 @@ import RoomForm from "./Room/RoomForm";
 import usePermission from "../../../hooks/usePermission";
 import { PERMISSIONS } from "../../../variables/permission";
 import ColorStatusTag from "../../../component/ColorStatusTag/ColorStatusTag";
-import Topbar from "./../../../component/Topbar/Topbar";
 
 const RoomTable = ({
   data,

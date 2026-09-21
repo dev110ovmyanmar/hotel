@@ -215,7 +215,7 @@ const FolioAndPaymentReviewDetails = ({ open, onClose, data }) => {
           {/* FOLIO BREAKDOWN SUMMARY */}
           <div className="rounded-xl border border-slate-200/80 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800 overflow-hidden">
             <div className="px-4 py-2.5 bg-slate-50/80 dark:bg-gray-700/50 border-b border-slate-100 dark:border-gray-700">
-              <h3 className={`font-bold text-xs uppercase tracking-wider text-slate-700 flex items-center gap-2 ${textColorDarkMode}`}>
+              <h3 className={`font-bold tracking-wider text-slate-700 flex items-center gap-2 ${textColorDarkMode}`}>
                 Folio Summary
               </h3>
             </div>
