@@ -70,6 +70,9 @@ export default function AddRoomExtensionLikeUpgradeDesignModal({
   const [checkSelectedRoom, setCheckSelectedRoom] = useState(false);
   const [selectRoomNo, setSelectRoomNo] = useState(false);
   const isRoomCheckIn = record?.roomStatus?.code === "checked_in";
+  const roomCheckOutDate = dayjs(record?.checkoutDate).format("YYYY-MM-DD");
+  const isToday = dayjs().format("YYYY-MM-DD");
+  const isSameCheckOutAndToday = roomCheckOutDate === isToday;
 
   // API Mutation engine handling state invalidation
   const createRoomAmendmentMutation = useApiMutation({
@@ -157,7 +160,7 @@ export default function AddRoomExtensionLikeUpgradeDesignModal({
         ),
         roomNo: r.roomNo,
         rank: r.roomType.rank,
-        disabled: isRoomCheckIn && (r?.cleanStatus?.code !== "clean" || r?.status?.code === "occupied")
+        disabled: isRoomCheckIn && isSameCheckOutAndToday && (r?.cleanStatus?.code !== "clean" || r?.status?.code !== "available")
 
       })),
     );
