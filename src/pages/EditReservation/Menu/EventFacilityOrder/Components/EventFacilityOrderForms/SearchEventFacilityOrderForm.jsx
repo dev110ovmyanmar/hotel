@@ -25,6 +25,7 @@ import ColorStatusTag from "../../../../../../component/ColorStatusTag/ColorStat
 import SearchByModal from "../SearchByModal";
 import { useApiMutation } from "../../../../../../hooks/useApiMutation";
 import Toast from "../../../../../../component/Toast/Toast";
+import Loader from "../../../../../../component/Loader/Loader";
 
 const SearchEventFacilityOrderForm = ({
   open,
@@ -356,7 +357,7 @@ const SearchEventFacilityOrderForm = ({
         bookingSearchPending
           ?
           <div className="w-full flex justify-center items-center mt-6">
-            <Spin></Spin>
+            <Loader />
           </div>
           :
 

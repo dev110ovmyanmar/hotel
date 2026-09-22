@@ -35,7 +35,7 @@ const RoomAmend = ({ mode, open, onClose, selectedData, onSuccess }) => {
   };
 
   // Replace with your real Stay Details API Hook if needed
-  const { data, isLoading } = useApiQuery({
+  const { data, isFetching } = useApiQuery({
     fetchQueryName: ["room-stay-detail", selectedData?.uuid],
     enabled: !!selectedData?.uuid,
   });
@@ -113,7 +113,7 @@ const RoomAmend = ({ mode, open, onClose, selectedData, onSuccess }) => {
         </Button>
       }
     >
-      <Spin spinning={isLoading}>
+      <Spin spinning={isFetching}>
         <div className="space-y-6 font-sans">
           {/* Current Stay Details Card */}
           <section className="space-y-2">

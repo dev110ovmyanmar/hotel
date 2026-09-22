@@ -32,7 +32,6 @@ export default function StayExtensionModal({
 
     const originalCheckin = record?.checkinDate ? dayjs(record?.checkinDate) : null;
     const originalCheckout = record?.checkoutDate ? dayjs(record?.checkoutDate) : null;
-    console.log(record, "recordoriginalCheckout")
     // Safely parse maxDayExtension to a number (fallback to 0 if undefined)
     const maxDayExtension = record?.maxExtend !== undefined ? Number(record.maxExtend) : 0;
 

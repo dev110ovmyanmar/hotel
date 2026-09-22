@@ -15,7 +15,7 @@ const FacilityList = () => {
   const [mode, setMode] = useState("add");
   const [selectedData, setSelectedData] = useState(null);
 
-  const { data, isLoading, error } = useApiQuery({
+  const { data, isFetching, error } = useApiQuery({
     fetchQueryName: "facilities",
     fetchQueryFunction: getFacilitList,
     params: {
@@ -57,7 +57,7 @@ const FacilityList = () => {
         total={data?.pagination?.total}
         changePage={(page) => setPage(page)}
         changePerPage={(perPage) => setPerPage(perPage)}
-        loading={isLoading}
+        loading={isFetching}
       />
 
       <FacilityForm

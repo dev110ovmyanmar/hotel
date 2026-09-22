@@ -58,7 +58,6 @@ const ReservationsGrid = ({
     <div>
       <Row gutter={[16, 16]}>
         {data.map((item) => {
-          console.log(item, "DATEITEmRESERVATionGRid");
           return (
             <>
               <Col xs={24} sm={12} lg={8} key={item.id}>

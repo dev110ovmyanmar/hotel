@@ -28,7 +28,7 @@ const FacilityListPackagesTable = ({
   const [mode, setMode] = useState(null);
   const [selectedData, setSelectedData] = useState({});
 
-  const { data, isLoading, error } = useApiQuery({
+  const { data, isFetching, error } = useApiQuery({
     fetchQueryName: "facility-details",
     fetchQueryFunction: getFacilityDetails,
     params: { uuid },
@@ -158,7 +158,7 @@ const FacilityListPackagesTable = ({
         scroll={{ x: 1000 }}
         columns={columns}
         dataSource={data?.facilityPackages}
-        loading={isLoading}
+        loading={isFetching}
         rowKey="uuid"
         pagination={{
           current: page,

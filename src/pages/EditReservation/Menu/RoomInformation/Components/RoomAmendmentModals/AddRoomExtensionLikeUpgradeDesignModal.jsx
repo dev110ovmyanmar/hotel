@@ -44,6 +44,7 @@ import {
 import dayjs from "dayjs";
 import PriceTag from "../../../../../../component/PriceTag/PriceTag";
 import ColorStatusTag from "../../../../../../component/ColorStatusTag/ColorStatusTag";
+import Loader from "../../../../../../component/Loader/Loader";
 
 const { Text, Title } = Typography;
 
@@ -308,7 +309,7 @@ export default function AddRoomExtensionLikeUpgradeDesignModal({
     >
       {availabilitySearchsPendings ? (
         <div className="flex justify-center items-center">
-          <Spin />
+          <Loader />
         </div>
       ) : !toReviewPage ? (
         hasRooms ? (

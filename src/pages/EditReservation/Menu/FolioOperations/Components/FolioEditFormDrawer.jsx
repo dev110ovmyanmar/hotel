@@ -35,7 +35,7 @@ const FolioEditFormDrawer = ({
   const [showChangeGuest, setShowChangeGuest] = useState(false);
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
 
-  const { data: reservationMetaData, isLoading: reservationMetaLoading } =
+  const { data: reservationMetaData, isFetching: reservationMetaLoading } =
     useApiQuery({
       fetchQueryName: "reservation-meta",
       fetchQueryFunction: reservationMeta,

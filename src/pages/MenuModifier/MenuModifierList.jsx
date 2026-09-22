@@ -18,7 +18,7 @@ const MenuModifierList = () => {
 
   const normalStatus = status === "all" ? null : status;
 
-  const { data, isLoading, error } = useApiQuery({
+  const { data, isFetching, error } = useApiQuery({
     fetchQueryName: "menu-modifiers",
     fetchQueryFunction: fetchMenuModifier,
     params: {
@@ -61,7 +61,7 @@ const MenuModifierList = () => {
         total={data?.pagination?.total}
         changePage={(page) => setPage(page)}
         changePerPage={(perPage) => setPerPage(perPage)}
-        loading={isLoading}
+        loading={isFetching}
       />
 
       <MenuModifierForm

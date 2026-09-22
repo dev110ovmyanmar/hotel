@@ -13,6 +13,7 @@ import PriceTag from "../../../component/PriceTag/PriceTag";
 import { textColorDarkMode, textWhiteInDarkStyle } from "../../../utils";
 import FinancialStatusTag from "../../../component/FinancialStatusTag/FinancialStatusTag";
 import { getNightAuditData } from "../../../variables/constants";
+import Loader from "../../../component/Loader/Loader";
 
 const FolioAndPaymentReviewDetails = ({ open, onClose, data }) => {
 
@@ -20,7 +21,7 @@ const FolioAndPaymentReviewDetails = ({ open, onClose, data }) => {
 
   const businessDate = nightAuditData?.businessDate;
 
-  const { data: folioData, isLoading: folioLoading } = useApiQuery({
+  const { data: folioData, isFetching: folioLoading } = useApiQuery({
     fetchQueryName: "folio-review",
     fetchQueryFunction: folioReviewPayment,
     params: {
@@ -110,7 +111,7 @@ const FolioAndPaymentReviewDetails = ({ open, onClose, data }) => {
     >
       {folioLoading ? (
         <div className="flex min-h-[300px] items-center justify-center">
-          <Spin size="large" />
+          <Loader />
         </div>
       ) : (
         <div className="flex flex-col gap-5">

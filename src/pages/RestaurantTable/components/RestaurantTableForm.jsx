@@ -37,7 +37,7 @@ const RestaurantTableForm = ({
   const canEdit = hasPermission(PERMISSIONS.RESTAURANT_TABLE_EDIT);
 
   // 1. API Query for Table Detail
-  const { data, isLoading } = useApiQuery({
+  const { data, isFetching } = useApiQuery({
     fetchQueryName: "table-detail",
     fetchQueryFunction: getRestaurantTableDetail,
     params: { uuid: selectedRow?.uuid },
@@ -147,7 +147,7 @@ const RestaurantTableForm = ({
         )
       }
     >
-      {isLoading ? (
+      {isFetching ? (
         <div className="flex items-center justify-center h-full min-h-[300px]">
           <Loader />
         </div>

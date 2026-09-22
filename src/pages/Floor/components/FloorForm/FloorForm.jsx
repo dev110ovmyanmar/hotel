@@ -41,7 +41,7 @@ const FloorForm = ({
     invalidateKeys: [["floorData"]],
   });
 
-  const { data, isLoading } = useApiQuery({
+  const { data, isFetching } = useApiQuery({
     fetchQueryName: "floorData",
     fetchQueryFunction: floorDetail,
     params: { uuid: selectedData?.uuid },
@@ -137,7 +137,7 @@ const FloorForm = ({
           </div>
         }
       >
-        {isLoading ? (
+        {isFetching ? (
           <div className="flex items-center justify-center h-full min-h-[300px]">
             <Loader />
           </div>

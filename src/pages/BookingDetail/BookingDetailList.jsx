@@ -40,7 +40,7 @@ const BookingDetailList = () => {
     }
   }, [bookingId, navigate]);
 
-  const { data, isLoading } = useApiQuery({
+  const { data, isFetching } = useApiQuery({
     fetchQueryName: "reservation-details",
     selectedRoomUuid,
     fetchQueryFunction: reservationDetails,
@@ -74,7 +74,7 @@ const BookingDetailList = () => {
     }
   }, [data, bookingId]);
 
-  if (isLoading) {
+  if (isFetching) {
     return (
       <div className="flex items-center justify-center h-full min-h-[300px]">
         <Loader />

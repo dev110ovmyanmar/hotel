@@ -55,7 +55,7 @@ const RoomForm = ({
     fetchQueryFunction: roomMeta,
   });
 
-  const { data, isLoading } = useApiQuery({
+  const { data, isFetching } = useApiQuery({
     fetchQueryName: "roomData",
     fetchQueryFunction: roomDetails,
     params: { uuid: selectedData?.uuid },
@@ -235,7 +235,7 @@ const RoomForm = ({
           </div>
         }
       >
-        {isLoading ? (
+        {isFetching ? (
           <div className="flex items-center justify-center h-full min-h-[300px]">
             <Loader />
           </div>

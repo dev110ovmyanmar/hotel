@@ -18,7 +18,7 @@ const TaxList = () => {
 
   const normalStatus = status === "all" ? null : status;
 
-  const { data, isLoading } = useApiQuery({
+  const { data, isFetching } = useApiQuery({
     fetchQueryName: "taxListData",
     fetchQueryFunction: fetchTax,
     params: {
@@ -62,7 +62,7 @@ const TaxList = () => {
         total={data?.pagination?.total}
         changePage={(page) => setPage(page)}
         changePerPage={(perPage) => setPerPage(perPage)}
-        loading={isLoading}
+        loading={isFetching}
       />
 
       <TaxForm

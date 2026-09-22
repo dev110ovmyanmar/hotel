@@ -42,7 +42,7 @@ const ServiceAddOnForm = ({
     : serviceData?.reservation?.uuid || serviceData?.reservationUuid;
   const serviceOrderUuid = isAdd ? null : serviceData?.uuid;
 
-  const { data: reservationRoom , isLoading: metaLoading} = useApiQuery({
+  const { data: reservationRoom , isFetching: metaLoading} = useApiQuery({
     fetchQueryFunction: reservationRoomMeta,
     params: {
       reservation: {
@@ -52,7 +52,7 @@ const ServiceAddOnForm = ({
     options: { enabled: !!reservationUuid },
   });
 
-  const { data: orderDetails, isLoading: detailsLoading } = useApiQuery({
+  const { data: orderDetails, isFetching: detailsLoading } = useApiQuery({
     fetchQueryName: "service-addons",
     fetchQueryFunction: serviceAddonDetails,
     params: { uuid: serviceOrderUuid },

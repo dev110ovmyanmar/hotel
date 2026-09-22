@@ -29,7 +29,7 @@ const DailyOccupactionsTableDrawer = ({
     const [selectedRowKey, setSelectedRowKey] = useState(null);
     const [initialEditMode, setInitialEditMode] = useState(false);
 
-    const { data, isLoading } = useApiQuery({
+    const { data, isFetching } = useApiQuery({
         fetchQueryName: "dailyOccupactions",
         fetchQueryFunction: getDailyOccupactions,
         params: {
@@ -293,7 +293,7 @@ const DailyOccupactionsTableDrawer = ({
                                             rowKey={(record) => record.uuid || record.stayDate}
                                             columns={columns}
                                             dataSource={data?.dailyOccupancies ?? []}
-                                            loading={isLoading}
+                                            loading={isFetching}
                                             pagination={false}
                                             scroll={{ x: 600 }}
                                             rowClassName={(_, index) =>

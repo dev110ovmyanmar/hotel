@@ -74,7 +74,7 @@ const AdminForm = ({
     shouldInvalidate: isEdit ? true : page === 1,
   });
 
-  const { data, isLoading } = useApiQuery({
+  const { data, isFetching } = useApiQuery({
     fetchQueryName: "admin-details",
     fetchQueryFunction: adminDetails,
     params: { uuid: selectedData?.uuid },
@@ -278,7 +278,7 @@ const AdminForm = ({
           </div>
         }
       >
-        {isLoading ? (
+        {isFetching ? (
           <div className="flex items-center justify-center h-full min-h-[300px]">
             <Loader />
           </div>

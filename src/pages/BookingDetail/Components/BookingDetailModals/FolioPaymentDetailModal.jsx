@@ -20,7 +20,7 @@ export default function FolioPaymentDetailModal({
     selectedDataUuid
 }) {
     // Dynamic Query hook fetching individual row payload matching selection uuid
-    const { data, isLoading } = useApiQuery({
+    const { data, isFetching } = useApiQuery({
         fetchQueryName: ["folio-payment-details"],
         fetchQueryFunction: folioPaymentDetails,
         params: { uuid: selectedDataUuid },
@@ -55,7 +55,7 @@ export default function FolioPaymentDetailModal({
             width={750}
             footer={null}
         >
-            <Spin spinning={isLoading} tip="Fetching live transaction entries...">
+            <Spin spinning={isFetching} tip="Fetching live transaction entries...">
 
                 {/* Top Banner Meta Details Summary */}
                 <div className="flex justify-between items-center bg-slate-50 p-3 px-4 rounded-lg my-4 border border-slate-200">

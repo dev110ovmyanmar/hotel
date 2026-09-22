@@ -18,7 +18,7 @@ const PropertiesListing = () => {
   const [documentDrawerOpen, setDocumentDrawerOpen] = useState(false);
   const [selectedCountryUuid, setSelectedCountryUuid] = useState(null);
 
-  const { data, isLoading, error } = useApiQuery({
+  const { data, isFetching, error } = useApiQuery({
     fetchQueryName: "properties",
     fetchQueryFunction: getProperties,
     params: {
@@ -130,7 +130,7 @@ const PropertiesListing = () => {
         onView={handleView}
         onEdit={handleEdit}
         onUpload={handelUpload}
-        loading={isLoading}
+        loading={isFetching}
         page={data?.response?.pagination?.currentPage || page}
         perPage={data?.response?.pagination?.perPage || perPage}
         total={data?.response?.pagination?.total}
@@ -142,7 +142,7 @@ const PropertiesListing = () => {
         mode={currentMode}
         drawerOpen={drawerOpen}
         setDrawerOpen={setDrawerOpen}
-        loading={isLoading}
+        loading={isFetching}
         selectedRow={selectedRow}
         setSelectedRow={setSelectedRow}
         propertyTypes={propertyTypes}

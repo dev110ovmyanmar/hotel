@@ -29,7 +29,7 @@ const UnitListing = () => {
         label: item.name,
       })) || [];
 
-  const { data, isLoading, error } = useApiQuery({
+  const { data, isFetching, error } = useApiQuery({
     fetchQueryName: "units",
     fetchQueryFunction: getUnits,
     params: {
@@ -92,7 +92,7 @@ const UnitListing = () => {
         dataSource={units} // Filtered by keyword via API or useMemo
         onView={handleView}
         onEdit={handleEdit}
-        loading={isLoading}
+        loading={isFetching}
         page={data?.pagination?.currentPage || page}
         perPage={data?.pagination?.perPage || perPage}
         total={data?.pagination?.total}
@@ -107,7 +107,7 @@ const UnitListing = () => {
         drawerOpen={drawerOpen}
         setDrawerOpen={setDrawerOpen}
         switchToEdit={switchToEdit}
-        loading={isLoading}
+        loading={isFetching}
         selectedRow={selectedRow}
         setSelectedRow={setSelectedRow}
         statusOptions={statusOptions}

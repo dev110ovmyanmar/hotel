@@ -12,7 +12,7 @@ const PaymentList = () => {
   const [perPage, setPerPage] = useState(LIMITS.PAGE_SIZE);
 
 
-  const { data, isLoading, error } = useApiQuery({
+  const { data, isFetching, error } = useApiQuery({
     fetchQueryName: "payments",
     fetchQueryFunction: getfolioPaymentList,
     params: {
@@ -47,7 +47,7 @@ const PaymentList = () => {
         total={data?.pagination?.total}
         changePage={(page) => setPage(page)}
         changePerPage={(perPage) => setPerPage(perPage)}
-        loading={isLoading}
+        loading={isFetching}
       />
     </div>
   );

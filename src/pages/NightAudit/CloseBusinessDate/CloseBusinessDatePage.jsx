@@ -7,6 +7,7 @@ import CheckBookingHeader from "../CheckBookingHeader";
 import CloseBusinessDateTable from "./CloseBusinessDateTable";
 import { getNightAuditData, spinLoadingCenter } from "../../../variables/constants";
 import { useEffect } from "react";
+import Loader from "../../../component/Loader/Loader";
 
 const CloseBusinessDatePage = ({
     stepValue,
@@ -25,7 +26,7 @@ const CloseBusinessDatePage = ({
         }
     }, [navigate]);
 
-    const { data: preAuditChecksData, isLoading, error } = useApiQuery({
+    const { data: preAuditChecksData, isFetching, error } = useApiQuery({
         fetchQueryName: "pre-audit-checks",
         fetchQueryFunction: preAuditCheck,
         params: {
@@ -34,10 +35,10 @@ const CloseBusinessDatePage = ({
         },
     });
 
-    if (isLoading) {
+    if (isFetching) {
         return (
             <div className={spinLoadingCenter}>
-                <Spin />
+                <Loader />
             </div>
         )
     }

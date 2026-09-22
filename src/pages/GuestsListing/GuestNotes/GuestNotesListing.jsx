@@ -38,7 +38,7 @@ const GuestNotesListing = () => {
   }, [guestUuid, navigate]);
 
   // Fetch List Data
-  const { data, isLoading } = useApiQuery({
+  const { data, isFetching } = useApiQuery({
     fetchQueryName: "guestNotes",
     fetchQueryFunction: getGuestNotes,
     params: {
@@ -97,7 +97,7 @@ const GuestNotesListing = () => {
         dataSource={guestNotes}
         onView={handleView}
         onEdit={handleEdit}
-        loading={isLoading}
+        loading={isFetching}
         page={page}
         perPage={perPage}
         total={data?.pagination?.total}

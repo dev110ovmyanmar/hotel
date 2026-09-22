@@ -63,7 +63,7 @@ const HouseKeepingStatusForm = ({
     const priorityOptions = useMemo(() =>
         initData?.statuses?.priority_level?.map(p => ({ value: p.uuid, label: p.name })) || [], [initData]);
     // 2. API Query for single Detail
-    const { data: houseKeepingStatusDetail, isLoading } = useApiQuery({
+    const { data: houseKeepingStatusDetail, isFetching } = useApiQuery({
         fetchQueryName: "housekeeping-detail",
         fetchQueryFunction: getHouseKeepingDetail,
         params: { uuid: selectedRow?.uuid },
@@ -134,7 +134,7 @@ const HouseKeepingStatusForm = ({
                 <FormButtons onClick={() => form.submit()} mode={mode} isPending={upsertMutation.isPending} />
             )}
         >
-            {isLoading ?
+            {isFetching ?
                 <div className="flex h-64 items-center justify-center"><Loader /></div>
                 : (
                     <Form form={form} layout="vertical" onFinish={onFinish}>

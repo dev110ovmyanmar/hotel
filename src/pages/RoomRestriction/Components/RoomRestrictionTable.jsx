@@ -260,7 +260,7 @@ const RoomRestrictionTable = ({ data, page, setPage, loading }) => {
         title={"Confirm Stop Selling ?"}
         okText="Confirm"
         cancelText="Cancel"
-        confirmLoading={updateStopSelling.isLoading}
+        confirmLoading={updateStopSelling.isPending}
         onOk={handleConfirmStopSell}
         onCancel={() => {
           setConfirmOpen(false);

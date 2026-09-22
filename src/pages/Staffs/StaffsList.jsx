@@ -20,7 +20,7 @@ const StaffsList = () => {
 
   const normalStatus = status === "all" ? null : status;
 
-  const { data, isLoading } = useApiQuery({
+  const { data, isFetching } = useApiQuery({
     fetchQueryName: "staffData",
     fetchQueryFunction: fetchStaff,
     params: {
@@ -64,7 +64,7 @@ const StaffsList = () => {
         total={data?.pagination?.total}
         changePage={(page) => setPage(page)}
         changePerPage={(perPage) => setPerPage(perPage)}
-        loading={isLoading}
+        loading={isFetching}
       />
 
       <StaffsForm

@@ -7,6 +7,7 @@ import CheckBookingHeader from "../CheckBookingHeader";
 import DailyChargePostingTable from "./DailyChargePostingTable";
 import { getNightAuditData, spinLoadingCenter } from "../../../variables/constants";
 import { useEffect } from "react";
+import Loader from "../../../component/Loader/Loader";
 
 const DailyChargePostingPage = ({
     stepValue,
@@ -32,12 +33,11 @@ const DailyChargePostingPage = ({
             businessDate
         },
     });
-    console.log(dailyChargePostingData, "dailyChargePostingData")
 
     if (!dailyChargePostingData) {
         return (
             <div className={spinLoadingCenter}>
-                <Spin />
+                <Loader />
             </div>
         )
     }

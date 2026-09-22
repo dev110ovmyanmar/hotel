@@ -147,7 +147,7 @@ const AddNewServiceOrderForm = ({
           <Button
             type="primary"
             onClick={() => form.submit()}
-            loading={createServiceOrder.isLoading}
+            loading={createServiceOrder.isPending}
           >
             Create
           </Button>

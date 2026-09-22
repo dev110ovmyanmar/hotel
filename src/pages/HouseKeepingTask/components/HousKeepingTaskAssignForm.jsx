@@ -47,7 +47,7 @@ const HouseKeepingTaskAssignForm = ({
     });
 
     // 2. Fetch Specific Assignment Detail for Edit
-    const { data: assignDetailRaw, isLoading: isAssignDetailLoading } = useApiQuery({
+    const { data: assignDetailRaw, isFetching: isAssignDetailLoading } = useApiQuery({
         fetchQueryName: "housekeeping-task-assign-detail",
         fetchQueryFunction: getHouseKeepingTaskAssignDetail,
         params: { uuid: selectedAssignment?.uuid },

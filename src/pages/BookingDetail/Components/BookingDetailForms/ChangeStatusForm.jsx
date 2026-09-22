@@ -25,7 +25,7 @@ const ChangeStatusForm = ({ reservationDetails, open, onClose }) => {
   const selectedRooms = Form.useWatch("reservationRooms", form) || [];
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
 
-  const { data, isLoading } = useApiQuery({
+  const { data, isFetching } = useApiQuery({
     fetchQueryFunction: reservationRoomList,
     params: {
       reservationRoom: {
@@ -349,7 +349,7 @@ const ChangeStatusForm = ({ reservationDetails, open, onClose }) => {
         </div>
       }
     >
-      {isLoading ? (
+      {isFetching ? (
         <div className="flex min-h-screen items-center justify-center">
           <Loader />
         </div>

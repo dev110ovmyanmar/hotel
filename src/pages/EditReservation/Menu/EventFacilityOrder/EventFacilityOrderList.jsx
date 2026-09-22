@@ -39,7 +39,7 @@ const EventFacilityOrderList = () => {
   const [searchOpen, setSearchOpen] = useState(false);
   const selectedRoomUuid = searchParams.get("selectedRoomUuid") || bookingId;
 
-  const { data, isLoading, error } = useApiQuery({
+  const { data, isFetching, error } = useApiQuery({
     fetchQueryName: "facility-booking-list",
     fetchQueryFunction: fetchFacilityBooking,
     params: {
@@ -68,7 +68,7 @@ const EventFacilityOrderList = () => {
     setDrawerOpen(true);
   };
 
-  if (isLoading) {
+  if (isFetching) {
     return (
       <div className="flex items-center justify-center h-full min-h-[300px]">
         <Loader />
@@ -94,7 +94,7 @@ const EventFacilityOrderList = () => {
         total={data?.pagination?.total}
         changePage={(page) => setPage(page)}
         changePerPage={(perPage) => setPerPage(perPage)}
-        loading={isLoading}
+        loading={isFetching}
         reservationRoom={data?.reservationRoom}
       />
 
