@@ -45,7 +45,7 @@ const GuestList = () => {
     setPage(1);
   }, [keyword]);
 
-  const { data, isLoading, refetch } = useApiQuery({
+  const { data, isFetching, refetch } = useApiQuery({
     fetchQueryName: "reservation-guest",
     fetchQueryFunction: reservationGuestList,
     params: {
@@ -70,7 +70,7 @@ const GuestList = () => {
 
   const reservationInfo = data?.reservation ?? null;
 
-  if (isLoading) {
+  if (isFetching) {
     return (
       <div className="flex items-center justify-center h-full min-h-[300px]">
         <Loader />
@@ -99,7 +99,7 @@ const GuestList = () => {
         total={data?.pagination?.total}
         changePage={(page) => setPage(page)}
         changePerPage={(perPage) => setPerPage(perPage)}
-        loading={isLoading}
+        loading={isFetching}
         reservationUuid={data?.data}
       />
 

@@ -24,7 +24,7 @@ const SeasonalRateList = () => {
     filter.startDate = startDate;
     filter.endDate = endDate;
   }
-  const { data, isLoading } = useApiQuery({
+  const { data, isFetching } = useApiQuery({
     fetchQueryName: "SeasonlRate",
     fetchQueryFunction: fetchSeasonlRate,
     params: {
@@ -68,7 +68,7 @@ const SeasonalRateList = () => {
 
       <SeasonalRateTable
         data={seasonalRoomTypeData || []}
-        loading={isLoading}
+        loading={isFetching}
       />
 
       <SeasonalRateForm

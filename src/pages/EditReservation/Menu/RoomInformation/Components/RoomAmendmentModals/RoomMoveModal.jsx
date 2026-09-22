@@ -11,6 +11,7 @@ import ColorStatusTag from '../../../../../../component/ColorStatusTag/ColorStat
 import { GiBed } from "react-icons/gi";
 import { queryClient } from '../../../../../../app/queryClient';
 import { darkModeStyle, selectedDarkMode, upgradeAndDownRoomDarkMode } from '../../../../../../utils';
+import Loader from '../../../../../../component/Loader/Loader';
 
 const { Text } = Typography;
 
@@ -171,7 +172,7 @@ export default function RoomMoveModal({
                                 isQueryFetching
                                     ?
                                     <div className='flex justify-center items-center'>
-                                        <Spin></Spin>
+                                        <Loader />
                                     </div>
                                     :
                                     <Row gutter={[16, 16]}>

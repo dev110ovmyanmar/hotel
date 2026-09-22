@@ -86,7 +86,7 @@ const TaxForm = ({
     page: page,
   });
 
-  const { data, isLoading } = useApiQuery({
+  const { data, isFetching } = useApiQuery({
     fetchQueryName: "taxData",
     fetchQueryFunction: TaxDetails,
     params: { uuid: selectedData?.uuid },
@@ -209,7 +209,7 @@ const TaxForm = ({
           </div>
         }
       >
-        {isLoading ? (
+        {isFetching ? (
           <div className="flex items-center justify-center h-full min-h-[300px]">
             <Loader />
           </div>

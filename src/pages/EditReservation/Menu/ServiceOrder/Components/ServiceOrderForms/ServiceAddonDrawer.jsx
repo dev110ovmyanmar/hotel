@@ -33,7 +33,7 @@ const ServiceAddonDrawer = ({
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState(null);
 
-  const { data, isLoading } = useApiQuery({
+  const { data, isFetching } = useApiQuery({
     fetchQueryName: "service-addon",
     fetchQueryFunction: serviceAddonList,
     params: {
@@ -167,7 +167,7 @@ const ServiceAddonDrawer = ({
         open={open}
       >
         <Table
-          loading={isLoading}
+          loading={isFetching}
           columns={columns}
           dataSource={data?.data || []}
           rowKey={(record) => record.uuid || record.id}
@@ -180,7 +180,7 @@ const ServiceAddonDrawer = ({
         open={isEditModalOpen}
         onCancel={handleCloseModal}
         onOk={() => form.submit()}
-        confirmLoading={updateAddon.isLoading}
+        confirmLoading={updateAddon.isPending}
         okText="Update"
         cancelText="Cancel"
         destroyOnClose

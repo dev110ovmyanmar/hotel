@@ -23,7 +23,7 @@ const CompanyContractList = () => {
 
   const normalStatus = status === "all" ? null : status;
 
-  const { data, isLoading, error } = useApiQuery({
+  const { data, isFetching, error } = useApiQuery({
     fetchQueryName: "partner-contracts",
     fetchQueryFunction: fetchPartnerContract,
     params: {

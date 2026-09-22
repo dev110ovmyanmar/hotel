@@ -30,7 +30,7 @@ const GuestNoteForm = ({
     const isAdd = mode === "add";
 
     // 1. Fetch Detail API - Ensure we handle data.response based on your JSON structure
-    const { data, isLoading } = useApiQuery({
+    const { data, isFetching } = useApiQuery({
         fetchQueryName: "guestNotes-detail",
         fetchQueryFunction: getGuestNoteDetail,
         params: {
@@ -116,7 +116,7 @@ const GuestNoteForm = ({
                     />
                 )
             }>
-            {isLoading && !isAdd ? (
+            {isFetching && !isAdd ? (
                 <Loader />
             ) : (
                 <Form form={form} layout="vertical" onFinish={onFinish}>

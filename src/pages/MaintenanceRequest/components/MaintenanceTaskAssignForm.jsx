@@ -55,7 +55,7 @@ const MaintenanceTaskAssignForm = ({
     });
 
     // 2. Fetch Specific Assignment Detail for Edit
-    const { data: assignDetailRaw, isLoading: isAssignDetailLoading } = useApiQuery({
+    const { data: assignDetailRaw, isFetching: isAssignDetailLoading } = useApiQuery({
         fetchQueryName: "maintenance-task-assign-detail",
         fetchQueryFunction: getMaintenanceTaskAssignmentDetail,
         params: { uuid: selectedAssignment?.uuid },

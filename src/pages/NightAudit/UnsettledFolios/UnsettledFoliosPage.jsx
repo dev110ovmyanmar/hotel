@@ -5,12 +5,13 @@ import CheckBookingHeader from "../CheckBookingHeader";
 import UnsettledFolios from "../UnsettledFolios";
 import { Spin } from "antd";
 import { spinLoadingCenter } from "../../../variables/constants";
+import Loader from "../../../component/Loader/Loader";
 
 const UnsettledFoliosPage = ({
     stepValue
 }) => {
     const navigate = useNavigate();
-    const { data: preAuditChecksData, isLoading, error } = useApiQuery({
+    const { data: preAuditChecksData, isFetching, error } = useApiQuery({
         fetchQueryName: "pre-audit-checks",
         fetchQueryFunction: preAuditCheck,
         params: {
@@ -21,7 +22,7 @@ const UnsettledFoliosPage = ({
     if (!preAuditChecksData) {
         return (
             <div className={spinLoadingCenter}>
-                <Spin />
+                <Loader />
             </div>
         )
     }

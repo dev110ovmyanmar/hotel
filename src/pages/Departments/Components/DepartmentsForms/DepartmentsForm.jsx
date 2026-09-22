@@ -55,7 +55,7 @@ const DepartmentsForm = ({
     invalidateKeys: [["departmentsdata"]],
   });
 
-  const { data, isLoading } = useApiQuery({
+  const { data, isFetching } = useApiQuery({
     fetchQueryName: "departmentsdata",
     fetchQueryFunction: departmentDetails,
     params: { uuid: selectedData?.uuid },
@@ -152,7 +152,7 @@ const DepartmentsForm = ({
           </div>
         }
       >
-        {isLoading ? (
+        {isFetching ? (
           <div className="flex items-center justify-center h-full min-h-[300px]">
             <Loader />
           </div>

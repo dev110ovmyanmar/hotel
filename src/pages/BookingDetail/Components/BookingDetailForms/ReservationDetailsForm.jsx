@@ -20,7 +20,7 @@ const ReservationDetailsForm = ({ open, onClose, onSuccess }) => {
   const [selectedSourceType, setSelectedSourceType] = useState(null);
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
 
-  const { data, isLoading: detailsLoading } = useApiQuery({
+  const { data, isFetching: detailsLoading } = useApiQuery({
     fetchQueryName: "reservation-details",
     fetchQueryFunction: reservationDetails,
     params: {
@@ -33,7 +33,7 @@ const ReservationDetailsForm = ({ open, onClose, onSuccess }) => {
     },
   });
 
-  const { data: reservationMetas, isLoading: metaLoading } = useApiQuery({
+  const { data: reservationMetas, isFetching: metaLoading } = useApiQuery({
     fetchQueryName: "reservation-meta",
     fetchQueryFunction: reservationMeta,
     options: {

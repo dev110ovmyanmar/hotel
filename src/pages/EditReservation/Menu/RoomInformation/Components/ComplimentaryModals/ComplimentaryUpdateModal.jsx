@@ -22,7 +22,7 @@ const ComplimentaryUpdateModal = ({
     const [selectedStatusUuid, setSelectedStatusUuid] = useState("");
     const [form] = Form.useForm();
 
-    const { data: reservationRoomsForComplimentary, isLoading: complimentaryLoading } = useApiQuery({
+    const { data: reservationRoomsForComplimentary, isFetching: complimentaryLoading } = useApiQuery({
         fetchQueryName: "reservation-room-comp",
         fetchQueryFunction: reservationRoomList,
         params: {

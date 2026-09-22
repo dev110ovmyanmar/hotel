@@ -196,7 +196,7 @@
 //     invalidateKeys: [["reservation-guest"]],
 //   });
 
-//   const { data, isLoading } = useApiQuery({
+//   const { data, isFetching } = useApiQuery({
 //     fetchQueryName: "guest-details",
 //     fetchQueryFunction: reservationGuestDetails,
 //     params: { uuid: guestData?.uuid },
@@ -919,7 +919,7 @@ const GuestForm = ({
     invalidateKeys: [["reservation-guest"]],
   });
 
-  const { data, isLoading } = useApiQuery({
+  const { data, isFetching } = useApiQuery({
     fetchQueryName: "guest-details",
     fetchQueryFunction: reservationGuestDetails,
     params: { uuid: guestData?.uuid },

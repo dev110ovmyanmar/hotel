@@ -18,7 +18,7 @@ const AgencyList = () => {
 
   const normalStatus = status === "all" ? null : status;
 
-  const { data, isLoading, error } = useApiQuery({
+  const { data, isFetching, error } = useApiQuery({
     fetchQueryName: "agencies",
     fetchQueryFunction: fetchPartner,
     params: {
@@ -61,7 +61,7 @@ const AgencyList = () => {
         total={data?.pagination?.total}
         changePage={(page) => setPage(page)}
         changePerPage={(perPage) => setPerPage(perPage)}
-        loading={isLoading}
+        loading={isFetching}
       />
 
       <AgencyForm

@@ -92,7 +92,7 @@ const ItemsForm = ({
     invalidateKeys: [["services"]],
   });
 
-  const { data, isLoading, error } = useApiQuery({
+  const { data, isFetching, error } = useApiQuery({
     fetchQueryName: "service-inventory-mapping-details",
     fetchQueryFunction: getServiceInventoryMappingDetails,
     params: { uuid: selectedItem?.uuid },

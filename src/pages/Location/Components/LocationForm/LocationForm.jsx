@@ -47,7 +47,7 @@ const LocationForm = ({
     shouldInvalidate: isEdit ? true : page === 1,
   });
 
-  const { data, isLoading, error } = useApiQuery({
+  const { data, isFetching, error } = useApiQuery({
     fetchQueryName: "location-detail",
     fetchQueryFunction: locationDetails,
     params: { uuid: selectedData?.uuid },
@@ -235,7 +235,7 @@ const LocationForm = ({
             dataSource={data?.city}
             rowKey="uuid"
             className="my-3"
-            loading={isLoading}
+            loading={isFetching}
             pagination={false}
           ></Table>
 
@@ -258,7 +258,7 @@ const LocationForm = ({
               </div>
             }
           >
-            {isLoading ? (
+            {isFetching ? (
               <div className="flex items-center justify-center h-full min-h-[300px]">
                 <Loader />
               </div>

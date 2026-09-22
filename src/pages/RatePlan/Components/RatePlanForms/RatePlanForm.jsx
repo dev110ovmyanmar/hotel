@@ -109,7 +109,7 @@ const RatePlanForm = ({
     invalidateKeys: [["ratePlan"]],
   });
 
-  const { data, isLoading: ratePlanDetailsLoading } = useApiQuery({
+  const { data, isFetching: ratePlanDetailsLoading } = useApiQuery({
     fetchQueryName: "ratePlan",
     fetchQueryFunction: ratePlanDetails,
     params: { uuid: selectedData?.uuid },

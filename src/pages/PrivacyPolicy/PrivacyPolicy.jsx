@@ -51,7 +51,7 @@ const PrivacyPolicy = () => {
   });
 
   // 1. Fetch initial data
-  const { data, isLoading } = useApiQuery({
+  const { data, isFetching } = useApiQuery({
     fetchQueryName: "privacypolicyData",
     fetchQueryFunction: fetchPrivacyPolicyData,
     params: {},
@@ -128,7 +128,7 @@ const PrivacyPolicy = () => {
     setIsEdit(false);
   };
 
-  if (isLoading) {
+  if (isFetching) {
     return (
       <div className="flex justify-center items-center h-screen">
         <Loader />
@@ -229,7 +229,7 @@ const PrivacyPolicy = () => {
               </Button>
               <Button
                 type="primary"
-                loading={mutation.isLoading}
+                loading={mutation.isPending}
                 className="bg-blue-600 hover:bg-blue-700 px-12 h-11 font-bold text-white"
                 htmlType="submit"
               >

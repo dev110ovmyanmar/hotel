@@ -6,6 +6,7 @@ import CreateNewDay from "../CreateNewDay";
 import CheckBookingHeader from "../CheckBookingHeader";
 import { useEffect, useState } from "react";
 import { getNightAuditData, spinLoadingCenter } from "../../../variables/constants";
+import Loader from "../../../component/Loader/Loader";
 
 const CreateNewDayPage = () => {
     const navigate = useNavigate();
@@ -22,7 +23,7 @@ const CreateNewDayPage = () => {
         }
     }, [navigate]);
 
-    const { data: preAuditChecksData, isLoading, error } = useApiQuery({
+    const { data: preAuditChecksData, isFetching, error } = useApiQuery({
         fetchQueryName: "pre-audit-checks",
         fetchQueryFunction: preAuditCheck,
         params: {
@@ -33,7 +34,7 @@ const CreateNewDayPage = () => {
     if (!preAuditChecksData) {
         return (
             <div className={spinLoadingCenter}>
-                <Spin />
+                <Loader />
             </div>
         )
     }

@@ -43,7 +43,7 @@ const HouseKeepingStatusListing = () => {
   const createPermission = hasPermission(PERMISSIONS.HK_TASK_CREATE);
 
   // API Query with combined params
-  const { data, isLoading } = useApiQuery({
+  const { data, isFetching } = useApiQuery({
     fetchQueryName: "houseKeeping-statuses",
     fetchQueryFunction: getHouseKeeping,
     params: {
@@ -138,7 +138,7 @@ const HouseKeepingStatusListing = () => {
             dataSource={houseKeepingStatuses}
             onView={(rec) => handleAction(rec, "view")}
             onEdit={(rec) => handleAction(rec, "edit")}
-            loading={isLoading}
+            loading={isFetching}
             page={data?.pagination?.currentPage || page}
             perPage={data?.pagination?.perPage || perPage}
             total={data?.pagination?.total}
@@ -147,7 +147,7 @@ const HouseKeepingStatusListing = () => {
           />
         </div>
       ) : (
-        <Spin spinning={isLoading}>
+        <Spin spinning={isFetching}>
           <div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 min-h-[400px]">
               {houseKeepingStatuses?.map((item) => (

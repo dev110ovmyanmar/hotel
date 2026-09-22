@@ -48,7 +48,7 @@ const MenuModifierForm = ({
     shouldInvalidate: isEdit ? true : page === 1,
   });
 
-  const { data: menuModifierDetailData, isLoading } = useApiQuery({
+  const { data: menuModifierDetailData, isFetching } = useApiQuery({
     fetchQueryName: "menu-modifier-details",
     fetchQueryFunction: menuModifierDetails,
     params: { uuid: selectedData?.uuid },
@@ -137,7 +137,7 @@ const MenuModifierForm = ({
           </div>
         }
       >
-        {isLoading ? (
+        {isFetching ? (
           <div className="flex items-center justify-center h-full min-h-[300px]">
             <Loader />
           </div>

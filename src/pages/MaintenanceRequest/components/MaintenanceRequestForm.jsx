@@ -92,7 +92,7 @@ const MaintenanceRequestForm = ({
     const departmentOptions = useMemo(() =>
         adminMetaData?.departments?.map(d => ({ value: d.uuid, label: d.name })), [adminMetaData]);
 
-    const { data: detail, isLoading } = useApiQuery({
+    const { data: detail, isFetching } = useApiQuery({
         fetchQueryName: "maintenance-request-detail",
         fetchQueryFunction: getMaintenanceRequestDetail,
         params: { uuid: selectedRow?.uuid },
@@ -216,7 +216,7 @@ const MaintenanceRequestForm = ({
                         isView ? (editPermission && <Button onClick={() => setMode("edit")} type="primary">Edit</Button>) :
                             <FormButtons onClick={() => form.submit()} mode={mode} isPending={createMutation.isPending || updateMutation.isPending} />}
             >
-                {isLoading && !isCreate ? <div className="flex h-64 items-center justify-center"><Loader /></div> : (
+                {isFetching && !isCreate ? <div className="flex h-64 items-center justify-center"><Loader /></div> : (
                     <div>
                         <Form form={form} layout="vertical" onFinish={onFinish}>
 
