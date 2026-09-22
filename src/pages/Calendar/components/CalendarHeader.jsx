@@ -11,6 +11,7 @@ import FilterPopover from './FilterPopover';
 const CalendarHeader = ({
   currentDate,
   setCurrentDate,
+  onRefetch,
   isLoading,
   isFetching,
   isChangingDate,
@@ -31,6 +32,7 @@ const CalendarHeader = ({
   const isDisabled = isLoading || isFetching || isChangingDate;
   const [confirmModalOpen, setConfirmModalOpen] = useState(false);
   const [pendingDate, setPendingDate] = useState(null);
+  const [confirming, setConfirming] = useState(false);
 
   const confirmDateChange = (newDate) => {
     setPendingDate(newDate);
@@ -38,17 +40,24 @@ const CalendarHeader = ({
   };
 
   const handleConfirmOk = useCallback(() => {
-    // Step 1: disable buttons (flushSync forces immediate render → paint)
+    const dateToApply = pendingDate;
+    const isSameMonth = currentDate.isSame(dateToApply, 'month');
+    // Step 1: force disabled state to paint immediately
     flushSync(() => {
+      setConfirming(true);
       setIsChangingDate(true);
     });
-    // Step 2: close modal + fire API (next frame, after disabled buttons paint)
+    // Step 2: close modal + fire API (after disabled buttons are painted)
     requestAnimationFrame(() => {
-      setConfirmModalOpen(false);
-      setCurrentDate(pendingDate);
-      setPendingDate(null);
-    });
-  }, [pendingDate, setIsChangingDate, setCurrentDate]);
+    setConfirmModalOpen(false);
+    setCurrentDate(dateToApply);
+    if (isSameMonth && onRefetch) {
+      onRefetch();
+    }
+    setPendingDate(null);
+    setConfirming(false);
+    })
+  }, [pendingDate, currentDate, setIsChangingDate, setCurrentDate, onRefetch]);
 
   const handleConfirmCancel = () => {
     setConfirmModalOpen(false);
@@ -136,7 +145,14 @@ const CalendarHeader = ({
           allowClear
           onClear={() => { setSearchInput(''); setSearchQuery(''); }}
         />
-        <Button type="primary" disabled={isDisabled} onClick={() => confirmDateChange(dayjs())}>Today</Button>
+        <Button
+          type="primary"
+          disabled={isDisabled}
+          style={isDisabled ? { opacity: 0.65, backgroundColor: '#1677ff', borderColor: '#1677ff', color: '#fff', cursor: 'not-allowed' } : {}}
+          onClick={() => confirmDateChange(dayjs())}
+        >
+          Today
+        </Button>
         <Popover
           content={filterContent}
           title="Filter Rooms"
@@ -161,8 +177,11 @@ const CalendarHeader = ({
         onCancel={handleConfirmCancel}
         okText="Yes"
         cancelText="No"
-        okButtonProps={{ disabled: isChangingDate, className: isChangingDate ? 'opacity-100' : '' }}
-        cancelButtonProps={{ disabled: isChangingDate, className: isChangingDate ? 'opacity-100' : '' }}
+        okButtonProps={{
+          disabled: isChangingDate || confirming,
+          style: (isChangingDate || confirming) ? { opacity: 0.65, backgroundColor: '#1677ff', borderColor: '#1677ff', color: '#fff', cursor: 'not-allowed' } : {}
+        }}
+        cancelButtonProps={{ disabled: isChangingDate || confirming }}
         transitionName=""
         maskTransitionName=""
       >

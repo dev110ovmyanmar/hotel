@@ -72,9 +72,17 @@ export default function StayReductionModal({
   // Step 2: Fire backend server mutations
   const handleFinalCommit = async () => {
     setIsSubmitting(true);
-    const checkinDate = record?.checkinDate
-      ? record.checkinDate.split(" ")[0]
-      : originalCheckin.format("YYYY-MM-DD");
+
+    const today = dayjs().startOf("day");
+
+    const checkinDateInRecord = record?.checkinDate
+      ? dayjs(record.checkinDate)
+      : originalCheckin;
+
+    const checkinDate = checkinDateInRecord.isBefore(today)
+      ? today.format("YYYY-MM-DD")
+      : checkinDateInRecord.format("YYYY-MM-DD");
+      
     try {
       const payload = {
         amendmentType: { uuid: stayReductionUuid },

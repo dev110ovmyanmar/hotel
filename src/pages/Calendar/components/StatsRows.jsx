@@ -1,7 +1,7 @@
 import React from 'react';
 import { darkModeStyle } from '../../../utils';
 
-const StatsRows = ({ dailyStats, days, CELL_WIDTH, SIDEBAR_WIDTH, checkIsToday, todayDarkStyle, todayDarkModeStyle }) => (
+const StatsRows = React.memo(({ dailyStats, days, CELL_WIDTH, SIDEBAR_WIDTH, checkIsToday, todayDarkStyle, todayDarkModeStyle }) => (
   <>
     <tr className="bg-gray-50/80">
       <td className={`sticky left-0 z-40 bg-[#1677FF] border-b border-r border-[#dee2e6] p-3 font-bold ${darkModeStyle}`} style={{ width: SIDEBAR_WIDTH, minWidth: SIDEBAR_WIDTH, maxWidth: SIDEBAR_WIDTH }}>
@@ -49,6 +49,7 @@ const StatsRows = ({ dailyStats, days, CELL_WIDTH, SIDEBAR_WIDTH, checkIsToday, 
       })}
     </tr>
   </>
-);
+));
 
+StatsRows.displayName = 'StatsRows';
 export default StatsRows;

@@ -29,7 +29,13 @@ export default function RoomMoveModal({
         }
     }, [isOpen]);
 
-    const checkinDate = record?.checkinDate;
+    const checkinDateInRecord = dayjs(record?.checkinDate);
+    const today = dayjs().startOf("day");
+
+    const checkinDate = checkinDateInRecord.isBefore(today)
+        ? today
+        : checkinDateInRecord;
+
     const checkoutDate = record?.checkoutDate;
 
     const roomTypeUuid =

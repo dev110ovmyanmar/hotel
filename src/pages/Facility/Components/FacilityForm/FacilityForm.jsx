@@ -158,7 +158,7 @@ const FacilityForm = ({
             ) : (
               <FormButtons
                 onClick={() => form.submit()}
-                isPending={createFacility.isPending || editFacility.isPending}
+                isPending={isAdd? createFacility.isPending : editFacility.isPending}
                 mode={mode}
               />
             )}
@@ -175,7 +175,7 @@ const FacilityForm = ({
             layout="vertical"
             style={{ width: "100%" }}
             onFinish={onFinish}
-           
+
           >
             <Form.Item
               label="Name"
@@ -185,22 +185,22 @@ const FacilityForm = ({
               <Input readOnly={isView} placeholder="Enter Facility Name" />
             </Form.Item>
 
-            <Form.Item 
-              label="Capacity" 
-              name="capacity" 
+            <Form.Item
+              label="Capacity"
+              name="capacity"
+              initialValue={1}
               readOnly={isView}
               rules={[{ required: true, message: "Capacity is Required" }]}
               className="minus-icon"
-           >
+            >
               {/* <Input placeholder="Enter Capacity" /> */}
               <InputNumber
                 // type="number"
                 mode="spinner"
                 placeholder="Enter Capacity"
                 readOnly={isView}
-                style={{width:"100%"}}
+                style={{ width: "100%" }}
                 min={1}
-                defaultValue={1}
               />
             </Form.Item>
 
