@@ -21,6 +21,7 @@ const FilterPopover = ({
   ratePlanOptions,
   onFiltersChange,
   onReset,
+  onClose,
 }) => {
   // Local (draft) state — mirrors parent filters, but is only committed on Apply
   const [local, setLocal] = useState({
@@ -40,11 +41,13 @@ const FilterPopover = ({
 
   const handleApply = () => {
     onFiltersChange(local);
+    onClose?.();
   };
 
   const handleReset = () => {
     setLocal({ roomType: undefined, floor: undefined, ratePlan: undefined });
     onReset();
+    onClose?.();
   };
 
   return (
