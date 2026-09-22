@@ -14,7 +14,7 @@ const todayDarkModeStyle = 'dark:!bg-[#1e3a5f] dark:!border-r-[#3B82F6] dark:!bo
  *   rtId            – room type id
  */
 
-const RoomRow = ({ room, daysMeta, getAvailability, roomDateMap, rtId, rtDateMap }) => {
+const RoomRow = React.memo(({ room, daysMeta, getAvailability, roomDateMap, rtId, rtDateMap }) => {
     return (
         <tr key={room.id} className="h-9 hover:bg-gray-50">
             <td className={`sticky left-0 z-30 border-b border-r border-[#dee2e6] bg-[#fcfcfc] px-4 py-1 ${darkModeStyle}`}>
@@ -41,6 +41,7 @@ const RoomRow = ({ room, daysMeta, getAvailability, roomDateMap, rtId, rtDateMap
             })}
         </tr>
     );
-};
+});
 
+RoomRow.displayName = 'RoomRow';
 export default RoomRow;

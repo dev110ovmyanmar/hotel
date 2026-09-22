@@ -33,14 +33,14 @@ const BookingDetailsModal = ({ isModalOpen, handleModalClose, selectedBooking })
           <Button key="close" type="primary" onClick={handleModalClose} className='mr-2'>
             Close
           </Button>,
-          hasPermissionToViewReservaion && (
-            <Link to={`/reservations/${selectedBooking?.id}/room-information`} className='ml-2'>
-              <Button key="view" type="primary">
+          hasPermissionToViewReservaion ? (
+            <Link key="view" to={`/reservations/${selectedBooking?.id}/room-information`} className='ml-2'>
+              <Button type="primary">
                 View Reservation
               </Button>
             </Link>
-          )
-        ]}
+          ) : null
+        ].filter(Boolean)}
       >
         {selectedBooking && (
           <Descriptions column={1} bordered size="small" className="mt-4">

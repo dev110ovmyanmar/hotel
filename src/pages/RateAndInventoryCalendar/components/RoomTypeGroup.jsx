@@ -41,7 +41,7 @@ const CELL_WIDTH = 100;
 
 
 
-const RoomTypeGroup = ({
+const RoomTypeGroup = React.memo(({
     rt,
     daysMeta,
     isExpanded,
@@ -293,6 +293,7 @@ const RoomTypeGroup = ({
                 ))}
         </React.Fragment>
     );
-};
+});
 
+RoomTypeGroup.displayName = 'RoomTypeGroup';
 export default RoomTypeGroup;

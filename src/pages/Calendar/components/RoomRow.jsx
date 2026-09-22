@@ -2,7 +2,7 @@ import React from 'react';
 import { darkModeStyle, textWhiteInDarkStyle } from '../../../utils';
 import BookingBar from './BookingBar';
 
-const RoomRow = ({ room, days, CELL_WIDTH, SIDEBAR_WIDTH, checkIsToday, todayDarkStyle, handleBookingClick }) => (
+const RoomRow = React.memo(({ room, days, CELL_WIDTH, SIDEBAR_WIDTH, checkIsToday, todayDarkStyle, handleBookingClick }) => (
   <tr className="h-15 hover:bg-gray-50">
     <td className={`sticky left-0 z-30 bg-[#fcfcfc] border-b border-r border-[#dee2e6] px-4 py-1 ${darkModeStyle}`} style={{ width: SIDEBAR_WIDTH, minWidth: SIDEBAR_WIDTH, maxWidth: SIDEBAR_WIDTH }}>
       <div className={`font-bold text-[12px] text-gray-700 ${textWhiteInDarkStyle}`}>{room.roomNo}</div>
@@ -34,6 +34,7 @@ const RoomRow = ({ room, days, CELL_WIDTH, SIDEBAR_WIDTH, checkIsToday, todayDar
       );
     })}
   </tr>
-);
+));
 
+RoomRow.displayName = 'RoomRow';
 export default RoomRow;
