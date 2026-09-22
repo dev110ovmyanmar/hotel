@@ -46,7 +46,7 @@ const ReservationMenu = ({ onStatusChange, onViewChange }) => {
     }
   }, [routeStatus, navigate]);
 
-  const { data, isFetching } = useApiQuery({
+  const { data, isFetching , isLoading} = useApiQuery({
     fetchQueryName: ["reservation-list", activeStatus, keyword, page, perPage],
     fetchQueryFunction: reservationList,
     params: {
@@ -193,7 +193,7 @@ const ReservationMenu = ({ onStatusChange, onViewChange }) => {
           setEndDate={setEndDate}
         />
 
-        <Spin spinning={isFetching}>
+        <Spin spinning={isLoading}>
           {view === "grid" ? (
             <ReservationsGrid
               data={data?.data || []}
