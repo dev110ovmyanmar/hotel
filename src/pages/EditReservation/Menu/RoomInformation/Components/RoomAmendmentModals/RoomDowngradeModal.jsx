@@ -112,7 +112,7 @@ export default function RoomDowngradeModal({
                     ),
                     roomNo: r.roomNo,
                     rank: r.roomType.rank,
-                    disabled: isRoomCheckIn && (r?.cleanStatus?.code !== "clean" || r?.status?.code === "occupied")
+                    disabled: isRoomCheckIn && (r?.cleanStatus?.code !== "clean" || r?.status?.code !== "available")
 
                 }
             )
