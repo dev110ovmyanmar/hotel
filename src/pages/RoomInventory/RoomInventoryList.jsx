@@ -24,7 +24,7 @@ const RoomInventoryList = () => {
     filter.endDate = endDate;
   }
 
-  const { data, isLoading, error } = useApiQuery({
+  const { data, isFetching, error } = useApiQuery({
     fetchQueryName: "availabilty-calendars",
     fetchQueryFunction: getAvailabilityCalendar,
     params: {
@@ -65,7 +65,7 @@ const RoomInventoryList = () => {
         />
       </div>
 
-      <RoomInventoryTable data={roomTypeData || []} loading={isLoading}/>
+      <RoomInventoryTable data={roomTypeData || []} loading={isFetching}/>
 
       {mode === "add" ? (
         <RoomInventoryCreateForm

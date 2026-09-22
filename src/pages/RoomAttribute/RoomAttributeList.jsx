@@ -18,7 +18,7 @@ const RoomAttributeList = () => {
 
   const normalStatus = status === "all" ? null : status;
 
-  const { data, isLoading } = useApiQuery({
+  const { data, isFetching } = useApiQuery({
     fetchQueryName: "roomAttributeData",
     fetchQueryFunction: fetchRoomAttribute,
     params: {
@@ -62,7 +62,7 @@ const RoomAttributeList = () => {
         total={data?.pagination?.total}
         changePage={(page) => setPage(page)}
         changePerPage={(perPage) => setPerPage(perPage)}
-        loading={isLoading}
+        loading={isFetching}
       />
 
       <RoomAttributeForm

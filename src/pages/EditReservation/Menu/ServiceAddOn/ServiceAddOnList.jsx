@@ -39,7 +39,7 @@ const ServiceAddOnList = () => {
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(LIMITS.PAGE_SIZE);
 
-  const { data, isLoading, refetch } = useApiQuery({
+  const { data, isFetching, refetch } = useApiQuery({
     fetchQueryName: "service-addon",
     fetchQueryFunction: serviceAddonList,
     params: {
@@ -71,7 +71,7 @@ const ServiceAddOnList = () => {
     setDrawerOpen(true);
   };
 
-  if (isLoading) {
+  if (isFetching) {
     return (
       <div className="flex items-center justify-center h-full min-h-[300px]">
         <Loader />

@@ -17,7 +17,7 @@ const RestaurantTableListing = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   // Fetch List Data
-  const { data, isLoading } = useApiQuery({
+  const { data, isFetching } = useApiQuery({
     fetchQueryName: "restaurant-tables",
     fetchQueryFunction: getRestaurantTables,
     params: {
@@ -73,7 +73,7 @@ const RestaurantTableListing = () => {
         dataSource={restaurantTables}
         onView={handleView}
         onEdit={handleEdit}
-        loading={isLoading}
+        loading={isFetching}
         page={data?.pagination?.currentPage || page}
         perPage={data?.pagination?.perPage || perPage}
         total={data?.pagination?.total}

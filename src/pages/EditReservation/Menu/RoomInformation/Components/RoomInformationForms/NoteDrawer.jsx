@@ -40,7 +40,7 @@ const NoteDrawer = ({ mode, open, onClose, selectedData, onSuccess }) => {
 
   const isView = mode === "view";
 
-  const { data, isLoading, refetch } = useApiQuery({
+  const { data, isFetching, refetch } = useApiQuery({
     fetchQueryName: "reservation-note",
     fetchQueryFunction: reservationNoteList,
     params: {
@@ -204,7 +204,7 @@ const NoteDrawer = ({ mode, open, onClose, selectedData, onSuccess }) => {
           </Form.Item>
         </Form>
       )} */}
-      {isLoading ? (
+      {isFetching ? (
         <div className="flex min-h-screen items-center justify-center">
           <Loader />
         </div>
@@ -237,7 +237,7 @@ const NoteDrawer = ({ mode, open, onClose, selectedData, onSuccess }) => {
             rowKey="id"
             pagination={false}
             loading={
-              isLoading ||
+              isFetching ||
               reservationNotesDelete.isPending ||
               reservationNotesCreate.isPending
             }

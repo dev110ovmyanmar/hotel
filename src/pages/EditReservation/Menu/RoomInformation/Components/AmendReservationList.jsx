@@ -130,7 +130,8 @@ export const getAmendReservationMenuItems = ({
               key: "room_upgrade",
               label: "Upgrade Room",
               icon: <ArrowUpOutlined />,
-              disabled: checkDisabled("room_upgrade") || record?.postedToFolio,
+              // disabled: checkDisabled("room_upgrade") || record?.postedToFolio,
+              disabled: checkDisabled("room_upgrade"),
               ...getDisabledStyles("room_upgrade"),
               onClick: () => {
                 if (!checkDisabled("room_upgrade")) {
@@ -139,18 +140,19 @@ export const getAmendReservationMenuItems = ({
                   setRatePlanUuid(record?.ratePlan?.uuid);
                 }
               },
-              style: record?.postedToFolio
-                ? {
-                  color: "#a2a0a0",
-                  cursor: "not-allowed",
-                }
-                : {},
+              // style: record?.postedToFolio
+              //   ? {
+              //     color: "#a2a0a0",
+              //     cursor: "not-allowed",
+              //   }
+              //   : {},
             },
             {
               key: "room_downgrade",
               label: "Downgrade Room",
               icon: <ArrowDownOutlined />,
-              disabled: checkDisabled("room_downgrade") || record?.postedToFolio,
+              // disabled: checkDisabled("room_downgrade") || record?.postedToFolio,
+              disabled: checkDisabled("room_downgrade"),
               ...getDisabledStyles("room_downgrade"),
               onClick: () => {
                 if (!checkDisabled("room_downgrade")) {
@@ -159,12 +161,12 @@ export const getAmendReservationMenuItems = ({
                   setRatePlanUuid(record?.ratePlan?.uuid);
                 }
               },
-              style: record?.postedToFolio
-                ? {
-                  color: "#a2a0a0",
-                  cursor: "not-allowed",
-                }
-                : {},
+              // style: record?.postedToFolio
+              //   ? {
+              //     color: "#a2a0a0",
+              //     cursor: "not-allowed",
+              //   }
+              //   : {},
             },
             {
               key: "add_room",

@@ -100,7 +100,7 @@ const StaffsForm = ({
     invalidateKeys: [["staffData"]],
   });
 
-  const { data, isLoading } = useApiQuery({
+  const { data, isFetching } = useApiQuery({
     fetchQueryName: "staffData",
     fetchQueryFunction: staffDetails,
     params: { uuid: selectedData?.uuid },
@@ -242,7 +242,7 @@ const StaffsForm = ({
           </div>
         }
       >
-        {isLoading ? (
+        {isFetching ? (
           <div className="flex items-center justify-center h-full min-h-[300px]">
             <Loader />
           </div>

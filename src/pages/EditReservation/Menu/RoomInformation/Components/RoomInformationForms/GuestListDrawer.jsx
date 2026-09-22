@@ -26,7 +26,7 @@ const GuestListDrawer = ({
   const [guestFormMode, setGuestFormMode] = useState("add");
   const [selectedGuestData, setSelectedGuestData] = useState(null);
 
-  const { data, isLoading } = useApiQuery({
+  const { data, isFetching } = useApiQuery({
     fetchQueryName: "reservation-guest",
     fetchQueryFunction: reservationGuestList,
     params: {
@@ -119,7 +119,7 @@ const GuestListDrawer = ({
     >
       <div>
         <Table
-          loading={isLoading}
+          loading={isFetching}
           columns={columns}
           dataSource={data?.data}
           rowKey={(record) => record.uuid}

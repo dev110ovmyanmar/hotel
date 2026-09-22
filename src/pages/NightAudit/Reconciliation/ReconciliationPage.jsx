@@ -7,6 +7,7 @@ import CheckBookingHeader from "../CheckBookingHeader";
 import ReconciliationTable from "./ReconciliationTable";
 import { getNightAuditData, spinLoadingCenter } from "../../../variables/constants";
 import { useEffect } from "react";
+import Loader from "../../../component/Loader/Loader";
 
 const ReconciliationPage = ({ stepValue }) => {
   const navigate = useNavigate();
@@ -33,9 +34,8 @@ const ReconciliationPage = ({ stepValue }) => {
 
   if (isFetching) {
     return (
-      // <div className="flex items-center justify-center">
       <div className={spinLoadingCenter}>
-        <Spin />
+        <Loader />
       </div>
     );
   }

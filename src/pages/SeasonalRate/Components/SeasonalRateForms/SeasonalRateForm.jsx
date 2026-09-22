@@ -124,7 +124,7 @@ const SeasonalRateForm = ({
     invalidateKeys: [["SeasonlRate"]],
   });
 
-  const { data, isLoading } = useApiQuery({
+  const { data, isFetching } = useApiQuery({
     fetchQueryName: "SeasonlRate-details",
     fetchQueryFunction: seasonlRateDetails,
     params: { uuid: selectedData?.uuid },
@@ -273,7 +273,7 @@ const SeasonalRateForm = ({
           </div>
         }
       >
-        {isLoading ? (
+        {isFetching ? (
           <div className="flex items-center justify-center h-full min-h-[300px]">
             <Loader />
           </div>

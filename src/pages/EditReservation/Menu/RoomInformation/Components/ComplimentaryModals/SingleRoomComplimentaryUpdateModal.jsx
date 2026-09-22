@@ -18,7 +18,7 @@ const SingleRoomComplimentaryUpdateModal = ({
     onCancel,
 }) => {
    
-    const { data: reservationData, isLoading: reservationRoomsDetailsLoading } = useApiQuery({
+    const { data: reservationData, isFetching: reservationRoomsDetailsLoading } = useApiQuery({
         fetchQueryName: "reservation-room-details",
         fetchQueryFunction: reservationRoomDetails,
         params: { uuid: reservationRoomUuid },

@@ -254,7 +254,7 @@ const RoomInventoryTable = ({
         title={"Confirm Stop Selling ?"}
         okText="Confirm"
         cancelText="Cancel"
-        confirmLoading={updateStopSelling.isLoading}
+        confirmLoading={updateStopSelling?.isPending}
         onOk={handleConfirmStopSell}
         onCancel={() => {
           setConfirmOpen(false);

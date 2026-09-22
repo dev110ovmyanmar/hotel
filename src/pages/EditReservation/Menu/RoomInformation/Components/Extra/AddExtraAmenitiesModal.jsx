@@ -99,7 +99,7 @@ const AddExtraAmenitiesModal = ({ isOpen, onClose, record }) => {
   const formValues = Form.useWatch([], form) || {};
 
   // ── Data fetching ─────────────────────────────────────────────────────────
-  const { data: sourceData, isLoading } = useApiQuery({
+  const { data: sourceData, isFetching } = useApiQuery({
     fetchQueryName: "reservation-room",
     fetchQueryFunction: reservationRoomDetails,
     params: { uuid: record?.uuid },
@@ -880,7 +880,7 @@ const AddExtraAmenitiesModal = ({ isOpen, onClose, record }) => {
         </Card>
 
         <Form form={form} layout="vertical">
-          {isLoading ? (
+          {isFetching ? (
             <div
               style={{
                 display: "flex",

@@ -17,7 +17,7 @@ const PermissionListing = () => {
   const [perPage, setPerPage] = useState(LIMITS.PAGE_SIZE);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
-  const { data, isLoading, error } = useApiQuery({
+  const { data, isFetching, error } = useApiQuery({
     fetchQueryName: "permissions",
     fetchQueryFunction: getPermissions,
     params: {
@@ -76,7 +76,7 @@ const PermissionListing = () => {
         permissions={permissions}
         onView={handleView}
         onEdit={handleEdit}
-        loading={isLoading}
+        loading={isFetching}
         page={data?.pagination?.currentPage || page}
         perPage={data?.pagination?.perPage || perPage}
         total={data?.pagination?.total}
@@ -91,7 +91,7 @@ const PermissionListing = () => {
         drawerOpen={drawerOpen}
         setDrawerOpen={setDrawerOpen}
         permissions={permissions}
-        loading={isLoading}
+        loading={isFetching}
         switchToEdit={switchToEdit}
         selectedRow={selectedRow}
         setSelectedRow={setSelectedRow}

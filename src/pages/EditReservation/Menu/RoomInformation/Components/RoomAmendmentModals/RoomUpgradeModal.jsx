@@ -8,6 +8,7 @@ import RoomUpgradeReview from './RoomUpgradeReview';
 import { FaStar } from 'react-icons/fa';
 import { darkModeStyle, selectedDarkMode, textWhiteInDarkStyle } from '../../../../../../utils';
 import ColorStatusTag from '../../../../../../component/ColorStatusTag/ColorStatusTag';
+import Loader from '../../../../../../component/Loader/Loader';
 
 const { Text, Title } = Typography;
 
@@ -203,8 +204,7 @@ export default function RoomUpgradeModal({
             {
                 availabilitySearchsPendings ?
                     <div className='flex justify-center items-center'>
-                        <Spin />
-
+                        <Loader />
                     </div>
                     :
                     !toReviewPage ? (

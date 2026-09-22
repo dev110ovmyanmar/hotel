@@ -19,7 +19,7 @@ const MaintenanceRequestListing = () => {
 
   const {
     data: maintenanceRequestsData,
-    isLoading: isMaintenanceRequestsLoading,
+    isFetching: isMaintenanceRequestsLoading,
   } = useApiQuery({
     fetchQueryName: "maintenance-requests",
     fetchQueryFunction: getMaintenanceRequests,

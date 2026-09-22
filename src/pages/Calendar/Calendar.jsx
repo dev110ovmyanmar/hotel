@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect, useRef } from 'react';
+import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import dayjs from 'dayjs';
 import { getReservationCalendar } from '../../api/reservationCalendarApi';
 import Loader from '../../component/Loader/Loader';
@@ -28,7 +28,6 @@ const todayDarkModeStyle = 'dark:!bg-[#1e3a5f] dark:!border-r-[#3B82F6] dark:!bo
 
 const Calendar = () => {
   const [currentDate, setCurrentDate] = useState(dayjs());
-  const [allData, setAllData] = useState([]);
   const [expandedGroups, setExpandedGroups] = useState(new Set());
   const [searchInput, setSearchInput] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
@@ -55,15 +54,21 @@ const Calendar = () => {
     fetchQueryFunction: roomMeta,
   });
 
-  const roomTypeOptions = roomMetaData?.room_types?.map((roomType) => ({
-    value: roomType.uuid,
-    label: roomType.name,
-  }));
+  const roomTypeOptions = useMemo(() =>
+    roomMetaData?.room_types?.map((roomType) => ({
+      value: roomType.uuid,
+      label: roomType.name,
+    })) || [],
+    [roomMetaData],
+  );
 
-  const floorOptions = roomMetaData?.floors?.map((floor) => ({
-    value: floor.uuid,
-    label: <span>{floor?.name} ({floor?.floorNo})</span>
-  }));
+  const floorOptions = useMemo(() =>
+    roomMetaData?.floors?.map((floor) => ({
+      value: floor.uuid,
+      label: <span>{floor?.name} ({floor?.floorNo})</span>
+    })) || [],
+    [roomMetaData],
+  );
 
   const month = currentDate.format('YYYY-MM');
   const keyword = searchQuery;
@@ -76,7 +81,7 @@ const Calendar = () => {
     reservationRoomStatus: filters.statuses ? { uuid: filters.statuses } : null,
   }), [month, keyword, filters]);
 
-  const { data: apiData, isLoading, isFetching, isPending } = useApiQuery({
+  const { data: apiData, isLoading, isFetching, isPending, refetch } = useApiQuery({
     fetchQueryName: 'reservationCalendar',
     fetchQueryFunction: getReservationCalendar,
     params: calendarParams,
@@ -85,7 +90,19 @@ const Calendar = () => {
     },
   });
 
-  const handleBookingClick = (booking, room) => {
+  const allData = apiData?.roomTypes || [];
+
+  useEffect(() => {
+    if (apiData?.roomTypes) {
+      setExpandedGroups(new Set(apiData.roomTypes.slice(0, 2).map(g => g.name)));
+    }
+  }, [apiData]);
+
+  useEffect(() => {
+    if (!isFetching) setIsChangingDate(false);
+  }, [isFetching]);
+
+  const handleBookingClick = useCallback((booking, room) => {
     setSelectedBooking({
       id: booking.reservationRoomUuid,
       reservationNo: booking.reservationNo,
@@ -103,38 +120,21 @@ const Calendar = () => {
       specialRequests: ''
     });
     setIsModalOpen(true);
-  };
+  }, []);
 
-  const handleModalClose = () => {
+  const handleModalClose = useCallback(() => {
     setIsModalOpen(false);
     setSelectedBooking(null);
-  };
+  }, []);
 
-  useEffect(() => {
-    if (apiData && apiData.roomTypes) {
-      setAllData(apiData.roomTypes);
-      setExpandedGroups(new Set(apiData.roomTypes.slice(0, 2).map(g => g.name)));
-    } else {
-      setAllData([]);
-    }
-  }, [apiData]);
+  const todayStr = useMemo(() => dayjs().format('YYYY-MM-DD'), []);
 
-  useEffect(() => {
-    if (!isFetching) setIsChangingDate(false);
-  }, [isFetching]);
-
-  const filteredData = useMemo(() => {
-    if (searchQuery) return allData;
-    return allData;
-  }, [allData, searchQuery]);
+  const checkIsToday = useCallback((day) => day.format('YYYY-MM-DD') === todayStr, [todayStr]);
 
   const days = useMemo(() => {
     const start = currentDate.startOf('month');
     return Array.from({ length: start.daysInMonth() }, (_, i) => start.add(i, 'day'));
   }, [currentDate]);
-
-  const todayStr = dayjs().format('YYYY-MM-DD');
-  const checkIsToday = (day) => day.format('YYYY-MM-DD') === todayStr;
 
   const dailyStats = useMemo(() => {
     const totalRoomsCount = allData.reduce((acc, g) => acc + g.rooms.length, 0);
@@ -158,12 +158,14 @@ const Calendar = () => {
     });
   }, [allData, days]);
 
-  const toggleGroup = (type) => {
-    const newSet = new Set(expandedGroups);
-    if (newSet.has(type)) newSet.delete(type);
-    else newSet.add(type);
-    setExpandedGroups(newSet);
-  };
+  const toggleGroup = useCallback((type) => {
+    setExpandedGroups(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(type)) newSet.delete(type);
+      else newSet.add(type);
+      return newSet;
+    });
+  }, []);
 
   const CELL_WIDTH = 85;
   const SIDEBAR_WIDTH = 240;
@@ -189,6 +191,7 @@ const Calendar = () => {
       <CalendarHeader
         currentDate={currentDate}
         setCurrentDate={setCurrentDate}
+        onRefetch={refetch}
         isLoading={isLoading}
         isFetching={isFetching}
         isChangingDate={isChangingDate}
@@ -259,7 +262,7 @@ const Calendar = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredData.map((group) => (
+              {allData.map((group) => (
                 <React.Fragment key={group.name}>
                   <GroupRow
                     group={group}

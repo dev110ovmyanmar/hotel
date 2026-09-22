@@ -26,7 +26,7 @@ const HouseKeepingTaskListing = () => {
   const [taskAssignDrawerOpen, setTaskAssignDrawerOpen] = useState(false);
 
   // --- Unified Data Fetching (Pagination for both Table and Grid) ---
-  const { data: listData, isLoading: isListLoading } = useApiQuery({
+  const { data: listData, isFetching: isListLoading } = useApiQuery({
     fetchQueryName: "houseKeeping-tasks",
     fetchQueryFunction: getHouseKeepingTasks,
     params: {

@@ -29,7 +29,7 @@ const UnitForm = ({
   const isEdit = mode === "edit";
   const isAdd = mode === "add";
 
-  const { data, isLoading, error } = useApiQuery({
+  const { data, isFetching, error } = useApiQuery({
     fetchQueryName: "unit_detail",
     fetchQueryFunction: getUnitDetail,
     params: { uuid: selectedRow?.uuid },
@@ -118,7 +118,11 @@ const UnitForm = ({
                 </Button>
               )
             ) : (
-              <FormButtons onClick={() => form.submit()} mode={mode} isPending={editUnit?.isPending} />
+              <FormButtons 
+                onClick={() => form.submit()} 
+                mode={mode} 
+                isPending={isAdd? createUnit?.isPending :  editUnit?.isPending} 
+              />
             )
           }
         </div>
@@ -134,7 +138,7 @@ const UnitForm = ({
       onClose={onClose}
       open={drawerOpen}
     >
-      {isLoading ? (
+      {isFetching ? (
         <div className="flex items-center justify-center h-full min-h-[300px]">
           <Loader />
         </div>

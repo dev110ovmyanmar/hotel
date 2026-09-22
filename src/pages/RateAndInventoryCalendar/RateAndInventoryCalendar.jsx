@@ -53,11 +53,11 @@ const RateAndInventoryCalendar = () => {
         month,
         keyword,
         roomType: filters.roomType ? { uuid: filters.roomType } : null,
-        Floor: filters.floor ? { uuid: filters.floor } : null,
+        floor: filters.floor ? { uuid: filters.floor } : null,
         ratePlan: filters.ratePlan ? { uuid: filters.ratePlan } : null,
     }), [month, keyword, filters]);
 
-    const { data: apiData, isLoading, isFetching } = useApiQuery({
+    const { data: apiData, isLoading, isFetching, refetch } = useApiQuery({
         fetchQueryName: 'rateInventoryCalendar',
         fetchQueryFunction: getCalendarData,
         params: calendarParams,
@@ -73,20 +73,29 @@ const RateAndInventoryCalendar = () => {
         fetchQueryFunction: roomMeta,
     });
 
-    const roomTypeOptions = roomMetaData?.room_types?.map((roomType) => ({
-        value: roomType.uuid,
-        label: roomType.name,
-    }));
+    const roomTypeOptions = useMemo(() =>
+        roomMetaData?.room_types?.map((roomType) => ({
+            value: roomType.uuid,
+            label: roomType.name,
+        })) || [],
+        [roomMetaData],
+    );
 
-    const floorOptions = roomMetaData?.floors?.map((floor) => ({
-        value: floor.uuid,
-        label: <span>{floor?.name} ({floor?.floorNo})</span>
-    }));
+    const floorOptions = useMemo(() =>
+        roomMetaData?.floors?.map((floor) => ({
+            value: floor.uuid,
+            label: <span>{floor?.name} ({floor?.floorNo})</span>
+        })) || [],
+        [roomMetaData],
+    );
 
-    const ratePlanOptions = roomMetaData?.rate_plans?.map((ratePlan) => ({
-        value: ratePlan.uuid,
-        label: ratePlan.name,
-    }));
+    const ratePlanOptions = useMemo(() =>
+        roomMetaData?.rate_plans?.map((ratePlan) => ({
+            value: ratePlan.uuid,
+            label: ratePlan.name,
+        })) || [],
+        [roomMetaData],
+    );
 
     const updateStopSelling = useApiMutation({ mutationFn: updateStopSell, invalidateKeys: [] });
     const updateRoomInventory = useApiMutation({ mutationFn: updateAvailabilityCalendar, invalidateKeys: [] });
@@ -643,6 +652,7 @@ const RateAndInventoryCalendar = () => {
             <CalendarHeader
                 currentDate={currentDate}
                 onDateChange={setCurrentDate}
+                onRefetch={refetch}
                 keyword={keyword}
                 onKeywordChange={setKeyword}
                 filters={filters}

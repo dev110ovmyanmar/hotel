@@ -18,7 +18,7 @@ const RatePlanList = () => {
 
   const normalStatus = status === "all" ? null : status;
 
-  const { data: ratePlanList, isLoading } = useApiQuery({
+  const { data: ratePlanList, isFetching } = useApiQuery({
     fetchQueryName: "ratePlan",
     fetchQueryFunction: fetchRatePlan,
     params: {
@@ -64,7 +64,7 @@ const RatePlanList = () => {
         total={ratePlanList?.pagination?.total}
         changePage={(page) => setPage(page)}
         changePerPage={(perPage) => setPerPage(perPage)}
-        loading={isLoading}
+        loading={isFetching}
         setDrawerOpen={setDrawerOpen}
         setMode={setMode}
         setSelectedData={setSelectedData}

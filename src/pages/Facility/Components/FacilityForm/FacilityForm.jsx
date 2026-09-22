@@ -60,7 +60,7 @@ const FacilityForm = ({
     invalidateKeys: [["facilities"]],
   });
 
-  const { data, isLoading, error } = useApiQuery({
+  const { data, isFetching, error } = useApiQuery({
     fetchQueryName: "facility-details",
     fetchQueryFunction: getFacilityDetails,
     params: { uuid: selectedData?.uuid },
@@ -165,7 +165,7 @@ const FacilityForm = ({
           </div>
         }
       >
-        {isLoading ? (
+        {isFetching ? (
           <div className="flex items-center justify-center h-full min-h-[300px]">
             <Loader />
           </div>

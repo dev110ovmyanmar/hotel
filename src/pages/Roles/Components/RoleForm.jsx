@@ -48,7 +48,7 @@ const RoleForm = ({
   //   shouldCallAPI: !!selectedRow?.uuid && (isEdit || isView) && drawerOpen
   // });
 
-  const { data, isLoading, error } = useApiQuery({
+  const { data, isFetching, error } = useApiQuery({
     fetchQueryName: "roles_details",
     fetchQueryFunction: getRoleDetails,
     params: { uuid: selectedRow?.uuid },
@@ -175,7 +175,7 @@ const RoleForm = ({
         onClose={onClose}
         open={drawerOpen}
       >
-        {isLoading ? (
+        {isFetching ? (
           <div className="flex justify-center items-center h-64">
             <Loader />
           </div>

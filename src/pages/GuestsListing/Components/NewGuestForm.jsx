@@ -125,7 +125,7 @@ const GuestForm = ({
   }, [initData]);
 
   // 4. API Query for single Guest Detail
-  const { data, isLoading } = useApiQuery({
+  const { data, isFetching } = useApiQuery({
     fetchQueryName: "guest-detail",
     fetchQueryFunction: getGuestDetail,
     params: { uuid: selectedRow?.uuid },
@@ -248,8 +248,10 @@ const GuestForm = ({
         )
       }
     >
-      {isLoading ? (
-        <Loader />
+      {isFetching ? (
+        <div className="flex items-center justify-center h-full min-h-[300px]">
+          <Loader />
+        </div>
       ) : (
         <Form
           form={form}

@@ -3,7 +3,7 @@ import { Input } from 'antd';
 import { UpOutlined, DownOutlined } from '@ant-design/icons';
 import { darkModeStyle } from '../../../utils';
 
-const GroupRow = ({ group, days, expandedGroups, toggleGroup, CELL_WIDTH, SIDEBAR_WIDTH, checkIsToday, todayDarkStyle }) => (
+const GroupRow = React.memo(({ group, days, expandedGroups, toggleGroup, CELL_WIDTH, SIDEBAR_WIDTH, checkIsToday, todayDarkStyle }) => (
   <tr className="bg-[#fcfcfc] cursor-pointer hover:bg-gray-100 h-15" onClick={() => toggleGroup(group.name)}>
     <td className={`sticky left-0 z-40 bg-gray-200 border-b border-r border-[#dee2e6] p-3 font-bold ${darkModeStyle}`} style={{ width: SIDEBAR_WIDTH, minWidth: SIDEBAR_WIDTH, maxWidth: SIDEBAR_WIDTH, borderTop: '3px solid #6b7280' }}>
       <div className="flex justify-between items-center">
@@ -33,6 +33,7 @@ const GroupRow = ({ group, days, expandedGroups, toggleGroup, CELL_WIDTH, SIDEBA
       );
     })}
   </tr>
-);
+));
 
+GroupRow.displayName = 'GroupRow';
 export default GroupRow;

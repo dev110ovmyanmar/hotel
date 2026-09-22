@@ -52,7 +52,7 @@ const MenuCategoryForm = ({
     invalidateKeys: [["menuCategory"]],
   });
 
-  const { data, isLoading } = useApiQuery({
+  const { data, isFetching } = useApiQuery({
     fetchQueryName: "menuCategory-details",
     fetchQueryFunction: menuCategoryDetails,
     params: { uuid: selectedData?.uuid },
@@ -163,7 +163,7 @@ const MenuCategoryForm = ({
           </div>
         }
       >
-        {isLoading ? (
+        {isFetching ? (
           <div className="flex items-center justify-center h-full min-h-[300px]">
             <Loader />
           </div>

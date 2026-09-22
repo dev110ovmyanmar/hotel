@@ -17,7 +17,7 @@ const RefundsList = () => {
   const paymentTypes = initData?.statuses?.payment_type;
   const paymentType = paymentTypes?.find((item)=>item.code === "refund").uuid;
 
-  const { data, isLoading, error } = useApiQuery({
+  const { data, isFetching, error } = useApiQuery({
     fetchQueryName: "payments",
     fetchQueryFunction: getfolioPaymentList,
     params: {
@@ -55,7 +55,7 @@ const RefundsList = () => {
         total={data?.pagination?.total}
         changePage={(page) => setPage(page)}
         changePerPage={(perPage) => setPerPage(perPage)}
-        loading={isLoading}
+        loading={isFetching}
       />
     </div>
   );

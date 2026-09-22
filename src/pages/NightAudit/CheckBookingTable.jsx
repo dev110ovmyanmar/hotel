@@ -125,7 +125,7 @@ const CheckBookingTable = ({
 
     ];
 
-    const { data: nightAuditCheckBookingData, isLoading, error } = useApiQuery({
+    const { data: nightAuditCheckBookingData, isFetching, error } = useApiQuery({
         fetchQueryName: "night-audit-check-bookings",
         fetchQueryFunction: nightAuditCheckBookings,
     });

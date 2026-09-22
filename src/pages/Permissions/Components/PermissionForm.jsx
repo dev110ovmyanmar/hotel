@@ -45,7 +45,7 @@ const PermissionForm = ({
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
   const permissionsArray = initData?.permissions;
 
-  const { data, isLoading } = useApiQuery({
+  const { data, isFetching } = useApiQuery({
     fetchQueryName: "permission-detail",
     fetchQueryFunction: getPermissionDetail,
     params: { uuid: selectedRow?.uuid },
@@ -170,7 +170,7 @@ const PermissionForm = ({
         onClose={onClose}
         open={drawerOpen}
       >
-        {isLoading ? (
+        {isFetching ? (
           <div className="flex justify-center items-center h-64">
             <Loader />
           </div>

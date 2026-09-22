@@ -64,7 +64,7 @@ const RoomInformationList = () => {
 
   const {
     data: listData,
-    isLoading: isListLoading,
+    isFetching: isListLoading,
     refetch,
   } = useApiQuery({
     fetchQueryName:"reservation-room",

@@ -15,7 +15,7 @@ const MenuItemList = () => {
   const [mode, setMode] = useState("add");
   const [selectedData, setSelectedData] = useState(null);
 
-  const { data, isLoading } = useApiQuery({
+  const { data, isFetching } = useApiQuery({
     fetchQueryName: "menuItem",
     fetchQueryFunction: fetchMenu,
     params: {
@@ -57,7 +57,7 @@ const MenuItemList = () => {
         total={data?.pagination?.total}
         changePage={(page) => setPage(page)}
         changePerPage={(perPage) => setPerPage(perPage)}
-        loading={isLoading}
+        loading={isFetching}
       />
 
       <MenuItemForm

@@ -7,6 +7,7 @@ import PreAuditTable from "./PreAuditTable";
 import CheckBookingHeader from "../CheckBookingHeader";
 import { getNightAuditData, spinLoadingCenter } from "../../../variables/constants";
 import { useEffect } from "react";
+import Loader from "../../../component/Loader/Loader";
 
 const PreAuditCheckPage = ({
     stepValue,
@@ -39,7 +40,7 @@ const PreAuditCheckPage = ({
     if (isFetching || !preAuditChecksData) {
         return (
             <div className={spinLoadingCenter}>
-                <Spin />
+                <Loader/>
             </div>
         )
     }
