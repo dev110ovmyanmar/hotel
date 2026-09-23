@@ -1,6 +1,6 @@
 import { Dropdown, Space, Table, Tag, Button } from "antd";
 import { useState } from "react";
-import { MoreOutlined, PlusOutlined } from "@ant-design/icons";
+import { DeleteOutlined, MoreOutlined, PlusOutlined } from "@ant-design/icons";
 import { EyeOutlined } from "@ant-design/icons";
 import { EditOutlined } from "@ant-design/icons";
 import ServiceForm from "./ServiceForm/ServiceForm";
@@ -9,6 +9,9 @@ import usePermission from "../../../hooks/usePermission";
 import ColorStatusTag from "../../../component/ColorStatusTag/ColorStatusTag";
 import PriceTag from "../../../component/PriceTag/PriceTag";
 import ItemsForm from "./ServiceForm/ItemsForm";
+import ServiceInventoryMappingDeleteModal from "../ServiceInventoryMappingDeleteModal";
+import { deleteServiceInventoryMapping } from "../../../api/serviceInventoryMappingApi";
+import { useApiMutation } from "../../../hooks/useApiMutation";
 
 const ServiceTable = ({
   data,
@@ -31,6 +34,15 @@ const ServiceTable = ({
   const [mode, setMode] = useState(null);
   const [selectedData, setSelectedData] = useState({});
   const [selectedItem, setSelectedItem] = useState(null);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [deleteServiceInventoryUuid,setDeleteServiceInventoryUuid] = useState();
+
+  const deleteServiceInventoryMappings = useApiMutation({
+    mutationFn: deleteServiceInventoryMapping,
+    invalidateKeys: [
+      ["services"],
+    ],
+  });
 
   const columns = [
     {
@@ -165,6 +177,7 @@ const ServiceTable = ({
       title: "Action",
       align: "center",
       render: (_, record) => {
+        console.log(record, "REcordInViewDelete")
         const smallStyle = { fontSize: "12px" };
 
         const actions = [
@@ -188,6 +201,16 @@ const ServiceTable = ({
               setItemDrawerOpen(true);
               setMode("item-edit");
               setSelectedItem(record);
+            },
+          },
+          {
+            key: "delete",
+            label: <div className="!text-red-500">Delete</div>,
+            icon: <DeleteOutlined style={{ color:"red", fontSize: "12px" }} />,
+            permission: PERMISSIONS.SERVICE_INVENTORY_DELETE,
+            onClick: () => {
+              setDeleteServiceInventoryUuid(record?.uuid)
+              setDeleteModalOpen(true)
             },
           },
         ];
@@ -253,6 +276,20 @@ const ServiceTable = ({
     );
   };
 
+  const handleDeleteOk = () => {
+    const payload = {
+      uuid : deleteServiceInventoryUuid
+    };
+    return (
+      deleteServiceInventoryMappings.mutate(payload,{
+        onSuccess: () => {
+          setDeleteModalOpen(false);
+          setDeleteServiceInventoryUuid();
+        }
+      })
+    )
+  }
+
   return (
     <div id="scrollId" className="w-full h-[63vh] ">
       <Table
@@ -299,6 +336,13 @@ const ServiceTable = ({
         selectedItem={selectedItem}
         drawerOpen={itemDrawerOpen}
         setDrawerOpen={setItemDrawerOpen}
+      />
+
+      <ServiceInventoryMappingDeleteModal
+        open={deleteModalOpen}
+        onOk={handleDeleteOk}
+        onCancel={() => setDeleteModalOpen(false)}
+        confirmLoading={deleteServiceInventoryMappings?.isPending}
       />
     </div>
   );
