@@ -1,17 +1,13 @@
-import { CloseCircleOutlined, EyeOutlined, LockOutlined, MoreOutlined, WarningOutlined } from "@ant-design/icons";
-import { Button, Dropdown, Space, Table, Tag, Tooltip } from "antd";
+import { CloseCircleOutlined, EyeOutlined, WarningOutlined } from "@ant-design/icons";
+import { Button, Table, Tag, Tooltip } from "antd";
 import { AiOutlineRight } from "react-icons/ai";
 import { CircleCheck } from "lucide-react";
 import { PERMISSIONS } from "../../../variables/permission";
 import PreAuditCheckDetails from "./PreAuditCheckDetails";
 import { useState } from "react";
-import useApiQuery from "../../../hooks/useApiQuery";
-import { reservationRoomList } from "../../../api/reservationSectionApi";
 
-const PreAuditTable = ({
-    colorCheckBooking,
-    preAuditChecksData
-}) => {
+const PreAuditTable = ({ colorCheckBooking, preAuditChecksData }) => {
+
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [selectedData, setSelectedData] = useState({});
 
@@ -78,33 +74,22 @@ const PreAuditTable = ({
             fixed: "end",
             align: "center",
             render: (_, record) => {
-                const hasPermissionForReservationList = PERMISSIONS?.RESERVATION_LIST;
 
                 const handlePreAuditView = () => {
                     setDrawerOpen(true);
-                    setSelectedData(record)
-                }
+                    setSelectedData(record);
+                };
 
                 return (
-                    <>
-                        {
-                           record?.details?.length > 0
-                                ?
-                                <Tooltip title="View Details">
-                                    <EyeOutlined
-                                        onClick={handlePreAuditView}
-                                    />
-                                </Tooltip>
-                                :
-                                <Tooltip title="Locked" >
-                                    <LockOutlined disabled className="!text-gray-400 cursor-not-allowed" />
-                                </Tooltip>
-                        }
+                    record?.details?.length > 0 ? (
+                        <Tooltip title="View Details">
+                            <EyeOutlined onClick={handlePreAuditView} />
+                        </Tooltip>
+                    ) : null
+                );
+            },
+        }
 
-                    </>
-                )
-            }
-        },
 
     ];
 
