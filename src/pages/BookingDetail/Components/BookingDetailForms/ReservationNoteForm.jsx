@@ -46,7 +46,7 @@ const ReservationNoteForm = ({
 
   const isView = mode === "view";
 
-  const { data, isLoading, refetch } = useApiQuery({
+  const { data, isFetching, refetch } = useApiQuery({
     fetchQueryName: "reservation-note",
     fetchQueryFunction: reservationNoteList,
     params: {
@@ -200,7 +200,7 @@ const ReservationNoteForm = ({
         )
       }
     >
-      {isLoading ? (
+      {isFetching ? (
         <div className="flex min-h-screen items-center justify-center">
           <Loader />
         </div>
@@ -234,7 +234,7 @@ const ReservationNoteForm = ({
             rowKey="id"
             pagination={false}
             loading={
-              isLoading ||
+              isFetching ||
               reservationNotesDelete.isPending ||
               reservationNotesCreate.isPending
             }

@@ -8,6 +8,7 @@ import RoomDowngradeReview from './RoomDowngradeReview';
 import { FaStar } from 'react-icons/fa';
 import { darkModeStyle, selectedDarkMode, textWhiteInDarkStyle } from '../../../../../../utils';
 import ColorStatusTag from '../../../../../../component/ColorStatusTag/ColorStatusTag';
+import Loader from '../../../../../../component/Loader/Loader';
 
 const { Text, Title } = Typography;
 
@@ -111,7 +112,7 @@ export default function RoomDowngradeModal({
                     ),
                     roomNo: r.roomNo,
                     rank: r.roomType.rank,
-                    disabled: isRoomCheckIn && (r.cleanStatus.code !== "clean" || r.status.code === "occupied")
+                    disabled: isRoomCheckIn && (r?.cleanStatus?.code !== "clean" || r?.status?.code !== "available")
 
                 }
             )
@@ -125,19 +126,13 @@ export default function RoomDowngradeModal({
                 room => room.value === values.roomUuid.value
             );
 
-            console.log(selectedRoomData,"selectedRoomDataselectedRoomData")
-
             const data = {
                 ...values,
                 rank: selectedRoomData?.rank,
                 roomNo: selectedRoomData?.roomNo
             };
-
-            console.log(values,"ValueInDataHnaldeReview")
-
             setReviewData(data);
             setToReviewPage(true);
-            console.log(data, "DataINHandleReview");
         } catch (error) {
             console.log(error);
         }
@@ -210,8 +205,7 @@ export default function RoomDowngradeModal({
             {
                 availabilitySearchsPendings ?
                     <div className='flex justify-center items-center'>
-                        <Spin />
-
+                        <Loader />
                     </div>
                     :
                     !toReviewPage ? (
@@ -253,7 +247,6 @@ export default function RoomDowngradeModal({
                                             {roomList?.rooms
                                                 ?.filter(room => room?.rooms?.length > 0)
                                                 ?.map(room => {
-                                                    console.log(room, "RoomInRoomList")
                                                     return (
                                                         <Col span={12}>
                                                             <div
@@ -268,14 +261,13 @@ export default function RoomDowngradeModal({
                                                                 !duration-500
                                                                 rounded-2xl 
                                                                 ${selectedRoom === room.roomType.uuid
-                                                                    ? `!border-blue-400/20 !bg-blue-500/15 backdrop-blur-lg !shadow-lg ${selectedDarkMode}`
-                                                                    : '!border-blue-200 !shadow-md hover:!border-blue-500/30 hover:-translate-y-1'}
+                                                                        ? `!border-blue-400/20 !bg-blue-500/15 backdrop-blur-lg !shadow-lg ${selectedDarkMode}`
+                                                                        : '!border-blue-200 !shadow-md hover:!border-blue-500/30 hover:-translate-y-1'}
                                                                 `}
                                                                 onClick={() => {
                                                                     const matchedRatePlan = room.ratePlans.find(
                                                                         rp => rp.uuid === ratePlanUuid
                                                                     );
-                                                                    console.log(room, "RoomInSearch")
                                                                     setSelectedRoom(room.roomType.uuid);
                                                                     setSelectedRoomTypeName(room.roomType);
                                                                     setCheckSelectedRoom(true);
@@ -348,6 +340,8 @@ export default function RoomDowngradeModal({
                                                             <Select
                                                                 options={ratePlanOptions}
                                                                 labelInValue
+                                                                showSearch
+                                                                optionFilterProp="label"
                                                             >
                                                             </Select>
                                                         </Form.Item>
@@ -369,6 +363,15 @@ export default function RoomDowngradeModal({
                                                             <Select
                                                                 options={roomUuidOptions}
                                                                 labelInValue
+                                                                showSearch
+                                                                filterOption={(input, option) => {
+                                                                    return (
+                                                                        String(option?.roomNo ?? "")
+                                                                            .toLowerCase()
+                                                                            .includes(input.toLowerCase())
+                                                                    )
+                                                                }
+                                                                }
                                                             >
                                                             </Select>
                                                         </Form.Item>

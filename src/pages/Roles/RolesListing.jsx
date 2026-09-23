@@ -17,7 +17,7 @@ const RolesListing = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
 
 
-  const { data, isLoading, error } = useApiQuery({
+  const { data, isFetching, error } = useApiQuery({
     fetchQueryName: "roles",
     fetchQueryFunction: getRoles,
     params: {
@@ -80,7 +80,7 @@ const RolesListing = () => {
           dataSource={roles}
           onView={handleView}
           onEdit={handleEdit}
-          loading={isLoading}
+          loading={isFetching}
           page={data?.pagination?.currentPage || page}
           perPage={data?.pagination?.perPage || perPage}
           total={data?.pagination?.total}
@@ -94,7 +94,7 @@ const RolesListing = () => {
         drawerOpen={drawerOpen}
         setDrawerOpen={setDrawerOpen}
         roles={roles}
-        loading={isLoading}
+        loading={isFetching}
         switchToEdit={switchToEdit}
         selectedRow={selectedRow}
         setSelectedRow={setSelectedRow}

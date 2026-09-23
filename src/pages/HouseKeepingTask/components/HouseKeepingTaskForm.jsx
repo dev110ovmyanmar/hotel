@@ -67,7 +67,7 @@ const HouseKeepingTaskForm = ({
     }, [initData, isCreate]);
 
     // ===== Fetch Detail =====
-    const { data: detail, isLoading } = useApiQuery({
+    const { data: detail, isFetching } = useApiQuery({
         fetchQueryName: "housekeeping-task-detail",
         fetchQueryFunction: getHouseKeepingTaskDetail,
         params: { uuid: selectedRow?.uuid },
@@ -231,7 +231,7 @@ const HouseKeepingTaskForm = ({
                     )
                 }
             >
-                {isLoading && !isCreate ?
+                {isFetching && !isCreate ?
                     <div className="flex h-64 items-center justify-center"><Loader /></div>
                     : (
                         <div>

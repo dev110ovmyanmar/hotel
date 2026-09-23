@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 import { STATUS_COLORS } from '../Calendar';
 import Team from '../../../assets/images/Team.png';
 
-const BookingBar = ({ bookingItem, room, day, days, CELL_WIDTH, handleBookingClick }) => {
+const BookingBar = React.memo(({ bookingItem, room, day, days, CELL_WIDTH, handleBookingClick }) => {
   if (!bookingItem.isBooked || !bookingItem.booking) return null;
 
   const booking = bookingItem.booking;
@@ -102,6 +102,7 @@ const BookingBar = ({ bookingItem, room, day, days, CELL_WIDTH, handleBookingCli
       </div>
     </div>
   );
-};
+});
 
+BookingBar.displayName = 'BookingBar';
 export default BookingBar;

@@ -17,7 +17,7 @@ const PedingPaymentsList = () => {
   const paymentStautuses = initData?.statuses?.payment_status;
   const paymentStatus = paymentStautuses?.find((item)=>item.code === "pending").uuid;
 
-  const { data, isLoading, error } = useApiQuery({
+  const { data, isFetching, error } = useApiQuery({
     fetchQueryName: "payments",
     fetchQueryFunction: getfolioPaymentList,
     params: {
@@ -55,7 +55,7 @@ const PedingPaymentsList = () => {
         total={data?.pagination?.total}
         changePage={(page) => setPage(page)}
         changePerPage={(perPage) => setPerPage(perPage)}
-        loading={isLoading}
+        loading={isFetching}
       />
     </div>
   );

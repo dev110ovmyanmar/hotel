@@ -46,7 +46,7 @@ const AddDepoistForm = ({
   const [form] = Form.useForm();
 
 
-  const { data: reservationMetaData, isLoading: reservationMetaDataLoading } =
+  const { data: reservationMetaData, isFetching: reservationMetaDataLoading } =
     useApiQuery({
       fetchQueryName: "reservation-meta",
       fetchQueryFunction: reservationMeta,

@@ -29,7 +29,7 @@ const GuestNotes = ({
   const [perPage, setPerPage] = useState(LIMITS.PAGE_SIZE);
 
   // Guest Note
-  const { data: guestNoteList, isLoading } = useApiQuery({
+  const { data: guestNoteList, isFetching } = useApiQuery({
     fetchQueryName: "guestNotes",
     fetchQueryFunction: getGuestNotes,
     params: {

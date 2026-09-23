@@ -18,7 +18,7 @@ const AdminList = () => {
 
   const normalStatus = status === "all" ? null : status;
 
-  const { data, isLoading, error } = useApiQuery({
+  const { data, isFetching, error } = useApiQuery({
     fetchQueryName: "admins",
     fetchQueryFunction: fetchAdmin,
     params: {
@@ -62,7 +62,7 @@ const AdminList = () => {
         total={data?.pagination?.total}
         changePage={(page) => setPage(page)}
         changePerPage={(perPage) => setPerPage(perPage)}
-        loading={isLoading}
+        loading={isFetching}
       />
 
       <AdminForm

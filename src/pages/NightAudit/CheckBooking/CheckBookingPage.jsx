@@ -5,12 +5,13 @@ import CheckBookingHeader from "../CheckBookingHeader";
 import CheckBookingTable from "../CheckBookingTable";
 import { useNavigate } from "react-router-dom";
 import { spinLoadingCenter } from "../../../variables/constants";
+import Loader from "../../../component/Loader/Loader";
 
 const CheckBookingPage = ({
     stepValue,
 }) => {
     const navigate = useNavigate();
-    const { data: preAuditChecksData, isLoading, error } = useApiQuery({
+    const { data: preAuditChecksData, isFetching, error } = useApiQuery({
         fetchQueryName: "pre-audit-checks",
         fetchQueryFunction: preAuditCheck,
         params: {
@@ -21,7 +22,7 @@ const CheckBookingPage = ({
     if (!preAuditChecksData) {
         return (
             <div className={spinLoadingCenter}>
-                <Spin />
+                <Loader />
             </div>
         )
     }

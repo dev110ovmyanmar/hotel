@@ -13,7 +13,7 @@ const NightAuditTopBar = () => {
     
     const businessDate = nightAuditData?.businessDate;
     
-    const { data: preAuditChecksData, isLoading, error } = useApiQuery({
+    const { data: preAuditChecksData, isFetching, error } = useApiQuery({
         fetchQueryName: "pre-audit-checks",
         fetchQueryFunction: preAuditCheck,
         params: {

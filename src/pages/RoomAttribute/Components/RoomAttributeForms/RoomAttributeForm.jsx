@@ -43,7 +43,7 @@ const RoomAttributeForm = ({
     invalidateKeys: [["roomAttributeData"]],
   });
 
-  const { data, isLoading } = useApiQuery({
+  const { data, isFetching } = useApiQuery({
     fetchQueryName: "roomAttributeData",
     fetchQueryFunction: roomAttributeDetails,
     params: { uuid: selectedData?.uuid },
@@ -137,7 +137,7 @@ const RoomAttributeForm = ({
           </div>
         }
       >
-        {isLoading ? (
+        {isFetching ? (
           <div className="flex items-center justify-center h-full min-h-[300px]">
             <Loader />
           </div>

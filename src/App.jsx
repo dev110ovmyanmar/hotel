@@ -16,7 +16,7 @@ const App = () => {
   const sessionId = loadState(LOCAL_STORAGE_KEYS.sessionId);
 
   // Call initData globally
-  const { data: initData, isLoading } = useApiQuery({
+  const { data: initData, isFetching } = useApiQuery({
     fetchQueryName: "initData",
     params: sessionId ? "authenticated" : "public",
     fetchQueryFunction: fetchInitData,

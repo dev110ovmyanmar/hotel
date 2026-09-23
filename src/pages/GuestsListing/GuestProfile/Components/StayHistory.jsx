@@ -12,7 +12,7 @@ const StayHistory = ({ guestUuid }) => {
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(LIMITS.PAGE_SIZE);
 
-  const { data: stayHistoryListFromReservationRoom, isLoading } = useApiQuery({
+  const { data: stayHistoryListFromReservationRoom, isFetching } = useApiQuery({
     fetchQueryName: "reservation-room",
     fetchQueryFunction: reservationRoomList,
     params: {

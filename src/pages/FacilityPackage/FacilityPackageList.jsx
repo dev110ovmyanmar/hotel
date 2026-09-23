@@ -15,7 +15,7 @@ const FacilityPackageList = () => {
   const [mode, setMode] = useState("add");
   const [selectedData, setSelectedData] = useState(null);
 
-  const { data, isLoading, error } = useApiQuery({
+  const { data, isFetching, error } = useApiQuery({
     fetchQueryName: "facility-packages",
     fetchQueryFunction: getFacilitPackageList,
     params: {
@@ -57,7 +57,7 @@ const FacilityPackageList = () => {
         total={data?.pagination?.total}
         changePage={(page) => setPage(page)}
         changePerPage={(perPage) => setPerPage(perPage)}
-        loading={isLoading}
+        loading={isFetching}
       />
 
       <FacilityPackageForm

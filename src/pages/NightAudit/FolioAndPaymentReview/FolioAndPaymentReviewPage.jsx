@@ -7,6 +7,7 @@ import CheckBookingHeader from "../CheckBookingHeader";
 import FolioAndPaymentReviewTable from "./FolioAndPaymentReviewTable";
 import { getNightAuditData, spinLoadingCenter } from "../../../variables/constants";
 import { useEffect } from "react";
+import Loader from "../../../component/Loader/Loader";
 
 const FolioAndPaymentReviewPage = ({ stepValue }) => {
     const navigate = useNavigate();
@@ -37,7 +38,7 @@ const FolioAndPaymentReviewPage = ({ stepValue }) => {
     if (folioLoading) {
         return (
             <div className={spinLoadingCenter}>
-                <Spin />
+                <Loader />
             </div>
         );
     }

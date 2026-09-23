@@ -69,7 +69,7 @@ const PropertyForm = ({
     invalidateKeys: [["properties"]],
   });
 
-  const { data, isLoading, error } = useApiQuery({
+  const { data, isFetching, error } = useApiQuery({
     fetchQueryName: "properties_details",
     fetchQueryFunction: getPropertyDetails,
     params: { uuid: selectedRow?.uuid },
@@ -427,7 +427,7 @@ const PropertyForm = ({
 
         {!isAdd && (
           <div className="space-y-4">
-            {isLoading ? (
+            {isFetching ? (
               <div className="text-center py-4">
                 <Spin size="small" /> Loading settings...
               </div>
@@ -493,7 +493,7 @@ const PropertyForm = ({
             <Button
               type="primary"
               onClick={() => settingForm.submit()} // Triggers SettingForm's onFinish
-              loading={editProperty.isLoading} // Show loading state if API is active
+              loading={createProperty?.isPending} // Show loading state if API is active
             >
               Create
             </Button>

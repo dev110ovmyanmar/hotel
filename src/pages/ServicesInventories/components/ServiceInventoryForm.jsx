@@ -55,7 +55,7 @@ const ServiceInventoryForm = ({
   const { hasPermission } = usePermission();
   const canEdit = hasPermission(PERMISSIONS.SERVICE_INVENTORY_EDIT);
 
-  const { data, isLoading, error } = useApiQuery({
+  const { data, isFetching, error } = useApiQuery({
     fetchQueryName: "serviceInventory_detail",
     fetchQueryFunction: getServiceInventoryDetail,
     params: { uuid: selectedRow?.uuid },
@@ -200,7 +200,7 @@ const ServiceInventoryForm = ({
       destroyOnClose
     >
       <Form form={form} layout="vertical" onFinish={handleSubmit}>
-        {isLoading ? (
+        {isFetching ? (
           <div className="flex items-center justify-center h-full min-h-[300px]">
             <Loader />
           </div>

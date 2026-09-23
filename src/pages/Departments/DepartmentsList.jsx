@@ -18,7 +18,7 @@ const DepartmentsList = () => {
 
   const normalStatus = status === "all" ? null : status;
 
-  const { data, isLoading } = useApiQuery({
+  const { data, isFetching } = useApiQuery({
     fetchQueryName: "departmentsdata",
     fetchQueryFunction: fetchDepartment,
     params: {
@@ -62,7 +62,7 @@ const DepartmentsList = () => {
         total={data?.pagination?.total}
         changePage={(page) => setPage(page)}
         changePerPage={(perPage) => setPerPage(perPage)}
-        loading={isLoading}
+        loading={isFetching}
       />
 
       <DepartmentsForm

@@ -79,6 +79,7 @@ import FolioAndPaymentReviewStatus from "../../pages/NightAudit/FolioAndPaymentR
 import FolioAndPaymentReviewPage from "../../pages/NightAudit/FolioAndPaymentReview/FolioAndPaymentReviewPage";
 import CloseBusinessDatePage from "../../pages/NightAudit/CloseBusinessDate/CloseBusinessDatePage";
 import NightAuditUnlockPage from "../../pages/NightAudit/NightAuditUnlock/NightAuditUnlockPage";
+import { ArrowLeftRight, Hourglass, Wallet } from "lucide-react";
 
 const Dashboard = lazy(() => import("../../pages/Dashboard/Dashboard"));
 const Calendar = lazy(() => import("../../pages/Calendar/Calendar"));
@@ -1018,7 +1019,7 @@ export const authRoutes = [
         key: 16.1,
         label: "Payment History",
         path: "/payment-&-billing/payment-history",
-        icon: <MdPayments style={{ fontSize: "20px" }} />,
+        icon: <Wallet size={20}/>,
         isPrivate: false,
         component: <PaymentHistoryAllList />,
         permission: PERMISSIONS.PAYMENT_LIST,
@@ -1027,7 +1028,7 @@ export const authRoutes = [
         key: 16.2,
         label: "Pending Payment",
         path: "/payment-&-billing/pending-payment",
-        icon: <DollarOutlined style={{ fontSize: "20px" }} />,
+        icon: <Hourglass size={20} />,
         component: <PendingPaymentsList />,
         permission: PERMISSIONS.TAX_LIST,
       },
@@ -1035,7 +1036,7 @@ export const authRoutes = [
         key: 16.3,
         label: "Refunds",
         path: "/payment-&-billing/refunds",
-        icon: <MdPayments style={{ fontSize: "20px" }} />,
+        icon: <ArrowLeftRight size={20}/>,
         isPrivate: true,
         component: <RedundsList />,
         permission: PERMISSIONS.PAYMENT_LIST,

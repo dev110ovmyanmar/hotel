@@ -13,10 +13,11 @@ import {
   textWhiteInDarkStyle,
 } from "../../../../../../utils";
 import ColorStatusTag from "../../../../../../component/ColorStatusTag/ColorStatusTag";
+import Loader from "../../../../../../component/Loader/Loader";
 
 const GetRoomForm = ({ selectedData, onSelectRoom, onClose, floorUuid }) => {
 
-  const { data, isLoading } = useApiQuery({
+  const { data, isFetching } = useApiQuery({
     fetchQueryName: "reservationRoom",
     fetchQueryFunction: reservationRoomSearch,
     params: {
@@ -48,12 +49,10 @@ const GetRoomForm = ({ selectedData, onSelectRoom, onClose, floorUuid }) => {
       },
     };
 
-    assignMutation.mutate(payload, {
-      onSuccess: () => {
-        Toast.success(`Room ${room.roomNo} assigned successfully!`);
-        if (onSelectRoom) onSelectRoom(room);
-        onClose();
-      },
+    return assignMutation.mutateAsync(payload).then(() => {
+      Toast.success(`Room ${room.roomNo} assigned successfully!`);
+      if (onSelectRoom) onSelectRoom(room);
+      onClose();
     });
   };
 
@@ -80,17 +79,15 @@ const GetRoomForm = ({ selectedData, onSelectRoom, onClose, floorUuid }) => {
         className: "bg-blue-600 hover:bg-blue-500 text-white border-none",
       },
       cancelText: "Cancel",
-      onOk: () => {
-        executeRoomAssignment(room);
-      },
+      onOk: () => executeRoomAssignment(room),
       rootClassName: "dark-confirm-modal",
     });
   };
 
-  if (isLoading)
+  if (isFetching)
     return (
       <div className="flex justify-center p-10">
-        <Spin />
+        <Loader />
       </div>
     );
 
@@ -122,7 +119,7 @@ const GetRoomForm = ({ selectedData, onSelectRoom, onClose, floorUuid }) => {
               <ColorStatusTag status={room?.cleanStatus} iconType="broom" />
 
               <Button
-                loading={assignMutation.isLoading}
+                loading={assignMutation.isFetching}
                 disabled={["Out of Service", "Out of Order"].includes(room.status?.name)}
                 onClick={() => handleAssignClick(room)}
                 className={

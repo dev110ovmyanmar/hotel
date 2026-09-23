@@ -57,7 +57,7 @@ const ItemsForm = ({
     invalidateKeys: [["menuItem"]],
   });
 
-  const { data, isLoading, error } = useApiQuery({
+  const { data, isFetching, error } = useApiQuery({
     fetchQueryName: "fnb-menu-inventory-mapping-details",
     fetchQueryFunction: getFnbMenuInventoryMappingDetails,
     params: { uuid: selectedItem?.uuid },

@@ -11,6 +11,7 @@ import ColorStatusTag from '../../../../../../component/ColorStatusTag/ColorStat
 import { GiBed } from "react-icons/gi";
 import { queryClient } from '../../../../../../app/queryClient';
 import { darkModeStyle, selectedDarkMode, upgradeAndDownRoomDarkMode } from '../../../../../../utils';
+import Loader from '../../../../../../component/Loader/Loader';
 
 const { Text } = Typography;
 
@@ -29,7 +30,13 @@ export default function RoomMoveModal({
         }
     }, [isOpen]);
 
-    const checkinDate = record?.checkinDate;
+    const checkinDateInRecord = dayjs(record?.checkinDate);
+    const today = dayjs().startOf("day");
+
+    const checkinDate = checkinDateInRecord.isBefore(today)
+        ? today
+        : checkinDateInRecord;
+
     const checkoutDate = record?.checkoutDate;
 
     const roomTypeUuid =
@@ -165,7 +172,7 @@ export default function RoomMoveModal({
                                 isQueryFetching
                                     ?
                                     <div className='flex justify-center items-center'>
-                                        <Spin></Spin>
+                                        <Loader />
                                     </div>
                                     :
                                     <Row gutter={[16, 16]}>
@@ -175,23 +182,21 @@ export default function RoomMoveModal({
                                                 room?.status?.code === "out_of_service";
 
                                             const isRoomCheckedIn = record?.roomStatus?.code === "checked_in";
-                                            const isCleanRoom = room?.cleanStatus?.code === "clean";
-                                            const isRoomCheckedInAndNotClean = isRoomCheckedIn && !isCleanRoom;
-
-                                            const isOccupied = room?.status?.code === "occupied";
-                                            const isRoomCheckedInAndOccupied = isRoomCheckedIn && isOccupied;
+                                            const isNotCleanRoom = room?.cleanStatus?.code !== "clean";
+                                            const isNotAvailable = room?.status?.code !== "available";
+                                            const isRoomCheckedInAndNotCleanOrNotAvailable = isRoomCheckedIn && (isNotCleanRoom || isNotAvailable);
 
                                             return (
                                                 <Col span={12} key={room.uuid}>
                                                     <Card
                                                         onClick={() => {
-                                                            if (isRoomDisabled || isRoomCheckedInAndNotClean || isRoomCheckedInAndOccupied) return;
+                                                            if (isRoomDisabled || isRoomCheckedInAndNotCleanOrNotAvailable) return;
 
                                                             setSelectRoomUuid(room.uuid);
                                                         }}
                                                         className={`
                                                             !overflow-hidden !border !p-3 shadow-md !items-center
-                                                            ${isRoomDisabled || isRoomCheckedInAndNotClean || isRoomCheckedInAndOccupied
+                                                            ${isRoomDisabled || isRoomCheckedInAndNotCleanOrNotAvailable
                                                                 ? "cursor-not-allowed opacity-50 !border-gray-300"
                                                                 : "cursor-pointer hover:!border-green-300 hover:!shadow-lg hover:-translate-y-1"
                                                             }
@@ -215,14 +220,14 @@ export default function RoomMoveModal({
                                                                 <GiBed
                                                                     fontSize={30}
                                                                     className={
-                                                                        isRoomDisabled || isRoomCheckedInAndNotClean || isRoomCheckedInAndOccupied
+                                                                        isRoomDisabled || isRoomCheckedInAndNotCleanOrNotAvailable
                                                                             ? "text-gray-400"
                                                                             : "text-green-500 dark:text-green-400"
                                                                     }
                                                                 />
 
                                                                 <h3
-                                                                    className={`text-base font-black leading-tight ${isRoomDisabled || isRoomCheckedInAndNotClean || isRoomCheckedInAndOccupied
+                                                                    className={`text-base font-black leading-tight ${isRoomDisabled || isRoomCheckedInAndNotCleanOrNotAvailable
                                                                         ? "text-gray-400"
                                                                         : "text-green-500 dark:text-green-400"
                                                                         }`}

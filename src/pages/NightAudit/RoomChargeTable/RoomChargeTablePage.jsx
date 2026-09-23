@@ -5,12 +5,13 @@ import { preAuditCheck } from "../../../api/nightAuditApi";
 import useApiQuery from "../../../hooks/useApiQuery";
 import { Spin } from "antd";
 import { spinLoadingCenter } from "../../../variables/constants";
+import Loader from "../../../component/Loader/Loader";
 
 const RoomChargeTablePage = ({
     stepValue
 }) => {
     const navigate = useNavigate();
-    const { data: preAuditChecksData, isLoading, error } = useApiQuery({
+    const { data: preAuditChecksData, isFetching, error } = useApiQuery({
         fetchQueryName: "pre-audit-checks",
         fetchQueryFunction: preAuditCheck,
         params: {
@@ -21,7 +22,7 @@ const RoomChargeTablePage = ({
     if (!preAuditChecksData) {
         return (
             <div className={spinLoadingCenter}>
-                <Spin/>
+                <Loader />
             </div>
         )
     }

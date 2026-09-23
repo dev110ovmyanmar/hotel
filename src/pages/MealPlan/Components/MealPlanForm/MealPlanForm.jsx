@@ -57,7 +57,7 @@ const MeanPlanForm = ({
     shouldInvalidate: isEdit ? true : page === 1,
   });
 
-  const { data, isLoading } = useApiQuery({
+  const { data, isFetching } = useApiQuery({
     fetchQueryName: "meal-plan-details",
     fetchQueryFunction: mealPlanDetails,
     params: {
@@ -227,7 +227,7 @@ const MeanPlanForm = ({
           </div>
         }
       >
-        {isLoading ? (
+        {isFetching ? (
           <div className="flex items-center justify-center h-full min-h-[300px]">
             <Loader />
           </div>

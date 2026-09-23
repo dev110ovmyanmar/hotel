@@ -45,7 +45,7 @@ const CategoryForm = ({
       label: item.name,
     })) || [];
 
-  const { data, isLoading, error } = useApiQuery({
+  const { data, isFetching, error } = useApiQuery({
     fetchQueryName: "category_detail",
     fetchQueryFunction: getCategoryDetail,
     params: { uuid: selectedRow?.uuid },
@@ -78,7 +78,6 @@ const CategoryForm = ({
     invalidateKeys: [["categories"]],
   });
 
-editCategory
   const onFinish = (values) => {
     const basePayload = {
       name: values.name,
@@ -136,7 +135,11 @@ editCategory
                 <Button type="primary" onClick={switchToEdit}>Edit</Button>
               )
             ) : (
-              <FormButtons onClick={() => form.submit()} mode={mode} isPending={editCategory?.isPending} />
+              <FormButtons 
+                onClick={() => form.submit()} 
+                mode={mode} 
+                isPending={isAdd? createCategory?.isPending :  editCategory?.isPending} 
+              />
             )
           }
         </div>
@@ -152,7 +155,7 @@ editCategory
       onClose={onClose}
       open={drawerOpen}
     >
-      {isLoading ?
+      {isFetching ?
         <div className="flex items-center justify-center h-full min-h-[300px]">
           <Loader />
         </div> : (

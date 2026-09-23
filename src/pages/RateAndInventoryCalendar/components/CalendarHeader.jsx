@@ -38,6 +38,7 @@ const CalendarHeader = ({
     disabled = false,
     isChangingDate = false,
     setIsChangingDate,
+    onRefetch,
 }) => {
     const hasActiveFilter =
         !!filters.roomType ||
@@ -52,6 +53,7 @@ const CalendarHeader = ({
     }, [keyword]);
 
     const isDisabled = disabled || isChangingDate;
+    const [filterOpen, setFilterOpen] = React.useState(false);
     const [confirmModalOpen, setConfirmModalOpen] = React.useState(false);
     const [pendingDate, setPendingDate] = React.useState(null);
 
@@ -61,12 +63,16 @@ const CalendarHeader = ({
     };
 
     const handleConfirmOk = () => {
+        const dateToApply = pendingDate;
+        const isSameMonth = currentDate.isSame(dateToApply, 'month');
         setConfirmModalOpen(false);
-        setTimeout(() => {
-            setIsChangingDate(true);
-            onDateChange(pendingDate);
-            setPendingDate(null);
-        }, 0);
+        setIsChangingDate(true);
+        onDateChange(dateToApply);
+        // Force refetch when same month (query key doesn't change)
+        if (isSameMonth && onRefetch) {
+            onRefetch();
+        }
+        setPendingDate(null);
     };
 
     const handleConfirmCancel = () => {
@@ -143,11 +149,14 @@ const CalendarHeader = ({
                                 ratePlanOptions={ratePlanOptions}
                                 onFiltersChange={onFiltersChange}
                                 onReset={onReset}
+                                onClose={() => setFilterOpen(false)}
                             />
                         }
                         title="Filter"
                         trigger="click"
                         placement="bottomRight"
+                        open={filterOpen}
+                        onOpenChange={setFilterOpen}
                     >
                         <Badge dot={hasActiveFilter}>
                             <Button icon={<FilterOutlined />}>Filter</Button>
