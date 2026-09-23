@@ -23,3 +23,8 @@ export const getServiceInventoryMappingDetails = async (params) => {
     );
     return data.response;
 };
+
+export const deleteServiceInventoryMapping = async (params) => {
+    const { data } = await apiClient.delete("/service-inventory-mapping/delete", { params });
+    return data.response;
+};
