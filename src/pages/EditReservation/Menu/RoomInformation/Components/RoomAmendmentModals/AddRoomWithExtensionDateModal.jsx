@@ -25,10 +25,7 @@ export default function AddRoomWithExtensionDateModal({
   const [form] = Form.useForm();
 
   // States for step navigation and submission
-  const [currentStep, setCurrentStep] = useState("form");
   const [daysToAdd, setDaysToAdd] = useState(1);
-  const [pendingValues, setPendingValues] = useState(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [availabilitySearchRoomList, setAvailabilitySearchRoomList] = useState(false);
   const [backToExtensionStayDate, setBackToExtensionStayDate] = useState(false);
 
@@ -77,8 +74,6 @@ export default function AddRoomWithExtensionDateModal({
   const handleCloseReset = () => {
     form.resetFields();
     setDaysToAdd(1);
-    setCurrentStep("form");
-    setPendingValues(null);
     extensionDateonClose(false);
   };
 
@@ -107,128 +102,103 @@ export default function AddRoomWithExtensionDateModal({
             <div className="flex items-center gap-2">
               <div className="h-[18px] w-1 rounded-sm bg-[#1677ff]" />
               <span className="font-semibold">
-                {currentStep === "form" ? "Add New Room" : "Review Stay Extension Summary"}
+                Add New Room
               </span>
             </div>
           }
           open={isOpen}
           onCancel={handleCloseReset}
-          width={currentStep === "form" ? 520 : 650}
+          width={520}
           footer={
-            currentStep === "form"
-              ? [
-                <Button
-                  key="submit"
-                  type="primary"
-                  onClick={handleAvailabilitySearchs}
-                  disabled={maxDayExtension <= 0}
-                  loading={availabilitySearchs?.isPending}
-                >
-                  Next
-                </Button>,
-              ]
-              : [
-                <Button
-                  key="back-to-form"
-                  disabled={isSubmitting}
-                  onClick={() => setCurrentStep("form")}
-                >
-                  Modify Extension
-                </Button>,
-                <Button
-                  key="confirm"
-                  type="primary"
-                  loading={isSubmitting}
-                  onClick={handleFinalCommit}
-                >
-                  Confirm Extension
-                </Button>,
-              ]
+            [
+              <Button
+                key="submit"
+                type="primary"
+                onClick={handleAvailabilitySearchs}
+                disabled={maxDayExtension <= 0}
+                loading={availabilitySearchs?.isPending}
+              >
+                Next
+              </Button>,
+            ]
           }
         >
           {/* Context Target Ribbon Header */}
           <div className="text-indigo-700 dark:text-indigo-500 font-semibold">
             {" "}
-            {/* <div className={`text-md text-slate-900 ${textWhiteInDarkStyle}`}>
-              {roomTypeName}
-            </div> */}
             {reservationNo}{" "}
             <span className={`text-slate-800 ${textWhiteInDarkStyle}`}>
               — {guestName}
             </span>
           </div>
 
-          <Divider className="my-3" />
+          <Divider className="!my-2" />
 
-          {/* --- STEP 1: INCREMENTOR INTERFACE --- */}
-          {currentStep === "form" && (
-            <Form form={form} layout="vertical">
-              <div
-                className={`bg-slate-50 p-4 rounded-lg mb-5 ${darkModeStyle}`}
-              >
-                <div className="flex justify-between items-center mb-2">
-                  <label
-                    className={`block text-sm font-medium text-slate-600 ${textWhiteInDarkStyle}`}
-                  >
-                    Provision Additional Days
-                  </label>
-                </div>
-
-                <Space size="middle" className="flex items-center">
-                  <Button
-                    shape="circle"
-                    icon={<MinusOutlined />}
-                    onClick={() =>
-                      setDaysToAdd((prev) => Math.max(1, prev - 1))
-                    }
-                    disabled={daysToAdd <= 1}
-                  />
-                  <span className="text-xl font-bold min-w-[30px] text-center inline-block">
-                    {daysToAdd}
-                  </span>
-
-                  <Button
-                    shape="circle"
-                    icon={<PlusOutlined />}
-                    onClick={() => setDaysToAdd((prev) => prev + 1)}
-                  // disabled={daysToAdd >= maxDayExtension}
-                  />
-                  <span
-                    className={`text-sm text-slate-500 font-medium ${textWhiteInDarkStyle}`}
-                  >
-                    Extra Day(s)
-                  </span>
-                </Space>
+          <Form form={form} layout="vertical">
+            <div
+              className={`bg-slate-50 p-4 rounded-lg mb-5 ${darkModeStyle}`}
+            >
+              <div className="flex justify-between items-center mb-2">
+                <label
+                  className={`block text-sm font-medium text-slate-600 ${textWhiteInDarkStyle}`}
+                >
+                  Provision Additional Days
+                </label>
               </div>
-              
 
-              {/* Timeline Data Footer */}
-              <div
-                className={`bg-slate-50 p-3 px-4 rounded-lg mb-5 border border-slate-200 ${darkModeStyle} ${borderDarkMode}`}
-              >
-                <div className="text-xs ">
-                  Current Checkout -{" "}
-                  <strong className={`text-slate-700 ${textWhiteInDarkStyle}`}>
-                    {originalCheckout
-                      ? originalCheckout?.format("DD MMM YYYY")
-                      : "-"}
+              <Space size="middle" className="flex items-center">
+                <Button
+                  shape="circle"
+                  icon={<MinusOutlined />}
+                  onClick={() =>
+                    setDaysToAdd((prev) => Math.max(1, prev - 1))
+                  }
+                  disabled={daysToAdd <= 1}
+                />
+                <span className="text-xl font-bold min-w-[30px] text-center inline-block">
+                  {daysToAdd}
+                </span>
+
+                <Button
+                  shape="circle"
+                  icon={<PlusOutlined />}
+                  onClick={() => setDaysToAdd((prev) => prev + 1)}
+                />
+                <span
+                  className={`text-sm text-slate-500 font-medium ${textWhiteInDarkStyle}`}
+                >
+                  Extra Day(s)
+                </span>
+              </Space>
+            </div>
+
+
+            {/* Timeline Data Footer */}
+            <div
+              className={`bg-slate-50 p-3 px-4 rounded-lg mb-5 border border-slate-200 ${darkModeStyle} ${borderDarkMode}`}
+            >
+              <div className="text-xs ">
+                Current Checkout -{" "}
+                <strong className={`text-slate-700 ${textWhiteInDarkStyle}`}>
+                  {originalCheckout
+                    ? originalCheckout?.format("DD MMM YYYY")
+                    : "-"}
+                </strong>
+              </div>
+              {maxDayExtension !== 0 && (
+                <div className="text-sm text-blue-600 mt-1">
+                  New Checkout{" "}
+                  <strong className="text-blue-700">
+                    {newCheckoutDate.format("DD MMM YYYY")}
                   </strong>
                 </div>
-                {maxDayExtension !== 0 && (
-                  <div className="text-sm text-blue-600 mt-1">
-                    New Checkout{" "}
-                    <strong className="text-blue-700">
-                      {newCheckoutDate.format("DD MMM YYYY")}
-                    </strong>
-                  </div>
-                )}
-              </div>
+              )}
+            </div>
 
-              <Form.Item name="reason" label="Reason for Add Room">
-                <Input.TextArea rows={3} placeholder="Reason for Add Room" />
-              </Form.Item>
-            </Form>
-          )}
+            <Form.Item name="reason" label="Reason for Add Room">
+              <Input.TextArea rows={3} placeholder="Reason for Add Room" />
+            </Form.Item>
+          </Form>
         </Modal>
       )}
     </>
