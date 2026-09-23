@@ -29,6 +29,8 @@ import ReservationStatusColor from "./../../../component/ReservationStatusColor/
 import dayjs from "dayjs";
 import PrintReservation from "../../../component/Topbar/PrintReservation";
 import { MdOutlineMeetingRoom } from "react-icons/md";
+import usePermission from "../../../hooks/usePermission";
+import { PERMISSIONS } from "../../../variables/permission";
 
 const ReservationsGrid = ({
   data,
@@ -38,6 +40,9 @@ const ReservationsGrid = ({
   changePage,
   changePerPage,
 }) => {
+  const { hasPermission } = usePermission();
+  const reservation_room_list = hasPermission(PERMISSIONS.RESERVATION_ROOM_LIST)
+
   const navigate = useNavigate();
   const [printOpen, setPrintOpen] = useState(false);
   const [selectedReservation, setSelectedReservation] = useState();
@@ -76,47 +81,49 @@ const ReservationsGrid = ({
                     </Tooltip>
                   }
                   extra={
-                    <Dropdown
-                      menu={{
-                        items: [
-                          {
-                            key: "edit",
-                            label: "Edit",
-                            icon: <EditOutlined />,
-                            onClick: () => handleMenuClick(item),
-                          },
-                          ...(item?.roomStatus?.code === "confirmed"
-                            ? [
-                                {
-                                  key: "print",
-                                  label: "Print",
-                                  icon: <PrinterOutlined />,
-                                  onClick: () => {
-                                    (setPrintOpen(true),
-                                      setSelectedReservation(item));
+                    (reservation_room_list || item?.roomStatus?.code === "confirmed") ? (
+                      <Dropdown
+                        menu={{
+                          items: [
+                            ...(reservation_room_list ? [{
+                              key: "edit",
+                              label: "Edit",
+                              icon: <EditOutlined />,
+                              onClick: () => handleMenuClick(item),
+                            }] : []),
+                            ...(item?.roomStatus?.code === "confirmed"
+                              ? [
+                                  {
+                                    key: "print",
+                                    label: "Print",
+                                    icon: <PrinterOutlined />,
+                                    onClick: () => {
+                                      (setPrintOpen(true),
+                                        setSelectedReservation(item));
+                                    },
                                   },
-                                },
-                              ]
-                            : []),
-                        ],
-                      }}
-                      trigger={["click"]}
-                    >
-                      <Button
-                        type="text"
-                        icon={
-                          <MoreOutlined
-                            style={{ color: "#ffffff", fontSize: "25px" }}
-                          />
-                        }
-                      />
-                    </Dropdown>
+                                ]
+                              : []),
+                          ],
+                        }}
+                        trigger={["click"]}
+                      >
+                        <Button
+                          type="text"
+                          icon={
+                            <MoreOutlined
+                              style={{ color: "#ffffff", fontSize: "25px" }}
+                            />
+                          }
+                        />
+                      </Dropdown>
+                    ) : null
                   }
                 >
                   {/* Info Row */}
                   <div
-                    className="cursor-pointer"
-                    onClick={() => handleMenuClick(item)}
+                    className={reservation_room_list ? "cursor-pointer" : "cursor-default"}
+                    onClick={() => reservation_room_list && handleMenuClick(item)}
                   >
                     <div
                       style={{

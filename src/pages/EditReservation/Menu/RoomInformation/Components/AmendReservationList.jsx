@@ -23,7 +23,9 @@ export const getAmendReservationMenuItems = ({
   setRatePlanUuid,
   setGuestOpen,
   setSelectedData,
+  reservation_room_amendment,
 }) => {
+
   if (!record?.amendStatus) return [];
   const hasRoom = record?.room;
 
@@ -48,8 +50,9 @@ export const getAmendReservationMenuItems = ({
   };
 
   const confirmStatusDisabled = record?.roomStatus?.code !== "confirmed";
-  return [
-    { type: "divider" },
+  return reservation_room_amendment ?
+  [
+    { type: "divider" } ,
     {
       key: "modify_group",
       label: "Amend Reservation",
@@ -59,13 +62,12 @@ export const getAmendReservationMenuItems = ({
           key: "col_date",
           type: "group",
           label: "DATE CHANGES",
-          children: [
+          children:[
             {
               key: "date_change",
               label: "Change CI/CO Dates",
               icon: <CalendarOutlined />,
-              disabled: checkDisabled("date_change") ||
-                confirmStatusDisabled,
+              disabled: checkDisabled("date_change") || confirmStatusDisabled,
               ...getDisabledStyles("date_change"),
               onClick: () =>
                 !checkDisabled("date_change") &&
@@ -249,5 +251,5 @@ export const getAmendReservationMenuItems = ({
         // },
       ],
     },
-  ];
+  ] : [];
 };

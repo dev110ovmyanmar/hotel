@@ -82,7 +82,6 @@ const RoomDowngradeReview = ({
             dataSource={dataSource}
             pagination={false}
             size="small"
-            // bordered
         />
     )
 }

@@ -2,6 +2,8 @@ import { Space, Table, Tooltip } from "antd";
 import { EyeOutlined, EditOutlined } from "@ant-design/icons";
 import PriceTag from "../../../../../component/PriceTag/PriceTag";
 import ColorStatusTag from "../../../../../component/ColorStatusTag/ColorStatusTag";
+import usePermission from "../../../../../hooks/usePermission";
+import { PERMISSIONS } from "../../../../../variables/permission";
 
 const FoodBeverageOrderTable = ({
   data,
@@ -16,6 +18,9 @@ const FoodBeverageOrderTable = ({
   const tableDataSource = Array.isArray(data)
     ? data
     : data;
+
+  const {hasPermission} = usePermission();
+  const fnb_order_edit = hasPermission(PERMISSIONS.FNB_ORDER_EDIT);
 
   const columns = [
     {
@@ -97,7 +102,7 @@ const FoodBeverageOrderTable = ({
               />
             </Tooltip>
 
-            {!isReadonlyStatus && (
+            {!isReadonlyStatus && fnb_order_edit && (
               <Tooltip title="Edit">
                 <EditOutlined
                   className="cursor-pointer text-amber-500 hover:text-amber-700"

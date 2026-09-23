@@ -3,10 +3,12 @@ import { Card, Row, Typography, Divider, Space } from "antd";
 import { DollarCircleOutlined } from "@ant-design/icons";
 import PriceTag from "../../../../component/PriceTag/PriceTag";
 
-const { Text, Title } = Typography;
+const { Text } = Typography;
 
 const SummaryCard = ({ data }) => {
+
   const reservation = data?.summary;
+  
   const CustomTitle = (
     <Space>
       <div className="summary-icon-box">
@@ -57,24 +59,6 @@ const SummaryCard = ({ data }) => {
           <span>MMK</span>
         </div>
       </Row>
-      {/* <Row justify="space-between">
-        <Text>Payment</Text>
-        <Text>- 300,000 MMK</Text>
-      </Row>
-
-      <Divider className="custom-line" />
-
-      <Row justify="space-between">
-        <Text strong>Balance</Text>
-        <Text>42,500 MMK</Text>
-      </Row>
-
-      <Divider className="custom-line" />
-
-      <Row justify="space-between">
-        <Text>Total Credit</Text>
-        <Text>0 MMK</Text>
-      </Row> */}
     </Card>
   );
 };

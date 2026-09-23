@@ -1,11 +1,11 @@
 import React from "react";
-import { Row, Col, Typography, Space, Card, Table } from "antd";
+import { Typography, Space, Card, Table } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import ColorStatusTag from "../../../../component/ColorStatusTag/ColorStatusTag";
 
 const { Text } = Typography;
 
-const ServiceOrder = ({ data , serviceOrderStatus}) => {
+const ServiceOrder = ({ data }) => {
   const CustomTitle = (
     <Space>
       <div className="service-order-icon-box">

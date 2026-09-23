@@ -216,7 +216,7 @@ const DailyOccupactionsTableDrawer = ({
                 onClose={handleClose}
                 width={700}
                 className="dark:bg-gray-900"
-                headerStyle={{ borderBottom: "1px solid rgba(229, 231, 235, 0.5)" }}
+                styles={{ header: { borderBottom: "1px solid rgba(229, 231, 235, 0.5)" } }}
                 title={
                     <h2 className="text-base font-bold text-slate-800 dark:text-white m-0">
                         Daily Occupancy
