@@ -414,7 +414,7 @@ const RoomInformationTable = ({
           },
           {
             key: "dailyOccupaction",
-            label: "Daily Occupacy",
+            label: "Daily Occupancy",
             icon: <CalendarPlus2 className="w-4 h-4" />,
             onClick: () => {
               setSelectedData(record);
