@@ -20,6 +20,7 @@ import {
 import Toast from "../../../../component/Toast/Toast";
 import usePermission from "../../../../hooks/usePermission";
 import { PERMISSIONS } from "../../../../variables/permission";
+import Loader from "../../../../component/Loader/Loader";
 
 const ItemsForm = ({
   selectedItem,
@@ -182,70 +183,79 @@ const ItemsForm = ({
             ) : (
               <FormButtons
                 onClick={() => form.submit()}
-                isPending={createItem.isPending || editItem.isPending}
+                isPending={isAdd ? createItem?.isPending : editItem?.isPending}
                 mode={mode}
               />
             )}
           </div>
         }
       >
-        <Form
-          form={form}
-          layout="vertical"
-          style={{ width: "100%" }}
-          onFinish={onFinish}
-          initialValues={{
-            quantityPerService: 1,
-          }}
-        >
-          <Row gutter={16}>
-            <Col span={12}>
-              <Form.Item
-                label="Item"
-                name="serviceInventoryItem"
-                rules={[{ required: true, message: "Item is Required" }]}
-                getValueProps={(value) => ({
-                  value: isView
-                    ? serviceInventoryOptions.find(
-                        (item) => item.value === value,
-                      )?.label
-                    : value,
-                })}
-              >
-                {isView ? (
-                  <Input readOnly={isView} />
-                ) : (
-                  <Select
-                    showSearch={{
-                      filterOption: (input, option) =>
-                        (option?.label ?? "")
-                          .toLowerCase()
-                          .includes(input.toLowerCase()),
-                    }}
-                    options={serviceInventoryOptions}
-                    onChange={onServiceItemChange} // Trigger the unit update
-                    placeholder="Select Item"
-                  />
-                )}
-              </Form.Item>
-              <Form.Item name="unit" hidden>
-                <Input />
-              </Form.Item>
-            </Col>
+        {
+          isFetching
+            ?
+            <div className="flex items-center justify-center h-full min-h-[300px]">
+              <Loader />
+            </div>
+            :
+            <Form
+              form={form}
+              layout="vertical"
+              style={{ width: "100%" }}
+              onFinish={onFinish}
+              initialValues={{
+                quantityPerService: 1,
+              }}
+            >
+              <Row gutter={16}>
+                <Col span={12}>
+                  <Form.Item
+                    label="Item"
+                    name="serviceInventoryItem"
+                    rules={[{ required: true, message: "Item is Required" }]}
+                    getValueProps={(value) => ({
+                      value: isView
+                        ? serviceInventoryOptions.find(
+                          (item) => item.value === value,
+                        )?.label
+                        : value,
+                    })}
+                  >
+                    {isView ? (
+                      <Input readOnly={isView} />
+                    ) : (
+                      <Select
+                        showSearch={{
+                          filterOption: (input, option) =>
+                            (option?.label ?? "")
+                              .toLowerCase()
+                              .includes(input.toLowerCase()),
+                        }}
+                        options={serviceInventoryOptions}
+                        onChange={onServiceItemChange} // Trigger the unit update
+                        placeholder="Select Item"
+                      />
+                    )}
+                  </Form.Item>
+                  <Form.Item name="unit" hidden>
+                    <Input />
+                  </Form.Item>
+                </Col>
 
-            <Col span={12}>
-              <Form.Item label="Quantity" name="quantityPerService" className="minus-icon">
-                <InputNumber
-                  className="w-full!"
-                  mode="spinner"
-                  min={1}
-                  readOnly={isView}
-                  placeholder="Enter Quantity"
-                />
-              </Form.Item>
-            </Col>
-          </Row>
-        </Form>
+                <Col span={12}>
+                  <Form.Item label="Quantity" name="quantityPerService" className="minus-icon">
+                    <InputNumber
+                      className="w-full!"
+                      mode="spinner"
+                      min={1}
+                      readOnly={isView}
+                      placeholder="Enter Quantity"
+                    />
+                  </Form.Item>
+                </Col>
+              </Row>
+            </Form>
+        }
+
       </Drawer>
     </div>
   );

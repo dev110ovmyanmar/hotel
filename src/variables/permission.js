@@ -140,6 +140,7 @@ export const PERMISSIONS = {
   SERVICE_INVENTORY_VIEW: "service-inventory.view",
   SERVICE_INVENTORY_CREATE: "service-inventory.create",
   SERVICE_INVENTORY_EDIT: "service-inventory.edit",
+  SERVICE_INVENTORY_DELETE:"service-inventory.delete",
 
   //Service Packages
   SERVICE_PACKAGE_LIST: "service-package.list",
