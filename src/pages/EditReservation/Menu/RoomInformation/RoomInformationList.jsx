@@ -20,8 +20,12 @@ import useApiQuery from "../../../../hooks/useApiQuery";
 import { LIMITS } from "../../../../variables/constants";
 import { queryClient } from "../../../../app/queryClient";
 import { PERMISSIONS } from "../../../../variables/permission";
+import usePermission from "../../../../hooks/usePermission";
 
 const RoomInformationList = () => {
+  const { hasPermission } = usePermission();
+  const reservation_edit = hasPermission(PERMISSIONS.RESERVATION_EDIT);
+
   const navigate = useNavigate();
   const { bookingId } = useParams();
 
@@ -140,9 +144,12 @@ const RoomInformationList = () => {
         />
       </div>
       <div className="flex gap-2 mb-2">
-        <Button className="custom-blue-btn" onClick={() => setOpen(true)}>
+        {
+          reservation_edit &&
+          <Button className="custom-blue-btn" onClick={() => setOpen(true)}>
           Change Status
-        </Button>
+          </Button>
+        }
 
         {
           isConfirmed && 
@@ -150,15 +157,18 @@ const RoomInformationList = () => {
           onClick={() => setAddDepositOpen(true)}
           icon={<PlusOutlined style={{ fontSize: "12px" }} />}>
           Add Deposit
-        </Button>
+          </Button>
         }
 
-        <Button className="custom-blue-btn" 
-         onClick={() => setNoteOpen(true)}
-         icon={<PlusOutlined style={{ fontSize: "12px" }} />}
-         >
+        {
+          reservation_edit && 
+          <Button className="custom-blue-btn" 
+          onClick={() => setNoteOpen(true)}
+          icon={<PlusOutlined style={{ fontSize: "12px" }} />}
+          >
           Add Note
-        </Button>
+          </Button>
+        }
         
       </div>
 

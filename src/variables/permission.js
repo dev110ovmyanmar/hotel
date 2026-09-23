@@ -329,6 +329,12 @@ export const PERMISSIONS = {
   MAINTENANCE_TASK_ASSIGNMENT_VIEW: "maintenance-task-assignment.view",
   MAINTENANCE_TASK_ASSIGNMENT_CREATE: "maintenance-task-assignment.create",
   MAINTENANCE_TASK_ASSIGNMENT_EDIT: "maintenance-task-assignment.edit",
+
+  //Reservation
+  RESERVATION_ROOM_LIST : "reservation-room.list",
+  RESERVATION_EDIT : "reservation.edit",
+  RESERVATION_ROOM_OCCUPANCY_VIEW : "reservation-room-occupancy.view",
+  RESERVATION_ROOM_AMENDMENT : "reservation-room.amendment",
 };
 
 

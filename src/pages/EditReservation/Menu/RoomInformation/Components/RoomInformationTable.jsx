@@ -31,6 +31,8 @@ import { useApiMutation } from "../../../../../hooks/useApiMutation";
 import { availabilitySearch } from "../../../../../api/reservationSectionApi";
 import { getAmendReservationMenuItems } from "./AmendReservationList";
 import { capitalizeFirstLetter } from "../../../../../utils";
+import usePermission from "../../../../../hooks/usePermission";
+import { PERMISSIONS } from "../../../../../variables/permission";
 
 const RoomInformationTable = ({
   data,
@@ -44,6 +46,15 @@ const RoomInformationTable = ({
   reservationUuid,
   onSelectRow,
 }) => {
+
+  const { hasPermission } = usePermission();
+  const reservation_room_view = hasPermission(PERMISSIONS.RESERVATION_ROOM_VIEW);
+  const reservation_edit = hasPermission(PERMISSIONS.RESERVATION_EDIT);
+  const reservation_room_occupancy_view = hasPermission(PERMISSIONS.RESERVATION_ROOM_OCCUPANCY_VIEW);
+  const reservation_room_amendment = hasPermission(PERMISSIONS.RESERVATION_ROOM_AMENDMENT);
+
+  const enableRoomSetting = reservation_room_view || reservation_edit || reservation_room_occupancy_view || reservation_room_amendment;
+
   const formattedData = data.map((item) => ({
     ...item,
     children: Array.isArray(item.children) ? item.children : null,
@@ -332,6 +343,7 @@ const RoomInformationTable = ({
     {
       title: "Action",
       width: 80,
+      hidden : !enableRoomSetting,
       render: (_, record) => {
         const rawCode = record?.roomStatus?.code || "";
         const enableComplimentaryUpdateButton =
@@ -368,6 +380,7 @@ const RoomInformationTable = ({
               setMode("view");
               setDetailsDrawerOpen(true);
             },
+            hidden: !reservation_room_view,
           },
           {
             key: "notes",
@@ -377,6 +390,7 @@ const RoomInformationTable = ({
               setSelectedData(record);
               setNoteOpen(true);
             },
+            hidden: !reservation_edit,
           },
           {
             key: "guestList",
@@ -386,6 +400,7 @@ const RoomInformationTable = ({
               setSelectedData(record);
               setGuestListOpen(true);
             },
+            hidden : !reservation_edit,
           },
           {
             key: "roomComp",
@@ -395,17 +410,18 @@ const RoomInformationTable = ({
               setReservationRoomUuid(record.uuid);
               setCompOpen(true);
             },
-            hidden: !enableComplimentaryUpdateButton || record?.amendStatus !== true,
+            hidden: !enableComplimentaryUpdateButton || record?.amendStatus !== true || !reservation_edit,
           },
           {
             key: "dailyOccupaction",
-            label: "Daily Occupaction",
+            label: "Daily Occupacy",
             icon: <CalendarPlus2 className="w-4 h-4" />,
             onClick: () => {
               setSelectedData(record);
               setMode("view");
               setDailyOccupactionsTableDrawerOpen(true);
             },
+            hidden: !reservation_room_occupancy_view
           },
         ];
 
@@ -419,11 +435,12 @@ const RoomInformationTable = ({
           setRatePlanUuid,
           setGuestOpen,
           setSelectedData,
+          reservation_room_amendment,
         });
 
         const menuItems = [...baseMenuItems, ...amendmentItems];
 
-        return (
+        return ( 
           <div
             onClick={(e) => {
               // IMPORTANT:
