@@ -15,6 +15,8 @@ import PriceTag from "../../../component/PriceTag/PriceTag";
 import ReservationStatusColor from "../../../component/ReservationStatusColor/ReservationStatusColor";
 import dayjs from "dayjs";
 import PrintReservation from "../../../component/Topbar/PrintReservation";
+import usePermission from "../../../hooks/usePermission";
+import { PERMISSIONS } from "../../../variables/permission";
 
 const ReservationsTable = ({
   data,
@@ -25,6 +27,9 @@ const ReservationsTable = ({
   changePage,
   changePerPage,
 }) => {
+  const { hasPermission } = usePermission();
+  const reservation_room_list = hasPermission(PERMISSIONS.RESERVATION_ROOM_LIST);
+  
   const navigate = useNavigate();
   const [printOpen, setPrintOpen] = useState(false);
   const [selectedReservation, setSelectedReservation] = useState();
@@ -168,26 +173,33 @@ const ReservationsTable = ({
       fixed: "end",
       align: "center",
       width: 80,
-      render: (_, record) => (
-        <div style={{ display: "flex", justifyContent: "center", gap: "8px" }}>
-          <Button
-            type="text"
-            icon={<EditOutlined />}
-            onClick={() => handleMenuClick(record)}
-          />
-          {record?.roomStatus?.code === "confirmed" && (
-            <Button
-              type="text"
-              icon={<PrinterOutlined />}
-              onClick={() => {
-                (handleMenuClick(record.uuid),
-                  setPrintOpen(true),
-                  setSelectedReservation(record));
-              }}
-            />
-          )}
-        </div>
-      ),
+      onCell: () => ({ style: { cursor: reservation_room_list ? 'pointer' : 'default' } }),
+      render: (_, record) => {
+        const hasActions = reservation_room_list || record?.roomStatus?.code === "confirmed";
+        if (!hasActions) return null;
+        return (
+          <div style={{ display: "flex", justifyContent: "center", gap: "8px" }}>
+            {reservation_room_list && (
+              <Button
+                type="text"
+                icon={<EditOutlined />}
+                onClick={() => handleMenuClick(record)}
+              />
+            )}
+            {record?.roomStatus?.code === "confirmed" && (
+              <Button
+                type="text"
+                icon={<PrinterOutlined />}
+                onClick={() => {
+                  (handleMenuClick(record.uuid),
+                    setPrintOpen(true),
+                    setSelectedReservation(record));
+                }}
+              />
+            )}
+          </div>
+        );
+      },
     },
   ];
 

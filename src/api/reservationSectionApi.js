@@ -142,22 +142,22 @@ export const updateServiceOrder = async (params) => {
 
 // reservation service add on
 export const serviceAddonList = async (params) => {
-  const { data } = await apiClient.get("reservations-addons", { params });
+  const { data } = await apiClient.get("reservation-addons", { params });
   return data.response;
 };
 
 export const serviceAddonDetails = async (params) => {
-  const { data } = await apiClient.get("reservations-addon", { params });
+  const { data } = await apiClient.get("reservation-addon", { params });
   return data.response;
 };
 
 export const serviceAddonCreate = async (params) => {
-  const { data } = await apiClient.post(`reservations-addon/create`, params);
+  const { data } = await apiClient.post(`reservation-addon/create`, params);
   return data.response;
 };
 
 export const updateServiceAddon = async (params) => {
-  const { data } = await apiClient.put("/reservations-addon/update", params);
+  const { data } = await apiClient.put("/reservation-addon/update", params);
   return data.response;
 };
 
