@@ -38,7 +38,7 @@ const ServiceOrderList = () => {
   const [perPage, setPerPage] = useState(LIMITS.PAGE_SIZE);
   const [open, setOpen] = useState(false);
 
-  const { data, isLoading, refetch } = useApiQuery({
+  const { data, isFetching, refetch } = useApiQuery({
     fetchQueryName: "service-order",
     fetchQueryFunction: serviceOrderList,
     params: {
@@ -67,7 +67,7 @@ const ServiceOrderList = () => {
     setDrawerOpen(true);
   };
 
-  if (isLoading) {
+  if (isFetching) {
     return (
       <div className="flex items-center justify-center h-full min-h-[300px]">
         <Loader />

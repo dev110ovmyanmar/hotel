@@ -75,7 +75,7 @@ const FolioOperationsList = () => {
 
   const {
     data: folioList,
-    isLoading,
+    isFetching,
     error,
   } = useApiQuery({
     fetchQueryName: "folios",
@@ -236,7 +236,7 @@ const FolioOperationsList = () => {
     return () => window.removeEventListener("print-all-folios", handler);
   }, [handlePrintAll]);
 
-  if (isLoading) {
+  if (isFetching) {
     return (
       <div className="flex items-center justify-center h-full min-h-[300px]">
         <Loader />

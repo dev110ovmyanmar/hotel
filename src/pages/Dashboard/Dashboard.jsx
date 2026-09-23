@@ -8,6 +8,7 @@ import {
   MetricCard,
   METRIC_CONFIGS,
 } from "./Components/MetricCard";
+import Loader from "../../component/Loader/Loader";
 
 export default function Dashboard() {
   const { data, isFetching } = useApiQuery({
@@ -20,7 +21,7 @@ export default function Dashboard() {
   if (isFetching) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <Spin />
+        <Loader />
       </div>
     );
   }

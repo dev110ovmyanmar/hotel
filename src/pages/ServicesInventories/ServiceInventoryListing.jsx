@@ -15,7 +15,7 @@ const ServiceInventoryListing = () => {
   const [perPage, setPerPage] = useState(LIMITS.PAGE_SIZE);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
-  const { data, isLoading, error } = useApiQuery({
+  const { data, isFetching, error } = useApiQuery({
     fetchQueryName: "service_inventories",
     fetchQueryFunction: getServiceInventory,
     params: {
@@ -76,7 +76,7 @@ const ServiceInventoryListing = () => {
         dataSource={serviceInventories}
         onView={handleView}
         onEdit={handleEdit}
-        loading={isLoading}
+        loading={isFetching}
         page={data?.pagination?.currentPage || page}
         perPage={data?.pagination?.perPage || perPage}
         total={data?.pagination?.total}
@@ -89,7 +89,7 @@ const ServiceInventoryListing = () => {
         page={page}
         drawerOpen={drawerOpen}
         setDrawerOpen={setDrawerOpen}
-        loading={isLoading}
+        loading={isFetching}
         switchToEdit={switchToEdit}
         selectedRow={selectedRow}
         setSelectedRow={setSelectedRow}

@@ -43,7 +43,7 @@ const AddRefundForm = ({
 }) => {
   const [form] = Form.useForm();
 
-  const { data: reservationMetaData, isLoading: reservationMetaLoading } = useApiQuery({
+  const { data: reservationMetaData, isFetching: reservationMetaLoading } = useApiQuery({
     fetchQueryName: "reservation-meta",
     fetchQueryFunction: reservationMeta,
     params: {

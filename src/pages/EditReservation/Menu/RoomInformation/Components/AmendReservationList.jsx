@@ -23,7 +23,9 @@ export const getAmendReservationMenuItems = ({
   setRatePlanUuid,
   setGuestOpen,
   setSelectedData,
+  reservation_room_amendment,
 }) => {
+
   if (!record?.amendStatus) return [];
   const hasRoom = record?.room;
 
@@ -48,8 +50,9 @@ export const getAmendReservationMenuItems = ({
   };
 
   const confirmStatusDisabled = record?.roomStatus?.code !== "confirmed";
-  return [
-    { type: "divider" },
+  return reservation_room_amendment ?
+  [
+    { type: "divider" } ,
     {
       key: "modify_group",
       label: "Amend Reservation",
@@ -59,13 +62,12 @@ export const getAmendReservationMenuItems = ({
           key: "col_date",
           type: "group",
           label: "DATE CHANGES",
-          children: [
+          children:[
             {
               key: "date_change",
               label: "Change CI/CO Dates",
               icon: <CalendarOutlined />,
-              disabled: checkDisabled("date_change") ||
-                confirmStatusDisabled,
+              disabled: checkDisabled("date_change") || confirmStatusDisabled,
               ...getDisabledStyles("date_change"),
               onClick: () =>
                 !checkDisabled("date_change") &&
@@ -130,7 +132,8 @@ export const getAmendReservationMenuItems = ({
               key: "room_upgrade",
               label: "Upgrade Room",
               icon: <ArrowUpOutlined />,
-              disabled: checkDisabled("room_upgrade") || record?.postedToFolio,
+              // disabled: checkDisabled("room_upgrade") || record?.postedToFolio,
+              disabled: checkDisabled("room_upgrade"),
               ...getDisabledStyles("room_upgrade"),
               onClick: () => {
                 if (!checkDisabled("room_upgrade")) {
@@ -139,18 +142,19 @@ export const getAmendReservationMenuItems = ({
                   setRatePlanUuid(record?.ratePlan?.uuid);
                 }
               },
-              style: record?.postedToFolio
-                ? {
-                  color: "#a2a0a0",
-                  cursor: "not-allowed",
-                }
-                : {},
+              // style: record?.postedToFolio
+              //   ? {
+              //     color: "#a2a0a0",
+              //     cursor: "not-allowed",
+              //   }
+              //   : {},
             },
             {
               key: "room_downgrade",
               label: "Downgrade Room",
               icon: <ArrowDownOutlined />,
-              disabled: checkDisabled("room_downgrade") || record?.postedToFolio,
+              // disabled: checkDisabled("room_downgrade") || record?.postedToFolio,
+              disabled: checkDisabled("room_downgrade"),
               ...getDisabledStyles("room_downgrade"),
               onClick: () => {
                 if (!checkDisabled("room_downgrade")) {
@@ -159,12 +163,12 @@ export const getAmendReservationMenuItems = ({
                   setRatePlanUuid(record?.ratePlan?.uuid);
                 }
               },
-              style: record?.postedToFolio
-                ? {
-                  color: "#a2a0a0",
-                  cursor: "not-allowed",
-                }
-                : {},
+              // style: record?.postedToFolio
+              //   ? {
+              //     color: "#a2a0a0",
+              //     cursor: "not-allowed",
+              //   }
+              //   : {},
             },
             {
               key: "add_room",
@@ -247,5 +251,5 @@ export const getAmendReservationMenuItems = ({
         // },
       ],
     },
-  ];
+  ] : [];
 };

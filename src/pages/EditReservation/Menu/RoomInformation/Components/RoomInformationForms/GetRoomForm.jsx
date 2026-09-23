@@ -13,10 +13,11 @@ import {
   textWhiteInDarkStyle,
 } from "../../../../../../utils";
 import ColorStatusTag from "../../../../../../component/ColorStatusTag/ColorStatusTag";
+import Loader from "../../../../../../component/Loader/Loader";
 
 const GetRoomForm = ({ selectedData, onSelectRoom, onClose, floorUuid }) => {
 
-  const { data, isLoading } = useApiQuery({
+  const { data, isFetching } = useApiQuery({
     fetchQueryName: "reservationRoom",
     fetchQueryFunction: reservationRoomSearch,
     params: {
@@ -83,10 +84,10 @@ const GetRoomForm = ({ selectedData, onSelectRoom, onClose, floorUuid }) => {
     });
   };
 
-  if (isLoading)
+  if (isFetching)
     return (
       <div className="flex justify-center p-10">
-        <Spin />
+        <Loader />
       </div>
     );
 
@@ -118,7 +119,7 @@ const GetRoomForm = ({ selectedData, onSelectRoom, onClose, floorUuid }) => {
               <ColorStatusTag status={room?.cleanStatus} iconType="broom" />
 
               <Button
-                loading={assignMutation.isLoading}
+                loading={assignMutation.isFetching}
                 disabled={["Out of Service", "Out of Order"].includes(room.status?.name)}
                 onClick={() => handleAssignClick(room)}
                 className={

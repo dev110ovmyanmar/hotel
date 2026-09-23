@@ -36,7 +36,7 @@ const SupplierForm = ({
   const { hasPermission } = usePermission();
   const canEdit = hasPermission(PERMISSIONS.SUPPLIER_EDIT);
 
-  const { data, isLoading } = useApiQuery({
+  const { data, isFetching } = useApiQuery({
     fetchQueryName: "supplier-detail",
     fetchQueryFunction: getSupplierDetail,
     params: { uuid: selectedRow?.uuid },
@@ -119,7 +119,7 @@ const SupplierForm = ({
         )
       }
     >
-      {isLoading ? (
+      {isFetching ? (
         <div className="flex items-center justify-center h-full min-h-[300px]">
           <Loader />
         </div>

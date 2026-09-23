@@ -37,6 +37,7 @@ import { AiOutlineCloseSquare } from "react-icons/ai";
 import { BookTemplateIcon, Check } from "lucide-react";
 import PriceInput from "../../../../../../component/PriceInput/PriceInput";
 import { InfoRow, SectionCard } from "../../../RoomInformation/Components/RoomInformationForms/DailyBreakDownDetailFormDrawer";
+import Loader from "../../../../../../component/Loader/Loader";
 
 
 const { Text } = Typography;
@@ -593,7 +594,9 @@ const FoodBeverageOrderForm = ({
       >
         {
           isEdit && (reservationRoomMetaPending || fnbOrderDetailsPending) ?
-            <Spin />
+            <div className="w-full h-full flex justify-center items-center text-center">
+              <Loader />
+            </div>
             :
             !isView &&
             <Form
@@ -898,7 +901,7 @@ const FoodBeverageOrderForm = ({
                                               {/* Save Menu */}
                                               <Tooltip title="Save Menu">
                                                 {upsertFoodBeverageOrderItems.isPending ? (
-                                                  <Spin />
+                                                  <Loader />
                                                 ) : (
                                                   <AiOutlineCheckSquare
                                                     onClick={() => {
@@ -1369,7 +1372,7 @@ const FoodBeverageOrderForm = ({
           isView &&
           (
             fnbOrderDetailsPending
-              ? <div className="flex justify-center items-center"><Spin/></div>
+              ? <div className="flex justify-center items-center"><Loader/></div>
             :
               <SectionCard title="Summary">
                 <div>

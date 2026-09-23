@@ -83,7 +83,7 @@ const FacilityPackageForm = ({
     invalidateKeys: [["facility-packages"]],
   });
 
-  const { data, isLoading, error } = useApiQuery({
+  const { data, isFetching, error } = useApiQuery({
     fetchQueryName: "facility-package-details",
     fetchQueryFunction: getFacilityPackageDetails,
     params: { uuid: selectedData?.uuid },
@@ -247,7 +247,7 @@ const FacilityPackageForm = ({
           </div>
         }
       >
-        {isLoading ? (
+        {isFetching ? (
           <div className="flex items-center justify-center h-full min-h-[300px]">
             <Loader />
           </div>

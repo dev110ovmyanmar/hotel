@@ -19,7 +19,7 @@ const LocationList = () => {
 
   const normalStatus = status === "all" ? null : status;
 
-  const { data, isLoading, error } = useApiQuery({
+  const { data, isFetching, error } = useApiQuery({
     fetchQueryName: "locations",
     fetchQueryFunction: fetchLocation,
     params: {
@@ -64,7 +64,7 @@ const LocationList = () => {
         total={data?.pagination?.total}
         changePage={(page) => setPage(page)}
         changePerPage={(perPage) => setPerPage(perPage)}
-        loading={isLoading}
+        loading={isFetching}
       />
 
       <LocationForm

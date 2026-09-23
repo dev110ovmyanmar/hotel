@@ -39,7 +39,7 @@ const ServicePackageForm = ({
 
   const {
     data: serviceData,
-    isLoading: serviceLoading,
+    isFetching: serviceLoading,
     error: serviceError,
   } = useApiQuery({
     fetchQueryName: "services",
@@ -70,7 +70,7 @@ const ServicePackageForm = ({
     invalidateKeys: [["service-packages"]],
   });
 
-  const { data, isLoading, error } = useApiQuery({
+  const { data, isFetching, error } = useApiQuery({
     fetchQueryName: "service-package-details",
     fetchQueryFunction: getServicePackageDetails,
     params: { uuid: selectedData?.uuid },
@@ -219,7 +219,7 @@ const ServicePackageForm = ({
           </div>
         }
       >
-        {isLoading ? (
+        {isFetching ? (
           <div className="flex items-center justify-center h-full min-h-[300px]">
             <Loader />
           </div>

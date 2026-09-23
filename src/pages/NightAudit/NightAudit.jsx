@@ -9,6 +9,7 @@ import { activeAdmins } from "../../api/nightAuditApi";
 import useInfiniteApiQuery from "../../hooks/useInfiniteApiQuery";
 import { useLocation, useNavigate } from "react-router-dom";
 import { spinLoadingCenter } from "../../variables/constants";
+import Loader from "../../component/Loader/Loader";
 
 const NightAudit = () => {
     const navigate = useNavigate();
@@ -55,7 +56,7 @@ const NightAudit = () => {
     if (!activeAdminDatas || isFetching || isLocked) {
         return (
             <div className={spinLoadingCenter}>
-                <Spin />
+                <Loader />
             </div>
         );
     }

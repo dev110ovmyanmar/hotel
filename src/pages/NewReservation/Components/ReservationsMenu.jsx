@@ -46,7 +46,7 @@ const ReservationMenu = ({ onStatusChange, onViewChange }) => {
     }
   }, [routeStatus, navigate]);
 
-  const { data, isLoading } = useApiQuery({
+  const { data, isFetching , isLoading} = useApiQuery({
     fetchQueryName: ["reservation-list", activeStatus, keyword, page, perPage],
     fetchQueryFunction: reservationList,
     params: {
@@ -202,7 +202,7 @@ const ReservationMenu = ({ onStatusChange, onViewChange }) => {
               total={data?.pagination?.total}
               changePage={setPage}
               changePerPage={setPerPage}
-              loading={isLoading}
+              loading={isFetching}
             />
           ) : (
             <ReservationsTable
@@ -212,7 +212,7 @@ const ReservationMenu = ({ onStatusChange, onViewChange }) => {
               total={data?.pagination?.total}
               changePage={setPage}
               changePerPage={setPerPage}
-              loading={isLoading}
+              loading={isFetching}
             />
           )}
         </Spin>

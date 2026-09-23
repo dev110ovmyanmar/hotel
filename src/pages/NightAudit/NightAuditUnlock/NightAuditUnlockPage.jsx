@@ -7,6 +7,7 @@ import CheckBookingHeader from "../CheckBookingHeader";
 import NightAuditUnlockTable from "./NightAuditUnlockTable";
 import { useApiMutation } from "../../../hooks/useApiMutation";
 import { spinLoadingCenter } from "../../../variables/constants";
+import Loader from "../../../component/Loader/Loader";
 
 const NightAuditUnlockPage = ({
     stepValue,
@@ -28,7 +29,7 @@ const NightAuditUnlockPage = ({
         },
     });
 
-    const { data: preAuditChecksData, isLoading, error } = useApiQuery({
+    const { data: preAuditChecksData, isFetching, error } = useApiQuery({
         fetchQueryName: "pre-audit-checks",
         fetchQueryFunction: preAuditCheck,
         params: {
@@ -39,7 +40,7 @@ const NightAuditUnlockPage = ({
     if (!preAuditChecksData) {
         return (
             <div className={spinLoadingCenter}>
-                <Spin />
+                <Loader />
             </div>
         )
     }

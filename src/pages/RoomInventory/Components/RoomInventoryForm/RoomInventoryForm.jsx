@@ -46,7 +46,7 @@ const RoomInventoryForm = ({
     invalidateKeys: [["availabilty-calendars"]],
   });
 
-  const { data, isLoading, error } = useApiQuery({
+  const { data, isFetching, error } = useApiQuery({
     fetchQueryName: "availabilty-calendar-details",
     fetchQueryFunction: getAvailabilityCalendarDetails,
     params: { uuid: selectedData?.uuid },

@@ -20,7 +20,7 @@ const GuestList = () => {
   const navigate = useNavigate();
 
   // Fetch List Data
-  const { data, isLoading } = useApiQuery({
+  const { data, isFetching } = useApiQuery({
     fetchQueryName: "guests",
     fetchQueryFunction: getGuests,
     params: {
@@ -91,7 +91,7 @@ const GuestList = () => {
         dataSource={guests}
         onView={handleView}
         onEdit={handleEdit}
-        loading={isLoading}
+        loading={isFetching}
         page={page}
         perPage={perPage}
         total={data?.pagination?.total}
