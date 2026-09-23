@@ -25,13 +25,6 @@ import { createRoomAmendment } from "../../../../../../api/roomAmendmentApi";
 import { useApiMutation } from "../../../../../../hooks/useApiMutation";
 import Toast from "../../../../../../component/Toast/Toast";
 import RoomUpgradeReview from "./RoomUpgradeReview";
-import { GiMushroomHouse, GiQueenCrown } from "react-icons/gi";
-import {
-  PiCrown,
-  PiCrownFill,
-  PiCrownSimpleThin,
-  PiRanking,
-} from "react-icons/pi";
 import { BsCalendar2Date } from "react-icons/bs";
 import { CiBadgeDollar } from "react-icons/ci";
 import { FaCrown, FaStar } from "react-icons/fa";
@@ -127,11 +120,6 @@ export default function AddRoomExtensionLikeUpgradeDesignModal({
       console.error("Form validation requirements missing:", err);
     }
   };
-
-  const options = roomList?.rooms?.map((room) => ({
-    value: room?.roomType?.uuid,
-    label: room?.roomType?.name,
-  }));
 
   const ratePlanOptions =
     roomList?.rooms
@@ -397,9 +385,6 @@ export default function AddRoomExtensionLikeUpgradeDesignModal({
                       </Col>
                     );
                   })}
-
-                {/* </Row> */}
-                {/* </Col> */}
               </Row>
 
               <Form.Item name="roomType" hidden>
@@ -408,7 +393,6 @@ export default function AddRoomExtensionLikeUpgradeDesignModal({
 
               {
                 selectedRoom && (
-                  // <Col span={12}>
                   <>
                     <Row gutter={16}>
                       <Col span={12}>

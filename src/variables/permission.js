@@ -262,7 +262,13 @@ export const PERMISSIONS = {
   FOOD_AND_BEVERAGE_INVENTORY_CREATE: "fnb-inventory.create",
   FOOD_AND_BEVERAGE_INVENTORY_EDIT: "fnb-inventory.edit",
 
-  //F&B Management
+  //F&B Order
+  FNB_ORDER_LIST : "fnb-order.list",
+  FNB_ORDER_CREATE : "fnb-order.create",
+  FNB_ORDER_EDIT : "fnb-order.edit",
+  FNB_ORDER_DELETE : "fnb-order.delete",
+  FNB_ORDER_ITEM: "fnb-order.item",
+  
   // Menu Category
   MENU_CATEGORY_LIST: "menu-category.list",
   MENU_CATEGORY_VIEW: "menu-category.view",
