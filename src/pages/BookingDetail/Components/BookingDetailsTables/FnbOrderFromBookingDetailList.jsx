@@ -1,6 +1,5 @@
 import React from "react";
-import { Card, Row, Col, Typography, Tag, Space, Table } from "antd";
-import { MdOutlineMeetingRoom } from "react-icons/md";
+import { Card, Typography, Space, Table } from "antd";
 import { IoRestaurantOutline } from "react-icons/io5";
 import dayjs from "dayjs";
 import ColorStatusTag from "../../../../component/ColorStatusTag/ColorStatusTag";
@@ -8,25 +7,6 @@ import ColorStatusTag from "../../../../component/ColorStatusTag/ColorStatusTag"
 const { Text } = Typography;
 
 const FnbOrderFromBookingDetailList = ({ data }) => {
-  const getStatusTag = (status) => {
-    const colors = {
-      pending: "warning",
-      confirm: "processing",
-      completed: "success",
-      cancelled: "error",
-      delivered: "cyan",
-    };
-    console.log(data, "FnbOrderFromBookingDetailList")
-
-    return (
-      <Tag
-        color={colors[status.toLowerCase()] || "default"}
-        className="rounded-full px-3"
-      >
-        {status}
-      </Tag>
-    );
-  };
 
   const CustomTitle = (
     <Space>
@@ -40,7 +20,6 @@ const FnbOrderFromBookingDetailList = ({ data }) => {
   const columns = [
     {
       title: "Room No",
-      // dataIndex: ["reservationRoom", "room", "roomNo"],
       key: "roomNo",
       render: (record) => {
         console.log(record,"TextRoomNo")
@@ -74,7 +53,7 @@ const FnbOrderFromBookingDetailList = ({ data }) => {
     {
       title: "Order Type",
       key: "orderType",
-      render: (record, text) => {
+      render: (record) => {
         return (
           <div className="flex-col">
             <div>{record?.orderType.name}</div>

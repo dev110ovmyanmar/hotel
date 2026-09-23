@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Card, Space, Table, Typography, Tag } from "antd";
+import { Card, Space, Table, Typography } from "antd";
 import { IoCardOutline } from "react-icons/io5";
 import FolioPaymentDetailModal from "../BookingDetailModals/FolioPaymentDetailModal";
 import ColorStatusTag from "../../../../component/ColorStatusTag/ColorStatusTag";
@@ -57,27 +57,6 @@ const PaymentSummaryTable = ({ data }) => {
   // Localized Modal state configuration handlers
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedDataUuid, setSelectedDataUuid] = useState(null);
-
-  // Safely extract the clean array from your wrapped object structure { data: Array(9) }
-  const rawDataArray =
-    data?.reservation?.folioPayments &&
-      Array.isArray(data?.reservation?.folioPayments)
-      ? data?.reservation?.folioPayments
-      : [];
-
-  // Fired when the interactive Id column row item gets selected
-  // const handleIdClick = (uuid) => {
-  //   setSelectedDataUuid(uuid);
-  //   setIsModalOpen(true);
-  // };
-
-  // Bind click trigger method to each data object item reference
-  // const tableData = rawDataArray.map(item => ({
-  //   ...item,
-  //   _onIdClick: handleIdClick
-  // }));
-
-  // console.log(tableData);
 
   const CustomTitle = (
     <Space>

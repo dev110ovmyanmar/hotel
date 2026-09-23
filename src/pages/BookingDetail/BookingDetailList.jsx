@@ -14,19 +14,19 @@ import ContactPersonCard from "./Components/BookingDetailsTables/ContactPersonTa
 import ServiceOrder from "./Components/BookingDetailsTables/ServiceOrder";
 import FolioSummaryCard from "./Components/BookingDetailsTables/FolioSummaryCard";
 import FnbOrderFromBookingDetailList from "./Components/BookingDetailsTables/FnbOrderFromBookingDetailList";
-
 import useApiQuery from "../../hooks/useApiQuery";
 import { reservationDetails } from "../../api/reservationSectionApi";
 import Loader from "../../component/Loader/Loader";
 
 const BookingDetailList = () => {
+
   const navigate = useNavigate();
+  
   const { bookingId } = useParams();
   const [searchParams] = useSearchParams();
   const uuid = bookingId;
 
-  const selectedRoomUuid =
-    searchParams.get("selectedRoomUuid") || uuid;
+  const selectedRoomUuid = searchParams.get("selectedRoomUuid") || uuid;
 
   useEffect(() => {
     const cleanId = bookingId ? bookingId.trim() : "";
