@@ -156,8 +156,8 @@ const DailyOccupationDetailDrawer = ({
         <Drawer
             open={open}
             onClose={handleCloseDrawer}
+            width={480}
             className="dark:bg-gray-900"
-            style={{ width: 480 }}
             styles={{ header: { borderBottom: "1px solid rgba(229, 231, 235, 0.5)" } }}
             title={
                 <div className="flex justify-between items-center pr-2">
