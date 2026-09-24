@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Card, Row, Typography, Divider, Space, Tooltip } from "antd";
+import { Card, Row, Typography, Space, Tooltip } from "antd";
 import { EditOutlined, PhoneOutlined } from "@ant-design/icons";
 import ContactPersonForm from "../BookingDetailForms/ContactPersonForm";
 

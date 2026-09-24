@@ -25,6 +25,8 @@ import { LOCAL_STORAGE_KEYS } from "../../../../variables/constants";
 import { adminDetails } from "../../../../api/adminApi";
 import { useNavigate, useParams } from "react-router-dom";
 import Loader from "../../../../component/Loader/Loader";
+import usePermission from "../../../../hooks/usePermission";
+import { PERMISSIONS } from "../../../../variables/permission";
 
 const FolioOperationsList = () => {
   const [keyword, setKeyword] = useState("");
@@ -34,6 +36,9 @@ const FolioOperationsList = () => {
   const [mode, setMode] = useState("add");
   const [selectedData, setSelectedData] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
+
+  const { hasPermission } = usePermission();
+  const canSplitFolio = hasPermission(PERMISSIONS.FOLIO_CREATE);
 
   // State holds the structured layout payload for printing
   const [printTarget, setPrintTarget] = useState(null);
@@ -252,7 +257,7 @@ const FolioOperationsList = () => {
         <ReservationListHeader
           reservationId={folioList?.reservation?.reservationNo}
           onAddreservation={handleAddFolioOperations}
-          addButtonText={!isFolioEmpty ? "Split New Folio" : ""}
+          addButtonText={(!isFolioEmpty && canSplitFolio)  ? "Split New Folio" : ""}
         />
       </div>
 
@@ -278,7 +283,7 @@ const FolioOperationsList = () => {
         onRebateLine={rebateLineMutation.mutateAsync}
         isRebating={rebateLineMutation.isPending}
         onVoidLine={voidLineMutation.mutateAsync}
-        isVording={voidLineMutation.isPending}
+        isVoiding={voidLineMutation.isPending}
         printingFolioUuid={printingFolioUuid}
         onPrintFolio={handlePrintSingleFolio}
       />

@@ -2,10 +2,10 @@ import { Card, Col, Row } from "antd";
 import { CircleCheckIcon } from "lucide-react";
 import WarningTable from "./WarningTable";
 
-const IssueAndWarningCard = ({
-    preAuditChecksData
-}) => {
+const IssueAndWarningCard = ({preAuditChecksData}) => {
+
     const cardDesign = `!shadow-md !m-0 !p-0`;
+    
     return (
         <div className="my-2">
             <Row gutter={16}>

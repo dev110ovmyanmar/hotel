@@ -1,7 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { preAuditCheck } from "../../../api/nightAuditApi";
 import useApiQuery from "../../../hooks/useApiQuery";
-import { Spin } from "antd";
 import PreAuditCheckStatus from "./PreAuditCheckStatus";
 import PreAuditTable from "./PreAuditTable";
 import CheckBookingHeader from "../CheckBookingHeader";
@@ -9,9 +8,8 @@ import { getNightAuditData, spinLoadingCenter } from "../../../variables/constan
 import { useEffect } from "react";
 import Loader from "../../../component/Loader/Loader";
 
-const PreAuditCheckPage = ({
-    stepValue,
-}) => {
+const PreAuditCheckPage = ({ stepValue }) => {
+
     const navigate = useNavigate();
 
     const nightAuditData = getNightAuditData();
@@ -26,7 +24,7 @@ const PreAuditCheckPage = ({
         }
     }, [navigate]);
 
-    const { data: preAuditChecksData, isFetching, error } = useApiQuery({
+    const { data: preAuditChecksData, isFetching } = useApiQuery({
         fetchQueryName: "pre-audit-checks",
         fetchQueryFunction: preAuditCheck,
         params: {
@@ -40,7 +38,7 @@ const PreAuditCheckPage = ({
     if (isFetching || !preAuditChecksData) {
         return (
             <div className={spinLoadingCenter}>
-                <Loader/>
+                <Loader />
             </div>
         )
     }
@@ -48,21 +46,20 @@ const PreAuditCheckPage = ({
     return (
         <div className="w-full px-6 py-2">
             <CheckBookingHeader />
-            <PreAuditCheckStatus preAuditChecksData={preAuditChecksData} preNightAudit={true} />
+            <PreAuditCheckStatus
+                preAuditChecksData={preAuditChecksData}
+                preNightAudit={true} />
             <PreAuditTable
                 colorCheckBooking={() => {
                     window.dispatchEvent(
                         new CustomEvent("breadcrumb_updated", {
-                            detail: {
-                                stepValue: Number(stepValue),
-                            },
+                            detail: { stepValue: Number(stepValue) },
                         })
                     );
                     navigate("/night-audit/daily-charge-posting")
                 }}
                 preAuditChecksData={preAuditChecksData}
             />
-            {/* <IssueAndWarningCard preAuditChecksData={preAuditChecksData} /> */}
         </div>
     )
 }

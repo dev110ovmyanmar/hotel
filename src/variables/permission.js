@@ -262,7 +262,13 @@ export const PERMISSIONS = {
   FOOD_AND_BEVERAGE_INVENTORY_CREATE: "fnb-inventory.create",
   FOOD_AND_BEVERAGE_INVENTORY_EDIT: "fnb-inventory.edit",
 
-  //F&B Management
+  //F&B Order
+  FNB_ORDER_LIST : "fnb-order.list",
+  FNB_ORDER_CREATE : "fnb-order.create",
+  FNB_ORDER_EDIT : "fnb-order.edit",
+  FNB_ORDER_DELETE : "fnb-order.delete",
+  FNB_ORDER_ITEM: "fnb-order.item",
+  
   // Menu Category
   MENU_CATEGORY_LIST: "menu-category.list",
   MENU_CATEGORY_VIEW: "menu-category.view",
@@ -335,6 +341,23 @@ export const PERMISSIONS = {
   RESERVATION_EDIT : "reservation.edit",
   RESERVATION_ROOM_OCCUPANCY_VIEW : "reservation-room-occupancy.view",
   RESERVATION_ROOM_AMENDMENT : "reservation-room.amendment",
+
+  //Folio
+  FOLIO_LIST : "folio.list",
+  FOLIO_PAYMENT_PAYMENT : "folio-payment.payment",
+  FOLIO_PAYMENT_DEPOSIT : "folio-payment.deposit",
+  FOLIO_PRINT : "folio.print",
+  FOLIO_EDIT : "folio.edit",
+  FOLIO_CREATE : "folio.create",
+
+  //Folio-Lines
+  FOLIO_LINE_ADJUST : "folio-line.adjust",
+  FOLIO_LINE_REBATE : "folio-line.rebate",
+  FOLIO_LINE_VOID : "folio-line.void",
+  FOLIO_LINE_TRANSFER : "folio-line.transfer",
+
+  //Service Order List
+  SERVICE_ORDER_LIST : "service-order.list",
 };
 
 

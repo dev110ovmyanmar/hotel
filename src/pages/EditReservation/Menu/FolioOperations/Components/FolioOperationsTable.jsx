@@ -31,6 +31,8 @@ import VoidDrawer from "./VoidDrawer";
 import FolioEditFormDrawer from "./FolioEditFormDrawer";
 import Toast from "../../../../../component/Toast/Toast";
 import FinancialStatusTag from "../../../../../component/FinancialStatusTag/FinancialStatusTag";
+import usePermission from "../../../../../hooks/usePermission";
+import { PERMISSIONS } from "../../../../../variables/permission";
 
 
 const FolioTitle = ({ rest }) => (
@@ -41,6 +43,9 @@ const FolioTitle = ({ rest }) => (
 );
 
 const SubFolioTable = ({ record, lineColumns, onMoveTo, isTransferring }) => {
+  const { hasPermission } = usePermission();
+  const canMoveFolioLine = hasPermission(PERMISSIONS.FOLIO_LINE_TRANSFER);
+
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
 
   const lines = record.folioLines || [];
@@ -54,13 +59,16 @@ const SubFolioTable = ({ record, lineColumns, onMoveTo, isTransferring }) => {
 
   const rowSelection = {
     selectedRowKeys,
-    onChange: (selectedKeys) => {
-      setSelectedRowKeys(selectedKeys);
+    onChange: (selectedKeys, selectedRows) => {
+      // Only allow parent lines (non-child lines) to be selected
+      const parentKeys = selectedRows
+        .filter((row) => !row.parentLineId)
+        .map((row) => row.id);
+      setSelectedRowKeys(parentKeys);
     },
-    hideSelectAll: true,
+    hideSelectAll: false,
     getCheckboxProps: (record) => ({
-      disabled: isFolioClosed 
-      // || !!record.voidedAt,
+      disabled: isFolioClosed || !!record.parentLineId,
     }),
   };
 
@@ -76,7 +84,7 @@ const SubFolioTable = ({ record, lineColumns, onMoveTo, isTransferring }) => {
 
   const summary = () => (
     <Table.Summary
-      fixed
+      scroll={{ x: 1000 }}
       className="bg-gray-50 dark:bg-gray-800 font-semibold"
       {...darkModeStyle}
       {...textWhiteInDarkStyle}
@@ -114,7 +122,9 @@ const SubFolioTable = ({ record, lineColumns, onMoveTo, isTransferring }) => {
 
   return (
     <div>
-      <div className="flex justify-end items-center gap-2.5 p-2 border-t border-gray-200 dark:border-gray-700">
+      {
+        canMoveFolioLine ? 
+        <div className="flex justify-end items-center gap-2.5 p-2 border-t border-gray-200 dark:border-gray-700">
         <Button
           onClick={() => setSelectedRowKeys([])}
           disabled={selectedRowKeys.length === 0 || isTransferring}
@@ -137,10 +147,13 @@ const SubFolioTable = ({ record, lineColumns, onMoveTo, isTransferring }) => {
         >
           Move To
         </Button>
-      </div>
+      </div> :
+      <div className="p-1.5 border-t border-gray-100 dark:border-gray-800"></div>
+      }
+
       <Table
         className="nested-folio-table expanded-table dark:[&_.ant-table-thead>tr>th]:!text-[#F3F4F6]"
-        rowSelection={rowSelection}
+        rowSelection={canMoveFolioLine ? rowSelection : false}
         columns={lineColumns}
         dataSource={lines}
         rowKey="id"
@@ -148,6 +161,7 @@ const SubFolioTable = ({ record, lineColumns, onMoveTo, isTransferring }) => {
         size="small"
         bordered
         summary={summary}
+        scroll={{ x: 1000}}
         rowClassName={(record) => {
           const classes = [];
           if (record.voidedAt) classes.push('void-folioLine-row');
@@ -180,7 +194,7 @@ const FolioOperationsTable = ({
   onRebateLine,
   isRebating = false,
   onVoidLine,
-  isVording = false
+  isVoiding = false
 }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedFolio, setSelectedFolio] = useState(null);
@@ -192,6 +206,13 @@ const FolioOperationsTable = ({
   const [selectedLine, setSelectedLine] = useState(null);
   const [folioEditDrawerOpen, setFolioEditDrawerOpen] = useState(false);
   const [selectedFolioForEdit, setSelectedFolioForEdit] = useState(null);
+
+  const { hasPermission } = usePermission();
+  const canPrintFolio = hasPermission(PERMISSIONS.FOLIO_PRINT);
+  const canEditFolio = hasPermission(PERMISSIONS.FOLIO_EDIT);
+  const canAdjustFolioLine = hasPermission(PERMISSIONS.FOLIO_LINE_ADJUST);
+  const canRebateFolioLine = hasPermission(PERMISSIONS.FOLIO_LINE_ADJUST);
+  const canVoidFolioLine = hasPermission(PERMISSIONS.FOLIO_LINE_VOID);
 
   // Updated lineColumns with Adjustment column
   const lineColumns = [
@@ -309,6 +330,7 @@ const FolioOperationsTable = ({
       title: "Action",
       key: "adjust",
       align: "center",
+      hidden : !canAdjustFolioLine && !canRebateFolioLine && !canVoidFolioLine,
       width: 50,
       render: (_, record) => {
         const isVoided = !!record.voidedAt;
@@ -342,6 +364,7 @@ const FolioOperationsTable = ({
             key: 'adjust',
             label: 'Adjust',
             icon: <SlCalculator />,
+            hidden: !canAdjustFolioLine,
             disabled: !canAdjust,
             title: tooltipTextforAdjust,
             onClick: () => {
@@ -353,6 +376,7 @@ const FolioOperationsTable = ({
             key: 'rebate',
             label: 'Rebate',
             icon: <AiOutlineHdd />,
+            hidden: !canRebateFolioLine,
             disabled: !canRebate,
             title: tooltipTextforRebate,
             onClick: () => {
@@ -363,6 +387,7 @@ const FolioOperationsTable = ({
           {
             key: 'void',
             label: 'Void',
+            hidden: !canVoidFolioLine,
             icon: <WarningOutlined />,
             disabled: !canVoid,
             title: tooltipTextforVoid,
@@ -452,6 +477,7 @@ const FolioOperationsTable = ({
       title: "Action",
       key: "action",
       align: "center",
+      hidden : !canPrintFolio && !canEditFolio,
       width: 60,
       render: (_, record) => {
         const isThisRowLoading = printingFolioUuid === record.uuid;
@@ -461,6 +487,7 @@ const FolioOperationsTable = ({
             key: 'edit',
             label: 'Edit',
             icon: <EditOutlined />,
+            hidden : !canEditFolio,
             onClick: () => {
               setSelectedFolioForEdit(record);
               setFolioEditDrawerOpen(true);
@@ -470,6 +497,7 @@ const FolioOperationsTable = ({
             key: 'print',
             label: 'Print',
             icon: <PrinterOutlined />,
+            hidden: !canPrintFolio,
             disabled: !!printingFolioUuid,
             onClick: () => {
               if (!printingFolioUuid && onPrintFolio) {
@@ -583,6 +611,7 @@ const FolioOperationsTable = ({
     <>
       <div className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden bg-white dark:bg-gray-800">
         <Table
+          scroll={{ x: 1000 }}
           columns={columns}
           dataSource={dataSource}
           rowKey="id"
@@ -791,7 +820,7 @@ const FolioOperationsTable = ({
         }}
         lineData={selectedLine}
         onConfirm={handleVoidConfirm}
-        loading={isVording}
+        loading={isVoiding}
       />
 
       {/* Folio Edit Drawer */}

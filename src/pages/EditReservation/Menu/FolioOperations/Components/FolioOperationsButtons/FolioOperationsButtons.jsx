@@ -8,6 +8,8 @@ import AddNewFacilityOrderForm from "../FolioOperationsForms/AddNewFacilityOrder
 import AddPaymentForm from "../../../../../BookingDetail/Components/BookingDetailForms/AddPaymentForm";
 import AddDepoistForm from "../../../../../BookingDetail/Components/BookingDetailForms/AddDepoistForm";
 import { queryClient } from "../../../../../../app/queryClient";
+import usePermission from "../../../../../../hooks/usePermission";
+import { PERMISSIONS } from "../.../../../../../../../variables/permission";
 
 const FolioOperationsButtons = ({
     data,
@@ -17,6 +19,11 @@ const FolioOperationsButtons = ({
     isPrintAllLoading = false,
     reservationUuid
   }) => {
+  const { hasPermission } = usePermission();
+  const canAddFolioPayment = hasPermission(PERMISSIONS.FOLIO_PAYMENT_PAYMENT);
+  const canAddDepositFolioPayment = hasPermission(PERMISSIONS.FOLIO_PAYMENT_DEPOSIT);
+  const canPrintFolio = hasPermission(PERMISSIONS.FOLIO_PRINT);
+  
   const [form] = Form.useForm();
   const [open, setOpen] = useState(false);
   const [serviceOpen, setServiceOpen] = useState(false);
@@ -71,6 +78,8 @@ const FolioOperationsButtons = ({
           </Button>
         </Dropdown> */}
 
+        {
+        canAddFolioPayment && 
         <Button
           className="custom-blue-btn"
           onClick={() => setPaymentOpen(true)}
@@ -78,15 +87,21 @@ const FolioOperationsButtons = ({
         >
           Add Payment
         </Button>
+        }
 
-        <Button
-        className="custom-blue-btn"
-        onClick={() => setAddDepositOpen(true)}
-        icon={<PlusOutlined style={{ fontSize: "12px"}}/>}
-        >
+        {
+          canAddDepositFolioPayment &&
+          <Button
+          className="custom-blue-btn"
+          onClick={() => setAddDepositOpen(true)}
+          icon={<PlusOutlined style={{ fontSize: "12px"}}/>}
+          >
           Add Deposit
-        </Button>
+          </Button>
+        }
 
+        {
+        canPrintFolio &&
         <Button
           className="custom-blue-btn"
           icon={isPrintAllLoading ? <LoadingOutlined spin /> : <IoPrintOutline />}
@@ -96,6 +111,7 @@ const FolioOperationsButtons = ({
         >
           Print Invoice
         </Button>
+        }
 
         {/* <Dropdown
           menu={{ items: food }}
