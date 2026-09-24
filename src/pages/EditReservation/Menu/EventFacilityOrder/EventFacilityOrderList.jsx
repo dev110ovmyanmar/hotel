@@ -9,6 +9,8 @@ import { LIMITS } from "../../../../variables/constants";
 import { useLocation, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import ReservationMenu from "../../Components/ReservationMenu.jsx";
 import Loader from "../../../../component/Loader/Loader.jsx";
+import usePermission from "../../../../hooks/usePermission.js";
+import { PERMISSIONS } from "../../../../variables/permission.js";
 
 const EventFacilityOrderList = () => {
   const navigate = useNavigate();
@@ -16,6 +18,9 @@ const EventFacilityOrderList = () => {
   const uuid = bookingId;
 
   const [searchParams] = useSearchParams();
+  
+  const { hasPermission } = usePermission();
+  const canCreateFacilityBooking = hasPermission(PERMISSIONS.FACILITY_BOOKING_CREATE);
 
   useEffect(() => {
     const cleanId = bookingId ? bookingId.trim() : "";
@@ -83,7 +88,7 @@ const EventFacilityOrderList = () => {
         <ReservationListHeader
           reservationId={data?.reservation?.reservationNo}
           onAddreservation={handleAddEvent}
-          addButtonText={"Add Facility"}
+          addButtonText={canCreateFacilityBooking ? "Add Facility" : ""}
         />
       </div>
 

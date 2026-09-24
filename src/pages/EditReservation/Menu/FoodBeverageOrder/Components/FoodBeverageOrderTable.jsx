@@ -19,8 +19,9 @@ const FoodBeverageOrderTable = ({
     ? data
     : data;
 
-  const {hasPermission} = usePermission();
-  const fnb_order_edit = hasPermission(PERMISSIONS.FNB_ORDER_EDIT);
+  const { hasPermission } = usePermission();
+  const canEditFnbOrder = hasPermission(PERMISSIONS.FNB_ORDER_EDIT);
+  const canViewFnbOrder = hasPermission(PERMISSIONS.FNB_ORDER_VIEW);
 
   const columns = [
     {
@@ -36,7 +37,7 @@ const FoodBeverageOrderTable = ({
         return (
           <div className="flex-col items-center gap-1">
             {record?.reservationRoom ? record?.reservationRoom.room.roomNo : "-"}
-           
+
           </div>
         )
       }
@@ -83,37 +84,50 @@ const FoodBeverageOrderTable = ({
       title: "Check No",
       dataIndex: "refNo",
       key: "refNo",
+      render: (text) => <div className={text ? "" : "!text-center"}>{text ? text : "-"}</div>,
     },
-    {
-      title: "Action",
-      key: "action",
-      fixed: "end",
-      render: (_, record) => {
-        const statusCode = record?.orderStatus?.code;
-        const isReadonlyStatus =
-          statusCode === "completed" || statusCode === "cancelled";
+    ...(
+      canEditFnbOrder || canViewFnbOrder
+        ?
+        [
+          {
+            title: "Action",
+            key: "action",
+            fixed: "end",
+            render: (_, record) => {
+              const statusCode = record?.orderStatus?.code;
+              const isReadonlyStatus =
+                statusCode === "completed" || statusCode === "cancelled";
+              console.log(canViewFnbOrder,"canViewFnbOrder")
+              return (
+                <Space size="middle">
+                  {
+                    canViewFnbOrder &&
+                    <Tooltip title="View Details">
+                      <EyeOutlined
+                        className="cursor-pointer text-blue-500 hover:text-blue-700"
+                        onClick={() => onView(record)}
+                      />
+                    </Tooltip>
+                  }
 
-        return (
-          <Space size="middle">
-            <Tooltip title="View Details">
-              <EyeOutlined
-                className="cursor-pointer text-blue-500 hover:text-blue-700"
-                onClick={() => onView(record)}
-              />
-            </Tooltip>
+                  {!isReadonlyStatus && canEditFnbOrder && (
+                    <Tooltip title="Edit">
+                      <EditOutlined
+                        className="cursor-pointer text-amber-500 hover:text-amber-700"
+                        onClick={() => onEdit(record)}
+                      />
+                    </Tooltip>
+                  )}
+                </Space>
+              );
+            },
+          }
+        ]
+        :
+        []
+    )
 
-            {!isReadonlyStatus && fnb_order_edit && (
-              <Tooltip title="Edit">
-                <EditOutlined
-                  className="cursor-pointer text-amber-500 hover:text-amber-700"
-                  onClick={() => onEdit(record)}
-                />
-              </Tooltip>
-            )}
-          </Space>
-        );
-      },
-    },
   ];
 
   return (
