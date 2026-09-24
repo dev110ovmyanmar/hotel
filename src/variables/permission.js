@@ -351,8 +351,6 @@ export const PERMISSIONS = {
 
   //Folio
   FOLIO_LIST : "folio.list",
-  FOLIO_PAYMENT_PAYMENT : "folio-payment.payment",
-  FOLIO_PAYMENT_DEPOSIT : "folio-payment.deposit",
   FOLIO_PRINT : "folio.print",
   FOLIO_EDIT : "folio.edit",
   FOLIO_CREATE : "folio.create",
@@ -363,6 +361,13 @@ export const PERMISSIONS = {
   FOLIO_LINE_VOID : "folio-line.void",
   FOLIO_LINE_TRANSFER : "folio-line.transfer",
 
+  //Folio-Payment
+  FOLIO_PAYMENT_PAYMENT : "folio-payment.payment",
+  FOLIO_PAYMENT_DEPOSIT : "folio-payment.deposit",
+  FOLIO_PAYMENT_REFUND: "folio-payment.refund",
+
+  //Service Order List
+  SERVICE_ORDER_LIST : "service-order.list",
 };
 
 

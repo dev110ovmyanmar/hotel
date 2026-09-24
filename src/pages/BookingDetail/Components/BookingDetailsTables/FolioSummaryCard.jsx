@@ -6,7 +6,7 @@ import PriceTag from "../../../../component/PriceTag/PriceTag";
 const { Text } = Typography;
 
 const FolioSummaryCard = ({ data }) => {
-  const reservation = data?.folioSummary;
+
   const CustomTitle = (
     <Space>
       <div className="folio-summary-icon-box">
@@ -21,7 +21,7 @@ const FolioSummaryCard = ({ data }) => {
       <Row justify="space-between">
         <Text>Total Charge</Text>
         <div className="flex  justify-end gap-1">
-          <PriceTag value={reservation?.subTotal} />
+          <PriceTag value={data?.subTotal} />
           <span>MMK</span>
         </div>
       </Row>
@@ -29,7 +29,7 @@ const FolioSummaryCard = ({ data }) => {
       <Row justify="space-between">
         <Text>Tax</Text>
         <div className="flex  justify-end gap-1">
-          <PriceTag value={reservation?.taxTotal} />
+          <PriceTag value={data?.taxTotal} />
           <span>MMK</span>
         </div>
       </Row>
@@ -39,17 +39,17 @@ const FolioSummaryCard = ({ data }) => {
       <Row justify="space-between">
         <Text>Total Amount</Text>
         <div className="flex  justify-end gap-1">
-          <PriceTag value={reservation?.grandTotal} />
+          <PriceTag value={data?.grandTotal} />
           <span>MMK</span>
         </div>
       </Row>
 
       {
-        reservation?.paidAmount === 0 ?
+        data?.paidAmount === 0 ?
           <Row justify="space-between">
             <Text>Deposit</Text>
             <div className="flex  justify-end gap-1">
-              <PriceTag value={reservation?.depositAmount} />
+              <PriceTag value={data?.depositAmount} />
               <span>MMK</span>
             </div>
           </Row> : null
@@ -59,7 +59,7 @@ const FolioSummaryCard = ({ data }) => {
       <Row justify="space-between">
         <Text>Payment</Text>
         <div className="flex  justify-end gap-1">
-          <PriceTag value={reservation?.paidAmount} />
+          <PriceTag value={data?.paidAmount} />
           <span>MMK</span>
         </div>
       </Row>
@@ -69,7 +69,7 @@ const FolioSummaryCard = ({ data }) => {
       <Row justify="space-between">
         <Text strong>Balance</Text>
         <div className="flex  justify-end gap-1">
-          <PriceTag value={reservation?.balanceAmount} />
+          <PriceTag value={data?.balanceAmount} />
           <span>MMK</span>
         </div>
       </Row>

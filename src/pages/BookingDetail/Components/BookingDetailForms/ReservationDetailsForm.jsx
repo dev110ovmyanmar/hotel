@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Drawer, Form, Input, Select } from "antd";
-import { useParams } from "react-router-dom";
 import FormButtons from "../../../../component/FormButtons/FormButtons";
 import {
-  reservationDetails,
   reservationEdit,
   reservationMeta,
 } from "../../../../api/reservationSectionApi";
@@ -11,27 +9,11 @@ import { queryClient } from "../../../../app/queryClient";
 import useApiQuery from "../../../../hooks/useApiQuery";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
 import Toast from "../../../../component/Toast/Toast";
-import Loader from "../../../../component/Loader/Loader";
-import PriceTag from "../../../../component/PriceTag/PriceTag";
 
-const ReservationDetailsForm = ({ open, onClose, onSuccess }) => {
+const ReservationDetailsForm = ({ open, onClose, onSuccess, data }) => {
   const [form] = Form.useForm();
-  const { bookingId: reservationRoomUuid } = useParams();
   const [selectedSourceType, setSelectedSourceType] = useState(null);
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
-
-  const { data, isFetching: detailsLoading } = useApiQuery({
-    fetchQueryName: "reservation-details",
-    fetchQueryFunction: reservationDetails,
-    params: {
-      reservationRoom: {
-        uuid: reservationRoomUuid,
-      },
-    },
-    options: {
-      enabled: !!reservationRoomUuid && open,
-    },
-  });
 
   const { data: reservationMetas, isFetching: metaLoading } = useApiQuery({
     fetchQueryName: "reservation-meta",
@@ -40,34 +22,6 @@ const ReservationDetailsForm = ({ open, onClose, onSuccess }) => {
       enabled: open,
     },
   });
-
-  const formatSourceLabel = (item) => {
-    if (!item) return "";
-
-    const value = item.chargeValue;
-    const typeCode = item.chargeType?.code?.trim()?.toLowerCase();
-
-    if (value === null || value === undefined) {
-      return item.name;
-    }
-
-    return (
-      <span>
-        {item.name}{" "}
-        ({" "}
-        {typeCode === "flat" ? (
-          <>
-            <PriceTag value={value} /> MMK
-          </>
-        ) : (
-          <>
-            {value} %
-          </>
-        )}
-        {" "} )
-      </span>
-    );
-  };
 
   const bookedVia =
     initData?.statuses?.booked_via?.map((item) => ({
@@ -129,8 +83,12 @@ const ReservationDetailsForm = ({ open, onClose, onSuccess }) => {
         refNo: reservation?.refNo || undefined,
         bookingSource: reservation?.bookedVia?.uuid || undefined,
         sourceType: reservation?.sourceType?.uuid || undefined,
-        sourceName: reservation?.source?.uuid || undefined,
       });
+
+      // Only set sourceName when options have loaded to avoid showing UUID
+      if (!metaLoading && ["agency", "company", "referral_agent"].includes(sourceTypeCode)) {
+        form.setFieldValue("sourceName", reservation?.source?.uuid || undefined);
+      }
     }
 
     if (!open) {
@@ -138,6 +96,19 @@ const ReservationDetailsForm = ({ open, onClose, onSuccess }) => {
       setSelectedSourceType(null);
     }
   }, [open, data, form]);
+
+  // Set sourceName once meta options finish loading
+  useEffect(() => {
+    if (!metaLoading && open && data?.reservation && selectedSourceType) {
+      const reservation = data.reservation;
+      if (["agency", "company", "referral_agent"].includes(selectedSourceType)) {
+        const currentVal = form.getFieldValue("sourceName");
+        if (!currentVal) {
+          form.setFieldValue("sourceName", reservation?.source?.uuid || undefined);
+        }
+      }
+    }
+  }, [metaLoading, open, data, form, selectedSourceType]);
 
   const handleSourceTypeChange = (value) => {
     const selected = sourceType.find((item) => item.value === value);
@@ -206,7 +177,6 @@ const ReservationDetailsForm = ({ open, onClose, onSuccess }) => {
       size={550}
       open={open}
       onClose={handleClose}
-      loading={detailsLoading}
       title={
         <div className="flex items-center justify-between">
           <span>Edit Reservation Details</span>
@@ -218,11 +188,6 @@ const ReservationDetailsForm = ({ open, onClose, onSuccess }) => {
         </div>
       }
     >
-      {metaLoading || detailsLoading ? (
-        <div className="flex min-h-screen items-center justify-center">
-          <Loader />
-        </div>
-      ) : (
         <Form form={form} layout="vertical" onFinish={handleFinish}>
           <Form.Item label="Ref No." name="refNo">
             <Input placeholder="Enter Ref No." />
@@ -251,6 +216,7 @@ const ReservationDetailsForm = ({ open, onClose, onSuccess }) => {
             >
               <Select
                 options={sourceNameOptions}
+                disabled={metaLoading}
                 placeholder={`Select ${selectedSourceType === "agency"
                   ? "Agency"
                   : selectedSourceType === "referral_agent"
@@ -258,12 +224,12 @@ const ReservationDetailsForm = ({ open, onClose, onSuccess }) => {
                     : "Company"
                   }`}
                 showSearch
+                loading={metaLoading}
               />
             </Form.Item>
 
           )}
         </Form>
-      )}
     </Drawer>
   );
 };
