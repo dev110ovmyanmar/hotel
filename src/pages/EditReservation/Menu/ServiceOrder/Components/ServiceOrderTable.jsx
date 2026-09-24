@@ -2,6 +2,8 @@ import { Space, Table, Tooltip } from "antd";
 import { EyeOutlined, EditOutlined } from "@ant-design/icons";
 import PriceTag from "../../../../../component/PriceTag/PriceTag";
 import ColorStatusTag from "../../../../../component/ColorStatusTag/ColorStatusTag";
+import usePermission from "../../../../../hooks/usePermission";
+import { PERMISSIONS } from "../../../../../variables/permission";
 
 const ServiceOrderTable = ({
   data,
@@ -13,6 +15,10 @@ const ServiceOrderTable = ({
   onView,
   onEdit,
 }) => {
+  const { hasPermission } = usePermission();
+  const canEditServiceOrder = hasPermission(PERMISSIONS.SERVICE_ORDER_EDIT);
+  const canViewServiceOrder = hasPermission(PERMISSIONS.SERVICE_ORDER_VIEW);
+
   const tableDataSource = Array.isArray(data)
     ? data
     : data?.serviceOrders || [];
@@ -87,14 +93,17 @@ const ServiceOrderTable = ({
 
         return (
           <Space size="middle">
-            <Tooltip title="View Details">
-              <EyeOutlined
-                className="cursor-pointer text-blue-500 hover:text-blue-700"
-                onClick={() => onView(record)}
-              />
-            </Tooltip>
+            {
+              canViewServiceOrder &&
+              <Tooltip title="View Details">
+                <EyeOutlined
+                  className="cursor-pointer text-blue-500 hover:text-blue-700"
+                  onClick={() => onView(record)}
+                />
+              </Tooltip>
+            }
 
-            {!isReadonlyStatus && (
+            {!isReadonlyStatus && canEditServiceOrder && (
               <Tooltip title="Edit">
                 <EditOutlined
                   className="cursor-pointer text-amber-500 hover:text-amber-700"
@@ -105,7 +114,7 @@ const ServiceOrderTable = ({
           </Space>
         );
       },
-    },
+    }
   ];
 
   return (

@@ -11,11 +11,16 @@ import ServiceOrderForm from "./Components/ServiceOrderForms/ServiceOrderForm";
 import Loader from "../../../../component/Loader/Loader";
 import ServiceAddonDrawer from "./Components/ServiceOrderForms/ServiceAddonDrawer";
 import { Button } from "antd";
+import usePermission from "../../../../hooks/usePermission";
+import { PERMISSIONS } from "../../../../variables/permission";
 
 const ServiceOrderList = () => {
   const navigate = useNavigate();
   const { bookingId } = useParams();
   const uuid = bookingId;
+
+  const {hasPermission} = usePermission();
+  const service_order_create = hasPermission(PERMISSIONS.SERVICE_ORDER_CREATE);
   
   useEffect(() => {
     const cleanId = bookingId ? bookingId.trim() : "";
@@ -84,7 +89,7 @@ const ServiceOrderList = () => {
         <ReservationListHeader
           reservationId={data?.reservation?.reservationNo}
           onAddreservation={handleAddService}
-          addButtonText="Add Service Order"
+          addButtonText={service_order_create ? "Add Service Order" : ""}
         />
       </div>
 
