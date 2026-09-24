@@ -341,6 +341,23 @@ export const PERMISSIONS = {
   RESERVATION_EDIT : "reservation.edit",
   RESERVATION_ROOM_OCCUPANCY_VIEW : "reservation-room-occupancy.view",
   RESERVATION_ROOM_AMENDMENT : "reservation-room.amendment",
+
+  //Folio
+  FOLIO_LIST : "folio.list",
+  FOLIO_PAYMENT_PAYMENT : "folio-payment.payment",
+  FOLIO_PAYMENT_DEPOSIT : "folio-payment.deposit",
+  FOLIO_PRINT : "folio.print",
+  FOLIO_EDIT : "folio.edit",
+  FOLIO_CREATE : "folio.create",
+
+  //Folio-Lines
+  FOLIO_LINE_ADJUST : "folio-line.adjust",
+  FOLIO_LINE_REBATE : "folio-line.rebate",
+  FOLIO_LINE_VOID : "folio-line.void",
+  FOLIO_LINE_TRANSFER : "folio-line.transfer",
+
+  //Service Order List
+  SERVICE_ORDER_LIST : "service-order.list",
 };
 
 
