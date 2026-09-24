@@ -21,11 +21,10 @@ import { useApiMutation } from "../../../../hooks/useApiMutation";
 import Toast from "../../../../component/Toast/Toast";
 import { upsertGuest } from "../../../../api/guestApi";
 
-const ContactPersonform = ({ open, onClose }) => {
+const ContactPersonform = ({ open, onClose, data }) => {
   const [form] = Form.useForm();
   const selectedTitle = Form.useWatch("title");
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
-  const { bookingId: reservationRoomUuid } = useParams();
 
   const titleOptions = useMemo(() => {
     return (
@@ -48,19 +47,6 @@ const ContactPersonform = ({ open, onClose }) => {
   const { data: reservationMetas } = useApiQuery({
     fetchQueryName: "reservation-meta",
     fetchQueryFunction: reservationMeta,
-  });
-
-  const { data } = useApiQuery({
-    fetchQueryName: "reservation-details",
-    fetchQueryFunction: reservationDetails,
-    params: {
-      reservationRoom: {
-        uuid: reservationRoomUuid,
-      },
-    },
-    options: {
-      enabled: !!reservationRoomUuid && open,
-    },
   });
 
   const reservationsEdit = useApiMutation({

@@ -266,6 +266,7 @@ export const PERMISSIONS = {
   FNB_ORDER_LIST : "fnb-order.list",
   FNB_ORDER_CREATE : "fnb-order.create",
   FNB_ORDER_EDIT : "fnb-order.edit",
+  FNB_ORDER_VIEW : "fnb-order.view",
   FNB_ORDER_DELETE : "fnb-order.delete",
   FNB_ORDER_ITEM: "fnb-order.item",
   
@@ -342,10 +343,14 @@ export const PERMISSIONS = {
   RESERVATION_ROOM_OCCUPANCY_VIEW : "reservation-room-occupancy.view",
   RESERVATION_ROOM_AMENDMENT : "reservation-room.amendment",
 
+  // Service Order
+  SERVICE_ORDER_LIST: "service-order.list",
+  SERVICE_ORDER_CREATE: "service-order.create",
+  SERVICE_ORDER_VIEW: "service-order.view",
+  SERVICE_ORDER_EDIT: "service-order.edit",
+
   //Folio
   FOLIO_LIST : "folio.list",
-  FOLIO_PAYMENT_PAYMENT : "folio-payment.payment",
-  FOLIO_PAYMENT_DEPOSIT : "folio-payment.deposit",
   FOLIO_PRINT : "folio.print",
   FOLIO_EDIT : "folio.edit",
   FOLIO_CREATE : "folio.create",
@@ -355,6 +360,11 @@ export const PERMISSIONS = {
   FOLIO_LINE_REBATE : "folio-line.rebate",
   FOLIO_LINE_VOID : "folio-line.void",
   FOLIO_LINE_TRANSFER : "folio-line.transfer",
+
+  //Folio-Payment
+  FOLIO_PAYMENT_PAYMENT : "folio-payment.payment",
+  FOLIO_PAYMENT_DEPOSIT : "folio-payment.deposit",
+  FOLIO_PAYMENT_REFUND: "folio-payment.refund",
 
   //Service Order List
   SERVICE_ORDER_LIST : "service-order.list",

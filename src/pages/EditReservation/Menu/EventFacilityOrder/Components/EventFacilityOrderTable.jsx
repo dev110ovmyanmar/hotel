@@ -5,6 +5,7 @@ import EventFacilityOrderForm from "./EventFacilityOrderForms/EventFacilityOrder
 import dayjs from "dayjs";
 import ColorStatusTag from "../../../../../component/ColorStatusTag/ColorStatusTag";
 import usePermission from "../../../../../hooks/usePermission";
+import { PERMISSIONS } from "../../../../../variables/permission";
 
 const EventFacilityOrderTable = ({
   data,
@@ -19,7 +20,10 @@ const EventFacilityOrderTable = ({
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mode, setMode] = useState("add");
   const [selectedData, setSelectedData] = useState(null);
+
   const { hasPermission } = usePermission();
+  const canEditFacilityBooking = hasPermission(PERMISSIONS.FACILITY_BOOKING_EDIT);
+  const canViewFacilityBooking = hasPermission(PERMISSIONS.FACILITY_BOOKING_VIEW);
 
   const actionDisable = reservationRoom?.roomStatus?.code === "cancelled";
 
@@ -137,18 +141,21 @@ const EventFacilityOrderTable = ({
           fixed: "end",
           render: (_, record) => (
             <Space size="middle">
-              <Tooltip title="View Details">
-                <EyeOutlined
-                  className="cursor-pointer text-blue-500 hover:text-blue-700"
-                  onClick={() => {
-                    setDrawerOpen(true);
-                    setMode("view");
-                    setSelectedData(record);
-                  }}
-                />
-              </Tooltip>
+              {
+                canViewFacilityBooking &&
+                <Tooltip title="View Details">
+                  <EyeOutlined
+                    className="cursor-pointer text-blue-500 hover:text-blue-700"
+                    onClick={() => {
+                      setDrawerOpen(true);
+                      setMode("view");
+                      setSelectedData(record);
+                    }}
+                  />
+                </Tooltip>
+              }
 
-              {record?.status?.code !== "completed" && (
+              {record?.status?.code !== "completed" && canEditFacilityBooking && (
                 <Tooltip title="Edit">
                   <EditOutlined
                     className="cursor-pointer text-amber-500 hover:text-amber-700"

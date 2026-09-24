@@ -28,6 +28,8 @@ import {
 import { useApiMutation } from "../../../../../../hooks/useApiMutation";
 import Toast from "../../../../../../component/Toast/Toast";
 import { getGuestMeta } from "./../../../../../../api/guestNoteApi";
+import usePermission from "../../../../../../hooks/usePermission";
+import { PERMISSIONS } from "../../../../../../variables/permission";
 
 const { RangePicker } = TimePicker;
 
@@ -46,6 +48,9 @@ const EventFacilityOrderForm = ({
 }) => {
   const [form] = Form.useForm();
   const guestType = Form.useWatch("guestType", form);
+
+  const { hasPermission } = usePermission();
+  const canEditFacilityBooking = hasPermission(PERMISSIONS.FACILITY_BOOKING_EDIT);
 
   const isView = mode === "view";
   const isEdit = mode === "edit";
@@ -300,7 +305,8 @@ const EventFacilityOrderForm = ({
             </span>
             {isView ? (
               selectedData?.status?.code !== "completed" &&
-              selectedData?.status?.code !== "cancelled" && (
+              selectedData?.status?.code !== "cancelled" && 
+              canEditFacilityBooking && (
                 <Button type="primary" onClick={() => setMode("edit")}>
                   Edit
                 </Button>

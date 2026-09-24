@@ -11,6 +11,8 @@ import {
 import GuestForm from "./GuestForms/GuestForm";
 import dayjs from "dayjs";
 import GuestUploadDrawer from "./GuestForms/GuestUploadDrawer";
+import usePermission from "../../../../../hooks/usePermission";
+import { PERMISSIONS } from "../../../../../variables/permission";
 
 const GuestTable = ({
   data,
@@ -27,6 +29,11 @@ const GuestTable = ({
   const [selectedData, setSelectedData] = useState(null);
   const [uploadOpen, setUploadOpen] = useState(false);
   const [noteOpen, setNoteOpen] = useState(false);
+
+  const { hasPermission } = usePermission();
+  const canViewReservationForGuest = hasPermission(PERMISSIONS.RESERVATION_VIEW);
+  const canEditReservationForGuest = hasPermission(PERMISSIONS.RESERVATION_EDIT);
+  const canViewAndEditGuestImage = hasPermission(PERMISSIONS.GUEST_VIEW);
 
   const statusCode = Array.isArray(reservationUuid)
     ? reservationUuid[0]?.reservationRoom?.roomStatus?.code?.toLowerCase()
@@ -117,7 +124,7 @@ const GuestTable = ({
 
       return (
         <Space size="middle">
-          {view && (
+          {view && canViewReservationForGuest &&(
             <Tooltip title="View Details">
               <EyeOutlined
                 className="cursor-pointer"
@@ -130,7 +137,7 @@ const GuestTable = ({
             </Tooltip>
           )}
 
-          {edit && (
+          {edit && canEditReservationForGuest && (
             <Tooltip title="Edit Details">
               <EditOutlined
                 className="cursor-pointer"
@@ -143,7 +150,7 @@ const GuestTable = ({
             </Tooltip>
           )}
 
-          {upload && (
+          {upload && canViewAndEditGuestImage &&(
             <Tooltip title="File Upload">
               <UploadOutlined
                 className="cursor-pointer"

@@ -114,7 +114,6 @@ const NoteDrawer = ({ mode, open, onClose, selectedData, onSuccess }) => {
     title: "Room",
     dataIndex: "room",
     key: "room",
-    align: "center",
     render: (_, record) => {
         return record?.reservationRoom == null
             ? "-"

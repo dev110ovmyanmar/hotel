@@ -19,9 +19,8 @@ const FoodBeverageOrderList = () => {
   const uuid = bookingId;
 
   const {hasPermission} = usePermission();
-  const fnb_order_create = hasPermission(PERMISSIONS.FNB_ORDER_CREATE);
+  const canCreateFnbOrder = hasPermission(PERMISSIONS.FNB_ORDER_CREATE);
   
-
   const isValidBookingId =
     !!bookingId &&
     bookingId !== ":bookingId" &&
@@ -77,7 +76,7 @@ const FoodBeverageOrderList = () => {
         <ReservationListHeader
           reservationId={data?.reservation?.reservationNo}
           onAddreservation={handleAddService}
-          addButtonText={fnb_order_create? "Add F&B Order" : ""}
+          addButtonText={canCreateFnbOrder? "Add F&B Order" : ""}
         />
       </div>
 
