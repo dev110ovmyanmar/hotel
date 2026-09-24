@@ -26,6 +26,8 @@ import Toast from "../../../../../../component/Toast/Toast";
 import useApiQuery from "../../../../../../hooks/useApiQuery";
 import { useApiMutation } from "../../../../../../hooks/useApiMutation";
 import { getGuestDetail, guestUpload } from "../../../../../../api/guestApi";
+import usePermission from "../../../../../../hooks/usePermission";
+import { PERMISSIONS } from "../../../../../../variables/permission";
 
 const { Title } = Typography;
 
@@ -40,6 +42,11 @@ const GuestUploadDrawer = ({ open, onClose, selectedRow }) => {
   const [originalDocs, setOriginalDocs] = useState([]);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState(null);
+
+  const { hasPermission } = usePermission();
+  const canViewAndEditGuestImage = hasPermission(PERMISSIONS.GUEST_VIEW);
+
+  // guest.view
 
   const uploadRefs = useRef({});
   const profileUploadRef = useRef(null);
@@ -206,6 +213,7 @@ const GuestUploadDrawer = ({ open, onClose, selectedRow }) => {
       open={open}
       destroyOnClose
       extra={
+        canViewAndEditGuestImage && 
         <FormButtons
           type="primary"
           onClick={() => form.submit()}

@@ -26,6 +26,8 @@ import {
   textWhiteInDarkStyle,
 } from "../../../../../../utils";
 import Loader from "../../../../../../component/Loader/Loader";
+import usePermission from "../../../../../../hooks/usePermission";
+import { PERMISSIONS } from "../../../../../../variables/permission";
 
 const sharedProps = {
   mode: "spinner",
@@ -52,6 +54,9 @@ const ServiceOrderForm = ({
 
   const selectedOrderType = Form.useWatch("orderType", form);
   const selectedServiceUuid = Form.useWatch("selectService", form);
+
+  const { hasPermission } = usePermission();
+  const canEditServiceOrder = hasPermission(PERMISSIONS.SERVICE_ORDER_EDIT);
 
   const reservationUuid = isAdd
     ? serviceData?.uuid
@@ -504,7 +509,7 @@ const ServiceOrderForm = ({
 
           {isView ? (
             serviceData?.orderStatus
-              ?.code !== "completed" && (
+              ?.code !== "completed" && canEditServiceOrder &&(
               <Button
                 type="primary"
                 onClick={() =>
@@ -520,7 +525,8 @@ const ServiceOrderForm = ({
                 form.submit()
               }
               isPending={
-                createServiceOrder.isPending ||
+                isAdd ?
+                createServiceOrder.isPending :
                 updateServiceOrders.isPending
               }
               mode={mode}

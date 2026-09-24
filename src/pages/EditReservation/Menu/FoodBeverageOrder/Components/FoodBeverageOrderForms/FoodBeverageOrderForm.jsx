@@ -63,9 +63,9 @@ const FoodBeverageOrderForm = ({
   const serviceChargesValue = Form.useWatch("serviceCharges", form);
 
   const { hasPermission } = usePermission();
-  const fnb_order_edit = hasPermission(PERMISSIONS.FNB_ORDER_EDIT);
-  const fnb_order_delete = hasPermission(PERMISSIONS.FNB_ORDER_DELETE);
-  const fnb_order_item = hasPermission(PERMISSIONS.FNB_ORDER_ITEM);
+  const canEditFnbOrder = hasPermission(PERMISSIONS.FNB_ORDER_EDIT);
+  const canDeleteFnbOrder = hasPermission(PERMISSIONS.FNB_ORDER_DELETE);
+  const canUpsertFnbOrderItem = hasPermission(PERMISSIONS.FNB_ORDER_ITEM);
 
   const isAdd = mode === "add";
   const isEdit = mode === "edit";
@@ -572,7 +572,7 @@ const FoodBeverageOrderForm = ({
                   : "Add Food Beverage Order"}
             </span>
             {isView ? (
-              selectedData?.orderStatus?.code !== "completed" && fnb_order_edit && (
+              selectedData?.orderStatus?.code !== "completed" && canEditFnbOrder && (
                 <Button
                   type="primary"
                   onClick={() => setMode("edit")}
@@ -618,7 +618,7 @@ const FoodBeverageOrderForm = ({
                     <div className="flex justify-between items-center">
                       <div>Order Info</div>
                       {
-                        isEdit && fnb_order_edit &&
+                        isEdit && canEditFnbOrder &&
                         <div>
                           <Button type="primary" onClick={() => {
                             form.submit(),
@@ -910,7 +910,7 @@ const FoodBeverageOrderForm = ({
                                                 {upsertFoodBeverageOrderItems.isPending ? (
                                                   <Loader />
                                                 ) : (
-                                                  fnb_order_item && (
+                                                  canUpsertFnbOrderItem && (
                                                     <AiOutlineCheckSquare
                                                       onClick={() => {
                                                         if (
@@ -950,7 +950,7 @@ const FoodBeverageOrderForm = ({
                                               </Tooltip>
 
                                               {/* Delete newly added menu */}
-                                              {!clickAddMenu && fnb_order_delete && (
+                                              {!clickAddMenu && canDeleteFnbOrder && (
                                                 <Tooltip title="Delete Menu">
                                                   <DeleteOutlined
                                                     onClick={() => {
@@ -997,7 +997,7 @@ const FoodBeverageOrderForm = ({
                                             <>
                                               {/* Existing menu - Edit */}
                                               {
-                                                fnb_order_item &&
+                                                canUpsertFnbOrderItem &&
                                                 <Tooltip title="Edit Menu">
                                                   <EditOutlined
                                                     onClick={() => {
@@ -1031,7 +1031,7 @@ const FoodBeverageOrderForm = ({
 
                                               {/* Existing menu - Delete */}
                                               {
-                                                fnb_order_delete &&
+                                                canDeleteFnbOrder &&
                                                 <Tooltip title="Delete Menu">
                                                   <DeleteOutlined
                                                     onClick={() => {
@@ -1324,7 +1324,7 @@ const FoodBeverageOrderForm = ({
                       })}
 
                       {
-                        isEdit && fnb_order_item &&
+                        isEdit && canUpsertFnbOrderItem &&
                         <Button
                           className="custom-blue-btn"
                           onClick={() => {

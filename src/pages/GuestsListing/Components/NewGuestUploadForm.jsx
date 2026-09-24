@@ -352,7 +352,7 @@ const NewGuestUploadForm = ({ open, onClose, selectedRow }) => {
             />
           </Col>
           <Col span={12}>
-            <UploadBox label="Back Photo" file={nrcBack} setFile={setNrcBack} />
+            <UploadBox label="Back Photo Edit" file={nrcBack} setFile={setNrcBack} />
           </Col>
         </Row>
 
