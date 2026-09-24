@@ -14,11 +14,18 @@ import {
 } from "./../../../../component/BookingActions/BookingActions";
 import ReservationNoteForm from "../BookingDetailForms/ReservationNoteForm";
 import { queryClient } from "../../../../app/queryClient";
+import usePermission from "../../../../hooks/usePermission";
+import { PERMISSIONS } from "../../../../variables/permission";
 
 const BookingDetailButton = ({ data }) => {
+  const { hasPermission } = usePermission();
+  const canAddRefund = hasPermission(PERMISSIONS.FOLIO_PAYMENT_REFUND);
+  
   const reservation = data?.reservationRoom;
   const status = reservation?.roomStatus?.code?.toUpperCase();
-  const actions = status_actions[status] || [];
+  const actions = (status_actions[status] || []).filter(
+    (key) => key !== "addRefund" || canAddRefund
+  );
 
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
   const providerTypes = initData?.statuses.provider_type;
@@ -76,8 +83,10 @@ const BookingDetailButton = ({ data }) => {
     }
   };
 
+  if (actions.length === 0) return null;
+
   return (
-    <div>
+    <div className="mb-4">
       <div className="text-sm mb-6 mt-1.5">
         Reservation No:
         <strong className="text-indigo-700 dark:text-indigo-500">
