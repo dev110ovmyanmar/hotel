@@ -1,9 +1,49 @@
 import { Button, Table } from "antd";
 import { AiOutlineLeft, AiOutlineRight } from "react-icons/ai";
 import PriceTag from "../../../component/PriceTag/PriceTag";
+import { useEffect, useState } from "react";
 
 const ReconciliationTable = ({ backStep, nextStep, data, isConfirm }) => {
   const tableData = data?.folios || [];
+
+  const [isConfirmed, setIsConfirmed] = useState(() => {
+    return JSON.parse(
+      localStorage.getItem("isConfirmed") || "false"
+    );
+  });
+
+  useEffect(() => {
+    if (typeof isConfirm === "boolean") {
+      setIsConfirmed(isConfirm);
+
+      localStorage.setItem(
+        "isConfirmed",
+        JSON.stringify(isConfirm)
+      );
+    }
+  }, [isConfirm]);
+
+  useEffect(() => {
+    const handleReconciliationConfirmed = (event) => {
+      const confirmed = event.detail?.isConfirmed;
+
+      if (typeof confirmed === "boolean") {
+        setIsConfirmed(confirmed);
+      }
+    };
+
+    window.addEventListener(
+      "reconciliation_confirmed",
+      handleReconciliationConfirmed
+    );
+
+    return () => {
+      window.removeEventListener(
+        "reconciliation_confirmed",
+        handleReconciliationConfirmed
+      );
+    };
+  }, []);
 
   const columns = [
     {
@@ -149,7 +189,7 @@ const ReconciliationTable = ({ backStep, nextStep, data, isConfirm }) => {
           type="primary"
           onClick={nextStep}
           className="flex items-center gap-1"
-          disabled={isConfirm !== "true"}
+          disabled={isConfirmed !== true}
         >
           Next Step
           <AiOutlineRight />
@@ -158,5 +198,4 @@ const ReconciliationTable = ({ backStep, nextStep, data, isConfirm }) => {
     </div>
   );
 };
-
 export default ReconciliationTable;

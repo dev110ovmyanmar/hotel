@@ -38,6 +38,8 @@ import { BookTemplateIcon, Check } from "lucide-react";
 import PriceInput from "../../../../../../component/PriceInput/PriceInput";
 import { InfoRow, SectionCard } from "../../../RoomInformation/Components/RoomInformationForms/DailyBreakDownDetailFormDrawer";
 import Loader from "../../../../../../component/Loader/Loader";
+import usePermission from "../../../../../../hooks/usePermission";
+import { PERMISSIONS } from "../../../../../../variables/permission";
 
 
 const { Text } = Typography;
@@ -59,6 +61,11 @@ const FoodBeverageOrderForm = ({
   const selectedOrderType = Form.useWatch("orderType", form);
   const taxValue = Form.useWatch("tax", form);
   const serviceChargesValue = Form.useWatch("serviceCharges", form);
+
+  const { hasPermission } = usePermission();
+  const canEditFnbOrder = hasPermission(PERMISSIONS.FNB_ORDER_EDIT);
+  const canDeleteFnbOrder = hasPermission(PERMISSIONS.FNB_ORDER_DELETE);
+  const canUpsertFnbOrderItem = hasPermission(PERMISSIONS.FNB_ORDER_ITEM);
 
   const isAdd = mode === "add";
   const isEdit = mode === "edit";
@@ -88,7 +95,7 @@ const FoodBeverageOrderForm = ({
   const dineInOrderType =
     orderType?.find((type) => type.value === selectedOrderType)?.code === "dine_in";
 
-  const { data, isPending: reservationRoomMetaPending } = useApiQuery({
+  const { data, isFetching: reservationRoomMetaPending } = useApiQuery({
     fetchQueryName: "order",
     fetchQueryFunction: reservationRoomMeta,
     params: {
@@ -565,7 +572,7 @@ const FoodBeverageOrderForm = ({
                   : "Add Food Beverage Order"}
             </span>
             {isView ? (
-              selectedData?.orderStatus?.code !== "completed" && (
+              selectedData?.orderStatus?.code !== "completed" && canEditFnbOrder && (
                 <Button
                   type="primary"
                   onClick={() => setMode("edit")}
@@ -594,7 +601,7 @@ const FoodBeverageOrderForm = ({
       >
         {
           isEdit && (reservationRoomMetaPending || fnbOrderDetailsPending) ?
-            <div className="w-full h-full flex justify-center items-center text-center">
+            <div className="flex items-center justify-center h-full min-h-[300px]">
               <Loader />
             </div>
             :
@@ -611,7 +618,7 @@ const FoodBeverageOrderForm = ({
                     <div className="flex justify-between items-center">
                       <div>Order Info</div>
                       {
-                        isEdit &&
+                        isEdit && canEditFnbOrder &&
                         <div>
                           <Button type="primary" onClick={() => {
                             form.submit(),
@@ -653,6 +660,8 @@ const FoodBeverageOrderForm = ({
                       placeholder="Select Room"
                       style={{ width: "100%" }}
                       options={roomOptions}
+                      loading={reservationRoomMetaPending}
+                      disabled={reservationRoomMetaPending}
                     />
                   </Form.Item>
 
@@ -903,20 +912,22 @@ const FoodBeverageOrderForm = ({
                                                 {upsertFoodBeverageOrderItems.isPending ? (
                                                   <Loader />
                                                 ) : (
-                                                  <AiOutlineCheckSquare
-                                                    onClick={() => {
-                                                      if (
-                                                        itemsValue?.[name]?.menu &&
-                                                        !upsertFoodBeverageOrderItems?.isPending
-                                                      ) {
-                                                        handleUpdateMenuSubmit(name);
-                                                      }
-                                                    }}
-                                                    className={`text-2xl ${itemsValue?.[name]?.menu
-                                                      ? "cursor-pointer text-blue-500"
-                                                      : "cursor-not-allowed text-gray-400"
-                                                      }`}
-                                                  />
+                                                  canUpsertFnbOrderItem && (
+                                                    <AiOutlineCheckSquare
+                                                      onClick={() => {
+                                                        if (
+                                                          itemsValue?.[name]?.menu &&
+                                                          !upsertFoodBeverageOrderItems?.isPending
+                                                        ) {
+                                                          handleUpdateMenuSubmit(name);
+                                                        }
+                                                      }}
+                                                      className={`text-2xl ${itemsValue?.[name]?.menu
+                                                        ? "cursor-pointer text-blue-500"
+                                                        : "cursor-not-allowed text-gray-400"
+                                                        }`}
+                                                    />
+                                                  )
                                                 )}
                                               </Tooltip>
 
@@ -941,7 +952,7 @@ const FoodBeverageOrderForm = ({
                                               </Tooltip>
 
                                               {/* Delete newly added menu */}
-                                              {!clickAddMenu && (
+                                              {!clickAddMenu && canDeleteFnbOrder && (
                                                 <Tooltip title="Delete Menu">
                                                   <DeleteOutlined
                                                     onClick={() => {
@@ -987,76 +998,84 @@ const FoodBeverageOrderForm = ({
                                           ) : (
                                             <>
                                               {/* Existing menu - Edit */}
-                                              <Tooltip title="Edit Menu">
-                                                <EditOutlined
-                                                  onClick={() => {
-                                                    if (!canEdit) return;
+                                              {
+                                                canUpsertFnbOrderItem &&
+                                                <Tooltip title="Edit Menu">
+                                                  <EditOutlined
+                                                    onClick={() => {
+                                                      if (!canEdit) return;
 
-                                                    const itemUuid =
-                                                      fnbOrderDetails?.fnbOrderItems?.[name]
-                                                        ?.uuid;
+                                                      const itemUuid =
+                                                        fnbOrderDetails?.fnbOrderItems?.[name]
+                                                          ?.uuid;
 
-                                                    if (!itemUuid) return;
+                                                      if (!itemUuid) return;
 
-                                                    setIsClickedEditUuid(itemUuid);
+                                                      setIsClickedEditUuid(itemUuid);
 
-                                                    setIsSameUuid((prev) =>
-                                                      prev.includes(itemUuid)
-                                                        ? prev
-                                                        : [...prev, itemUuid]
-                                                    );
+                                                      setIsSameUuid((prev) =>
+                                                        prev.includes(itemUuid)
+                                                          ? prev
+                                                          : [...prev, itemUuid]
+                                                      );
 
-                                                    setClickAddMenu(false);
-                                                    setIsDeleteUuid(null);
-                                                  }}
-                                                  className={`text-2xl ${canEdit
-                                                    ? "!cursor-pointer !text-blue-500"
-                                                    : "!cursor-not-allowed !text-gray-400"
-                                                    }`}
-                                                />
-                                              </Tooltip>
+                                                      setClickAddMenu(false);
+                                                      setIsDeleteUuid(null);
+                                                    }}
+                                                    className={`text-2xl ${canEdit
+                                                      ? "!cursor-pointer !text-blue-500"
+                                                      : "!cursor-not-allowed !text-gray-400"
+                                                      }`}
+                                                  />
+                                                </Tooltip>
+                                              }
+
 
                                               {/* Existing menu - Delete */}
-                                              <Tooltip title="Delete Menu">
-                                                <DeleteOutlined
-                                                  onClick={() => {
-                                                    if (fields.length <= 1) return;
+                                              {
+                                                canDeleteFnbOrder &&
+                                                <Tooltip title="Delete Menu">
+                                                  <DeleteOutlined
+                                                    onClick={() => {
+                                                      if (fields.length <= 1) return;
 
-                                                    const currentItem =
-                                                      form.getFieldValue([
-                                                        "items",
-                                                        name,
-                                                      ]);
+                                                      const currentItem =
+                                                        form.getFieldValue([
+                                                          "items",
+                                                          name,
+                                                        ]);
 
-                                                    const itemUuid =
-                                                      fnbOrderDetails?.fnbOrderItems?.find(
-                                                        (item) =>
-                                                          item?.menuItem?.uuid ===
-                                                          currentItem?.menu
-                                                      )?.uuid;
+                                                      const itemUuid =
+                                                        fnbOrderDetails?.fnbOrderItems?.find(
+                                                          (item) =>
+                                                            item?.menuItem?.uuid ===
+                                                            currentItem?.menu
+                                                        )?.uuid;
 
-                                                    if (!itemUuid) return;
+                                                      if (!itemUuid) return;
 
-                                                    setDeleteTarget({
-                                                      index: name,
-                                                      itemUuid,
-                                                    });
+                                                      setDeleteTarget({
+                                                        index: name,
+                                                        itemUuid,
+                                                      });
 
-                                                    setIsDeleteUuid(itemUuid);
+                                                      setIsDeleteUuid(itemUuid);
 
-                                                    if (
-                                                      fields?.length > 1 &&
-                                                      !clickAddMenu
-                                                    ) {
-                                                      setIsModalOpen(true);
-                                                    }
-                                                  }}
-                                                  className={`!text-xl ${fields.length > 1 && canEdit
-                                                    ? "!cursor-pointer !text-red-500"
-                                                    : "!cursor-not-allowed !text-gray-400"
-                                                    }`}
-                                                />
-                                              </Tooltip>
+                                                      if (
+                                                        fields?.length > 1 &&
+                                                        !clickAddMenu
+                                                      ) {
+                                                        setIsModalOpen(true);
+                                                      }
+                                                    }}
+                                                    className={`!text-xl ${fields.length > 1 && canEdit
+                                                      ? "!cursor-pointer !text-red-500"
+                                                      : "!cursor-not-allowed !text-gray-400"
+                                                      }`}
+                                                  />
+                                                </Tooltip>
+                                              }
+
                                             </>
                                           )}
                                         </>
@@ -1084,13 +1103,14 @@ const FoodBeverageOrderForm = ({
                                             }
                                             placeholder="Select Menu"
                                             disabled={
-                                              isView
+                                              isView || reservationRoomMetaPending
                                                 ? true
                                                 :
                                                 isAdd
                                                   ? false
                                                   : !isCurrentCardEditable
                                             }
+                                            loading={reservationRoomMetaPending}
                                           />
                                         </Form.Item>
 
@@ -1307,7 +1327,7 @@ const FoodBeverageOrderForm = ({
                       })}
 
                       {
-                        isEdit &&
+                        isEdit && canUpsertFnbOrderItem &&
                         <Button
                           className="custom-blue-btn"
                           onClick={() => {
@@ -1372,8 +1392,8 @@ const FoodBeverageOrderForm = ({
           isView &&
           (
             fnbOrderDetailsPending
-              ? <div className="flex justify-center items-center"><Loader/></div>
-            :
+              ? <div className="flex items-center justify-center h-full min-h-[300px]"><Loader /></div>
+              :
               <SectionCard title="Summary">
                 <div>
                   <div className="grid grid-cols-2 gap-x-15">

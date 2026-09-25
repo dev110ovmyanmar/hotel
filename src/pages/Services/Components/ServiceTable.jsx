@@ -12,6 +12,7 @@ import ItemsForm from "./ServiceForm/ItemsForm";
 import ServiceInventoryMappingDeleteModal from "../ServiceInventoryMappingDeleteModal";
 import { deleteServiceInventoryMapping } from "../../../api/serviceInventoryMappingApi";
 import { useApiMutation } from "../../../hooks/useApiMutation";
+import Toast from "../../../component/Toast/Toast";
 
 const ServiceTable = ({
   data,
@@ -282,7 +283,8 @@ const ServiceTable = ({
     };
     return (
       deleteServiceInventoryMappings.mutate(payload,{
-        onSuccess: () => {
+        onSuccess: (response) => {
+          Toast.success(response);
           setDeleteModalOpen(false);
           setDeleteServiceInventoryUuid();
         }

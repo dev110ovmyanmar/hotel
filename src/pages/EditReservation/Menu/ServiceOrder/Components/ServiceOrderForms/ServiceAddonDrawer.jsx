@@ -7,7 +7,6 @@ import {
   Select,
   Modal,
   Form,
-  Button,
 } from "antd";
 import { EditOutlined } from "@ant-design/icons";
 import useApiQuery from "../../../../../../hooks/useApiQuery";
@@ -109,9 +108,10 @@ const ServiceAddonDrawer = ({
     updateAddon.mutate(payload, {
       onSuccess: () => {
         Toast.success("Service add-on status updated successfully");
-        setIsEditModalOpen(false);
-        setSelectedRecord(null);
+        // setIsEditModalOpen(false);
+        // setSelectedRecord(null);
         form.resetFields();
+        onClose();
       },
     });
   };

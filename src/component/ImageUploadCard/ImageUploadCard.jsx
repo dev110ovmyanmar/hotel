@@ -2,6 +2,8 @@ import { Image, Upload } from "antd";
 import { PlusOutlined, LoadingOutlined, EditOutlined, EyeOutlined } from "@ant-design/icons";
 import { useEffect, useRef, useState } from "react";
 import Toast from "../Toast/Toast";
+import usePermission from "../../hooks/usePermission";
+import { PERMISSIONS } from "../../variables/permission";
 
 const getBase64 = file =>
   new Promise((resolve, reject) => {
@@ -19,6 +21,9 @@ const ImageUploadCard = ({
   imageUrl,
   smallSizes
 }) => {
+  const { hasPermission } = usePermission();
+  const canEditPayment = hasPermission(PERMISSIONS.PAYMENT_EDIT);
+
   const [preview, setPreview] = useState(null);
   const [loading, setLoading] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
@@ -32,12 +37,6 @@ const ImageUploadCard = ({
     setPreview(file);
     setPreviewOpen(true);
   };
-
-  // useEffect(() => {
-  //   if (imageUrl) {
-  //     setPreview(imageUrl);
-  //   }
-  // }, [imageUrl]);
 
   const inputRefClick = () => {
     inputRef.current?.click();
@@ -146,13 +145,17 @@ const ImageUploadCard = ({
                 <EyeOutlined />
               </span>
 
-              <span
-                style={{ color: "orange", cursor: "pointer" }}
-                onClick={inputRefClick}
+              {
+                canEditPayment &&
+                <span
+                  style={{ color: "orange", cursor: "pointer" }}
+                  onClick={inputRefClick}
 
-              >
-                <EditOutlined />
-              </span>
+                >
+                  <EditOutlined />
+                </span>
+              }
+
             </div>
 
             <img

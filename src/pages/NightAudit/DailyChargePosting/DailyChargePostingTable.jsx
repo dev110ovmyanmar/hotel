@@ -9,6 +9,7 @@ const DailyChargePostingTable = ({
     backStep,
     dailyChargePostingData
 }) => {
+    
     const columns = [
         {
             title: "No",
@@ -25,27 +26,27 @@ const DailyChargePostingTable = ({
             dataIndex: "chargeStatus",
             key: "chargeStatus",
             align: "center",
-            render: (record) => {
-                const posted = record?.code === "posted";
+            // render: (record) => {
+            //     const posted = record?.chargeStatus === "posted";
 
-                return (
-                    <Tag color={posted ? "green" : "red"}
-                        className={
-                            `!rounded ${posted
-                                ? "!border-green-500"
-                                : "!border-red-500"
-                            }`
-                        }>
-                        <div className="flex gap-x-2 items-center">
-                            {posted
-                                ? <CircleCheck size={15} />
-                                : <CloseCircleOutlined className="!text-[15px]" />
-                            }
-                            <div>{record?.name?.charAt(0).toUpperCase() + record?.name?.slice(1).toLowerCase()}</div>
-                        </div>
-                    </Tag>
-                )
-            }
+            //     return (
+            //         <Tag color={posted ? "green" : "red"}
+            //             className={
+            //                 `!rounded ${posted
+            //                     ? "!border-green-500"
+            //                     : "!border-red-500"
+            //                 }`
+            //             }>
+            //             <div className="flex gap-x-2 items-center">
+            //                 {posted
+            //                     ? <CircleCheck size={15} />
+            //                     : <CloseCircleOutlined className="!text-[15px]" />
+            //                 }
+            //                 <div>{record?.chargeStatus?.charAt(0).toUpperCase() + record?.chargeStatus?.slice(1).toLowerCase()}</div>
+            //             </div>
+            //         </Tag>
+            //     )
+            // }
         },
         {
             title: "Grand Total",
@@ -67,7 +68,6 @@ const DailyChargePostingTable = ({
                 dataSource={dailyChargePostingData?.charges}
                 pagination={false}
             />
-            {/* <div className={`${nextStepButtonDesign} flex gap-4`}> */}
             <div className="sticky bottom-0 flex justify-end gap-4 bg-gray-50 dark:bg-[#121111] py-2 px-4 z-10">
 
                 <Button

@@ -8,6 +8,7 @@ import {
   Divider,
   Space,
   Popconfirm,
+  Tooltip,
 } from "antd";
 import {
   DeleteOutlined,
@@ -114,7 +115,6 @@ const NoteDrawer = ({ mode, open, onClose, selectedData, onSuccess }) => {
     title: "Room",
     dataIndex: "room",
     key: "room",
-    align: "center",
     render: (_, record) => {
         return record?.reservationRoom == null
             ? "-"
@@ -144,27 +144,40 @@ const NoteDrawer = ({ mode, open, onClose, selectedData, onSuccess }) => {
         <Space>
           {record.id === editingKey ? (
             <>
-              <CheckOutlined
-                className="text-green-500 cursor-pointer"
-                onClick={() => editNote(record)}
-              />
-              <CloseOutlined
-                className="text-red-500 cursor-pointer"
-                onClick={() => setEditingKey("")}
-              />
+              <Tooltip title="Save">
+                <CheckOutlined
+                  className="text-green-500 cursor-pointer"
+                  onClick={() => editNote(record)}
+                />
+              </Tooltip>
+
+              <Tooltip title="Cancel">
+                <CloseOutlined
+                  className="text-red-500 cursor-pointer"
+                  onClick={() => setEditingKey("")}
+                />
+              </Tooltip>
             </>
           ) : (
             <>
-              <EditOutlined
-                className="text-blue-500 cursor-pointer"
-                onClick={() => {
-                  setEditingKey(record.id);
-                  setEditValue(record.note);
-                }}
-              />
-              <Popconfirm title="Delete?" onConfirm={() => deleteNote(record)}>
-                <DeleteOutlined className="text-red-500 cursor-pointer" />
-              </Popconfirm>
+              <Tooltip title="Edit">
+                <EditOutlined
+                  className="text-blue-500 cursor-pointer"
+                  onClick={() => {
+                    setEditingKey(record.id);
+                    setEditValue(record.note);
+                  }}
+                />
+              </Tooltip>
+
+              <Tooltip title="Delete">
+                <Popconfirm
+                  title="Delete?"
+                  onConfirm={() => deleteNote(record)}
+                >
+                  <DeleteOutlined className="text-red-500 cursor-pointer" />
+                </Popconfirm>
+              </Tooltip>
             </>
           )}
         </Space>

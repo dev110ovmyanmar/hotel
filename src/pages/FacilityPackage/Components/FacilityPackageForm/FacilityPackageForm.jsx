@@ -321,13 +321,20 @@ const FacilityPackageForm = ({
                 rules={[
                   { required: true, message: "Included Hours is Required" },
                 ]}
+                getValueProps={(value) => ({
+                  value: isView
+                    ? value?.format("HH:mm") || ""
+                    : value,
+                })}
               >
-                <TimePicker
-                  style={{
-                    width: "100%",
-                  }}
-                  format="HH:mm"
-                />
+                {isView ? (
+                  <Input readOnly />
+                ) : (
+                  <TimePicker
+                    style={{ width: "100%" }}
+                    format="HH:mm"
+                  />
+                )}
               </Form.Item>
             </div>
 
@@ -406,16 +413,14 @@ const FacilityPackageForm = ({
                 />
               </Form.Item>
             </div>
+            <Status isView={isView} statusValue={status} />
 
             <Form.Item
               label="Remark"
               name="remark"
-              rules={[{ required: true, message: "Remark is Required" }]}
             >
               <Input.TextArea readOnly={isView} placeholder="Enter Remark" />
             </Form.Item>
-
-            <Status isView={isView} statusValue={status} />
           </Form>
         )}
       </Drawer>

@@ -2,6 +2,8 @@ import { Space, Table, Tooltip } from "antd";
 import { EyeOutlined, EditOutlined } from "@ant-design/icons";
 import PriceTag from "../../../../../component/PriceTag/PriceTag";
 import ColorStatusTag from "../../../../../component/ColorStatusTag/ColorStatusTag";
+import usePermission from "../../../../../hooks/usePermission";
+import { PERMISSIONS } from "../../../../../variables/permission";
 
 const FoodBeverageOrderTable = ({
   data,
@@ -17,6 +19,10 @@ const FoodBeverageOrderTable = ({
     ? data
     : data;
 
+  const { hasPermission } = usePermission();
+  const canEditFnbOrder = hasPermission(PERMISSIONS.FNB_ORDER_EDIT);
+  const canViewFnbOrder = hasPermission(PERMISSIONS.FNB_ORDER_VIEW);
+
   const columns = [
     {
       title: "ID",
@@ -29,10 +35,9 @@ const FoodBeverageOrderTable = ({
       key: "reservationRoom",
       render: (record) => {
         return (
-          <div className="flex-col items-center gap-1">
+          <>
             {record?.reservationRoom ? record?.reservationRoom.room.roomNo : "-"}
-           
-          </div>
+          </>
         )
       }
     },
@@ -44,7 +49,7 @@ const FoodBeverageOrderTable = ({
     {
       title: "Order Type",
       key: "orderType",
-      render: (record, text) => {
+      render: (record) => {
         return (
           <div className="flex-col items-center gap-1">
             <div>{record?.orderType.name}</div>
@@ -66,6 +71,7 @@ const FoodBeverageOrderTable = ({
       title: "Price",
       dataIndex: "grandTotal",
       key: "grandTotal",
+      align:"end",
       width: 150,
       render: (text) => (
         <div className="flex justify-end items-center gap-1">
@@ -78,37 +84,51 @@ const FoodBeverageOrderTable = ({
       title: "Check No",
       dataIndex: "refNo",
       key: "refNo",
+      render: (text) => <div className={text ? "" : "!text-center"}>{text ? text : "-"}</div>,
     },
-    {
-      title: "Action",
-      key: "action",
-      fixed: "end",
-      render: (_, record) => {
-        const statusCode = record?.orderStatus?.code;
-        const isReadonlyStatus =
-          statusCode === "completed" || statusCode === "cancelled";
+    ...(
+      canEditFnbOrder || canViewFnbOrder
+        ?
+        [
+          {
+            title: "Action",
+            key: "action",
+            fixed: "end",
+            width: 80,
+            render: (_, record) => {
+              const statusCode = record?.orderStatus?.code;
+              const isReadonlyStatus =
+                statusCode === "completed" || statusCode === "cancelled";
+              console.log(canViewFnbOrder,"canViewFnbOrder")
+              return (
+                <Space size="middle">
+                  {
+                    canViewFnbOrder &&
+                    <Tooltip title="View Details">
+                      <EyeOutlined
+                        className="cursor-pointer text-blue-500 hover:text-blue-700"
+                        onClick={() => onView(record)}
+                      />
+                    </Tooltip>
+                  }
 
-        return (
-          <Space size="middle">
-            <Tooltip title="View Details">
-              <EyeOutlined
-                className="cursor-pointer text-blue-500 hover:text-blue-700"
-                onClick={() => onView(record)}
-              />
-            </Tooltip>
+                  {!isReadonlyStatus && canEditFnbOrder && (
+                    <Tooltip title="Edit">
+                      <EditOutlined
+                        className="cursor-pointer text-amber-500 hover:text-amber-700"
+                        onClick={() => onEdit(record)}
+                      />
+                    </Tooltip>
+                  )}
+                </Space>
+              );
+            },
+          }
+        ]
+        :
+        []
+    )
 
-            {!isReadonlyStatus && (
-              <Tooltip title="Edit">
-                <EditOutlined
-                  className="cursor-pointer text-amber-500 hover:text-amber-700"
-                  onClick={() => onEdit(record)}
-                />
-              </Tooltip>
-            )}
-          </Space>
-        );
-      },
-    },
   ];
 
   return (

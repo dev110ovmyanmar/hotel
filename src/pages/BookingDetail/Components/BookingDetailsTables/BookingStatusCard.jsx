@@ -4,10 +4,15 @@ import { MdOutlineMeetingRoom } from "react-icons/md";
 import { EditOutlined } from "@ant-design/icons";
 import ReservationDetailsForm from "../BookingDetailForms/ReservationDetailsForm";
 import PriceTag from "../../../../component/PriceTag/PriceTag";
+import usePermission from "../../../../hooks/usePermission";
+import { PERMISSIONS } from "../../../../variables/permission";
 
 const { Text } = Typography;
 
 const BookingStatusCard = ({ data }) => {
+  const { hasPermission } = usePermission();
+  const canEditReservation = hasPermission(PERMISSIONS.RESERVATION_EDIT);
+
   const reservationRoom = data?.reservationRoom;
 
   const editOpen =
@@ -28,7 +33,7 @@ const BookingStatusCard = ({ data }) => {
         <Text>Reservation Details</Text>
       </Space>
 
-      {editOpen && (
+      {(editOpen && canEditReservation) && (
         <Tooltip title="Edit Reservation">
           <EditOutlined
             style={{ color: "#1070de", fontSize: "20px", cursor: "pointer" }}
@@ -80,7 +85,7 @@ const BookingStatusCard = ({ data }) => {
       </Card>
 
       {drawerOpen && (
-        <ReservationDetailsForm open={drawerOpen} onClose={setDrawerOpen} />
+        <ReservationDetailsForm open={drawerOpen} onClose={setDrawerOpen}  data={data}/>
       )}
     </>
   );

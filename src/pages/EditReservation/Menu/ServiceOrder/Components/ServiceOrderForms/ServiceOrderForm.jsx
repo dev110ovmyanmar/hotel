@@ -9,6 +9,7 @@ import {
   Select,
   Radio,
   DatePicker,
+  Spin,
 } from "antd";
 import useApiQuery from "../../../../../../hooks/useApiQuery";
 import { useApiMutation } from "../../../../../../hooks/useApiMutation";
@@ -26,6 +27,8 @@ import {
   textWhiteInDarkStyle,
 } from "../../../../../../utils";
 import Loader from "../../../../../../component/Loader/Loader";
+import usePermission from "../../../../../../hooks/usePermission";
+import { PERMISSIONS } from "../../../../../../variables/permission";
 
 const sharedProps = {
   mode: "spinner",
@@ -53,6 +56,9 @@ const ServiceOrderForm = ({
   const selectedOrderType = Form.useWatch("orderType", form);
   const selectedServiceUuid = Form.useWatch("selectService", form);
 
+  const { hasPermission } = usePermission();
+  const canEditServiceOrder = hasPermission(PERMISSIONS.SERVICE_ORDER_EDIT);
+
   const reservationUuid = isAdd
     ? serviceData?.uuid
     : serviceData?.reservation?.uuid ||
@@ -62,7 +68,7 @@ const ServiceOrderForm = ({
     ? null
     : serviceData?.uuid;
 
-  const { data: reservationRoom, isLoading: metaLoading } = useApiQuery({
+  const { data: reservationRoom, isFetching: metaLoading } = useApiQuery({
     fetchQueryFunction: reservationRoomMeta,
     params: {
       reservation: { uuid: reservationUuid, },
@@ -72,7 +78,7 @@ const ServiceOrderForm = ({
     },
   });
 
-  const { data: orderDetails, isLoading: detailsLoading } = useApiQuery({
+  const { data: orderDetails, isFetching: detailsLoading } = useApiQuery({
     fetchQueryName: "service-orders",
     fetchQueryFunction: serviceOrderDetails,
     params: { uuid: serviceOrderUuid },
@@ -504,7 +510,7 @@ const ServiceOrderForm = ({
 
           {isView ? (
             serviceData?.orderStatus
-              ?.code !== "completed" && (
+              ?.code !== "completed" && canEditServiceOrder &&(
               <Button
                 type="primary"
                 onClick={() =>
@@ -520,7 +526,8 @@ const ServiceOrderForm = ({
                 form.submit()
               }
               isPending={
-                createServiceOrder.isPending ||
+                isAdd ?
+                createServiceOrder.isPending :
                 updateServiceOrders.isPending
               }
               mode={mode}
@@ -529,7 +536,7 @@ const ServiceOrderForm = ({
         </div>
       }
     >
-      {metaLoading || detailsLoading ? (
+      {!isAdd && (metaLoading || detailsLoading) ? (
         <div className="flex min-h-screen items-center justify-center">
           <Loader />
         </div>
@@ -570,6 +577,8 @@ const ServiceOrderForm = ({
                     <Input readOnly />
                   ) : (
                     <Select
+                      loading={metaLoading}
+                      disabled={metaLoading}
                       options={rooms}
                       placeholder="Select a Room"
                     />
@@ -682,6 +691,8 @@ const ServiceOrderForm = ({
                       options={services}
                       placeholder="Select a Service"
                       onChange={handleServiceChange}
+                      loading={metaLoading}
+                      disabled={metaLoading}
                     />
                   )}
                 </Form.Item>

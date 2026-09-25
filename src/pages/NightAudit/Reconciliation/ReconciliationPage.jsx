@@ -1,7 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { reconciliation } from "../../../api/nightAuditApi";
 import useApiQuery from "../../../hooks/useApiQuery";
-import { Spin } from "antd";
 import ReconciliationStatus from "./ReconciliationStatus";
 import CheckBookingHeader from "../CheckBookingHeader";
 import ReconciliationTable from "./ReconciliationTable";
@@ -32,6 +31,15 @@ const ReconciliationPage = ({ stepValue }) => {
     },
   });
 
+  useEffect(() => {
+    if (typeof data?.isConfirmed === "boolean") {
+      localStorage.setItem(
+        "isConfirmed",
+        JSON.stringify(data.isConfirmed)
+      );
+    }
+  }, [data?.isConfirmed]);
+
   if (isFetching) {
     return (
       <div className={spinLoadingCenter}>
@@ -46,11 +54,12 @@ const ReconciliationPage = ({ stepValue }) => {
       <ReconciliationStatus
         data={data?.summary}
         hasBlockingDifferences={data?.hasBlockingDifferences}
-        canConfirm={data?.canConfirm}
+        confirm={data?.canConfirm}
         isConfirm={data?.isConfirmed}
       />
+      
       <ReconciliationTable
-       isConfirm={data?.isConfirmed}
+        isConfirm={data?.isConfirmed}
         backStep={() => {
           window.dispatchEvent(
             new CustomEvent("breadcrumb_updated", {
@@ -77,5 +86,4 @@ const ReconciliationPage = ({ stepValue }) => {
     </div>
   );
 };
-
 export default ReconciliationPage;

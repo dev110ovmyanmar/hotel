@@ -1,16 +1,15 @@
-import { Dropdown, Space, Table, Button, Tooltip } from "antd";
-import { useState, useEffect } from "react";
+import { Space, Table, Tooltip } from "antd";
+import { useState } from "react";
 import {
-  MoreOutlined,
   EyeOutlined,
   EditOutlined,
-  PlusOutlined,
-  InboxOutlined,
   UploadOutlined,
 } from "@ant-design/icons";
 import GuestForm from "./GuestForms/GuestForm";
 import dayjs from "dayjs";
 import GuestUploadDrawer from "./GuestForms/GuestUploadDrawer";
+import usePermission from "../../../../../hooks/usePermission";
+import { PERMISSIONS } from "../../../../../variables/permission";
 
 const GuestTable = ({
   data,
@@ -26,11 +25,24 @@ const GuestTable = ({
   const [mode, setMode] = useState("add");
   const [selectedData, setSelectedData] = useState(null);
   const [uploadOpen, setUploadOpen] = useState(false);
-  const [noteOpen, setNoteOpen] = useState(false);
 
-  const statusCode = Array.isArray(reservationUuid)
-    ? reservationUuid[0]?.reservationRoom?.roomStatus?.code?.toLowerCase()
-    : undefined;
+  const { hasPermission } = usePermission();
+  const canViewReservationForGuest = hasPermission(PERMISSIONS.RESERVATION_VIEW);
+  const canEditReservationForGuest = hasPermission(PERMISSIONS.RESERVATION_EDIT);
+  const canViewAndEditGuestImage = hasPermission(PERMISSIONS.GUEST_VIEW);
+
+  const getRoomStatus = (roomUuid) => {
+    if (!roomUuid || !Array.isArray(reservationUuid)) {
+      return null;
+    }
+
+    const reservationRoom = reservationUuid.find(
+      (item) =>
+        item?.reservationRoom?.uuid === roomUuid ||
+        item?.uuid === roomUuid
+    );
+    return reservationRoom?.reservationRoom?.roomStatus?.code?.toLowerCase();
+  };
 
   const baseColumns = [
     { title: "ID", dataIndex: "id", key: "id", width: 70 },
@@ -99,7 +111,11 @@ const GuestTable = ({
 
   const actionColumn = {
     title: "Action",
+    key: "action",
     render: (_, record) => {
+      const roomUuid = record?.reservationRoom?.uuid;
+
+      const statusCode = getRoomStatus(roomUuid);
       const viewStatus = [
         "pending",
         "booked",
@@ -113,11 +129,18 @@ const GuestTable = ({
       const edit = editStatus.includes(statusCode);
 
       const uploadStatus = ["pending", "booked", "confirmed", "checked_in"];
-      const upload = uploadStatus.includes(statusCode) && record.guest !== null;
+      const upload = uploadStatus.includes(statusCode) && record.guest !== null &&
+        record?.guest !== undefined;
+      if (["cancelled", "no_show"].includes(statusCode)) {
+        return "-";
+      }
+      if (!statusCode) {
+        return "-";
+      }
 
       return (
         <Space size="middle">
-          {view && (
+          {view && canViewReservationForGuest && (
             <Tooltip title="View Details">
               <EyeOutlined
                 className="cursor-pointer"
@@ -130,7 +153,7 @@ const GuestTable = ({
             </Tooltip>
           )}
 
-          {edit && (
+          {edit && canEditReservationForGuest && (
             <Tooltip title="Edit Details">
               <EditOutlined
                 className="cursor-pointer"
@@ -143,7 +166,7 @@ const GuestTable = ({
             </Tooltip>
           )}
 
-          {upload && (
+          {upload && canViewAndEditGuestImage && (
             <Tooltip title="File Upload">
               <UploadOutlined
                 className="cursor-pointer"
@@ -159,8 +182,7 @@ const GuestTable = ({
     },
   };
 
-  const isHiddenStatus = ["cancelled", "no_show"].includes(statusCode);
-  const columns = isHiddenStatus ? baseColumns : [...baseColumns, actionColumn];
+  const columns = [...baseColumns, actionColumn];
 
   return (
     <div>
@@ -215,3 +237,4 @@ const GuestTable = ({
 };
 
 export default GuestTable;
+

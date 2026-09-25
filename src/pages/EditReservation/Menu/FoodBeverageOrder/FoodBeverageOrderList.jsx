@@ -10,12 +10,17 @@ import Loader from "../../../../component/Loader/Loader";
 import FoodBeverageOrderTable from "./Components/FoodBeverageOrderTable";
 import FoodBeverageOrderForm from "./Components/FoodBeverageOrderForms/FoodBeverageOrderForm";
 import { fetchFoodBeverageOrderList } from "../../../../api/foodBeverageOrder";
+import usePermission from "../../../../hooks/usePermission";
+import { PERMISSIONS } from "../../../../variables/permission";
 
 const FoodBeverageOrderList = () => {
   const navigate = useNavigate();
   const { bookingId } = useParams();
   const uuid = bookingId;
 
+  const {hasPermission} = usePermission();
+  const canCreateFnbOrder = hasPermission(PERMISSIONS.FNB_ORDER_CREATE);
+  
   const isValidBookingId =
     !!bookingId &&
     bookingId !== ":bookingId" &&
@@ -54,6 +59,7 @@ const FoodBeverageOrderList = () => {
     setMode("add");
     setDrawerOpen(true);
   };
+  
   if (isFetching) {
     return (
       <div className="flex items-center justify-center h-full min-h-[300px]">
@@ -70,7 +76,7 @@ const FoodBeverageOrderList = () => {
         <ReservationListHeader
           reservationId={data?.reservation?.reservationNo}
           onAddreservation={handleAddService}
-          addButtonText="Add F&B Order"
+          addButtonText={canCreateFnbOrder? "Add F&B Order" : ""}
         />
       </div>
 

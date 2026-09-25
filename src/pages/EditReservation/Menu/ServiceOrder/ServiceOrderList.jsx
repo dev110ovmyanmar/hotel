@@ -11,12 +11,18 @@ import ServiceOrderForm from "./Components/ServiceOrderForms/ServiceOrderForm";
 import Loader from "../../../../component/Loader/Loader";
 import ServiceAddonDrawer from "./Components/ServiceOrderForms/ServiceAddonDrawer";
 import { Button } from "antd";
+import usePermission from "../../../../hooks/usePermission";
+import { PERMISSIONS } from "../../../../variables/permission";
 
 const ServiceOrderList = () => {
   const navigate = useNavigate();
   const { bookingId } = useParams();
   const uuid = bookingId;
-  
+
+  const { hasPermission } = usePermission();
+  const canCreateServiceOrder = hasPermission(PERMISSIONS.SERVICE_ORDER_CREATE);
+  const canEditPermissionWithViewServiceOrderAddOns = hasPermission(PERMISSIONS.SERVICE_ORDER_EDIT);
+
   useEffect(() => {
     const cleanId = bookingId ? bookingId.trim() : "";
 
@@ -84,13 +90,16 @@ const ServiceOrderList = () => {
         <ReservationListHeader
           reservationId={data?.reservation?.reservationNo}
           onAddreservation={handleAddService}
-          addButtonText="Add Service Order"
+          addButtonText={canCreateServiceOrder ? "Add Service Order" : ""}
         />
       </div>
 
-      <Button className="mb-2 custom-blue-btn" onClick={() => setOpen(true)}>
-        View Add On Service
-      </Button>
+      {
+        canEditPermissionWithViewServiceOrderAddOns &&
+        <Button className="mb-2 custom-blue-btn" onClick={() => setOpen(true)}>
+          View Add On Service
+        </Button>
+      }
 
       <ServiceOrderTable
         data={data?.data || []}

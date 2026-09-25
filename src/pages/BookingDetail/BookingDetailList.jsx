@@ -89,25 +89,29 @@ const BookingDetailList = () => {
 
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
         <BookingDetailButton data={data || {}} />
-      </div>
+      </div>   
 
       <Row gutter={[16, 16]}>
 
         <Col xs={24} lg={16}>
           <Row gutter={[16, 16]}>
-            <Col span={24}>
-              <PaymentSummaryTable
-                data={data?.reservation?.folioPayments}
-              />
-            </Col>
+            {data?.reservation?.folioPayments?.length > 0 && (
+              <Col span={24}>
+                <PaymentSummaryTable
+                  data={data?.reservation?.folioPayments}
+                />
+              </Col>
+            )}
 
-            <Col span={24}>
-              <RoomStatusTable
-                data={data?.reservation?.reservationRooms}
-              />
-            </Col>
+            {data?.reservation?.reservationRooms?.length > 0 && (
+              <Col span={24}>
+                <RoomStatusTable
+                  data={data?.reservation?.reservationRooms}
+                />
+              </Col>
+            )}
 
-            {serviceAddOn && (
+            {serviceAddOn && data?.reservation?.reservationAddOns?.length > 0 && (
               <Col span={24}>
                 <ServiceAddOn
                   data={data?.reservation?.reservationAddOns}
@@ -115,7 +119,7 @@ const BookingDetailList = () => {
               </Col>
             )}
 
-            {serviceOrder && (
+            {serviceOrder && data?.reservation?.serviceOrders?.length > 0 && (
               <Col span={24}>
                 <ServiceOrder
                   data={data?.reservation?.serviceOrders}
@@ -123,17 +127,21 @@ const BookingDetailList = () => {
               </Col>
             )}
 
-            <Col span={24}>
-              <FnbOrderFromBookingDetailList
-                data={data?.reservation?.fnbOrders}
-              />
-            </Col>
+            {data?.reservation?.fnbOrders?.length > 0 && (
+              <Col span={24}>
+                <FnbOrderFromBookingDetailList
+                  data={data?.reservation?.fnbOrders}
+                />
+              </Col>
+            )}
 
-            <Col span={24}>
-              <EventFacility
-                data={data?.reservation?.facilityBookings}
-              />
-            </Col>
+            {data?.reservation?.facilityBookings?.length > 0 && (
+              <Col span={24}>
+                <EventFacility
+                  data={data?.reservation?.facilityBookings}
+                />
+              </Col>
+            )}
 
           </Row>
         </Col>
@@ -141,33 +149,38 @@ const BookingDetailList = () => {
         <Col xs={24} lg={8}>
 
           <Row gutter={[16, 16]}>
-            {!reservationBooked && (
-              <>
-                <Col span={24}>
-                  <FolioSummaryCard
-                    data={data?.reservation || {}}
-                  />
-                </Col>
-
-                <Col span={24}>
-                  <SummaryCard
-                    data={data?.reservation || {}}
-                  />
-                </Col>
-              </>
+            {!reservationBooked && data?.reservation?.folioSummary && (
+              <Col span={24}>
+                <FolioSummaryCard
+                  data={data?.reservation?.folioSummary || {}}
+                />
+              </Col>
             )}
 
-            <Col span={24}>
+            {!reservationBooked && data?.reservation?.summary && (
+              <Col span={24}>
+                <SummaryCard
+                  data={data?.reservation?.summary || {}}
+                />
+              </Col>
+            )}
+
+            {
+              data && 
+              <Col span={24}>
               <BookingStatusCard
                 data={data || {}}
               />
             </Col>
+            }
 
-            <Col span={24}>
-              <ContactPersonCard
-                data={data || {}}
-              />
-            </Col>
+            {data && (
+              <Col span={24}>
+                <ContactPersonCard
+                  data={data || {}}
+                />
+              </Col>
+            )}
           </Row>
         </Col>
       </Row>
