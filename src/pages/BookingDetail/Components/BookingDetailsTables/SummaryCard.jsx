@@ -6,8 +6,6 @@ import PriceTag from "../../../../component/PriceTag/PriceTag";
 const { Text } = Typography;
 
 const SummaryCard = ({ data }) => {
-
-  const reservation = data?.summary;
   
   const CustomTitle = (
     <Space>
@@ -23,14 +21,14 @@ const SummaryCard = ({ data }) => {
       <Row justify="space-between">
         <Text>Sub Total </Text>
         <div className="flex  justify-end gap-1">
-          <PriceTag value={reservation?.subTotal} />
+          <PriceTag value={data?.subTotal} />
           <span>MMK</span>
         </div>
       </Row>
       <Row justify="space-between">
         <Text>Tax</Text>
         <div className="flex  justify-end gap-1">
-          <PriceTag value={reservation?.taxTotal} />
+          <PriceTag value={data?.taxTotal} />
           <span>MMK</span>
         </div>
       </Row>
@@ -38,7 +36,7 @@ const SummaryCard = ({ data }) => {
       <Row justify="space-between">
         <Text>Incentive</Text>
         <div className="flex  justify-end gap-1 text-rose-500">
-          - <PriceTag value={reservation?.incentiveTotal} />
+          - <PriceTag value={data?.incentiveTotal} />
           <span>MMK</span>
         </div>
       </Row>
@@ -46,7 +44,7 @@ const SummaryCard = ({ data }) => {
       <Row justify="space-between">
         <Text>Discount</Text>
         <div className="flex  justify-end gap-1 text-rose-500">
-          - <PriceTag value={reservation?.discountTotal} />
+          - <PriceTag value={data?.discountTotal} />
           <span>MMK</span>
         </div>
       </Row>
@@ -55,7 +53,7 @@ const SummaryCard = ({ data }) => {
       <Row justify="space-between">
         <Text strong>Grand Total</Text>
         <div className="flex  justify-end gap-1 text-indigo-600 dark:text-indigo-400">
-          <PriceTag value={reservation?.grandTotal} />
+          <PriceTag value={data?.grandTotal} />
           <span>MMK</span>
         </div>
       </Row>

@@ -24,6 +24,7 @@ const GuestTable = ({
   changePerPage,
   reservationUuid,
 }) => {
+  console.log(reservationUuid,"reservationUUId")
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mode, setMode] = useState("add");
   const [selectedData, setSelectedData] = useState(null);

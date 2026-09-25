@@ -2,10 +2,15 @@ import React, { useState } from "react";
 import { Card, Row, Typography, Space, Tooltip } from "antd";
 import { EditOutlined, PhoneOutlined } from "@ant-design/icons";
 import ContactPersonForm from "../BookingDetailForms/ContactPersonForm";
+import usePermission from "../../../../hooks/usePermission";
+import { PERMISSIONS } from "../../../../variables/permission";
 
 const { Text } = Typography;
 
 const ContactPersonCard = ({ data }) => {
+  const { hasPermission } = usePermission();
+  const canEditContactPerson = hasPermission(PERMISSIONS.RESERVATION_EDIT);
+
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const reservation = data?.reservation;
@@ -22,7 +27,7 @@ const ContactPersonCard = ({ data }) => {
         <Text>Contact Person</Text>
       </Space>
 
-      {(editOpen) && (
+      {(editOpen && canEditContactPerson) && (
         <Tooltip title="Edit Contact Person">
           <EditOutlined
             style={{
@@ -52,7 +57,7 @@ const ContactPersonCard = ({ data }) => {
       </Card>
 
       {drawerOpen && (
-        <ContactPersonForm open={drawerOpen} onClose={setDrawerOpen} />
+        <ContactPersonForm open={drawerOpen} onClose={setDrawerOpen} data={data}/>
       )}
     </>
   );

@@ -9,6 +9,7 @@ import {
   Select,
   Radio,
   DatePicker,
+  Spin,
 } from "antd";
 import useApiQuery from "../../../../../../hooks/useApiQuery";
 import { useApiMutation } from "../../../../../../hooks/useApiMutation";
@@ -67,7 +68,7 @@ const ServiceOrderForm = ({
     ? null
     : serviceData?.uuid;
 
-  const { data: reservationRoom, isLoading: metaLoading } = useApiQuery({
+  const { data: reservationRoom, isFetching: metaLoading } = useApiQuery({
     fetchQueryFunction: reservationRoomMeta,
     params: {
       reservation: { uuid: reservationUuid, },
@@ -77,7 +78,7 @@ const ServiceOrderForm = ({
     },
   });
 
-  const { data: orderDetails, isLoading: detailsLoading } = useApiQuery({
+  const { data: orderDetails, isFetching: detailsLoading } = useApiQuery({
     fetchQueryName: "service-orders",
     fetchQueryFunction: serviceOrderDetails,
     params: { uuid: serviceOrderUuid },
@@ -535,7 +536,7 @@ const ServiceOrderForm = ({
         </div>
       }
     >
-      {metaLoading || detailsLoading ? (
+      {!isAdd && (metaLoading || detailsLoading) ? (
         <div className="flex min-h-screen items-center justify-center">
           <Loader />
         </div>
@@ -576,6 +577,8 @@ const ServiceOrderForm = ({
                     <Input readOnly />
                   ) : (
                     <Select
+                      loading={metaLoading}
+                      disabled={metaLoading}
                       options={rooms}
                       placeholder="Select a Room"
                     />
@@ -688,6 +691,8 @@ const ServiceOrderForm = ({
                       options={services}
                       placeholder="Select a Service"
                       onChange={handleServiceChange}
+                      loading={metaLoading}
+                      disabled={metaLoading}
                     />
                   )}
                 </Form.Item>

@@ -50,6 +50,8 @@ const GuestForm = ({
   const [form] = Form.useForm();
   const { hasPermission } = usePermission();
   const canEditReservationForGuest = hasPermission(PERMISSIONS.RESERVATION_EDIT);
+  console.log(reservationUuid[0]?.reservationRoom?.roomStatus.code === "checked_out","reservationUuidreservationUuid")
+  const isCheckedout = reservationUuid[0]?.reservationRoom?.roomStatus.code === "checked_out";
 
   const watchedSrNo = Form.useWatch("srcNo", form);
   const guestAgeType = Form.useWatch("isAdult", form);
@@ -156,7 +158,7 @@ const GuestForm = ({
   //   cityOptions.find((o) => o.value === form.getFieldValue("city"))?.label ??
   //   "";
 
-  const { data: reservationMetas, isLoading: metaLoading } = useApiQuery({
+  const { data: reservationMetas, isFetching: metaLoading } = useApiQuery({
     fetchQueryName: "reservation-meta",
     fetchQueryFunction: reservationMeta,
   });
@@ -197,7 +199,7 @@ const GuestForm = ({
     invalidateKeys: [["reservation-guest"]],
   });
 
-  const { data, isFetching, isLoading: detailsLoading } = useApiQuery({
+  const { data, isFetching : detailsLoading, isLoading } = useApiQuery({
     fetchQueryName: "guest-details",
     fetchQueryFunction: reservationGuestDetails,
     params: { uuid: guestData?.uuid },
@@ -305,7 +307,7 @@ const GuestForm = ({
           </span>
 
           {isView ? (
-            canEditReservationForGuest &&
+            canEditReservationForGuest && !isCheckedout && 
             <Button type="primary" onClick={() => setMode("edit")}>
               Edit
             </Button>

@@ -95,7 +95,7 @@ const FoodBeverageOrderForm = ({
   const dineInOrderType =
     orderType?.find((type) => type.value === selectedOrderType)?.code === "dine_in";
 
-  const { data, isPending: reservationRoomMetaPending } = useApiQuery({
+  const { data, isFetching: reservationRoomMetaPending } = useApiQuery({
     fetchQueryName: "order",
     fetchQueryFunction: reservationRoomMeta,
     params: {
@@ -601,7 +601,7 @@ const FoodBeverageOrderForm = ({
       >
         {
           isEdit && (reservationRoomMetaPending || fnbOrderDetailsPending) ?
-            <div className="w-full h-full flex justify-center items-center text-center">
+            <div className="flex items-center justify-center h-full min-h-[300px]">
               <Loader />
             </div>
             :
@@ -660,6 +660,8 @@ const FoodBeverageOrderForm = ({
                       placeholder="Select Room"
                       style={{ width: "100%" }}
                       options={roomOptions}
+                      loading={reservationRoomMetaPending}
+                      disabled={reservationRoomMetaPending}
                     />
                   </Form.Item>
 
@@ -1101,13 +1103,14 @@ const FoodBeverageOrderForm = ({
                                             }
                                             placeholder="Select Menu"
                                             disabled={
-                                              isView
+                                              isView || reservationRoomMetaPending
                                                 ? true
                                                 :
                                                 isAdd
                                                   ? false
                                                   : !isCurrentCardEditable
                                             }
+                                            loading={reservationRoomMetaPending}
                                           />
                                         </Form.Item>
 
@@ -1389,7 +1392,7 @@ const FoodBeverageOrderForm = ({
           isView &&
           (
             fnbOrderDetailsPending
-              ? <div className="flex justify-center items-center"><Loader /></div>
+              ? <div className="flex items-center justify-center h-full min-h-[300px]"><Loader /></div>
               :
               <SectionCard title="Summary">
                 <div>
