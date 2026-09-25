@@ -35,10 +35,9 @@ const FoodBeverageOrderTable = ({
       key: "reservationRoom",
       render: (record) => {
         return (
-          <div className="flex-col items-center gap-1">
+          <>
             {record?.reservationRoom ? record?.reservationRoom.room.roomNo : "-"}
-
-          </div>
+          </>
         )
       }
     },
@@ -50,7 +49,7 @@ const FoodBeverageOrderTable = ({
     {
       title: "Order Type",
       key: "orderType",
-      render: (record, text) => {
+      render: (record) => {
         return (
           <div className="flex-col items-center gap-1">
             <div>{record?.orderType.name}</div>
@@ -72,6 +71,7 @@ const FoodBeverageOrderTable = ({
       title: "Price",
       dataIndex: "grandTotal",
       key: "grandTotal",
+      align:"end",
       width: 150,
       render: (text) => (
         <div className="flex justify-end items-center gap-1">
@@ -94,6 +94,7 @@ const FoodBeverageOrderTable = ({
             title: "Action",
             key: "action",
             fixed: "end",
+            width: 80,
             render: (_, record) => {
               const statusCode = record?.orderStatus?.code;
               const isReadonlyStatus =
