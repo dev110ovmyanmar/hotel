@@ -22,6 +22,7 @@ import useApiQuery from "../../../hooks/useApiQuery";
 import Toast from "../../../component/Toast/Toast";
 import usePermission from "../../../hooks/usePermission";
 import { PERMISSIONS } from "../../../variables/permission";
+import Loader from "../../../component/Loader/Loader";
 
 
 const PropertyForm = ({
@@ -69,7 +70,7 @@ const PropertyForm = ({
     invalidateKeys: [["properties"]],
   });
 
-  const { data, isFetching, error } = useApiQuery({
+  const { data, isFetching: propertyDetailsFetching, error } = useApiQuery({
     fetchQueryName: "properties_details",
     fetchQueryFunction: getPropertyDetails,
     params: { uuid: selectedRow?.uuid },
@@ -153,18 +154,19 @@ const PropertyForm = ({
     if (isAdd) {
       createProperty.mutate(payload, {
         onSuccess: () => {
+          Toast.success("Property Created Successfully!");
           form.resetFields();
           setPage(1);
           setDrawerOpen(false);
-          Toast.success("Property Created Successfully!");
         }
       });
     }
     if (isEdit) {
       editProperty.mutate(payload, {
         onSuccess: () => {
-          setDrawerOpen(false);
           Toast.success("Property Updated Successfully!");
+          setDrawerOpen(false);
+          
         }
       });
     }
@@ -206,277 +208,282 @@ const PropertyForm = ({
       onClose={onClose}
       open={drawerOpen}
     >
-      <Spin spinning={loading}>
-        <Form form={form} layout="vertical" onFinish={handlePropertySubmit}>
-          <Form.Item name="uuid" hidden>
-            <Input />
-          </Form.Item>
-
-          <div className="grid grid-cols-2 gap-4">
-            <Form.Item
-              label="Name"
-              name="name"
-              rules={[{ required: true }]}
-            >
-              <Input readOnly={isView} variant="outlined" placeholder="Enter Property Name" />
-            </Form.Item>
-            <Form.Item
-              label="Property Type"
-              name="property_type_uuid"
-              rules={[{ required: true }]}
-            >
-              <Select
-                options={propertyTypes}
-                open={isView ? false : undefined}
-                placeholder="Select Property Type"
-              />
-            </Form.Item>
+      {
+        propertyDetailsFetching
+          ?
+          <div className="flex items-center justify-center h-full min-h-[300px]">
+            <Loader />
           </div>
+          :
+          <Spin spinning={loading}>
+            <Form form={form} layout="vertical" onFinish={handlePropertySubmit}>
+              <Form.Item name="uuid" hidden>
+                <Input />
+              </Form.Item>
 
-          <div className="grid grid-cols-2 gap-4">
-            <Form.Item
-              label="Email"
-              name="email"
-              rules={[{ required: true, type: "email" }]}
-            >
-              <Input readOnly={isView} placeholder="Enter Email" />
-            </Form.Item>
-            <Form.Item
-              label="Phone"
-              name="phone"
-              rules={[
-                { required: true },
-                {
-                  pattern: /^\+?[0-9]{7,15}$/,
-                  message: "Invalid format (e.g. +959...)",
-                },
-              ]}
-            >
-              <Input readOnly={isView} placeholder="Enter Phone Number" />
-            </Form.Item>
-          </div>
-
-          <Form.Item
-            label="Address"
-            name="address"
-            rules={[{ required: true, message: "Invalid address format" }]}
-          >
-            <Input.TextArea rows={2} readOnly={isView} variant="outlined" placeholder="Enter Address" />
-          </Form.Item>
-
-          <div className="grid grid-cols-3 gap-4">
-            {
-              isView ? (
-                <Form.Item label="Country">
-                  <Input
-                    readOnly
-                    value={data?.country?.name}
-                    className="bg-white text-black cursor-default border-gray-200"
-                    variant="outlined"
-                  />
-                </Form.Item>
-              ) : (
+              <div className="grid grid-cols-2 gap-4">
                 <Form.Item
-                  label="Country"
-                  name="country_uuid"
+                  label="Name"
+                  name="name"
+                  rules={[{ required: true }]}
+                >
+                  <Input readOnly={isView} variant="outlined" placeholder="Enter Property Name" />
+                </Form.Item>
+                <Form.Item
+                  label="Property Type"
+                  name="property_type_uuid"
                   rules={[{ required: true }]}
                 >
                   <Select
-                    showSearch
-                    placeholder="Select or type country"
-                    options={countryOptions}
-                    onChange={onCountryChange}
+                    options={propertyTypes}
                     open={isView ? false : undefined}
-                    filterOption={(input, option) =>
-                      (option?.label ?? "")
-                        .toLocaleLowerCase()
-                        .includes(input.toLowerCase())
-                    }
+                    placeholder="Select Property Type"
                   />
                 </Form.Item>
-              )
-            }
-
-            {
-              isView ? (
-                <Form.Item label="City">
-                  <Input
-                    readOnly
-                    value={data?.city?.name}
-                    className="bg-white text-black cursor-default border-gray-200"
-                    variant="outlined"
-                  />
-                </Form.Item>
-              ) : (
-                <Form.Item
-                  label="City"
-                  name="city_uuid"
-                  rules={[{ required: true }]}
-                >
-                  <Select
-                    showSearch
-                    placeholder="Select or type city"
-                    options={cityOptions}
-                    filterOption={(input, option) =>
-                      (option?.label ?? "")
-                        .toLowerCase()
-                        .includes(input.toLowerCase())
-                    }
-                  />
-                </Form.Item>
-              )
-            }
-
-            {
-              isView ? (
-                <Form.Item label="Currency">
-                  <Input
-                    readOnly
-                    value={data?.currency?.code}
-                    className="bg-white text-black cursor-default border-gray-200"
-                    variant="outlined"
-                  />
-                </Form.Item>
-              ) :
-                (
-                  <Form.Item
-                    label="Currency"
-                    name="currency_uuid"
-                    rules={[{ required: true }]}
-                  >
-                    <Select
-                      options={currencyOptions}
-                      placeholder="Select Currency"
-                    />
-                  </Form.Item>
-                )
-            }
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            {
-              isView ? (
-                <Form.Item label="Check-In Time">
-                  <Input
-                    readOnly
-                    value={data?.checkinTime}
-                    className="bg-white text-black cursor-default border-gray-200"
-                    variant="outlined"
-                  />
-                </Form.Item>
-              ) :
-                <Form.Item
-                  label="Check-In Time"
-                  name="checkinTime"
-                  rules={[{ required: true }]}
-                >
-                  <TimePicker
-                    className="w-full"
-                    format="HH:mm:ss"
-                    onChange={() => form.validateFields(["checkOutTime"])}
-                    placeholder="Select Check-In Time"
-                  />
-                </Form.Item>
-            }
-
-            {
-              isView ? (
-                <Form.Item label="Check-Out Time">
-                  <Input
-                    readOnly
-                    value={data?.checkoutTime}
-                    className="bg-white text-black cursor-default border-gray-200"
-                    variant="outlined"
-                  />
-                </Form.Item>
-              ) : (
-                <Form.Item
-                  label="Check-Out Time"
-                  name="checkoutTime"
-                  rules={[{ required: true }]}
-                >
-                  <TimePicker
-                    className="w-full"
-                    format="HH:mm:ss"
-                    placeholder="Select Check-Out Time"
-                  />
-                </Form.Item>
-              )
-            }
-          </div>
-        </Form>
-
-        <Divider />
-        {!isAdd && (
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="text-lg font-bold">Settings ({data?.settings?.length || 0})</h3>
-            {!isView && (
-              <Button
-                type="dashed"
-                icon={<PlusOutlined />}
-                onClick={() => {
-                  setEditingSetting(null);
-                  setSettingDrawer(true);
-                }}
-              >
-                Add Setting
-              </Button>
-            )}
-          </div>
-        )}
-
-        {!isAdd && (
-          <div className="space-y-4">
-            {isFetching ? (
-              <div className="text-center py-4">
-                <Spin size="small" /> Loading settings...
               </div>
-            ) : data?.settings && data.settings.length > 0 ? (
-              data.settings.map((s, idx) => (
-                <div>
-                  <Card
-                    key={s.uuid || idx}
-                    size="small"
-                    title={
-                      <Tag color={s.uuid ? "blue" : "green"}>
-                        {s.settingKey?.toUpperCase()}
-                      </Tag>
-                    }
-                  // extra={!isView && (
-                  //   <Button 
-                  //     type="link" 
-                  //     icon={<EditOutlined />} 
-                  //     onClick={() => {
-                  //       setEditingSetting({
-                  //         uuid: s.uuid,
-                  //         key: s.settingKey,
-                  //         value: s.settingValue 
-                  //       });
-                  //       setSettingDrawer(true);
-                  //     }}
-                  //   >
-                  //     Edit
-                  //   </Button>
-                  // )}
+
+              <div className="grid grid-cols-2 gap-4">
+                <Form.Item
+                  label="Email"
+                  name="email"
+                  rules={[{ required: true, type: "email" }]}
+                >
+                  <Input readOnly={isView} placeholder="Enter Email" />
+                </Form.Item>
+                <Form.Item
+                  label="Phone"
+                  name="phone"
+                  rules={[
+                    { required: true },
+                    {
+                      pattern: /^\+?[0-9]{7,15}$/,
+                      message: "Invalid format (e.g. +959...)",
+                    },
+                  ]}
+                >
+                  <Input readOnly={isView} placeholder="Enter Phone Number" />
+                </Form.Item>
+              </div>
+
+              <Form.Item
+                label="Address"
+                name="address"
+                rules={[{ required: true, message: "Invalid address format" }]}
+              >
+                <Input.TextArea rows={2} readOnly={isView} variant="outlined" placeholder="Enter Address" />
+              </Form.Item>
+
+              <div className="grid grid-cols-3 gap-4">
+                {
+                  isView ? (
+                    <Form.Item label="Country">
+                      <Input
+                        readOnly
+                        value={data?.country?.name}
+                        className="bg-white text-black cursor-default border-gray-200"
+                        variant="outlined"
+                      />
+                    </Form.Item>
+                  ) : (
+                    <Form.Item
+                      label="Country"
+                      name="country_uuid"
+                      rules={[{ required: true }]}
+                    >
+                      <Select
+                        showSearch
+                        placeholder="Select or type country"
+                        options={countryOptions}
+                        onChange={onCountryChange}
+                        open={isView ? false : undefined}
+                        filterOption={(input, option) =>
+                          (option?.label ?? "")
+                            .toLocaleLowerCase()
+                            .includes(input.toLowerCase())
+                        }
+                      />
+                    </Form.Item>
+                  )
+                }
+
+                {
+                  isView ? (
+                    <Form.Item label="City">
+                      <Input
+                        readOnly
+                        value={data?.city?.name}
+                        className="bg-white text-black cursor-default border-gray-200"
+                        variant="outlined"
+                      />
+                    </Form.Item>
+                  ) : (
+                    <Form.Item
+                      label="City"
+                      name="city_uuid"
+                      rules={[{ required: true }]}
+                    >
+                      <Select
+                        showSearch
+                        placeholder="Select or type city"
+                        options={cityOptions}
+                        filterOption={(input, option) =>
+                          (option?.label ?? "")
+                            .toLowerCase()
+                            .includes(input.toLowerCase())
+                        }
+                      />
+                    </Form.Item>
+                  )
+                }
+
+                {
+                  isView ? (
+                    <Form.Item label="Currency">
+                      <Input
+                        readOnly
+                        value={data?.currency?.code}
+                        className="bg-white text-black cursor-default border-gray-200"
+                        variant="outlined"
+                      />
+                    </Form.Item>
+                  ) :
+                    (
+                      <Form.Item
+                        label="Currency"
+                        name="currency_uuid"
+                        rules={[{ required: true }]}
+                      >
+                        <Select
+                          options={currencyOptions}
+                          placeholder="Select Currency"
+                        />
+                      </Form.Item>
+                    )
+                }
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                {
+                  isView ? (
+                    <Form.Item label="Check-In Time">
+                      <Input
+                        readOnly
+                        value={data?.checkinTime}
+                        className="bg-white text-black cursor-default border-gray-200"
+                        variant="outlined"
+                      />
+                    </Form.Item>
+                  ) :
+                    <Form.Item
+                      label="Check-In Time"
+                      name="checkinTime"
+                      rules={[{ required: true }]}
+                    >
+                      <TimePicker
+                        className="w-full"
+                        format="HH:mm:ss"
+                        onChange={() => form.validateFields(["checkOutTime"])}
+                        placeholder="Select Check-In Time"
+                      />
+                    </Form.Item>
+                }
+
+                {
+                  isView ? (
+                    <Form.Item label="Check-Out Time">
+                      <Input
+                        readOnly
+                        value={data?.checkoutTime}
+                        className="bg-white text-black cursor-default border-gray-200"
+                        variant="outlined"
+                      />
+                    </Form.Item>
+                  ) : (
+                    <Form.Item
+                      label="Check-Out Time"
+                      name="checkoutTime"
+                      rules={[{ required: true }]}
+                    >
+                      <TimePicker
+                        className="w-full"
+                        format="HH:mm:ss"
+                        placeholder="Select Check-Out Time"
+                      />
+                    </Form.Item>
+                  )
+                }
+              </div>
+            </Form>
+
+            <Divider />
+            {!isAdd && (
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg font-bold">Settings ({data?.settings?.length || 0})</h3>
+                {!isView && (
+                  <Button
+                    type="dashed"
+                    icon={<PlusOutlined />}
+                    onClick={() => {
+                      setEditingSetting(null);
+                      setSettingDrawer(true);
+                    }}
                   >
-                    <div className="text-sm">
-                      {/* <strong>Key:</strong> {s.settingKey}<br /> */}
-                      <strong>Value:</strong>
-                      {
-                        typeof s.settingValue === 'object' && s.settingValue !== null
-                          ? JSON.stringify(s.settingValue)
-                          : String(s.settingValue)
-                      }
-                    </div>
-                  </Card>
-                </div>
-              ))
-            ) : (
-              <Empty description="No settings added" />
+                    Add Setting
+                  </Button>
+                )}
+              </div>
             )}
-          </div>
-        )}
-      </Spin>
+
+            {!isAdd &&
+              <div className="space-y-4">
+                {data?.settings && data.settings.length > 0 ? (
+                  data.settings.map((s, idx) => (
+                    <div>
+                      <Card
+                        key={s.uuid || idx}
+                        size="small"
+                        title={
+                          <Tag color={s.uuid ? "blue" : "green"}>
+                            {s.settingKey?.toUpperCase()}
+                          </Tag>
+                        }
+                      // extra={!isView && (
+                      //   <Button 
+                      //     type="link" 
+                      //     icon={<EditOutlined />} 
+                      //     onClick={() => {
+                      //       setEditingSetting({
+                      //         uuid: s.uuid,
+                      //         key: s.settingKey,
+                      //         value: s.settingValue 
+                      //       });
+                      //       setSettingDrawer(true);
+                      //     }}
+                      //   >
+                      //     Edit
+                      //   </Button>
+                      // )}
+                      >
+                        <div className="text-sm">
+                          {/* <strong>Key:</strong> {s.settingKey}<br /> */}
+                          <strong>Value:</strong>
+                          {
+                            typeof s.settingValue === 'object' && s.settingValue !== null
+                              ? JSON.stringify(s.settingValue)
+                              : String(s.settingValue)
+                          }
+                        </div>
+                      </Card>
+                    </div>
+                  ))
+                ) : (
+                  <Empty description="No settings added" />
+                )}
+              </div>
+            }
+          </Spin>
+      }
+
 
       <Drawer
         title={editingSetting ? "Edit Setting" : "Add Setting"}
@@ -493,7 +500,7 @@ const PropertyForm = ({
             <Button
               type="primary"
               onClick={() => settingForm.submit()} // Triggers SettingForm's onFinish
-              loading={createProperty?.isPending} // Show loading state if API is active
+              loading={createProperty?.isPending || editProperty?.isPending} // Show loading state if API is active
             >
               Create
             </Button>
