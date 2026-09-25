@@ -402,6 +402,7 @@ const ReservationForm = ({
                                     suffixIcon={afterRoomConfirm ? null : undefined}
                                     optionFilterProp="label"
                                     loading={reservationMetaFetching}
+                                    disabled={reservationMetaFetching}
                                 />
                             </Form.Item>
                         </div>
@@ -427,6 +428,7 @@ const ReservationForm = ({
                                     suffixIcon={afterRoomConfirm ? null : undefined}
                                     optionFilterProp="label"
                                     loading={reservationMetaFetching}
+                                    disabled={reservationMetaFetching}
                                 />
                             </Form.Item>
                         </div>

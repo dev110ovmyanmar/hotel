@@ -23,7 +23,7 @@ const CompanyContractList = () => {
 
   const normalStatus = status === "all" ? null : status;
 
-  const { data, isFetching, error } = useApiQuery({
+  const { data, isFetching : companyContractDataFetching, error } = useApiQuery({
     fetchQueryName: "partner-contracts",
     fetchQueryFunction: fetchPartnerContract,
     params: {
@@ -69,6 +69,7 @@ const CompanyContractList = () => {
         total={data?.pagination?.total}
         changePage={(page) => setPage(page)}
         changePerPage={(perPage) => setPerPage(perPage)}
+        loading={companyContractDataFetching}
       />
 
       <CompanyContractForm
