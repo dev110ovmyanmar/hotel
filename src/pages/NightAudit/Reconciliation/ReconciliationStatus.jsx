@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   CARD_CONFIGS,
   StatusCard,
@@ -16,14 +16,13 @@ import { useApiMutation } from "../../../hooks/useApiMutation";
 
 const { Text } = Typography;
 
-const ReconciliationStatus = ({ data, hasBlockingDifferences, canConfirm, isConfirm }) => {
+const ReconciliationStatus = ({ data, hasBlockingDifferences, confirm, isConfirm }) => {
 
-  const confirmed = canConfirm === true;
-  const confirm = isConfirm === true;
+  const canConfirm = confirm === true;
+  const isConfirmed = isConfirm === false;
   const hasBlockingDifference = hasBlockingDifferences === false;
 
-  // const isBalanced = hasBlockingDifference && confirm && confirmed;
-  const isBalanced = hasBlockingDifference && confirm && confirmed;
+  const isBalanced = hasBlockingDifference && canConfirm && isConfirmed;
 
   const nightAuditData = getNightAuditData();
   const businessDate = nightAuditData?.businessDate;
@@ -39,7 +38,20 @@ const ReconciliationStatus = ({ data, hasBlockingDifferences, canConfirm, isConf
     });
   };
 
-  const isConfirmed = reconciliationConfirmed.isSuccess;
+  const recConfirmed = reconciliationConfirmed.isSuccess;
+
+  useEffect(() => {
+  if (recConfirmed) {
+    localStorage.setItem("isConfirmed", JSON.stringify(true));
+ window.dispatchEvent(
+        new CustomEvent("reconciliation_confirmed", {
+          detail: {
+            isConfirmed: true,
+          },
+        })
+      );
+  }
+}, [recConfirmed]);
 
   return (
     <div className="mb-2">
@@ -76,7 +88,7 @@ const ReconciliationStatus = ({ data, hasBlockingDifferences, canConfirm, isConf
                 <>
                   <CheckCircleFilled style={{ color: "#52c41a" }} />
                   <Text className="text-[#274916] dark:text-[#A8D58D]">
-                    {isConfirmed ? "Confirmed" : "Can Confirm"}
+                    {recConfirmed ? "Confirmed" : "Can Confirm"}
                   </Text>
                 </>
               ) : (
@@ -87,8 +99,7 @@ const ReconciliationStatus = ({ data, hasBlockingDifferences, canConfirm, isConf
               )}
             </Space>
 
-            {/* Hide button if confirmed; otherwise render based on isBalanced */}
-            {!isConfirmed && (
+            {!recConfirmed && (
               <Button
                 type="primary"
                 danger={!isBalanced}

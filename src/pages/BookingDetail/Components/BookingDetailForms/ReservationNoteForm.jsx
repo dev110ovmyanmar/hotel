@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Form,
   Input,
@@ -8,6 +8,7 @@ import {
   Divider,
   Space,
   Popconfirm,
+  Tooltip,
 } from "antd";
 import {
   DeleteOutlined,
@@ -22,7 +23,6 @@ import {
 } from "../../../../api/reservationSectionApi";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
 import Toast from "../../../../component/Toast/Toast";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { LIMITS } from "../../../../variables/constants";
 import useApiQuery from "../../../../hooks/useApiQuery";
 import Loader from "../../../../component/Loader/Loader";
@@ -34,17 +34,21 @@ const ReservationNoteForm = ({
   selectedData,
   onSuccess,
   reservationUuid,
+  reservationRoomUuid
 }) => {
+
   const [form] = Form.useForm();
+
+  const isView = mode === "view";
+
   const uuid = reservationUuid;
+  const roomUuid = reservationRoomUuid;
 
   const [editingKey, setEditingKey] = useState("");
   const [editValue, setEditValue] = useState("");
   const [keyword, setKeyword] = useState("");
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(LIMITS.PAGE_SIZE);
-
-  const isView = mode === "view";
 
   const { data, isFetching, refetch } = useApiQuery({
     fetchQueryName: "reservation-note",
@@ -91,6 +95,7 @@ const ReservationNoteForm = ({
       note: editValue,
       uuid: record?.uuid,
       reservation: { uuid },
+      reservationRoom: { uuid: roomUuid },
     };
 
     reservationNotesCreate.mutate(payload, {
@@ -119,16 +124,16 @@ const ReservationNoteForm = ({
   };
 
   const columns = [
-  {
-    title: "Room",
-    dataIndex: "room",
-    key: "room",
-    align: "center",
-    render: (_, record) => {
+    {
+      title: "Room",
+      dataIndex: "room",
+      key: "room",
+      align: "center",
+      render: (_, record) => {
         return record?.reservationRoom == null
-            ? "-"
-            : <span className="text-black">{record?.reservationRoom?.room?.roomNo}</span>;
-    },
+          ? "-"
+          : <span className="text-black">{record?.reservationRoom?.room?.roomNo}</span>;
+      },
     },
     {
       title: "Note",
@@ -153,39 +158,53 @@ const ReservationNoteForm = ({
         <Space>
           {record.id === editingKey ? (
             <>
-              <CheckOutlined
-                className="text-green-500 cursor-pointer"
-                onClick={() => editNote(record)}
-              />
-              <CloseOutlined
-                className="text-red-500 cursor-pointer"
-                onClick={() => setEditingKey("")}
-              />
+              <Tooltip title="Save">
+                <CheckOutlined
+                  className="text-green-500 cursor-pointer"
+                  onClick={() => editNote(record)}
+                />
+              </Tooltip>
+
+              <Tooltip title="Cancel">
+                <CloseOutlined
+                  className="text-red-500 cursor-pointer"
+                  onClick={() => setEditingKey("")}
+                />
+              </Tooltip>
             </>
           ) : (
             <>
-              <EditOutlined
-                className="text-blue-500 cursor-pointer"
-                onClick={() => {
-                  setEditingKey(record.id);
-                  setEditValue(record.note);
-                }}
-              />
-              <Popconfirm title="Delete?" onConfirm={() => deleteNote(record)}>
-                <DeleteOutlined className="text-red-500 cursor-pointer" />
-              </Popconfirm>
+              <Tooltip title="Edit">
+                <EditOutlined
+                  className="text-blue-500 cursor-pointer"
+                  onClick={() => {
+                    setEditingKey(record.id);
+                    setEditValue(record.note);
+                  }}
+                />
+              </Tooltip>
+
+              <Tooltip title="Delete">
+                <Popconfirm
+                  title="Delete?"
+                  onConfirm={() => deleteNote(record)}
+                >
+                  <DeleteOutlined className="text-red-500 cursor-pointer" />
+                </Popconfirm>
+              </Tooltip>
             </>
           )}
         </Space>
       ),
-    },
+    }
+
   ].filter((c) => !c.hidden);
 
   return (
     <Drawer
       open={open}
       onClose={onClose}
-      title="Room Notes"
+      title="Reservation Notes"
       size={550}
       extra={
         !isView && (
