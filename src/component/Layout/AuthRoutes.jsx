@@ -1022,7 +1022,7 @@ export const authRoutes = [
         icon: <Wallet size={20}/>,
         isPrivate: false,
         component: <PaymentHistoryAllList />,
-        permission: PERMISSIONS.PAYMENT_LIST,
+        permission: PERMISSIONS.FOLIO_PAYMENT_LIST,
       },
       {
         key: 16.2,
@@ -1030,7 +1030,7 @@ export const authRoutes = [
         path: "/payment-&-billing/pending-payment",
         icon: <Hourglass size={20} />,
         component: <PendingPaymentsList />,
-        permission: PERMISSIONS.TAX_LIST,
+        permission: PERMISSIONS.FOLIO_PAYMENT_LIST,
       },
       {
         key: 16.3,
@@ -1039,7 +1039,7 @@ export const authRoutes = [
         icon: <ArrowLeftRight size={20}/>,
         isPrivate: true,
         component: <RedundsList />,
-        permission: PERMISSIONS.PAYMENT_LIST,
+        permission: PERMISSIONS.FOLIO_PAYMENT_LIST,
       },
       {
         key: 16.5,

@@ -1,19 +1,15 @@
-import React, { useEffect, useState } from "react";
+import { useEffect } from "react";
 import {
   Form,
   Input,
   Button,
   Drawer,
-  Space,
   Select,
   Switch,
-  Upload,
 } from "antd";
 import Toast from "../../../../component/Toast/Toast";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
 import useApiQuery from "../../../../hooks/useApiQuery";
-import { loadState } from "./../../../../utils/Utils";
-import { LOCAL_STORAGE_KEYS } from "./../../../../variables/constants";
 import FormButtons from "./../../../../component/FormButtons/FormButtons";
 import {
   upsertPayment,
@@ -25,6 +21,7 @@ import Status from "./../../../../component/Status/Status";
 import ImageUploadCard from "../../../../component/ImageUploadCard/ImageUploadCard";
 import usePermission from "../../../../hooks/usePermission";
 import { PERMISSIONS } from "../../../../variables/permission";
+import Loader from "../../../../component/Loader/Loader";
 
 // Add PaymentForm
 const PaymentForm = ({
@@ -39,6 +36,7 @@ const PaymentForm = ({
 }) => {
   const [form] = Form.useForm();
   const { hasPermission } = usePermission();
+  const canEditPayment = hasPermission(PERMISSIONS.PAYMENT_EDIT);
 
   const isView = mode === "view";
   const isEdit = mode === "edit";
@@ -50,15 +48,13 @@ const PaymentForm = ({
   const providerType = initData?.statuses.provider_type;
   const cashName = providerType.find((item) => item?.name === "Cash")?.name;
 
-  const canEdit = hasPermission(PERMISSIONS.PAYMENT_EDIT);
-
   const upsertPayments = useApiMutation({
     mutationFn: upsertPayment,
     invalidateKeys: [["payments"]],
     shouldInvalidate: isEdit ? true : page === 1,
   });
 
-  const { data, isPending, error } = useApiQuery({
+  const { data, isFetching, error } = useApiQuery({
     fetchQueryName: "payment-details",
     fetchQueryFunction: paymentDetails,
     params: { uuid: selectedData?.uuid },
@@ -163,7 +159,7 @@ const PaymentForm = ({
                   : "Add Payment"}
             </span>
             {isView ? (
-              canEdit && (
+              canEditPayment && (
                 <Button type="primary" onClick={() => setMode("edit")}>
                   Edit
                 </Button>
@@ -178,82 +174,91 @@ const PaymentForm = ({
           </div>
         }
       >
-        <Form
-          form={form}
-          layout="vertical"
-          style={{ width: "100%" }}
-          onFinish={onFinish}
-          initialValues={{
-            isOnline: false,
-          }}
-        >
-          {!isAdd && (
-            <div className="left-container mb-5">
-              <ImageUploadCard
-                type="payment_img"
-                property={selectedData}
-                uploadMutation={uploadMutation}
-                imageUrl={data?.file}
-                size="small"
-              />
+        {
+          !isAdd && isFetching
+            ?
+            <div className="flex items-center justify-center h-full min-h-[300px]">
+              <Loader />
             </div>
-          )}
-
-          <Form.Item
-            label=" Name"
-            name="name"
-            rules={[{ required: true, message: " Name is Required" }]}
-          >
-            <Input readOnly={isView} placeholder="Enter Payment Name" />
-          </Form.Item>
-          <Form.Item
-            label="Provider Type"
-            name={["type", "uuid"]}
-            rules={[{ required: true, message: "Provider Type is Required" }]}
-          >
-            <Select
-              showSearch={{ optionFilterProp: "label" }}
-              options={providerType?.map((item) => ({
-                label: item?.name,
-                value: item?.uuid,
-              }))}
-              open={isView ? false : undefined}
-              placeholder="Select Provider Type"
-            ></Select>
-          </Form.Item>
-
-          {selectedType && selectedTypeName !== "Cash" && (
-            <Form.Item
-              label="Provider"
-              name={["provider", "uuid"]}
-              // name="provider"
-              rules={[{ required: true, message: "Provider is Required" }]}
+            :
+            <Form
+              form={form}
+              layout="vertical"
+              style={{ width: "100%" }}
+              onFinish={onFinish}
+              initialValues={{
+                isOnline: false,
+              }}
             >
-              <Select
-                showSearch={{ optionFilterProp: "label" }}
-                options={provider?.map((item) => ({
-                  label: item?.name,
-                  value: item?.uuid,
-                }))}
-                open={isView ? false : undefined}
-                placeholder="Select Provider Name"
-              />
-            </Form.Item>
-          )}
-          <Form.Item
-            label="Is Online"
-            name="isOnline"
-            valuePropName="checked"
-            rules={[{ required: true, message: "is Online is Required" }]}
-          >
-            <Switch
-              disabled={isView}
-              checkedChildren="True"
-              unCheckedChildren="False"
-            />
-          </Form.Item>
-          <Status isView={isView} statusValue={statuses} />
-        </Form>
+              {!isAdd && (
+                <div className="left-container mb-5">
+                  <ImageUploadCard
+                    type="payment_img"
+                    property={selectedData}
+                    uploadMutation={uploadMutation}
+                    imageUrl={data?.file}
+                    size="small"
+                  />
+                </div>
+              )}
+
+              <Form.Item
+                label=" Name"
+                name="name"
+                rules={[{ required: true, message: " Name is Required" }]}
+              >
+                <Input readOnly={isView} placeholder="Enter Payment Name" />
+              </Form.Item>
+              <Form.Item
+                label="Provider Type"
+                name={["type", "uuid"]}
+                rules={[{ required: true, message: "Provider Type is Required" }]}
+              >
+                <Select
+                  showSearch={{ optionFilterProp: "label" }}
+                  options={providerType?.map((item) => ({
+                    label: item?.name,
+                    value: item?.uuid,
+                  }))}
+                  open={isView ? false : undefined}
+                  placeholder="Select Provider Type"
+                ></Select>
+              </Form.Item>
+
+              {selectedType && selectedTypeName !== "Cash" && (
+                <Form.Item
+                  label="Provider"
+                  name={["provider", "uuid"]}
+                  // name="provider"
+                  rules={[{ required: true, message: "Provider is Required" }]}
+                >
+                  <Select
+                    showSearch={{ optionFilterProp: "label" }}
+                    options={provider?.map((item) => ({
+                      label: item?.name,
+                      value: item?.uuid,
+                    }))}
+                    open={isView ? false : undefined}
+                    placeholder="Select Provider Name"
+                  />
+                </Form.Item>
+              )}
+              <Form.Item
+                label="Is Online"
+                name="isOnline"
+                valuePropName="checked"
+                rules={[{ required: true, message: "is Online is Required" }]}
+              >
+                <Switch
+                  disabled={isView}
+                  checkedChildren="True"
+                  unCheckedChildren="False"
+                />
+              </Form.Item>
+              <Status isView={isView} statusValue={statuses} />
+            </Form>
+        }
+
       </Drawer>
     </div>
   );
