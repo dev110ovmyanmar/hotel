@@ -52,7 +52,7 @@ const PaymentList = () => {
           setKeyword={setKeyword}
           addButtonText="Add New Payment"
           onAdd={handleAdd}
-          permission={PERMISSIONS.TAX_CREATE}
+          permission={PERMISSIONS.PAYMENT_CREATE}
         />
       </div>
 

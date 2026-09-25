@@ -242,8 +242,6 @@ export const PERMISSIONS = {
   // AVAILABILITY_CALENDAR_CREATE: "availability-calendar.create",
   // AVAILABILITY_CALENDAR_UPDATE: "availability-calendar.edit",
 
-  
-
   //Supplier
   SUPPLIER_LIST: "supplier.list",
   SUPPLIER_VIEW: "supplier.view",
@@ -366,8 +364,10 @@ export const PERMISSIONS = {
   FOLIO_PAYMENT_DEPOSIT : "folio-payment.deposit",
   FOLIO_PAYMENT_REFUND: "folio-payment.refund",
 
-  //Service Order List
-  SERVICE_ORDER_LIST : "service-order.list",
+  // Payment History (Folio-Payment)
+  FOLIO_PAYMENT_LIST:"folio-payment.list",
+
+  
 };
 
 

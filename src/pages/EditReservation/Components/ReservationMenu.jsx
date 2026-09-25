@@ -28,7 +28,6 @@ const EXTENDED_TABS = [
 const ReservationMenu = ({ data }) => {
   const { hasPermission } = usePermission();
   const canViewRoomInformation = hasPermission(PERMISSIONS.RESERVATION_ROOM_LIST);
-  // const canViewGuestDetails = hasPermission(PERMISSIONS.RESERVATION_EDIT);
   const canViewGuestDetails = hasPermission(PERMISSIONS.RESERVATION_LIST);
   const canViewFacilityBooking = hasPermission(PERMISSIONS.FACILITY_BOOKING_LIST);
   const canViewServiceAddOn = hasPermission(PERMISSIONS.RESERVATION_EDIT);

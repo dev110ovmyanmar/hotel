@@ -34,6 +34,7 @@ const SearchEventFacilityOrderForm = ({
   setDrawerOpen,
   reservationData,
   facilityPackagesOptions,
+  facilityMetaLoading
 }) => {
   const [form] = Form.useForm();
   const hasStartTime = Form.useWatch("startTime", form);
@@ -334,6 +335,8 @@ const SearchEventFacilityOrderForm = ({
                 <Select
                   placeholder="Select Package"
                   options={facilityPackagesOptions}
+                  loading={facilityMetaLoading}
+                  disabled={facilityMetaLoading}
                 />
               </Form.Item>
             </Col>
