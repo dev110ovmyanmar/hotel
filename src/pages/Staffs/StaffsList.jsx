@@ -21,7 +21,7 @@ const StaffsList = () => {
   const normalStatus = status === "all" ? null : status;
 
   const { data, isFetching } = useApiQuery({
-    fetchQueryName: "staffData",
+    fetchQueryName: "staffDataList",
     fetchQueryFunction: fetchStaff,
     params: {
       pagination: {
