@@ -42,7 +42,7 @@ const TaxForm = ({
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
   const chargeTypeValue = Form.useWatch("charge_type", form);
 
-  const canEdit = hasPermission(PERMISSIONS.TAX_EDIT);
+  const canEditTax = hasPermission(PERMISSIONS.TAX_EDIT);
 
   const chargeCategory = initData?.statuses?.charge_category?.map(
     (category) => ({
@@ -194,7 +194,7 @@ const TaxForm = ({
                   : "Create Taxes & Service Charges"}
             </span>
             {isView ? (
-              canEdit && (
+              canEditTax && (
                 <Button type="primary" onClick={() => setMode("edit")}>
                   Edit
                 </Button>
