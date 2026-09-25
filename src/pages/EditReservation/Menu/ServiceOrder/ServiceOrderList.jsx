@@ -19,9 +19,10 @@ const ServiceOrderList = () => {
   const { bookingId } = useParams();
   const uuid = bookingId;
 
-  const {hasPermission} = usePermission();
-  const service_order_create = hasPermission(PERMISSIONS.SERVICE_ORDER_CREATE);
-  
+  const { hasPermission } = usePermission();
+  const canCreateServiceOrder = hasPermission(PERMISSIONS.SERVICE_ORDER_CREATE);
+  const canEditPermissionWithViewServiceOrderAddOns = hasPermission(PERMISSIONS.SERVICE_ORDER_EDIT);
+
   useEffect(() => {
     const cleanId = bookingId ? bookingId.trim() : "";
 
@@ -89,13 +90,16 @@ const ServiceOrderList = () => {
         <ReservationListHeader
           reservationId={data?.reservation?.reservationNo}
           onAddreservation={handleAddService}
-          addButtonText={service_order_create ? "Add Service Order" : ""}
+          addButtonText={canCreateServiceOrder ? "Add Service Order" : ""}
         />
       </div>
 
-      <Button className="mb-2 custom-blue-btn" onClick={() => setOpen(true)}>
-        View Add On Service
-      </Button>
+      {
+        canEditPermissionWithViewServiceOrderAddOns &&
+        <Button className="mb-2 custom-blue-btn" onClick={() => setOpen(true)}>
+          View Add On Service
+        </Button>
+      }
 
       <ServiceOrderTable
         data={data?.data || []}

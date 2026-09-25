@@ -30,6 +30,7 @@ import Toast from "../../../../../../component/Toast/Toast";
 import { getGuestMeta } from "./../../../../../../api/guestNoteApi";
 import usePermission from "../../../../../../hooks/usePermission";
 import { PERMISSIONS } from "../../../../../../variables/permission";
+import Loader from "../../../../../../component/Loader/Loader";
 
 const { RangePicker } = TimePicker;
 
@@ -70,9 +71,12 @@ const EventFacilityOrderForm = ({
 
   const eventTime = Form.useWatch("timeRange", form);
 
-  const { data: facilityMetaData } = useApiQuery({
+  const { data: facilityMetaData, isFetching: facilityMetaLoading } = useApiQuery({
     fetchQueryName: "facilityMetaData",
     fetchQueryFunction: facilityMeta,
+    options: {
+      enabled: !!drawerOpen
+    }
   });
 
   const facilityPackages = facilityMetaData?.facility_packages?.map((item) => ({
@@ -92,20 +96,23 @@ const EventFacilityOrderForm = ({
     invalidateKeys: [["facility-booking-list"]],
   });
 
-  const { data: bookingDetails } = useApiQuery({
+  const { data: bookingDetails, isFetching: bookingDetailsFetching } = useApiQuery({
     fetchQueryName: "facility-booking-details",
     fetchQueryFunction: facilityBookingDetails,
     params: {
       uuid: selectedData?.uuid,
     },
     options: {
-      enabled: !!selectedData?.uuid,
+      enabled: !!selectedData?.uuid && drawerOpen,
     },
   });
 
-  const { data: guestDetails } = useApiQuery({
+  const { data: guestDetails, isFetching: guestDetailFetching } = useApiQuery({
     fetchQueryName: "guest-details",
     fetchQueryFunction: getGuestMeta,
+    options: {
+      enabled: !!drawerOpen
+    }
   });
 
   const guestList = Array.isArray(guestDetails)
@@ -305,7 +312,7 @@ const EventFacilityOrderForm = ({
             </span>
             {isView ? (
               selectedData?.status?.code !== "completed" &&
-              selectedData?.status?.code !== "cancelled" && 
+              selectedData?.status?.code !== "cancelled" &&
               canEditFacilityBooking && (
                 <Button type="primary" onClick={() => setMode("edit")}>
                   Edit
@@ -325,267 +332,279 @@ const EventFacilityOrderForm = ({
           </div>
         }
       >
-        <Form
-          form={form}
-          layout="vertical"
-          onFinish={onFinish}
-          disabled={isView}
-          initialValues={{ expectedPax: 1 }}
-        >
-          {isAdd && (
-            <div className="flex justify-end mb-4">
-              <Button
-                onClick={() => setSearchOpen(true)}
-                className="custom-blue-btn"
-              >
-                Search By
-              </Button>
+        {
+          !isAdd && (facilityMetaLoading || guestDetailFetching || bookingDetailsFetching)
+            ?
+            <div className="flex items-center justify-center h-full min-h-[300px]">
+              <Loader /> 
             </div>
-          )}
-
-          <Form.Item label="Guest Name" name="guestType" className="mb-2">
-            <Radio.Group
+            :
+            <Form
+              form={form}
+              layout="vertical"
+              onFinish={onFinish}
               disabled={isView}
-              onChange={(e) => {
-                const type = e.target.value;
-
-                if (type === "new") {
-                  form.setFieldsValue({
-                    guestUuid: undefined,
-                    guestName: "",
-                    guestPhone: "",
-                  });
-                }
-
-                if (type === "existing") {
-                  form.setFieldsValue({
-                    guestUuid: undefined,
-                    guestName: undefined,
-                    guestPhone: "",
-                  });
-                }
-              }}
+              initialValues={{ expectedPax: 1 }}
             >
-              <Radio
-                value="new"
-                className={
-                  guestType === "new" ? "custom-disabled-checkbox" : ""
-                }
-              >
-                New Guest
-              </Radio>
-              <Radio
-                value="existing"
-                className={
-                  guestType === "existing" ? "custom-disabled-checkbox" : ""
-                }
-              >
-                Existing Guest
-              </Radio>
-            </Radio.Group>
-          </Form.Item>
+              {isAdd && (
+                <div className="flex justify-end mb-4">
+                  <Button
+                    onClick={() => setSearchOpen(true)}
+                    className="custom-blue-btn"
+                  >
+                    Search By
+                  </Button>
+                </div>
+              )}
 
-          {guestType === "existing" ? (
-            <Form.Item
-              label="Existing Guest"
-              name="guestUuid"
-              rules={[
-                {
-                  required: true,
-                  message: "Please select an existing guest",
-                },
-              ]}
-            >
-              <Select
-                showSearch
-                placeholder="Select Existing Guest"
-                disabled={isView}
-                options={guestOptions}
-                optionFilterProp="label"
-                filterOption={(input, option) =>
-                  option?.label?.toLowerCase().includes(input.toLowerCase())
-                }
-                onChange={(value, option) => {
-                  form.setFieldsValue({
-                    guestUuid: value,
-                    guestName: option?.fullName || option?.label || "",
-                    guestPhone: option?.phone || "",
-                  });
-                }}
-              />
-            </Form.Item>
-          ) : (
-            <Form.Item
-              label="New Guest Name"
-              name="guestName"
-              rules={[
-                {
-                  required: true,
-                  message: "Guest Name is Required",
-                },
-              ]}
-            >
-              <Input readOnly={isView} placeholder="Enter New Guest Name" />
-            </Form.Item>
-          )}
+              <Form.Item label="Guest Name" name="guestType" className="mb-2">
+                <Radio.Group
+                  disabled={isView}
+                  onChange={(e) => {
+                    const type = e.target.value;
 
-          <Form.Item
-            label="Guest Phone No"
-            name="guestPhone"
-            rules={[
-              {
-                required: true,
-                message: "Guest Phone is Required",
-              },
-            ]}
-          >
-            <Input
-              maxLength={20}
-              disabled={isView || guestType === "existing"}
-              placeholder="Enter Phone"
-              onKeyPress={(e) => {
-                const value = e.currentTarget.value;
+                    if (type === "new") {
+                      form.setFieldsValue({
+                        guestUuid: undefined,
+                        guestName: "",
+                        guestPhone: "",
+                      });
+                    }
 
-                if (
-                  !/[0-9]/.test(e.key) &&
-                  !(e.key === "+" && value.length === 0)
-                ) {
-                  e.preventDefault();
-                }
-              }}
-            />
-          </Form.Item>
+                    if (type === "existing") {
+                      form.setFieldsValue({
+                        guestUuid: undefined,
+                        guestName: undefined,
+                        guestPhone: "",
+                      });
+                    }
+                  }}
+                >
+                  <Radio
+                    value="new"
+                    className={
+                      guestType === "new" ? "custom-disabled-checkbox" : ""
+                    }
+                  >
+                    New Guest
+                  </Radio>
+                  <Radio
+                    value="existing"
+                    className={
+                      guestType === "existing" ? "custom-disabled-checkbox" : ""
+                    }
+                  >
+                    Existing Guest
+                  </Radio>
+                </Radio.Group>
+              </Form.Item>
 
-          <Form.Item
-            label="Event Name"
-            name="eventName"
-            rules={[{ required: true, message: "Event Name is Required" }]}
-          >
-            <Input readOnly={isView} placeholder="Enter Event Name" />
-          </Form.Item>
+              {guestType === "existing" ? (
+                <Form.Item
+                  label="Existing Guest"
+                  name="guestUuid"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please select an existing guest",
+                    },
+                  ]}
+                >
+                  <Select
+                    showSearch
+                    placeholder="Select Existing Guest"
+                    disabled={isView || guestDetailFetching}
+                    options={guestOptions}
+                    optionFilterProp="label"
+                    filterOption={(input, option) =>
+                      option?.label?.toLowerCase().includes(input.toLowerCase())
+                    }
+                    onChange={(value, option) => {
+                      form.setFieldsValue({
+                        guestUuid: value,
+                        guestName: option?.fullName || option?.label || "",
+                        guestPhone: option?.phone || "",
+                      });
+                    }}
+                    loading={guestDetailFetching}
+                  />
+                </Form.Item>
+              ) : (
+                <Form.Item
+                  label="New Guest Name"
+                  name="guestName"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Guest Name is Required",
+                    },
+                  ]}
+                >
+                  <Input readOnly={isView} placeholder="Enter New Guest Name" />
+                </Form.Item>
+              )}
 
-          <Form.Item
-            label="Facility Package"
-            name="facilityPackage"
-            rules={[
-              { required: true, message: "Facility Package is Required" },
-            ]}
-            getValueProps={(value) => ({
-              value: isView
-                ? facilityPackages.find((item) => item.value === value)?.label
-                : value,
-            })}
-          >
-            {isView ? (
-              <Input readOnly={isView} />
-            ) : (
-              <Select
-                showSearch={{
-                  filterOption: (input, option) =>
-                    (option?.label ?? "")
-                      .toLowerCase()
-                      .includes(input.toLowerCase()),
-                }}
-                options={facilityPackages}
-                placeholder="Select Event Name"
-              />
-            )}
-          </Form.Item>
-
-          <Form.Item
-            label="Event Date"
-            name="eventDate"
-            rules={[{ required: true, message: "Event Date is Required" }]}
-          >
-            <DatePicker
-              format={dateFormat}
-              disabledDate={disabledDate}
-              style={{ width: "100%" }}
-            />
-          </Form.Item>
-
-          <Row gutter={16}>
-            <Col span={12}>
               <Form.Item
-                label="Time Range"
-                name="timeRange"
-                rules={[{ required: true, message: "Time Range is Required" }]}
+                label="Guest Phone No"
+                name="guestPhone"
+                rules={[
+                  {
+                    required: true,
+                    message: "Guest Phone is Required",
+                  },
+                ]}
               >
-                <RangePicker format={format} />
+                <Input
+                  maxLength={20}
+                  disabled={isView || guestType === "existing"}
+                  placeholder="Enter Phone"
+                  onKeyPress={(e) => {
+                    const value = e.currentTarget.value;
+
+                    if (
+                      !/[0-9]/.test(e.key) &&
+                      !(e.key === "+" && value.length === 0)
+                    ) {
+                      e.preventDefault();
+                    }
+                  }}
+                />
               </Form.Item>
-            </Col>
 
-            <Col span={12}>
-              <Form.Item label="Expected Hours" name="expectedHours" required>
-                <Input readOnly />
+              <Form.Item
+                label="Event Name"
+                name="eventName"
+                rules={[{ required: true, message: "Event Name is Required" }]}
+              >
+                <Input readOnly={isView} placeholder="Enter Event Name" />
               </Form.Item>
-            </Col>
 
-            <Form.Item
-              label="Expected Hours"
-              name="expectedHoursBackend"
-              hidden
-            >
-              <Input readOnly />
-            </Form.Item>
-          </Row>
+              <Form.Item
+                label="Facility Package"
+                name="facilityPackage"
+                rules={[
+                  { required: true, message: "Facility Package is Required" },
+                ]}
+                getValueProps={(value) => ({
+                  value: isView
+                    ? facilityPackages.find((item) => item.value === value)?.label
+                    : value,
+                })}
+              >
+                {isView ? (
+                  <Input readOnly={isView} />
+                ) : (
+                  <Select
+                    showSearch={{
+                      filterOption: (input, option) =>
+                        (option?.label ?? "")
+                          .toLowerCase()
+                          .includes(input.toLowerCase()),
+                    }}
+                    options={facilityPackages}
+                    placeholder="Select Event Name"
+                    loading={facilityMetaLoading}
+                    disabled={facilityMetaLoading}
+                  />
+                )}
+              </Form.Item>
 
-          <Form.Item
-            label="Expected Pax"
-            name="expectedPax"
-            rules={[{ required: true, message: "Expected Pax is Required" }]}
-          >
-            <InputNumber
-              {...childSharedProps}
-              placeholder="Outlined"
-              readOnly={isView}
-              style={{ width: 240 }}
-              className="minus-icon"
-            />
-          </Form.Item>
+              <Form.Item
+                label="Event Date"
+                name="eventDate"
+                rules={[{ required: true, message: "Event Date is Required" }]}
+              >
+                <DatePicker
+                  format={dateFormat}
+                  disabledDate={disabledDate}
+                  style={{ width: "100%" }}
+                />
+              </Form.Item>
 
-          <Form.Item
-            label="Facility Status"
-            name={["status", "uuid"]}
-            className="col-span-1"
-            rules={[
-              { required: true, message: "Please select a Facility Status" },
-            ]}
-            getValueProps={(value) => ({
-              value: isView
-                ? facilityStatus.find((item) => item.value === value)?.label
-                : value,
-            })}
-          >
-            {isView ? (
-              <Input readOnly />
-            ) : (
-              <Select
-                showSearch
-                filterOption={(input, option) =>
-                  (option?.label ?? "")
-                    .toLowerCase()
-                    .includes(input.toLowerCase())
-                }
-                options={facilityStatus}
-                placeholder="Select a Facility Status"
-                disabled={
-                  isEdit &&
-                  (currentStatus === "completed" ||
-                    currentStatus === "cancelled")
-                }
-              />
-            )}
-          </Form.Item>
+              <Row gutter={16}>
+                <Col span={12}>
+                  <Form.Item
+                    label="Time Range"
+                    name="timeRange"
+                    rules={[{ required: true, message: "Time Range is Required" }]}
+                  >
+                    <RangePicker format={format} />
+                  </Form.Item>
+                </Col>
 
-          <Form.Item label="Remark" name="remark">
-            <TextArea
-              readOnly={isView}
-              placeholder="Enter Remark"
-              className={darkModeStyle}
-            />
-          </Form.Item>
-        </Form>
+                <Col span={12}>
+                  <Form.Item label="Expected Hours" name="expectedHours" required>
+                    <Input readOnly />
+                  </Form.Item>
+                </Col>
+
+                <Form.Item
+                  label="Expected Hours"
+                  name="expectedHoursBackend"
+                  hidden
+                >
+                  <Input readOnly />
+                </Form.Item>
+              </Row>
+
+              <Form.Item
+                label="Expected Pax"
+                name="expectedPax"
+                rules={[{ required: true, message: "Expected Pax is Required" }]}
+              >
+                <InputNumber
+                  {...childSharedProps}
+                  placeholder="Outlined"
+                  readOnly={isView}
+                  style={{ width: 240 }}
+                  className="minus-icon"
+                />
+              </Form.Item>
+
+              <Form.Item
+                label="Facility Status"
+                name={["status", "uuid"]}
+                className="col-span-1"
+                rules={[
+                  { required: true, message: "Please select a Facility Status" },
+                ]}
+                getValueProps={(value) => ({
+                  value: isView
+                    ? facilityStatus.find((item) => item.value === value)?.label
+                    : value,
+                })}
+              >
+                {isView ? (
+                  <Input readOnly />
+                ) : (
+                  <Select
+                    showSearch
+                    filterOption={(input, option) =>
+                      (option?.label ?? "")
+                        .toLowerCase()
+                        .includes(input.toLowerCase())
+                    }
+                    options={facilityStatus}
+                    placeholder="Select a Facility Status"
+                    disabled={
+                      isEdit &&
+                      (currentStatus === "completed" ||
+                        currentStatus === "cancelled")
+                    }
+                  />
+                )}
+              </Form.Item>
+
+              <Form.Item label="Remark" name="remark">
+                <TextArea
+                  readOnly={isView}
+                  placeholder="Enter Remark"
+                  className={darkModeStyle}
+                />
+              </Form.Item>
+            </Form>
+        }
+
       </Drawer>
 
       {searchOpen && (
@@ -595,6 +614,7 @@ const EventFacilityOrderForm = ({
           reservationId={reservationId}
           setDrawerOpen={setDrawerOpen}
           facilityPackagesOptions={facilityPackages}
+          facilityMetaLoading={facilityMetaLoading}
         />
       )}
     </>

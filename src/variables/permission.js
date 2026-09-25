@@ -365,9 +365,7 @@ export const PERMISSIONS = {
   FOLIO_PAYMENT_PAYMENT : "folio-payment.payment",
   FOLIO_PAYMENT_DEPOSIT : "folio-payment.deposit",
   FOLIO_PAYMENT_REFUND: "folio-payment.refund",
-
-  //Service Order List
-  SERVICE_ORDER_LIST : "service-order.list",
+  
 };
 
 
