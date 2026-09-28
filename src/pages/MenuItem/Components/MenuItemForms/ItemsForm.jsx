@@ -29,11 +29,14 @@ const ItemsForm = ({
   const isEdit = mode === "item-edit";
   const isAdd = mode === "item-add";
 
-  const canEdit = hasPermission(PERMISSIONS.MENU_MODIFIER_EDIT);
+  const canEdit = hasPermission(PERMISSIONS.FOOD_AND_BEVERAGE_INVENTORY_EDIT);
 
   const { data: menuMetaData, isFetching: menuMetaDataFetching } = useApiQuery({
     fetchQueryName: "menuMetaData",
     fetchQueryFunction: menuMeta,
+    options: {
+      enabled : !!drawerOpen
+    }
   });
 
   const fnbInventoryOptions = menuMetaData?.fnb_inventory_items?.map(
@@ -150,7 +153,7 @@ const ItemsForm = ({
         }
       >
         {
-          menuMetaDataFetching
+          !isAdd && menuMetaDataFetching
             ?
             <div className="flex items-center justify-center h-full min-h-[300px]">
               <Loader />
@@ -185,6 +188,8 @@ const ItemsForm = ({
                     }}
                     options={fnbInventoryOptions}
                     placeholder="Select Item"
+                    loading={menuMetaDataFetching}
+                    disabled={menuMetaDataFetching}
                   />
                 )}
               </Form.Item>
@@ -212,6 +217,8 @@ const ItemsForm = ({
                     options={unitOptions}
                     placeholder="Select Unit"
                     open={isView ? false : undefined}
+                    loading={menuMetaDataFetching}
+                    disabled={menuMetaDataFetching}
                   />
                 )}
               </Form.Item>

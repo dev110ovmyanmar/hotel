@@ -89,6 +89,7 @@ const StaffsTable = ({
             key: "upload",
             label: "Image Upload",
             icon: <UploadOutlined style={{ fontSize: "12px" }} />,
+            permission : PERMISSIONS.STAFF_IMAGE_UPLOAD,
             onClick: () => {
               if (!record.uuid) return;
               setSelectedRow(record);

@@ -43,7 +43,7 @@ const MenuItemForm = ({
 
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
   const status = initData?.statuses?.status;
-  const canEdit = hasPermission(PERMISSIONS.MENU_MODIFIER_EDIT);
+  const canEditMenuItem = hasPermission(PERMISSIONS.MENU_ITEM_EDIT);
 
   const statusList = status
     ?.filter((item) => item.code !== "blocked")
@@ -52,9 +52,12 @@ const MenuItemForm = ({
       label: status.name,
     }));
 
-  const { data: menuMetaData } = useApiQuery({
+  const { data: menuMetaData , isFetching : menuMetaDataFetching } = useApiQuery({
     fetchQueryName: "menuMetaData",
     fetchQueryFunction: menuMeta,
+    options : {
+      enabled : !!drawerOpen
+    }
   });
 
   const menuCategory = menuMetaData?.menu_categories?.map((menu) => ({
@@ -173,7 +176,7 @@ const MenuItemForm = ({
                   : "Create Menu Item"}
             </span>
             {isView ? (
-              canEdit && (
+              canEditMenuItem && (
                 <Button type="primary" onClick={() => setMode("edit")}>
                   Edit
                 </Button>
@@ -215,7 +218,7 @@ const MenuItemForm = ({
                 rules={[{ required: true }]}
                 getValueProps={(value) => ({
                   value: isView
-                    ? menuCategory.find((item) => item.value === value)?.label
+                    ? menuCategory?.find((item) => item.value === value)?.label
                     : value,
                 })}
               >
@@ -231,6 +234,8 @@ const MenuItemForm = ({
                     }}
                     options={menuCategory}
                     placeholder="Select Menu Item"
+                    loading={menuMetaDataFetching}
+                    disabled={menuMetaDataFetching}
                   />
                 )}
               </Form.Item>
@@ -283,7 +288,7 @@ const MenuItemForm = ({
                 rules={[{ required: true, message: "Status is Required" }]}
                 getValueProps={(value) => ({
                   value: isView
-                    ? statusList.find((item) => item.value === value)?.label
+                    ? statusList?.find((item) => item.value === value)?.label
                     : value,
                 })}
               >
