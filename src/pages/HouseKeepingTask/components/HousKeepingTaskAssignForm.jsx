@@ -15,6 +15,8 @@ import {
 import Toast from "../../../component/Toast/Toast";
 import ColorStatusTag from "../../../component/ColorStatusTag/ColorStatusTag";
 import { darkModeStyle } from "../../../utils";
+import usePermission from "../../../hooks/usePermission";
+import { PERMISSIONS } from "../../../variables/permission";
 
 const HouseKeepingTaskAssignForm = ({
     drawerOpen,
@@ -29,6 +31,9 @@ const HouseKeepingTaskAssignForm = ({
 
     const [deleteModal, setDeleteModal] = useState(false);
     const [itemToDelete, setItemToDelete] = useState(null);
+
+    const { hasPermission } = usePermission();
+    const canAssignStaff = hasPermission(PERMISSIONS.HK_TASK_ASSIGNMENT_CREATE);
 
     const detail = houseKeepingTaskDetail;
 
@@ -207,6 +212,7 @@ const HouseKeepingTaskAssignForm = ({
             onClose={() => setDrawerOpen(false)}
             open={drawerOpen}
             extra={
+                canAssignStaff && 
                 (!isDisableEdit) ? (
                     <Button type="primary" onClick={() => {
                         setIsEdit(false);

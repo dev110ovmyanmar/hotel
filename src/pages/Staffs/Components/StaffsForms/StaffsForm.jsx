@@ -43,12 +43,12 @@ const StaffsForm = ({
   const isView = mode === "view";
   const isEdit = mode === "edit";
   const isAdd = mode === "add";
+  
   const { hasPermission } = usePermission();
-  const canEdit = hasPermission(PERMISSIONS.STAFF_EDIT);
+  const canEditStaff = hasPermission(PERMISSIONS.STAFF_EDIT);
 
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
   const [selectedRegion, setSelectedRegion] = useState(null);
-  const [isCurrent, setIsCurrent] = useState(false);
 
   const statuses = initData?.statuses?.status
     ?.filter((item) => item.code !== "blocked")
@@ -77,14 +77,6 @@ const StaffsForm = ({
     value: type.code,
     label: type.code,
   }));
-
-  const handleCurrentChange = (e) => {
-    const checked = e.target.checked;
-    setIsCurrent(checked);
-    if (checked) {
-      form.setFieldsValue({ endedAt: null });
-    }
-  };
 
   const createStaffs = useApiMutation({
     mutationFn: createStaff,
@@ -190,7 +182,7 @@ const StaffsForm = ({
             {isView ? "Staff Details" : isEdit ? "Edit Staff" : "Create Staff"}
           </span>
           {isView ? (
-            canEdit && (
+            canEditStaff && (
               <Button type="primary" onClick={() => setMode("edit")}>
                 Edit
               </Button>

@@ -39,9 +39,12 @@ const HouseKeepingTaskListing = () => {
   });
 
   // Fetch Metadata for staff options
-  const { data: adminMetaData } = useApiQuery({
+  const { data: adminMetaData , isFetching : adminMetaDataFetching } = useApiQuery({
     fetchQueryName: "admin-meta",
     fetchQueryFunction: adminMeta,
+    options:{
+      enabled : !!drawerOpen
+    }
   });
 
   const staffOptionsforTask = useMemo(
@@ -215,6 +218,7 @@ const HouseKeepingTaskListing = () => {
         setTaskAssignDrawerOpen={setTaskAssignDrawerOpen}
         staffOptionsforAssignment={staffOptionsforAssignment}
         adminMetaData={adminMetaData}
+        adminMetaDataFetching={adminMetaDataFetching}
       />
     </div>
   );
