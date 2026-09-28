@@ -40,7 +40,7 @@ const MenuModifierForm = ({
   const isEdit = mode === "edit";
   const isAdd = mode === "add";
 
-  const canEdit = hasPermission(PERMISSIONS.MENU_MODIFIER_EDIT);
+  const canEditMenuModifier = hasPermission(PERMISSIONS.MENU_MODIFIER_EDIT);
 
   const upsertMenuModifiers = useApiMutation({
     mutationFn: upsertMenuModifier,
@@ -122,7 +122,7 @@ const MenuModifierForm = ({
                   : "Create Menu Modifier"}
             </span>
             {isView ? (
-              canEdit && (
+              canEditMenuModifier && (
                 <Button type="primary" onClick={() => setMode("edit")}>
                   Edit
                 </Button>

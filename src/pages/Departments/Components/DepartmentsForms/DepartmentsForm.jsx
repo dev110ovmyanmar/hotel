@@ -32,7 +32,7 @@ const DepartmentsForm = ({
   const isAdd = mode === "add";
 
   const { hasPermission } = usePermission();
-  const canEdit = hasPermission(PERMISSIONS.DEPARTMENT_EDIT);
+  const canEditDepartment = hasPermission(PERMISSIONS.DEPARTMENT_EDIT);
 
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
 
@@ -130,7 +130,7 @@ const DepartmentsForm = ({
                   : "Create Department"}
             </span>
             {isView ? (
-              canEdit && (
+              canEditDepartment && (
                 <Button
                   type="primary"
                   onClick={() => {

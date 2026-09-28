@@ -34,7 +34,7 @@ const RestaurantTableForm = ({
   const isEdit = mode === "edit";
   const isAdd = mode === "add";
 
-  const canEdit = hasPermission(PERMISSIONS.RESTAURANT_TABLE_EDIT);
+  const canEditRestaurantTable = hasPermission(PERMISSIONS.RESTAURANT_TABLE_EDIT);
 
   // 1. API Query for Table Detail
   const { data, isFetching } = useApiQuery({
@@ -133,7 +133,7 @@ const RestaurantTableForm = ({
       open={drawerOpen}
       extra={
         isView ? (
-          canEdit && (
+          canEditRestaurantTable && (
             <Button type="primary" onClick={() => setMode("edit")}>
               Edit
             </Button>

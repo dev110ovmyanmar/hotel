@@ -25,7 +25,7 @@ const MenuCategoryForm = ({
 }) => {
   const [form] = Form.useForm();
   const { hasPermission } = usePermission();
-  const canEdit = hasPermission(PERMISSIONS.MENU_CATEGORY_EDIT);
+  const canEditMenuCategory = hasPermission(PERMISSIONS.MENU_CATEGORY_EDIT);
 
   const isView = mode === "view";
   const isEdit = mode === "edit";
@@ -140,7 +140,7 @@ const MenuCategoryForm = ({
                   : "Create Menu Category"}
             </span>
             {isView ? (
-              canEdit &&
+              canEditMenuCategory && 
               <Button
                 type="primary"
                 onClick={() => {
