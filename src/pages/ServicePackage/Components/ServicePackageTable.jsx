@@ -22,9 +22,9 @@ const ServicePackageTable = ({
 }) => {
   const { hasPermission } = usePermission();
   const canCreateNested = hasPermission(
-    PERMISSIONS.SERVICE_PACKAGE_ITEM_CREATE,
+    PERMISSIONS.SERVICE_PACKAGE_CREATE,
   );
-  const rowExpandList = hasPermission(PERMISSIONS.SERVICE_PACKAGE_ITEM_LIST);
+  const rowExpandList = hasPermission(PERMISSIONS.SERVICE_PACKAGE_LIST);
 
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [itemDrawerOpen, setItemDrawerOpen] = useState(false);
@@ -168,7 +168,7 @@ const ServicePackageTable = ({
             key: "view",
             label: "View",
             icon: <EyeOutlined style={{ fontSize: "12px" }} />,
-            permission: PERMISSIONS.SERVICE_PACKAGE_ITEM_VIEW,
+            permission: PERMISSIONS.SERVICE_PACKAGE_VIEW,
             onClick: () => {
               setItemDrawerOpen(true);
               setMode("item-view");
@@ -179,7 +179,7 @@ const ServicePackageTable = ({
             key: "edit",
             label: "Edit",
             icon: <EditOutlined style={{ fontSize: "12px" }} />,
-            permission: PERMISSIONS.SERVICE_PACKAGE_ITEM_EDIT,
+            permission: PERMISSIONS.SERVICE_PACKAGE_EDIT,
             onClick: () => {
               setItemDrawerOpen(true);
               setMode("item-edit");

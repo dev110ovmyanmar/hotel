@@ -38,9 +38,12 @@ const ItemsForm = ({
   const { hasPermission } = usePermission();
   const canEdit = hasPermission(PERMISSIONS.SERVICE_INVENTORY_EDIT);
 
-  const { data: serviceMetaData } = useApiQuery({
+  const { data: serviceMetaData , isFetching : serviceMetaDataFetching} = useApiQuery({
     fetchQueryName: "serviceInventory_metaData",
     fetchQueryFunction: getServiceMeta,
+    options : {
+      enabled : !!drawerOpen
+    }
   });
 
   // const serviceInventoryOptions = serviceMetaData?.service_inventory_items?.map(
@@ -233,6 +236,8 @@ const ItemsForm = ({
                         options={serviceInventoryOptions}
                         onChange={onServiceItemChange} // Trigger the unit update
                         placeholder="Select Item"
+                        loading={serviceMetaDataFetching}
+                        disabled={serviceMetaDataFetching}
                       />
                     )}
                   </Form.Item>

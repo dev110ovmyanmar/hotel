@@ -21,6 +21,7 @@ import { queryClient } from "../../../../app/queryClient";
 import Toast from "../../../../component/Toast/Toast";
 import usePermission from "../../../../hooks/usePermission";
 import { PERMISSIONS } from "../../../../variables/permission";
+import Loader from "../../../../component/Loader/Loader";
 
 const ItemsForm = ({
   selectedItem,
@@ -49,9 +50,12 @@ const ItemsForm = ({
     },
   );
 
-  const { data: serviceMetaData } = useApiQuery({
+  const { data: serviceMetaData, isFetching: serviceMetaDataFetching } = useApiQuery({
     fetchQueryName: "serviceMetaData",
     fetchQueryFunction: getServiceMeta,
+    options: {
+      enabled: !!drawerOpen
+    }
   });
 
   const selectedTypeUuid = Form.useWatch("itemType", form);
@@ -100,7 +104,7 @@ const ItemsForm = ({
     invalidateKeys: [["service-package-items"], ["service-packages"]],
   });
 
-  const { data } = useApiQuery({
+  const { data, isFetching: servicePackageItemFetching } = useApiQuery({
     fetchQueryName: "service-package-item-details",
     fetchQueryFunction: getServicePackageItemDetails,
     params: { uuid: selectedItem?.uuid },
@@ -198,76 +202,85 @@ const ItemsForm = ({
           </div>
         }
       >
-        <Form
-          form={form}
-          layout="vertical"
-          style={{ width: "100%" }}
-          onFinish={onFinish}
-          initialValues={{ quantity: 1 }}
-        >
-          <Row gutter={16}>
-            <Col span={12}>
-              <Form.Item name={["servicePackage", "uuid"]} hidden />
+        {
+          !isAdd && (servicePackageItemFetching || serviceMetaDataFetching)
+            ?
+            <div className="flex items-center justify-center h-full min-h-[300px]">
+              <Loader />
+            </div>
+            :
+            <Form
+              form={form}
+              layout="vertical"
+              style={{ width: "100%" }}
+              onFinish={onFinish}
+              initialValues={{ quantity: 1 }}
+            >
+              <Row gutter={16}>
+                <Col span={12}>
+                  <Form.Item name={["servicePackage", "uuid"]} hidden />
 
-              <Form.Item
-                label="Item Type"
-                name="itemType"
-                rules={[{ required: true, message: "Item Type is Required" }]}
-              >
-                <Select
-                  options={service_item_types}
-                  placeholder="Select Item Type"
-                  disabled={isView}
-                  onChange={() => form.setFieldValue("item", undefined)}
-                />
-              </Form.Item>
-            </Col>
+                  <Form.Item
+                    label="Item Type"
+                    name="itemType"
+                    rules={[{ required: true, message: "Item Type is Required" }]}
+                  >
+                    <Select
+                      options={service_item_types}
+                      placeholder="Select Item Type"
+                      disabled={isView}
+                      onChange={() => form.setFieldValue("item", undefined)}
+                    />
+                  </Form.Item>
+                </Col>
 
-            <Col span={12}>
-              <Form.Item
-                label="Item"
-                name="item"
-                rules={[{ required: true, message: "Item is Required" }]}
-              >
-                <Select
-                  allowClear
-                  options={dynamicItemOptions}
-                  placeholder={
-                    selectedTypeUuid
-                      ? "Select Item"
-                      : "Please select an Item Type first"
-                  }
-                  disabled={isView || !selectedTypeUuid}
-                  showSearch={{
-                    filterOption: (input, option) =>
-                      (option?.label ?? "")
-                        .toLowerCase()
-                        .includes(input.toLowerCase()),
-                  }}
-                />
-              </Form.Item>
-            </Col>
-          </Row>
+                <Col span={12}>
+                  <Form.Item
+                    label="Item"
+                    name="item"
+                    rules={[{ required: true, message: "Item is Required" }]}
+                  >
+                    <Select
+                      allowClear
+                      options={dynamicItemOptions}
+                      placeholder={
+                        selectedTypeUuid
+                          ? "Select Item"
+                          : "Please select an Item Type first"
+                      }
+                      disabled={isView || !selectedTypeUuid || serviceMetaDataFetching}
+                      showSearch={{
+                        filterOption: (input, option) =>
+                          (option?.label ?? "")
+                            .toLowerCase()
+                            .includes(input.toLowerCase()),
+                      }}
+                      loading={serviceMetaDataFetching}
+                    />
+                  </Form.Item>
+                </Col>
+              </Row>
 
-          <Row gutter={16}>
-            <Col span={12}>
-              <Form.Item
-                label="Quantity"
-                name="quantity"
-                className="minus-icon"
-                rules={[{ required: true, message: "Quantity is required!" }]}
-              >
-                <InputNumber
-                  className="w-full!"
-                  mode="spinner"
-                  min={1}
-                  readOnly={isView}
-                  placeholder="Enter Quantity"
-                />
-              </Form.Item>
-            </Col>
-          </Row>
-        </Form>
+              <Row gutter={16}>
+                <Col span={12}>
+                  <Form.Item
+                    label="Quantity"
+                    name="quantity"
+                    className="minus-icon"
+                    rules={[{ required: true, message: "Quantity is required!" }]}
+                  >
+                    <InputNumber
+                      className="w-full!"
+                      mode="spinner"
+                      min={1}
+                      readOnly={isView}
+                      placeholder="Enter Quantity"
+                    />
+                  </Form.Item>
+                </Col>
+              </Row>
+            </Form>
+        }
       </Drawer>
     </div>
   );

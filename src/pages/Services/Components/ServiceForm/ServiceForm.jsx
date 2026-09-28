@@ -37,7 +37,7 @@ const ServiceForm = ({
   const isAdd = mode === "add";
 
   const { hasPermission } = usePermission();
-  const canEdit = hasPermission(PERMISSIONS.SERVICE_EDIT);
+  const canEditService = hasPermission(PERMISSIONS.SERVICE_EDIT);
 
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
   const billingType = initData?.statuses?.billing_type;
@@ -198,7 +198,7 @@ const ServiceForm = ({
                   : "Create Service"}
             </span>
             {isView ? (
-              canEdit && (
+              canEditService && (
                 <Button
                   type="primary"
                   onClick={() => {
@@ -211,7 +211,7 @@ const ServiceForm = ({
             ) : (
               <FormButtons
                 onClick={() => form.submit()}
-                isPending={createService.isPending || editService.isPending}
+                isPending={isAdd ? createService.isPending : editService.isPending}
                 mode={mode}
               />
             )}

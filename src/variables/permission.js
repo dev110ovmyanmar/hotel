@@ -148,12 +148,6 @@ export const PERMISSIONS = {
   SERVICE_PACKAGE_CREATE: "service-package.create",
   SERVICE_PACKAGE_EDIT: "service-package.edit",
 
-  // Service Package Item
-  SERVICE_PACKAGE_ITEM_LIST: "service-package.list",
-  SERVICE_PACKAGE_ITEM_VIEW: "service-package.view",
-  SERVICE_PACKAGE_ITEM_CREATE: "service-package.create",
-  SERVICE_PACKAGE_ITEM_EDIT: "service-package.edit",
-
   // Payment
   PAYMENT_LIST: "payment.list",
   PAYMENT_VIEW: "payment.view",
