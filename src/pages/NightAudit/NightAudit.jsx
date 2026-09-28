@@ -4,7 +4,6 @@ import { MdWarningAmber } from "react-icons/md";
 import { useEffect, useState } from "react";
 import ConfirmModal from "./ConfirmModal";
 import ReactTimer from "../../component/ReactTimer/ReactTimer";
-import dayjs from "dayjs";
 import { activeAdmins } from "../../api/nightAuditApi";
 import useInfiniteApiQuery from "../../hooks/useInfiniteApiQuery";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -14,12 +13,11 @@ import Loader from "../../component/Loader/Loader";
 const NightAudit = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    console.log(location.pathname,"LocationINNightAudit")
+    console.log(location.pathname, "LocationINNightAudit")
     const [forceLogout, setForceLogout] = useState(false);
     const [confirmModal, setConfirmModal] = useState(false);
     const [step, setStep] = useState("startNightAudit");
     const [finishCountDown, setFinishCountDown] = useState(false);
-    const todayDate = dayjs().format("DD MMM YYYY");
 
     const {
         data: activeAdminDatas,
@@ -36,17 +34,30 @@ const NightAudit = () => {
     });
 
     const isLocked = activeAdminDatas?.pages[0]?.systemLock?.isLocked;
-    const businessDate = activeAdminDatas?.pages[0]?.nightAudit?.targetBusinessDate;
-    const checkStatus = activeAdminDatas?.pages[0]?.nightAudit?.status;
+    const checkStatus = activeAdminDatas?.pages[0]?.nightAudit?.auditStatus;
+    const businessDate = activeAdminDatas?.pages[0]?.nightAudit?.businessDate;
+    const targetBusinessDate = activeAdminDatas?.pages[0]?.nightAudit?.targetBusinessDate;
+    const nextStep = activeAdminDatas?.pages[0]?.nightAudit?.nextStep;
+
+    const expectedBusinessDate =
+        checkStatus === "not_started"
+            ? targetBusinessDate
+            : checkStatus === "in_progress"
+                ? businessDate
+                : checkStatus === "completed" && nextStep === "create_new_day"
+                    ? businessDate
+                    : checkStatus === "completed" && nextStep === "start"
+                        ? targetBusinessDate
+                        : null;
 
     useEffect(() => {
-        if (isLocked && businessDate) {
+        if (isLocked && expectedBusinessDate) {
             localStorage.setItem(
                 "nightAudit",
                 JSON.stringify({
                     isLocked: isLocked,
-                    businessDate: businessDate,
-                    auditStatus: checkStatus
+                    businessDate: expectedBusinessDate,
+                    auditStatus: checkStatus,
                 })
             );
             navigate("/night-audit/pre-audit-check");
@@ -67,10 +78,6 @@ const NightAudit = () => {
                 {
                     step === "startNightAudit" &&
                     <div>
-                        {/* <div className="flex justify-end mb-3">
-                        <DatePicker defaultValue={dayjs()} />
-                    </div> */}
-
                         <div>
                             <Card
                                 title={
@@ -78,7 +85,6 @@ const NightAudit = () => {
                                         Night Audit
                                     </div>
                                 }
-
                             >
                                 {
                                     forceLogout ?
@@ -135,7 +141,6 @@ const NightAudit = () => {
                                             </div>
                                         </div>
                                 }
-
                             </Card>
                         </div>
                     </div>

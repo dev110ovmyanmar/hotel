@@ -123,6 +123,8 @@ const RoomInformationList = () => {
   );
 
   const reservationUuid = listData?.reservation?.uuid;
+  const reservationRoomUuid = listData?.reservationRoom?.uuid;
+
 
   if (isListLoading) {
     return (
@@ -232,6 +234,7 @@ const RoomInformationList = () => {
           open={noteOpen}
           onClose={() => setNoteOpen(false)}
           reservationUuid={reservationUuid}
+          reservationRoomUuid ={reservationRoomUuid}
       />
     </div>
   );

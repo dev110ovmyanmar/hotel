@@ -23,7 +23,7 @@ const CreateNewDayPage = () => {
         }
     }, [navigate]);
 
-    const { data: preAuditChecksData, isFetching, error } = useApiQuery({
+    const { data: preAuditChecksData } = useApiQuery({
         fetchQueryName: "pre-audit-checks",
         fetchQueryFunction: preAuditCheck,
         params: {
