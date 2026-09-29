@@ -9,15 +9,13 @@ import { useEffect } from "react";
 import Loader from "../../../component/Loader/Loader";
 
 const ReconciliationPage = ({ stepValue }) => {
+
   const navigate = useNavigate();
-
   const nightAuditData = getNightAuditData();
-
   const businessDate = nightAuditData?.businessDate;
+  const nightAudit = localStorage.getItem("nightAudit");
 
   useEffect(() => {
-    const nightAudit = localStorage.getItem("nightAudit");
-
     if (!nightAudit) {
       navigate("/night-audit", { replace: true });
     }
@@ -26,19 +24,9 @@ const ReconciliationPage = ({ stepValue }) => {
   const { data, isFetching } = useApiQuery({
     fetchQueryName: "folio-review",
     fetchQueryFunction: reconciliation,
-    params: {
-      businessDate,
-    },
+    params: {businessDate},
+    options: { enabled: !!nightAudit},
   });
-
-  useEffect(() => {
-    if (typeof data?.isConfirmed === "boolean") {
-      localStorage.setItem(
-        "isConfirmed",
-        JSON.stringify(data.isConfirmed)
-      );
-    }
-  }, [data?.isConfirmed]);
 
   if (isFetching) {
     return (
@@ -57,7 +45,7 @@ const ReconciliationPage = ({ stepValue }) => {
         confirm={data?.canConfirm}
         isConfirm={data?.isConfirmed}
       />
-      
+
       <ReconciliationTable
         isConfirm={data?.isConfirmed}
         backStep={() => {
@@ -68,9 +56,9 @@ const ReconciliationPage = ({ stepValue }) => {
               },
             })
           );
-
           navigate("/night-audit/folio-&-payment-review");
         }}
+        
         nextStep={() => {
           window.dispatchEvent(
             new CustomEvent("breadcrumb_updated", {

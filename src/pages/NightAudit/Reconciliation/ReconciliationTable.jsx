@@ -3,7 +3,7 @@ import { AiOutlineLeft, AiOutlineRight } from "react-icons/ai";
 import PriceTag from "../../../component/PriceTag/PriceTag";
 import { useEffect, useState } from "react";
 
-const ReconciliationTable = ({ backStep, nextStep, data, isConfirm }) => {
+const ReconciliationTable = ({ backStep, nextStep, data }) => {
   const tableData = data?.folios || [];
 
   const [isConfirmed, setIsConfirmed] = useState(() => {
@@ -11,17 +11,6 @@ const ReconciliationTable = ({ backStep, nextStep, data, isConfirm }) => {
       localStorage.getItem("isConfirmed") || "false"
     );
   });
-
-  useEffect(() => {
-    if (typeof isConfirm === "boolean") {
-      setIsConfirmed(isConfirm);
-
-      localStorage.setItem(
-        "isConfirmed",
-        JSON.stringify(isConfirm)
-      );
-    }
-  }, [isConfirm]);
 
   useEffect(() => {
     const handleReconciliationConfirmed = (event) => {
