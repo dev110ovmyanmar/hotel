@@ -39,11 +39,14 @@ const ServicePackageForm = ({
 
   const {
     data: serviceData,
-    isFetching: serviceLoading,
-    error: serviceError,
+    isFetching: servicePackageFetching,
+    error: servicePackageError,
   } = useApiQuery({
     fetchQueryName: "services",
     fetchQueryFunction: getServiceMeta,
+    options: {
+      enabled : !!drawerOpen
+    }
   });
 
   const statusOptions =
@@ -244,7 +247,7 @@ const ServicePackageForm = ({
               rules={[{ required: true, message: "Service is Required" }]}
               getValueProps={(value) => ({
                 value: isView
-                  ? serviceLists.find((item) => item.value === value)?.label
+                  ? serviceLists?.find((item) => item.value === value)?.label
                   : value,
               })}
             >
@@ -260,6 +263,8 @@ const ServicePackageForm = ({
                   }
                   options={serviceLists}
                   placeholder="Select Service"
+                  loading={servicePackageFetching}
+                  disabled={servicePackageFetching}
                 />
               )}
             </Form.Item>
@@ -296,7 +301,7 @@ const ServicePackageForm = ({
               rules={[{ required: true }]}
               getValueProps={(value) => ({
                 value: isView
-                  ? statusOptions.find((item) => item.value === value)?.label
+                  ? statusOptions?.find((item) => item.value === value)?.label
                   : value,
               })}
             >

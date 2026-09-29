@@ -19,7 +19,7 @@ export const PERMISSIONS = {
   ADMIN_CREATE: "admin.create",
   ADMIN_EDIT: "admin.edit",
   ADMIN_PERMISSION: "admin.permission",
-  ADMIN_RESET_PASSWORD:"	admin.reset-password",
+  ADMIN_RESET_PASSWORD: "	admin.reset-password",
 
   //role
   ROLE_LIST: "role.list",
@@ -140,19 +140,13 @@ export const PERMISSIONS = {
   SERVICE_INVENTORY_VIEW: "service-inventory.view",
   SERVICE_INVENTORY_CREATE: "service-inventory.create",
   SERVICE_INVENTORY_EDIT: "service-inventory.edit",
-  SERVICE_INVENTORY_DELETE:"service-inventory.delete",
+  SERVICE_INVENTORY_DELETE: "service-inventory.delete",
 
   //Service Packages
   SERVICE_PACKAGE_LIST: "service-package.list",
   SERVICE_PACKAGE_VIEW: "service-package.view",
   SERVICE_PACKAGE_CREATE: "service-package.create",
   SERVICE_PACKAGE_EDIT: "service-package.edit",
-
-  // Service Package Item
-  SERVICE_PACKAGE_ITEM_LIST: "service-package.list",
-  SERVICE_PACKAGE_ITEM_VIEW: "service-package.view",
-  SERVICE_PACKAGE_ITEM_CREATE: "service-package.create",
-  SERVICE_PACKAGE_ITEM_EDIT: "service-package.edit",
 
   // Payment
   PAYMENT_LIST: "payment.list",
@@ -177,7 +171,7 @@ export const PERMISSIONS = {
   GUEST_VIEW: "guest.view",
   GUEST_CREATE: "guest.create",
   GUEST_EDIT: "guest.edit",
-  GUEST_IMAGE_DOCUMENT : "guest.image-document",
+  GUEST_IMAGE_DOCUMENT: "guest.image-document",
 
   // Guest Note
   GUEST_NOTE_LIST: "guest-note.list",
@@ -196,6 +190,7 @@ export const PERMISSIONS = {
   STAFF_VIEW: "staff.view",
   STAFF_CREATE: "staff.create",
   STAFF_EDIT: "staff.edit",
+  STAFF_IMAGE_UPLOAD: "staff.upload",
 
   // Facility
   FACILITY_LIST: "facility.list",
@@ -228,7 +223,7 @@ export const PERMISSIONS = {
   SEASONAL_RATE_EDIT: "seasonal-rate.edit",
 
   // Reservation Calendar
-  RESERVATION_CALENDAR:"calendar.reservation",
+  RESERVATION_CALENDAR: "calendar.reservation",
 
   // Availability Calendar
   AVAILABILITY_CALENDAR_LIST: "availability-calendar.list",
@@ -254,31 +249,31 @@ export const PERMISSIONS = {
   RESTAURANT_TABLE_CREATE: "table.create",
   RESTAURANT_TABLE_EDIT: "table.edit",
 
-  // Food and Beverage Inventory
-  FOOD_AND_BEVERAGE_INVENTORY_LIST: "fnb-inventory.list",
-  FOOD_AND_BEVERAGE_INVENTORY_VIEW: "fnb-inventory.view",
-  FOOD_AND_BEVERAGE_INVENTORY_CREATE: "fnb-inventory.create",
-  FOOD_AND_BEVERAGE_INVENTORY_EDIT: "fnb-inventory.edit",
-
   //F&B Order
-  FNB_ORDER_LIST : "fnb-order.list",
-  FNB_ORDER_CREATE : "fnb-order.create",
-  FNB_ORDER_EDIT : "fnb-order.edit",
-  FNB_ORDER_VIEW : "fnb-order.view",
-  FNB_ORDER_DELETE : "fnb-order.delete",
+  FNB_ORDER_LIST: "fnb-order.list",
+  FNB_ORDER_CREATE: "fnb-order.create",
+  FNB_ORDER_EDIT: "fnb-order.edit",
+  FNB_ORDER_VIEW: "fnb-order.view",
+  FNB_ORDER_DELETE: "fnb-order.delete",
   FNB_ORDER_ITEM: "fnb-order.item",
-  
+
   // Menu Category
   MENU_CATEGORY_LIST: "menu-category.list",
   MENU_CATEGORY_VIEW: "menu-category.view",
   MENU_CATEGORY_CREATE: "menu-category.create",
   MENU_CATEGORY_EDIT: "menu-category.edit",
 
-  // Menu Item
-  // MENU_ITEM_LIST: "menu.list",
-  // MENU_ITEM_VIEW: "menu.view",
-  // MENU_ITEM_CREATE: "menu.create",
-  // MENU_ITEM_EDIT: "menu.edit",
+  // Menu Items
+  MENU_ITEM_LIST: "menu.list",
+  MENU_ITEM_VIEW: "menu.view",
+  MENU_ITEM_CREATE: "menu.create",
+  MENU_ITEM_EDIT: "menu.edit",
+
+  // Food and Beverage Inventory
+  FOOD_AND_BEVERAGE_INVENTORY_LIST: "fnb-inventory.list",
+  FOOD_AND_BEVERAGE_INVENTORY_VIEW: "fnb-inventory.view",
+  FOOD_AND_BEVERAGE_INVENTORY_CREATE: "fnb-inventory.create",
+  FOOD_AND_BEVERAGE_INVENTORY_EDIT: "fnb-inventory.edit",
 
   // Menu Modifier 
   MENU_MODIFIER_LIST: "menu.list",
@@ -323,6 +318,13 @@ export const PERMISSIONS = {
   HK_TASK_CREATE: "hk-task.create",
   HK_TASK_EDIT: "hk-task.edit",
 
+  // HoseKeeping Task Staff Assign
+  HK_TASK_ASSIGNMENT_LIST: "hk-task-assignment.list",
+  HK_TASK_ASSIGNMENT_CREATE: "hk-task-assignment.create",
+  HK_TASK_ASSIGNMENT_VIEW: "hk-task-assignment.view",
+  HK_TASK_ASSIGNMENT_EDIT: "hk-task-assignment.edit",
+  HK_TASK_ASSIGNMENT_DELETE: "hk-task-assignment.delete",
+
   //Maintenance Request
   MAINTENANCE_REQUEST_LIST: "maintenance-request.list",
   MAINTENANCE_REQUEST_VIEW: "maintenance-request.view",
@@ -336,10 +338,10 @@ export const PERMISSIONS = {
   MAINTENANCE_TASK_ASSIGNMENT_EDIT: "maintenance-task-assignment.edit",
 
   //Reservation
-  RESERVATION_ROOM_LIST : "reservation-room.list",
-  RESERVATION_EDIT : "reservation.edit",
-  RESERVATION_ROOM_OCCUPANCY_VIEW : "reservation-room-occupancy.view",
-  RESERVATION_ROOM_AMENDMENT : "reservation-room.amendment",
+  RESERVATION_ROOM_LIST: "reservation-room.list",
+  RESERVATION_EDIT: "reservation.edit",
+  RESERVATION_ROOM_OCCUPANCY_VIEW: "reservation-room-occupancy.view",
+  RESERVATION_ROOM_AMENDMENT: "reservation-room.amendment",
 
   // Service Order
   SERVICE_ORDER_LIST: "service-order.list",
@@ -348,26 +350,27 @@ export const PERMISSIONS = {
   SERVICE_ORDER_EDIT: "service-order.edit",
 
   //Folio
-  FOLIO_LIST : "folio.list",
-  FOLIO_PRINT : "folio.print",
-  FOLIO_EDIT : "folio.edit",
-  FOLIO_CREATE : "folio.create",
+  FOLIO_LIST: "folio.list",
+  FOLIO_PRINT: "folio.print",
+  FOLIO_EDIT: "folio.edit",
+  FOLIO_CREATE: "folio.create",
 
   //Folio-Lines
-  FOLIO_LINE_ADJUST : "folio-line.adjust",
-  FOLIO_LINE_REBATE : "folio-line.rebate",
-  FOLIO_LINE_VOID : "folio-line.void",
-  FOLIO_LINE_TRANSFER : "folio-line.transfer",
+  FOLIO_LINE_ADJUST: "folio-line.adjust",
+  FOLIO_LINE_REBATE: "folio-line.rebate",
+  FOLIO_LINE_VOID: "folio-line.void",
+  FOLIO_LINE_TRANSFER: "folio-line.transfer",
+  FOLIO_LINE_NEW_POST: "folio-line.new-post",
 
   //Folio-Payment
-  FOLIO_PAYMENT_PAYMENT : "folio-payment.payment",
-  FOLIO_PAYMENT_DEPOSIT : "folio-payment.deposit",
+  FOLIO_PAYMENT_PAYMENT: "folio-payment.payment",
+  FOLIO_PAYMENT_DEPOSIT: "folio-payment.deposit",
   FOLIO_PAYMENT_REFUND: "folio-payment.refund",
 
   // Payment History (Folio-Payment)
-  FOLIO_PAYMENT_LIST:"folio-payment.list",
+  FOLIO_PAYMENT_LIST: "folio-payment.list",
 
-  
+
 };
 
 

@@ -1,7 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { reconciliation } from "../../../api/nightAuditApi";
 import useApiQuery from "../../../hooks/useApiQuery";
-import { Spin } from "antd";
 import ReconciliationStatus from "./ReconciliationStatus";
 import CheckBookingHeader from "../CheckBookingHeader";
 import ReconciliationTable from "./ReconciliationTable";
@@ -10,15 +9,13 @@ import { useEffect } from "react";
 import Loader from "../../../component/Loader/Loader";
 
 const ReconciliationPage = ({ stepValue }) => {
+
   const navigate = useNavigate();
-
   const nightAuditData = getNightAuditData();
-
   const businessDate = nightAuditData?.businessDate;
+  const nightAudit = localStorage.getItem("nightAudit");
 
   useEffect(() => {
-    const nightAudit = localStorage.getItem("nightAudit");
-
     if (!nightAudit) {
       navigate("/night-audit", { replace: true });
     }
@@ -27,9 +24,8 @@ const ReconciliationPage = ({ stepValue }) => {
   const { data, isFetching } = useApiQuery({
     fetchQueryName: "folio-review",
     fetchQueryFunction: reconciliation,
-    params: {
-      businessDate,
-    },
+    params: {businessDate},
+    options: { enabled: !!nightAudit},
   });
 
   if (isFetching) {
@@ -46,11 +42,12 @@ const ReconciliationPage = ({ stepValue }) => {
       <ReconciliationStatus
         data={data?.summary}
         hasBlockingDifferences={data?.hasBlockingDifferences}
-        canConfirm={data?.canConfirm}
+        confirm={data?.canConfirm}
         isConfirm={data?.isConfirmed}
       />
+
       <ReconciliationTable
-       isConfirm={data?.isConfirmed}
+        isConfirm={data?.isConfirmed}
         backStep={() => {
           window.dispatchEvent(
             new CustomEvent("breadcrumb_updated", {
@@ -59,9 +56,9 @@ const ReconciliationPage = ({ stepValue }) => {
               },
             })
           );
-
           navigate("/night-audit/folio-&-payment-review");
         }}
+        
         nextStep={() => {
           window.dispatchEvent(
             new CustomEvent("breadcrumb_updated", {
@@ -77,5 +74,4 @@ const ReconciliationPage = ({ stepValue }) => {
     </div>
   );
 };
-
 export default ReconciliationPage;

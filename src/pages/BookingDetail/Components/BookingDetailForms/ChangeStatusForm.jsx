@@ -9,7 +9,7 @@ import {
 } from "../../../../api/reservationSectionApi";
 import dayjs from "dayjs";
 import { useApiQuery } from "./../../../../hooks/useApiQuery";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { textColorDarkMode, textWhiteInDarkStyle } from "../../../../utils";
 import ReservationStatusColor from "../../../../component/ReservationStatusColor/ReservationStatusColor";
 import Loader from "../../../../component/Loader/Loader";
@@ -17,7 +17,6 @@ import ColorStatusTag from "../../../../component/ColorStatusTag/ColorStatusTag"
 
 const ChangeStatusForm = ({ reservationDetails, open, onClose }) => {
   const [form] = Form.useForm();
-  const navigate = useNavigate();
   const { bookingId } = useParams();
   const uuid = bookingId;
 
@@ -330,7 +329,6 @@ const ChangeStatusForm = ({ reservationDetails, open, onClose }) => {
       open={open}
       onClose={onClose}
       size={550}
-      destroyOnClose
       title={
         <div className="flex justify-between items-center">
           <span>Change Status</span>

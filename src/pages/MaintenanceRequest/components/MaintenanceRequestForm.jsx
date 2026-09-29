@@ -40,7 +40,6 @@ const MaintenanceRequestForm = ({
     const queryClient = useQueryClient();
 
     const { hasPermission } = usePermission();
-    const viewPermission = hasPermission(PERMISSIONS.MAINTENANCE_REQUEST_VIEW);
     const editPermission = hasPermission(PERMISSIONS.MAINTENANCE_REQUEST_EDIT);
     const taskAssignmentViewPermission = hasPermission(PERMISSIONS.MAINTENANCE_TASK_ASSIGNMENT_VIEW);
 
@@ -67,7 +66,7 @@ const MaintenanceRequestForm = ({
         }
     ));
 
-    const { data: adminMetaData } = useApiQuery({
+    const { data: adminMetaData , isFetching : adminMetaDataFetching } = useApiQuery({
         fetchQueryName: "admin-meta",
         fetchQueryFunction: adminMeta,
         options: { enabled: drawerOpen }
@@ -216,7 +215,7 @@ const MaintenanceRequestForm = ({
                         isView ? (editPermission && <Button onClick={() => setMode("edit")} type="primary">Edit</Button>) :
                             <FormButtons onClick={() => form.submit()} mode={mode} isPending={createMutation.isPending || updateMutation.isPending} />}
             >
-                {isFetching && !isCreate ? <div className="flex h-64 items-center justify-center"><Loader /></div> : (
+                {(isFetching || adminMetaDataFetching) && !isCreate ? <div className="flex h-64 items-center justify-center"><Loader /></div> : (
                     <div>
                         <Form form={form} layout="vertical" onFinish={onFinish}>
 
@@ -256,7 +255,7 @@ const MaintenanceRequestForm = ({
                                                 :
                                                 <Select 
                                                 options={roomOptions} 
-                                                disabled={isView || detail?.housekeepingTask} 
+                                                disabled={isView || detail?.housekeepingTask || adminMetaDataFetching} 
                                                 placeholder="Select Room" 
                                                 showSearch
                                                 optionFilterProp="searchLabel"
@@ -265,6 +264,7 @@ const MaintenanceRequestForm = ({
                                                         .toLowerCase()
                                                         .includes(input.toLowerCase())
                                                 }
+                                                loading={adminMetaDataFetching}
                                                 />
                                         }
                                     </Form.Item>
@@ -423,13 +423,19 @@ const MaintenanceRequestForm = ({
                                     isCreate && (
                                         <Col span={12}>
                                             <Form.Item name="staff" label="Staff">
-                                                <Select options={staffOptions} open={isView ? !isView : undefined}
-                                                    mode="multiple" placeholder="Select Staff"
+                                                <Select 
+                                                    options={staffOptions} 
+                                                    open={isView ? !isView : undefined}
+                                                    mode="multiple" 
+                                                    placeholder="Select Staff"
                                                     onChange={(value) => {
                                                         if (value && value.length > 0 && assignedStatus) {
                                                             form.setFieldsValue({ maintenanceStatus: assignedStatus.uuid });
                                                         }
-                                                    }} />
+                                                    }} 
+                                                    loading={adminMetaDataFetching}
+                                                    disabled={adminMetaDataFetching}
+                                                />
                                             </Form.Item>
                                         </Col>
                                     )
@@ -446,7 +452,12 @@ const MaintenanceRequestForm = ({
                                         {
                                             isView ?
                                                 <Input readOnly={isView} /> :
-                                                <Select options={departmentOptions} disabled={isView || detail?.housekeepingTask} placeholder="Select Dept" />
+                                                <Select 
+                                                    options={departmentOptions} 
+                                                    disabled={isView || detail?.housekeepingTask || adminMetaDataFetching} 
+                                                    placeholder="Select Dept"
+                                                    loading={adminMetaDataFetching} 
+                                                />
                                         }
                                     </Form.Item>
                                 </Col>

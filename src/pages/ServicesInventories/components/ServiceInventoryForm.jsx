@@ -53,7 +53,7 @@ const ServiceInventoryForm = ({
   const isAdd = mode === "add";
 
   const { hasPermission } = usePermission();
-  const canEdit = hasPermission(PERMISSIONS.SERVICE_INVENTORY_EDIT);
+  const canEditServiceInventory = hasPermission(PERMISSIONS.SERVICE_INVENTORY_EDIT);
 
   const { data, isFetching, error } = useApiQuery({
     fetchQueryName: "serviceInventory_detail",
@@ -64,9 +64,12 @@ const ServiceInventoryForm = ({
     },
   });
 
-  const { data: serviceMetaData } = useApiQuery({
+  const { data: serviceMetaData, isFetching: serviceMetaDataFetching } = useApiQuery({
     fetchQueryName: "serviceInventory_metaData",
     fetchQueryFunction: getServiceMeta,
+    options: {
+      enabled: !!drawerOpen
+    }
   });
 
   const categoryOptions = serviceMetaData?.categories?.map((category) => ({
@@ -177,7 +180,7 @@ const ServiceInventoryForm = ({
           <span>{DrawerTitle}</span>
 
           {isView ? (
-            canEdit && (
+            canEditServiceInventory && (
               <Button type="primary" onClick={switchToEdit}>
                 Edit
               </Button>
@@ -187,8 +190,9 @@ const ServiceInventoryForm = ({
               onClick={() => form.submit()}
               mode={mode}
               isPending={
-                createServiceInventory.isPending ||
-                editServiceInventory.isPending
+                isAdd ?
+                  createServiceInventory.isPending :
+                  editServiceInventory.isPending
               }
             />
           )}
@@ -200,7 +204,7 @@ const ServiceInventoryForm = ({
       destroyOnClose
     >
       <Form form={form} layout="vertical" onFinish={handleSubmit}>
-        {isFetching ? (
+        {!isAdd && (isFetching || serviceMetaDataFetching) ? (
           <div className="flex items-center justify-center h-full min-h-[300px]">
             <Loader />
           </div>
@@ -272,7 +276,7 @@ const ServiceInventoryForm = ({
                 rules={[{ required: true }]}
                 getValueProps={(value) => ({
                   value: isView
-                    ? unitOptions.find((item) => item.value === value)?.label
+                    ? unitOptions?.find((item) => item.value === value)?.label
                     : value,
                 })}
               >
@@ -282,8 +286,9 @@ const ServiceInventoryForm = ({
                   <Select
                     options={unitOptions}
                     placeholder="Select Unit"
-                    disabled={isView}
+                    disabled={isView || serviceMetaDataFetching}
                     className="!w-full"
+                    loading={serviceMetaDataFetching}
                   />
                 )}
               </Form.Item>
@@ -294,8 +299,8 @@ const ServiceInventoryForm = ({
                 rules={[{ required: true }]}
                 getValueProps={(value) => ({
                   value: isView
-                    ? categoryOptions.find((item) => item.value === value)
-                        ?.label
+                    ? categoryOptions?.find((item) => item.value === value)
+                      ?.label
                     : value,
                 })}
               >
@@ -305,8 +310,9 @@ const ServiceInventoryForm = ({
                   <Select
                     options={categoryOptions}
                     placeholder="Select Category"
-                    disabled={isView}
+                    disabled={isView || serviceMetaDataFetching}
                     className="!w-full"
+                    loading={serviceMetaDataFetching}
                   />
                 )}
               </Form.Item>
@@ -315,8 +321,8 @@ const ServiceInventoryForm = ({
                 name="supplierUuid"
                 getValueProps={(value) => ({
                   value: isView
-                    ? supplierOptions.find((item) => item.value === value)
-                        ?.label
+                    ? supplierOptions?.find((item) => item.value === value)
+                      ?.label
                     : value,
                 })}
               >
@@ -326,8 +332,9 @@ const ServiceInventoryForm = ({
                   <Select
                     options={supplierOptions}
                     placeholder="Select Supplier"
-                    disabled={isView}
+                    disabled={isView || serviceMetaDataFetching}
                     className="!w-full"
+                    loading={serviceMetaDataFetching}
                   />
                 )}
               </Form.Item>

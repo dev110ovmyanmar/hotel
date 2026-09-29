@@ -21,14 +21,14 @@ const MenuItemTable = ({
   changePerPage,
 }) => {
   const { hasPermission } = usePermission();
+  const canCreateFoodAndBeverageInventory = hasPermission(PERMISSIONS.FOOD_AND_BEVERAGE_INVENTORY_CREATE);
+  const canEditFoodAndBeverageInventory = hasPermission(PERMISSIONS.FOOD_AND_BEVERAGE_INVENTORY_EDIT);
 
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [itemDrawerOpen, setItemDrawerOpen] = useState(false);
   const [mode, setMode] = useState(null);
   const [selectedData, setSelectedData] = useState({});
   const [selectedItem, setSelectedItem] = useState(null);
-
-  const canCreate = hasPermission(PERMISSIONS.MENU_MODIFIER_CREATE);
 
   const columns = [
     {
@@ -81,7 +81,7 @@ const MenuItemTable = ({
             key: "view",
             label: "View",
             icon: <EyeOutlined style={{ fontSize: "12px" }} />,
-            permission: PERMISSIONS.MENU_MODIFIER_VIEW,
+            permission: PERMISSIONS.MENU_ITEM_VIEW,
             onClick: () => {
               setDrawerOpen(true);
               setMode("view");
@@ -92,7 +92,7 @@ const MenuItemTable = ({
             key: "edit",
             label: "Edit",
             icon: <EditOutlined style={{ fontSize: "12px" }} />,
-            permission: PERMISSIONS.MENU_MODIFIER_EDIT,
+            permission: PERMISSIONS.MENU_ITEM_EDIT,
             onClick: () => {
               setDrawerOpen(true);
               setMode("edit");
@@ -143,55 +143,64 @@ const MenuItemTable = ({
       key: "unit",
       align: "center",
     },
-    {
-      title: "Action",
-      align: "center",
-      render: (_, record) => {
-        const smallStyle = { fontSize: "12px" };
-
-        const actions = [
+    ...(
+      canEditFoodAndBeverageInventory
+        ?
+        [
           {
-            key: "edit",
-            label: "Edit",
-            icon: <EditOutlined style={{ fontSize: "12px" }} />,
-            permission: PERMISSIONS.MENU_MODIFIER_EDIT,
-            onClick: () => {
-              setItemDrawerOpen(true);
-              setMode("item-edit");
-              setSelectedItem(record);
+            title: "Action",
+            align: "center",
+            render: (_, record) => {
+              const smallStyle = { fontSize: "12px" };
+
+              const actions = [
+                {
+                  key: "edit",
+                  label: "Edit",
+                  icon: <EditOutlined style={{ fontSize: "12px" }} />,
+                  permission: PERMISSIONS.FOOD_AND_BEVERAGE_INVENTORY_EDIT,
+                  onClick: () => {
+                    setItemDrawerOpen(true);
+                    setMode("item-edit");
+                    setSelectedItem(record);
+                  },
+                },
+              ];
+
+              // Filter actions by permission
+              const items = actions
+                .filter(
+                  (action) => !action.permission || hasPermission(action.permission),
+                )
+                .map((action) => ({
+                  key: action.key,
+                  label: (
+                    <Space size={4} style={smallStyle} onClick={action.onClick}>
+                      {action.icon}
+                      <span style={{ fontSize: "14px" }}>{action.label}</span>
+                    </Space>
+                  ),
+                }));
+
+              return (
+                <Dropdown menu={{ items }} trigger={["click"]}>
+                  <MoreOutlined style={{ fontSize: "16px" }} />
+                </Dropdown>
+              );
             },
-          },
-        ];
+          }
+        ]
+        :
+        []
+    )
 
-        // Filter actions by permission
-        const items = actions
-          .filter(
-            (action) => !action.permission || hasPermission(action.permission),
-          )
-          .map((action) => ({
-            key: action.key,
-            label: (
-              <Space size={4} style={smallStyle} onClick={action.onClick}>
-                {action.icon}
-                <span style={{ fontSize: "14px" }}>{action.label}</span>
-              </Space>
-            ),
-          }));
-
-        return (
-          <Dropdown menu={{ items }} trigger={["click"]}>
-            <MoreOutlined style={{ fontSize: "16px" }} />
-          </Dropdown>
-        );
-      },
-    },
   ];
 
   const expandedRowRender = (record) => {
     return (
       <div className="nested-table-container">
         <div className="flex justify-between items-center mb-3">
-          {canCreate && (
+          {canCreateFoodAndBeverageInventory && (
             <Button
               className="py-4! rounded-[5px]!"
               type="primary"
@@ -214,7 +223,7 @@ const MenuItemTable = ({
             columns={expandColumns}
             dataSource={record.menuInventoryMappings || []}
             rowKey="uuid"
-            loading={loading} 
+            loading={loading}
             pagination={
               record.menuInventoryMappings?.length > 10 ? true : false
             }
@@ -233,7 +242,7 @@ const MenuItemTable = ({
         columns={columns}
         expandable={{ expandedRowRender, defaultExpandedRowKeys: ["0"] }}
         dataSource={data}
-        loading={loading} 
+        loading={loading}
         rowKey="uuid"
         pagination={{
           current: page,

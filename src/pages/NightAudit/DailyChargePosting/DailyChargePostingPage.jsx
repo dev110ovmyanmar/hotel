@@ -1,7 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { dailyChargePosing } from "../../../api/nightAuditApi";
 import useApiQuery from "../../../hooks/useApiQuery";
-import { Spin } from "antd";
 import DailyChargeStatus from "./DailyChargeStatus";
 import CheckBookingHeader from "../CheckBookingHeader";
 import DailyChargePostingTable from "./DailyChargePostingTable";
@@ -17,21 +16,20 @@ const DailyChargePostingPage = ({
     const nightAuditData = getNightAuditData();
 
     const businessDate = nightAuditData?.businessDate;
+    const nightAudit = localStorage.getItem("nightAudit");
 
     useEffect(() => {
-        const nightAudit = localStorage.getItem("nightAudit");
 
         if (!nightAudit) {
             navigate("/night-audit", { replace: true });
         }
     }, [navigate]);
 
-    const { data: dailyChargePostingData, dailyChargeDataLoading, dailyChargeDataError } = useApiQuery({
+    const { data: dailyChargePostingData } = useApiQuery({
         fetchQueryName: "daily-charge-postings",
         fetchQueryFunction: dailyChargePosing,
-        params: {
-            businessDate
-        },
+        params: { businessDate },
+        options: { enabled: !!nightAudit },
     });
 
     if (!dailyChargePostingData) {
@@ -55,7 +53,6 @@ const DailyChargePostingPage = ({
                             },
                         })
                     );
-
                     navigate("/night-audit/pre-audit-check");
                 }}
                 nextStep={() => {
@@ -68,7 +65,6 @@ const DailyChargePostingPage = ({
                     );
                     navigate("/night-audit/folio-&-payment-review")
                 }}
-
                 dailyChargePostingData={dailyChargePostingData}
             />
         </div>

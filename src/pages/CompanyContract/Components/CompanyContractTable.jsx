@@ -18,6 +18,7 @@ const CompanyContractTable = ({
   total,
   changePage,
   changePerPage,
+  loading
 }) => {
   const { hasPermission } = usePermission();
 
@@ -142,6 +143,7 @@ const CompanyContractTable = ({
         columns={columns}
         dataSource={data}
         rowKey="roomrate"
+        loading={loading}
         pagination={{
           current: page,
           pageSize: perPage,

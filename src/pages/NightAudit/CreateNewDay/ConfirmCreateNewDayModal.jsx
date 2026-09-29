@@ -9,9 +9,7 @@ const ConfirmCreateNewDayModal = ({
     onCancel,
     onOk,
     confirmLoading
-
 }) => {
-
     return (
         <Modal
             open={open}
@@ -21,24 +19,19 @@ const ConfirmCreateNewDayModal = ({
             confirmLoading={confirmLoading}
             title={
                 <div className="!flex !items-center !gap-x-3 !py-3">
-                    {/* <div className="!flex !justify-center sm:!justify-start"> */}
-                        <CalendarRange
-                            className="!h-8 !w-8 !shrink-0 !text-blue-500"
-                        />
-                    {/* </div> */}
-
-                    {/* <div className="!min-w-0 !text-center sm:!text-left"> */}
-                        <div className="!font-bold">
-                            Confrim Create New Day
-                        </div>
-                    {/* </div> */}
+                    <CalendarRange
+                        className="!h-8 !w-8 !shrink-0 !text-blue-500"
+                    />
+                    <div className="!font-bold">
+                        Confrim Create New Day
+                    </div>
                 </div>
             }
         >
             <div>
                 <div className="!my-2 text-sm leading-6 text-gray-500">
                     Are you sure you want to create a new business day for
-                    <span className="!font-bold">{nextBusinessDay}</span>
+                    <span className="!font-bold"> {nextBusinessDay} </span>
                     and unlock the system?
                 </div>
 

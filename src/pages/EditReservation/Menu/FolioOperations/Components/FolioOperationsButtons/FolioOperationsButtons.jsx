@@ -10,6 +10,7 @@ import AddDepoistForm from "../../../../../BookingDetail/Components/BookingDetai
 import { queryClient } from "../../../../../../app/queryClient";
 import usePermission from "../../../../../../hooks/usePermission";
 import { PERMISSIONS } from "../.../../../../../../../variables/permission";
+import AddFolioLineNewPost from "../AddFolioLineNewPost";
 
 const FolioOperationsButtons = ({
     data,
@@ -23,6 +24,7 @@ const FolioOperationsButtons = ({
   const canAddFolioPayment = hasPermission(PERMISSIONS.FOLIO_PAYMENT_PAYMENT);
   const canAddDepositFolioPayment = hasPermission(PERMISSIONS.FOLIO_PAYMENT_DEPOSIT);
   const canPrintFolio = hasPermission(PERMISSIONS.FOLIO_PRINT);
+  const canAddFolioLineNewPost = hasPermission(PERMISSIONS.FOLIO_LINE_NEW_POST);
   
   const [form] = Form.useForm();
   const [open, setOpen] = useState(false);
@@ -31,6 +33,7 @@ const FolioOperationsButtons = ({
   const [paymentOpen, setPaymentOpen] = useState(false);
   const [addDepositOpen, setAddDepositOpen] = useState(false);
   const [folioOpen, setFolioOpen] = useState(false);
+  const [addFolioLineNewPostOpen, setAddFolioLineNewPostOpen] = useState(false);
 
   const foliosList = folioUuid?.data || [];
 
@@ -77,6 +80,16 @@ const FolioOperationsButtons = ({
             Add Orders <DownOutlined />
           </Button>
         </Dropdown> */}
+        {
+          canAddFolioLineNewPost && 
+          <Button
+          className="custom-blue-btn"
+          onClick={() => setAddFolioLineNewPostOpen(true)}
+          icon={<PlusOutlined style={{ fontSize: "12px" }} />}
+        >
+          Add New Post
+        </Button>
+        }
 
         {
         canAddFolioPayment && 
@@ -164,6 +177,12 @@ const FolioOperationsButtons = ({
         paymentCompletedStatus={paymentCompletedStatus}
         reservationUuid={reservationUuid}
       /> 
+
+      <AddFolioLineNewPost
+        open={addFolioLineNewPostOpen}
+        onClose={() => setAddFolioLineNewPostOpen(false)}
+        reservationUuid={reservationUuid}
+      />
     </div>
   );
 };

@@ -10,7 +10,6 @@ const ConfirmModal = ({
     onCancel,
     activeAdminDatas
 }) => {
-    console.log(activeAdminDatas?.pages[0]?.nightAudit?.targetBusinessDate, "activeAdminDatasINConfrimMOdal")
     const [form] = Form.useForm();
     const navigate = useNavigate();
 
@@ -38,12 +37,6 @@ const ConfirmModal = ({
     const tailwindcss = {
         footer: "dark:!bg-[#1F1F1F] dark:!border-[#e5e5e5]"
     }
-
-    // const nightAuditStorage = {
-    //     isLocked: activeAdminDatas?.pages[0]?.systemLock?.isLocked,
-    //     businessDate: activeAdminDatas?.pages[0]?.nightAudit?.targetBusinessDate,
-    //     checkStatus: activeAdminDatas?.pages[0]?.nightAudit?.status
-    // };
 
     const systemLockMutation = useApiMutation({
         mutationFn: systemLock,

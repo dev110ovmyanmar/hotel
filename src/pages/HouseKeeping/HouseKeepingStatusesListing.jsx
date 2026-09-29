@@ -40,7 +40,6 @@ const HouseKeepingStatusListing = () => {
   const [viewMode, setViewMode] = useState("card");
 
   const { hasPermission } = usePermission();
-  const createPermission = hasPermission(PERMISSIONS.HK_TASK_CREATE);
 
   // API Query with combined params
   const { data, isFetching } = useApiQuery({
@@ -58,6 +57,9 @@ const HouseKeepingStatusListing = () => {
   const { data: roomData } = useApiQuery({
     fetchQueryName: "room-meta",
     fetchQueryFunction: roomMeta,
+    options : {
+      enabled: !!drawerOpen
+    }
   });
 
   const houseKeepingStatuses = data?.data || [];
