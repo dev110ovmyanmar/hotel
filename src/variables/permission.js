@@ -360,6 +360,7 @@ export const PERMISSIONS = {
   FOLIO_LINE_REBATE: "folio-line.rebate",
   FOLIO_LINE_VOID: "folio-line.void",
   FOLIO_LINE_TRANSFER: "folio-line.transfer",
+  FOLIO_LINE_NEW_POST: "folio-line.new-post",
 
   //Folio-Payment
   FOLIO_PAYMENT_PAYMENT: "folio-payment.payment",
