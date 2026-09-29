@@ -21,24 +21,7 @@ const CreateNewDay = ({
 
     const createNewDayMutate = useApiMutation({
         mutationFn: clickCreateNewDay,
-        // invalidateKeys: [["admins"]],
     });
-
-    // System Unlock Mutation
-    // const systemUnlockMutation = useApiMutation({
-    //     mutationFn: systemUnlock,
-    //     options: {
-    //         onSuccess: (data) => {
-    //             Toast.success("System Unlocked successfully");
-    //             setHaveNiceDay(true);
-    //             createNewDayClick()
-    //         },
-    //         onError: (error) => {
-    //             console.error("System lock error:", error);
-    //             Toast.error(error?.response?.data?.error?.text || "Failed to unlock system");
-    //         },
-    //     },
-    // });
 
     const handleNext = () => {
         createNewDayMutate.mutate({
@@ -118,7 +101,6 @@ const CreateNewDay = ({
                                         <LockFilled
                                             className="h-5 w-5 shrink-0 !text-blue-500"
                                         />
-
                                         <div>
                                             <div className="text-[11px] sm:text-xs font-medium">
                                                 System Status
@@ -136,13 +118,7 @@ const CreateNewDay = ({
                         <div className="flex justify-center">
                             <Button
                                 type="primary"
-                                className="
-                        w-full sm:w-auto
-                        !bg-[#4F63A8]
-                        hover:!bg-[#3F5295]
-                        !border-[#4F63A8]
-                        hover:!border-[#3F5295]
-                    "
+                                className=" w-full sm:w-auto !bg-[#4F63A8] hover:!bg-[#3F5295] !border-[#4F63A8] hover:!border-[#3F5295]"
                             >
                                 <span className="text-xs sm:text-sm">
                                     Go to Dashboard
@@ -173,14 +149,7 @@ const CreateNewDay = ({
                                 </div>
                             </div>
                         }
-                        className="
-                w-full
-                sm:w-[90%]
-                md:w-[75%]
-                lg:w-[60%]
-                xl:w-[50%]
-                !border-blue-200
-            "
+                        className=" w-full sm:w-[90%] md:w-[75%] lg:w-[60%] xl:w-[50%] !border-blue-200"
                     >
                         <div className={cardDesign}>
                             <div className="flex justify-center sm:justify-start">
@@ -206,10 +175,7 @@ const CreateNewDay = ({
                             <Row gutter={[16, 16]}>
                                 <Col xs={24} md={10}>
                                     <div className="flex items-center gap-x-3">
-                                        <CalendarRange
-                                            className="h-5 w-5 shrink-0 !text-blue-500"
-                                        />
-
+                                        <CalendarRange className="h-5 w-5 shrink-0 !text-blue-500"/>
                                         <div>
                                             <div className="text-[11px] sm:text-xs font-medium">
                                                 Current Business Date
