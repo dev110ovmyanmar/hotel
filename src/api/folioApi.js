@@ -51,3 +51,8 @@ export const editFolio = async (params) => {
     const { data } = await apiClient.put("/folio/edit", params);
     return data.response;
 }
+
+export const createFolioLineNewPost = async (params) => {
+    const { data } = await apiClient.post("/folio-line/new-post", params);
+    return data.response;
+}

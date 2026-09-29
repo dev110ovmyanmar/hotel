@@ -77,9 +77,9 @@ const CategoryListing = () => {
         onView={handleView}
         onEdit={handleEdit}
         loading={isFetching}
-        page={data?.response?.pagination?.currentPage || page}
-        perPage={data?.response?.pagination?.perPage || perPage}
-        total={data?.response?.pagination?.total}
+        page={data?.pagination?.currentPage || page}
+        perPage={data?.pagination?.perPage || perPage}
+        total={data?.pagination?.total}
         changePage={(page) => setPage(page)}
         changePerPage={(perPage) => setPerPage(perPage)}
       />
