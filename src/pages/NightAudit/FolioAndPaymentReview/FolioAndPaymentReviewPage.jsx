@@ -1,7 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { folioReview } from "../../../api/nightAuditApi";
 import useApiQuery from "../../../hooks/useApiQuery";
-import { Spin } from "antd";
 import FolioAndPaymentReviewStatus from "./FolioAndPaymentReviewStatus";
 import CheckBookingHeader from "../CheckBookingHeader";
 import FolioAndPaymentReviewTable from "./FolioAndPaymentReviewTable";
@@ -10,29 +9,24 @@ import { useEffect } from "react";
 import Loader from "../../../component/Loader/Loader";
 
 const FolioAndPaymentReviewPage = ({ stepValue }) => {
+    
     const navigate = useNavigate();
-
     const nightAuditData = getNightAuditData();
-
     const businessDate = nightAuditData?.businessDate;
+    const nightAudit = localStorage.getItem("nightAudit");
 
     useEffect(() => {
-        const nightAudit = localStorage.getItem("nightAudit");
 
         if (!nightAudit) {
             navigate("/night-audit", { replace: true });
         }
     }, [navigate]);
 
-    const {
-        data: folioData,
-        isFetching: folioLoading,
-    } = useApiQuery({
+    const { data: folioData, isFetching: folioLoading, } = useApiQuery({
         fetchQueryName: "folio-review",
         fetchQueryFunction: folioReview,
-        params: {
-            businessDate
-        },
+        params: { businessDate },
+        options: { enabled: !!nightAudit },
     });
 
     if (folioLoading) {
