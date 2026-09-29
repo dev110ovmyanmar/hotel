@@ -1,10 +1,9 @@
-import { Button, Modal, Table, Tooltip } from "antd";
+import { Button, Modal, Table } from "antd";
 import { AiOutlineLeft, AiOutlineRight } from "react-icons/ai";
 import PriceTag from "../../../component/PriceTag/PriceTag";
 import FolioAndPaymentReviewDetails from "./FolioAndPaymentReviewDetails";
 import { useState } from "react";
 import FinancialStatusTag from "../../../component/FinancialStatusTag/FinancialStatusTag";
-import { EyeOutlined } from "@ant-design/icons";
 
 const FolioAndPaymentReviewTable = ({ data, backStep, nextStep, }) => {
 
@@ -93,25 +92,6 @@ const FolioAndPaymentReviewTable = ({ data, backStep, nextStep, }) => {
                 <FinancialStatusTag status={financialStatus} />
             ),
         },
-        // {
-        //     title: "Unposted Charges",
-        //     dataIndex: "hasUnpostedCharges",
-        //     key: "hasUnpostedCharges",
-        //     width: 140,
-        //     render: (hasUnpostedCharges, record) => (
-        //         <>  <div
-        //             className={
-        //                 hasUnpostedCharges === true
-        //                     ? "text-[#389E0D]"
-        //                     : "text-[#CF1322]"
-        //             }
-        //         >
-        //             {hasUnpostedCharges === true ? "True" : "False"}
-        //         </div>
-        //         </>
-
-        //     ),
-        // },
         {
             title: "Unposted Charges",
             dataIndex: "hasUnpostedCharges",
@@ -128,15 +108,21 @@ const FolioAndPaymentReviewTable = ({ data, backStep, nextStep, }) => {
                     >
                         {hasUnpostedCharges === true ? "True" : "False"}
                     </div>
-
-                    {record?.reviewIssues?.length !== 0 &&
-                        <Tooltip title="View Issue">
-                            <EyeOutlined onClick={(e) => {
+                    
+                    {record?.reviewIssues?.length !== 0 && (
+                        <a
+                            style={{
+                                textDecoration: 'underline',
+                                cursor: 'pointer'
+                            }}
+                            onClick={(e) => {
                                 e.stopPropagation();
                                 handleViewIssue(record);
-                            }} />
-                        </Tooltip>
-                    }
+                            }}
+                        >
+                            View Issue
+                        </a>
+                    )}
                 </>
             ),
         }

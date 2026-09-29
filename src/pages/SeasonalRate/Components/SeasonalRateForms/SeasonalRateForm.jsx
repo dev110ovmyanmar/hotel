@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import {
   Form,
   Input,
@@ -39,7 +39,13 @@ const SeasonalRateForm = ({
   page,
 }) => {
   const [form] = Form.useForm();
+  const formInitialized = useRef(false);
+  const prevRatePlanUuid = useRef(null);
+  const prevRoomTypeUuid = useRef(null);
+  const priceChanged = useRef(false);
+  const addFormReady = useRef(false);
   const formValues = Form.useWatch([], form);
+  const formPrice = Form.useWatch("price", form);
   const selectedRatePlanUuid = Form.useWatch("ratePlanUuid", form);
   const selectedRoomTypeUuid = Form.useWatch("roomTypeUuid", form);
 
@@ -102,11 +108,25 @@ const SeasonalRateForm = ({
   }, [selectedRatePlanUuid, selectedRoomTypeUuid, roomRateMapping]);
 
   // Auto-fill Base Price when mappedPrice changes
+  // In add mode: always fill.
+  // In edit mode: only when user actually changes ratePlan or roomType (not on initial load).
   useEffect(() => {
-    if (mappedPrice !== null) {
+    if (mappedPrice === null) return;
+    if (isAdd) {
+      addFormReady.current = true;
+      form.setFieldsValue({ price: mappedPrice });
+      return;
+    }
+    // Edit mode: only auto-fill if ratePlan or roomType actually changed
+    const ratePlanChanged = prevRatePlanUuid.current !== null && prevRatePlanUuid.current !== selectedRatePlanUuid;
+    const roomTypeChanged = prevRoomTypeUuid.current !== null && prevRoomTypeUuid.current !== selectedRoomTypeUuid;
+    if (formInitialized.current && (ratePlanChanged || roomTypeChanged)) {
+      priceChanged.current = true;
       form.setFieldsValue({ price: mappedPrice });
     }
-  }, [mappedPrice]);
+    prevRatePlanUuid.current = selectedRatePlanUuid;
+    prevRoomTypeUuid.current = selectedRoomTypeUuid;
+  }, [mappedPrice, isAdd, selectedRatePlanUuid, selectedRoomTypeUuid]);
 
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
   const mapOptions = (data) =>
@@ -152,6 +172,9 @@ const SeasonalRateForm = ({
         rateCategory: data?.rateCategory?.uuid,
         roomTypeUuid: data?.roomType?.uuid,
       });
+      formInitialized.current = true;
+      prevRatePlanUuid.current = data?.ratePlan?.uuid;
+      prevRoomTypeUuid.current = data?.roomType?.uuid;
     }
   }, [data, drawerOpen]);
 
@@ -233,6 +256,11 @@ const SeasonalRateForm = ({
   const handleClose = () => {
     setDrawerOpen(false);
     form.resetFields();
+    formInitialized.current = false;
+    prevRatePlanUuid.current = null;
+    prevRoomTypeUuid.current = null;
+    priceChanged.current = false;
+    addFormReady.current = false;
   };
 
   return (
@@ -285,6 +313,9 @@ const SeasonalRateForm = ({
             onFinish={onFinish}
             onValuesChange={(changedValues) => {
               const changedField = Object.keys(changedValues)[0];
+              if (changedField === "price") {
+                priceChanged.current = true;
+              }
               // Check if the changed field is one of our "enable" checkboxes
               if (changedField?.startsWith("enable_")) {
                 const isEnabled = changedValues[changedField];
@@ -383,13 +414,25 @@ const SeasonalRateForm = ({
               </Col>
 
               <Col span={12}>
+
                 <Form.Item
-                  label={<span>Price{mappedPrice !== null && <> (Original Price: <PriceTag value={mappedPrice} /> MMK)</>}</span>}
+                  label={
+                    <span>
+                      Price
+                      {mappedPrice !== null && (
+                        <> (Original Price: <PriceTag value={mappedPrice} /> MMK)</>
+                      )}
+                    </span>
+                  }
                   name="price"
                   rules={[{ required: true }]}
-                  getValueProps={(value) => ({
-                    value: value !== null && value !== undefined ? String(value) : "",
-                  })}
+                  getValueProps={() => {
+                    // Edit/view: show API price on initial load, form value after user changes
+                    if ((isView || isEdit) && data?.price != null && !priceChanged.current) {
+                      return { value: String(data.price) };
+                    }
+                    return { value: formPrice != null ? String(formPrice) : "" };
+                  }}
                 >
                   <PriceInput
                     min={0}

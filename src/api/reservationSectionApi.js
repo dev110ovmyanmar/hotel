@@ -202,3 +202,10 @@ export const roomPost = async (params) => {
   const { data } = await apiClient.post("/daily-charge/room-posted", params);
   return data.response; 
 }
+
+// Reservation Room View Details Time Edit
+export const reservationRoomEdit = async (params) => {
+  const { data } = await apiClient.put("reservation-room/edit", params);
+  return data.response;
+}
+

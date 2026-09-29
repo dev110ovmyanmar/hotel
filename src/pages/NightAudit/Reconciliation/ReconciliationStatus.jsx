@@ -13,23 +13,40 @@ import {
 import { reconciliationConfirm } from "../../../api/nightAuditApi";
 import { getNightAuditData } from "../../../variables/constants";
 import { useApiMutation } from "../../../hooks/useApiMutation";
+import { useNavigate } from "react-router-dom";
 
 const { Text } = Typography;
 
-const ReconciliationStatus = ({ data, hasBlockingDifferences, confirm, isConfirm }) => {
+const ReconciliationStatus = ({
+  data,
+  hasBlockingDifferences,
+  confirm,
+}) => {
+  const navigate = useNavigate();
 
   const canConfirm = confirm === true;
-  const isConfirmed = isConfirm === false;
   const hasBlockingDifference = hasBlockingDifferences === false;
-
-  const isBalanced = hasBlockingDifference && canConfirm && isConfirmed;
 
   const nightAuditData = getNightAuditData();
   const businessDate = nightAuditData?.businessDate;
 
+  const nightAudit = JSON.parse(
+    localStorage.getItem("nightAudit") || "{}"
+  );
+
+  const isConfirmed = nightAudit?.isConfirm === true;
+
+  const isBalanced =
+    hasBlockingDifference && canConfirm && !isConfirmed;
+
+  useEffect(() => {
+    if (!localStorage.getItem("nightAudit")) {
+      navigate("/night-audit", { replace: true });
+    }
+  }, [navigate]);
+
   const reconciliationConfirmed = useApiMutation({
     mutationFn: reconciliationConfirm,
-    // invalidateKeys: [["folio-review"]],
   });
 
   const reconciliation = () => {
@@ -41,17 +58,28 @@ const ReconciliationStatus = ({ data, hasBlockingDifferences, confirm, isConfirm
   const recConfirmed = reconciliationConfirmed.isSuccess;
 
   useEffect(() => {
-  if (recConfirmed) {
-    localStorage.setItem("isConfirmed", JSON.stringify(true));
- window.dispatchEvent(
+    if (recConfirmed) {
+      const currentNightAudit = JSON.parse(
+        localStorage.getItem("nightAudit") || "{}"
+      );
+
+      localStorage.setItem(
+        "nightAudit",
+        JSON.stringify({
+          ...currentNightAudit,
+          isConfirm: true,
+        })
+      );
+
+      window.dispatchEvent(
         new CustomEvent("reconciliation_confirmed", {
           detail: {
             isConfirmed: true,
           },
         })
       );
-  }
-}, [recConfirmed]);
+    }
+  }, [recConfirmed]);
 
   return (
     <div className="mb-2">
@@ -88,18 +116,22 @@ const ReconciliationStatus = ({ data, hasBlockingDifferences, confirm, isConfirm
                 <>
                   <CheckCircleFilled style={{ color: "#52c41a" }} />
                   <Text className="text-[#274916] dark:text-[#A8D58D]">
-                    {recConfirmed ? "Confirmed" : "Can Confirm"}
+                    {recConfirmed || isConfirmed
+                      ? "Confirmed"
+                      : "Can Confirm"}
                   </Text>
                 </>
               ) : (
                 <>
                   <WarningOutlined style={{ color: "#ff4d4f" }} />
-                  <Text style={{ color: "#a8071a" }}>Cannot Confirm</Text>
+                  <Text style={{ color: "#a8071a" }}>
+                    Cannot Confirm
+                  </Text>
                 </>
               )}
             </Space>
 
-            {!recConfirmed && (
+            {!recConfirmed && !isConfirmed && (
               <Button
                 type="primary"
                 danger={!isBalanced}
@@ -119,7 +151,6 @@ const ReconciliationStatus = ({ data, hasBlockingDifferences, confirm, isConfirm
         }
         style={{ alignItems: "center" }}
       />
-    
     </div>
   );
 };

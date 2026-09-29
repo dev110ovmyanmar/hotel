@@ -92,7 +92,7 @@ const FacilityTable = ({
             key: "facility-packages",
             label: "Facility Packages",
             icon: <DatabaseOutlined style={{ fontSize: "12px" }} />,
-            permission: PERMISSIONS.FACILITY_PACKAGE_LIST,
+            permission: PERMISSIONS.FACILITY_VIEW,
             onClick: () => {
               navigate(
                 `/events-&-facilities/facilities/${record?.id}/packages`,

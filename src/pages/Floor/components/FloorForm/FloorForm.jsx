@@ -28,7 +28,7 @@ const FloorForm = ({
   const isAdd = mode === "add";
 
   const { hasPermission } = usePermission();
-  const canEdit = hasPermission(PERMISSIONS.FLOOR_EDIT);
+  const canEditFloor = hasPermission(PERMISSIONS.FLOOR_EDIT);
 
   const createFloors = useApiMutation({
     mutationFn: createFloor,
@@ -115,7 +115,7 @@ const FloorForm = ({
                   : "Add Floor Rooms"}
             </span>
             {isView ? (
-              canEdit && (
+              canEditFloor && (
                 <Button
                   type="primary"
                   onClick={() => {
