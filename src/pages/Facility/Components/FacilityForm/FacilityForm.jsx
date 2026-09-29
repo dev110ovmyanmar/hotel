@@ -30,7 +30,7 @@ const FacilityForm = ({
   const isAdd = mode === "add";
 
   const { hasPermission } = usePermission();
-  const canEdit = hasPermission(PERMISSIONS.FACILITY_EDIT);
+  const canEditFacility = hasPermission(PERMISSIONS.FACILITY_EDIT);
 
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
   const status = initData?.statuses?.status;
@@ -60,7 +60,7 @@ const FacilityForm = ({
     invalidateKeys: [["facilities"]],
   });
 
-  const { data, isFetching, error } = useApiQuery({
+  const { data, isFetching : facilityDetailsFetching, error } = useApiQuery({
     fetchQueryName: "facility-details",
     fetchQueryFunction: getFacilityDetails,
     params: { uuid: selectedData?.uuid },
@@ -145,7 +145,7 @@ const FacilityForm = ({
                   : "Create Events & Facilities"}
             </span>
             {isView ? (
-              canEdit && (
+              canEditFacility && (
                 <Button
                   type="primary"
                   onClick={() => {
@@ -165,7 +165,7 @@ const FacilityForm = ({
           </div>
         }
       >
-        {isFetching ? (
+        {!isAdd && facilityDetailsFetching ? (
           <div className="flex items-center justify-center h-full min-h-[300px]">
             <Loader />
           </div>

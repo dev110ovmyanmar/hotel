@@ -29,12 +29,9 @@ const FacilityBookingTable = ({
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mode, setMode] = useState(null);
   const [selectedData, setSelectedData] = useState({});
-  const [imageDrawerOpen, setImageDrawerOpen] = useState(false);
 
   const { hasPermission } = usePermission();
-
-  const navigate = useNavigate();
-
+  
   const columns = [
     {
       title: "ID",

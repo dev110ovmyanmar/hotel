@@ -38,10 +38,11 @@ const RoomForm = ({
   const isEdit = mode === "edit";
   const isAdd = mode === "add";
 
-  const canEdit = hasPermission(PERMISSIONS.ROOM_EDIT);
+  const canEditRoom = hasPermission(PERMISSIONS.ROOM_EDIT);
   const canCreateAttribute = hasPermission(
     PERMISSIONS.ROOM_ATTRIBUTE_VALUE_CREATE,
   );
+  const canEditAttribute = hasPermission(PERMISSIONS.ROOM_ATTRIBUTE_VALUE_EDIT);
 
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
 
@@ -50,9 +51,12 @@ const RoomForm = ({
   //   label: status.name,
   // }));
 
-  const { data: roomMetaData } = useApiQuery({
+  const { data: roomMetaData, isFetching: roomMetaDataFetching } = useApiQuery({
     fetchQueryName: "roomMetaData",
     fetchQueryFunction: roomMeta,
+    options: {
+      enabled: !!drawerOpen
+    }
   });
 
   const { data, isFetching } = useApiQuery({
@@ -184,23 +188,32 @@ const RoomForm = ({
       dataIndex: "value",
       key: "value",
     },
-    {
-      title: "Action",
-      key: "action",
-      width: 80,
-      render: (_, record) =>
-        hasPermission(PERMISSIONS.ROOM_ATTRIBUTE_VALUE_EDIT) && (
-          <Button
-            type="text"
-            icon={<EditOutlined />}
-            onClick={() => {
-              setAttributeMode("edit");
-              setSelectedAttribute(record);
-              setAttributeOpen(true);
-            }}
-          />
-        ),
-    },
+    ...(
+      canEditAttribute && !isView
+        ?
+        [
+          {
+            title: "Action",
+            key: "action",
+            width: 80,
+            render: (_, record) =>
+              hasPermission(PERMISSIONS.ROOM_ATTRIBUTE_VALUE_EDIT) && (
+                <Button
+                  type="text"
+                  icon={<EditOutlined />}
+                  onClick={() => {
+                    setAttributeMode("edit");
+                    setSelectedAttribute(record);
+                    setAttributeOpen(true);
+                  }}
+                />
+              ),
+          }
+        ]
+        :
+        []
+    )
+
   ];
 
   return (
@@ -220,7 +233,7 @@ const RoomForm = ({
             </span>
 
             {isView ? (
-              canEdit && (
+              canEditRoom && (
                 <Button type="primary" onClick={() => setMode("edit")}>
                   Edit
                 </Button>
@@ -228,14 +241,14 @@ const RoomForm = ({
             ) : (
               <FormButton
                 onClick={() => form.submit()}
-                isPending={createRooms.isPending || editRooms.isPending}
+                isPending={isAdd ? createRooms.isPending : editRooms.isPending}
                 mode={mode}
               />
             )}
           </div>
         }
       >
-        {isFetching ? (
+        {!isAdd && (isFetching || roomMetaDataFetching) ? (
           <div className="flex items-center justify-center h-full min-h-[300px]">
             <Loader />
           </div>
@@ -271,6 +284,8 @@ const RoomForm = ({
                   }}
                   options={floors}
                   placeholder="Select Floor"
+                  loading={roomMetaDataFetching}
+                  disabled={roomMetaDataFetching}
                 />
               )}
             </Form.Item>
@@ -297,6 +312,8 @@ const RoomForm = ({
                   }}
                   options={roomType}
                   placeholder="Select Room Type"
+                  loading={roomMetaDataFetching}
+                  disabled={roomMetaDataFetching}
                 />
               )}
             </Form.Item>
