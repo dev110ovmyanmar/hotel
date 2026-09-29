@@ -44,7 +44,7 @@ const FacilityPackageForm = ({
   const isAdd = mode === "add";
 
   const { hasPermission } = usePermission();
-  const canEdit = hasPermission(PERMISSIONS.FACILITY_PACKAGE_EDIT);
+  const canEditFacilityPackage = hasPermission(PERMISSIONS.FACILITY_PACKAGE_EDIT);
 
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
   const status = initData?.statuses?.status;
@@ -62,9 +62,12 @@ const FacilityPackageForm = ({
       label: status.name,
     }));
 
-  const { data: facilityMetaData } = useApiQuery({
+  const { data: facilityMetaData , isFetching : facilityMetaDataFetching } = useApiQuery({
     fetchQueryName: "facilityMetaData",
     fetchQueryFunction: facilityMeta,
+    options : {
+      enabled : !!drawerOpen
+    }
   });
 
   const facilityList = facilityMetaData?.facilities?.map((facilitiy) => ({
@@ -83,7 +86,7 @@ const FacilityPackageForm = ({
     invalidateKeys: [["facility-packages"]],
   });
 
-  const { data, isFetching, error } = useApiQuery({
+  const { data, isFetching : facilityPackageDetailsFetching, error } = useApiQuery({
     fetchQueryName: "facility-package-details",
     fetchQueryFunction: getFacilityPackageDetails,
     params: { uuid: selectedData?.uuid },
@@ -227,7 +230,7 @@ const FacilityPackageForm = ({
                   : "Create Package"}
             </span>
             {isView ? (
-              canEdit && (
+              canEditFacilityPackage && (
                 <Button
                   type="primary"
                   onClick={() => {
@@ -240,14 +243,14 @@ const FacilityPackageForm = ({
             ) : (
               <FormButtons
                 onClick={() => form.submit()}
-                isPending={createFacility.isPending || editFacility.isPending}
+                isPending={isAdd ? createFacility.isPending : editFacility.isPending}
                 mode={mode}
               />
             )}
           </div>
         }
       >
-        {isFetching ? (
+        {facilityPackageDetailsFetching ? (
           <div className="flex items-center justify-center h-full min-h-[300px]">
             <Loader />
           </div>
@@ -288,6 +291,8 @@ const FacilityPackageForm = ({
                   }}
                   options={facilityList}
                   placeholder="Select Facility"
+                  loading={facilityMetaDataFetching}
+                  disabled={facilityMetaDataFetching}
                 />
               )}
             </Form.Item>

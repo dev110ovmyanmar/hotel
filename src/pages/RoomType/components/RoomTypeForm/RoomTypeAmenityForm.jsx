@@ -18,6 +18,7 @@ import { queryClient } from "../../../../app/queryClient";
 import { useEffect } from "react";
 import FormButtons from "../../../../component/FormButtons/FormButtons";
 import PriceInput from "../../../../component/PriceInput/PriceInput";
+import Loader from "../../../../component/Loader/Loader";
 
 const RoomAttributesForm = ({
   mode,
@@ -32,9 +33,12 @@ const RoomAttributesForm = ({
   const isEdit = mode === "edit";
   const isFree = Form.useWatch("isFree", form);
 
-  const { data: roomMetaData } = useApiQuery({
+  const { data: roomMetaData, isFetching: roomMetaDataFetching } = useApiQuery({
     fetchQueryName: "roomMetaData",
     fetchQueryFunction: roomMeta,
+    options: {
+      enabled: !!open
+    }
   });
 
   const roomTypeAmenities = roomMetaData?.amenities?.map((amenity) => ({
@@ -125,8 +129,9 @@ const RoomAttributesForm = ({
           <FormButtons
             onClick={() => form.submit()}
             isPending={
-              createRoomTypeAmenities.isPending ||
-              editRoomTypeAmenities.isPending
+              isAdd ?
+                createRoomTypeAmenities.isPending :
+                editRoomTypeAmenities.isPending
             }
             mode={mode}
           />
@@ -136,25 +141,33 @@ const RoomAttributesForm = ({
       onClose={handleClose}
       destroyOnClose
     >
-      {open && (
-        <Form
-          form={form}
-          layout="vertical"
-          onFinish={onFinish}
-          initialValues={{ isFree: 0 }}
-        >
-          <Form.Item
-            label="Room Amenity"
-            name="roomTypeAmenityUuid"
-            rules={[{ required: true, message: "Select attribute" }]}
+      {!isAdd && roomMetaDataFetching
+        ?
+        <div className="flex items-center justify-center h-full min-h-[300px]">
+          <Loader />
+        </div>
+        :
+        (
+          <Form
+            form={form}
+            layout="vertical"
+            onFinish={onFinish}
+            initialValues={{ isFree: 0 }}
           >
-            <Select
-              options={roomTypeAmenities}
-              placeholder="Select Attribute"
-            />
-          </Form.Item>
+            <Form.Item
+              label="Room Amenity"
+              name="roomTypeAmenityUuid"
+              rules={[{ required: true, message: "Select attribute" }]}
+            >
+              <Select
+                options={roomTypeAmenities}
+                placeholder="Select Attribute"
+                loading={roomMetaDataFetching}
+                disabled={roomMetaDataFetching}
+              />
+            </Form.Item>
 
-          {/* <Form.Item
+            {/* <Form.Item
             label="Is Free"
             name="isFree"
             valuePropName="checked"
@@ -172,17 +185,17 @@ const RoomAttributesForm = ({
               }}
             />
           </Form.Item> */}
-          <Form.Item
-            // label="Is Free"
-            name="isFree"
-            initialValue={false}
-            valuePropName="checked"
-            rules={[{ required: true, message: "Please select billing type!" }]}
-          >
-            <Checkbox>This item is free</Checkbox>
-          </Form.Item>
+            <Form.Item
+              // label="Is Free"
+              name="isFree"
+              initialValue={false}
+              valuePropName="checked"
+              rules={[{ required: true, message: "Please select billing type!" }]}
+            >
+              <Checkbox>This item is free</Checkbox>
+            </Form.Item>
 
-          {/* <Form.Item
+            {/* <Form.Item
             label="Extra Price"
             name="extraPrice"
           >
@@ -196,22 +209,22 @@ const RoomAttributesForm = ({
               parser={priceParser}
             />
           </Form.Item> */}
-          {!isFree && (
-            <Form.Item
-              label="Extra Price"
-              name="extraPrice"
-              rules={[{ required: true, message: "Please enter extra price!" }]}
-              getValueProps={(value) => ({ value: value !== null && value !== undefined ? String(value) : "" })}
-            >
-              <PriceInput
-                min={1}
-                placeholder="Enter Extra Price"
-                suffix="MMK"
-              />
-            </Form.Item>
-          )}
-        </Form>
-      )}
+            {!isFree && (
+              <Form.Item
+                label="Extra Price"
+                name="extraPrice"
+                rules={[{ required: true, message: "Please enter extra price!" }]}
+                getValueProps={(value) => ({ value: value !== null && value !== undefined ? String(value) : "" })}
+              >
+                <PriceInput
+                  min={1}
+                  placeholder="Enter Extra Price"
+                  suffix="MMK"
+                />
+              </Form.Item>
+            )}
+          </Form>
+        )}
     </Drawer>
   );
 };

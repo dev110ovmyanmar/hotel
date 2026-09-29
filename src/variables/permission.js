@@ -90,6 +90,8 @@ export const PERMISSIONS = {
   ROOM_ATTRIBUTE_VIEW: "room-attribute.view",
   ROOM_ATTRIBUTE_CREATE: "room-attribute.create",
   ROOM_ATTRIBUTE_EDIT: "room-attribute.edit",
+
+  // Room Attribute Value
   ROOM_ATTRIBUTE_VALUE_CREATE: "room-attribute-value.create",
   ROOM_ATTRIBUTE_VALUE_EDIT: "room-attribute-value.edit",
 
