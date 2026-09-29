@@ -155,7 +155,7 @@ const useMaintenanceRequestColumns = (onEdit, onView) => {
                             },
                             items: [
                                 viewPermission && { key: "1", label: "View", icon: <EyeOutlined /> },
-                                editPermission && isEditDisabled ||  { key: "2", label: "Edit", icon: <EditOutlined /> },
+                                editPermission && (isEditDisabled ||  { key: "2", label: "Edit", icon: <EditOutlined /> }),
                             ],
                         }}
                         trigger={["click"]}

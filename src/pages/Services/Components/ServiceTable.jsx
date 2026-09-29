@@ -26,9 +26,10 @@ const ServiceTable = ({
 }) => {
   const { hasPermission } = usePermission();
   const canCreateNested = hasPermission(
-    PERMISSIONS.SERVICE_INVENTORY_ITEM_CREATE,
+    PERMISSIONS.SERVICE_INVENTORY_CREATE,
   );
-  const rowExpandList = hasPermission(PERMISSIONS.SERVICE_INVENTORY_ITEM_LIST);
+  const rowExpandList = hasPermission(PERMISSIONS.SERVICE_LIST);
+  const canViewForServiceInventory = hasPermission(PERMISSIONS.SERVICE_INVENTORY_VIEW);
 
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [itemDrawerOpen, setItemDrawerOpen] = useState(false);
@@ -36,7 +37,7 @@ const ServiceTable = ({
   const [selectedData, setSelectedData] = useState({});
   const [selectedItem, setSelectedItem] = useState(null);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-  const [deleteServiceInventoryUuid,setDeleteServiceInventoryUuid] = useState();
+  const [deleteServiceInventoryUuid, setDeleteServiceInventoryUuid] = useState();
 
   const deleteServiceInventoryMappings = useApiMutation({
     mutationFn: deleteServiceInventoryMapping,
@@ -174,70 +175,78 @@ const ServiceTable = ({
       align: "end",
       render: (text) => <PriceTag value={text} />,
     },
-    {
-      title: "Action",
-      align: "center",
-      render: (_, record) => {
-        console.log(record, "REcordInViewDelete")
-        const smallStyle = { fontSize: "12px" };
-
-        const actions = [
+    ...(
+      canViewForServiceInventory
+        ?
+        [
           {
-            key: "view",
-            label: "View",
-            icon: <EyeOutlined style={{ fontSize: "12px" }} />,
-            permission: PERMISSIONS.SERVICE_INVENTORY_ITEM_VIEW,
-            onClick: () => {
-              setItemDrawerOpen(true);
-              setMode("item-view");
-              setSelectedItem(record);
-            },
-          },
-          {
-            key: "edit",
-            label: "Edit",
-            icon: <EditOutlined style={{ fontSize: "12px" }} />,
-            permission: PERMISSIONS.SERVICE_INVENTORY_ITEM_EDIT,
-            onClick: () => {
-              setItemDrawerOpen(true);
-              setMode("item-edit");
-              setSelectedItem(record);
-            },
-          },
-          {
-            key: "delete",
-            label: <div className="!text-red-500">Delete</div>,
-            icon: <DeleteOutlined style={{ color:"red", fontSize: "12px" }} />,
-            permission: PERMISSIONS.SERVICE_INVENTORY_DELETE,
-            onClick: () => {
-              setDeleteServiceInventoryUuid(record?.uuid)
-              setDeleteModalOpen(true)
-            },
-          },
-        ];
+            title: "Action",
+            align: "center",
+            render: (_, record) => {
+              const smallStyle = { fontSize: "12px" };
 
-        // Filter actions by permission
-        const items = actions
-          .filter(
-            (action) => !action.permission || hasPermission(action.permission),
-          )
-          .map((action) => ({
-            key: action.key,
-            label: (
-              <Space size={4} style={smallStyle} onClick={action.onClick}>
-                {action.icon}
-                <span style={{ fontSize: "14px" }}>{action.label}</span>
-              </Space>
-            ),
-          }));
+              const actions = [
+                {
+                  key: "view",
+                  label: "View",
+                  icon: <EyeOutlined style={{ fontSize: "12px" }} />,
+                  permission: PERMISSIONS.SERVICE_INVENTORY_VIEW,
+                  onClick: () => {
+                    setItemDrawerOpen(true);
+                    setMode("item-view");
+                    setSelectedItem(record);
+                  },
+                },
+                {
+                  key: "edit",
+                  label: "Edit",
+                  icon: <EditOutlined style={{ fontSize: "12px" }} />,
+                  permission: PERMISSIONS.SERVICE_INVENTORY_EDIT,
+                  onClick: () => {
+                    setItemDrawerOpen(true);
+                    setMode("item-edit");
+                    setSelectedItem(record);
+                  },
+                },
+                {
+                  key: "delete",
+                  label: <div className="!text-red-500">Delete</div>,
+                  icon: <DeleteOutlined style={{ color: "red", fontSize: "12px" }} />,
+                  permission: PERMISSIONS.SERVICE_INVENTORY_DELETE,
+                  onClick: () => {
+                    setDeleteServiceInventoryUuid(record?.uuid)
+                    setDeleteModalOpen(true)
+                  },
+                },
+              ];
 
-        return (
-          <Dropdown menu={{ items }} trigger={["click"]}>
-            <MoreOutlined style={{ fontSize: "16px" }} />
-          </Dropdown>
-        );
-      },
-    },
+              // Filter actions by permission
+              const items = actions
+                .filter(
+                  (action) => !action.permission || hasPermission(action.permission),
+                )
+                .map((action) => ({
+                  key: action.key,
+                  label: (
+                    <Space size={4} style={smallStyle} onClick={action.onClick}>
+                      {action.icon}
+                      <span style={{ fontSize: "14px" }}>{action.label}</span>
+                    </Space>
+                  ),
+                }));
+
+              return (
+                <Dropdown menu={{ items }} trigger={["click"]}>
+                  <MoreOutlined style={{ fontSize: "16px" }} />
+                </Dropdown>
+              );
+            },
+          }
+        ]
+        :
+        []
+    )
+
   ];
 
   const expandedRowRender = (record) => {
@@ -279,10 +288,10 @@ const ServiceTable = ({
 
   const handleDeleteOk = () => {
     const payload = {
-      uuid : deleteServiceInventoryUuid
+      uuid: deleteServiceInventoryUuid
     };
     return (
-      deleteServiceInventoryMappings.mutate(payload,{
+      deleteServiceInventoryMappings.mutate(payload, {
         onSuccess: (response) => {
           Toast.success(response);
           setDeleteModalOpen(false);

@@ -36,7 +36,8 @@ const HouseKeepingTaskForm = ({
     onViewTaskAssign,
     taskAssignDrawerOpen,
     setTaskAssignDrawerOpen,
-    staffOptionsforAssignment
+    staffOptionsforAssignment,
+    adminMetaDataFetching
 }) => {
     const [form] = Form.useForm();
     const queryClient = useQueryClient();
@@ -48,7 +49,6 @@ const HouseKeepingTaskForm = ({
     const isCreate = mode === "add";
 
     const { hasPermission } = usePermission();
-    const viewPermission = hasPermission(PERMISSIONS.HK_TASK_VIEW);
     const editPermission = hasPermission(PERMISSIONS.HK_TASK_EDIT);
 
     // ===== Options & Meta Data =====
@@ -59,15 +59,15 @@ const HouseKeepingTaskForm = ({
 
     const priorityOptions = useMemo(() => mapOptions(initData?.statuses?.priority_level), [initData]);
     const taskTypeOptions = useMemo(() => {
-    const options = mapOptions(initData?.statuses?.task_type);
-    return options.map((opt) => ({
-    ...opt,
-    disabled: opt.code === "checkout_cleaning",
-    }));
+        const options = mapOptions(initData?.statuses?.task_type);
+        return options.map((opt) => ({
+            ...opt,
+            disabled: opt.code === "checkout_cleaning",
+        }));
     }, [initData, isCreate]);
 
     // ===== Fetch Detail =====
-    const { data: detail, isFetching } = useApiQuery({
+    const { data: detail, isFetching  } = useApiQuery({
         fetchQueryName: "housekeeping-task-detail",
         fetchQueryFunction: getHouseKeepingTaskDetail,
         params: { uuid: selectedRow?.uuid },
@@ -102,7 +102,7 @@ const HouseKeepingTaskForm = ({
                             (
                                 editCurrentStatus === "in_progress" &&
                                 ["pending", "cancelled"].includes(item.code)
-                            ) 
+                            )
                             ||
                             (
                                 isCheckoutCleaning &&
@@ -152,7 +152,7 @@ const HouseKeepingTaskForm = ({
     });
 
     // Determine loading state for FormButtons
-    const isPending = createMutation.isPending || updateMutation.isPending;
+    const isPending = isCreate ? createMutation.isPending : updateMutation.isPending;
 
     const handleClose = () => {
         setDrawerOpen(false);
@@ -231,7 +231,7 @@ const HouseKeepingTaskForm = ({
                     )
                 }
             >
-                {isFetching && !isCreate ?
+                {(isFetching || adminMetaDataFetching) && !isCreate ?
                     <div className="flex h-64 items-center justify-center"><Loader /></div>
                     : (
                         <div>
@@ -263,7 +263,7 @@ const HouseKeepingTaskForm = ({
                                         {isView ? <Input readOnly /> :
                                             <Select
                                                 options={roomOptions}
-                                                disabled={isView}
+                                                disabled={isView || adminMetaDataFetching}
                                                 placeholder="Select Room"
                                                 showSearch
                                                 optionFilterProp="searchLabel"
@@ -272,6 +272,7 @@ const HouseKeepingTaskForm = ({
                                                         .toLowerCase()
                                                         .includes(input.toLowerCase())
                                                 }
+                                                loading={adminMetaDataFetching}
                                             />}
                                     </Form.Item>
 
@@ -283,10 +284,10 @@ const HouseKeepingTaskForm = ({
                                         })}>
                                         {
                                             isView || isCheckoutCleaning ? <Input readOnly={isView || isCheckoutCleaning} /> :
-                                                <Select 
-                                                options={taskTypeOptions} 
-                                                // disabled={isView} 
-                                                placeholder="Select Task Type" />
+                                                <Select
+                                                    options={taskTypeOptions}
+                                                    // disabled={isView} 
+                                                    placeholder="Select Task Type" />
                                         }
                                     </Form.Item>
 
@@ -324,7 +325,7 @@ const HouseKeepingTaskForm = ({
                                                         : value,
                                                 })}
                                             >
-                                                <Input readOnly={isCreate} /> 
+                                                <Input readOnly={isCreate} />
                                             </Form.Item>
                                         ) : (
                                             <Form.Item name="housekeepingStatus"
@@ -416,10 +417,11 @@ const HouseKeepingTaskForm = ({
                                             <Select
                                                 mode="multiple"
                                                 options={staffOptions}
-                                                disabled={isView}
+                                                disabled={isView || adminMetaDataFetching}
                                                 placeholder="Select Staffs"
                                                 optionFilterProp="label"
                                                 allowClear
+                                                loading={adminMetaDataFetching}
                                             />
                                         </Form.Item>
                                     )

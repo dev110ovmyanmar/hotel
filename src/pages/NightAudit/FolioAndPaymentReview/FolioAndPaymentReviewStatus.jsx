@@ -1,17 +1,13 @@
 import {
-  CheckCircleOutlined,
   CloseCircleOutlined,
-  ExclamationCircleOutlined,
   FileTextOutlined,
-  FolderOutlined,
-  PieChartOutlined,
   WarningOutlined,
 } from "@ant-design/icons";
 import { Card } from "antd";
 import { CircleCheck } from "lucide-react";
 
 const FolioAndPaymentReviewStatus = ({ data }) => {
-  const folioCounts = data?.reviewSummary
+  const folioCounts = data?.reviewSummary ?? {}
 
   const cardDesign = `!w-full !h-full !shadow-md !m-0 !p-0 `;
 

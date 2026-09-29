@@ -12,6 +12,7 @@ import { menuMeta } from "../../../../api/menuApi";
 import Toast from "../../../../component/Toast/Toast";
 import { PERMISSIONS } from "../../../../variables/permission";
 import usePermission from "../../../../hooks/usePermission";
+import Loader from "../../../../component/Loader/Loader";
 
 const ItemsForm = ({
   selectedItem,
@@ -19,7 +20,7 @@ const ItemsForm = ({
   drawerOpen,
   setDrawerOpen,
   mode,
-  setMode,
+  setMode
 }) => {
   const [form] = Form.useForm();
   const { hasPermission } = usePermission();
@@ -27,12 +28,15 @@ const ItemsForm = ({
   const isView = mode === "item-view";
   const isEdit = mode === "item-edit";
   const isAdd = mode === "item-add";
-  
-  const canEdit = hasPermission(PERMISSIONS.MENU_MODIFIER_EDIT);
 
-  const { data: menuMetaData } = useApiQuery({
+  const canEdit = hasPermission(PERMISSIONS.FOOD_AND_BEVERAGE_INVENTORY_EDIT);
+
+  const { data: menuMetaData, isFetching: menuMetaDataFetching } = useApiQuery({
     fetchQueryName: "menuMetaData",
     fetchQueryFunction: menuMeta,
+    options: {
+      enabled : !!drawerOpen
+    }
   });
 
   const fnbInventoryOptions = menuMetaData?.fnb_inventory_items?.map(
@@ -148,76 +152,88 @@ const ItemsForm = ({
           </div>
         }
       >
-        <Form
-          form={form}
-          layout="vertical"
-          style={{ width: "100%" }}
-          onFinish={onFinish}
-        >
-          <Form.Item
-            label="Item"
-            name="fnbInventoryItem"
-            rules={[{ required: true, message: "Item is Required" }]}
-            getValueProps={(value) => ({
-              value: isView
-                ? fnbInventoryOptions.find((item) => item.value === value)
-                    ?.label
-                : value,
-            })}
-          >
-            {isView ? (
-              <Input readOnly={isView} />
-            ) : (
-              <Select
-                showSearch={{
-                  filterOption: (input, option) =>
-                    (option?.label ?? "")
-                      .toLowerCase()
-                      .includes(input.toLowerCase()),
-                }}
-                options={fnbInventoryOptions}
-                placeholder="Select Item"
-              />
-            )}
-          </Form.Item>
+        {
+          !isAdd && menuMetaDataFetching
+            ?
+            <div className="flex items-center justify-center h-full min-h-[300px]">
+              <Loader />
+            </div>
+            :
+            <Form
+              form={form}
+              layout="vertical"
+              style={{ width: "100%" }}
+              onFinish={onFinish}
+            >
+              <Form.Item
+                label="Item"
+                name="fnbInventoryItem"
+                rules={[{ required: true, message: "Item is Required" }]}
+                getValueProps={(value) => ({
+                  value: isView
+                    ? fnbInventoryOptions.find((item) => item.value === value)
+                      ?.label
+                    : value,
+                })}
+              >
+                {isView ? (
+                  <Input readOnly={isView} />
+                ) : (
+                  <Select
+                    showSearch={{
+                      filterOption: (input, option) =>
+                        (option?.label ?? "")
+                          .toLowerCase()
+                          .includes(input.toLowerCase()),
+                    }}
+                    options={fnbInventoryOptions}
+                    placeholder="Select Item"
+                    loading={menuMetaDataFetching}
+                    disabled={menuMetaDataFetching}
+                  />
+                )}
+              </Form.Item>
 
-          <Form.Item
-            label="Unit"
-            name="unit"
-            rules={[{ required: true, message: "Units is Required" }]}
-            getValueProps={(value) => ({
-              value: isView
-                ? unitOptions.find((item) => item.value === value)?.label
-                : value,
-            })}
-          >
-            {isView ? (
-              <Input readOnly={isView} />
-            ) : (
-              <Select
-                showSearch={{
-                  filterOption: (input, option) =>
-                    (option?.label ?? "")
-                      .toLowerCase()
-                      .includes(input.toLowerCase()),
-                }}
-                options={unitOptions}
-                placeholder="Select Unit"
-                open={isView ? false : undefined}
-              />
-            )}
-          </Form.Item>
+              <Form.Item
+                label="Unit"
+                name="unit"
+                rules={[{ required: true, message: "Units is Required" }]}
+                getValueProps={(value) => ({
+                  value: isView
+                    ? unitOptions.find((item) => item.value === value)?.label
+                    : value,
+                })}
+              >
+                {isView ? (
+                  <Input readOnly={isView} />
+                ) : (
+                  <Select
+                    showSearch={{
+                      filterOption: (input, option) =>
+                        (option?.label ?? "")
+                          .toLowerCase()
+                          .includes(input.toLowerCase()),
+                    }}
+                    options={unitOptions}
+                    placeholder="Select Unit"
+                    open={isView ? false : undefined}
+                    loading={menuMetaDataFetching}
+                    disabled={menuMetaDataFetching}
+                  />
+                )}
+              </Form.Item>
 
-          <Form.Item label="Quantity" name="quantityPerItem">
-            <InputNumber
-              className="w-full!"
-              mode="spinner"
-              min={1}
-              readOnly={isView}
-              placeholder="Enter Quantity"
-            />
-          </Form.Item>
-        </Form>
+              <Form.Item label="Quantity" name="quantityPerItem">
+                <InputNumber
+                  className="w-full!"
+                  mode="spinner"
+                  min={1}
+                  readOnly={isView}
+                  placeholder="Enter Quantity"
+                />
+              </Form.Item>
+            </Form>
+        }
       </Drawer>
     </div>
   );

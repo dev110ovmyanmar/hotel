@@ -1,6 +1,8 @@
 import React from "react";
 import { Table } from "antd";
 import useServiceInventoryColumns from "./useServiceInventoryColumns";
+import usePermission from "../../../hooks/usePermission";
+import { PERMISSIONS } from "../../../variables/permission";
 
 const ServiceInventoryTable = ({
   dataSource,
@@ -14,6 +16,8 @@ const ServiceInventoryTable = ({
   total,
 
 }) => {
+  const { hasPermission } = usePermission();
+  const hasPermissionForExpandedColumns = hasPermission(PERMISSIONS.SERVICE_INVENTORY_LIST);
   const columns = useServiceInventoryColumns(onEdit, onView);
 
   const expandColumns = [
@@ -48,7 +52,7 @@ const ServiceInventoryTable = ({
       columns={columns}
       expandable={{
         expandedRowRender,
-        rowExpandable: (record) => record?.serviceInventoryMappings.length > 0
+        rowExpandable: (record) => record?.serviceInventoryMappings.length > 0 && hasPermissionForExpandedColumns
       }}
       dataSource={dataSource}
       rowKey="uuid"

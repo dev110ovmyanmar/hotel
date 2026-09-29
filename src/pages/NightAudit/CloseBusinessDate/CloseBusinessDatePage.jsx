@@ -1,38 +1,30 @@
 import { useNavigate } from "react-router-dom";
 import { preAuditCheck } from "../../../api/nightAuditApi";
 import useApiQuery from "../../../hooks/useApiQuery";
-import { Spin } from "antd";
-import CloseBusinessDateStatus from "./CloseBusinessDateStatus";
 import CheckBookingHeader from "../CheckBookingHeader";
 import CloseBusinessDateTable from "./CloseBusinessDateTable";
 import { getNightAuditData, spinLoadingCenter } from "../../../variables/constants";
 import { useEffect } from "react";
 import Loader from "../../../component/Loader/Loader";
 
-const CloseBusinessDatePage = ({
-    stepValue,
-}) => {
+const CloseBusinessDatePage = ({stepValue}) => {
+  
     const navigate = useNavigate();
-
     const nightAuditData = getNightAuditData();
-
     const businessDate = nightAuditData?.businessDate;
+    const nightAudit = localStorage.getItem("nightAudit");
 
     useEffect(() => {
-        const nightAudit = localStorage.getItem("nightAudit");
-
         if (!nightAudit) {
             navigate("/night-audit", { replace: true });
         }
     }, [navigate]);
 
-    const { data: preAuditChecksData, isFetching, error } = useApiQuery({
+    const { data: preAuditChecksData, isFetching } = useApiQuery({
         fetchQueryName: "pre-audit-checks",
         fetchQueryFunction: preAuditCheck,
-        params: {
-            businessDate
-
-        },
+        params: { businessDate },
+        options: { enabled: !!nightAudit },
     });
 
     if (isFetching) {
@@ -46,7 +38,6 @@ const CloseBusinessDatePage = ({
     return (
         <div className="w-full px-6 py-2">
             <CheckBookingHeader />
-            {/* <CloseBusinessDateStatus preAuditChecksData={preAuditChecksData} /> */}
             <CloseBusinessDateTable
                 backStep={() => {
                     window.dispatchEvent(
@@ -56,7 +47,6 @@ const CloseBusinessDatePage = ({
                             },
                         })
                     );
-
                     navigate("/night-audit/reconciliation");
                 }}
                 nextStep={() => {

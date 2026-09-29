@@ -11,14 +11,11 @@ import Loader from "../../../component/Loader/Loader";
 const PreAuditCheckPage = ({ stepValue }) => {
 
     const navigate = useNavigate();
-
     const nightAuditData = getNightAuditData();
-
     const businessDate = nightAuditData?.businessDate;
+    const nightAudit = localStorage.getItem("nightAudit");
 
     useEffect(() => {
-        const nightAudit = localStorage.getItem("nightAudit");
-
         if (!nightAudit) {
             navigate("/night-audit", { replace: true });
         }
@@ -27,12 +24,8 @@ const PreAuditCheckPage = ({ stepValue }) => {
     const { data: preAuditChecksData, isFetching } = useApiQuery({
         fetchQueryName: "pre-audit-checks",
         fetchQueryFunction: preAuditCheck,
-        params: {
-            businessDate: businessDate
-        },
-        options: {
-            enabled: !!businessDate,
-        },
+        params: { businessDate: businessDate },
+        options: { enabled: !!nightAudit && !!businessDate, },
     });
 
     if (isFetching || !preAuditChecksData) {
@@ -49,6 +42,7 @@ const PreAuditCheckPage = ({ stepValue }) => {
             <PreAuditCheckStatus
                 preAuditChecksData={preAuditChecksData}
                 preNightAudit={true} />
+                
             <PreAuditTable
                 colorCheckBooking={() => {
                     window.dispatchEvent(

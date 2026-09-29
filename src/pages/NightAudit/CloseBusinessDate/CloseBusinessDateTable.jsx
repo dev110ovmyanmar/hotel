@@ -1,11 +1,11 @@
 import { CloseCircleOutlined, WarningOutlined } from "@ant-design/icons";
-import { Button, Card, Col, Form, Row, Space, Table, Tag } from "antd";
+import { Button, Card, Col, Form, Row, Table, Tag } from "antd";
 import { AiOutlineLeft, AiOutlineRight } from "react-icons/ai";
 import { CalendarRange, CircleCheck, LockKeyhole } from "lucide-react";
 import { addDays } from "../../../variables/constants";
 import { useApiMutation } from "../../../hooks/useApiMutation";
-import { clickCloseBusinessDate, clickCreateNewDay } from "../../../api/nightAuditApi";
-import { useState } from "react";
+import { clickCloseBusinessDate } from "../../../api/nightAuditApi";
+import { useState } from "react";    
 
 const CloseBusinessDateTable = ({
     backStep,
@@ -16,16 +16,17 @@ const CloseBusinessDateTable = ({
     const [form] = Form.useForm();
     const nextBusinessDate = addDays(preAuditChecksData?.businessDate, 1);
     const [successCloseBusinessDate, setSuccessCloseBusinessDate] = useState(false);
+    const disableBtn = preAuditChecksData?.summary?.blockingIssues !== 0;
 
     const closeBusinessDateMutate = useApiMutation({
         mutationFn: clickCloseBusinessDate,
         // invalidateKeys: [["admins"]],
     });
 
-    const createNewDayMutate = useApiMutation({
-        mutationFn: clickCreateNewDay,
-        // invalidateKeys: [["admins"]],
-    });
+    // const createNewDayMutate = useApiMutation({
+    //     mutationFn: clickCreateNewDay,
+    //     // invalidateKeys: [["admins"]],
+    // });
 
     const auditData = JSON.parse(
         localStorage.getItem("nightAudit")
@@ -56,15 +57,15 @@ const CloseBusinessDateTable = ({
             })
     };
 
-    const handlecreateNewDay = () => {
-        createNewDayMutate.mutate({
-            businessDate: nextBusinessDate
-        }, {
-            onSuccess: () => {
-                setShowNewBusinessDayCard(true)
-            }
-        })
-    };
+    // const handlecreateNewDay = () => {
+    //     createNewDayMutate.mutate({
+    //         businessDate: nextBusinessDate
+    //     }, {
+    //         onSuccess: () => {
+    //             setShowNewBusinessDayCard(true)
+    //         }
+    //     })
+    // };
 
     const columns = [
         {
@@ -88,7 +89,6 @@ const CloseBusinessDateTable = ({
                 const blocking = text === "BLOCKING";
                 const passed = text === "PASSED";
                 const warning = text === "WARNING"
-                console.log(text, "TextStatus")
                 return (
                     <Tag color={blocking ? "red" : warning ? "orange" : "green"}
                         className={
@@ -180,7 +180,9 @@ const CloseBusinessDateTable = ({
                                         type="primary"
                                         className="!w-full"
                                         onClick={handleCloseBusinessDate}
-                                        disabled={activeButton}
+                                        disabled={activeButton || disableBtn}
+                                        loading={closeBusinessDateMutate.isPending}
+
                                     >
                                         <div className="flex gap-x-5">
                                             <div><LockKeyhole /></div>
