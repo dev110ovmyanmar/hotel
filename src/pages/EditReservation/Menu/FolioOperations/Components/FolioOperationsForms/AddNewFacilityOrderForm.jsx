@@ -95,7 +95,7 @@ const AddNewFacilityOrderForm = ({ open, onClose, reservationId }) => {
           <div className="flex justify-end mb-3">
             <Button
               onClick={() => setSearchOpen(true)}
-              className="custom-blue-btn"
+              className={`custom-blue-btn ${searchOpen ? "custom-blue-btn-active" : ""}`}
             >
               Search By
             </Button>

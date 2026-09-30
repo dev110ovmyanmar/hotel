@@ -8,7 +8,7 @@ const ServiceOrderButtons = ({ reservationId }) => {
   return (
     <div>
       <div className="flex flex-row gap-2 items-center w-full mb-4">
-        <Button className="custom-blue-btn"
+        <Button className={`custom-blue-btn ${drawerOpen ? "custom-blue-btn-active" : ""}`}
           onClick={() => setDrawerOpen(true)}
         >
           View Service Add On
