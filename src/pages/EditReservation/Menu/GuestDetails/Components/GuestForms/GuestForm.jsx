@@ -50,7 +50,7 @@ const GuestForm = ({
   const [form] = Form.useForm();
   const { hasPermission } = usePermission();
   const canEditReservationForGuest = hasPermission(PERMISSIONS.RESERVATION_EDIT);
-  console.log(reservationUuid[0]?.reservationRoom?.roomStatus.code === "checked_out","reservationUuidreservationUuid")
+  console.log(reservationUuid[0]?.reservationRoom?.roomStatus.code === "checked_out", "reservationUuidreservationUuid")
   const isCheckedout = reservationUuid[0]?.reservationRoom?.roomStatus.code === "checked_out";
 
   const watchedSrNo = Form.useWatch("srcNo", form);
@@ -199,7 +199,7 @@ const GuestForm = ({
     invalidateKeys: [["reservation-guest"]],
   });
 
-  const { data, isFetching : detailsLoading, isLoading } = useApiQuery({
+  const { data, isFetching: detailsLoading, isLoading } = useApiQuery({
     fetchQueryName: "guest-details",
     fetchQueryFunction: reservationGuestDetails,
     params: { uuid: guestData?.uuid },
@@ -307,7 +307,7 @@ const GuestForm = ({
           </span>
 
           {isView ? (
-            canEditReservationForGuest && !isCheckedout && 
+            canEditReservationForGuest && !isCheckedout &&
             <Button type="primary" onClick={() => setMode("edit")}>
               Edit
             </Button>
@@ -367,7 +367,13 @@ const GuestForm = ({
             <Radio.Group className="w-full">
               <Row gutter={16}>
                 <Col span={12}>
-                  <Radio value={1} className="align-top">
+                  <Radio value={1}
+                    className={
+                      isView && guestAgeType === 1
+                        ? "custom-disabled-checkbox"
+                        : ""
+                    }>
+
                     <span
                       className={`block font-medium text-slate-800 ${textColorDarkMode}`}
                     >
@@ -381,7 +387,13 @@ const GuestForm = ({
                   </Radio>
                 </Col>
                 <Col span={12}>
-                  <Radio value={0} className="align-top">
+                  <Radio value={0}
+                    className={
+                      isView && guestAgeType === 0
+                        ? "custom-disabled-checkbox"
+                        : ""
+                    }
+                  >
                     <span
                       className={`block font-medium text-slate-800 ${textColorDarkMode}`}
                     >
@@ -409,7 +421,14 @@ const GuestForm = ({
             <Radio.Group className="w-full">
               <Row gutter={16}>
                 <Col span={12}>
-                  <Radio value={1}>
+                  <Radio value={1}
+                    className={
+                      isView && form.getFieldValue("isPrimary") === 1
+                        ? "custom-disabled-checkbox"
+                        : ""
+                    }
+                  >
+
                     <span
                       className={`font-medium text-slate-800 ${textColorDarkMode}`}
                     >
@@ -418,7 +437,13 @@ const GuestForm = ({
                   </Radio>
                 </Col>
                 <Col span={12}>
-                  <Radio value={0}>
+                  <Radio value={0}
+                    className={
+                      isView && form.getFieldValue("isPrimary") === 0
+                        ? "custom-disabled-checkbox"
+                        : ""
+                    }
+                  >
                     <span
                       className={`font-medium text-slate-800 ${textColorDarkMode}`}
                     >
