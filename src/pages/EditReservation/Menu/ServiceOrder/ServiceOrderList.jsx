@@ -96,7 +96,7 @@ const ServiceOrderList = () => {
 
       {
         canEditPermissionWithViewServiceOrderAddOns &&
-        <Button className="mb-2 custom-blue-btn" onClick={() => setOpen(true)}>
+        <Button className={`mb-2 custom-blue-btn ${open ? "custom-blue-btn-active" : ""}`} onClick={() => setOpen(true)}>
           View Add On Service
         </Button>
       }

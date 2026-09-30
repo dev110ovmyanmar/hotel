@@ -81,7 +81,7 @@ const OvertimeChargeForm = ({ open, onClose, reservationId }) => {
               <div className="flex justify-end mt-5">
                 <Button
                   onClick={() => setCreateOpen(true)}
-                  className="custom-blue-btn"
+                  className={`custom-blue-btn ${createOpen ? "custom-blue-btn-active" : ""}`}
                 >
                   Add On Time
                 </Button>
@@ -122,7 +122,7 @@ const OvertimeChargeForm = ({ open, onClose, reservationId }) => {
               <div className="flex justify-end mt-5">
                 <Button
                   onClick={() => setCreateOpen(true)}
-                  className="custom-blue-btn"
+                  className={`custom-blue-btn ${createOpen ? "custom-blue-btn-active" : ""}`}
                 >
                   Add On Time
                 </Button>

@@ -112,9 +112,9 @@ const rooms =
 
   return (
     <Drawer
-      title="Add New Post"
+      title="Folio New Post"
       open={open}
-      onClose={onClose}
+      onClose={() => { form.resetFields(); onClose(); }}
       size={550}
       extra={
         <Button
@@ -134,7 +134,7 @@ const rooms =
       >
         <Form.Item
           name="itemType"
-          label="Overtime Type"
+          label="Charge Type"
           rules={[{ required: true, message: "Please select an overtime type" }]}
         >
           <Select

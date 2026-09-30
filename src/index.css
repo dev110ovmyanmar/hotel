@@ -343,8 +343,17 @@ span .ant-upload {
 }
 
 .custom-blue-btn:hover {
-  border-color: #4096ff;
-  color: #4096ff;
+  border-color: #4096ff !important;
+  color: #fff !important;
+  background-color: #1677ff !important;
+}
+
+.custom-blue-btn-active,
+.custom-blue-btn-active:hover,
+.custom-blue-btn-active:focus {
+  border-color: #4096ff !important;
+  color: #fff !important;
+  background-color: #1677ff !important;
 }
 
 .ant-badge .ant-badge-count {
