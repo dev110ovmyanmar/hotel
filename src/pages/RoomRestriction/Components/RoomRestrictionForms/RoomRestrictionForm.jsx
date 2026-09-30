@@ -24,6 +24,8 @@ import {
   upsertRoomRestriction,
 } from "../../../../api/roomrestriction";
 import Loader from "../../../../component/Loader/Loader";
+import usePermission from "../../../../hooks/usePermission";
+import { PERMISSIONS } from "../../../../variables/permission";
 
 const RoomRestrictionForm = ({
   mode,
@@ -42,15 +44,20 @@ const RoomRestrictionForm = ({
   const isAdd = mode === "add";
 
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
+  const { hasPermission } = usePermission();
+  const canEditRoomRestriction = hasPermission(PERMISSIONS.ROOM_RESTRICTION_EDIT);
 
   const ageList = initData?.statuses?.age_type?.map((ageType) => ({
     value: ageType.uuid,
     label: ageType.name,
   }));
 
-  const { data: ratePlanMetaData } = useApiQuery({
+  const { data: ratePlanMetaData, isFetching: ratePlanMetaDataFetching } = useApiQuery({
     fetchQueryName: "ratePlanMetaData",
     fetchQueryFunction: ratePlanMeta,
+    options: {
+      enabled: !!drawerOpen
+    }
   });
 
   const ratePlan = ratePlanMetaData?.rate_plans?.map((rate) => ({
@@ -177,6 +184,7 @@ const RoomRestrictionForm = ({
                   : "Create Room Restriction"}
             </span>
             {isView ? (
+              canEditRoomRestriction &&
               <Button
                 type="primary"
                 onClick={() => {
@@ -189,8 +197,10 @@ const RoomRestrictionForm = ({
               <FormButtons
                 onClick={() => form.submit()}
                 isPending={
-                  createRoomRestriction.isPending ||
-                  editRoomRestriction.isPending
+                  isAdd
+                    ? createRoomRestriction.isPending
+                    : editRoomRestriction.isPending
+                    
                 }
                 mode={mode}
               />
@@ -200,150 +210,154 @@ const RoomRestrictionForm = ({
       >
         {
           isFetching ?
-          <div className="flex items-center justify-center h-full min-h-[300px]">
-          <Loader />
-          </div>
-          : 
-          <Form
-          form={form}
-          layout="vertical"
-          style={{ width: "100%" }}
-          onFinish={onFinish}
-          initialValues={{
-            closedToArrival: false,
-            closedToDeparture: false,
-            minStay: 0,
-            maxStay: 0,
-          }}
-        >
-          <div className="grid grid-cols-2 gap-6">
-            <Form.Item
-              label="Room Type"
-              name="roomTypeUuid"
-              rules={[{ required: true }]}
-              getValueProps={(value) => ({
-                value: isView
-                  ? roomType.find((item) => item.value === value)?.label
-                  : value,
-              })}
+            <div className="flex items-center justify-center h-full min-h-[300px]">
+              <Loader />
+            </div>
+            :
+            <Form
+              form={form}
+              layout="vertical"
+              style={{ width: "100%" }}
+              onFinish={onFinish}
+              initialValues={{
+                closedToArrival: false,
+                closedToDeparture: false,
+                minStay: 0,
+                maxStay: 0,
+              }}
             >
-              {isView ? (
-                <Input readOnly={isView} />
-              ) : (
-                <Select
-                  showSearch={{
-                    filterOption: (input, option) =>
-                      (option?.label ?? "")
-                        .toLowerCase()
-                        .includes(input.toLowerCase()),
-                  }}
-                  options={roomType}
-                  placeholder="Select Room Type"
+              <div className="grid grid-cols-2 gap-6">
+                <Form.Item
+                  label="Room Type"
+                  name="roomTypeUuid"
+                  rules={[{ required: true }]}
+                  getValueProps={(value) => ({
+                    value: isView
+                      ? roomType.find((item) => item.value === value)?.label
+                      : value,
+                  })}
+                >
+                  {isView ? (
+                    <Input readOnly={isView} />
+                  ) : (
+                    <Select
+                      showSearch={{
+                        filterOption: (input, option) =>
+                          (option?.label ?? "")
+                            .toLowerCase()
+                            .includes(input.toLowerCase()),
+                      }}
+                      options={roomType}
+                      placeholder="Select Room Type"
+                      loading={ratePlanMetaDataFetching}
+                      disabled={ratePlanMetaDataFetching}
+                    />
+                  )}
+                </Form.Item>
+                <Form.Item
+                  label="Rate Plan"
+                  name="ratePlanUuid"
+                  rules={[{ required: true }]}
+                  getValueProps={(value) => ({
+                    value: isView
+                      ? ratePlan.find((item) => item.value === value)?.label
+                      : value,
+                  })}
+                >
+                  {isView ? (
+                    <Input readOnly={isView} />
+                  ) : (
+                    <Select
+                      showSearch={{
+                        filterOption: (input, option) =>
+                          (option?.label ?? "")
+                            .toLowerCase()
+                            .includes(input.toLowerCase()),
+                      }}
+                      options={ratePlan}
+                      placeholder="Select rate Plan"
+                      loading={ratePlanMetaDataFetching}
+                      disabled={ratePlanMetaDataFetching}
+                    />
+                  )}
+                </Form.Item>
+              </div>
+
+              <Form.Item
+                label="Date"
+                name="date"
+                rules={[{ required: true, message: "Please select Date" }]}
+              >
+                <DatePicker
+                  className="w-60"
+                  open={isView ? !isView : undefined}
+                  inputReadOnly={isView}
+                  suffixIcon={isView ? null : undefined}
+                  allowClear={!isView}
+                  disabledDate={!isView ? disabledDate : undefined}
                 />
-              )}
-            </Form.Item>
-            <Form.Item
-              label="Rate Plan"
-              name="ratePlanUuid"
-              rules={[{ required: true }]}
-              getValueProps={(value) => ({
-                value: isView
-                  ? ratePlan.find((item) => item.value === value)?.label
-                  : value,
-              })}
-            >
-              {isView ? (
-                <Input readOnly={isView} />
-              ) : (
-                <Select
-                  showSearch={{
-                    filterOption: (input, option) =>
-                      (option?.label ?? "")
-                        .toLowerCase()
-                        .includes(input.toLowerCase()),
-                  }}
-                  options={ratePlan}
-                  placeholder="Select rate Plan"
-                />
-              )}
-            </Form.Item>
-          </div>
+              </Form.Item>
 
-          <Form.Item
-            label="Date"
-            name="date"
-            rules={[{ required: true, message: "Please select Date" }]}
-          >
-            <DatePicker
-              className="w-60"
-              open={isView ? !isView : undefined}
-              inputReadOnly={isView}
-              suffixIcon={isView ? null : undefined}
-              allowClear={!isView}
-              disabledDate={!isView ? disabledDate : undefined}
-            />
-          </Form.Item>
+              <div className="grid grid-cols-2 gap-6">
+                <Form.Item
+                  label="Min Stay"
+                  name="minStay"
+                  rules={[{ required: true }]}
+                  className="minus-icon"
+                >
+                  <InputNumber
+                    {...childSharedProps}
+                    placeholder="Outlined"
+                    readOnly={isView}
+                    style={{ width: "100%" }}
+                  />
+                </Form.Item>
 
-          <div className="grid grid-cols-2 gap-6">
-            <Form.Item
-              label="Min Stay"
-              name="minStay"
-              rules={[{ required: true }]}
-              className="minus-icon"
-            >
-              <InputNumber
-                {...childSharedProps}
-                placeholder="Outlined"
-                readOnly={isView}
-                style={{ width: "100%" }}
-              />
-            </Form.Item>
+                <Form.Item
+                  label="Max Stay"
+                  name="maxStay"
+                  rules={[{ required: true }]}
+                  className="minus-icon"
+                >
+                  <InputNumber
+                    {...childSharedProps}
+                    placeholder="Outlined"
+                    readOnly={isView}
+                    style={{ width: "100%" }}
+                  />
+                </Form.Item>
+              </div>
 
-            <Form.Item
-              label="Max Stay"
-              name="maxStay"
-              rules={[{ required: true }]}
-              className="minus-icon"
-            >
-              <InputNumber
-                {...childSharedProps}
-                placeholder="Outlined"
-                readOnly={isView}
-                style={{ width: "100%" }}
-              />
-            </Form.Item>
-          </div>
+              <div className="grid grid-cols-2 gap-6">
+                <Form.Item
+                  label="Close to Arrival"
+                  name="closedToArrival"
+                  valuePropName="checked"
+                  rules={[{ required: true }]}
+                  normalize={(value) => (value ? 1 : 0)}
+                >
+                  <Switch
+                    checkedChildren="True"
+                    unCheckedChildren="False"
+                    disabled={isView}
+                  />
+                </Form.Item>
 
-          <div className="grid grid-cols-2 gap-6">
-            <Form.Item
-              label="Close to Arrival"
-              name="closedToArrival"
-              valuePropName="checked"
-              rules={[{ required: true }]}
-              normalize={(value) => (value ? 1 : 0)}
-            >
-              <Switch
-                checkedChildren="True"
-                unCheckedChildren="False"
-                disabled={isView}
-              />
-            </Form.Item>
-
-            <Form.Item
-              label="Close to Departure"
-              name="closedToDeparture"
-              valuePropName="checked"
-              rules={[{ required: true }]}
-              normalize={(value) => (value ? 1 : 0)}
-            >
-              <Switch
-                checkedChildren="True"
-                unCheckedChildren="False"
-                disabled={isView}
-              />
-            </Form.Item>
-          </div>
-        </Form>
+                <Form.Item
+                  label="Close to Departure"
+                  name="closedToDeparture"
+                  valuePropName="checked"
+                  rules={[{ required: true }]}
+                  normalize={(value) => (value ? 1 : 0)}
+                >
+                  <Switch
+                    checkedChildren="True"
+                    unCheckedChildren="False"
+                    disabled={isView}
+                  />
+                </Form.Item>
+              </div>
+            </Form>
         }
       </Drawer>
     </div>

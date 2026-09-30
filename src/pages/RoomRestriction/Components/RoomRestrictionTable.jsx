@@ -19,6 +19,7 @@ dayjs.extend(isSameOrBeforePlugin);
 
 const RoomRestrictionTable = ({ data, page, setPage, loading }) => {
   const { hasPermission } = usePermission();
+  const canStopSell = hasPermission(PERMISSIONS.ROOM_RESTRICTION_STOP_SELL);
 
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mode, setMode] = useState(null);
@@ -130,12 +131,12 @@ const RoomRestrictionTable = ({ data, page, setPage, loading }) => {
       render: (_, record) => {
         const isPastOrToday = dayjs(record.date).isSameOrBefore(dayjs(), "day");
 
-        const isDisabled = isPastOrToday || updatingId === record.id;
+        const isDisabled = isPastOrToday || updatingId  === record.id;
         const switchComponent = (
           <Switch
             checked={record.stopSell === true}
             loading={updatingId === record.id}
-            disabled={isDisabled}
+            disabled={isDisabled || !canStopSell}
             style={{
               opacity: isDisabled ? 0.2 : 1,
               backgroundColor: record.stopSell ? "#ff4d4f" : "#56ec0b",
