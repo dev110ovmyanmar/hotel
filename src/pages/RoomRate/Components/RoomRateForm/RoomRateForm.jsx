@@ -19,6 +19,8 @@ import usePermission from "./../../../../hooks/usePermission";
 import { upsertRoomRate, roomRateDetails } from "../../../../api/roomRateApi";
 import { ratePlanMeta } from "../../../../api/ratePlanApi";
 import PriceInput from "../../../../component/PriceInput/PriceInput";
+import Loader from "../../../../component/Loader/Loader";
+import { PERMISSIONS } from "../../../../variables/permission";
 
 const RoomRateForm = ({
   mode,
@@ -34,8 +36,9 @@ const RoomRateForm = ({
 }) => {
   const [form] = Form.useForm();
   const formValues = Form.useWatch([], form);
-
   const { hasPermission } = usePermission();
+  const canEditRoomRate = hasPermission(PERMISSIONS.RATE_PLAN_EDIT);
+
 
   const isView = mode === "view";
   const isEdit = mode === "edit";
@@ -46,9 +49,12 @@ const RoomRateForm = ({
     ratePlan?.pricingType?.code ?? state?.ratePlan?.pricingType?.code;
   const activeRatePlanUuid = ratePlan?.uuid ?? state?.ratePlan?.uuid;
 
-  const { data: ratePlanMetas } = useApiQuery({
+  const { data: ratePlanMetas, isFetching: ratePlanMetasFetching } = useApiQuery({
     fetchQueryName: "rate-plan-meta",
     fetchQueryFunction: ratePlanMeta,
+    options: {
+      enabled: !!drawerOpen
+    }
   });
 
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
@@ -81,7 +87,7 @@ const RoomRateForm = ({
     shouldInvalidate: isEdit ? true : page === 1,
   });
 
-  const { data: roomRateDetailData } = useApiQuery({
+  const { data: roomRateDetailData, isFetching: roomRateDetailDataFetching } = useApiQuery({
     fetchQueryName: "room-rate-details",
     fetchQueryFunction: roomRateDetails,
     params: { uuid: roomRateUuid },
@@ -194,7 +200,7 @@ const RoomRateForm = ({
     }
   }, [roomRateDetailData, isAdd, form, roomRateUuid]);
 
-    const handleClose = () => {
+  const handleClose = () => {
     setDrawerOpen(false);
     setSelectedData(null);
     form.resetFields();
@@ -267,6 +273,7 @@ const RoomRateForm = ({
                   : "Create Room Rate"}
             </span>
             {isView ? (
+              canEditRoomRate &&
               <Button
                 type="primary"
                 onClick={() => {
@@ -285,157 +292,170 @@ const RoomRateForm = ({
           </div>
         }
       >
-        <Form
-          form={form}
-          layout="vertical"
-          style={{ width: "100%" }}
-          onFinish={onFinish}
-          initialValues={{
-            durationHours: 0,
-          }}
-        >
-          <Row gutter={16}>
-            <Col span={12}>
-              <Form.Item
-                label="Room Type"
-                name={["roomType", "uuid"]}
-                rules={[{ required: true, message: "Room Type is Required" }]}
-                getValueProps={(value) => {
-                  return {
-                    value: isView
-                      ? ratePlanMetas?.room_types?.find(
-                          (item) => item.uuid === value,
-                        )?.name
-                      : value,
-                  };
-                }}
-              >
-                {isView ? (
-                  <Input readOnly={isView} />
-                ) : (
-                  <Select options={roomTypeOptions} />
-                )}
-              </Form.Item>
-            </Col>
-
-            <Col span={12}>
-              <Form.Item
-                label="Price"
-                name="price"
-                rules={[{ required: true, message: "Price is Required" }]}
-                getValueProps={(value) => ({
-                  value: value !== null && value !== undefined ? String(value) : "",
-                })}
-              >
-                <PriceInput readOnly={isView} suffix="MMK" />
-              </Form.Item>
-            </Col>
-
-            <Col span={12}>
-              {activePricingType !== "daily" && (
-                <Form.Item
-                  label="Duration Hours"
-                  name="durationHours"
-                  rules={[
-                    { required: true, message: "Duration Hours is Required" },
-                  ]}
-                >
-                  <Input readOnly={isView} suffix="hrs" />
-                </Form.Item>
-              )}
-            </Col>
-          </Row>
-
-          {/* <Status isView={isView}/> */}
-          <Row gutter={16}>
-            <Col span={24}>
-              <Form.Item
-                label="Status"
-                name="status"
-                rules={[{ required: true, message: "Status is required" }]}
-                getValueProps={(value) => ({
-                  value: isView
-                    ? statuses.find((item) => item.value === value)?.label
-                    : value,
-                })}
-              >
-                {isView ? (
-                  <Input readOnly={isView} />
-                ) : (
-                  <Select
-                    showSearch={{
-                      filterOption: (input, option) =>
-                        (option?.label ?? "")
-                          .toLowerCase()
-                          .includes(input.toLowerCase()),
-                    }}
-                    options={statuses}
-                    placeholder="Select Status"
-                  />
-                )}
-              </Form.Item>
-            </Col>
-          </Row>
-
-          <Row gutter={16}>
-            <Col span={12}>
-              <Form.Item
-                label="Days of Week"
-                className={`mb-4 ${isView ? "pointer-events-none" : ""}`}
-              >
-                <div className="flex flex-wrap gap-x-3 gap-y-2 p-0.5">
-                  {days.map((day) => (
-                    <div
-                      key={`group-${day.key}`}
-                      className="flex flex-col items-center"
-                    >
-                      <span className="text-[10px] uppercase mb-1">
-                        {day.key}
-                      </span>
-                      <Form.Item
-                        name={`enable_${day.key}`}
-                        valuePropName="checked"
-                        noStyle
-                      >
-                        <Checkbox
-                          className="ant-checkbox-small"
-                          style={{ margin: 0 }}
-                        />
-                      </Form.Item>
-                    </div>
-                  ))}
-                </div>
-              </Form.Item>
-            </Col>
-          </Row>
-
-          <Row gutter={16}>
-            {days.map((day) => {
-              const isEnabled = formValues?.[`enable_${day.key}`];
-              return (
-                <Col span={8} key={`input-${day.key}`}>
+        {
+          !isAdd && (roomRateDetailDataFetching || ratePlanMetasFetching)
+            ?
+            <div className="flex items-center justify-center h-full min-h-[300px]">
+              <Loader />
+            </div>
+            :
+            <Form
+              form={form}
+              layout="vertical"
+              style={{ width: "100%" }}
+              onFinish={onFinish}
+              initialValues={{
+                durationHours: 0,
+              }}
+            >
+              <Row gutter={16}>
+                <Col span={12}>
                   <Form.Item
-                    name={day.key}
-                    label={`${day.label}`}
-                    rules={[
-                      { required: isEnabled, message: "Price is required" },
-                    ]}
+                    label="Room Type"
+                    name={["roomType", "uuid"]}
+                    rules={[{ required: true, message: "Room Type is Required" }]}
+                    getValueProps={(value) => {
+                      return {
+                        value: isView
+                          ? ratePlanMetas?.room_types?.find(
+                            (item) => item.uuid === value,
+                          )?.name
+                          : value,
+                      };
+                    }}
+                  >
+                    {isView ? (
+                      <Input readOnly={isView} />
+                    ) : (
+                      <Select
+                        options={roomTypeOptions}
+                        loading={ratePlanMetasFetching}
+                        disabled={ratePlanMetasFetching}
+                      />
+                    )}
+                  </Form.Item>
+                </Col>
+
+                <Col span={12}>
+                  <Form.Item
+                    label="Price"
+                    name="price"
+                    rules={[{ required: true, message: "Price is Required" }]}
                     getValueProps={(value) => ({
                       value: value !== null && value !== undefined ? String(value) : "",
                     })}
                   >
-                    <PriceInput
-                      placeholder="Enter Price"
-                      min={0}
-                      readOnly={!isEnabled || isView}
-                      suffix="MMK"
-                    />
+                    <PriceInput readOnly={isView} suffix="MMK" />
                   </Form.Item>
                 </Col>
-              );
-            })}
-          </Row>
-        </Form>
+
+                <Col span={12}>
+                  {activePricingType !== "daily" && (
+                    <Form.Item
+                      label="Duration Hours"
+                      name="durationHours"
+                      rules={[
+                        { required: true, message: "Duration Hours is Required" },
+                      ]}
+                    >
+                      <Input readOnly={isView} suffix="hrs" />
+                    </Form.Item>
+                  )}
+                </Col>
+              </Row>
+
+              {/* <Status isView={isView}/> */}
+              <Row gutter={16}>
+                <Col span={24}>
+                  <Form.Item
+                    label="Status"
+                    name="status"
+                    rules={[{ required: true, message: "Status is required" }]}
+                    getValueProps={(value) => ({
+                      value: isView
+                        ? statuses.find((item) => item.value === value)?.label
+                        : value,
+                    })}
+                  >
+                    {isView ? (
+                      <Input readOnly={isView} />
+                    ) : (
+                      <Select
+                        showSearch={{
+                          filterOption: (input, option) =>
+                            (option?.label ?? "")
+                              .toLowerCase()
+                              .includes(input.toLowerCase()),
+                        }}
+                        options={statuses}
+                        placeholder="Select Status"
+                      />
+                    )}
+                  </Form.Item>
+                </Col>
+              </Row>
+
+              <Row gutter={16}>
+                <Col span={12}>
+                  <Form.Item
+                    label="Days of Week"
+                    className={`mb-4 ${isView ? "pointer-events-none" : ""}`}
+                  >
+                    <div className="flex flex-wrap gap-x-3 gap-y-2 p-0.5">
+                      {days.map((day) => (
+                        <div
+                          key={`group-${day.key}`}
+                          className="flex flex-col items-center"
+                        >
+                          <span className="text-[10px] uppercase mb-1">
+                            {day.key}
+                          </span>
+                          <Form.Item
+                            name={`enable_${day.key}`}
+                            valuePropName="checked"
+                            noStyle
+                          >
+                            <Checkbox
+                              className="ant-checkbox-small"
+                              style={{ margin: 0 }}
+                            />
+                          </Form.Item>
+                        </div>
+                      ))}
+                    </div>
+                  </Form.Item>
+                </Col>
+              </Row>
+
+              <Row gutter={16}>
+                {days.map((day) => {
+                  const isEnabled = formValues?.[`enable_${day.key}`];
+                  return (
+                    <Col span={8} key={`input-${day.key}`}>
+                      <Form.Item
+                        name={day.key}
+                        label={`${day.label}`}
+                        rules={[
+                          { required: isEnabled, message: "Price is required" },
+                        ]}
+                        getValueProps={(value) => ({
+                          value: value !== null && value !== undefined ? String(value) : "",
+                        })}
+                      >
+                        <PriceInput
+                          placeholder="Enter Price"
+                          min={0}
+                          readOnly={!isEnabled || isView}
+                          suffix="MMK"
+                        />
+                      </Form.Item>
+                    </Col>
+                  );
+                })}
+              </Row>
+            </Form>
+        }
+
       </Drawer>
     </div>
   );

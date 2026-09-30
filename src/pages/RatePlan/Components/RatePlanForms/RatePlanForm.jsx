@@ -71,9 +71,12 @@ const RatePlanForm = ({
     label: type.name,
   }));
 
-  const { data: ratePlanMetaData, isPending } = useApiQuery({
+  const { data: ratePlanMetaData, isFetching : ratePlanMetaDataFetching } = useApiQuery({
     fetchQueryName: "ratePlanMetaData",
     fetchQueryFunction: ratePlanMeta,
+    options : {
+      enabled : !!drawerOpen
+    }
   });
 
   const mealPlans = ratePlanMetaData?.meal_plans?.map((meal) => ({
@@ -285,7 +288,7 @@ const RatePlanForm = ({
           </div>
         }
       >
-        {ratePlanDetailsLoading ? (
+        {!isAdd && (ratePlanMetaDataFetching || ratePlanDetailsLoading)  ? (
           <div className="flex items-center justify-center h-full min-h-[300px]">
             <Loader />
           </div>
@@ -333,7 +336,7 @@ const RatePlanForm = ({
                   rules={[{ required: true, message: "Meal Plan is Required" }]}
                   getValueProps={(value) => ({
                     value: isView
-                      ? mealPlans.find((item) => item.value === value)?.label
+                      ? mealPlans?.find((item) => item.value === value)?.label
                       : value,
                   })}
                 >
@@ -349,6 +352,8 @@ const RatePlanForm = ({
                       }}
                       options={mealPlans}
                       placeholder="Select Meal Plan"
+                      loading={ratePlanMetaDataFetching}
+                      disabled={ratePlanMetaDataFetching}
                     />
                   )}
                 </Form.Item>
@@ -361,7 +366,7 @@ const RatePlanForm = ({
                   rules={[{ required: true, message: "Policy is Required" }]}
                   getValueProps={(value) => ({
                     value: isView
-                      ? policy.find((item) => item.value === value)?.label
+                      ? policy?.find((item) => item.value === value)?.label
                       : value,
                   })}
                 >
@@ -377,6 +382,8 @@ const RatePlanForm = ({
                       }}
                       options={policy}
                       placeholder="Select Policy"
+                      loading={ratePlanMetaDataFetching}
+                      disabled={ratePlanMetaDataFetching}
                     />
                   )}
                 </Form.Item>
@@ -389,7 +396,7 @@ const RatePlanForm = ({
                   rules={[{ required: true, message: "Currency is Required" }]}
                   getValueProps={(value) => ({
                     value: isView
-                      ? currencies.find((item) => item.value === value)?.label
+                      ? currencies?.find((item) => item.value === value)?.label
                       : value,
                   })}
                 >
@@ -405,6 +412,8 @@ const RatePlanForm = ({
                       }}
                       options={currencies}
                       placeholder="Select Currency"
+                      loading={ratePlanMetaDataFetching}
+                      disabled={ratePlanMetaDataFetching}
                     />
                   )}
                 </Form.Item>
@@ -419,7 +428,7 @@ const RatePlanForm = ({
                   ]}
                   getValueProps={(value) => ({
                     value: isView
-                      ? pricingType.find((item) => item.value === value)?.label
+                      ? pricingType?.find((item) => item.value === value)?.label
                       : value,
                   })}
                 >
@@ -435,6 +444,8 @@ const RatePlanForm = ({
                       }}
                       options={pricingType}
                       placeholder="Select Pricing Type"
+                      loading={ratePlanMetaDataFetching}
+                      disabled={ratePlanMetaDataFetching}
                     />
                   )}
                 </Form.Item>
@@ -447,7 +458,7 @@ const RatePlanForm = ({
               rules={[{ required: true, message: "Status is required" }]}
               getValueProps={(value) => ({
                 value: isView
-                  ? statuses.find((item) => item.value === value)?.label
+                  ? statuses?.find((item) => item.value === value)?.label
                   : value,
               })}
             >
