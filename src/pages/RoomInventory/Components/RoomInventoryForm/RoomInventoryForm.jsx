@@ -13,8 +13,6 @@ import {
 import Toast from "../../../../component/Toast/Toast";
 import { useApiMutation } from "../../../../hooks/useApiMutation";
 import useApiQuery from "../../../../hooks/useApiQuery";
-import { queryClient } from "../../../../app/queryClient";
-import { getServiceDetails, upsertService } from "../../../../api/serviceApi";
 import FormButtons from "../../../../component/FormButtons/FormButtons";
 import {
   getAvailabilityCalendarDetails,
@@ -24,6 +22,9 @@ import {
   MAX_AVAILABILITY_ROOM,
   MIN_AVAILABILITY_ROOM,
 } from "../../../../variables/constants";
+import Loader from "../../../../component/Loader/Loader";
+import usePermission from "../../../../hooks/usePermission";
+import { PERMISSIONS } from "../../../../variables/permission";
 
 const RoomInventoryForm = ({
   mode,
@@ -36,6 +37,8 @@ const RoomInventoryForm = ({
   setPage,
 }) => {
   const [form] = Form.useForm();
+  const { hasPermission } = usePermission();
+  const canEditRoomInventory = hasPermission(PERMISSIONS.AVAILABILITY_CALENDAR_EDIT)
 
   const isView = mode === "view";
   const isEdit = mode === "edit";
@@ -46,7 +49,7 @@ const RoomInventoryForm = ({
     invalidateKeys: [["availabilty-calendars"]],
   });
 
-  const { data, isFetching, error } = useApiQuery({
+  const { data, isFetching: availabiltyCalendarDetailsFetching, error } = useApiQuery({
     fetchQueryName: "availabilty-calendar-details",
     fetchQueryFunction: getAvailabilityCalendarDetails,
     params: { uuid: selectedData?.uuid },
@@ -112,6 +115,7 @@ const RoomInventoryForm = ({
                   : ""}
             </span>
             {isView ? (
+              canEditRoomInventory &&
               <Button
                 type="primary"
                 onClick={() => {
@@ -130,58 +134,66 @@ const RoomInventoryForm = ({
           </div>
         }
       >
-        <Form
-          form={form}
-          layout="vertical"
-          style={{ width: "100%" }}
-          onFinish={onFinish}
-        >
-          <Form.Item label="Room Type" name="name">
-            <Input readOnly={!isAdd}/>
-          </Form.Item>
-
-          <div className="grid grid-cols-2 gap-6">
-            <Form.Item
-              label="Aavailable Rooms"
-              name="availableRooms"
-              rules={[
-                { required: true, message: "Available Rooms is Required" },
-              ]}
-              className="minus-icon"
+        {
+          availabiltyCalendarDetailsFetching
+            ?
+            <div className="flex items-center justify-center h-full min-h-[300px]">
+              <Loader />
+            </div>
+            :
+            <Form
+              form={form}
+              layout="vertical"
+              style={{ width: "100%" }}
+              onFinish={onFinish}
             >
-              <InputNumber
-                {...sharedProps}
-                placeholder="Outlined"
-                readOnly={isView}
-              />
-            </Form.Item>
+              <Form.Item label="Room Type" name="name">
+                <Input readOnly={!isAdd} />
+              </Form.Item>
 
-            <Form.Item
-              label="Sold Rooms"
-              name="soldRooms"
-              dependencies={["availableRooms"]}
-              rules={[
-                ({ getFieldValue }) => ({
-                  validator(_, value) {
-                    const availableRooms = getFieldValue("availableRooms");
+              <div className="grid grid-cols-2 gap-6">
+                <Form.Item
+                  label="Aavailable Rooms"
+                  name="availableRooms"
+                  rules={[
+                    { required: true, message: "Available Rooms is Required" },
+                  ]}
+                  className="minus-icon"
+                >
+                  <InputNumber
+                    {...sharedProps}
+                    placeholder="Outlined"
+                    readOnly={isView}
+                  />
+                </Form.Item>
 
-                    if (value === undefined || value <= availableRooms) {
-                      return Promise.resolve();
-                    }
+                <Form.Item
+                  label="Sold Rooms"
+                  name="soldRooms"
+                  dependencies={["availableRooms"]}
+                  rules={[
+                    ({ getFieldValue }) => ({
+                      validator(_, value) {
+                        const availableRooms = getFieldValue("availableRooms");
 
-                    return Promise.reject(
-                      new Error(
-                        "Sold rooms cannot be greater than available rooms",
-                      ),
-                    );
-                  },
-                }),
-              ]}
-            >
-              <InputNumber {...sharedProps} readOnly={true} />
-            </Form.Item>
-          </div>
-        </Form>
+                        if (value === undefined || value <= availableRooms) {
+                          return Promise.resolve();
+                        }
+
+                        return Promise.reject(
+                          new Error(
+                            "Sold rooms cannot be greater than available rooms",
+                          ),
+                        );
+                      },
+                    }),
+                  ]}
+                >
+                  <InputNumber {...sharedProps} readOnly={true} />
+                </Form.Item>
+              </div>
+            </Form>
+        }
       </Drawer>
     </div>
   );

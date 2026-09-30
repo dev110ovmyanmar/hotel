@@ -31,7 +31,8 @@ const CloseBusinessDateTable = ({
     const auditData = JSON.parse(
         localStorage.getItem("nightAudit")
     );
-    const activeButton = auditData?.auditStatus === "completed";
+    const activeButton = auditData?.auditStatus === "completed" ;
+    const isactiveButton = auditData?.isConfirm !== true ;
 
     const handleCloseBusinessDate = () => {
         closeBusinessDateMutate.mutate({
@@ -180,7 +181,7 @@ const CloseBusinessDateTable = ({
                                         type="primary"
                                         className="!w-full"
                                         onClick={handleCloseBusinessDate}
-                                        disabled={activeButton || disableBtn}
+                                        disabled={activeButton || disableBtn || isactiveButton}
                                         loading={closeBusinessDateMutate.isPending}
 
                                     >

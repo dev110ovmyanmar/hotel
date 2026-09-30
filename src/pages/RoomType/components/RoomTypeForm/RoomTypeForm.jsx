@@ -62,7 +62,7 @@ const RoomTypeForm = ({
 
   const { hasPermission } = usePermission();
 
-  const canEdit = hasPermission(PERMISSIONS.ROOM_TYPE_EDIT);
+  const canEditRoomType = hasPermission(PERMISSIONS.ROOM_TYPE_EDIT);
   const canEditOrCreateRoomTypeAmenity = hasPermission(
     PERMISSIONS.ROOM_TYPE_AMENITY,
   );
@@ -92,9 +92,12 @@ const RoomTypeForm = ({
       label: item.name,
     }));
 
-  const { data: ratePlanMetaData } = useApiQuery({
+  const { data: ratePlanMetaData, isFetching: ratePlanMetaDataFetching } = useApiQuery({
     fetchQueryName: "ratePlanMetaData",
     fetchQueryFunction: ratePlanMeta,
+    options: {
+      enabled: !!drawerOpen
+    }
   });
 
   const ratePlans = ratePlanMetaData?.rate_plans?.map((rate) => ({
@@ -113,7 +116,7 @@ const RoomTypeForm = ({
     invalidateKeys: [["roomTypeData"]],
   });
 
-  const { data, isFetching } = useApiQuery({
+  const { data, isFetching: roomTypeDetailsFetching } = useApiQuery({
     fetchQueryName: "roomTypeData",
     fetchQueryFunction: roomTypeDetails,
     params: { uuid: selectedData?.uuid },
@@ -206,23 +209,32 @@ const RoomTypeForm = ({
         </div>
       ),
     },
-    {
-      title: "Action",
-      key: "action",
-      width: 80,
-      align: "center",
-      render: (_, record) => (
-        <Button
-          type="text"
-          icon={<EditOutlined />}
-          onClick={() => {
-            setAmenityMode("edit");
-            setSelectedAmenity(record);
-            setRoomTypeAmenityOpen(true);
-          }}
-        />
-      ),
-    },
+    ...(
+      canEditOrCreateRoomTypeAmenity && !isView
+        ?
+        [
+          {
+            title: "Action",
+            key: "action",
+            width: 80,
+            align: "center",
+            render: (_, record) => (
+              <Button
+                type="text"
+                icon={<EditOutlined />}
+                onClick={() => {
+                  setAmenityMode("edit");
+                  setSelectedAmenity(record);
+                  setRoomTypeAmenityOpen(true);
+                }}
+              />
+            ),
+          }
+        ]
+        :
+        []
+    )
+
   ];
 
   const fetchRoomTypeUploads = useApiMutation({
@@ -260,7 +272,7 @@ const RoomTypeForm = ({
                   : "Create Room Type"}
             </span>
             {isView ? (
-              canEdit && (
+              canEditRoomType && (
                 <Button
                   type="primary"
                   onClick={() => {
@@ -273,14 +285,14 @@ const RoomTypeForm = ({
             ) : (
               <FormButton
                 onClick={() => form.submit()}
-                isPending={createRoomTypes.isPending || editRoomTypes.isPending}
+                isPending={isAdd ? createRoomTypes.isPending : editRoomTypes.isPending}
                 mode={mode}
               />
             )}
           </div>
         }
       >
-        {isFetching ? (
+        {roomTypeDetailsFetching ? (
           <div className="flex items-center justify-center h-full min-h-[300px]">
             <Loader />
           </div>

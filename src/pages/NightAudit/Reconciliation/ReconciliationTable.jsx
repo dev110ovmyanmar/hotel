@@ -12,6 +12,18 @@ const ReconciliationTable = ({ backStep, nextStep, data }) => {
     );
   });
 
+  //   useEffect(() => {
+  //   if (typeof isConfirm === "boolean") {
+  //     setIsConfirmed(isConfirm);
+
+  //     localStorage.setItem(
+  //       "isConfirmed",
+  //       JSON.stringify(isConfirm)
+  //     );
+  //   }
+  // }, [isConfirm]);
+
+
   useEffect(() => {
     const handleReconciliationConfirmed = (event) => {
       const confirmed = event.detail?.isConfirmed;

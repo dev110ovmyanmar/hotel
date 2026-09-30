@@ -28,6 +28,7 @@ import dayjs from "dayjs";
 import { facilityMeta } from "../../../../api/facilityPackageApi";
 import usePermission from "../../../../hooks/usePermission";
 import { PERMISSIONS } from "../../../../variables/permission";
+import Loader from "../../../../component/Loader/Loader";
 
 const { TextArea } = Input;
 const { RangePicker } = TimePicker;
@@ -43,14 +44,13 @@ const FacilityBookingForm = ({
   setPage,
 }) => {
   const [form] = Form.useForm();
-  const phoneValue = Form.useWatch("guestPhone", form);
   const dateFormat = "DD-MM-YYYY";
   const disabledDate = (current) => {
     return current < dayjs().startOf("day");
   };
 
   const { hasPermission } = usePermission();
-  const canEdit = hasPermission(PERMISSIONS.FACILITY_BOOKING_EDIT);
+  const canEditFacilityBooking = hasPermission(PERMISSIONS.FACILITY_BOOKING_EDIT);
 
   const format = "HH:mm";
 
@@ -78,9 +78,12 @@ const FacilityBookingForm = ({
   ])?.statuses;
   const initDataFacilityStatus = initData?.facility_status;
 
-  const { data: facilityMetaData } = useApiQuery({
+  const { data: facilityMetaData , isFetching : facilityMetaDataFetching } = useApiQuery({
     fetchQueryName: "facilityMetaData",
     fetchQueryFunction: facilityMeta,
+    options: {
+      enabled : !!drawerOpen
+    }
   });
 
   const facilityPackages = facilityMetaData?.facility_packages?.map((item) => ({
@@ -102,7 +105,7 @@ const FacilityBookingForm = ({
 
   const {
     data: bookingDetails,
-    isPending,
+    isFetching: bookingDetailsFetching,
     error,
   } = useApiQuery({
     fetchQueryName: "facility-booking-details",
@@ -273,7 +276,7 @@ const FacilityBookingForm = ({
                   : "Add New Facility Booking"}
             </span>
             {isView ? (
-              canEdit && (
+              canEditFacilityBooking && (
                 <Button
                   type="primary"
                   onClick={() => {
@@ -286,153 +289,163 @@ const FacilityBookingForm = ({
             ) : (
               <FormButtons
                 onClick={() => form.submit()}
-                isPending={isAdd? createFacilityBookings?.isPending : editFacilityBookings?.isPending}
+                isPending={isAdd ? createFacilityBookings?.isPending : editFacilityBookings?.isPending}
                 mode={mode}
               />
             )}
           </div>
         }
       >
-        <Form
-          form={form}
-          layout="vertical"
-          validateTrigger="onSubmit"
-          onFinish={onFinish}
-          initialValues={{
-            expectedPax: 1,
-          }}
-        >
-          <Form.Item
-            label="Guest Name"
-            name="guestName"
-            rules={[
-              { required: true, message: "Facility Booking Name is Required" },
-            ]}
-          >
-            <Input readOnly={isView} placeholder="Enter FacilityBooking Name" />
-          </Form.Item>
-
-          <Form.Item
-            label="Guest Phone No"
-            name="guestPhone"
-            rules={[{ required: true }]}
-          >
-            <Input
-              maxLength={20}
-              readOnly={isView}
-              onKeyPress={(e) => {
-                const currentValue = form.getFieldValue("phone") || "";
-                if (
-                  !/[0-9]/.test(e.key) &&
-                  !(e.key === "+" && currentValue.length === 0)
-                ) {
-                  e.preventDefault();
-                }
+        {
+          !isAdd && (bookingDetailsFetching || facilityMetaDataFetching)
+            ?
+            <div className="flex items-center justify-center h-full min-h-[300px]">
+              <Loader />
+            </div>
+            :
+            <Form
+              form={form}
+              layout="vertical"
+              validateTrigger="onSubmit"
+              onFinish={onFinish}
+              initialValues={{
+                expectedPax: 1,
               }}
-              placeholder="Enter Phone Number"
-            />
-          </Form.Item>
-
-          <Form.Item
-            label="Event Name"
-            name="eventName"
-            rules={[{ required: true, message: "Event Name is Required" }]}
-          >
-            <Input readOnly={isView} placeholder="Enter Event Name" />
-          </Form.Item>
-
-          <Form.Item
-            label="Facility Package"
-            name="facilityPackage"
-            rules={[
-              { required: true, message: "Facility Package is Required" },
-            ]}
-          >
-            <Select
-              options={facilityPackages}
-              readOnly={isView}
-              placeholder="Select Event Name"
-            />
-          </Form.Item>
-
-          <Form.Item
-            label="Event Date"
-            name="eventDate"
-            rules={[{ required: true, message: "Event Date is Required" }]}
-          >
-            <DatePicker
-              format={dateFormat}
-              disabledDate={disabledDate}
-              style={{ width: "100%" }}
-            />
-          </Form.Item>
-
-          <Row gutter={16}>
-            <Col span={12}>
+            >
               <Form.Item
-                label="Time Range"
-                name="timeRange"
-                rules={[{ required: true, message: "Time Range is Required" }]}
+                label="Guest Name"
+                name="guestName"
+                rules={[
+                  { required: true, message: "Facility Booking Name is Required" },
+                ]}
               >
-                <RangePicker format={format} />
+                <Input readOnly={isView} placeholder="Enter FacilityBooking Name" />
               </Form.Item>
-            </Col>
 
-            <Col span={12}>
-              <Form.Item label="Expected Hours" required>
-                <Input value={frontformattedExpectedHours} readOnly />
+              <Form.Item
+                label="Guest Phone No"
+                name="guestPhone"
+                rules={[{ required: true }]}
+              >
+                <Input
+                  maxLength={20}
+                  readOnly={isView}
+                  onKeyPress={(e) => {
+                    const currentValue = form.getFieldValue("phone") || "";
+                    if (
+                      !/[0-9]/.test(e.key) &&
+                      !(e.key === "+" && currentValue.length === 0)
+                    ) {
+                      e.preventDefault();
+                    }
+                  }}
+                  placeholder="Enter Phone Number"
+                />
               </Form.Item>
-            </Col>
-          </Row>
 
-          <Form.Item
-            label="Expected Pax"
-            name="expectedPax"
-            rules={[{ required: true, message: "Expected Pax is Required" }]}
-            className="minus-icon"
-          >
-            <InputNumber
-              {...childSharedProps}
-              placeholder="Outlined"
-              readOnly={isView}
-              style={{ width: 240 }}
-            />
-          </Form.Item>
+              <Form.Item
+                label="Event Name"
+                name="eventName"
+                rules={[{ required: true, message: "Event Name is Required" }]}
+              >
+                <Input readOnly={isView} placeholder="Enter Event Name" />
+              </Form.Item>
 
-          <Form.Item
-            label="Facility Status"
-            name={["status", "uuid"]}
-            className="col-span-1"
-            rules={[
-              { required: true, message: "Please select a Facility Status" },
-            ]}
-            getValueProps={(value) => ({
-              value: isView
-                ? facilityStatus.find((item) => item.value === value)?.label
-                : value,
-            })}
-          >
-            {isView ? (
-              <Input readOnly />
-            ) : (
-              <Select
-                showSearch
-                filterOption={(input, option) =>
-                  (option?.label ?? "")
-                    .toLowerCase()
-                    .includes(input.toLowerCase())
-                }
-                options={facilityStatus}
-                placeholder="Select a Facility Status"
-                disabled={isEdit && (currentStatus === 'completed' || currentStatus === 'cancelled')}
-              />
-            )}
-          </Form.Item>
+              <Form.Item
+                label="Facility Package"
+                name="facilityPackage"
+                rules={[
+                  { required: true, message: "Facility Package is Required" },
+                ]}
+              >
+                <Select
+                  options={facilityPackages}
+                  readOnly={isView}
+                  placeholder="Select Event Name"
+                  loading={facilityMetaDataFetching}
+                  disabled={facilityMetaDataFetching}
+                />
+              </Form.Item>
 
-          <Form.Item label="Remark" name="remark">
-            <TextArea readOnly={isView} placeholder="Enter Remark" />
-          </Form.Item>
-        </Form>
+              <Form.Item
+                label="Event Date"
+                name="eventDate"
+                rules={[{ required: true, message: "Event Date is Required" }]}
+              >
+                <DatePicker
+                  format={dateFormat}
+                  disabledDate={disabledDate}
+                  style={{ width: "100%" }}
+                />
+              </Form.Item>
+
+              <Row gutter={16}>
+                <Col span={12}>
+                  <Form.Item
+                    label="Time Range"
+                    name="timeRange"
+                    rules={[{ required: true, message: "Time Range is Required" }]}
+                  >
+                    <RangePicker format={format} />
+                  </Form.Item>
+                </Col>
+
+                <Col span={12}>
+                  <Form.Item label="Expected Hours" required>
+                    <Input value={frontformattedExpectedHours} readOnly />
+                  </Form.Item>
+                </Col>
+              </Row>
+
+              <Form.Item
+                label="Expected Pax"
+                name="expectedPax"
+                rules={[{ required: true, message: "Expected Pax is Required" }]}
+                className="minus-icon"
+              >
+                <InputNumber
+                  {...childSharedProps}
+                  placeholder="Outlined"
+                  readOnly={isView}
+                  style={{ width: 240 }}
+                />
+              </Form.Item>
+
+              <Form.Item
+                label="Facility Status"
+                name={["status", "uuid"]}
+                className="col-span-1"
+                rules={[
+                  { required: true, message: "Please select a Facility Status" },
+                ]}
+                getValueProps={(value) => ({
+                  value: isView
+                    ? facilityStatus.find((item) => item.value === value)?.label
+                    : value,
+                })}
+              >
+                {isView ? (
+                  <Input readOnly />
+                ) : (
+                  <Select
+                    showSearch
+                    filterOption={(input, option) =>
+                      (option?.label ?? "")
+                        .toLowerCase()
+                        .includes(input.toLowerCase())
+                    }
+                    options={facilityStatus}
+                    placeholder="Select a Facility Status"
+                    disabled={isEdit && (currentStatus === 'completed' || currentStatus === 'cancelled')}
+                  />
+                )}
+              </Form.Item>
+
+              <Form.Item label="Remark" name="remark">
+                <TextArea readOnly={isView} placeholder="Enter Remark" />
+              </Form.Item>
+            </Form>
+        }
       </Drawer>
     </div>
   );

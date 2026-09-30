@@ -28,6 +28,7 @@ const RoomInventoryTable = ({
   changePerPage,
 }) => {
   const { hasPermission } = usePermission();
+  const canStopSell = hasPermission(PERMISSIONS.AVAILABILITY_CALENDAR_STOP_SELL)
 
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mode, setMode] = useState(null);
@@ -131,7 +132,7 @@ const RoomInventoryTable = ({
           <Switch
             checked={record.stopSell === true}
             loading={updatingId === record.id}
-            disabled={isDisabled}
+            disabled={isDisabled || !canStopSell}
             style={{
               opacity: isDisabled ? 0.2 : 1,
               backgroundColor: record.stopSell ? "#ff4d4f" : "#56ec0b",
@@ -167,7 +168,7 @@ const RoomInventoryTable = ({
             key: "view",
             label: "View",
             icon: <EyeOutlined style={{ fontSize: "12px" }} />,
-            permission: PERMISSIONS.SERVICE_VIEW,
+            permission: PERMISSIONS.AVAILABILITY_CALENDAR_VIEW,
             onClick: () => {
               setDrawerOpen(true);
               setMode("view");
@@ -178,7 +179,7 @@ const RoomInventoryTable = ({
             key: "edit",
             label: "Edit",
             icon: <EditOutlined style={{ fontSize: "12px" }} />,
-            permission: PERMISSIONS.SERVICE_EDIT,
+            permission: PERMISSIONS.AVAILABILITY_CALENDAR_EDIT,
             onClick: () => {
               setDrawerOpen(true);
               setMode("edit");

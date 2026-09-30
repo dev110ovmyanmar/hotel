@@ -25,6 +25,7 @@ import { getFormattedDate } from "../../../../utils";
 import { PERMISSIONS } from "../../../../variables/permission";
 import usePermission from "../../../../hooks/usePermission";
 import PriceInput from "../../../../component/PriceInput/PriceInput";
+import Loader from "../../../../component/Loader/Loader";
 
 const sharedProps = {
   mode: "spinner",
@@ -58,7 +59,7 @@ const ExtraBedRateForm = ({
   const { RangePicker } = DatePicker;
 
   const { hasPermission } = usePermission();
-  const canEdit = hasPermission(PERMISSIONS.EXTRA_RATE_EDIT);
+  const canEditExtraRate = hasPermission(PERMISSIONS.EXTRA_RATE_EDIT);
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
 
   const disabledDate = (current) => {
@@ -95,9 +96,12 @@ const ExtraBedRateForm = ({
     ?.toLowerCase()
     .includes("extra child");
 
-  const { data: ratePlanMetaData } = useApiQuery({
+  const { data: ratePlanMetaData, isFetching: ratePlanMetaDataFetching } = useApiQuery({
     fetchQueryName: "ratePlanMetaData",
     fetchQueryFunction: ratePlanMeta,
+    options: {
+      enabled: !!drawerOpen
+    }
   });
 
   const ratePlan = ratePlanMetaData?.rate_plans?.map((rate) => ({
@@ -237,7 +241,7 @@ const ExtraBedRateForm = ({
                   : "Create Extra Rate"}
             </span>
             {isView ? (
-              canEdit && (
+              canEditExtraRate && (
                 <Button
                   type="primary"
                   onClick={() => {
@@ -259,208 +263,220 @@ const ExtraBedRateForm = ({
           </div>
         }
       >
-        <Form
-          form={form}
-          layout="vertical"
-          style={{ width: "100%" }}
-          onFinish={onFinish}
-          initialValues={{
-            minAge: 0,
-            maxAge: 1,
-          }}
-        >
-          <Form.Item
-            label="Room Type"
-            name="roomTypeUuid"
-            rules={[{ required: true }]}
-            getValueProps={(value) => ({
-              value: isView
-                ? roomType.find((item) => item.value === value)?.label
-                : value,
-            })}
-          >
-            {isView ? (
-              <Input readOnly={isView} />
-            ) : (
-              <Select
-                showSearch={{
-                  filterOption: (input, option) =>
-                    (option?.label ?? "")
-                      .toLowerCase()
-                      .includes(input.toLowerCase()),
-                }}
-                options={roomType}
-                placeholder="Select Room Type"
-              />
-            )}
-          </Form.Item>
-
-          <Form.Item
-            label="Rate Plan"
-            name="ratePlanUuid"
-            rules={[{ required: true }]}
-            getValueProps={(value) => ({
-              value: isView
-                ? ratePlan.find((item) => item.value === value)?.label
-                : value,
-            })}
-          >
-            {isView ? (
-              <Input readOnly={isView} />
-            ) : (
-              <Select
-                showSearch={{
-                  filterOption: (input, option) =>
-                    (option?.label ?? "")
-                      .toLowerCase()
-                      .includes(input.toLowerCase()),
-                }}
-                options={ratePlan}
-                placeholder="Select rate Plan"
-              />
-            )}
-          </Form.Item>
-
-          <Form.Item
-            label="Extra Type"
-            name="extraType"
-            rules={[{ required: true }]}
-            // getValueProps={(value) => ({
-            //   value: isView
-            //     ? extraList?.find((item) => item.value === value)?.label
-            //     : value,
-            // })}
-            getValueProps={(value) => {
-              const selectedItem = extraList?.find(
-                (item) => item.value === value,
-              );
-              return {
-                value: isView ? selectedItem?.label : value,
-              };
-            }}
-          >
-            {isView ? (
-              <Input readOnly={isView} />
-            ) : (
-              <Select
-                options={extraList}
-                open={isView ? false : undefined}
-                placeholder="Select age type"
-              />
-            )}
-          </Form.Item>
-
-          {isExtraChild && (
-            <Row gutter={16}>
-              <Col span={12}>
-                <Form.Item
-                  label="Min Age"
-                  name="minAge"
-                  dependencies={["maxAge"]}
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please enter min age",
-                    },
-                    {
-                      type: "number",
-                      min: 0,
-                      max: 8,
-                      message: "Child age must be between 0 and 8",
-                    },
-                  ]}
-                >
-                  <InputNumber
-                    {...sharedProps}
-                    readOnly={isView}
-                    placeholder="Min age"
-                    style={{ width: "100%" }}
-                  />
-                </Form.Item>
-              </Col>
-
-              <Col span={12}>
-                <Form.Item
-                  label="Max Age"
-                  name="maxAge"
-                  dependencies={["minAge"]}
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please enter max age",
-                    },
-                    {
-                      type: "number",
-                      max: 9,
-                      message: "Child age must be 9 or less",
-                    },
-                    ({ getFieldValue }) => ({
-                      validator(_, value) {
-                        const minAge = getFieldValue("minAge");
-
-                        if (
-                          value === undefined ||
-                          value === null ||
-                          minAge === undefined ||
-                          minAge === null ||
-                          value > minAge
-                        ) {
-                          return Promise.resolve();
-                        }
-
-                        return Promise.reject(
-                          new Error(
-                            "Max age must be strictly greater than Min age",
-                          ),
-                        );
-                      },
-                    }),
-                  ]}
-                >
-                  <InputNumber
-                    {...sharedProp}
-                    readOnly={isView}
-                    placeholder="Max age"
-                    style={{ width: "100%" }}
-                  />
-                </Form.Item>
-              </Col>
-            </Row>
-          )}
-
-          <Form.Item
-            label="Price"
-            name="price"
-            rules={[{ required: true, message: "Price is Required" }]}
-            getValueProps={(value) => ({
-              value: value !== null && value !== undefined ? String(value) : "",
-            })}
-          >
-            <PriceInput
-              readOnly={isView}
-              suffix="MMK"
-              placeholder="Enter price"
-            />
-          </Form.Item>
-
-          <Form.Item
-            name="dateRange"
-            label="Date Range"
-            rules={[{ required: true, message: "Please select Date Range" }]}
-            labelCol={{ span: 24 }}
-            wrapperCol={{ span: 24 }}
-          >
-            <RangePicker
-              disabledDate={disabledDate}
-              open={isView ? !isView : undefined}
-              inputReadOnly={isView}
-              suffixIcon={isView ? null : undefined}
-              className="w-full flex"
+        {
+          !isAdd && ratePlanMetaDataFetching
+            ?
+            <div className="flex items-center justify-center h-full min-h-[300px]">
+              <Loader />
+            </div>
+            :
+            <Form
+              form={form}
+              layout="vertical"
               style={{ width: "100%" }}
-              allowClear={!isView}
-            />
-          </Form.Item>
-        </Form>
+              onFinish={onFinish}
+              initialValues={{
+                minAge: 0,
+                maxAge: 1,
+              }}
+            >
+              <Form.Item
+                label="Room Type"
+                name="roomTypeUuid"
+                rules={[{ required: true }]}
+                getValueProps={(value) => ({
+                  value: isView
+                    ? roomType.find((item) => item.value === value)?.label
+                    : value,
+                })}
+              >
+                {isView ? (
+                  <Input readOnly={isView} />
+                ) : (
+                  <Select
+                    showSearch={{
+                      filterOption: (input, option) =>
+                        (option?.label ?? "")
+                          .toLowerCase()
+                          .includes(input.toLowerCase()),
+                    }}
+                    options={roomType}
+                    placeholder="Select Room Type"
+                    loading={ratePlanMetaDataFetching}
+                    disabled={ratePlanMetaDataFetching}
+                  />
+                )}
+              </Form.Item>
+
+              <Form.Item
+                label="Rate Plan"
+                name="ratePlanUuid"
+                rules={[{ required: true }]}
+                getValueProps={(value) => ({
+                  value: isView
+                    ? ratePlan.find((item) => item.value === value)?.label
+                    : value,
+                })}
+              >
+                {isView ? (
+                  <Input readOnly={isView} />
+                ) : (
+                  <Select
+                    showSearch={{
+                      filterOption: (input, option) =>
+                        (option?.label ?? "")
+                          .toLowerCase()
+                          .includes(input.toLowerCase()),
+                    }}
+                    options={ratePlan}
+                    placeholder="Select rate Plan"
+                    loading={ratePlanMetaDataFetching}
+                    disabled={ratePlanMetaDataFetching}
+                  />
+                )}
+              </Form.Item>
+
+              <Form.Item
+                label="Extra Type"
+                name="extraType"
+                rules={[{ required: true }]}
+                // getValueProps={(value) => ({
+                //   value: isView
+                //     ? extraList?.find((item) => item.value === value)?.label
+                //     : value,
+                // })}
+                getValueProps={(value) => {
+                  const selectedItem = extraList?.find(
+                    (item) => item.value === value,
+                  );
+                  return {
+                    value: isView ? selectedItem?.label : value,
+                  };
+                }}
+              >
+                {isView ? (
+                  <Input readOnly={isView} />
+                ) : (
+                  <Select
+                    options={extraList}
+                    open={isView ? false : undefined}
+                    placeholder="Select Extra type"
+                  />
+                )}
+              </Form.Item>
+
+              {isExtraChild && (
+                <Row gutter={16}>
+                  <Col span={12}>
+                    <Form.Item
+                      label="Min Age"
+                      name="minAge"
+                      dependencies={["maxAge"]}
+                      rules={[
+                        {
+                          required: true,
+                          message: "Please enter min age",
+                        },
+                        {
+                          type: "number",
+                          min: 0,
+                          max: 8,
+                          message: "Child age must be between 0 and 8",
+                        },
+                      ]}
+                    >
+                      <InputNumber
+                        {...sharedProps}
+                        readOnly={isView}
+                        placeholder="Min age"
+                        style={{ width: "100%" }}
+                      />
+                    </Form.Item>
+                  </Col>
+
+                  <Col span={12}>
+                    <Form.Item
+                      label="Max Age"
+                      name="maxAge"
+                      dependencies={["minAge"]}
+                      rules={[
+                        {
+                          required: true,
+                          message: "Please enter max age",
+                        },
+                        {
+                          type: "number",
+                          max: 9,
+                          message: "Child age must be 9 or less",
+                        },
+                        ({ getFieldValue }) => ({
+                          validator(_, value) {
+                            const minAge = getFieldValue("minAge");
+
+                            if (
+                              value === undefined ||
+                              value === null ||
+                              minAge === undefined ||
+                              minAge === null ||
+                              value > minAge
+                            ) {
+                              return Promise.resolve();
+                            }
+
+                            return Promise.reject(
+                              new Error(
+                                "Max age must be strictly greater than Min age",
+                              ),
+                            );
+                          },
+                        }),
+                      ]}
+                    >
+                      <InputNumber
+                        {...sharedProp}
+                        readOnly={isView}
+                        placeholder="Max age"
+                        style={{ width: "100%" }}
+                      />
+                    </Form.Item>
+                  </Col>
+                </Row>
+              )}
+
+              <Form.Item
+                label="Price"
+                name="price"
+                rules={[{ required: true, message: "Price is Required" }]}
+                getValueProps={(value) => ({
+                  value: value !== null && value !== undefined ? String(value) : "",
+                })}
+              >
+                <PriceInput
+                  readOnly={isView}
+                  suffix="MMK"
+                  placeholder="Enter price"
+                />
+              </Form.Item>
+
+              <Form.Item
+                name="dateRange"
+                label="Date Range"
+                rules={[{ required: true, message: "Please select Date Range" }]}
+                labelCol={{ span: 24 }}
+                wrapperCol={{ span: 24 }}
+              >
+                <RangePicker
+                  disabledDate={disabledDate}
+                  open={isView ? !isView : undefined}
+                  inputReadOnly={isView}
+                  suffixIcon={isView ? null : undefined}
+                  className="w-full flex"
+                  style={{ width: "100%" }}
+                  allowClear={!isView}
+                />
+              </Form.Item>
+            </Form>
+        }
       </Drawer>
     </div>
   );
