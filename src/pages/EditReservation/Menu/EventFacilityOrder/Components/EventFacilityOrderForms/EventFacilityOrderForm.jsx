@@ -350,7 +350,7 @@ const EventFacilityOrderForm = ({
                 <div className="flex justify-end mb-4">
                   <Button
                     onClick={() => setSearchOpen(true)}
-                    className="custom-blue-btn"
+                    className={`custom-blue-btn ${searchOpen ? "custom-blue-btn-active" : ""}`}
                   >
                     Search By
                   </Button>
