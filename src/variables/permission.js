@@ -90,6 +90,8 @@ export const PERMISSIONS = {
   ROOM_ATTRIBUTE_VIEW: "room-attribute.view",
   ROOM_ATTRIBUTE_CREATE: "room-attribute.create",
   ROOM_ATTRIBUTE_EDIT: "room-attribute.edit",
+
+  // Room Attribute Value
   ROOM_ATTRIBUTE_VALUE_CREATE: "room-attribute-value.create",
   ROOM_ATTRIBUTE_VALUE_EDIT: "room-attribute-value.edit",
 
@@ -360,6 +362,7 @@ export const PERMISSIONS = {
   FOLIO_LINE_REBATE: "folio-line.rebate",
   FOLIO_LINE_VOID: "folio-line.void",
   FOLIO_LINE_TRANSFER: "folio-line.transfer",
+  FOLIO_LINE_NEW_POST: "folio-line.new-post",
 
   //Folio-Payment
   FOLIO_PAYMENT_PAYMENT: "folio-payment.payment",

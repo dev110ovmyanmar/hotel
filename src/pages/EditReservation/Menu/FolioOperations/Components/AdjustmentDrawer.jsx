@@ -12,6 +12,7 @@ import {
 import { CloseOutlined, WarningOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import PriceTag from "../../../../../component/PriceTag/PriceTag";
+import PriceInput from "../../../../../component/PriceInput/PriceInput";
 
 const AdjustmentDrawer = ({
   open,
@@ -162,21 +163,11 @@ const AdjustmentDrawer = ({
                 label="Amount"
                 rules={[
                   { required: true, message: "Required" },
-                  { type: "number", min: 0.01, message: "Must be > 0" },
                 ]}
               >
-                <InputNumber
-                  style={{ width: "100%" }}
-                  formatter={(v) =>
-                    v === undefined || v === null || v === ""
-                      ? ""
-                      : `${v}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-                  }
-                  parser={(v) => (v ? v.replace(/[^\d.]/g, "") : "")}
-                  suffix={lineData?.currency?.code || "MMK"}
-                  placeholder="Enter amount"
-                  controls={false}
-                  min={0.01}
+                <PriceInput 
+                min={1}
+                placeholder="Enter Amount"
                 />
               </Form.Item>
 
@@ -215,8 +206,8 @@ const AdjustmentDrawer = ({
               rules={[{ required: true, message: "Required" }]}
             >
               <Input.TextArea
-                rows={2}
-                placeholder="Reason for adjustment"
+                rows={1}
+                placeholder="Description for adjustment"
                 maxLength={255}
               />
             </Form.Item>

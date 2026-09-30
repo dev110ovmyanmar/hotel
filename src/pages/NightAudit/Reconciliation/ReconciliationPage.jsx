@@ -28,6 +28,16 @@ const ReconciliationPage = ({ stepValue }) => {
     options: { enabled: !!nightAudit},
   });
 
+    useEffect(() => {
+    if (typeof data?.isConfirmed === "boolean") {
+      localStorage.setItem(
+        "isConfirmed",
+        JSON.stringify(data.isConfirmed)
+      );
+    }
+  }, [data?.isConfirmed]);
+
+
   if (isFetching) {
     return (
       <div className={spinLoadingCenter}>

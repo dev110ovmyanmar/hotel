@@ -14,10 +14,9 @@ const CreateNewDayPage = () => {
     const nightAuditData = getNightAuditData();
 
     const businessDate = nightAuditData?.businessDate;
+    const nightAudit = localStorage.getItem("nightAudit");
 
     useEffect(() => {
-        const nightAudit = localStorage.getItem("nightAudit");
-
         if (!nightAudit) {
             navigate("/night-audit", { replace: true });
         }
@@ -26,9 +25,8 @@ const CreateNewDayPage = () => {
     const { data: preAuditChecksData } = useApiQuery({
         fetchQueryName: "pre-audit-checks",
         fetchQueryFunction: preAuditCheck,
-        params: {
-            businessDate
-        },
+        params: { businessDate },
+        options: { enabled: !!nightAudit },
     });
 
     if (!preAuditChecksData) {
@@ -48,7 +46,7 @@ const CreateNewDayPage = () => {
                 createNewDayClick={() => {
                     setHideSteps(true)
                 }}
-                preAuditChecksData={preAuditChecksData} 
+                preAuditChecksData={preAuditChecksData}
             />
 
         </div>

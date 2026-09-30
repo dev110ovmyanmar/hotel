@@ -30,7 +30,7 @@ const RoomAttributeForm = ({
   const isAdd = mode === "add";
 
   const { hasPermission } = usePermission();
-  const canEdit = hasPermission(PERMISSIONS.ROOM_ATTRIBUTE_EDIT);
+  const canEditRoomAttribute = hasPermission(PERMISSIONS.ROOM_ATTRIBUTE_EDIT);
 
   const createRoomAttributes = useApiMutation({
     mutationFn: createRoomAttribute,
@@ -115,7 +115,7 @@ const RoomAttributeForm = ({
                   : "Create Room Attribute"}
             </span>
             {isView ? (
-              canEdit && (
+              canEditRoomAttribute && (
                 <Button
                   type="primary"
                   onClick={() => {
@@ -129,7 +129,9 @@ const RoomAttributeForm = ({
               <FormButton
                 onClick={() => form.submit()}
                 isPending={
-                  createRoomAttributes.isPending || editRoomAttributes.isPending
+                  isAdd ?
+                    createRoomAttributes.isPending :
+                    editRoomAttributes.isPending
                 }
                 mode={mode}
               />

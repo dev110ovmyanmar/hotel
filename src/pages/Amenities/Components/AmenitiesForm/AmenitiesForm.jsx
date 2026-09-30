@@ -26,7 +26,7 @@ const AmenitiesForm = ({
   const isAdd = mode === "add";
 
   const { hasPermission } = usePermission();
-  const canEdit = hasPermission(PERMISSIONS.AMENITY_EDIT);
+  const canEditAmenity = hasPermission(PERMISSIONS.AMENITY_EDIT);
 
   const upsertAmenities = useApiMutation({
     mutationFn: upsertAmenity,
@@ -109,7 +109,7 @@ const AmenitiesForm = ({
                   : "Add New Room Amenities"}
             </span>
             {isView ? (
-              canEdit && (
+              canEditAmenity && (
                 <Button
                   type="primary"
                   onClick={() => {

@@ -35,7 +35,7 @@ const FAndBInventoryForm = ({
   const isAdd = mode === "add";
 
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
-  const canEdit = hasPermission(PERMISSIONS.FOOD_AND_BEVERAGE_INVENTORY_EDIT);
+  const canEditFNBInventory = hasPermission(PERMISSIONS.FOOD_AND_BEVERAGE_INVENTORY_EDIT);
 
   const statuses = initData?.statuses?.status;
   // ?.filter((item) => item.code !== "blocked")
@@ -44,9 +44,12 @@ const FAndBInventoryForm = ({
   //   label: status.name,
   // }));
 
-  const { data: fnbMetaData } = useApiQuery({
+  const { data: fnbMetaData , isFetching : fnbMetaDataFetching } = useApiQuery({
     fetchQueryName: "fnbMetaData",
     fetchQueryFunction: fnbMeta,
+    options:{
+      enabled : !!drawerOpen
+    }
   });
 
   const categoryList = fnbMetaData?.categories?.map((category) => ({
@@ -176,7 +179,7 @@ const FAndBInventoryForm = ({
                   : "Create F & B Inventory"}
             </span>
             {isView ? (
-              canEdit && (
+              canEditFNBInventory && (
                 <Button type="primary" onClick={() => setMode("edit")}>
                   Edit
                 </Button>
@@ -184,14 +187,14 @@ const FAndBInventoryForm = ({
             ) : (
               <FormButtons
                 onClick={() => form.submit()}
-                isPending={createFacility.isPending || editFacility.isPending}
+                isPending={isAdd? createFacility.isPending : editFacility.isPending}
                 mode={mode}
               />
             )}
           </div>
         }
       >
-        {isFetching ? (
+        {!isAdd && fnbMetaDataFetching ? (
           <div className="flex items-center justify-center h-full min-h-[300px]">
             <Loader />
           </div>
@@ -232,6 +235,8 @@ const FAndBInventoryForm = ({
                   }}
                   options={categoryList}
                   placeholder="Select Category"
+                  loading={fnbMetaDataFetching}
+                  disabled={fnbMetaDataFetching}
                 />
               )}
             </Form.Item>
@@ -259,6 +264,8 @@ const FAndBInventoryForm = ({
                     }}
                     options={unitList}
                     placeholder="Select Unit"
+                    loading={fnbMetaDataFetching}
+                    disabled={fnbMetaDataFetching}
                   />
                 )}
               </Form.Item>
@@ -345,6 +352,8 @@ const FAndBInventoryForm = ({
                     }}
                     options={supplierList}
                     placeholder="Select Supplier"
+                    loading={fnbMetaDataFetching}
+                    disabled={fnbMetaDataFetching}
                   />
                 )}
               </Form.Item>
