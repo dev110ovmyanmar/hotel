@@ -45,8 +45,6 @@ const RatePlanTable = ({
     setIsWeekDaysModalOpen(true);
   };
 
-  const navigate = useNavigate();
-
   const baseColumns = [
     {
       title: "ID",

@@ -43,9 +43,12 @@ const RoomInventoryCreateForm = ({
   const isEdit = mode === "edit";
   const isAdd = mode === "add";
 
-  const { data: roomMetaData } = useApiQuery({
+  const { data: roomMetaData , isFetching : roomMetaDataFetching } = useApiQuery({
     fetchQueryName: "roomMetaData",
     fetchQueryFunction: roomMeta,
+    options:{
+      enabled : !!drawerOpen
+    }
   });
 
   const roomType = roomMetaData?.room_types?.map((type) => ({
@@ -178,12 +181,12 @@ const RoomInventoryCreateForm = ({
                     options={roomType}
                     placeholder="Select Room Type"
                     maxTagCount="responsive"
+                    loading={roomMetaDataFetching}
+                    disabled={roomMetaDataFetching}
                   />
                 )}
               </Form.Item>
             </Col>
-
-
 
             <Col span={12}>
               <Form.Item

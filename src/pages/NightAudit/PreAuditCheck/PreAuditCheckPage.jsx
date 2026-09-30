@@ -20,12 +20,14 @@ const PreAuditCheckPage = ({ stepValue }) => {
             navigate("/night-audit", { replace: true });
         }
     }, [navigate]);
-
+    
     const { data: preAuditChecksData, isFetching } = useApiQuery({
         fetchQueryName: "pre-audit-checks",
         fetchQueryFunction: preAuditCheck,
         params: { businessDate: businessDate },
-        options: { enabled: !!nightAudit && !!businessDate, },
+        options: {
+            enabled: !!nightAudit && !!businessDate ,
+        },
     });
 
     if (isFetching || !preAuditChecksData) {
@@ -42,7 +44,7 @@ const PreAuditCheckPage = ({ stepValue }) => {
             <PreAuditCheckStatus
                 preAuditChecksData={preAuditChecksData}
                 preNightAudit={true} />
-                
+
             <PreAuditTable
                 colorCheckBooking={() => {
                     window.dispatchEvent(

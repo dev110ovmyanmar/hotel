@@ -180,18 +180,18 @@ const ChangeStatusForm = ({ reservationDetails, open, onClose }) => {
         const isAssignRoomDisabled =
           isCheckedInStatusSelected && isRoomNull;
 
-        const isSameDayCheckIn =
-          !!roomItem?.checkinDate &&
-          dayjs(roomItem.checkinDate).isSame(dayjs(), "day");
+        // const isSameDayCheckIn =
+        //   !!roomItem?.checkinDate &&
+        //   dayjs(roomItem.checkinDate).isSame(dayjs(), "day");
 
-        const isAtLeastOneStayDisabled =
-          isCheckedOutStatusSelected && isSameDayCheckIn;
+        // const isAtLeastOneStayDisabled =
+        //   isCheckedOutStatusSelected && isSameDayCheckIn;
 
         const isRoomDisabled =
           isCheckedInStatusSelected && isRoomNotReady;
 
         const isDisabledRoom =
-          isAssignRoomDisabled || isAtLeastOneStayDisabled || isRoomDisabled;;
+          isAssignRoomDisabled  || isRoomDisabled;;
 
         return {
           label: (
@@ -217,11 +217,11 @@ const ChangeStatusForm = ({ reservationDetails, open, onClose }) => {
                   </span>
                 )}
 
-                {isAtLeastOneStayDisabled && (
+                {/* {isAtLeastOneStayDisabled && (
                   <span className="text-red-500 bg-red-50 text-xs p-1 rounded ml-2 font-normal">
                     At least one stay
                   </span>
-                )}
+                )} */}
 
                 {isRoomNotReady && isCheckedInStatusSelected && (
                   <span className="text-red-500 bg-red-50 text-xs p-1 rounded ml-2 font-normal">
