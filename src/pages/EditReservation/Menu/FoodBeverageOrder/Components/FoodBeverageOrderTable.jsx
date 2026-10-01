@@ -14,6 +14,7 @@ const FoodBeverageOrderTable = ({
   changePerPage,
   onView,
   onEdit,
+  loading
 }) => {
   const tableDataSource = Array.isArray(data)
     ? data
@@ -149,6 +150,7 @@ const FoodBeverageOrderTable = ({
           },
           showSizeChanger: true,
         }}
+        loading={loading}
       />
     </div>
   );

@@ -14,6 +14,7 @@ import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
 import BooleanTag from "../../../component/BooleanTag/BooleanTag";
 import PriceTag from "../../../component/PriceTag/PriceTag";
 import { TableColumns } from "../../../component/TableColumns/TableColumns";
+import { FaSellcast } from "react-icons/fa6";
 
 dayjs.extend(isSameOrBefore);
 
@@ -261,11 +262,23 @@ const RoomInventoryTable = ({
           setConfirmOpen(false);
         }}
       >
-        <p>
+        {/* <p>
           Are you sure you want to stop selling{" "}
           <strong>{selectedRecord?.roomType?.name}</strong> for{" "}
           <strong>{selectedRecord?.date}</strong>?
-        </p>
+        </p> */}
+
+        <div className="space-y-3 py-2">
+          <p className="text-gray-700">
+            Are you sure you want to stop selling for this room type?
+          </p>
+          <div className="flex items-center gap-2 rounded-md border border-blue-200 bg-blue-50 px-3 py-2">
+            <FaSellcast className="h-4 w-4 text-blue-500" />
+            <span className="font-semibold text-blue-700">
+              {selectedRecord?.roomType?.name} - {selectedRecord?.date}
+            </span>
+          </div>
+        </div>
       </Modal>
     </div>
   );

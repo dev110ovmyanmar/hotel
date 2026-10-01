@@ -44,7 +44,7 @@ const EventFacilityOrderList = () => {
   const [searchOpen, setSearchOpen] = useState(false);
   const selectedRoomUuid = searchParams.get("selectedRoomUuid") || bookingId;
 
-  const { data, isFetching, error } = useApiQuery({
+  const { data, isFetching, isLoading } = useApiQuery({
     fetchQueryName: "facility-booking-list",
     fetchQueryFunction: fetchFacilityBooking,
     params: {
@@ -73,7 +73,7 @@ const EventFacilityOrderList = () => {
     setDrawerOpen(true);
   };
 
-  if (isFetching) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center h-full min-h-[300px]">
         <Loader />
