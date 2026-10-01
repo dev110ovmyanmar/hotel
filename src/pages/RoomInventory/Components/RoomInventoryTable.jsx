@@ -157,60 +157,60 @@ const RoomInventoryTable = ({
         return switchComponent;
       },
     },
-    {
-      title: "Action",
-      align: "center",
-      width: 150,
-      render: (_, record) => {
-        const smallStyle = { fontSize: "12px" };
+    // {
+    //   title: "Action",
+    //   align: "center",
+    //   width: 150,
+    //   render: (_, record) => {
+    //     const smallStyle = { fontSize: "12px" };
 
-        const actions = [
-          {
-            key: "view",
-            label: "View",
-            icon: <EyeOutlined style={{ fontSize: "12px" }} />,
-            permission: PERMISSIONS.AVAILABILITY_CALENDAR_VIEW,
-            onClick: () => {
-              setDrawerOpen(true);
-              setMode("view");
-              setSelectedData(record);
-            },
-          },
-          {
-            key: "edit",
-            label: "Edit",
-            icon: <EditOutlined style={{ fontSize: "12px" }} />,
-            permission: PERMISSIONS.AVAILABILITY_CALENDAR_EDIT,
-            onClick: () => {
-              setDrawerOpen(true);
-              setMode("edit");
-              setSelectedData(record);
-            },
-          },
-        ];
+    //     const actions = [
+    //       {
+    //         key: "view",
+    //         label: "View",
+    //         icon: <EyeOutlined style={{ fontSize: "12px" }} />,
+    //         permission: PERMISSIONS.AVAILABILITY_CALENDAR_VIEW,
+    //         onClick: () => {
+    //           setDrawerOpen(true);
+    //           setMode("view");
+    //           setSelectedData(record);
+    //         },
+    //       },
+    //       {
+    //         key: "edit",
+    //         label: "Edit",
+    //         icon: <EditOutlined style={{ fontSize: "12px" }} />,
+    //         permission: PERMISSIONS.AVAILABILITY_CALENDAR_EDIT,
+    //         onClick: () => {
+    //           setDrawerOpen(true);
+    //           setMode("edit");
+    //           setSelectedData(record);
+    //         },
+    //       },
+    //     ];
 
-        // Filter actions by permission
-        const items = actions
-          .filter(
-            (action) => !action.permission || hasPermission(action.permission),
-          )
-          .map((action) => ({
-            key: action.key,
-            label: (
-              <Space size={4} style={smallStyle} onClick={action.onClick}>
-                {action.icon}
-                <span style={{ fontSize: "14px" }}>{action.label}</span>
-              </Space>
-            ),
-          }));
+    //     // Filter actions by permission
+    //     const items = actions
+    //       .filter(
+    //         (action) => !action.permission || hasPermission(action.permission),
+    //       )
+    //       .map((action) => ({
+    //         key: action.key,
+    //         label: (
+    //           <Space size={4} style={smallStyle} onClick={action.onClick}>
+    //             {action.icon}
+    //             <span style={{ fontSize: "14px" }}>{action.label}</span>
+    //           </Space>
+    //         ),
+    //       }));
 
-        return (
-          <Dropdown menu={{ items }} trigger={["click"]}>
-            <MoreOutlined style={{ fontSize: "16px" }} />
-          </Dropdown>
-        );
-      },
-    },
+    //     return (
+    //       <Dropdown menu={{ items }} trigger={["click"]}>
+    //         <MoreOutlined style={{ fontSize: "16px" }} />
+    //       </Dropdown>
+    //     );
+    //   },
+    // },
   ];
 
   const expandedRowRender = (record) => {

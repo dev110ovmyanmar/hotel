@@ -1,19 +1,10 @@
 import React, { useState } from "react";
-import { Drawer, Button, Modal, TimePicker } from "antd";
+import { Drawer, TimePicker } from "antd";
 import dayjs from "dayjs";
-import { Gift, BedDouble, AlertTriangle, CalendarDays } from "lucide-react";
+import { Gift } from "lucide-react";
 import Loader from "../../../../../../component/Loader/Loader"
-
-// Custom styles for modal without footer
-const modalStyles = `
-  .room-post-modal .ant-modal-body {
-    min-height: 80px;
-    display: flex;
-    align-items: center;
-  }
-`;
 import { EditOutlined, CheckCircleFilled } from "@ant-design/icons";
-import { reservationRoomDetails, reservationRoomEdit, roomPost } from "../../../../../../api/reservationSectionApi";
+import { reservationRoomDetails, reservationRoomEdit } from "../../../../../../api/reservationSectionApi";
 import Toast from "../../../../../../component/Toast/Toast";
 import {
   textColorDarkMode,
@@ -80,28 +71,6 @@ const RoomInformationDetailsForm = ({
     }
   };
 
-  const updateRoomPost = useApiMutation({
-    mutationFn: roomPost,
-    invalidateKeys: [["reservation-room-details"], ["reservation-room"]],
-  });
-
-  const [roomPostModal, setRoomPostModal] = useState({ open: false, stayDate: null });
-
-  const handleRoomPostConfirm = () => {
-    updateRoomPost.mutate(
-      {
-        reservationRoom: { uuid: d?.uuid },
-        stayDate: dayjs(roomPostModal.stayDate).format("YYYY-MM-DD"),
-      },
-      {
-        onSuccess: () => {
-          setRoomPostModal({ open: false, stayDate: null });
-          Toast.success("Room Posted Successfully!");
-        },
-      }
-    );
-  };
-
   const reservationRoomEdits = useApiMutation({
     mutationFn: reservationRoomEdit,
     invalidateKeys: [["reservation-room-details"], ["reservation-room"]],
@@ -115,7 +84,6 @@ const RoomInformationDetailsForm = ({
   };
 
   const currentStatus = d?.roomStatus?.name;
-  const isCheckedIn = d?.roomStatus?.code === "checked_in";
   const statusStyle = STATUS_CONFIG[currentStatus] || STATUS_CONFIG.default;
 
   const handleCheckinTimeOk = (time) => {
@@ -198,7 +166,6 @@ const RoomInformationDetailsForm = ({
   const textWhiteDark = `flex justify-between items-center text-slate-600 ${textWhiteInDarkStyle}`;
   return (
     <>
-      <style>{modalStyles}</style>
       <Drawer
         open={drawerOpen}
         onClose={handleClose}
@@ -593,8 +560,6 @@ const RoomInformationDetailsForm = ({
                           // const incentiveCharges = dc?.incentiveTotal || 0;
                           const taxTotal = dc?.taxTotal || 0;
 
-                          const isTodayOrPast = !dayjs(r.stayDate).isAfter(dayjs(), 'day');
-
                           return (
                             <tr
                               key={r.uuid}
@@ -633,7 +598,7 @@ const RoomInformationDetailsForm = ({
                                   </span>
                                 </div>
                               </td>
-                              <td className="px-3 py-2 text-center" onClick={(e) => e.stopPropagation()}>
+                              <td className="px-3 py-2 text-center">
                                 {r?.dailyCharge?.postedToFolio === true ? (
                                   <div className="flex items-center justify-center gap-2 border-2 border-green-400 p-2 rounded bg-green-50">
                                     <CheckCircleFilled className="!text-green-600 " />
@@ -647,21 +612,9 @@ const RoomInformationDetailsForm = ({
                                     </div>
                                   </div>
                                 ) : (
-                                  <div
-                                    className={`flex items-center justify-center gap-2 border-2 p-2 rounded ${isTodayOrPast
-                                      ? 'border-blue-400 bg-blue-50 cursor-pointer hover:bg-blue-100'
-                                      : 'border-gray-300 bg-gray-100 cursor-not-allowed opacity-50 pointer-events-none'
-                                      }`}
-                                    onClick={() =>
-                                      isTodayOrPast && setRoomPostModal({ open: true, stayDate: r.stayDate })
-                                    }
-                                    title={isTodayOrPast ? 'Room Post' : 'Only available today'}
-                                  >
-                                    <BedDouble className={isTodayOrPast ? 'text-blue-500' : 'text-gray-400'} size={20} />
-                                    <span className={`whitespace-nowrap ${isTodayOrPast ? 'text-blue-500' : 'text-gray-400'}`}>
-                                      Post Room
-                                    </span>
-                                  </div>
+                                  <span className="text-gray-400 whitespace-nowrap">
+                                    Not Posted
+                                  </span>
                                 )}
                               </td>
                             </tr>
@@ -688,70 +641,6 @@ const RoomInformationDetailsForm = ({
           initialEditMode={editMode}
           disableEdit={true}
         />
-
-        {/* <Modal
-          title="Room Posted"
-          open={roomPostModal.open}
-          onOk={d?.roomStatus?.code === "checked_in" ? handleRoomPostConfirm : undefined}
-          onCancel={() => setRoomPostModal({ open: false, stayDate: null })}
-          okText="Confirm"
-          cancelText="Cancel"
-          confirmLoading={updateRoomPost.isPending}
-          footer={d?.roomStatus?.code === "checked_in" ? undefined : null}
-          className={d?.roomStatus?.code !== "checked_in" ? "room-post-modal" : ""}
-        >
-          {d?.roomStatus?.code === "checked_in" ? (
-            <p>Are you sure you want to post this room for {dayjs(roomPostModal.stayDate).format("YYYY-MM-DD")}?</p>
-          ) : (
-            <div className="flex items-center gap-3 py-4">
-              <AlertTriangle className="w-6 h-6 flex-shrink-0 text-red-500" />
-              <p className="font-medium text-red-500">
-                Room status must be "Checked In" to post this room.
-              </p>
-            </div>
-          )}
-        </Modal> */}
-
-        <Modal
-          title={isCheckedIn ? "Confirm Room Post" : "Cannot Post Room"}
-          open={roomPostModal.open}
-          onOk={isCheckedIn ? handleRoomPostConfirm : undefined}
-          onCancel={() => setRoomPostModal({ open: false, stayDate: null })}
-          okText="Confirm"
-          cancelText="Cancel"
-          confirmLoading={updateRoomPost.isPending}
-          okButtonProps={{ disabled: !isCheckedIn }}
-          footer={isCheckedIn ? undefined : null}
-          centered
-          width={420}
-          className={!isCheckedIn ? "room-post-modal" : ""}
-        >
-          {isCheckedIn ? (
-            <div className="space-y-3 py-2">
-              <p className="text-gray-700">
-                Are you sure you want to post this room for the following date?
-              </p>
-              <div className="flex items-center gap-2 rounded-md border border-blue-200 bg-blue-50 px-3 py-2">
-                <CalendarDays className="h-4 w-4 text-blue-500" />
-                <span className="font-semibold text-blue-700">
-                  {dayjs(roomPostModal.stayDate)?.format("YYYY-MM-DD")}
-                </span>
-              </div>
-            </div>
-          ) : (
-            <div className="flex items-start gap-3 py-2">
-              <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-red-100">
-                <AlertTriangle className="h-5 w-5 text-red-500" />
-              </div>
-              <div>
-                <p className="font-semibold text-gray-900">Action not allowed</p>
-                <p className="mt-1 text-sm text-gray-600">
-                  Room status must be <span className="font-medium text-red-500">"Checked In"</span> to post this room.
-                </p>
-              </div>
-            </div>
-          )}
-        </Modal>
       </Drawer>
     </>
   );
