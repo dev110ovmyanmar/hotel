@@ -14,6 +14,7 @@ const ServiceOrderTable = ({
   changePerPage,
   onView,
   onEdit,
+  loading,
 }) => {
   const { hasPermission } = usePermission();
   const canEditServiceOrder = hasPermission(PERMISSIONS.SERVICE_ORDER_EDIT);
@@ -125,6 +126,7 @@ const ServiceOrderTable = ({
         columns={columns}
         dataSource={tableDataSource}
         rowKey="uuid"
+        loading={loading}
         pagination={{
           current: page,
           pageSize: perPage,

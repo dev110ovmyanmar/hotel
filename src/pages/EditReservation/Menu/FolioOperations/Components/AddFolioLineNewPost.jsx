@@ -31,7 +31,7 @@ const AddFolioLineNewPost = ({
           uuid: reservationUuid,
         },
       },
-      options: { enabled: !!reservationUuid },
+      options: { enabled: !reservationUuid },
     });
 
 const rooms =
