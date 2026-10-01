@@ -15,6 +15,7 @@ import Toast from "../../../component/Toast/Toast";
 import usePermission from "../../../hooks/usePermission"; // <-- Permission hook
 import { PERMISSIONS } from "../../../variables/permission";
 import ColorStatusTag from './../../../component/ColorStatusTag/ColorStatusTag';
+import { IoPersonCircleOutline } from "react-icons/io5";
 
 const AdminTable = ({
   data,
@@ -194,10 +195,23 @@ const AdminTable = ({
       <Modal
         open={confirmModal}
         onCancel={() => setConfirmModal(false)}
-        title="Are you sure you want to reset password?"
+        title="Reset Password Confirmation"
         onOk={resetPasswordOk}
         confirmLoading={resetPasswordFunction.isPending}
-      />
+      >
+        <div className="space-y-3 py-2">
+          <p className="text-gray-700">
+            Are you sure you want to reset password for this person ?
+          </p>
+          <div className="flex items-center gap-2 rounded-md border border-blue-200 bg-blue-50 px-3 py-2">
+            <IoPersonCircleOutline className="h-4 w-4 text-blue-500" />
+            <span className="font-semibold text-blue-700">
+              {selectedData?.name} - {selectedData?.role?.name}
+              <div>{" "}{selectedData?.email}</div>
+            </span>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 };

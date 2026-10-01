@@ -16,6 +16,7 @@ import useApiQuery from '../../../../hooks/useApiQuery';
 import { deleteGuestNote, getGuestNotes } from '../../../../api/guestNoteApi';
 import { useApiMutation } from '../../../../hooks/useApiMutation';
 import { LIMITS } from '../../../../variables/constants';
+import Loader from '../../../../component/Loader/Loader';
 
 const GuestNotes = ({
   guestUuid
@@ -29,7 +30,7 @@ const GuestNotes = ({
   const [perPage, setPerPage] = useState(LIMITS.PAGE_SIZE);
 
   // Guest Note
-  const { data: guestNoteList, isFetching } = useApiQuery({
+  const { data: guestNoteList, isFetching: guestNoteListFetching } = useApiQuery({
     fetchQueryName: "guestNotes",
     fetchQueryFunction: getGuestNotes,
     params: {
@@ -81,71 +82,48 @@ const GuestNotes = ({
         </button>
       </div>
 
-
-      {/* --- CREATE NEW NOTE SECTION --- */}
-      {/* <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 relative"> */}
-      {/* <button className="absolute right-6 top-6 text-slate-400 hover:text-slate-600">
-          <X size={20} />
-        </button>
-
-        <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100 mb-6">Create New Note</h3> */}
-
-      {/* Note Type Selector */}
-      {/* <div className="space-y-3 mb-6">
-          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Note Type</p>
-          <div className="flex flex-wrap gap-3">
-            <TypeButton icon={<MessageSquare size={14} />} label="General" active color="bg-slate-100 text-slate-700 border-slate-300" />
-            <TypeButton icon={<Heart size={14} />} label="Preference" color="text-pink-500 bg-pink-50 border-pink-100" />
-            <TypeButton icon={<AlertCircle size={14} />} label="Complaint" color="text-red-500 bg-red-50 border-red-100" />
-            <TypeButton icon={<Star size={14} />} label="Special Request" color="text-orange-500 bg-orange-50 border-orange-100" />
-          </div>
-        </div> */}
-
-      {/* Note Content Input */}
-      {/* <div className="space-y-3 mb-6">
-          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Note Content</p>
-          <textarea
-            placeholder="Enter note details..."
-            className="w-full h-32 p-4 bg-slate-50 dark:bg-[#141414] border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-100 text-sm"
-          />
-        </div> */}
-
-
-      {/* </div> */}
-
       {/* --- NOTES LIST SECTION --- */}
-      <div className="space-y-4">
-        {/* Preference Note */}
-        {
-          guestNoteList?.data?.length <= 0 ? " " : <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100 ml-1">Guest Notes</h2>
-        }
-        {
-          guestNoteList?.data?.map(item => {
-            return (
-              <NoteCard
-                borderColor="border-orange-300"
-                tags={[
-                  { label: "Preference", color: "text-pink-500 bg-pink-50 border-pink-100", icon: <Heart size={12} /> },
-                  { label: "Special Request", color: "text-orange-500 bg-orange-50 border-orange-100", icon: <Star size={12} /> }
-                ]}
-                content={item?.note}
-                meta={dayjs(item?.createdAt).format("MMMM D, YYYY [at] h:mm A")}
-                isStarred={true}
-                onEdit={() => handleUpdate(item)}
-                deleteModal={() => {
-                  setDeleteModalOpen(true);
-                  setDeleteUuid(item?.uuid)
-                }}
-              />
-            )
-          })
-        }
-      </div>
+      {
+        guestNoteListFetching
+          ?
+          <div className="flex items-center justify-center h-full min-h-[300px]">
+            <Loader />
+          </div>
+          :
+          <div className="space-y-4">
+            {/* Preference Note */}
+            {
+              guestNoteList?.data?.length <= 0 ? " " : <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100 ml-1">Guest Notes</h2>
+            }
+            {
+              guestNoteList?.data?.map(item => {
+                return (
+                  <NoteCard
+                    borderColor="border-orange-300"
+                    tags={[
+                      { label: "Preference", color: "text-pink-500 bg-pink-50 border-pink-100", icon: <Heart size={12} /> },
+                      { label: "Special Request", color: "text-orange-500 bg-orange-50 border-orange-100", icon: <Star size={12} /> }
+                    ]}
+                    content={item?.note}
+                    meta={dayjs(item?.createdAt).format("MMMM D, YYYY [at] h:mm A")}
+                    isStarred={true}
+                    onEdit={() => handleUpdate(item)}
+                    deleteModal={() => {
+                      setDeleteModalOpen(true);
+                      setDeleteUuid(item?.uuid)
+                    }}
+                  />
+                )
+              })
+            }
+          </div>
+      }
 
       <Modal
         open={deleteModalOpen}
         onCancel={() => setDeleteModalOpen(false)}
         onOk={() => handleDelete(deleteUuid)}
+        confirmLoading={deleteGuestNotes?.isPending}
       >
         Are you sure you want to delete this note?
       </Modal>
