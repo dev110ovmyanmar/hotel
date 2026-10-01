@@ -100,10 +100,20 @@ const BookingDetailButton = ({ data }) => {
           const btn = button_config[key];
           if (!btn) return null;
 
+          const isOpen =
+            (key === "changeStatus" && open) ||
+            (key === "amendBooking" && amendOpen) ||
+            (key === "addDeposit" && addDepositOpen) ||
+            (key === "addRefund" && refundOpen) ||
+            (key === "addPayment" && addPaymentOpen) ||
+            (key === "overtimeCharges" && overtimeOpen) ||
+            (key === "roomMove" && roomMoveOpen) ||
+            (key === "addNote" && noteOpen);
+
           return (
             <Button
               key={key}
-              className="custom-blue-btn"
+              className={`custom-blue-btn ${isOpen ? "custom-blue-btn-active" : ""}`}
               icon={btn.icon || null}
               onClick={() => handleAction(key)}
             >

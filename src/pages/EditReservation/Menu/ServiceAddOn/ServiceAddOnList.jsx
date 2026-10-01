@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { useLocation, useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import ReservationHeader from "../../Components/ReservationHeader";
 import ReservationMenu from "../../Components/ReservationMenu";
 import ReservationListHeader from "../../../../component/ReservationHeader/ReservationListHeader";
 import { useApiQuery } from "./../../../../hooks/useApiQuery";
 import {
   serviceAddonList,
-  serviceOrderList,
 } from "../../../../api/reservationSectionApi";
 import { LIMITS } from "../../../../variables/constants";
 import ServiceAddOnForm from "./Components/ServiceAddOnForms/ServiceAddOnForm";
@@ -39,7 +38,7 @@ const ServiceAddOnList = () => {
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(LIMITS.PAGE_SIZE);
 
-  const { data, isFetching, refetch } = useApiQuery({
+  const { data, isFetching, refetch, isLoading} = useApiQuery({
     fetchQueryName: "service-addon",
     fetchQueryFunction: serviceAddonList,
     params: {
@@ -50,9 +49,7 @@ const ServiceAddOnList = () => {
       keyword,
       reservationRoom: { uuid: uuid },
     },
-    options: {
-      enabled: !!uuid,
-    }
+    options: {enabled: !!uuid}
   });
 
   useEffect(() => {
@@ -71,7 +68,7 @@ const ServiceAddOnList = () => {
     setDrawerOpen(true);
   };
 
-  if (isFetching) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center h-full min-h-[300px]">
         <Loader />
@@ -104,6 +101,7 @@ const ServiceAddOnList = () => {
           setMode("edit");
           setDrawerOpen(true);
         }}
+        loading={isFetching}
       />
 
       {drawerOpen && (

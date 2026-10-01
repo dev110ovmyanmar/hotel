@@ -68,7 +68,8 @@ const RoomInformationList = () => {
 
   const {
     data: listData,
-    isFetching: isListLoading,
+    isFetching: isListFetching,
+    isLoading: isListLoading,
     refetch,
   } = useApiQuery({
     fetchQueryName:"reservation-room",
@@ -148,14 +149,17 @@ const RoomInformationList = () => {
       <div className="flex gap-2 mb-2">
         {
           reservation_edit &&
-          <Button className="custom-blue-btn" onClick={() => setOpen(true)}>
+          <Button 
+          className={`custom-blue-btn ${open ? "custom-blue-btn-active" : ""}`}
+          onClick={() => setOpen(true)}>
           Change Status
           </Button>
         }
 
         {
           isConfirmed && 
-          <Button className="custom-blue-btn" 
+          <Button 
+          className={`custom-blue-btn ${addDepositOpen ? "custom-blue-btn-active" : ""}`}
           onClick={() => setAddDepositOpen(true)}
           icon={<PlusOutlined style={{ fontSize: "12px" }} />}>
           Add Deposit
@@ -164,7 +168,8 @@ const RoomInformationList = () => {
 
         {
           reservation_edit && 
-          <Button className="custom-blue-btn" 
+          <Button 
+          className={`custom-blue-btn ${noteOpen ? "custom-blue-btn-active" : ""}`}
           onClick={() => setNoteOpen(true)}
           icon={<PlusOutlined style={{ fontSize: "12px" }} />}
           >
@@ -191,7 +196,7 @@ const RoomInformationList = () => {
         total={listData?.pagination?.total}
         changePage={setPage}
         changePerPage={setPerPage}
-        loading={isListLoading}
+        loading={isListFetching}
         reservationUuid={{
           ...listData,
           reservationRoom: selectedRoom || listData?.reservationRoom,

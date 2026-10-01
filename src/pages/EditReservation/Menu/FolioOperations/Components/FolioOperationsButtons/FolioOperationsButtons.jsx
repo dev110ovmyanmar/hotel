@@ -83,18 +83,18 @@ const FolioOperationsButtons = ({
         {
           canAddFolioLineNewPost && 
           <Button
-          className="custom-blue-btn"
+          className={`custom-blue-btn ${addFolioLineNewPostOpen ? "custom-blue-btn-active" : ""}`}
           onClick={() => setAddFolioLineNewPostOpen(true)}
           icon={<PlusOutlined style={{ fontSize: "12px" }} />}
         >
-          Add New Post
+          New Post
         </Button>
         }
 
         {
         canAddFolioPayment && 
         <Button
-          className="custom-blue-btn"
+          className={`custom-blue-btn ${paymentOpen ? "custom-blue-btn-active" : ""}`}
           onClick={() => setPaymentOpen(true)}
           icon={<PlusOutlined style={{ fontSize: "12px" }} />}
         >
@@ -105,7 +105,7 @@ const FolioOperationsButtons = ({
         {
           canAddDepositFolioPayment &&
           <Button
-          className="custom-blue-btn"
+          className={`custom-blue-btn ${addDepositOpen ? "custom-blue-btn-active" : ""}`}
           onClick={() => setAddDepositOpen(true)}
           icon={<PlusOutlined style={{ fontSize: "12px"}}/>}
           >
@@ -116,7 +116,7 @@ const FolioOperationsButtons = ({
         {
         canPrintFolio &&
         <Button
-          className="custom-blue-btn"
+          className={`custom-blue-btn ${isPrintAllLoading ? "custom-blue-btn-active" : ""}`}
           icon={isPrintAllLoading ? <LoadingOutlined spin /> : <IoPrintOutline />}
           disabled={foliosList.length === 0 || isPrintAllLoading}
           loading={isPrintAllLoading}

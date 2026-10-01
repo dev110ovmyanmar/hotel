@@ -75,11 +75,14 @@ const SeasonalRateForm = ({
   };
 
   const { hasPermission } = usePermission();
-  const canEdit = hasPermission(PERMISSIONS.SEASONAL_RATE_EDIT);
+  const canEditSeasonalRate = hasPermission(PERMISSIONS.SEASONAL_RATE_EDIT);
 
-  const { data: ratePlanMetaData } = useApiQuery({
+  const { data: ratePlanMetaData, isFetching: ratePlanMetaDataFetching } = useApiQuery({
     fetchQueryName: "ratePlanMetaData",
     fetchQueryFunction: ratePlanMeta,
+    options:{
+      enabled : !!drawerOpen
+    }
   });
 
   const roomTypes = ratePlanMetaData?.room_types?.map((type) => ({
@@ -279,7 +282,7 @@ const SeasonalRateForm = ({
                   : "Create Room Type Rate"}
             </span>
             {isView ? (
-              canEdit && (
+              canEditSeasonalRate && (
                 <Button
                   type="primary"
                   onClick={() => {
@@ -293,7 +296,9 @@ const SeasonalRateForm = ({
               <FormButton
                 onClick={() => form.submit()}
                 isPending={
-                  createSeasonlRates.isPending || editSeasonlRates.isPending
+                  isAdd ?
+                    createSeasonlRates.isPending :
+                    editSeasonlRates.isPending
                 }
                 mode={mode}
               />
@@ -351,6 +356,8 @@ const SeasonalRateForm = ({
                       }}
                       options={roomTypes}
                       placeholder="Select Room Type Rate"
+                      loading={ratePlanMetaDataFetching}
+                      disabled={ratePlanMetaDataFetching}
                     />
                   )}
                 </Form.Item>
@@ -379,6 +386,8 @@ const SeasonalRateForm = ({
                       }}
                       options={ratePlans}
                       placeholder="Select Rate Plan"
+                      loading={ratePlanMetaDataFetching}
+                      disabled={ratePlanMetaDataFetching}
                     />
                   )}
                 </Form.Item>
@@ -408,6 +417,8 @@ const SeasonalRateForm = ({
                       }}
                       options={rateCategoryOptions}
                       placeholder="Select Rate Category"
+                      loading={ratePlanMetaDataFetching}
+                      disabled={ratePlanMetaDataFetching}
                     />
                   )}
                 </Form.Item>

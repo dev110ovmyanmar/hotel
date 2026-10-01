@@ -227,11 +227,12 @@ export const PERMISSIONS = {
   // Reservation Calendar
   RESERVATION_CALENDAR: "calendar.reservation",
 
-  // Availability Calendar
+  // Availability Calendar and for room inventory
   AVAILABILITY_CALENDAR_LIST: "availability-calendar.list",
   AVAILABILITY_CALENDAR_VIEW: "availability-calendar.view",
   AVAILABILITY_CALENDAR_CREATE: "availability-calendar.create",
-  AVAILABILITY_CALENDAR_UPDATE: "availability-calendar.edit",
+  AVAILABILITY_CALENDAR_EDIT: "availability-calendar.edit",
+  AVAILABILITY_CALENDAR_STOP_SELL : "availability-calendar.stop-sell",
 
   // Availability Calendar
   RATE_AND_INVENTORY_CALENDAR_LIST: "calendar.rate-inventory",
@@ -294,6 +295,7 @@ export const PERMISSIONS = {
   ROOM_RESTRICTION_VIEW: "room-restriction.view",
   ROOM_RESTRICTION_CREATE: "room-restriction.create",
   ROOM_RESTRICTION_EDIT: "room-restriction.edit",
+  ROOM_RESTRICTION_STOP_SELL:"room-restriction.stop-sell",
 
   //Reservation 
   RESERVATION_LIST: "reservation.list",

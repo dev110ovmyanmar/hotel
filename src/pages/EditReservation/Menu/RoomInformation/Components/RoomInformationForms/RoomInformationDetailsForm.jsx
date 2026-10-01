@@ -65,7 +65,7 @@ const RoomInformationDetailsForm = ({
     options: { enabled: !!selectedData?.uuid && drawerOpen },
   });
   const d = reservationRoomsDetails;
-  
+
   const handleViewDailyOccupancy = (rateDate) => {
     setEditMode(false);
     const matched = d?.dailyOccupancies?.find(
@@ -104,12 +104,14 @@ const RoomInformationDetailsForm = ({
 
   const reservationRoomEdits = useApiMutation({
     mutationFn: reservationRoomEdit,
-    invalidateKeys: [["reservation-room-details"]],
+    invalidateKeys: [["reservation-room-details"], ["reservation-room"]],
   });
 
   const handleClose = () => {
     setDrawerOpen(false);
     if (setSelectedData) setSelectedData(null);
+    setEditCheckinTime(false);
+    setEditCheckoutTime(false)
   };
 
   const currentStatus = d?.roomStatus?.name;

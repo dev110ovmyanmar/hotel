@@ -81,7 +81,7 @@ const FolioOperationsList = () => {
   const {
     data: folioList,
     isFetching,
-    error,
+    isLoading,
   } = useApiQuery({
     fetchQueryName: "folios",
     fetchQueryFunction: getFolioList,
@@ -241,7 +241,7 @@ const FolioOperationsList = () => {
     return () => window.removeEventListener("print-all-folios", handler);
   }, [handlePrintAll]);
 
-  if (isFetching) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center h-full min-h-[300px]">
         <Loader />
@@ -286,6 +286,7 @@ const FolioOperationsList = () => {
         isVoiding={voidLineMutation.isPending}
         printingFolioUuid={printingFolioUuid}
         onPrintFolio={handlePrintSingleFolio}
+        loading={isFetching}
       />
 
       {/* Hidden container for window.print() to capture */}
