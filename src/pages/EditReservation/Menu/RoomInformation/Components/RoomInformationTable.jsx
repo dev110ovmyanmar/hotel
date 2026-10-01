@@ -2,7 +2,7 @@ import { useState, } from "react";
 import { Dropdown, Table } from "antd";
 import dayjs from "dayjs";
 import { MessageOutlined, EyeOutlined } from "@ant-design/icons";
-import { CalendarPlus2, Gift } from "lucide-react";
+import { CalendarPlus2, Gift, FilePenLine } from "lucide-react";
 import { IoOptionsSharp } from "react-icons/io5";
 import { Bs0Circle, BsPeople } from "react-icons/bs";
 import RoomInformationForm from "./RoomInformationForms/RoomInformationForm";
@@ -27,6 +27,7 @@ import SingleRoomComplimentaryUpdateModal from "./ComplimentaryModals/SingleRoom
 import RoomInformationDetailsForm from "./RoomInformationForms/RoomInformationDetailsForm";
 import AddExtraAmenitiesModal from "./Extra/AddExtraAmenitiesModal";
 import DailyOccupactionsTableDrawer from "./RoomInformationForms/DailyOccupactionsTableDrawer";
+import RoomPostDrawer from "./RoomInformationForms/RoomPostDrawer";
 import { useApiMutation } from "../../../../../hooks/useApiMutation";
 import { availabilitySearch } from "../../../../../api/reservationSectionApi";
 import { getAmendReservationMenuItems } from "./AmendReservationList";
@@ -52,6 +53,7 @@ const RoomInformationTable = ({
   const reservation_edit = hasPermission(PERMISSIONS.RESERVATION_EDIT);
   const reservation_room_occupancy_view = hasPermission(PERMISSIONS.RESERVATION_ROOM_OCCUPANCY_VIEW);
   const reservation_room_amendment = hasPermission(PERMISSIONS.RESERVATION_ROOM_AMENDMENT);
+  const reservation_room_posted = hasPermission(PERMISSIONS.RESERVATION_ROOM_POSTED);
 
   const enableRoomSetting = reservation_room_view || reservation_edit || reservation_room_occupancy_view || reservation_room_amendment;
 
@@ -83,6 +85,7 @@ const RoomInformationTable = ({
     dailyOccupactionsTableDrawerOpen,
     setDailyOccupactionsTableDrawerOpen,
   ] = useState(false);
+  const [roomPostOpen, setRoomPostOpen] = useState(false);
 
   const [compOpen, setCompOpen] = useState(false);
   const [addExtraBedOpen, setExtraBedOpen] = useState(false);
@@ -423,6 +426,16 @@ const RoomInformationTable = ({
             },
             hidden: !reservation_room_occupancy_view
           },
+          {
+            key: "roomPost",
+            label: "Room Posted",
+            icon: <FilePenLine className="w-4 h-4" />,
+            onClick: () => {
+              setSelectedData(record);
+              setRoomPostOpen(true);
+            },
+            hidden: !reservation_room_posted,
+          }
         ];
 
         const amendmentItems = getAmendReservationMenuItems({
@@ -531,6 +544,13 @@ const RoomInformationTable = ({
       <DailyOccupactionsTableDrawer
         drawerOpen={dailyOccupactionsTableDrawerOpen}
         setDrawerOpen={setDailyOccupactionsTableDrawerOpen}
+        selectedData={selectedData}
+        setSelectedData={setSelectedData}
+      />
+
+      <RoomPostDrawer
+        drawerOpen={roomPostOpen}
+        setDrawerOpen={setRoomPostOpen}
         selectedData={selectedData}
         setSelectedData={setSelectedData}
       />

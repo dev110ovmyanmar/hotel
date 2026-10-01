@@ -374,7 +374,8 @@ export const PERMISSIONS = {
   // Payment History (Folio-Payment)
   FOLIO_PAYMENT_LIST: "folio-payment.list",
 
-
+  //Room Post
+  RESERVATION_ROOM_POSTED:"reservation-room.posted"
 };
 
 
