@@ -47,7 +47,7 @@ const LocationForm = ({
     shouldInvalidate: isEdit ? true : page === 1,
   });
 
-  const { data, isFetching, error } = useApiQuery({
+  const { data, isFetching: locationDetailsFetching, error } = useApiQuery({
     fetchQueryName: "location-detail",
     fetchQueryFunction: locationDetails,
     params: { uuid: selectedData?.uuid },
@@ -235,7 +235,7 @@ const LocationForm = ({
             dataSource={data?.city}
             rowKey="uuid"
             className="my-3"
-            loading={isFetching}
+            loading={locationDetailsFetching}
             pagination={false}
           ></Table>
 
@@ -258,7 +258,7 @@ const LocationForm = ({
               </div>
             }
           >
-            {isFetching ? (
+            {locationDetailsFetching ? (
               <div className="flex items-center justify-center h-full min-h-[300px]">
                 <Loader />
               </div>
@@ -294,27 +294,40 @@ const LocationForm = ({
           validateTrigger="onSubmit"
           onFinish={onFinish}
         >
-          <Form.Item
-            label="Country"
-            name="name"
-            rules={[{ required: true, message: "Country is Required" }]}
-          >
-            <Input />
-          </Form.Item>
+          {
+            locationDetailsFetching
+              ?
+              <div className="flex items-center justify-center h-full">
+                <Loader />
+              </div>
+              :
+              <>
+                <Form.Item
+                  label="Country"
+                  name="name"
+                  rules={[{ required: true, message: "Country is Required" }]}
+                >
+                  <Input loading={locationDetailsFetching} disabled={locationDetailsFetching} />
+                </Form.Item>
 
-          {!isView && (
-            <div className="flex justify-end sm:mb-2 md:mb-3 gap-2">
-              <Button type="default" onClick={() => setModalOpen(false)}>
-                Cancel
-              </Button>
 
-              <FormButtons
-                onClick={() => form.submit()}
-                isPending={upsertLocations?.isPending}
-                mode={mode}
-              />
-            </div>
-          )}
+                {!isView && (
+                  <div className="flex justify-end sm:mb-2 md:mb-3 gap-2">
+                    <Button type="default" onClick={() => setModalOpen(false)}>
+                      Cancel
+                    </Button>
+
+                    <FormButtons
+                      onClick={() => form.submit()}
+                      isPending={upsertLocations?.isPending}
+                      mode={mode}
+                    />
+                  </div>
+                )}
+              </>
+
+          }
+
         </Form>
       </Modal>
     </div>

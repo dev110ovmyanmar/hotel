@@ -220,6 +220,7 @@ const SearchEventFacilityOrderForm = ({
       fixed: "end",
       align: "center",
       render: (_, record) => {
+        console.log(record,"RecordForEventFacility")
         return (
           <Button
             type="primary"
@@ -274,7 +275,7 @@ const SearchEventFacilityOrderForm = ({
       });
     }
   };
-
+  
   return (
     <Drawer
       title="Search By"
@@ -392,6 +393,7 @@ const SearchEventFacilityOrderForm = ({
         onCancel={() => setOpenSearchModal(false)}
         onOk={handleOk}
         confirmLoading={facilityBookingAttachs.isPending}
+        record={reservationIdList}
       />
     </Drawer>
   );

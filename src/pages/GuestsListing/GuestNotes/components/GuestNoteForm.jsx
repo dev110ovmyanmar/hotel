@@ -117,7 +117,9 @@ const GuestNoteForm = ({
                 )
             }>
             {isFetching && !isAdd ? (
-                <Loader />
+                <div className="flex items-center justify-center h-full min-h-[300px]">
+                    <Loader />
+                </div>
             ) : (
                 <Form form={form} layout="vertical" onFinish={onFinish}>
                     <div className="grid grid-cols-12 gap-y-2">
