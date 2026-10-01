@@ -32,7 +32,7 @@ const FoodBeverageOrderList = () => {
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(LIMITS.PAGE_SIZE);
 
-  const { data, isFetching, refetch } = useApiQuery({
+  const { data, isFetching, refetch, isLoading } = useApiQuery({
     fetchQueryName: "food-beverage-orders",
     fetchQueryFunction: fetchFoodBeverageOrderList,
     params: {
@@ -60,7 +60,7 @@ const FoodBeverageOrderList = () => {
     setDrawerOpen(true);
   };
   
-  if (isFetching) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center h-full min-h-[300px]">
         <Loader />
@@ -97,6 +97,7 @@ const FoodBeverageOrderList = () => {
           setMode("edit");
           setDrawerOpen(true);
         }}
+        loading={isFetching}
       />
 
       {drawerOpen && (
