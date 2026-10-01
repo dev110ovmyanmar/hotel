@@ -68,7 +68,8 @@ const RoomInformationList = () => {
 
   const {
     data: listData,
-    isFetching: isListLoading,
+    isFetching: isListFetching,
+    isLoading: isListLoading,
     refetch,
   } = useApiQuery({
     fetchQueryName:"reservation-room",
@@ -195,7 +196,7 @@ const RoomInformationList = () => {
         total={listData?.pagination?.total}
         changePage={setPage}
         changePerPage={setPerPage}
-        loading={isListLoading}
+        loading={isListFetching}
         reservationUuid={{
           ...listData,
           reservationRoom: selectedRoom || listData?.reservationRoom,

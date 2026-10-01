@@ -45,7 +45,7 @@ const GuestList = () => {
     setPage(1);
   }, [keyword]);
 
-  const { data, isFetching, refetch } = useApiQuery({
+  const { data, isFetching, refetch, isLoading } = useApiQuery({
     fetchQueryName: "reservation-guest",
     fetchQueryFunction: reservationGuestList,
     params: {
@@ -70,7 +70,7 @@ const GuestList = () => {
 
   const reservationInfo = data?.reservation ?? null;
 
-  if (isFetching) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center h-full min-h-[300px]">
         <Loader />
