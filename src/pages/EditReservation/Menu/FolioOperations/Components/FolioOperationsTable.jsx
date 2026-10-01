@@ -194,7 +194,8 @@ const FolioOperationsTable = ({
   onRebateLine,
   isRebating = false,
   onVoidLine,
-  isVoiding = false
+  isVoiding = false,
+  loading,
 }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedFolio, setSelectedFolio] = useState(null);
@@ -541,6 +542,7 @@ const FolioOperationsTable = ({
           setTargetFolioUuid(null);
           setModalOpen(true);
         }}
+        // loading={loading}
       />
     );
   };
@@ -627,6 +629,7 @@ const FolioOperationsTable = ({
             rowExpandable: (record) =>
               record.folioLines && record.folioLines.length > 0,
           }}
+           loading={loading}
         />
       </div>
 

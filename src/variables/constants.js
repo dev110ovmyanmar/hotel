@@ -21,6 +21,7 @@ export const ADMIN = "admin";
 export const SUPER_ADMIN = "superAdmin";
 export const SUPER_ADMIN_SK = "superadmin";
 export const FRONT_OFFICE = "front_office";
+export const NIGHT_AUDITOR = "night_auditor";
 
 //Gender options
 export const MALE = "male";

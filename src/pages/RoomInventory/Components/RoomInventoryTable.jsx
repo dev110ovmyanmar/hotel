@@ -14,6 +14,7 @@ import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
 import BooleanTag from "../../../component/BooleanTag/BooleanTag";
 import PriceTag from "../../../component/PriceTag/PriceTag";
 import { TableColumns } from "../../../component/TableColumns/TableColumns";
+import { FaSellcast } from "react-icons/fa6";
 
 dayjs.extend(isSameOrBefore);
 
@@ -156,60 +157,60 @@ const RoomInventoryTable = ({
         return switchComponent;
       },
     },
-    {
-      title: "Action",
-      align: "center",
-      width: 150,
-      render: (_, record) => {
-        const smallStyle = { fontSize: "12px" };
+    // {
+    //   title: "Action",
+    //   align: "center",
+    //   width: 150,
+    //   render: (_, record) => {
+    //     const smallStyle = { fontSize: "12px" };
 
-        const actions = [
-          {
-            key: "view",
-            label: "View",
-            icon: <EyeOutlined style={{ fontSize: "12px" }} />,
-            permission: PERMISSIONS.AVAILABILITY_CALENDAR_VIEW,
-            onClick: () => {
-              setDrawerOpen(true);
-              setMode("view");
-              setSelectedData(record);
-            },
-          },
-          {
-            key: "edit",
-            label: "Edit",
-            icon: <EditOutlined style={{ fontSize: "12px" }} />,
-            permission: PERMISSIONS.AVAILABILITY_CALENDAR_EDIT,
-            onClick: () => {
-              setDrawerOpen(true);
-              setMode("edit");
-              setSelectedData(record);
-            },
-          },
-        ];
+    //     const actions = [
+    //       {
+    //         key: "view",
+    //         label: "View",
+    //         icon: <EyeOutlined style={{ fontSize: "12px" }} />,
+    //         permission: PERMISSIONS.AVAILABILITY_CALENDAR_VIEW,
+    //         onClick: () => {
+    //           setDrawerOpen(true);
+    //           setMode("view");
+    //           setSelectedData(record);
+    //         },
+    //       },
+    //       {
+    //         key: "edit",
+    //         label: "Edit",
+    //         icon: <EditOutlined style={{ fontSize: "12px" }} />,
+    //         permission: PERMISSIONS.AVAILABILITY_CALENDAR_EDIT,
+    //         onClick: () => {
+    //           setDrawerOpen(true);
+    //           setMode("edit");
+    //           setSelectedData(record);
+    //         },
+    //       },
+    //     ];
 
-        // Filter actions by permission
-        const items = actions
-          .filter(
-            (action) => !action.permission || hasPermission(action.permission),
-          )
-          .map((action) => ({
-            key: action.key,
-            label: (
-              <Space size={4} style={smallStyle} onClick={action.onClick}>
-                {action.icon}
-                <span style={{ fontSize: "14px" }}>{action.label}</span>
-              </Space>
-            ),
-          }));
+    //     // Filter actions by permission
+    //     const items = actions
+    //       .filter(
+    //         (action) => !action.permission || hasPermission(action.permission),
+    //       )
+    //       .map((action) => ({
+    //         key: action.key,
+    //         label: (
+    //           <Space size={4} style={smallStyle} onClick={action.onClick}>
+    //             {action.icon}
+    //             <span style={{ fontSize: "14px" }}>{action.label}</span>
+    //           </Space>
+    //         ),
+    //       }));
 
-        return (
-          <Dropdown menu={{ items }} trigger={["click"]}>
-            <MoreOutlined style={{ fontSize: "16px" }} />
-          </Dropdown>
-        );
-      },
-    },
+    //     return (
+    //       <Dropdown menu={{ items }} trigger={["click"]}>
+    //         <MoreOutlined style={{ fontSize: "16px" }} />
+    //       </Dropdown>
+    //     );
+    //   },
+    // },
   ];
 
   const expandedRowRender = (record) => {
@@ -261,11 +262,23 @@ const RoomInventoryTable = ({
           setConfirmOpen(false);
         }}
       >
-        <p>
+        {/* <p>
           Are you sure you want to stop selling{" "}
           <strong>{selectedRecord?.roomType?.name}</strong> for{" "}
           <strong>{selectedRecord?.date}</strong>?
-        </p>
+        </p> */}
+
+        <div className="space-y-3 py-2">
+          <p className="text-gray-700">
+            Are you sure you want to stop selling for this room type?
+          </p>
+          <div className="flex items-center gap-2 rounded-md border border-blue-200 bg-blue-50 px-3 py-2">
+            <FaSellcast className="h-4 w-4 text-blue-500" />
+            <span className="font-semibold text-blue-700">
+              {selectedRecord?.roomType?.name} - {selectedRecord?.date}
+            </span>
+          </div>
+        </div>
       </Modal>
     </div>
   );

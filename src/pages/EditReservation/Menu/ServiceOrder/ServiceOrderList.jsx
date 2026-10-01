@@ -44,7 +44,7 @@ const ServiceOrderList = () => {
   const [perPage, setPerPage] = useState(LIMITS.PAGE_SIZE);
   const [open, setOpen] = useState(false);
 
-  const { data, isFetching, refetch } = useApiQuery({
+  const { data, isFetching, refetch, isLoading } = useApiQuery({
     fetchQueryName: "service-order",
     fetchQueryFunction: serviceOrderList,
     params: {
@@ -73,7 +73,7 @@ const ServiceOrderList = () => {
     setDrawerOpen(true);
   };
 
-  if (isFetching) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center h-full min-h-[300px]">
         <Loader />
@@ -103,6 +103,7 @@ const ServiceOrderList = () => {
 
       <ServiceOrderTable
         data={data?.data || []}
+        loading={isFetching}
         page={page}
         perPage={perPage}
         total={data?.pagination?.total}
@@ -118,6 +119,7 @@ const ServiceOrderList = () => {
           setMode("edit");
           setDrawerOpen(true);
         }}
+        
       />
 
       {drawerOpen && (

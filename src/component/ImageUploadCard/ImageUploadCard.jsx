@@ -117,7 +117,6 @@ const ImageUploadCard = ({
         beforeUpload={beforeUpload}
         accept="image/png,image/jpeg"
         disabled={loading}
-
       >
         {loading ? (
           <div>

@@ -40,6 +40,7 @@ import { InfoRow, SectionCard } from "../../../RoomInformation/Components/RoomIn
 import Loader from "../../../../../../component/Loader/Loader";
 import usePermission from "../../../../../../hooks/usePermission";
 import { PERMISSIONS } from "../../../../../../variables/permission";
+import { MdRestaurantMenu } from "react-icons/md";
 
 
 const { Text } = Typography;
@@ -82,6 +83,7 @@ const FoodBeverageOrderForm = ({
     index: null,
     itemUuid: null,
   });
+  const [deleteMenuName, setDeleteMenuName] = useState();
 
   const initData = queryClient.getQueryData(["initData", "authenticated"]);
   const allStatuses = initData?.statuses;
@@ -422,7 +424,7 @@ const FoodBeverageOrderForm = ({
         );
 
         // Reset current editing state
-        setIsClickedEditUuid();
+        setIsClickedEditUuid(null);
         setClickAddMenu(false);
         setAddedMenuIndex(null);
         setIsDeleteUuid(null);
@@ -430,6 +432,7 @@ const FoodBeverageOrderForm = ({
           index: null,
           itemUuid: null,
         });
+        setDeleteMenuName();
       }
     });
   };
@@ -839,6 +842,7 @@ const FoodBeverageOrderForm = ({
                             isDeleteUuid ||
                             isMenuEditing
                           );
+
                         return (
                           <>
                             <Collapse
@@ -980,6 +984,14 @@ const FoodBeverageOrderForm = ({
 
                                                       setIsDeleteUuid(itemUuid);
 
+                                                      const itemName =
+                                                        fnbOrderDetails?.fnbOrderItems?.find(
+                                                          (item) =>
+                                                            item?.menuItem?.uuid ===
+                                                            currentItem?.menu
+                                                        )?.menuItem?.name;
+                                                      setDeleteMenuName(itemName);
+
                                                       if (
                                                         fields?.length > 1 &&
                                                         !clickAddMenu
@@ -1060,6 +1072,14 @@ const FoodBeverageOrderForm = ({
                                                       });
 
                                                       setIsDeleteUuid(itemUuid);
+
+                                                      const itemName =
+                                                        fnbOrderDetails?.fnbOrderItems?.find(
+                                                          (item) =>
+                                                            item?.menuItem?.uuid ===
+                                                            currentItem?.menu
+                                                        )?.menuItem?.name;
+                                                      setDeleteMenuName(itemName);
 
                                                       if (
                                                         fields?.length > 1 &&
@@ -1517,11 +1537,23 @@ const FoodBeverageOrderForm = ({
             itemUuid: null,
           });
           setIsDeleteUuid(null);
+          setDeleteMenuName();
         }}
         confirmLoading={deleteFoodBeverageOrderMenu?.isPending}
         mask={false}
       >
-        Are you sure you want to delete this menu?
+        <div className="space-y-3 py-2">
+          <p className="text-gray-700">
+            Are you sure you want to delete this menu?
+          </p>
+          <div className="flex items-center gap-2 rounded-md border border-blue-200 bg-blue-50 px-3 py-2">
+            <MdRestaurantMenu className="h-4 w-4 text-blue-500" />
+            <span className="font-semibold text-blue-700">
+              {deleteMenuName}
+            </span>
+          </div>
+        </div>
+
       </Modal>
     </>
   );

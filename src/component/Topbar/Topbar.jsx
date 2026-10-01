@@ -283,7 +283,7 @@ const Topbar = withDirection(function (props) {
             onOpenChange={(open) => setPopoverOpen(open)}
           >
             <Modal
-              title="Are you sure you want to logout?"
+              title="Logout Confirmation"
               open={isOpenModal}
               onOk={handleLogout}
               okText="Log out"
@@ -291,7 +291,9 @@ const Topbar = withDirection(function (props) {
                 loading: loading,
               }}
               onCancel={cancelButton}
-            />
+            >
+              Are you sure you want to logout?
+            </Modal>
 
             <div className="cursor-pointer">
               <div className="flex items-center">
