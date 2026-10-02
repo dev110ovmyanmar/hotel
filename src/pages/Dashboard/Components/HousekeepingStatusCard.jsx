@@ -22,7 +22,7 @@ export default function HousekeepingStatusCard({
     {
       label: "In-progress",
       color: "#fa8c16",
-      value: housekeepingData?.inprogress || 0,
+      value: housekeepingData?.inProgress || 0,
     },
     // {
     //   label: "Inspected",
@@ -152,19 +152,7 @@ export default function HousekeepingStatusCard({
       </div>
 
       <style>
-        {`
-          @keyframes housekeepingFadeIn {
-            from {
-              opacity: 0;
-              transform: translateY(-2px);
-            }
-
-            to {
-              opacity: 1;
-              transform: translateY(0);
-            }
-          }
-        `}
+       
       </style>
     </Card>
   );
