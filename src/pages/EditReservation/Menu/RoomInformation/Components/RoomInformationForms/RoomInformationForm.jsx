@@ -253,7 +253,8 @@ const disabledDate = (current, info) => {
                    placeholder="Select Room Type"
                    onChange={handleRoomTypeChange}
                    loading={roomAvailabilitySearchs.isPending}
-                          />
+                   disabled={roomAvailabilitySearchs.isPending}
+              />
           </Form.Item>
 
           <Form.Item

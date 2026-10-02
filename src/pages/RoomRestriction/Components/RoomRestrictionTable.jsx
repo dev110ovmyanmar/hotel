@@ -14,6 +14,7 @@ import dayjs from "dayjs";
 import { updateStopSell } from "../../../api/roomrestriction";
 import { useApiMutation } from "../../../hooks/useApiMutation";
 import isSameOrBeforePlugin from "dayjs/plugin/isSameOrBefore";
+import { FaSellcast } from "react-icons/fa6";
 
 dayjs.extend(isSameOrBeforePlugin);
 
@@ -131,7 +132,7 @@ const RoomRestrictionTable = ({ data, page, setPage, loading }) => {
       render: (_, record) => {
         const isPastOrToday = dayjs(record.date).isSameOrBefore(dayjs(), "day");
 
-        const isDisabled = isPastOrToday || updatingId  === record.id;
+        const isDisabled = isPastOrToday || updatingId === record.id;
         const switchComponent = (
           <Switch
             checked={record.stopSell === true}
@@ -267,11 +268,23 @@ const RoomRestrictionTable = ({ data, page, setPage, loading }) => {
           setConfirmOpen(false);
         }}
       >
-        <p>
+        {/* <p>
           Are you sure you want to stop selling{" "}
           <strong>{selectedRecord?.roomType?.name}</strong> for{" "}
           <strong>{selectedRecord?.date}</strong>?
-        </p>
+        </p> */}
+
+        <div className="space-y-3 py-2">
+          <p className="text-gray-700">
+            Are you sure you want to stop selling for this room type?
+          </p>
+          <div className="flex items-center gap-2 rounded-md border border-blue-200 bg-blue-50 px-3 py-2">
+            <FaSellcast className="h-4 w-4 text-blue-500" />
+            <span className="font-semibold text-blue-700">
+              {selectedRecord?.roomType?.name} - {selectedRecord?.date}
+            </span>
+          </div>
+        </div>
       </Modal>
     </div>
   );

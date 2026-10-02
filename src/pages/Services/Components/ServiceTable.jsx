@@ -38,6 +38,7 @@ const ServiceTable = ({
   const [selectedItem, setSelectedItem] = useState(null);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [deleteServiceInventoryUuid, setDeleteServiceInventoryUuid] = useState();
+  const [deleteServiceInventoryName, setDeleteServiceInventoryName] = useState();
 
   const deleteServiceInventoryMappings = useApiMutation({
     mutationFn: deleteServiceInventoryMapping,
@@ -183,6 +184,7 @@ const ServiceTable = ({
             title: "Action",
             align: "center",
             render: (_, record) => {
+              console.log(record,"RecordInServiceInventory")
               const smallStyle = { fontSize: "12px" };
 
               const actions = [
@@ -214,6 +216,7 @@ const ServiceTable = ({
                   icon: <DeleteOutlined style={{ color: "red", fontSize: "12px" }} />,
                   permission: PERMISSIONS.SERVICE_INVENTORY_DELETE,
                   onClick: () => {
+                    setDeleteServiceInventoryName(record?.serviceInventoryItem.name)
                     setDeleteServiceInventoryUuid(record?.uuid)
                     setDeleteModalOpen(true)
                   },
@@ -354,6 +357,7 @@ const ServiceTable = ({
         onOk={handleDeleteOk}
         onCancel={() => setDeleteModalOpen(false)}
         confirmLoading={deleteServiceInventoryMappings?.isPending}
+        deleteServiceInventoryName={deleteServiceInventoryName}
       />
     </div>
   );

@@ -51,11 +51,11 @@ const PersonalInformation = ({
       <DataRow label="City" value={personalInfo?.city?.name ? personalInfo?.city?.name : "-"} />
     </InfoSection>
 
-    <InfoSection title="Emergency Contact" icon={<Asterisk size={18} />}>
+    {/* <InfoSection title="Emergency Contact" icon={<Asterisk size={18} />}>
       <DataRow label="Contact Name" value="John Doe" />
       <DataRow label="Phone" value="+95 9 123 456 789" />
       <DataRow label="Relationship" value="Friend" />
-    </InfoSection>
+    </InfoSection> */}
   </div>
   )
 }

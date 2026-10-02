@@ -166,7 +166,7 @@ const CalendarHeader = ({
             </div>
 
             <Modal
-                title="Confirm Date Change"
+                title="Date Change Confirmation"
                 open={confirmModalOpen}
                 onOk={handleConfirmOk}
                 onCancel={handleConfirmCancel}

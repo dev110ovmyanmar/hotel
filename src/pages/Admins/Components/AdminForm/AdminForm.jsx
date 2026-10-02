@@ -79,14 +79,17 @@ const AdminForm = ({
     fetchQueryFunction: adminDetails,
     params: { uuid: selectedData?.uuid },
     options: {
-      enabled: !!selectedData?.uuid,
+      enabled: !!selectedData?.uuid && !!drawerOpen,
     },
   });
 
 
-  const { data: adminMetaData } = useApiQuery({
+  const { data: adminMetaData , isFetching : adminMetaDataFetching } = useApiQuery({
     fetchQueryName: "admin-meta",
     fetchQueryFunction: adminMeta,
+    options: {
+      enabled : !!drawerOpen
+    }
   });
 
   const staffList = adminMetaData?.staffs?.map((staff) => ({
@@ -367,6 +370,8 @@ const AdminForm = ({
                     }}
                     options={staffList}
                     placeholder="Select Staff"
+                    loading={adminMetaDataFetching}
+                    disabled={adminMetaDataFetching}
                   />
               }
             </Form.Item>
